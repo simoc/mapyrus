@@ -124,6 +124,9 @@ public class Interpreter
 		mWorldUnitsLookup.put("feet", new Integer(Context.WORLD_UNITS_FEET));
 		mWorldUnitsLookup.put("foot", new Integer(Context.WORLD_UNITS_FEET));
 		mWorldUnitsLookup.put("ft", new Integer(Context.WORLD_UNITS_FEET));
+		mWorldUnitsLookup.put("degrees", new Integer(Context.WORLD_UNITS_DEGREES));
+		mWorldUnitsLookup.put("degree", new Integer(Context.WORLD_UNITS_DEGREES));
+		mWorldUnitsLookup.put("deg", new Integer(Context.WORLD_UNITS_DEGREES));
 	}
 
 	/**
