@@ -33,10 +33,10 @@ stroke
 clearpath
 
 
-# Import temperature for major Australian cities.
+# Read temperature statistics for major Australian cities.
 # Show histograms of temperature for each city.
 #
-dataset "textfile", "aust_temperatures.dat", ""
+dataset "textfile", "aust_cities.dat", ""
 while Mapyrus.fetch.more
 do
 	fetch

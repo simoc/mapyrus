@@ -28,8 +28,7 @@ do
   addpath GEOMETRY
   stroke
 done
-
-dataset "textfile", "aust_temperatures.dat", ""
+dataset "textfile", "aust_cities.dat", ""
 while Mapyrus.fetch.more
 do
   fetch
