@@ -387,8 +387,8 @@ public class Interpreter
 						st.getFilenameAndLineNumber());
 				}
 				break;
-				
-			case Statement.IMPORT:
+	
+			case Statement.DATASET:
 				if (nExpressions >= 3)
 				{
 					/*
@@ -418,7 +418,11 @@ public class Interpreter
 						st.getFilenameAndLineNumber());
 				}
 				break;
-	
+
+			case Statement.IMPORT:
+				context.queryDataset();
+				break;
+
 			case Statement.FETCH:
 				/*
 				 * Add next row from dataset to path.
@@ -515,7 +519,7 @@ public class Interpreter
 						 * Print large or small numbers in scientific notation
 						 * to give more significant digits.
 						 */				
-						if (absoluteD != 0 && (absoluteD < 0.01 || absoluteD > 1000000.0))
+						if (absoluteD != 0 && (absoluteD < 0.01 || absoluteD > 10000000.0))
 							format = new DecimalFormat("#.################E0");
 						else
 							format = new DecimalFormat("#.################");
