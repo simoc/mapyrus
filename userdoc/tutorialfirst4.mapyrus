@@ -1,8 +1,8 @@
-# Set page size to 200x50 screen pixels and set scale
+# Set page size to 250x50 screen pixels and set scale
 # so we can work with pixel coordinate values too.
 #
 newpage "eps", "tutorialfirst4.eps", \
-  200 * Mapyrus.screen.resolution.mm, \
+  250 * Mapyrus.screen.resolution.mm, \
   50 * Mapyrus.screen.resolution.mm
 scale Mapyrus.screen.resolution.mm
 
@@ -25,4 +25,10 @@ stroke
 clearpath
 color "indigo"
 wedge 150, 10, 30, 45, 90
+stroke
+
+clearpath
+color "black"
+ellipse 200, 25, 10, 20
+ellipse 200, 25, 20, 10
 stroke
