@@ -398,6 +398,8 @@ public class OutputFormat
 		mWriter.println("  height=\"" +
 			mCoordinateDecimal.format(height * pxPerMM) + "\"");
 		mWriter.println("  version=\"1.1\"");
+		mWriter.println("  overflow=\"hidden\"");
+		mWriter.println("  xml:space=\"preserve\"");
 		mWriter.println("  xmlns=\"http://www.w3.org/2000/svg\">");
 
 		if (backgroundColor != null)
@@ -2523,12 +2525,19 @@ public class OutputFormat
 						py = mPageHeight - (y - yInc);
 					}
 
-					writeLine("<text xml:space=\"preserve\" x=\"" +
-						mCoordinateDecimal.format(px) + "\" y=\"" +
-						mCoordinateDecimal.format(py) +
+					writeLine("<text x=\"" + mCoordinateDecimal.format(px) +
+						"\" y=\"" + mCoordinateDecimal.format(py) +
 						"\" text-anchor=\"" + anchor + "\"");
-					String family = font.getFamily();
-					writeLine("  font-family=\"" + family + "\" " +
+
+					String fontName = font.getName();
+
+					/*
+					 * Change default Java font name to something sensible.
+					 */
+					if (fontName.equalsIgnoreCase("sansserif"))
+							fontName = "Helvetica";
+
+					writeLine("  font-family=\"" + fontName + "\" " +
 						"font-size=\"" + font.getSize2D() + "\" " +
 						extras.toString());
 
