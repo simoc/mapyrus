@@ -235,7 +235,7 @@ public class Interpreter
 				cap = BasicStroke.CAP_BUTT;
 			else if (s.equals(CAP_ROUND_STRING))
 				cap = BasicStroke.CAP_ROUND;
-			else if (s.equals(CAP_ROUND_STRING))
+			else if (s.equals(CAP_SQUARE_STRING))
 				cap = BasicStroke.CAP_SQUARE;
 			else
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_END_CAP) + ": " + s);
