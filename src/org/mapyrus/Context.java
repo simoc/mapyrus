@@ -51,6 +51,16 @@ public class Context
 	public static final int WORLD_UNITS_DEGREES = 3;
 
 	/*
+	 * Bit flags of graphical attributes.  OR-ed together
+	 * to control which attributes have been set, or not set.
+	 */
+	private static final int ATTRIBUTE_FONT = 1;
+	private static final int ATTRIBUTE_JUSTIFY = 2;
+	private static final int ATTRIBUTE_COLOR = 4;
+	private static final int ATTRIBUTE_LINESTYLE = 8;
+	private static final int ATTRIBUTE_CLIP = 16;
+
+	/*
 	 * Projection transformation may results in some strange warping.
 	 * To get a better estimate of extents when projecting to world coordinate
 	 * system we project many points in a grid to find minimum and maximum values.
@@ -79,12 +89,15 @@ public class Context
 	private double mFontRotation;
 
 	/*
-	 * Have graphical attributes been set in this context?
-	 * Have graphical attributes been changed in this context
-	 * since something was last drawn?
+	 * Bit flags of graphical attributes that have been changed by caller
+	 * but not set yet.
 	 */
-	private boolean mAttributesSet;
-	private boolean mAttributesChanged;
+	private int mAttributesPending;
+
+	/*
+	 * Bit flags of graphical attributes that have been changed in this context.
+	 */
+	private int mAttributesChanged;
 	
 	/*
 	 * Transformation matrix and cumulative scaling factors and rotation.
@@ -175,8 +188,7 @@ public class Context
 
 		mOutputFormat = null;
 		mOutputDefined = false;
-		mAttributesChanged = true;
-		mAttributesSet = false;
+		mAttributesPending = mAttributesChanged = 0;
 		mDataset = null;
 	}
 
@@ -243,8 +255,8 @@ public class Context
 			mOutputFormat.saveState();
 		}
 
-		mAttributesChanged = existing.mAttributesChanged;
-		mAttributesSet = false;
+		mAttributesPending = existing.mAttributesPending;
+		mAttributesChanged = 0;
 	}
 
 	private GeometricPath getDefinedPath()
@@ -329,25 +341,39 @@ public class Context
 	/**
 	 * Set graphics attributes (color, line width, etc.) if they
 	 * have changed since the last time we drew something.
+	 * @param attributeMask bit mask of attributes to set: ATTRIBUTE_*.
 	 */
-	private void setGraphicsAttributes()
+	private void setGraphicsAttributes(int attributeMask)
 	{
-		if (mAttributesChanged)
-		{
-			mOutputFormat.setAttributes(mColor, mLinestyle, mJustify,
-				mFontName, mFontStyle, mFontSize, mFontRotation, mClippingPaths);
-			mAttributesChanged = false;
-		}
+		int maskComplement = (~attributeMask);
+
+		if ((mAttributesPending & ATTRIBUTE_FONT & attributeMask) != 0)
+			mOutputFormat.setFontAttribute(mFontName, mFontStyle, mFontSize, mFontRotation);
+		if ((mAttributesPending & ATTRIBUTE_JUSTIFY & attributeMask) != 0)
+			mOutputFormat.setJustifyAttribute(mJustify);
+		if ((mAttributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
+			mOutputFormat.setColorAttribute(mColor);
+		if ((mAttributesPending & ATTRIBUTE_LINESTYLE & attributeMask) != 0)
+			mOutputFormat.setLinestyleAttribute(mLinestyle);
+		if ((mAttributesPending & ATTRIBUTE_CLIP & attributeMask) != 0)
+			mOutputFormat.setClipAttribute(mClippingPaths);
+
+		/*
+		 * Clear attributes we've just set -- they are no longer pending.
+		 */
+		mAttributesPending = (mAttributesPending & maskComplement);
 	}
 
 	/**
-	 * Flag that graphics attributes have been changed.
+	 * Flag that graphics attributes have been changed by a call to a procedure.
+	 * @param attributes bit flags of attributes that are changed.
 	 */
-	public void setAttributesChanged()
+	public void setAttributesChanged(int attributes)
 	{
-		mAttributesChanged = mAttributesSet = true;
+		mAttributesPending |= attributes;
+		mAttributesChanged |= attributes;
 	}
-	
+
 	/**
 	 * Sets output file for drawing to.
 	 * @param filename name of image file output will be saved to.
@@ -383,7 +409,8 @@ public class Context
 
 		mOutputFormat = new OutputFormat(filename, format,
 			width, height, resolution, extras, stdoutStream);
-		mAttributesChanged = true;
+		mAttributesPending = ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_COLOR| 
+			ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP;
 		mOutputDefined = true;
 	}
 
@@ -391,10 +418,10 @@ public class Context
 	 * Closes a context.  Any output started in this context is completed,
 	 * memory used for context is released.
 	 * A context cannot be used again after this call.
-	 * @return flag true if graphical attributes were set in this context
+	 * @return bit flag of graphical attributes that were changed in this context
 	 * and cannot be restored.
 	 */
-	public boolean closeContext() throws IOException, MapyrusException
+	public int closeContext() throws IOException, MapyrusException
 	{
 		boolean restoredState;
 
@@ -406,9 +433,9 @@ public class Context
 			 */
 			restoredState = mOutputFormat.restoreState();
 			if (restoredState)
-				mAttributesSet = false;
+				mAttributesChanged = 0;
 		}
-		
+
 		if (mOutputDefined)
 		{
 			mOutputFormat.closeOutputFormat();
@@ -420,9 +447,9 @@ public class Context
 		mVars = null;
 		mLocalVars = null;
 		mDataset = null;
-		return(mAttributesSet);
+		return(mAttributesChanged);
 	}
-					
+
 	/**
 	 * Sets linestyle.
 	 * @param width is width for lines in millimetres.
@@ -450,7 +477,8 @@ public class Context
 			mLinestyle = new BasicStroke((float)(width * mScaling), cap, join,
 				MITER_LIMIT, dashes, (float)phase);
 		}
-		mAttributesChanged = mAttributesSet = true;
+		mAttributesPending |= ATTRIBUTE_LINESTYLE;
+		mAttributesChanged |= ATTRIBUTE_LINESTYLE;
 	}
 
 	/**
@@ -460,7 +488,8 @@ public class Context
 	public void setColor(Color color)
 	{
 		mColor = color;
-		mAttributesChanged = mAttributesSet = true;
+		mAttributesPending |= ATTRIBUTE_COLOR;
+		mAttributesChanged |= ATTRIBUTE_COLOR;
 	}
 
 	/**
@@ -475,7 +504,8 @@ public class Context
 		mFontStyle = fontStyle;
 		mFontSize = fontSize * mScaling;
 		mFontRotation = mRotation;
-		mAttributesChanged = mAttributesSet = true;
+		mAttributesChanged |= ATTRIBUTE_FONT;
+		mAttributesPending |= ATTRIBUTE_FONT;
 	}
 
 	/**
@@ -485,7 +515,8 @@ public class Context
 	public void setJustify(int code)
 	{
 		mJustify = code;
-		mAttributesChanged = mAttributesSet = true;
+		mAttributesChanged |= ATTRIBUTE_JUSTIFY;
+		mAttributesPending |= ATTRIBUTE_JUSTIFY;
 	}
 
 	/**
@@ -496,7 +527,6 @@ public class Context
 	{
 		mCtm.scale(factor, factor);
 		mScaling *= factor;
-		mAttributesChanged = mAttributesSet = true;
 	}
 	
 	/**
@@ -507,7 +537,6 @@ public class Context
 	public void setTranslation(double x, double y)
 	{
 		mCtm.translate(x, y);
-		mAttributesChanged = mAttributesSet = true;
 	}
 	
 	/**
@@ -519,7 +548,6 @@ public class Context
 		mCtm.rotate(angle);
 		mRotation += angle;
 		mRotation = Math.IEEEremainder(mRotation, Math.PI * 2);
-		mAttributesChanged = mAttributesSet = true;
 	}
 
 	/**
@@ -606,6 +634,7 @@ public class Context
 	 */
 	public void setDataset(GeographicDataset dataset) throws MapyrusException
 	{
+// TODO close any previous dataset first.
 		mDataset = new Dataset(dataset);
 	}
 
@@ -949,7 +978,7 @@ public class Context
 
 		if (path != null && mOutputFormat != null)
 		{
-			setGraphicsAttributes();
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP);
 			mOutputFormat.stroke(path.getShape());
 		}
 	}
@@ -963,7 +992,7 @@ public class Context
 		
 		if (path != null && mOutputFormat != null)
 		{	
-			setGraphicsAttributes();
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_CLIP);
 			mOutputFormat.fill(path.getShape());
 		}
 	}
@@ -1011,7 +1040,8 @@ public class Context
 			protectedPath.closePath();
 			protectedPath.append(path, false);
 
-			mAttributesChanged = mAttributesSet = true;
+			mAttributesPending |= ATTRIBUTE_CLIP;
+			mAttributesChanged |= ATTRIBUTE_CLIP;
 			mOutputFormat.clip(protectedPath.getShape());
 
 			/*
@@ -1037,7 +1067,8 @@ public class Context
 			if (mClippingPaths == null)
 				mClippingPaths = new ArrayList();
 			mClippingPaths.add(clipPath);
-			mAttributesChanged = mAttributesSet = true;
+			mAttributesPending |= ATTRIBUTE_CLIP;
+			mAttributesChanged |= ATTRIBUTE_CLIP;
 			if (mOutputFormat != null)
 			{
 				mOutputFormat.clip(clipPath.getShape());
@@ -1055,11 +1086,11 @@ public class Context
 		
 		if (path != null && mOutputFormat != null)
 		{	
-			setGraphicsAttributes();
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
 			mOutputFormat.label(path.getMoveTos(), label);
 		}
 	}
-	
+
 	/**
 	 * Returns the number of moveTo's in path defined in this context.
 	 * @return count of moveTo calls made.
