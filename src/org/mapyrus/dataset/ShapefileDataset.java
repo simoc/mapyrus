@@ -85,11 +85,6 @@ public class ShapefileDataset implements GeographicDataset
 	private static final byte DBF_LOGICAL = 'L';
 
 	/*
-	 * Empty path for null shapes.
-	 */
-	private static final double []EMPTY_PATH = {Argument.GEOMETRY_POINT, 0};
-
-	/*
 	 * Files containing data, their lengths and type.
 	 */	
 	private DataInputStream mShapeStream;
@@ -638,7 +633,7 @@ public class ShapefileDataset implements GeographicDataset
 					/*
 					 * A null shape.
 					 */
-					path = EMPTY_PATH;
+					path = Argument.emptyGeometry.getGeometryValue();
 					shapeInExtents = true;
 				}
 				else if (mShapeFileType == POINT || mShapeFileType == POINT_Z ||
