@@ -42,8 +42,7 @@ begin church name, ruined
   endif
   color "black"
   linestyle 0.1
-  move -1, 0
-  draw 1, 0, 1, -2, -1, -2
+  box -1, 0, 1, -2
   fill
   clearpath
   move 0, 0
