@@ -24,9 +24,9 @@ public class ParsedStatement
 	public static final int PARSED_ELSE = 3;
 	public static final int PARSED_ELSIF = 4;
 	public static final int PARSED_ENDIF = 5;
-	
-	public static final int PARSED_DO = 6;
-	public static final int PARSED_DONE = 7;
+
+	public static final int PARSED_DO = 7;
+	public static final int PARSED_DONE = 8;
 
 	private Statement mStatement;	/* statement that was parsed */
 	private int mKeywordType;	/* type of keyword parsed */
