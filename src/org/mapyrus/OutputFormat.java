@@ -1,11 +1,14 @@
 /*
- * $Id$
+ * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
  
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import javax.imageio.*;
@@ -17,6 +20,9 @@ import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.awt.image.*;
 import java.awt.Color;
 
@@ -35,16 +41,22 @@ public class OutputFormat
 	private static final int POSTSCRIPT = 3;
 
 	/*
-	 * Number of points and millimetres per inch.
+	 * Type of justification for labels on page, as used
+	 * in a word processor and in HTML tags.
 	 */
-	private static final int POINTS_PER_INCH = 72;
-	public static final double MM_PER_INCH = 25.4;
-
+	public static final int JUSTIFY_LEFT = 1;
+	public static final int JUSTIFY_CENTER = 2;
+	public static final int JUSTIFY_RIGHT = 4;
+	public static final int JUSTIFY_TOP = 8;
+	public static final int JUSTIFY_MIDDLE = 16;
+	public static final int JUSTIFY_BOTTOM = 32;
+	
 	/*
-	 * Format for coordinates and colors in PostScript files.
+	 * Format for coordinates, colors and rotation in PostScript files.
 	 */	
 	private DecimalFormat mLinearFormat;
 	private DecimalFormat mColorFormat;
+	private DecimalFormat mRotationFormat;
 		
 	/*
 	 * File or image that drawing commands are
@@ -59,7 +71,18 @@ public class OutputFormat
 	private Graphics2D mGraphics2D;
 	private boolean mPipedOutput;	
 	private Process mOutputProcess;
+	
+	/*
+	 * Frequently used fonts.
+	 */
+	private FontCache mFontCache;
 
+	/*
+	 * List of fonts used in PostScript file to add at end of PostScript
+	 * file as required resources.
+	 */
+	private HashSet mFontResources;
+	
 	/*
 	 * Page dimensions and resolution.
 	 */
@@ -73,17 +96,25 @@ public class OutputFormat
 	private int mPostScriptIndent;
 
 	/*
-	 * Write PostScript file header.
+	 * Write PostScript file header, including document structuring conventions (DSC).
 	 */
 	private void writePostScriptHeader(double width, double height)
 	{
-		long widthInPoints = Math.round(width / MM_PER_INCH * POINTS_PER_INCH);
-		long heightInPoints = Math.round(height / MM_PER_INCH * POINTS_PER_INCH);
-		
-		mWriter.println("%!PS-Adobe-3.0");
+		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
+			Constants.POINTS_PER_INCH);
+		long heightInPoints = Math.round(height / Constants.MM_PER_INCH *
+			Constants.POINTS_PER_INCH);
+
+		mWriter.print("%!PS-Adobe-3.0");
+		if (mFormatName.equals("EPS"))
+			mWriter.print(" EPSF-3.0");
+		mWriter.println("");
+
 		mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 		mWriter.println("%%DocumentData: Clean7Bit");
+		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: " + Mapyrus.PROGRAM_NAME);
+		mWriter.println("%%DocumentRequiredResources: (atend)");
 		mWriter.println("%%EndComments");
 		mWriter.println("");
 
@@ -95,16 +126,23 @@ public class OutputFormat
 		/*
 		 * Set plotting units to millimetres.
 		 */
-		mWriter.println(POINTS_PER_INCH + " " + MM_PER_INCH + " div dup scale");
+		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
+			" div dup scale");
 		
 		/*
 		 * Define shorter names for most commonly used operations.
 		 */
 		mWriter.println("/m { moveto } def /l { lineto } def");
 		mWriter.println("/s { stroke } def /f { fill } def");
+		mWriter.println("/radtodeg { 180 mul 3.1415629 div } def");
+		mWriter.println("% Rotate and justify text using current font settings");
+		mWriter.println("/t { gsave currentpoint translate frot radtodeg rotate");
+		mWriter.println("dup stringwidth pop fjx mul fsize fjy mul rmoveto");
+		mWriter.println("show grestore newpath } def");
 		mWriter.println("/gs { gsave } def /gr { grestore } def");
 		mWriter.println("/rgb { setrgbcolor } def");
 		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap setlinewidth } def");
+		mWriter.println("");
 	}
 
 	/*
@@ -118,7 +156,7 @@ public class OutputFormat
 		mGraphics2D.setColor(Color.WHITE);
 		mGraphics2D.fillRect(0, 0, mImage.getWidth(), mImage.getHeight());
 		
-		scale = resolution / MM_PER_INCH;
+		scale = resolution / Constants.MM_PER_INCH;
 		
 		/*
 		 * Set transform with origin in lower-left corner and
@@ -196,8 +234,11 @@ public class OutputFormat
 		{
 			mLinearFormat = new DecimalFormat("#.##");
 			mColorFormat = new DecimalFormat("#.###");
+			mRotationFormat = new DecimalFormat("#.####");
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 			writePostScriptHeader(width, height);
+			mPostScriptIndent = 0;
+			mFontResources = new HashSet();
 		}
 		else
 		{
@@ -205,18 +246,18 @@ public class OutputFormat
 			 * Create a BufferedImage to draw into.  We'll save it to a file
 			 * when user has finished drawing to it.
 			 */
-			int widthInPixels = (int)Math.round(width / MM_PER_INCH * resolution);
-			int heightInPixels = (int)Math.round(height / MM_PER_INCH * resolution);
+			int widthInPixels = (int)Math.round(width / Constants.MM_PER_INCH * resolution);
+			int heightInPixels = (int)Math.round(height / Constants.MM_PER_INCH * resolution);
 			mImage = new BufferedImage(widthInPixels, heightInPixels,
 				BufferedImage.TYPE_3BYTE_BGR);
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution);
 		}
 		mFilename = filename;
-		mPostScriptIndent = 0;
 		mPageWidth = width;
 		mPageHeight = height;
-		mResolution = MM_PER_INCH / resolution;
+		mResolution = Constants.MM_PER_INCH / resolution;
+		mFontCache = new FontCache();
 	}
 
 	/**
@@ -316,6 +357,12 @@ public class OutputFormat
 				 */
 				mWriter.println("showpage");
 			}
+
+			mWriter.println("%%Trailer");	
+			mWriter.println("%%DocumentNeededResources:");
+			Iterator it = mFontResources.iterator();
+			while (it.hasNext())
+				mWriter.println("%%+ font " + (String)(it.next()));
 			mWriter.println("%%EOF");
 			mWriter.close();
 			
@@ -365,12 +412,23 @@ public class OutputFormat
 	 * Set graphics attributes.
 	 * @param color is color to draw in.
 	 * @param linestyle is Java2D line width, cap and join style, dash pattern.
+	 * @param justify is label justification value, combination of JUSTIFY_* bit flags.
+	 * @param fontName is name of font as defined in java.awt.Font class.
+	 * @param fontStyle is a style as defined in java.awt.Font class.
+	 * @param fontSize is size for labelling in millimetres.
+	 * @param fontRotation is rotation angle for font, in degrees,
+	 * measured counter-clockwise.
 	 * @param is clip path.
 	 */
-	public void setAttributes(Color color, BasicStroke linestyle, Shape clipPath)
+	public void setAttributes(Color color, BasicStroke linestyle, int justify,
+		String fontName, int fontStyle, double fontSize, double fontRotation,
+		Shape clipPath)
 	{
 		int cap, join;
-		
+		String styleName;
+		Font font;
+		int pointSize;
+
 		if (mOutputType == POSTSCRIPT)
 		{
 			/*
@@ -391,7 +449,7 @@ public class OutputFormat
 				join = 1;
 			else /* BEVEL */
 				join = 2;
-		
+
 			writePostScriptLine(mLinearFormat.format(linestyle.getLineWidth()) + " " +
 				cap + " " + join + " " +
 				mLinearFormat.format(linestyle.getMiterLimit()) + " sl");
@@ -422,15 +480,81 @@ public class OutputFormat
 			writePostScriptLine(mColorFormat.format(c[0]) + " " +
 				mColorFormat.format(c[1]) + " " +
 				mColorFormat.format(c[2]) + " rgb");
+				
+			/*
+			 * Set font for labelling.
+			 */
+			if (fontStyle == Font.BOLD)
+				styleName = "Bold";
+			else if (fontStyle == Font.ITALIC)
+				styleName = "Italic";
+			else if (fontStyle == (Font.BOLD | Font.ITALIC))
+				styleName = "BoldItalic";
+			else
+				styleName = "";
+
+			String psFontName = fontName + styleName;
+			writePostScriptLine("/fsize " + mLinearFormat.format(fontSize) + " def");
+			writePostScriptLine("/" + psFontName + " findfont fsize scalefont setfont");
+			writePostScriptLine("/frot " + mRotationFormat.format(fontRotation) + " def");
+			mFontResources.add(psFontName);
+
+			/*
+			 * Set justification for labels as fraction of string height and
+			 * width to move string in X and Y direction to achieve justification
+			 * the user wants.
+			 */
+			double justX, justY;
+			if ((justify & JUSTIFY_LEFT) != 0)
+				justX = 0.0;
+			else if ((justify & JUSTIFY_CENTER) != 0)
+				justX = -0.5;
+			else
+				justX = -1.0;
+
+			if ((justify & JUSTIFY_BOTTOM) != 0)
+				justY = 0.0;
+			else if ((justify & JUSTIFY_MIDDLE) != 0)
+				justY = -0.5;
+			else
+				justY = -1.0;
+
+			writePostScriptLine("/fjx " + justX + " def /fjy " + justY + " def");
 		}
 		else
 		{
 			/*
-			 * Set color, linestyle and clip path for graphics context.
+			 * Get font from cache, or create it if it is not in cache.
+			 * Font size is defined in millimetres because it will later be
+			 * displayed with a Graphics2D object scaled to millimetre units.
+			 */
+			int size = (int)Math.round(fontSize);
+			font = mFontCache.get(fontName, fontStyle, size);
+			if (font == null)
+			{
+				font = new Font(fontName, fontStyle, size);
+
+				/*
+				 * Mirror Y axis of fonts so that they can be displayed
+				 * with a Graphics2D object that has inverted the Y axis to
+				 * increase upwards.
+				 */
+				AffineTransform fontTransform = AffineTransform.getScaleInstance(1.0, -1.0);
+				if (fontRotation != 0.0)
+					fontTransform.rotate(fontRotation);
+				font = font.deriveFont(fontTransform);
+				mFontCache.put(fontName, fontStyle, size, font);
+// TODO how does font cache deal with rotated fonts?
+			}
+
+			/*
+			 * Set color, linestyle, font and clip path for graphics context.
 			 */
 			mGraphics2D.setColor(color);
 			mGraphics2D.setStroke(linestyle);
 			mGraphics2D.setClip(clipPath);
+			mGraphics2D.setFont(font);
+			// TODO make sure font is right size with mGraphics2D.getTransform();
 		}
 	}
 
@@ -544,6 +668,85 @@ public class OutputFormat
 				writePostScriptShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f));
 			}
 			writePostScriptLine("clip newpath");
+		}
+	}
+
+	/**
+	 * Convert a string to PostScript format, escaping special characters and
+	 * write it to PostScript file.
+	 * @param s is string to convert and write.
+	 */
+	private void writePostScriptString(String s)
+	{
+		char c;
+		StringBuffer buffer = new StringBuffer("(");
+		for (int i = 0; i < s.length(); i++)
+		{
+			/*
+			 * Wrap strings that get too long.
+			 */
+			if (buffer.length() > 72)
+			{
+				buffer.append('\\');
+				mWriter.println(buffer.toString());
+				buffer.delete(0, buffer.length());
+			}
+
+			/*
+			 * Convert backslashes to '\\' and other special characters to octal.
+			 */
+			c = s.charAt(i);
+			if (c == '\\')
+			{
+				buffer.append("\\\\");
+			}
+			else if (c == '(' || c == ')' || c == '%' || c < ' ' || c > 'z')
+			{
+				int extendedChar = c;
+				int b1 = extendedChar / (8 * 8);
+				extendedChar -= b1 * (8 * 8);
+				int b2 = extendedChar / 8;
+				extendedChar -= b2 * 8;
+				int b3 = extendedChar;
+				buffer.append('\\');
+				buffer.append(b1);
+				buffer.append(b2);
+				buffer.append(b3);
+			}
+			else
+			{
+				buffer.append(c);
+			} 
+		}
+		buffer.append(")");
+		mWriter.println(buffer.toString());
+	}
+
+	/**
+	 * Draw label positioned at (or along) currently defined path.
+	 * @param pointList is list of Point2D objects at which to draw label.
+	 * @param label is string to draw on path.
+	 */
+	public void label(ArrayList pointList, String label)
+	{
+		/*
+		 * Draw label at each position in list.
+		 */
+		for (int i = 0; i < pointList.size(); i++)
+		{
+			Point2D pt = (Point2D)(pointList.get(i));
+			if (mOutputType == POSTSCRIPT)
+			{
+				writePostScriptLine(mLinearFormat.format(pt.getX()) + " " +
+					mLinearFormat.format(pt.getY()) + " m");
+// TODO need to split multiline strings.
+				writePostScriptString(label);
+				writePostScriptLine("t");
+			}
+			else
+			{
+				mGraphics2D.drawString(label, (float)pt.getX(), (float)pt.getY());
+			}
 		}
 	}
 }
