@@ -24,14 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <target name="init" description="Setup properties">
 
+<!-- Current software version, this value is updated -->
+<!-- manually for each new release. -->
+<property name="version" value="0.49"/>
+
 <!-- 'Java Topology Suite' JAR file required for building some Java classes -->
 <property name="jts.jar" value="jts-1.4.0.jar"/>
 <available file="${jts.jar}" property="jts.jar.isAvailable"/>
 <fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
 
-<loadfile property="version" srcFile="VERSION">
-<filterchain><striplinebreaks/></filterchain>
-</loadfile>
 <tstamp>
 <format property="today" pattern="d-MMMM-yyyy" locale="en"/>
 </tstamp>
@@ -64,7 +65,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="doc" depends="jar" description="Build documentation and examples (requires LaTeX)">
 <!-- Delete documentation generated previously -->
 <delete>
-<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
+<fileset dir="." includes="${ant.project.name}.pdf"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps"/>
 </delete>
 <replace file="userdoc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
 <replace file="userdoc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
@@ -126,27 +128,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </exec>
 
 <exec dir="userdoc" executable="dvipdf" failonerror="true">
-<arg line="${ant.project.name}.dvi ${ant.project.name}.pdf"/>
+<arg line="${ant.project.name}.dvi ../${ant.project.name}.pdf"/>
 </exec>
 
 <!-- Create README file -->
-<echo file="README" level="info">
+<echo file="README.txt" level="info">
 Mapyrus Version ${version} README
 Copyright (C) 2003, 2004 Simon Chenery.
 
-User manual is userdoc/mapyrus.pdf.
+User manual is mapyrus.pdf.
 Examples from user manual are in userdoc directory.
 
-Changes in this version of Mapyrus are described in file NEWS.
+Changes in this version of Mapyrus are described in file NEWS.txt.
 
 Mapyrus runs on any operating system for which Java 1.4 (or later)
 is available.
 
 Start Mapyrus from a terminal window with a command like:
 
-java -cp mapyrus.jar org.mapyrus.Mapyrus myfile.mapyrus
+java -classpath mapyrus.jar org.mapyrus.Mapyrus myfile.mapyrus
 
 Mapyrus is released under the GNU Lesser General Public License (LGPL).
+See file named userdoc/COPYING for details.
 </echo>
 
 </target>
@@ -156,7 +159,7 @@ Mapyrus is released under the GNU Lesser General Public License (LGPL).
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, userdoc/**, ${ant.project.name}.jar, src/**, NEWS, README, VERSION" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log"/>
+<fileset dir="." includes="build/**, build.xml, userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, src/**, NEWS.txt, README.txt" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc"/>
 </zip>
 </target>
 
@@ -164,9 +167,9 @@ Mapyrus is released under the GNU Lesser General Public License (LGPL).
 <target name="clean" description="Remove everything we have built">
 <delete dir="build/classes"/>
 <delete>
-<fileset dir="." includes="${ant.project.name}.jar, manifest, README"/>
-<fileset dir="." includes="${ant.project.name}*.zip"/>
-<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out,${ant.project.name}.pdf"/>
+<fileset dir="." includes="${ant.project.name}.jar, manifest, README.txt"/>
+<fileset dir="." includes="${ant.project.name}*.zip, ${ant.project.name}.pdf"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out"/>
 </delete>
 </target>
 
