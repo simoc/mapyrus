@@ -237,16 +237,15 @@ public class Expression
 			if (t.mIsLeaf)
 			{
 				/*
-				 * Evaluate any variable name.
+				 * Evaluate any variable name.  Variables that are not assigned
+				 * are given the value of an empty string (which converts to the
+				 * numeric value 0), like in awk(1) and Perl.
 				 */
 				if (t.mLeafArg.getType() == Argument.VARIABLE)
 				{
 					retval = context.getVariableValue(t.mLeafArg.getVariableName());
 					if (retval == null)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
-							": " + t.mLeafArg.getVariableName());
-					}
+						retval = Argument.emptyString;
 				}
 				else
 				{
@@ -332,33 +331,6 @@ public class Expression
 				 */
 				leftValue = traverse(t.mLeftBranch, context);
 				rightValue = traverse(t.mRightBranch, context);
-
-				/*
-				 * Evaluate any variable names.
-				 */
-				if (leftValue.getType() == Argument.VARIABLE)
-				{
-					Argument leftVarValue =
-						context.getVariableValue(leftValue.getVariableName());
-					if (leftVarValue == null)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
-							": " + leftValue.getVariableName());
-					}
-					leftValue = leftVarValue;
-				}
-				if (rightValue.getType() == Argument.VARIABLE)
-				{
-					Argument rightVarValue =
-						context.getVariableValue(rightValue.getVariableName());
-					if (rightVarValue == null)
-					{
-// TODO treat undefined variables as empty string.
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
-							": " + rightValue.getVariableName());
-					}
-					rightValue = rightVarValue;
-				}
 
 				switch (t.mOperation)
 				{
