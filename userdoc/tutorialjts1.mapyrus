@@ -1,0 +1,24 @@
+newpage "eps", "tutorialjts1.eps", 60, 60
+worlds 5000, 1000, 6000, 2000
+
+# Demonstrate drawing buffer around a line.  For simplicity, use
+# only a single line.  In reality, geometries would be read
+# from a dataset.
+#
+let wkt = 'LINESTRING (5200 1200, 5337 1664, 5798 1643, 5347 1120)'
+let G1 = parsewkt(wkt)
+addpath G1
+linestyle 3
+color "orange"
+stroke
+
+clearpath
+addpath buffer(G1, 100, "round")
+linestyle 0.1
+color "red"
+stroke
+# Fill buffered area with a hatch pattern.
+#
+clip "in"
+stripepath 3, -45
+stroke
