@@ -52,7 +52,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Generate all examples, doing tutorial examples separately so
 it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="contact.mpy topofpage.mpy turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy turtle6.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
+<arg line="contact.mpy turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy turtle6.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="tutorialfirst1.mpy"/>
@@ -67,7 +67,7 @@ it is not necessary to show path being cleared in each example -->
 <arg line="tutorialvar1.mpy tutorialvar2.mpy"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutoriallines1.mpy tutoriallines2.mpy tutoriallines3.mpy tutoriallines4.mpy tutoriallines5.mpy tutorialpolygons1.mpy tutorialpolygons2.mpy tutorialpolygons3.mpy tutorialpolygons4.mpy tutorialprocedures1.mpy tutorialprocedures2.mpy tutoriallabels1.mpy tutoriallabels2.mpy tutorialdatasets1.mpy tutorialdatasets2.mpy tutorialdatasets3.mpy tutorialscalebar1.mpy"/>
+<arg line="tutoriallines1.mpy tutoriallines2.mpy tutoriallines3.mpy tutoriallines4.mpy tutoriallines5.mpy tutorialpolygons1.mpy tutorialpolygons2.mpy tutorialpolygons3.mpy tutorialpolygons4.mpy tutorialprocedures1.mpy tutorialprocedures2.mpy tutoriallabels1.mpy tutoriallabels2.mpy tutorialdatasets1.mpy tutorialdatasets2.mpy tutorialdatasets3.mpy tutorialscalebar1.mpy tutorialshadow1.mpy"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="tutorialrand1.mpy tutorialrand2.mpy tutorialrand3.mpy tutorialpiechart1.mpy"/>
