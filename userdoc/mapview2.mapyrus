@@ -1,0 +1,163 @@
+# @(#) $Id$
+
+# Show 'v' symbol at random position.
+#
+begin v
+	x = 1 - random(2)
+	y = 1 - random(2)
+	clearpath
+	move x - 0.6, y + 1
+	draw x, y
+	draw x + 0.6, y + 1
+	stroke
+end
+
+# Fill polygon with 'v' symbols.
+#
+begin savannah
+	clip
+	stripepath 5, 0
+	samplepath 5, 0
+	color "#44cc44"
+	linestyle 0.2
+	v
+end
+
+# Show wheat kernel symbol.
+#
+begin kernel
+	rotate -Mapyrus.rotation
+	move -0.8, 2
+	draw -0.8, 0
+	draw 0, -0.5
+	draw 0, -1.5
+	draw 0, -0.5
+	draw 0.8, 0
+	draw 0.8, 2
+	stroke
+	move 0, 3
+	draw 0, 1
+	stroke
+end
+
+# Fill polygon with wheat symbols.
+#
+begin wheatfield
+	clip
+	stripepath 6, 10
+	samplepath 6, 0
+	color "orange"
+	linestyle 0.2
+	kernel
+end
+
+# Show rock symbol as '/\_'.
+#
+begin rock
+	rotate -Mapyrus.rotation
+	move -1, 0
+	draw 0, 3, 1, 0, 2, 0
+	stroke
+	move 1, 0
+	draw 0.8, 0, -0.1, 2.8, 0, 3
+	stroke
+end
+
+# Fill polygon with rock symbols.
+#
+begin barerock
+	clip
+	stripepath 6, 45
+	samplepath 6, 0
+	color "#cccccc"
+	linestyle 0.1
+	rock
+end
+
+# Show marsh grass symbol as '\|/'.
+#
+begin marshgrass
+	rotate -Mapyrus.rotation
+	x = 2 - random(4)
+	clearpath
+	move x - 1, 0
+	draw x + 1, 0
+	move x, 0
+	draw x, 1
+	move x, 0
+	draw x + 1, 1
+	move x, 0
+	draw x - 1, 1
+	stroke
+end
+
+# Fill polygon with marsh symbols.
+#
+begin marsh
+	clip
+	stripepath 6, 45
+	samplepath 6, 0
+	color "#a52a2a"
+	linestyle 0.1
+	marshgrass
+end
+
+begin water
+	color "#80b2ff"
+	fill
+end
+
+newpage "png", "mapview2.png", 70, 60, 96
+worlds 40000, 40000, 50000, 45000
+
+# Import polygons of imaginary vegetation.
+#
+dataset "textfile", "vegetation.dat", "comment=#"
+import
+while Mapyrus.import.moreRows
+do
+	fetch
+	nCoords = $1
+	vegCode = $2
+
+	# Add all coordinate for this polygon to path.
+	#
+	fetch
+	clearpath
+	move $1, $2
+	i = 1
+	while i < nCoords
+	do
+		fetch
+		draw $1, $2
+		i = i + 1
+	done
+
+	# Display polygon differently, depending on its vegetation class.
+	#
+	if vegCode == 1
+	then
+		savannah
+	elif vegCode == 2
+	then
+		wheatfield
+	elif vegCode == 3
+	then
+		barerock
+	elif vegCode == 4
+	then
+		marsh
+	elif vegCode == 5
+	then
+		marsh
+	elif vegCode == 6
+	then
+		water
+	endif
+
+	# Show outline of polygon
+	#
+	color "black"
+	linestyle 0.1
+	stroke
+done
