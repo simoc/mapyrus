@@ -101,11 +101,11 @@ public class MapyrusMessages
 	public static final String WRONG_TYPES = "wrongtypes";
 	public static final String ZERO_WORLD_RANGE = "zeroworldrange";
 
-	private static ResourceBundle messages;
+	private static ResourceBundle mMessages;
 
 	static
 	{
-		messages = ResourceBundle.getBundle("MapyrusMessages");
+		mMessages = ResourceBundle.getBundle("MapyrusMessages");
 	}
 
 	/**
@@ -114,6 +114,6 @@ public class MapyrusMessages
 	 */
 	public static String get(String key)
 	{
-		return(messages.getString(key));
+		return(mMessages.getString(key));
 	}
 }
