@@ -452,7 +452,18 @@ public class Interpreter
 			 */
 			context.clearPath();
 			context.moveTo(legendEntrySize * 1.1 + 2, legendEntrySize / 2);
-			context.label(entry.getDescription());
+			String description = entry.getDescription();
+			int index;
+			while ((index = description.indexOf("(#)")) >= 0)
+			{
+				/*
+				 * Replace part of legend description with number of times this
+				 * entry was used.
+				 */
+				description = description.substring(0, index + 1) +
+					entry.getReferenceCount() + description.substring(index + 2);
+			}
+			context.label(description);
 
 			/*
 			 * Set path to a point, line or box and then call procedure block
