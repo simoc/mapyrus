@@ -68,6 +68,8 @@ public class MapyrusMessages
 	public static final String INVALID_IMPORT = "invalidimport";
 	public static final String INVALID_KEYWORD = "invalidkeyword";
 	public static final String INVALID_JUSTIFY = "invalidjustify";
+	public static final String INVALID_LEGEND_ENTRY = "invalidlegendentry";
+	public static final String INVALID_LEGEND_TYPE = "invalidlegendtype";
 	public static final String INVALID_LINE_JOIN = "invalidlinejoin";
 	public static final String INVALID_LINE_WIDTH = "invalidlinewidth";
 	public static final String INVALID_LINESTYLE = "invalidlinestyle";
