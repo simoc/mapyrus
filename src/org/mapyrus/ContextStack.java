@@ -960,7 +960,7 @@ public class ContextStack
 				if (top == null)
 					retval = Argument.emptyString;
 				else
-					retval = new Argument(Argument.STRING, top.getTypeString());
+					retval = new Argument(Argument.STRING, top.getBlockName());
 			}
 			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + PAGE_VARIABLE + "."))
 			{
