@@ -1,0 +1,12 @@
+# Draw icons with different sizes and rotations.
+#
+newpage "eps", "tutorialicon1.eps", 40, 40
+move 10, 15
+icon "footballpitch.gif"
+clearpath
+move 25, 15
+icon "footballpitch.gif", 15
+clearpath
+rotate 30
+move 30, 20
+icon "footballpitch.gif", 12
