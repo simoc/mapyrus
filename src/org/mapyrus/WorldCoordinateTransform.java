@@ -1,7 +1,7 @@
 /**
- * Interfaces to an external shared library to which we pipe coordinate values and then 
- * read back transformed values.  Most useful in combination with PROJ.4 coordinate
- * transform program for reprojecting coordinates.
+ * Interfaces to an external shared library to which we pipe coordinate values
+ * and then read back transformed values.  Most useful in combination with
+ * PROJ.4 coordinate transform program for reprojecting coordinates.
  *
  * Uses JNI interface to call native methods to define transformation and then
  * to transform points between coordinate systems.
@@ -19,13 +19,14 @@ import java.io.*;
 public class WorldCoordinateTransform
 {
 	/*
-	 * Native methods implementing defintion and transformation between coordinate systems.
+	 * Native methods implementing defintion and transformation
+	 * between coordinate systems.
 	 */
-	static native int defineCS(String description);
-	static native int transform(int t1, int t2, double []coords, int nCoords);
+	private static native int define(String description);
+	private static native int transform(int t1, int t2, double []coords, int nCoords);
 
 	static private Hashtable mDefinedCoordinateSystems;
-	
+
 	static
 	{
 		System.loadLibrary("mapyrusproj4");
@@ -45,7 +46,7 @@ public class WorldCoordinateTransform
 		definition = (Integer)mDefinedCoordinateSystems.get(description);
 		if (definition == null)
 		{
-			newProjection = defineCS(description);
+			newProjection = define(description);
 			if (newProjection < 0)
 			{
 				throw new MapyrusException("Failed to define coordinate system " +
