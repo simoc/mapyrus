@@ -163,6 +163,13 @@ public class OutputFormat
 	 * measured counter-clockwise.
 	 */
 	private double mFontRotation;
+
+	/*
+	 * If non-zero, gives linewidth to use for drawing outlines of
+	 * each character of labels.
+	 */
+	private double mFontOutlineWidth;
+
 	private Font mBaseFont;
 
 	/*
@@ -299,7 +306,9 @@ public class OutputFormat
 		 * Define font and dictionary entries for font size and justification.
 		 * Don't bind these as font loading operators may be overridden in interpreter.
 		 */
-		mWriter.println("/font { /frot exch radtodeg def");
+		mWriter.println("/font {");
+		mWriter.println("/foutline exch def");
+		mWriter.println("/frot exch radtodeg def");
 		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
 		mWriter.println("/radtodeg { 180 mul 3.1415629 div } bind def");
 
@@ -314,7 +323,9 @@ public class OutputFormat
 		mWriter.println("/t { gsave currentpoint translate frot rotate");
 		mWriter.println("dup stringwidth pop fjx mul");
 		mWriter.println("3 -1 roll neg fjy add fsize mul");
-		mWriter.println("rmoveto show grestore newpath } bind def");
+		mWriter.println("rmoveto foutline 0 gt");
+		mWriter.println("{false charpath foutline 0 0 2 sl stroke} {show} ifelse");
+		mWriter.println("grestore newpath } bind def");
 
 		mWriter.println("/rgb { setrgbcolor } bind def");
 		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap");
@@ -646,13 +657,14 @@ public class OutputFormat
 		mResolution = Constants.MM_PER_INCH / resolution;
 		mFontCache = new FontCache();
 		mJustificationShiftX = mJustificationShiftY = 0.0;
+		mFontOutlineWidth = 0.0;
 
 		/*
 		 * Set impossible current font rotation so first font
 		 * accessed will be loaded.
 		 */
 		mFontRotation = Double.MAX_VALUE;
-		
+
 		/*
 		 * Do not allocate page mask until needed to save memory.
 		 */
@@ -1167,8 +1179,10 @@ public class OutputFormat
 	 * @param fontSize is size for labelling in millimetres.
 	 * @param fontRotation is rotation angle for font, in degrees,
 	 * measured counter-clockwise.
+	 * @param outlineWidth if non-zero, labels will drawn as character outlines
+	 * with this width.
 	 */
-	public void setFontAttribute(String fontName, double fontSize, double fontRotation)
+	public void setFontAttribute(String fontName, double fontSize, double fontRotation, double outlineWidth)
 		throws IOException, MapyrusException
 	{
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
@@ -1188,7 +1202,8 @@ public class OutputFormat
 			 */
 			writePostScriptLine("/" + fontName + " " +
 				fontSize + " " +
-				fontRotation + " font");
+				fontRotation + " " +
+				outlineWidth + " font");
 			mNeededFontResources.add(fontName);
 		}
 		else
@@ -1269,10 +1284,11 @@ public class OutputFormat
 		}
 
 		/*
-		 * Font rotation not easily held in a Graphics2D object so keep
-		 * track of it's current value ourselves.
+		 * Font rotation and outlining not easily held in a Graphics2D
+		 * object so keep track of it's current value ourselves.
 		 */
 		mFontRotation = fontRotation;
+		mFontOutlineWidth = outlineWidth;
 	}
 	
 	/**
@@ -1810,6 +1826,7 @@ public class OutputFormat
 					{
 						startPt = pt;
 					}
+					// TODO check if mFontOutlineWidth > 0.
 					mGraphics2D.drawString(nextLine, (float)(startPt.getX()),
 						(float)(startPt.getY()));
 				}
