@@ -46,22 +46,15 @@ public class Expression
 	/*
 	 * Line separator replaces '\n' sequences in expressions.
 	 */
-	private static final String mLineSeparator;
+	private static final String mLineSeparator = System.getProperty("line.separator");
 
 	/*
 	 * Static table of frequently used regular expressions.  They
 	 * are thread-safe so can be reused by everyone and this saves
 	 * the effort of compiling them again and again.
 	 */
-	private static Hashtable mRegexHashtable;
+	private static Hashtable mRegexHashtable = new Hashtable();
 	
-	static
-	{
-		mLineSeparator = System.getProperty("line.separator");
-		
-		mRegexHashtable = new Hashtable();
-	}
-
 	/**
 	 * Compile a regular expression string into a Pattern that can be used for matching.
 	 * Patterns are cached to avoid recomputing them again and again.
