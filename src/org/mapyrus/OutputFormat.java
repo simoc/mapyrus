@@ -24,7 +24,7 @@ package au.id.chenery.mapyrus;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
-import java.awt.FontMetrics;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -42,6 +42,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.awt.image.*;
 import java.awt.Color;
 
@@ -52,6 +53,8 @@ import java.awt.Color;
  */
 public class OutputFormat
 {
+	private static final String cvsid = "@(#) $Id";
+
 	/*
 	 * Type of output currently being generated.
 	 */
@@ -126,6 +129,7 @@ public class OutputFormat
 	 * measured counter-clockwise.
 	 */
 	private double mFontRotation;
+	private Font mBaseFont;
 	
 	/*
 	 * Write PostScript file header, including document structuring conventions (DSC).
@@ -166,19 +170,30 @@ public class OutputFormat
 		 */
 		mWriter.println("/m { moveto } def /l { lineto } def");
 		mWriter.println("/s { stroke } def /f { fill } def");
-		mWriter.println("/font { /fjy exch def /fjx exch def /frot exch def");
-		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
-		mWriter.println("/radtodeg { 180 mul 3.1415629 div } def");
 		
 		/*
-		 * Rotate and justify text using current font settings.
+		 * Define font and dictionary entries for font size and justification.
 		 */
-		mWriter.println("/t { gsave currentpoint translate frot radtodeg rotate");
-		mWriter.println("dup stringwidth pop fjx mul fsize fjy mul rmoveto");
-		mWriter.println("show grestore newpath } def");
+		mWriter.println("/font { /fjy exch def /fjx exch def /frot exch radtodeg def");
+		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
+		mWriter.println("/radtodeg { 180 mul 3.1415629 div } def");
+
+		/*
+		 * Draw text string, after setting correct position, rotation,
+		 * justifying it horizontally and vertically for current font size
+		 * and shifting it down a number of lines if it is part of a multi-line
+		 * string.
+		 * 
+		 * Line number (starting at 0) and string to show are passed to this procedure.
+		 */
+		mWriter.println("/t { gsave currentpoint translate frot rotate");
+		mWriter.println("dup stringwidth pop fjx mul");
+		mWriter.println("2 index neg fjy add fsize mul");
+		mWriter.println("rmoveto show grestore newpath } def");
+
 		mWriter.println("/rgb { setrgbcolor } def");
 		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap setlinewidth } def");
-		
+
 		/*
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
@@ -302,7 +317,13 @@ public class OutputFormat
 		mPageHeight = height;
 		mResolution = Constants.MM_PER_INCH / resolution;
 		mFontCache = new FontCache();
-		mJustificationShiftX = mJustificationShiftY = mFontRotation = 0.0;
+		mJustificationShiftX = mJustificationShiftY = 0.0;
+
+		/*
+		 * Set impossible current font rotation so first font
+		 * accessed will be loaded.
+		 */
+		mFontRotation = Double.MAX_VALUE;
 	}
 
 	/**
@@ -471,7 +492,6 @@ public class OutputFormat
 	{
 		int cap, join;
 		String styleName;
-		Font font;
 		int pointSize;
 
 		/*
@@ -491,8 +511,6 @@ public class OutputFormat
 			mJustificationShiftY = -0.5;
 		else
 			mJustificationShiftY = -1.0;
-
-		mFontRotation = fontRotation;
 
 		if (mOutputType == POSTSCRIPT)
 		{
@@ -570,35 +588,55 @@ public class OutputFormat
 		else
 		{
 			/*
-			 * Get font from cache, or create it if it is not in cache.
-			 * Font size is defined in millimetres because it will later be
-			 * displayed with a Graphics2D object scaled to millimetre units.
+			 * Continually opening and deriving fonts is probably expensive.
+			 * Check that new font is actually different to current font
+			 * before defining it.
 			 */
-			int size = (int)Math.round(fontSize);
-			font = mFontCache.get(fontName, fontStyle, size, fontRotation);
-			if (font == null)
+			Font currentFont = mGraphics2D.getFont();
+			int newSize = (int)Math.round(fontSize);
+			if (newSize != currentFont.getSize() ||
+				(!fontName.equals(currentFont.getFontName())) ||
+				fontStyle != currentFont.getStyle() ||
+				fontRotation != mFontRotation)
 			{
-				font = new Font(fontName, fontStyle, size);
-
 				/*
-				 * Mirror Y axis of fonts so that they can be displayed
-				 * with a Graphics2D object that has inverted the Y axis to
-				 * increase upwards.
+				 * We need a base font that is not rotated for calculating
+				 * string widths for justifying text.
+				 * Get base font from cache, or create it if we don't find it there.
 				 */
-				AffineTransform fontTransform;
-				fontTransform = AffineTransform.getRotateInstance(fontRotation);
-				fontTransform.scale(1, -1);
+				mBaseFont = mFontCache.get(fontName, fontStyle, newSize, 0);
+				if (mBaseFont == null)
+				{
+					mBaseFont = new Font(fontName, fontStyle, newSize);
+					mFontCache.put(fontName, fontStyle, newSize, 0, mBaseFont);
+				}
 				
-				font = font.deriveFont(fontTransform);
-				mFontCache.put(fontName, fontStyle, size, fontRotation, font);
+				/*
+				 * The real font used for labelling must be mirrored in Y axis
+				 * (to reverse the transform we use on Graphics2D objects) and
+				 * rotated to the angle the user wants.
+				 * 
+				 * Look it up in cache too.
+				 */
+				Font font = mFontCache.get(fontName, fontStyle, -newSize, fontRotation);
+				if (font == null)
+				{
+					AffineTransform fontTransform;
+					fontTransform = AffineTransform.getRotateInstance(fontRotation);
+					fontTransform.scale(1, -1);
+					font = mBaseFont.deriveFont(fontTransform);
+					mFontCache.put(fontName, fontStyle, -newSize, fontRotation, font);
+				}
+
+				mGraphics2D.setFont(font);
 			}
 
 			/*
-			 * Set color, linestyle, font and clip path for graphics context.
+			 * Set color, linestyle and clip path for graphics context.
 			 */
 			mGraphics2D.setColor(color);
 			mGraphics2D.setStroke(linestyle);
-			mGraphics2D.setFont(font);
+			
 
 			mGraphics2D.setClip(null);
 			if (clipPaths != null)
@@ -610,6 +648,12 @@ public class OutputFormat
 				}
 			}
 		}
+
+		/*
+		 * Font rotation not easily held in a Graphics2D object so keep
+		 * track of it's current value ourselves.
+		 */
+		mFontRotation = fontRotation;
 	}
 
 	/*
@@ -783,8 +827,16 @@ public class OutputFormat
 	 */
 	public void label(ArrayList pointList, String label)
 	{
-		Point2D pt;
+		Point2D pt, startPt;
 		double x, y;
+		String nextLine;
+		StringTokenizer st;
+		int lineNumber;
+		AffineTransform affine;
+		FontRenderContext frc = null;
+		
+		if (mOutputType != POSTSCRIPT)
+			frc = mGraphics2D.getFontRenderContext();
 
 		/*
 		 * Draw label at each position in list.
@@ -795,29 +847,51 @@ public class OutputFormat
 			x = pt.getX();
 			y = pt.getY();
 
-			if (mOutputType == POSTSCRIPT)
+			/*
+			 * Draw each line of label below the one above.
+			 */
+			st = new StringTokenizer(label, Constants.LINE_SEPARATOR);
+			lineNumber = 0;
+			while (st.hasMoreTokens())
 			{
-				writePostScriptLine(mLinearFormat.format(x) + " " +
-					mLinearFormat.format(y) + " m");
-// TODO need to split multiline strings.
-				writePostScriptString(label);
-				writePostScriptLine("t");
-			}
-			else
-			{
-				/*
-				 * Reposition label from original point so it has correct justification.
-				 */
-				if (mJustificationShiftX != 0.0 || mJustificationShiftY != 0.0)
+				nextLine = st.nextToken();
+
+				if (mOutputType == POSTSCRIPT)
 				{
-   					FontMetrics fontMetrics = mGraphics2D.getFontMetrics();
-   					Rectangle2D bounds = fontMetrics.getStringBounds(label, mGraphics2D);
-   					x += bounds.getWidth() * mJustificationShiftX * Math.cos(mFontRotation) +
-   						bounds.getHeight() * mJustificationShiftY * Math.sin(mFontRotation);
-					y += bounds.getWidth() * mJustificationShiftX * Math.sin(mFontRotation) +
-						bounds.getHeight() * mJustificationShiftY * Math.sin(mFontRotation);
+					writePostScriptLine(mLinearFormat.format(x) + " " +
+						mLinearFormat.format(y) + " m");
+
+					/*
+					 * Pass counter and line to PostScript procedure for
+					 * drawing each line of the label.
+					 */
+					writePostScriptLine(Integer.toString(lineNumber));
+					writePostScriptString(nextLine);
+					writePostScriptLine("t");
 				}
-				mGraphics2D.drawString(label, (float)x, (float)y);
+				else
+				{
+					/*
+					 * Reposition label from original point so it has correct justification.
+					 */
+					if (mJustificationShiftX != 0.0 || mJustificationShiftY != 0.0 || lineNumber > 0)
+					{
+						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
+						affine = AffineTransform.getTranslateInstance(x, y);
+						affine.rotate(mFontRotation);
+
+	   					startPt = new Point2D.Double(bounds.getWidth() * mJustificationShiftX,
+	   						bounds.getHeight() * (mJustificationShiftY - lineNumber));
+	   					affine.transform(startPt, startPt);
+					}
+					else
+					{
+						startPt = pt;
+					}
+					mGraphics2D.drawString(nextLine, (float)(startPt.getX()),
+						(float)(startPt.getY()));
+				}
+				lineNumber++;
 			}
 		}
 	}
