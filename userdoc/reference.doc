@@ -257,14 +257,14 @@ found in other languages are available:
 Executes <i>then commands</i> if <i>condition</i> evaluates to
 a non-zero value, otherwise <i>else commands</i> are executed.
 The <tt>else</tt> part is optional.
-Compound tests are built using the <tt>elsif</tt> keyword:
+Compound tests are built using the <tt>elif</tt> keyword:
 <p>
 
 <tt>if</tt> <i>condition</i> <tt>then</tt>
 <br>
 &nbsp;&nbsp;<i>commands</i> ...
 <br>
-<tt>elsif</tt> <i>condition</i> <tt>then</tt>
+<tt>elif</tt> <i>condition</i> <tt>then</tt>
 <br>
 &nbsp;&nbsp;<i>commands</i> ...
 <br>
@@ -405,7 +405,7 @@ system given as the source projection to the
 <tt>Mapyrus.rotation</tt>
 <td>
 The current rotation angle in degrees set by
-<a href="#rotation">rotation</a> command.
+<a href="#rotate">rotate</a> command.
 
 <tr>
 <td>
@@ -478,8 +478,9 @@ Line <i>width</i> given in millimetres.
 <tt>butt</tt>, <tt>round</tt> or <tt>square</tt>.
 <i>join</i> is the style to use where lines join, either
 <tt>bevel</tt>, <tt>miter</tt> or <tt>round</tt>.
-<i>dash length</i> is the length in millimetres
-of one dash in a dashed linestyle.
+One or more <i>dash length</i> values are given, alternating
+between the length of one dash and the length of space between
+dashes in a dash pattern.  Each <i>dash length</i> is given in millimetres.
 <i>phase</i> is the offset in millimetres into the dash pattern 
 at which to begin.
 
@@ -600,20 +601,32 @@ include hr.doc
 
 <p>
 <a name="protect"></a>
-protect
+<tt>protect</tt>
 Protects
 
 include hr.doc
 
 <p>
 <a name="clip"></a>
-CLIP
-opposite of protect
+<tt>clip</tt>
+Opposite of protect
 Protects
+<a href="#protect"/>protect</a>
 
 <p>
 <a name="label"></a>
-LABEL
+<tt>label</tt> <i>string</i> [, <i>string</i> ...]
+<p>
+Draws a label at the last point added to the path, using the
+font, justification and rotation set with the
+<a href="#font"/>font</a>,
+<a href="#justify"/>justify</a> and
+<a href="#rotate"/>rotate</a>
+commands.
+If more than one <i>string</i> is given, or a <i>string</i>
+contains newline characters (<tt>\n</tt>) then
+labels are displayed as multiple lines, one below the other,
+with each line justified independently.
 
 <p>
 <a name="scale"></a>
@@ -625,7 +638,13 @@ ROTATE
 
 <p>
 <a name="worlds"></a>
-WORLDS
+<tt>worlds</tt> <i>x1</i>, <i>y1</i>, <i>x2</i>, <i>y2</i> [, <i>units</i>]
+<p>
+Defines a world coordinate system.
+uniform scaling
+<i>units</i>
+scale factor
+assumed metres.
 
 <p>
 <a name="project"></a>
@@ -641,21 +660,27 @@ IMPORT
 
 <p>
 <a name="fetch"></a>
-FETCH
-Fetches next row from dataset.
+<tt>fetch</tt>
+<p>
+Fetches next row from current dataset.
+A variable with the name of
+each column value
 
 <p>
 <a name="newpage"></a>
 <tt>newpage</tt> <i>format</i>, <i>filename</i>, <i>width</i>,
 <i>height</i>, <i>resolution</i>
 <p>
-Begins
-Adds one or more points (<i>x</i>, <i>y</i>) to the current path.
+Begins output
+any previous output file is closed.
 <i>resolution</i> is given as a dots-per-inch value.
 
 <p>
 <a name="print"></a>
-PRINT expression, [expression]
-Writes 
+<tt>print</tt> <i>string</i> [, <i>string</i> ...]
+<p>
+Prints each <i>string</i> to standard output.  No space
+prints a newline.
+<p>
 
 include footer.doc
