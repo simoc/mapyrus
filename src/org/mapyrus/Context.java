@@ -34,7 +34,14 @@ public class Context
 	 * system we project many points in a grid to find minimum and maximum values.
 	 */
 	private static final int PROJECTED_GRID_STEPS = 5;
-		
+
+	/*
+	 * Page size and resolution to use when no output page defined.
+	 */
+	private static final int DEFAULT_PAGE_WIDTH = 210;
+	private static final int DEFAULT_PAGE_HEIGHT = 297;
+	private static final int DEFAULT_RESOLUTION = 96;
+	
 	/*
 	 * Graphical attributes
 	 */	
@@ -208,7 +215,55 @@ public class Context
 			retval = mExistingPath;
 		return(retval);
 	}
-	
+
+	/**
+	 * Return page width for output we are currently writing.
+	 * @return width in millimetres.
+	 */
+	public double getPageWidth()
+	{
+		double retval;
+		
+		if (mOutputFormat == null)
+			retval = 0.0;
+		else
+			retval = mOutputFormat.getPageWidth();
+		
+		return(retval);
+	}
+
+	/**
+	 * Return page height for output we are currently writing.
+	 * @return height in millimetres.
+	 */
+	public double getPageHeight()
+	{
+		double retval;
+		
+		if (mOutputFormat == null)
+			retval = 0.0;
+		else
+			retval = mOutputFormat.getPageWidth();
+		
+		return(retval);
+	}
+
+	/**
+	 * Return resolution of page we are writing to as a distance measurement.
+	 * @return distance in millimetres between centres of adjacent pixels.
+	 */
+	public double getResolution() throws MapyrusException
+	{
+		double retval;
+		
+		if (mOutputFormat == null)
+			retval = OutputFormat.MM_PER_INCH / DEFAULT_RESOLUTION;
+		else
+			retval = mOutputFormat.getResolution();
+
+		return(retval);
+	}
+
 	/**
 	 * Set graphics attributes (color, line width, etc.) if they
 	 * have changed since the last time we drew something.
@@ -241,15 +296,17 @@ public class Context
 	 * Sets output file for drawing to.
 	 * @param filename name of image file output will be saved to.
 	 * @param format is image format for saving output.
-	 * @param width is the page width (in points).
-	 * @param height is the page height (in points).
+	 * @param width is the page width (in mm).
+	 * @param height is the page height (in mm).
+	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
 	 */
 	public void setOutputFormat(String format, String filename,
-		int width, int height, String extras)
+		int width, int height, int resolution, String extras)
 		throws IOException, MapyrusException
 	{
-		mOutputFormat = new OutputFormat(filename, format, width, height, extras);
+		mOutputFormat = new OutputFormat(filename, format,
+			width, height, resolution, extras);
 		mAttributesChanged = true;
 		mOutputDefined = true;
 	}
@@ -667,6 +724,52 @@ public class Context
 	}
 
 	/**
+	 * Add circular arc to path from last point to a new point, given centre and direction.
+	 * @param direction positive for clockwise, negative for anti-clockwise. 
+	 * @param xCentre X coordinate of centre point of arc.
+	 * @param yCentre Y coordinate of centre point of arc.
+	 * @param xEnd X coordinate of end point of arc.
+	 * @param yEnd Y coordinate of end point of arc.
+	 */
+	public void arcTo(int direction, double xCentre, double yCentre,
+		double xEnd, double yEnd) throws MapyrusException
+	{
+		double centrePts[] = new double[2];
+		double endPts[] = new double[2];
+		float dstPts[] = new float[4];
+
+		centrePts[0] = xCentre;
+		centrePts[1] = yCentre;
+		endPts[0] = xEnd;
+		endPts[1] = yEnd;
+		
+		/*
+		 * Transform to correct world coordinate system.
+		 */
+		if (mProjectionTransform != null)
+		{
+			mProjectionTransform.forwardTransform(centrePts);
+			mProjectionTransform.forwardTransform(endPts);
+		}
+
+		/*
+		 * Transform points from world coordinates
+		 * to millimetre position on page.
+		 */
+		if (mWorldCtm != null)
+		{
+			mWorldCtm.transform(centrePts, 0, centrePts, 0, 1);
+			mWorldCtm.transform(endPts, 0, endPts, 0, 1);
+		}
+		mCtm.transform(centrePts, 0, dstPts, 0, 1);
+		mCtm.transform(endPts, 0, dstPts, 2, 1);
+
+		if (mPath == null)
+			mPath = new GeometricPath();
+		mPath.arcTo(direction, dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
+	}
+	
+	/**
 	 * Clears currently defined path.
 	 */
 	public void clearPath()
@@ -680,12 +783,16 @@ public class Context
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
 	 */
-	public void slicePath(double spacing, double offset)
+	public void slicePath(double spacing, double offset) throws MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
 
 		if (path != null)
-			path.slicePath(spacing * mScalingMagnitude, offset * mScalingMagnitude);
+		{
+			path.slicePath(spacing * mScalingMagnitude, offset * mScalingMagnitude,
+				resolution);
+		}
 	}
 
 	/**
@@ -784,15 +891,16 @@ public class Context
 	 * Returns geometric length of current path.
 	 * @return length of current path.
 	 */
-	public double getPathLength()
+	public double getPathLength() throws MapyrusException
 	{
 		double retval;
 		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
 		
 		if (path == null)
 			retval = 0.0;
 		else
-			retval = path.getLength();
+			retval = path.getLength(resolution);
 		return(retval);
 	}
 
@@ -800,15 +908,16 @@ public class Context
 	 * Returns geometric area of current path.
 	 * @return area of current path.
 	 */
-	public double getPathArea()
+	public double getPathArea() throws MapyrusException
 	{
 		double retval;
 		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
 		
 		if (path == null)
 			retval = 0.0;
 		else
-			retval = path.getArea();
+			retval = path.getArea(resolution);
 		return(retval);
 	}
 
@@ -816,15 +925,16 @@ public class Context
 	 * Returns geometric centroid of current path.
 	 * @return centroid of current path.
 	 */
-	public Point2D.Double getPathCentroid()
+	public Point2D.Double getPathCentroid() throws MapyrusException
 	{
 		Point2D.Double retval;
 		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
 		
 		if (path == null)
 			retval = new Point2D.Double();
 		else
-			retval = path.getCentroid();
+			retval = path.getCentroid(resolution);
 		return(retval);
 	}
 
