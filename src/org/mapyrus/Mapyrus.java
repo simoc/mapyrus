@@ -27,13 +27,12 @@ import java.net.MalformedURLException;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points, lines and polygons
- * to various output formats.  Runs as either a GUI, a server or interpreter for files
- * given on the command line.
+ * to various output formats.  Runs as either an interpreter for files
+ * given on the command line or as a Servlet.
  */
 public class Mapyrus
 {
 	public static final String PROGRAM_NAME = "Mapyrus";
-	private static final int DEFAULT_PORT = 8337;
 	
 	/**
 	 * Get software version information.
@@ -52,7 +51,7 @@ public class Mapyrus
 	 */
 	private static void printUsage()
 	{		
-		String []messages =
+		String []usage =
 		{
 			
 			"Usage:",
@@ -64,10 +63,8 @@ public class Mapyrus
 			"Variables are passed into " + PROGRAM_NAME + " using the Java -D",
 			"option.",
 			"",
-			"java [-Dvar=val] ... -jar " + PROGRAM_NAME.toLowerCase() + ".jar httpserver [port]",
-			"",
-			PROGRAM_NAME + " runs as an HTTP server, accepting HTTP GET",
-			"requests on the given TCP/IP port.",
+			PROGRAM_NAME + " can also run as a Java Servlet.  Refer to manual for",
+			"instructions on incorporating " + PROGRAM_NAME + " into a web application."
 		};
 
 		String []license =
@@ -83,9 +80,9 @@ public class Mapyrus
 			" Copyright (C) 2003 Simon Chenery");
 		System.out.println("");
 
-		for (int i = 0; i < messages.length; i++)
+		for (int i = 0; i < usage.length; i++)
 		{
-			System.out.println(messages[i]);
+			System.out.println(usage[i]);
 		}
 
 		System.out.println("");
@@ -154,7 +151,6 @@ public class Mapyrus
 		 * Parse command line arguments -- these are the files and URLs
 		 * to read commands from.
 		 */
-// TODO if no args are given then start a GUI to run interactively.
 		if (args.length == 0 || (args.length == 1 && (args[0].equals("-h") ||
 			args[0].equals("-help") || args[0].equals("-?") ||
 			args[0].equals("-v") || args[0].equals("-version"))))
@@ -193,38 +189,15 @@ public class Mapyrus
 			}
 		}
 		else
-		{
-			boolean isServer = false;
-			int startIndex = 0;
-			
-			if (args[0].equals("httpserver"))
-			{
-				int port;
-				isServer = true;
-					
-				/*
-				 * Run as a server.
-				 */
-				if (args.length == 1)
-				{
-					port = DEFAULT_PORT;
-					startIndex = 1;
-				}
-				else
-				{
-					port = Integer.parseInt(args[1]);
-					startIndex = 2;
-				}
-			}
-
+		{	
 			initialise();
 			context = new ContextStack();
 			Interpreter interpreter = new Interpreter(context);
-			
+
 			/*
 			 * Process each file and URL given as command line argument.
 			 */
-			for (int i = startIndex; i < args.length; i++)
+			for (int i = 0; i < args.length; i++)
 			{
 				/*
 				 * Try it as a URL.  If that does not work then open it as a file
