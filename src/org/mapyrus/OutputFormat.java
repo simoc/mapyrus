@@ -600,6 +600,7 @@ public class OutputFormat
 		throws IOException, MapyrusException
 	{
 		mOutputType = INTERNAL_IMAGE;
+		mImage = image;
 		mFormatName = "png";
 		setOutput("", 0, 0, extras);
 	}
