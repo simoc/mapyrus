@@ -765,6 +765,28 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.ELLIPSE:
+				if (nExpressions == 4)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					double xRadius = mExecuteArgs[2].getNumericValue();
+					double yRadius = mExecuteArgs[3].getNumericValue();
+					if (xRadius > 0 && yRadius > 0)
+					{
+						/*
+						 * Add ellipse to path.
+						 */
+						context.ellipseTo(x1 - xRadius, y1 - yRadius,
+							x1 + xRadius, y1 + yRadius);
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ELLIPSE));
+				}
+				break;
+
 			case Statement.WEDGE:
 				if (nExpressions == 5)
 				{
@@ -1214,7 +1236,8 @@ public class Interpreter
 			case Statement.SCALE:
 				if (nExpressions == 1)
 				{
-					context.setScaling(mExecuteArgs[0].getNumericValue());
+					double s = mExecuteArgs[0].getNumericValue();
+					context.setScaling(s);
 				}
 				else
 				{
