@@ -292,7 +292,7 @@ public class Context
 		if (mOutputFormat == null)
 			retval = 0.0;
 		else
-			retval = mOutputFormat.getPageWidth();
+			retval = mOutputFormat.getPageHeight();
 		
 		return(retval);
 	}
