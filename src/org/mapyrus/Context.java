@@ -28,6 +28,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.io.IOException;
@@ -434,6 +435,31 @@ public class Context
 
 		mOutputFormat = new OutputFormat(filename, format,
 			width, height, extras, stdoutStream);
+		mOutputDefined = true;
+	}
+
+	/**
+	 * Sets image for drawing to.
+	 * @param image is buffered image to draw into.
+	 * @param extras contains extra settings for this output.
+	 */
+	public void setOutputFormat(BufferedImage image, String extras)
+		throws IOException, MapyrusException
+	{
+		if (mOutputDefined && mOutputFormat != null)
+		{
+			/*
+			 * Finish any previous page before beginning a new one.
+			 */
+			mOutputFormat.closeOutputFormat();
+		}
+
+		/*
+		 * Clear graphics context before beginning new page.  
+		 */
+		initialiseContext(this);
+
+		mOutputFormat = new OutputFormat(image, extras);
 		mOutputDefined = true;
 	}
 

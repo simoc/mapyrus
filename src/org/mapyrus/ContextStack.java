@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
@@ -185,6 +186,17 @@ public class ContextStack
 	{
 		getCurrentContext().setOutputFormat(format, filename,
 			width, height, extras, stdoutStream);
+	}
+
+	/**
+	 * Sets image for drawing to.
+	 * @param image is buffered image to draw into.
+	 * @param extras contains extra settings for this output.
+	 */
+	public void setOutputFormat(BufferedImage image, String extras)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().setOutputFormat(image, extras);
 	}
 
 	/**
