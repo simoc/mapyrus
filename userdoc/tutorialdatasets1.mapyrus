@@ -17,7 +17,7 @@ end
 #
 newpage "eps", "tutorialdatasets1.eps", 85, 85
 
-dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiters=|"
+dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiter=|"
 worlds 150, -45, 180, -5
 while Mapyrus.fetch.more
 do
