@@ -833,7 +833,15 @@ public class ContextStack
 		Argument []legendArgs, int legendArgIndex, int nLegendArgs)
 	{
 		String blockName = getCurrentContext().getBlockName();
-		mLegendEntries.add(blockName, legendArgs, legendArgIndex, nLegendArgs, type, description);
+		
+		/*
+		 * Ignore legend entries defined outside of a procedure block.
+		 */
+		if (blockName != null)
+		{
+			mLegendEntries.add(blockName, legendArgs, legendArgIndex,
+				nLegendArgs, type, description);
+		}
 	}
 
 	/**
