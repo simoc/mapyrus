@@ -93,9 +93,11 @@ public class TrueTypeFont
 	public Font getFont() throws IOException, MapyrusException
 	{
 		Font font = null;
-		FileInputStream f = new FileInputStream(mFilename);
+		FileInputStream f = null;
+
 		try
 		{
+			f = new FileInputStream(mFilename);
 			font = Font.createFont(Font.TRUETYPE_FONT, f);
 		}
 		catch (FontFormatException e)
@@ -103,7 +105,11 @@ public class TrueTypeFont
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_TTF_FILE) +
 				": " + mFilename);
 		}
-		f.close();
+		finally
+		{
+			if (f != null)
+				f.close();
+		}
 		return(font);
 	}
 }
