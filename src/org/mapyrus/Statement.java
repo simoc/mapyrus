@@ -20,7 +20,9 @@ public class Statement
 	public static final int MOVE = 5;
 	public static final int DRAW = 6;
 	public static final int STROKE = 7;
-
+	public static final int NEWPAGE = 8;
+	public static final int PRINT = 9;
+	
 	private int mType;
 	Statement mThenStatement;
 	Statement mElseStatement;
@@ -47,11 +49,11 @@ public class Statement
 		{
 			retval = LINEWIDTH;
 		}
-		else if (sLower.equals("point"))
+		else if (sLower.equals("move"))
 		{
 			retval = MOVE;
 		}
-		else if (sLower.equals("line"))
+		else if (sLower.equals("draw"))
 		{
 			retval = DRAW;
 		}
@@ -59,9 +61,17 @@ public class Statement
 		{
 			retval = STROKE;
 		}
+		else if (sLower.equals("newpage"))
+		{
+			retval = NEWPAGE;
+		}
+		else if (sLower.equals("print"))
+		{
+			retval = PRINT;
+		}
 		return(retval);
 	}
-
+	
 	/**
 	 * Creates a plain statement.
 	 * @param type is the type of statement.
@@ -104,6 +114,16 @@ public class Statement
 		return(mType);
 	}
 
+	public Expression []getExpressions()
+	{
+		return(mExpressions);
+	}
+
+	public String getAssignedVariable()
+	{
+		return(mAssignedVariable);
+	}
+		
 	public Statement getThenStatement()
 	{
 		return(mThenStatement);
