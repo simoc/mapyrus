@@ -1,7 +1,7 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
  * Copyright (C) 2003, 2004 Simon Chenery.
- *k
+ *
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -34,7 +34,8 @@ import java.util.StringTokenizer;
  * An argument is a literal value, array of literal values, or a variable name.
  * Each field read from a dataset is an argument.
  * Several arguments can be combined with operators to make an expression
- * For example, '2 * a + 7' and 'prefix["DE"] . "11823"' both contain three arguments.
+ * For example, '2 * a + 7' and 'prefix["DE"] . "11823"' both contain three
+ * arguments.
  */
 public class Argument
 {
@@ -86,8 +87,9 @@ public class Argument
 	 * Constant for empty geometry.
 	 * Avoids allocating many arguments for null geometries.
 	 */
-	public static final Argument emptyGeometry = new Argument(Argument.GEOMETRY_POINT,
-		new double[]{Argument.GEOMETRY_POINT, 0});
+	public static final Argument emptyGeometry =
+		new Argument(Argument.GEOMETRY_POINT,
+			new double[]{Argument.GEOMETRY_POINT, 0});
 
 	private int mType;
 	private double mNumericValue;
@@ -109,7 +111,8 @@ public class Argument
 
 	/**
 	 * Create a new string argument, or variable name.
-	 * @param type is STRING to create a string argument, or a VARIABLE to create
+	 * @param type is STRING to create a string argument,
+	 * or a VARIABLE to create
 	 * a reference to a variable.
 	 * @param s is string, or variable name.
 	 */
@@ -171,8 +174,8 @@ public class Argument
 	 * GEOMETRY_LINESTRING, 2, MOVE, x0, y0, DRAW, x1, y1
 	 * </pre>
 	 * 
-	 * where the second element gives the number of geometries included in the
-	 * multi-geometry.
+	 * where the second element gives the number of geometries included in
+	 * the multi-geometry.
 	 * 
 	 */
 	public Argument(int geometryType, double []coords)
@@ -182,11 +185,13 @@ public class Argument
 	}
 
 	/**
-	 * Parse parenthesised coordinate list from OGC geometry string into array.
+	 * Parse parenthesised coordinate list from OGC geometry string
+	 * into array.
 	 * @param wktGeometry original geometry string.
 	 * @param st OGC geometry string as tokens.
 	 * @param geometryIndex index into geometry array to add coordinates.
-	 * @param isMultiPoint flag true when all coordinates to be added as MULTIPOINT geometry.
+	 * @param isMultiPoint flag true when all coordinates to be added as
+	 * MULTIPOINT geometry.
 	 * @return number of coordinate pairs added to geometry array.
 	 */
 	private int parseCoordinateList(String wktGeometry, StringTokenizer st,
@@ -212,8 +217,8 @@ public class Argument
 		}
 
 		/*
-		 * Then expect a series of X and Y coordinate value separated by commas,
-		 * and then a ')' to finish the coordinate string.
+		 * Then expect a series of X and Y coordinate value separated
+		 * by commas, and then a ')' to finish the coordinate string.
 		 */
 		if (foundOpenParen)
 		{
@@ -267,7 +272,8 @@ public class Argument
 						else
 						{
 							/*
-							 * Not expecting an X or Y coordinate.  The OGC string must be invalid.
+							 * Not expecting an X or Y coordinate.
+							 * The OGC string must be invalid.
 							 */
 							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
 								": " + wktGeometry);
@@ -319,7 +325,8 @@ public class Argument
 	 * @param geometryIndex index into geometry array to add coordinates.
 	 * @param isMultiLinestring flag true when all coordinates to be added
 	 * as MULTILINESTRING geometries
-	 * @return index of next free position in geometry array after adding coordinates.
+	 * @return index of next free position in geometry array after
+	 * adding coordinates.
 	 */
 	private int parseRing(String wktGeometry, StringTokenizer st,
 		int geometryIndex, boolean isMultiLinestring)
@@ -394,7 +401,8 @@ public class Argument
 		}
 
 		/*
-		 * Set number of coordinate pairs for POLYGON, number of sub-geometries for MULTILINESTRING. 
+		 * Set number of coordinate pairs for POLYGON,
+		 * number of sub-geometries for MULTILINESTRING. 
 		 */
 		mGeometryValue[geometryIndex] = counter;  
 		return(index);
@@ -404,8 +412,10 @@ public class Argument
 	 * Parse OGC geometry string.
 	 * @param wktGeometry original geometry string.
 	 * @param st OGC geometry coordinates as tokens.
-	 * @param index index into geometry array to add geometry type and coordinates.
-	 * @return index of next free position in geometry array after adding coordinates.
+	 * @param index index into geometry array to add geometry type
+	 * and coordinates.
+	 * @return index of next free position in geometry array after
+	 * adding coordinates.
 	 */
 	private int parseGeometry(String wktGeometry, StringTokenizer st, int index)
 		throws MapyrusException
@@ -524,7 +534,8 @@ public class Argument
 					}
 
 					/*
-					 * Set number of sub-geometries in MULTIPOLYGON or GEOMETRYCOLLECTION. 
+					 * Set number of sub-geometries in
+					 * MULTIPOLYGON or GEOMETRYCOLLECTION. 
 					 */
 					mGeometryValue[counterIndex] = counter;
 
@@ -842,7 +853,8 @@ public class Argument
 	 * @param coords geometry type, count and move/draw coordinates.
 	 * @param startIndex index in coords array to start converting.
 	 * @param s buffer to append geometry to.
-	 * @param addGeometryType if true then geometry type added to geometry string.
+	 * @param addGeometryType if true then geometry type added to
+	 * geometry string.
 	 * @return index of next element in coords array to be parsed.
 	 */
 	private int createOGCWKT(double []coords, int startIndex, StringBuffer s, boolean addGeometryType)
