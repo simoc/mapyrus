@@ -267,8 +267,8 @@ public class Interpreter
 			/*
 			 * Build list of dash pattern values.
 			 */
-			dashes = new float[args.length - 4];
-			for (int i = 4; i < args.length; i++)
+			dashes = new float[nArgs - 4];
+			for (int i = 4; i < nArgs; i++)
 			{
 				dashes[i - 4] = (float)(args[i].getNumericValue());
 				if (dashes[i - 4] <= 0.0)
