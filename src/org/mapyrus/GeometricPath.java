@@ -141,9 +141,8 @@ public class GeometricPath
 		}
 
 		/*
-		 * XXX
-		 * Java is interpreting positive arc sweep in clockwise direction
-		 * which is opposite direction to documented direction.
+		 * Y axis is flipped when writing some output formats,
+		 * so arc is really sweeping in opposite direction.
 		 */
 		angleExtent = -angleExtent;
 
