@@ -71,7 +71,7 @@ public class TextfileDataset implements GeographicDataset
 		{
 			s = mReader.readLine();
 		}
-		while (s != null && s.startsWith(mComment));
+		while (s != null && (mComment.length() > 0 && s.startsWith(mComment)));
 
 		return(s);
 	}
