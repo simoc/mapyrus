@@ -730,11 +730,29 @@ public class Interpreter
 				{
 					String filename = args[1].getStringValue();
 					String format = args[0].getStringValue();
-					context.setOutputFormat(format, filename,
-						(int)args[2].getNumericValue(),
-						(int)args[3].getNumericValue(),
-						(int)args[4].getNumericValue(), "extras", mStdoutStream);
-						
+					int width = (int)args[2].getNumericValue();
+					int height = (int)args[3].getNumericValue();
+					int resolution = (int)args[4].getNumericValue();
+
+					if (width <= 0)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_SIZE) +
+							": " + width);
+					}
+					if (height <= 0)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_SIZE) +
+							": " + height);
+					}
+					if (resolution <= 0)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_RESOLUTION) +
+							": " + resolution);
+					}
+
+					context.setOutputFormat(format, filename, width, height, resolution,
+						"extras", mStdoutStream);
+
 					/*
 					 * If writing to stdout then content type for an HTTP
 					 * request is an image.
