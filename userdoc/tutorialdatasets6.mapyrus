@@ -1,19 +1,26 @@
-let allFiles = listfiles(user.home . "\\data\\shape\\*\\*.shp")
-let nFiles = length(allFiles)
-let i = 1
+# Display the geographic data held in a PostGIS database
+# in a PostScript file.
+#
+newpage "eps", "tutorialdatasets6.eps", 85, 85
 
-newpage "eps", "tutorialdatasets6.eps", 180, 260
-worlds 1600000, 610000, 1770000, 710000
+let x1 = 191232, y1 = 243117, x2 = 191234, y2 = 243119
 
-while i <= nFiles
+# Build spatially extended SQL statement to fetch
+# road network data inside an area of interest.
+#
+let sql = "SELECT AsText(GEOM) AS GEOM FROM ROADS_GEOM \
+WHERE GEOM && GeometryFromText( BOX3D(" . x1 . " " . y1 . \
+"," . x2 . " " . y2 . ") ::box3d,-1)"
+
+# Fetch each road as an OGC WKT geometry string and draw it.
+#
+dataset "jdbc", sql, "driver=org.postgresql.Driver \
+url=jdbc:postgresql:pogo user=postgres password=postgres"
+worlds x1, y1, x2, y2
+while Mapyrus.fetch.more
 do
-  dataset "shapefile", allFiles[i], "dbffields="
-  while Mapyrus.fetch.more
-  do
-    fetch
-    clearpath
-    addpath GEOMETRY
-    stroke
-  done
-  let i = i + 1
+  clearpath
+  fetch
+  addpath geom
+  stroke
 done
