@@ -229,11 +229,14 @@ public class HTTPRequest extends Thread
 		 * Read line and see whether it is a GET or POST request.
 		 */
 		String firstLine = reader.readLine();
-		if (mLogger.isLoggable(Level.FINE))
+		if (mLogger.isLoggable(Level.INFO))
 		{
-			mLogger.fine(getName() + ": " +
-				MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + firstLine);
+			String logMessage = getName() + ": " +
+				MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) +
+				": " + firstLine;
+			mLogger.info(logMessage);
 		}
+
 		StringTokenizer st = new StringTokenizer(firstLine);
 		if (st.countTokens() < 3)
 		{
