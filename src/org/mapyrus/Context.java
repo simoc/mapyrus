@@ -1266,7 +1266,10 @@ public class Context
 		GeometricPath path = getDefinedPath();
 
 		if (path != null)
-			mPath = path.stripePath(spacing * mScaling, angle);
+		{
+			mPath = path.stripePath(spacing * mScaling,
+				angle + mRotation);
+		}
 	}
 
 	/**
