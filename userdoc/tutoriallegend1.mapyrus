@@ -1,0 +1,74 @@
+begin river
+	# Display current path as blue line, signifying a river.
+	#
+	key "line", "River"
+	color "blue"
+	linestyle 1
+	stroke
+end
+
+begin road
+	# Display current path as red line, signifying a road.
+	#
+	key "line", "Road"
+	color "red"
+	linestyle 0.1
+	stroke
+end
+
+begin lake
+	# Fill current path with light blue, signifying a lake.
+	#
+	key "box", "Lake"
+	color "cyan"
+	fill
+end
+
+begin church
+	# Display a church symbol at current point.
+	#
+	key "point", "Church"
+	color "black"
+	linestyle 0.1
+	move -1, -1
+	arc 1, 0, -1, -1, -1
+	fill
+	clearpath
+	move 0, 0
+	draw 0, 2
+	move -1, 1
+	draw 1, 1
+	stroke
+end
+
+newpage "png", "tutoriallegend1.png", 50, 30, 96
+
+clearpath
+move 5, 5
+draw 7, 22, 6, 29, 23, 27, 21, 9, 5, 5
+lake
+
+clearpath
+move 27, 3
+draw 34, 28
+river
+clearpath
+move 29, 9
+draw 40, 7, 47, 3
+river
+
+clearpath
+move 40, 16
+church
+
+# Draw legend for map in a separate image file, giving plenty
+# of move points for legend entries.
+#
+newpage "png", "tutoriallegend1legend.png", 90, 30, 96
+clearpath
+color "black"
+move 5, 10, 5, 20, 30, 10, 30, 20, 60, 10, 60, 20
+justify "middle"
+font "Helvetica", 2.5
+legend 4
+
