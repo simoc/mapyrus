@@ -10,7 +10,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import au.id.chenery.mapyrus.dataset.DatasetFactory;
 import au.id.chenery.mapyrus.dataset.GeographicDataset;;
 
@@ -829,9 +829,9 @@ public class Context
 	 * @return list of three element float arrays containing x, y coordinates and
 	 * rotation angles. 
 	 */
-	public Vector getMoveTos()
+	public ArrayList getMoveTos()
 	{
-		Vector retval;
+		ArrayList retval;
 		GeometricPath path = getDefinedPath();
 
 		if (path == null)

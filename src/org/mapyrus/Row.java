@@ -9,8 +9,8 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.util.Vector;
+import java.util.ArrayList;;
 
-public class Row extends Vector 
+public class Row extends ArrayList 
 {
 }

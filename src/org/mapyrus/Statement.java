@@ -3,7 +3,7 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
@@ -50,13 +50,13 @@ public class Statement
 	/*
 	 * Statements in an if-then-else statement.
 	 */
-	private Vector mThenStatements;
-	private Vector mElseStatements;
+	private ArrayList mThenStatements;
+	private ArrayList mElseStatements;
 
 	/*
 	 * Statements in a while loop statement.
 	 */
-	private Vector mLoopStatements;
+	private ArrayList mLoopStatements;
 		
 	/*
 	 * Name of procedure block,
@@ -64,8 +64,8 @@ public class Statement
 	 * and block of statements in a procedure in order of execution
 	 */
 	private String mBlockName;
-	private Vector mStatementBlock;
-	private Vector mParameters;
+	private ArrayList mStatementBlock;
+	private ArrayList mParameters;
 	
 	/*
 	 * Name of variable in assignment.
@@ -161,7 +161,7 @@ public class Statement
 	 * @param parameters variable names of parameters to this procedure.
 	 * @param statements list of statements that make up this procedure block.
 	 */
-	public Statement(String blockName, Vector parameters, Vector statements)
+	public Statement(String blockName, ArrayList parameters, ArrayList statements)
 	{
 		mBlockName = blockName;
 		mParameters = parameters;
@@ -176,8 +176,8 @@ public class Statement
 	 * @param elseStatements is statements to execute if expression is false,
 	 * or null if there is no statement to execute.
 	 */
-	public Statement(Expression test, Vector thenStatements,
-		Vector elseStatements)
+	public Statement(Expression test, ArrayList thenStatements,
+		ArrayList elseStatements)
 	{
 		mType = CONDITIONAL;
 		mExpressions = new Expression[1];
@@ -191,7 +191,7 @@ public class Statement
 	 * @param test is expression to test before each iteration of loop.
 	 * @param loopStatements is statements to execute for each loop iteration.
 	 */
-	public Statement(Expression test, Vector loopStatements)
+	public Statement(Expression test, ArrayList loopStatements)
 	{
 		mType = LOOP;
 		mExpressions = new Expression[1];
@@ -243,7 +243,7 @@ public class Statement
 	 * Returns list of statements in "then" section of "if" statement.
 	 * @return list of statements.
 	 */		
-	public Vector getThenStatements()
+	public ArrayList getThenStatements()
 	{
 		return(mThenStatements);
 	}
@@ -252,7 +252,7 @@ public class Statement
 	 * Returns list of statements in "else" section of "if" statement.
 	 * @return list of statements.
 	 */	
-	public Vector getElseStatements()
+	public ArrayList getElseStatements()
 	{
 		return(mElseStatements);
 	}
@@ -261,7 +261,7 @@ public class Statement
 	 * Returns list of statements in while loop statement.
 	 * @return list of statements.
 	 */	
-	public Vector getLoopStatements()
+	public ArrayList getLoopStatements()
 	{
 		return(mLoopStatements);
 	}
@@ -279,16 +279,16 @@ public class Statement
 	 * Return variable names of parameters to a procedure.
 	 * @return list of parameter names.
 	 */
-	public Vector getBlockParameters()
+	public ArrayList getBlockParameters()
 	{
 		return(mParameters);
 	}
 	
 	/**
 	 * Return statements in a procedure.
-	 * @return vector of statements that make up the procedure.
+	 * @return ArrayList of statements that make up the procedure.
 	 */
-	public Vector getStatementBlock()
+	public ArrayList getStatementBlock()
 	{
 		return(mStatementBlock);
 	}

@@ -5,7 +5,7 @@ package au.id.chenery.mapyrus;
  
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * A geometric path.  A series of coordinates, either separate or joined together
@@ -31,7 +31,7 @@ public class GeometricPath
 	 * Coordinates of path and moveto points with rotation angles.
 	 */
 	private GeneralPath mPath;
-	private Vector mMoveTos;
+	private ArrayList mMoveTos;
 
 	/*
 	 * Count of number of lineTos in path.
@@ -44,7 +44,7 @@ public class GeometricPath
 	public GeometricPath()
 	{
 		mPath = new GeneralPath();
-		mMoveTos = new Vector();
+		mMoveTos = new ArrayList();
 		mNLineTos = 0;
 	}
 
@@ -56,7 +56,7 @@ public class GeometricPath
 	{
 		mPath = (GeneralPath)(path.mPath.clone());	
 		mNLineTos = path.mNLineTos;
-		mMoveTos = (Vector)path.mMoveTos.clone();
+		mMoveTos = (ArrayList)path.mMoveTos.clone();
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class GeometricPath
 	 * @return list of three element float arrays containing moveTo points
 	 * in path.
 	 */
-	public Vector getMoveTos()
+	public ArrayList getMoveTos()
 	{
 		return(mMoveTos);
 	}
