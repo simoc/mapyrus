@@ -530,6 +530,10 @@ The version of the software.
 <br>
 <tt>Mapyrus.worlds.max.y</tt>
 <td>
+<tt>Mapyrus.worlds.width</tt>
+<td>
+<tt>Mapyrus.worlds.height</tt>
+<td>
 The bounding rectangle of world coordinates set with the 
 <a href="#worlds">worlds</a> command.
 
