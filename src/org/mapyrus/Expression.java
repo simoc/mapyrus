@@ -36,13 +36,6 @@ public class Expression
 	private static final int OR_OPERATION = 14;
 
 	/*
-	 * Constant arguments for most commonly used values to avoid
-	 * memory allocations.
-	 */
-	private static Argument mZeroArgument = new Argument(0.0);
-	private static Argument mOneArgument = new Argument(1.0);
-	
-	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
 	private class ExpressionTreeNode
@@ -213,9 +206,9 @@ public class Expression
 					}
 
 					if (d == 0.0)
-						retval = mZeroArgument;
+						retval = Argument.numericZero;
 					else if (d == 1.0)
-						retval = mOneArgument;
+						retval = Argument.numericOne;
 					else
 						retval = new Argument(d);
 				}
@@ -261,7 +254,13 @@ public class Expression
 						{
 							throw new MapyrusException("Operation not permitted between strings");
 						}
-						retval = new Argument(d);
+						
+						if (d == 0.0)
+							retval = Argument.numericZero;
+						else if (d == 1.0)
+							retval = Argument.numericOne;
+						else
+							retval = new Argument(d);
 					}
 				}
 			}

@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -299,7 +299,7 @@ public class ContextStack
 	 * @returns list of three element float arrays containing x, y coordinates and
 	 * rotation angles. 
 	 */	
-	public Vector getMoveTos()
+	public ArrayList getMoveTos()
 	{
 		return(getCurrentContext().getMoveTos());
 	}
@@ -406,9 +406,9 @@ public class ContextStack
 			else if (sub.equals("import.moreRows"))
 			{
 				if (getCurrentContext().datasetHasMoreRows())
-					retval = new Argument(1.0);
+					retval = Argument.numericOne;
 				else
-					retval = new Argument(0.0);
+					retval = Argument.numericZero;
 			}
 			else if (sub.equals("import.count"))
 			{
