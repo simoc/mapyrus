@@ -2,7 +2,7 @@
 
 \section{Tutorial}
 
-The folllowing examples demonstrate how to using Mapyrus.  Each example is also
+The folllowing examples demonstrate how to use Mapyrus.  Each example is also
 included as a file in the \texttt{doc} subdirectory.  All example files
 have file suffix \texttt{.mapyrus}.  This suffix is not required but makes
 identification of files that are to be interpreted by Mapyrus easier.
@@ -134,7 +134,8 @@ Private variables in a procedure are defined with the
 \texttt{local} command.
 
 When a procedure is called, the graphics state
-is saved, the commands for the procedure are executed and then the
+is saved (see page \pageref{graphicsstate}),
+the commands for the procedure are executed and then the
 graphics state is restored before returning.
 
 The following example shows a simple procedure named \texttt{trail}.
@@ -177,8 +178,13 @@ and the file containing the commands to execute
 
 \subsection{Displaying Lines}
 
-Solid and dashed line styles are set with the
-\texttt{linestyle} command.  To draw a line with repeated symbols, use the
+Simple solid line styles or dashed line styles
+are set with the
+\texttt{linestyle} command.  More complex line styles are built using
+symbols repeated along a line or combinations of linestyles, plotted
+on top of each other.
+
+To draw a line with repeated symbols, use the
 \texttt{samplepath}
 command to replace the path with evenly spaced sample points and
 then call a procedure to draw a symbol at each sample point.
