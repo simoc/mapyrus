@@ -5,7 +5,9 @@ include header.doc
 Reference
 </h2>
 
-Java 1.4
+Java 1.4.1
+PROJ.4
+www.remotesensing.org
 
 language reference
 assignments
@@ -16,7 +18,7 @@ procedures
 
 +, -, *, /, .
 <p>
-Number of built-in functions
+Following built-in functions
 
 <p>
 <table cellpadding=4 border=1>
@@ -29,41 +31,41 @@ Number of built-in functions
 <tr>
 <td>
 <a name="length"></a>
-<tt>length(S)<tt>
+<tt>length(<i>str</i>)<tt>
 <td>
-Returns the length of the string S.
+Returns the length of the string <i>str</i>.
 
 <tr>
 <td>
 <a name="match"></a>
-<tt>match(S, R)<tt>
+<tt>match(<i>str</i>, <i>regex</i>)<tt>
 <td>
-Returns the index in the string S, where the regular expression R
-is first matched.  The index of the first character is 1.
-If the regular expression does not match S, then 0 is returned.
+Returns the index in the string <i>str</i>, where the regular expression
+<i>regex</i> is first matched.  The index of the first character is 1.
+If the regular expression does not match <i>str</i>, then 0 is returned.
 
 <tr>
 <td>
 <a name="round"></a>
-<tt>round(N)<tt>
+<tt>round(<i>n</i>)<tt>
 <td>
-Returns N rounded to nearest whole number.
+Returns <i>n</i> rounded to nearest whole number.
 
 <tr>
 <td>
 <a name="random"></a>
-<tt>random(N)<tt>
+<tt>random(<i>n</i>)<tt>
 <td>
-Generates a random floating point number between 0 and N.
+Generates a random floating point number between 0 and <i>n</i>.
 
 <tr>
 <td>
 <a name="substr"></a>
-<tt>substr(S, N, L)<tt>
+<tt>substr(<i>str</i>, <i>offset</i>, <i>n</i>)<tt>
 <td>
-Returns a substring of the string S, beginning at the
-character with index N that is L characters long.  The first character
-in S has an index of 1.
+Returns a substring of the string <i>str</i>, beginning at the
+character with index <i>offset</i> that is <i>n</i> characters long.
+The first character in <i>str</i> has an index of 1.
 
 </table>
 
@@ -157,54 +159,118 @@ in millimetres, resolution is in dots-per-inch.
 <br>
 <tt>Mapyrus.project.max.y</tt>
 <td>
-The bounding rectangle of the current dataset.
+The bounding rectangle of world coordinates, in the coordinate
+system given as the source projection to the
+<a href="#project">project</a> command.
 
 <tr>
 <td>
 <tt>Mapyrus.rotation</tt>
-<tr>
-<tt>Mapyrus.scale.x</tt>
-<tt>Mapyrus.scale.y</tt>
-<tr>
-<tt>Mapyrus.timestamp</tt>
+<td>
+The current rotation angle in degrees set by
+<a href="#rotation">rotation</a> command.
+
 <tr>
 <td>
-A string rep
+<tt>Mapyrus.scale.x</tt>
+<br>
+<tt>Mapyrus.scale.y</tt>
+<td>
+The current scale factor set by 
+<a href="#scale">scale</a> command.
+
+<tr>
+<td>
+<tt>Mapyrus.timestamp</tt>
+<td>
+A string representation of the current date and time.
 
 <tr>
 <td>
 <tt>Mapyrus.version</tt>
-<tr>
 <td>
 The version of the software.
 
 <tr>
 <td>
 <tt>Mapyrus.worlds.min.x</tt>
+<br>
 <tt>Mapyrus.worlds.min.y</tt>
+<br>
 <tt>Mapyrus.worlds.max.x</tt>
+<br>
 <tt>Mapyrus.worlds.max.y</tt>
-The bounding box of world coordinates set with the 
-<a href="#worlds">WORLDS</a> command.
+<td>
+The bounding rectangle of world coordinates set with the 
+<a href="#worlds">worlds</a> command.
 </table>
+<p>
+
+<hr>
 
 <p>
-COLOR NamedColor
-Sets color for subsequest drawing.
+<a name="color"></a>
+<tt>color</tt> <i>name</i>
+<br>
+<tt>color "rgb"</tt>, <i>red</i>, <i>green</i>, <i>blue</i>
+<br>
+<tt>color "hsb"</tt>, <i>hue</i>, <i>saturation</i>, <i>brightness</i>
+<p>
+Sets color for drawing.
+Named colors refer to colors in the file
+<tt>/usr/lib/X11/rgb.txt</tt>, or the file given 
+in the Java system property <tt>Mapyrus.rgbfile</tt>.
+Values for RGB and HSB colors are given as intensities
+in the range 0-1.
 
+<hr>
 
 <p>
 <a name="linestyle"></a>
-LINESTYLE
+<tt>linestyle</tt> <i>width</i>
+<br>
+<tt>linestyle</tt> <i>width</i>, <i>cap</i>, <i>join</i>
+<br>
+<tt>linestyle</tt> <i>width</i>, <i>cap</i>, <i>join</i>,
+<i>phase</i>, <i>dash length</i>, ...
+<p>
+Sets style line drawing by the <a href="#stroke">stroke</a>
+command.
+Line <i>width</i> given in millimetres.
+<i>cap</i> is the style to use at the ends of lines, either
+<tt>butt</tt>, <tt>round</tt> or <tt>square</tt>.
+<i>join</i> is the style to use where lines join, either
+<tt>bevel</tt>, <tt>miter</tt> or <tt>round</tt>.
+<i>dash length</i> is the length in millimetres
+of one dash in a dashed linestyle.
+<i>phase</i> is the offset in millimetres into the dash pattern 
+at which to begin.
+
+<hr>
 
 <p>
 <a name="font"></a>
-FONT
-Sets font for drawing.
+<tt>font</tt> <i>name</i>, <i>style</i>, <i>size</i>
+<p>
+Sets font for labelling with the <a href="#label">label</a> command.
+Font <i>name</i>, <i>style</i> is either <tt>plain</tt>, <tt>bold</tt>,
+<tt>italic</tt> or <tt>bolditalic</tt>.
+Font <i>size</i> is given in millimetres.
+
+<hr>
 
 <p>
 <a name="justify"></a>
-JUSTIFY
+justify <i>justification</i>
+<p>
+Sets justification for labelling with the <a href="#label">label</a> command.
+<i>justification</i> is a string containing either
+<tt>left</tt>, <tt>right</tt>, <tt>center</tt> for justifying labels
+horizontally and/or
+<tt>top</tt>, <tt>middle</tt>, <tt>bottom</tt> for justifying labels
+vertically.
+
+<hr>
 
 <p>
 <a name="move"></a>
