@@ -53,7 +53,7 @@ public class Mapyrus
 			"Variables and configuration are passed to " + Constants.PROGRAM_NAME + " using the",
 			"Java -D option.",
 			"",
-			"-s option starts " + Constants.PROGRAM_NAME + " as a stand-alone HTTP server",
+			"-s option starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server",
 			"on the given port.  Refer to manual for detailed instructions."
 		};
 
