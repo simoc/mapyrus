@@ -995,6 +995,7 @@ For each fetched record, field values are assigned to variables
 with the name of the fields.
 Field values that are NULL are converted to either an empty string,
 or numeric zero, depending on their type.
+Binary and blob fields are interpreted as OGC WKB geometry values.
 
 Some databases convert all field names to upper case, or to lowercase.
 Use a field name alias for fields that are the result of an expression.
