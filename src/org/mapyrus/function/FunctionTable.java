@@ -178,7 +178,7 @@ public class FunctionTable
 			mFunctions.put("overlaps", new DummyFunction("overlaps"));
 			mFunctions.put("union", new DummyFunction("union"));
 		}
-	};
+	}
 
 	/**
 	 * Lookup function from name and return object

@@ -46,7 +46,7 @@ public class WildcardFile
 		 */
 		String osname = System.getProperty("os.name");
 		mFilenamesCaseInsensitive = (osname != null && osname.toUpperCase().indexOf("WIN") >= 0);
-	};
+	}
 
 	/*
 	 * Base directory of all matching files.
