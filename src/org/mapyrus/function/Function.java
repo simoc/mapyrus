@@ -59,8 +59,7 @@ public abstract class Function
 	 */
 	public Argument evaluate(ContextStack context) throws MapyrusException
 	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
-			": " + getName());
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 
 	/**
@@ -72,8 +71,7 @@ public abstract class Function
 	 */
 	public Argument evaluate(ContextStack context, Argument arg1) throws MapyrusException
 	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
-			": " + getName());
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 
 	/**
@@ -87,8 +85,7 @@ public abstract class Function
 	public Argument evaluate(ContextStack context,
 		Argument arg1, Argument arg2) throws MapyrusException
 	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
-			": " + getName());
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 
 	/**
@@ -104,8 +101,7 @@ public abstract class Function
 		Argument arg1, Argument arg2, Argument arg3)
 		throws MapyrusException
 	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
-			": " + getName());
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 	
 	/**
@@ -122,7 +118,6 @@ public abstract class Function
 		Argument arg1, Argument arg2, Argument arg3, Argument arg4)
 		throws MapyrusException
 	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
-			": " + getName());
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 }
