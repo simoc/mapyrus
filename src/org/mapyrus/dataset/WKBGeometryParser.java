@@ -53,6 +53,38 @@ public class WKBGeometryParser
 	private static int WKB_GEOMETRY_COLLECTION = 7;
 
 	/**
+	 * Convert bytes in ByteBuffer to hex digits.
+	 * @param b first byte of buffer.
+	 * @param byteBuffer remaining bytes in buffer.
+	 * @return first few bytes of buffer as a hex string.
+	 */
+	private static String convertToHexDigits(int b, ByteBuffer byteBuffer)
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append("0x");
+		b = (b & 255);
+		String hex = Integer.toHexString(b);
+		if (hex.length() == 1)
+			sb.append("0");
+		sb.append(hex);
+		for (int i = 0; i < 6; i++)
+		{
+			if (byteBuffer.hasRemaining())
+			{
+				b = byteBuffer.get();
+				b = (b & 255);
+				hex = Integer.toHexString(b);
+				if (hex.length() == 1)
+					sb.append("0");
+				sb.append(hex);
+			}
+		}
+		if (byteBuffer.hasRemaining())
+			sb.append("...");
+		return(sb.toString());
+	}
+
+	/**
 	 * Parse a geometry from WKB buffer.
 	 * Called recursively to parse geometries made up of multiple parts.
 	 * @param byteBuffer buffer containg WKB geometry.
@@ -68,6 +100,19 @@ public class WKBGeometryParser
 		int nPoints, nLines, nRings, nPolygons, nGeometries;
 
 		/*
+		 * If buffer is not long enough to hold the shortest geometry (a point)
+		 * then blob cannot possibly hold a valid geometry.
+		 */
+		if (byteBuffer.remaining() < 1 + 4 + 8 + 8)
+		{
+			String s = "";
+			if (byteBuffer.hasRemaining())
+				s = convertToHexDigits(byteBuffer.get(), byteBuffer);
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKB) +
+				": " + s);
+		}
+
+		/*
 		 * Parse byte order of this geometry.
 		 */
 		byte order = byteBuffer.get();
@@ -76,7 +121,10 @@ public class WKBGeometryParser
 		else if (order == LITTLE_ENDIAN)
 			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 		else
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKB));
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKB) +
+				": " + convertToHexDigits(order, byteBuffer));
+		}
 
 		/*
 		 * Find type of geometry in buffer, then extract it from buffer.
@@ -166,7 +214,8 @@ public class WKBGeometryParser
 		}
 		else
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKB));
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKB) +
+				": " + convertToHexDigits(wkbType, byteBuffer));
 		}
 
 		/*
