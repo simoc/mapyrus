@@ -101,7 +101,8 @@ Change the file \texttt{first.mapyrus} to contain the following lines.
 This example demonstrates setting the page size in
 screen pixels and setting a scale so that coordinates
 are also given as pixels.
-A circle and a hexagon are drawn, giving a center point and radius.
+A circle and a hexagon are drawn using \texttt{circle}
+and \texttt{hexagon} commands, giving a center point and radius.
 The output of these commands is shown in Figure \ref{tutorialfirst4}.
 
 \begin{figure}[htb]
@@ -765,6 +766,25 @@ polygon.
 \includegraphics{tutorialshadow1.eps}
 \caption{Shadow Effects}
 \label{tutorialshadow1}
+\end{figure}
+
+\subsection{Wordwrapped Labels}
+
+To split a long sentence into several lines for display as a label, use
+the \texttt{wordwrap} function.
+This function breaks lines at word boundaries like a word-processor
+and is useful for displaying speech bubbles, or tooltip type
+labels on the page.
+The following example shows sentences being word-wrapped and
+displayed inside a box.  The output of this example
+is shown in Figure \ref{tutorialwordwrap1}.
+
+\verbatiminput{tutorialwordwrap1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialwordwrap1.eps}
+\caption{Wordwrapped Labels}
+\label{tutorialwordwrap1}
 \end{figure}
 
 \subsection{Avoiding Overlapping Labels}
