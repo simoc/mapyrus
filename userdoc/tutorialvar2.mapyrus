@@ -1,4 +1,4 @@
-newpage "png", "tutorialvar2.png", 40, 40, 96
+newpage "eps", "tutorialvar2.eps", 40, 40, 300
 
 # Set colors for rings
 #
@@ -12,13 +12,12 @@ let i = length(a)
 #
 while i > 0
 do
-	color a[i]
+  color a[i]
 
-	clearpath
-	move 20 + i * ringSize, 20
-	arc 1, 20, 20, 20 + i * ringSize, 20
-	fill
+  clearpath
+  move 20 + i * ringSize, 20
+  arc 1, 20, 20, 20 + i * ringSize, 20
+  fill
 
-	let i = i - 1
+  let i = i - 1
 done
-

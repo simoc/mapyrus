@@ -1,24 +1,23 @@
-newpage "png", "tutorialvar1.png", 70, 20, 96
+newpage "eps", "tutorialvar1.eps", 70, 20, 300
 
 let x = 5
 let counter = 1
 while x < Mapyrus.page.width
 do
-	if counter % 2 == 0
-	then
-		color "blue"
-	else
-		color "green"
-	endif
+  if counter % 2 == 0
+  then
+    color "blue"
+  else
+    color "green"
+  endif
 
-	linestyle counter, 'butt', 'bevel'
+  linestyle counter, 'butt', 'bevel'
 
-	clearpath
-	move x, 5
-	draw x, 15
-	stroke
+  clearpath
+  move x, 5
+  draw x, 15
+  stroke
 
-	let x = x + counter * 2
-	let counter = counter + 1
+  let x = x + counter * 2
+  let counter = counter + 1
 done
-
