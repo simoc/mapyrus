@@ -45,6 +45,7 @@ public class ParsedStatement
 
 	public static final int PARSED_DO = 7;
 	public static final int PARSED_DONE = 8;
+	public static final int PARSED_IN = 9;
 
 	private Statement mStatement;	/* statement that was parsed */
 	private int mKeywordType;	/* type of keyword parsed */
