@@ -40,29 +40,36 @@ public class Statement
 	/*
 	 * Statements in an if-then-else statement.
 	 */
-	Statement mThenStatement;
-	Statement mElseStatement;
+	private Statement mThenStatement;
+	private Statement mElseStatement;
 	
 	/*
 	 * Name of procedure block,
 	 * variable names of parameters to this procedure
 	 * and block of statements in a procedure in order of execution
 	 */
-	String mBlockName;
-	Vector mStatementBlock;
-	Vector mParameters;
+	private String mBlockName;
+	private Vector mStatementBlock;
+	private Vector mParameters;
 	
 	/*
 	 * Name of variable in assignment.
 	 */
-	String mAssignedVariable;
+	private String mAssignedVariable;
 
-	Expression []mExpressions;
+	private Expression []mExpressions;
+	
+	/*
+	 * Filename and line number within file that this 
+	 * statement was read from.
+	 */
+	private String mFilename;
+	private int mLineNumber;
 
 	/*
 	 * Static statement type lookup table for fast lookup.
 	 */
-	static Hashtable mStatementTypeLookup;
+	private static Hashtable mStatementTypeLookup;
 	
 	static
 	{
@@ -89,12 +96,12 @@ public class Statement
 	private int getStatementType(String s)
 	{
 		int retval;
-		Integer i = (Integer)mStatementTypeLookup.get(s.toLowerCase());
+		Integer type = (Integer)mStatementTypeLookup.get(s.toLowerCase());
 		
-		if (i == null)
+		if (type == null)
 			retval = CALL;
 		else
-			retval = i.intValue();
+			retval = type.intValue();
 		return(retval);
 	}
 	
@@ -150,7 +157,32 @@ public class Statement
 		mStatementBlock = statements;
 		mType = BLOCK;
 	}
-	
+
+	/**
+	 * Sets the filename and line number that this statement was read from.
+	 * This is for use in any error message for this statement.
+	 * @param filename is name of file this statement was read from.
+	 * @param lineNumber is line number within file containing this statement.
+	 */
+	public void setFilenameAndLineNumber(String filename, int lineNumber)
+	{
+		mFilename = filename;
+		mLineNumber = lineNumber;
+	}
+
+	/**
+	 * Returns filename and line number that this statement was read from.
+	 * @return string containing filename and line number.
+	 */
+	public String getFilenameAndLineNumber()
+	{
+		return(mFilename + " line " + mLineNumber);
+	}
+
+	/**
+	 * Returns the type of this statement.
+	 * @return statement type.
+	 */
 	public int getType()
 	{
 		return(mType);
