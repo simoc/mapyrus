@@ -576,11 +576,12 @@ public class Interpreter
 				break;	
 
 			case Statement.LABEL:
+			case Statement.PRINT:
 				String label;
 				int nChars = 0;
 
 				/*
-				 * Label with a single line of text, or multiple lines.
+				 * Label/print a single argument, or several separated by spaces.
 				 */
 				if (nExpressions == 1)
 				{
@@ -593,8 +594,8 @@ public class Interpreter
 					for (int i = 0; i < nExpressions; i++)
 					{
 						if (i > 0)
-							sb.append(Constants.LINE_SEPARATOR);
-							
+							sb.append(' ');
+
 						String nextLine = args[i].toString();
 						sb.append(nextLine);
 						nChars += nextLine.length();
@@ -602,7 +603,9 @@ public class Interpreter
 					label = sb.toString();
 				}
 
-				if (nChars > 0)
+				if (type == Statement.PRINT)
+					System.out.println(label);
+				else if (nChars > 0)
 					context.label(label);
 				break;
 						
@@ -739,17 +742,6 @@ public class Interpreter
 				}
 				break;	
 							
-			case Statement.PRINT:
-				/*
-				 * Print each of the expressions passed to standard output.
-				 */
-				for (int i = 0; i <nExpressions; i++)
-				{
-					System.out.print(args[i].toString());
-				}
-				System.out.println("");
-				break;
-				
 			case Statement.LOCAL:
 				break;
 
