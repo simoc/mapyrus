@@ -51,7 +51,7 @@ Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
 appearance of the geographic data.
-Scalebars, legends, coordinate grids and north arrows are also available.
+Scalebars, coordinate grids and north arrows are also available.
 For example,
 <p>
 
