@@ -1572,6 +1572,20 @@ by Mapyrus. \\
 \label{outputformats}
 \end{table}
 
+\subsubsection{parallelpath}
+
+\begin{alltt}
+parallelpath \textit{distance} [, \textit{distance} ...]
+\end{alltt}
+
+Replaces current path with new paths parallel to current path.
+For each given distance, a new path is created at \textit{distance}
+millimeters to the right of current path.  If a \textit{distance} is
+negative then path is created to the left of the current path.
+
+When used on complex paths with sharp angles, this command creates
+paths that self-intersect.
+
 \subsubsection{print}
 
 \begin{alltt}
