@@ -37,7 +37,7 @@ public class MapyrusMessages
 	public static final String INVALID_NUMBER = "invalidnumber";
 	public static final String INVALID_OUTPUT = "invalidoutput";
 	public static final String INVALID_PAGE = "invalidpage";
-	public static final String INVALID_PATH_SLICE = "invalidpathslice";
+	public static final String INVALID_PATH_SAMPLE = "invalidpathsample";
 	public static final String INVALID_PATH_STRIPE = "invalidpathstripe";
 	public static final String INVALID_ROTATION = "invalidrotation";
 	public static final String INVALID_SCALING = "invalidscaling";

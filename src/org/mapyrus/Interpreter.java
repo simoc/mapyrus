@@ -366,15 +366,15 @@ public class Interpreter
 				context.clearPath();
 				break;
 
-			case Statement.SLICEPATH:
+			case Statement.SAMPLEPATH:
 				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
 					args[1].getType() == Argument.NUMERIC)
 				{
-					context.slicePath(args[0].getNumericValue(), args[1].getNumericValue());
+					context.samplePath(args[0].getNumericValue(), args[1].getNumericValue());
 				}
 				else
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_SLICE));
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_SAMPLE));
 				}
 				break;
 				

@@ -27,7 +27,7 @@ public class Statement
 	public static final int DRAW = 13;
 	public static final int ARC = 14;
 	public static final int CLEARPATH = 15;
-	public static final int SLICEPATH = 16;
+	public static final int SAMPLEPATH = 16;
 	public static final int STRIPEPATH = 17;
 	public static final int STROKE = 18;
 	public static final int FILL = 19;
@@ -98,7 +98,7 @@ public class Statement
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
 		mStatementTypeLookup.put("arc", new Integer(ARC));
 		mStatementTypeLookup.put("clearpath", new Integer(CLEARPATH));
-		mStatementTypeLookup.put("slicepath", new Integer(SLICEPATH));
+		mStatementTypeLookup.put("samplepath", new Integer(SAMPLEPATH));
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));

@@ -387,7 +387,7 @@ public class GeometricPath
 	 * are placed beginning at end of the path, moving towards
 	 * start of path.
 	 */
-	public void slicePath(double spacing, double offset, double resolution)
+	public void samplePath(double spacing, double offset, double resolution)
 	{
 		PathIterator pi;
 

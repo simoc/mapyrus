@@ -807,14 +807,14 @@ public class Context
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
 	 */
-	public void slicePath(double spacing, double offset) throws MapyrusException
+	public void samplePath(double spacing, double offset) throws MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		double resolution = getResolution();
 
 		if (path != null)
 		{
-			path.slicePath(spacing * mScalingMagnitude, offset * mScalingMagnitude,
+			path.samplePath(spacing * mScalingMagnitude, offset * mScalingMagnitude,
 				resolution);
 		}
 	}

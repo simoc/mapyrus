@@ -272,9 +272,9 @@ public class ContextStack
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
 	 */
-	public void slicePath(double spacing, double offset) throws MapyrusException
+	public void samplePath(double spacing, double offset) throws MapyrusException
 	{
-		getCurrentContext().slicePath(spacing, offset);
+		getCurrentContext().samplePath(spacing, offset);
 	}
 	
 	/**
