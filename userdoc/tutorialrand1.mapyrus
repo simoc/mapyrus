@@ -1,5 +1,5 @@
 begin flower
-  # Draw flower with randomly colored petals.
+  # Draw flower with 12 randomly colored petals.
   #
   repeat 12
   do
