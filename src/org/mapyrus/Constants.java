@@ -22,6 +22,9 @@
  */
 package org.mapyrus;
 
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  * Globally useful constants including fixed distance measurements.
  */
@@ -52,6 +55,13 @@ public class Constants
 		 */
 		return("@release_date_token@");
 	}
+
+	/*
+	 * American number formatting used for all output, with '.'
+	 * as the decimal separator.
+	 */
+	public static final DecimalFormatSymbols US_DECIMAL_FORMAT_SYMBOLS =
+		new DecimalFormatSymbols(Locale.US); 
 
 	/*
 	 * Maximum number of threads to run simultaneously handling HTTP requests.
