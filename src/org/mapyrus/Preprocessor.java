@@ -457,19 +457,7 @@ class Preprocessor
 	private static void processLine(PrintWriter writer, String s)
 		throws IOException, InterruptedException
 	{
-		/*
-		 * Execute lines with commands, echo all other lines.
-		 */
-		if (s.length() > 5 && s.startsWith("exec") && Character.isWhitespace(s.charAt(4)))
-		{
-			String command = s.substring(5).trim();
-			Process p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-		}
-		else
-		{
-			writer.println(s);
-		}
+		writer.println(s);
 	}
 
 	/*
@@ -490,7 +478,7 @@ class Preprocessor
 		if (args.length != 2)
 		{
 			System.err.println("Usage: [infile] [outfile]");
-			System.err.println("Read from one file, expand include and exec lines,");
+			System.err.println("Read from one file, expanding include lines,");
 			System.err.println("write output to other file.");
 			System.exit(1);
 		}
@@ -508,4 +496,3 @@ class Preprocessor
 		System.exit(0);
 	}
 }
-
