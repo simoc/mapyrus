@@ -1,4 +1,6 @@
 # @(#) $Id$
+include symbols.mapyrus
+
 newpage "eps", "mapview1.eps", 80, 80, "isolatinfonts=Helvetica-Bold"
 clearpath
 
@@ -30,112 +32,6 @@ color "black"
 stroke
 clearpath
 
-# Display histogram showing minimum and maximum temperatures for each
-# of the twelve months.
-#
-begin bar mint, maxt
-	move 0, mint / 5
-	draw 0, maxt / 5
-	draw 1, maxt / 5
-	draw 1, mint / 5
-	fill
-end
-begin temperatureHistogram name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12
-	# Make empty box to draw graph into.
-	#
-	color "white"
-	move -6, -3
-	draw -6, 8, 6, 8, 6, -3
-	fill
-	color "blue"
-	linestyle 0.1
-	stroke
-
-	# Draw lines and labels as a guide to temperature values.
-	#
-	move -6, 2
-	draw 6, 2
-	move -6, 4
-	draw 6, 4
-	move -6, 6
-	draw 6, 6
-	stroke
-	clearpath
-
-	font 'Helvetica-Bold', 2
-	justify "left"
-	move 6, 1
-	label "10"
-	clearpath
-	move 6, 3
-	label "20"
-	clearpath
-	move 6, 5
-	label "30\260C"
-
-	# Label city below the place where the graph goes.
-	#
-	clearpath
-	move -6, -3
-	draw -6, 0, 6, 0, 6, -3
-	fill
-	clearpath
-	move 0, -2
-	justify "centre"
-	colour "white"
-	label name
-
-	# Draw a bar for each month, between minimum and maximum values.
-	#
-	colour "red"
-	clearpath
-	move -6, 0
-	bar a1, b1
-
-	clearpath
-	move -5, 0
-	bar a2, b2
-
-	clearpath
-	move -4, 0
-	bar a3, b3
-
-	clearpath
-	move -3, 0
-	bar a4, b4
-
-	clearpath
-	move -2, 0
-	bar a5, b5
-
-	clearpath
-	move -1, 0
-	bar a6, b6
-
-	clearpath
-	move 0, 0
-	bar a7, b7
-
-	clearpath
-	move 1, 0
-	bar a8, b8
-
-	clearpath
-	move 2, 0
-	bar a9, b9
-
-	clearpath
-	move 3, 0
-	bar a10, b10
-
-	clearpath
-	move 4, 0
-	bar a11, b11
-
-	clearpath
-	move 5, 0
-	bar a12, b12
-end
 
 # Import temperature for major Australian cities.
 # Show histograms of temperature for each city.

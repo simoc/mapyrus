@@ -482,7 +482,9 @@ end
 begin windindicator bearing, strength, name
 	# Draw a line with feathered tail showing wind direction and strength.
 	#
+	key "point", "Wind from SW at force 1", 45, 1, ""
 	key "point", "Wind from SW at force 2", 45, 2, ""
+	key "point", "Wind from SW at force 3", 45, 3, ""
 	key "point", "Wind from SE at force 5", 315, 5, ""
 	local s, y
 
@@ -519,6 +521,117 @@ begin windindicator bearing, strength, name
 	linestyle 0.1
 	color "black"
 	stroke
+end
+
+# Display histogram showing minimum and maximum temperatures for each
+# of the twelve months.
+#
+begin temperatureBar mint, maxt
+	move 0, mint / 5
+	draw 0, maxt / 5
+	draw 1, maxt / 5
+	draw 1, mint / 5
+	fill
+end
+
+begin temperatureHistogram name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12
+
+	key "point", "Temperature", "SYDNEY", 18.6, 18.7, 17.5, 14.6, 11.5, 9.2, 8.0, 8.9, 11.0, 13.5, 15.5, 17.4, 25.8, 25.7, 24.7, 22.3, 19.3, 16.8, 16.2, 17.7, 19.8, 22.0, 23.5, 25.1
+
+	# Make empty box to draw graph into.
+	#
+	color "white"
+	move -6, -3
+	draw -6, 8, 6, 8, 6, -3
+	fill
+	color "blue"
+	linestyle 0.1
+	stroke
+
+	# Draw lines and labels as a guide to temperature values.
+	#
+	move -6, 2
+	draw 6, 2
+	move -6, 4
+	draw 6, 4
+	move -6, 6
+	draw 6, 6
+	stroke
+	clearpath
+
+	font 'Helvetica-Bold', 2
+	justify "left"
+	move 6, 1
+	label "10"
+	clearpath
+	move 6, 3
+	label "20"
+	clearpath
+	move 6, 5
+	label "30\260C"
+
+	# Label city below the place where the graph goes.
+	#
+	clearpath
+	move -6, -3
+	draw -6, 0, 6, 0, 6, -3
+	fill
+	clearpath
+	move 0, -2
+	justify "centre"
+	colour "white"
+	label name
+
+	# Draw a bar for each month, between minimum and maximum values.
+	#
+	colour "red"
+	clearpath
+	move -6, 0
+	temperatureBar a1, b1
+
+	clearpath
+	move -5, 0
+	temperatureBar a2, b2
+
+	clearpath
+	move -4, 0
+	temperatureBar a3, b3
+
+	clearpath
+	move -3, 0
+	temperatureBar a4, b4
+
+	clearpath
+	move -2, 0
+	temperatureBar a5, b5
+
+	clearpath
+	move -1, 0
+	temperatureBar a6, b6
+
+	clearpath
+	move 0, 0
+	temperatureBar a7, b7
+
+	clearpath
+	move 1, 0
+	temperatureBar a8, b8
+
+	clearpath
+	move 2, 0
+	temperatureBar a9, b9
+
+	clearpath
+	move 3, 0
+	temperatureBar a10, b10
+
+	clearpath
+	move 4, 0
+	temperatureBar a11, b11
+
+	clearpath
+	move 5, 0
+	temperatureBar a12, b12
 end
 
 begin speechbubble message
@@ -1941,6 +2054,7 @@ then
 	quadrants "", 1, 1, 1, 1, 0
 	speechbubble ""
 	windindicator 0, 1, ""
+	temperatureHistogram "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	bordercrossing
 	crosshair
 	lighthouse
