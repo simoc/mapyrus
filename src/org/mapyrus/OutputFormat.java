@@ -153,7 +153,12 @@ public class OutputFormat
 	 */
 	private double mFontRotation;
 	private Font mBaseFont;
-	
+
+	/*
+	 * Mask containing protected areas of the page.
+	 */
+	private PageMask mPageMask;
+
 	/**
 	 * Write PostScript file header, including document structuring conventions (DSC).
 	 * @param width width of page in mm.
@@ -532,12 +537,17 @@ public class OutputFormat
 		mResolution = Constants.MM_PER_INCH / resolution;
 		mFontCache = new FontCache();
 		mJustificationShiftX = mJustificationShiftY = 0.0;
-	
+
 		/*
 		 * Set impossible current font rotation so first font
 		 * accessed will be loaded.
 		 */
 		mFontRotation = Double.MAX_VALUE;
+		
+		/*
+		 * Do not allocate page mask until needed to save memory.
+		 */
+		mPageMask = null;
 	}
 
 	/**
@@ -674,7 +684,7 @@ public class OutputFormat
 				mAdobeFontMetrics = new AdobeFontMetricsManager(mAfmFiles, mEncodeAsISOLatin1);
 
 			double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
-			retval = mAdobeFontMetrics.getStringWidth(fontName, (int)Math.round(pointSize), s);
+			retval = mAdobeFontMetrics.getStringWidth(fontName, pointSize, s);
 			retval = retval / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
 		}
 		else
@@ -688,6 +698,20 @@ public class OutputFormat
 			retval = bounds.getWidth();
 		}
 		return(retval);
+	}
+
+	/**
+	 * Return mask for this page.
+	 * @return page mask.
+	 */
+	public PageMask getPageMask()
+	{
+		if (mPageMask == null)
+		{
+			mPageMask = new PageMask((int)Math.round(mPageWidth),
+				(int)Math.round(mPageHeight));
+		}
+		return(mPageMask);
 	}
 
 	/*
