@@ -1,0 +1,6 @@
+newpage "png", "tutorialfirst3.png", 30, 30, 96
+linestyle 0.1
+color "rgb", 0.2, 0.8, 0.3
+move 5, 15
+arc 1, 15, 15, 5, 15
+stroke
