@@ -197,6 +197,10 @@ public class ContextStack
 				Date now = new Date();
 				retval = new Argument(Argument.STRING, now.toString());
 			}
+			else if (sub.equals("version"))
+			{
+				retval = new Argument(Argument.STRING, Mapyrus.getVersion());
+			}
 			else
 			{
 				/*
