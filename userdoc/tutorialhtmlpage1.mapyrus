@@ -29,8 +29,7 @@ let x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (zoomlevel / (maxZoomle
 let y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
 
 worlds x1, y1, x2, y2
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
 	clearpath
 	fetch
@@ -40,18 +39,17 @@ do
 	color '#7f7f7f'
 	stroke
 done
-let recordCount = Mapyrus.import.count
+let recordCount = Mapyrus.fetch.count
 
 if labels eq 'on'
 then
 	# Display point map containing labels.
 	#
 	dataset "textfile", "aust_temperatures.dat", "comments=#"
-	import
 	color "black"
 	font "Helvetica", 3
 	justify "right"
-	while Mapyrus.import.more
+	while Mapyrus.fetch.more
 	do
 		clearpath
 		fetch
@@ -62,22 +60,22 @@ then
 		fetch
 		label placeName
 	done
-	let recordCount = recordCount + Mapyrus.import.count
+	let recordCount = recordCount + Mapyrus.fetch.count
 endif
 
-print '&lt;html>'
-print '&lt;img src="' . imageFile . '">'
+print '<html>'
+print '<img src="' . imageFile . '">'
 
 # Generate HTML form offering options for changing map display,
 # giving current values as defaults.
 #
-print '&lt;form method=get action="' . Mapyrus.filename . '">'
+print '<form method=get action="' . Mapyrus.filename . '">'
 print 'Zoom level'
-print '&lt;select name=zoomlevel size=1>'
+print '<select name=zoomlevel size=1>'
 let i = 0
 while i <= maxZoomlevel
 do
-	print '&lt;option value=' . i
+	print '<option value=' . i
 	if i == zoomlevel
 	then
 		# Select current zoom factor in pop-up list.
@@ -88,18 +86,17 @@ do
 	print '>' . i
 	let i=i+1
 done
-print '&lt;/select>'
+print '</select>'
 
 # Add toggle button for labels on/off.
 #
-print '&nbsp;&lt;input type=checkbox name=labels value=on'
+print '&nbsp;<input type=checkbox name=labels value=on'
 if labels eq 'on'
 then
 	print ' checked'
 endif
 print '> Display Labels'
-print '&nbsp;&lt;input type="submit" name="submit" value="Redisplay">'
-print '&lt;/form>'
+print '&nbsp;<input type="submit" name="submit" value="Redisplay">'
+print '</form>'
 
-print '&lt;br>Record count ' . recordCount
-
+print '<br>Record count ' . recordCount
