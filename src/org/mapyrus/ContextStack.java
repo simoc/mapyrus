@@ -597,24 +597,6 @@ public class ContextStack
 					retval = getBoundingBoxVariable(sub, dataset.getWorlds());
 				}
 			}
-			else
-			{
-				/*
-				 * Get value from system properties.
-				 */
-				try
-				{
-					String property = System.getProperty(sub);
-					if (property != null)
-						retval = new Argument(Argument.STRING, property);
-					else
-						retval = new Argument(Argument.STRING, "undef");
-				}
-				catch (SecurityException e)
-				{
-					retval = new Argument(Argument.STRING, "undef");
-				}
-			}
 		}
 		else
 		{
@@ -631,10 +613,46 @@ public class ContextStack
 				i--;
 				retval = context.getVariableValue(varName);
 			}
+			
+			String property = null;
+			try
+			{
+				if (retval == null)
+				{
+					/*
+					 * Variable not defined by user.  Is it set
+					 * as a system property?
+					 */
+					property = System.getProperty(varName);
+					if (property != null)
+					{
+						/*
+						 * Try to convert it to a number.
+						 */
+						d = Double.parseDouble(property);
+						retval = new Argument(d);
+					}
+				}
+			}
+			catch (SecurityException e)
+			{
+				/*
+				 * We cannot access variable as a property so
+				 * consider it to be undefined.
+				 */
+			}
+			catch (NumberFormatException e)
+			{
+				/*
+				 * System property was found but it is a
+				 * string, not a number.
+				 */
+				retval = new Argument(Argument.STRING, property);
+			}
 		}
 		return(retval);
 	}
-	
+
 	/**
 	 * Define a variable in current context, replacing any existing
 	 * variable of the same name.
