@@ -35,6 +35,7 @@ public class MapyrusMessages
 	public static final String ACCEPTING_HTTP = "acceptinghttp";
 	public static final String CANNOT_OPEN_ICON = "cannotopenicon";
 	public static final String CANNOT_OPEN_URL = "cannotopenurl";
+	public static final String CLASS_NOT_FUNCTION = "classnotfunction";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
 	public static final String DEFINE_TRANSFORM = "definetransform";
 	public static final String ERROR_PS = "errorps";
