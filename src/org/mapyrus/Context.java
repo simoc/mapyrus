@@ -1,10 +1,11 @@
 /*
- * $Id$
+ * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -14,7 +15,6 @@ import java.util.Hashtable;
 import java.io.IOException;
 import java.util.ArrayList;
 import au.id.chenery.mapyrus.dataset.GeographicDataset;
-;
 
 /**
  * Maintains state information during interpretation inside a single procedure block. 
@@ -53,7 +53,11 @@ public class Context
 	 */	
 	private Color mColor;
 	private BasicStroke mLinestyle;
-	
+	private int mJustify;
+	private String mFontName;
+	private int mFontStyle;
+	private double mFontSize;
+
 	/*
 	 * Have graphical attributes been set in this context?
 	 * Have graphical attributes been changed in this context
@@ -132,6 +136,10 @@ public class Context
 	{
 		mColor = Color.GRAY;
 		mLinestyle = new BasicStroke();
+		mJustify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
+		mFontName = "SansSerif";
+		mFontStyle = Font.PLAIN;
+		mFontSize = 5;
 	
 		mCtm = new AffineTransform();
 		mProjectionTransform = null;
@@ -158,6 +166,10 @@ public class Context
 	{
 		mColor = existing.mColor;
 		mLinestyle = existing.mLinestyle;
+		mJustify = existing.mJustify;
+		mFontName = existing.mFontName;
+		mFontStyle = existing.mFontStyle;
+		mFontSize = existing.mFontSize;
 
 		mCtm = new AffineTransform(existing.mCtm);
 		mProjectionTransform = null;
@@ -264,7 +276,7 @@ public class Context
 		double retval;
 		
 		if (mOutputFormat == null)
-			retval = OutputFormat.MM_PER_INCH / DEFAULT_RESOLUTION;
+			retval = Constants.MM_PER_INCH / DEFAULT_RESOLUTION;
 		else
 			retval = mOutputFormat.getResolution();
 
@@ -286,7 +298,8 @@ public class Context
 			else
 				clip = null;
 				
-			mOutputFormat.setAttributes(mColor, mLinestyle, clip);
+			mOutputFormat.setAttributes(mColor, mLinestyle, mJustify,
+				mFontName, mFontStyle, mFontSize, mRotation, clip);
 			mAttributesChanged = false;
 		}
 	}
@@ -391,7 +404,31 @@ public class Context
 		mColor = color;
 		mAttributesChanged = mAttributesSet = true;
 	}
-	
+
+	/**
+	 * Sets font for labelling with.
+	 * @param fontName is name of font as defined in java.awt.Font class.
+	 * @param fontStyle is a style as defined in java.awt.Font class.
+	 * @param fontSize is size for labelling in millimetres.
+	 */
+	public void setFont(String fontName, int fontStyle, double fontSize)
+	{
+		mFontName = fontName;
+		mFontStyle = fontStyle;
+		mFontSize = fontSize * mScalingMagnitude;
+		mAttributesChanged = mAttributesSet = true;
+	}
+
+	/**
+	 * Sets horizontal and vertical justification for labelling.
+	 * @param code is bit flags of JUSTIFY_* constant values for justification.
+	 */
+	public void setJustify(int code)
+	{
+		mJustify = code;
+		mAttributesChanged = mAttributesSet = true;
+	}
+
 	/**
 	 * Sets scaling for subsequent coordinates.
 	 * @param x is new scaling in X axis.
@@ -876,6 +913,21 @@ public class Context
 			{
 				mOutputFormat.clip(mClippingPath.getShape());
 			}
+		}
+	}
+
+	/**
+	 * Draw label positioned at (or along) currently defined path.
+	 * @param label is string to draw on page.
+	 */
+	public void label(String label)
+	{
+		GeometricPath path = getDefinedPath();
+		
+		if (path != null && mOutputFormat != null)
+		{	
+			setGraphicsAttributes();
+			mOutputFormat.label(path.getMoveTos(), label);
 		}
 	}
 	
