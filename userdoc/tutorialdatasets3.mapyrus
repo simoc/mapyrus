@@ -1,48 +1,44 @@
 begin hotel name, stars
-	# Draw hotel name inside a box about as wide as the name.
-	#
-	color '#A00000'
-	clearpath
-	move 2, 0
-	draw 2, 4, length(name) * 2, 4, length(name) * 2, 0, 2, 0
-	move 0, 2
-	draw 2, 4, 2, 0, 0, 2
-	fill
-
-	clearpath
-	move 2, 1
-	color 'white'
-	font 'Dialog', 3
-	label name
-
-	# Draw box below hotel name, then show number of stars inside it.
-	#
-	clearpath
-	color '#A00000'
-	move 2, -2
-	draw 2, 0, stars * 3, 0, stars * 3, -2
-	fill
-
-	clearpath
-	color 'yellow'
-	move 2, -2
-	label substr('* * * * *', 1, stars * 2)
+  # Draw hotel name inside a box about as wide as the name.
+  #
+  color '#A00000'
+  clearpath
+  move 2, 0
+  box 2, 0, 2 + length(name) * 2, 4
+  move 0, 2
+  draw 2, 4, 2, 0, 0, 2
+  fill
+  clearpath
+  move 2, 1
+  color 'white'
+  font 'Helvetica', 3
+  label name
+  # Draw box below hotel name, then show number of stars inside it.
+  #
+  clearpath
+  color '#A00000'
+  box 2, -2, stars * 3, 0
+  fill
+  clearpath
+  color 'yellow'
+  move 2, -2
+  label '* ' x stars
 end
 
 # Display the ESRI Shape file hotel.shp in a PNG file.
 #
-newpage "png", "tutorialdatasets3.png", 60, 50, 96
+newpage "eps", "tutorialdatasets3.eps", 65, 50, 96
 dataset "shapefile", "hotel.shp", ""
-
 # Expand bounding box to the right so labels don't run off edge of page.
 #
-worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, Mapyrus.dataset.max.x + Mapyrus.dataset.width / 5, Mapyrus.dataset.max.y
+worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
+  Mapyrus.dataset.max.x + Mapyrus.dataset.width / 5, Mapyrus.dataset.max.y
 import
 while Mapyrus.import.more
 do
-	fetch
-	clearpath
-	addpath GEOMETRY
-	print "DEBUG:", GEOMETRY, HOTELNAME, STARRATING
-	hotel HOTELNAME, STARRATING
+  fetch
+  clearpath
+  addpath GEOMETRY
+  print "DEBUG:", GEOMETRY, HOTELNAME, STARRATING
+  hotel HOTELNAME, STARRATING
 done
