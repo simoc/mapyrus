@@ -1,6 +1,6 @@
 # @(#) $Id$
 
-# Draw highlighted label
+# Draw label in black, with white highlight so that it is easier to read.
 #
 begin highlightlabel name
 	font "Helvetica", "bold", 3
@@ -72,28 +72,27 @@ end
 
 newpage "png", "mapview4.png", 60, 60, 96
 
-# Use blue background for sea.
+# Use light background.
 #
-color "rgb", 0.2, 0.8, 1
+color "rgb", 1, 0.9, 0.9
 move 0, 0
 draw 0, Mapyrus.page.height, Mapyrus.page.width, Mapyrus.page.height, Mapyrus.page.width, 0
 fill
 
-worlds -20000, 5500000, 900000, 6600000
-
-# Import polygon of United Kingdom
+# Import freight rail line network in Munich
 #
-dataset "textfile", "uk_utm.dat", "comment=#"
+clearpath
+dataset "textfile", "muc_freight.dat", "comment=#"
+worlds 11, 48, 11.5, 48.5
 import
 while Mapyrus.import.moreRecords
 do
 	fetch
 	nCoords = $1
 
-	# Add all coordinate for this polygon to path.
+	# Add all coordinates for this line to path.
 	#
 	fetch
-	clearpath
 	move $1, $2
 
 	i = 1
@@ -103,24 +102,24 @@ do
 		draw $1, $2
 		i = i + 1
 	done
-
-	color "#00c033"
-	fill
-	color "black"
-	linestyle 0.1
-	stroke
 done
 
-# Display symbols showing inventory levels at warehouses.
-#
-worlds -20000, 5500000, 900000, 6600000
-clearpath
-move 600000, 5650000
-warehouse "Portsmouth", 2
-clearpath
-move 500000, 5750000
-warehouse "Bristol", 19
-clearpath
-move 400000, 6200000
-warehouse "Glasgow", 7
+color "#000000"
+linestyle 0.8
+stroke
+color "#7f7f7f"
+linestyle 0.8, 'butt', 'bevel', 0, 2, 2
+stroke
 
+# Display symbols showing inventory levels at warehouses.
+# In a real application, this information would be read from a database.
+#
+clearpath
+move 11.115, 48.251
+warehouse "Pasing", 2
+clearpath
+move 11.188, 48.376
+warehouse "Harthof", 19
+clearpath
+move 11.357, 48.298
+warehouse "Feldkirchen", 7
