@@ -7,6 +7,7 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
 
 import java.io.*;
 import java.net.URL;

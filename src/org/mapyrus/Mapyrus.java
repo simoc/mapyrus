@@ -7,7 +7,8 @@
 /*
  * $Id$
  */
-import java.lang.*;
+package net.sourceforge.mapyrus;
+
 import java.io.*;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -30,7 +31,7 @@ public class Mapyrus
 		String rcsState = RCS_STATE.substring(8).replace('$', ' ');
 		return(rcsState.trim());
 	}
-		
+
 	/*
 	 * Show software version number and usage message.
 	 */

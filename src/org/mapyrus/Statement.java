@@ -7,6 +7,8 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
+
 import java.util.Vector;
 import java.util.Hashtable;
 

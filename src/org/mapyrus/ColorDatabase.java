@@ -6,6 +6,7 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
  
 import java.util.Hashtable;
 import java.awt.Color;

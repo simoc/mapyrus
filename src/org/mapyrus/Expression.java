@@ -8,6 +8,8 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
+
 import java.lang.String;
 import java.util.Hashtable;
 import java.io.*;

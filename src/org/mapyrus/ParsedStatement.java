@@ -10,6 +10,8 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
+
 import java.io.*;
 
 public class ParsedStatement
