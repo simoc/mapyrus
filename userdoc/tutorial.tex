@@ -850,6 +850,78 @@ on other operating systems using the \textit{extras} \texttt{ttffiles} option
 to the \texttt{newpage} command.  Include filenames of TrueType font definition
 files to be used in the page.
 
+\subsection{Using Mapyrus In A Java Application}
+
+To use Mapyrus in a Java application, create objects of the class
+\texttt{org.mapyrus.Mapyrus}.  Each Mapyrus object is an interpreter
+and parses and executes
+lists of commands passed to its \texttt{interpret()} method.
+
+Two \texttt{interpret()} methods are provided.
+One of the methods is passed a
+\texttt{java.awt.image.BufferedImage} to set as the
+initial output page.
+This enables Mapyrus to draw into a buffer that the application
+later displays in a window.
+
+Both methods are demonstrated in the following sample Java code.
+
+\begin{verbatim}
+String []commands1 =
+{
+  "newpage 'ps', 'test.ps', 210, 297",
+  "move 0, 0",
+  "draw 20, 20, 40, 20",
+  "stroke"
+};
+Mapyrus m1 = new Mapyrus();
+m1.interpret(commands1, System.out);
+m1.close();
+
+String []commands2 =
+{
+  "move 0, 0",
+  "draw 20, 20, 40, 20",
+  "stroke"
+};
+BufferedImage bi = new BufferedImage(128, 128,
+  BufferedImage.TYPE_3BYTE_BGR);
+Mapyrus m2 = new Mapyrus();
+m2.interpret(commands2, System.out, bi, "");
+m2.close();
+\end{verbatim}
+
+\subsection{Setting Up Mapyrus As An HTTP Server}
+\label{tutorialhttpserver}
+
+Enter the following lines into a text file named
+\texttt{tutorialhttpserver1.mapyrus}.
+
+\verbatiminput{tutorialhttpserver1.mapyrus}
+
+Copy the file \texttt{coastline.shp} from the \texttt{doc} subdirectory in the
+Mapyrus installation into the same directory as the file
+\texttt{tutorialhttpserver1.mapyrus}.  In a terminal window, change to the
+directory containing the two files and start Mapyrus as an HTTP server on port
+8410 with the following command
+(where \textit{install-dir} is the directory in which Mapyrus is installed).
+
+\begin{alltt}
+java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus -s 8410
+\end{alltt}
+
+Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver1.mapyrus} in a
+web browser.  Mapyrus receives the request, executes the commands in the file
+\texttt{tutorialhttpserver1.mapyrus} and returns the PNG image that is written to
+standard output to the web browser.
+
+\subsection{Passing Variables To Mapyrus HTTP Server Through URLs}
+
+To vary the display that is created by the Mapyrus HTTP Server, include
+variables in the URL.  For example,
+
+\begin{verbatim}
+
 \subsection{Setting Up Mapyrus As An HTTP Server}
 \label{tutorialhttpserver}
 
@@ -1009,7 +1081,6 @@ start Mapyrus as an HTTP server and make HTTP requests instead so that
 startup time is eliminated.
 Most programming languages include a method of making HTTP requests.
 From Perl use the libwww-perl modules.
-From Java use the java.net.HttpURLConnection class.
 
 Use lynx\footnote{Available from http://www.lynx.browser.org} or
 w3m\footnote{Available from http://w3m.sourceforge.net}
