@@ -130,9 +130,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
 <target name="clean" description="Remove everything we have built">
-<delete>
-<fileset dir="build/classes"/>
-</delete>
+<delete dir="build/classes"/>
 <delete>
 <fileset dir="." includes="${ant.project.name}.jar"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
