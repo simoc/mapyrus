@@ -162,6 +162,11 @@ public class Context
 	 */
 	private Dataset mDataset;
 
+	/*
+	 * Name of procedure block that this context is executing in. 
+	 */
+	private String mBlockName;
+
 	/**
 	 * Create a new context with reasonable default values.
 	 */		
@@ -189,13 +194,15 @@ public class Context
 		mDatasetDefined = false;
 		mAttributesPending = mAttributesChanged = 0;
 		mDataset = null;
+		mBlockName = "";
 	}
 
 	/**
 	 * Create a new context, making a copy from an existing context.
 	 * @param existing is context to copy from.
+	 * @param blockName is name of procedure block which context will execute.
 	 */
-	public Context(Context existing)
+	public Context(Context existing, String blockName)
 	{
 		mColor = existing.mColor;
 		mLinestyle = existing.mLinestyle;
@@ -256,6 +263,8 @@ public class Context
 
 		mAttributesPending = existing.mAttributesPending;
 		mAttributesChanged = 0;
+		
+		mBlockName = blockName;
 	}
 
 	private GeometricPath getDefinedPath()
@@ -810,6 +819,15 @@ public class Context
 	public Dataset getDataset()
 	{
 		return(mDataset);
+	}
+
+	/**
+	 * Get name of procedure block containing statements currently being executed.
+	 * @return procedure block name.
+	 */
+	public String getBlockName()
+	{
+		return(mBlockName);
 	}
 
 	/**
