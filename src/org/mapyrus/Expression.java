@@ -1239,7 +1239,7 @@ public class Expression
 		ExpressionTreeNode term, factor;
 		int op;
 
-		term = parseHashMapReference(p);
+		term = parseUnary(p);
 		while (true)
 		{
 			op = p.readNonSpace();
@@ -1256,7 +1256,7 @@ public class Expression
 				else
 					opType = REPEAT_OPERATION;
 
-				factor = parseHashMapReference(p);
+				factor = parseUnary(p);
 				term = new ExpressionTreeNode(term, opType, factor);
 			}
 			else
@@ -1267,7 +1267,33 @@ public class Expression
 		}
 		return(term);
 	}
-	
+
+	/*
+	 * Parse expression including unary plus or minus.
+	 */
+	private ExpressionTreeNode parseUnary(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr;
+		int op;
+
+		op = p.readNonSpace();
+		if (op != '+' && op != '-')
+		{
+			p.unread(op);
+		}
+		expr = parseHashMapReference(p);
+		if (op == '-')
+		{
+			/*
+			 * Negate value of expression by multiplying by -1.
+			 */
+			ExpressionTreeNode left = new ExpressionTreeNode(Argument.numericMinusOne);
+			expr = new ExpressionTreeNode(left, MULTIPLY_OPERATION, expr);
+		}
+		return(expr);
+	}
+
 	/*
 	 * Parse expression including reference to an element in a hashmap.
 	 */
@@ -1316,7 +1342,6 @@ public class Expression
 	 */
 	private ExpressionTreeNode parseFactor(Preprocessor p) throws IOException, MapyrusException
 	{
-		boolean hasUnaryMinus = false;
 		boolean parsedDigit;
 		StringBuffer buf = new StringBuffer();
 		ExpressionTreeNode expr;
@@ -1357,22 +1382,6 @@ public class Expression
 				lastC = c;
 			}
 			return(new ExpressionTreeNode(new Argument(Argument.STRING, buf.toString())));
-		}
-
-		if (c == '+')
-		{
-			/*
-			 * Skip unary plus.
-			 */
-			c = p.readNonSpace();
-		}
-		if (c == '-')
-		{
-			/*
-			 * Note unary minus and continue.
-			 */
-			hasUnaryMinus = true;
-			c = p.readNonSpace();
 		}
 
 		if (Character.isDigit((char)c) || c == '.')
@@ -1447,9 +1456,6 @@ public class Expression
 				 * always be valid.
 				 */
 			}
-
-			if (hasUnaryMinus)
-				d = -d;
 
 			return(new ExpressionTreeNode(new Argument(d)));
 		}
@@ -1553,15 +1559,6 @@ public class Expression
 			 */
 			throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
 				": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
-		}
-
-		if (hasUnaryMinus)
-		{
-			/*
-			 * Expand expression to negate value.
-			 */
-			ExpressionTreeNode left = new ExpressionTreeNode(Argument.numericMinusOne);
-			expr = new ExpressionTreeNode(left, MULTIPLY_OPERATION, expr);
 		}
 
 		return(expr);
