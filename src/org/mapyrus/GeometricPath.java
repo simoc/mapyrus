@@ -245,6 +245,126 @@ public class GeometricPath
 	}
 
 	/**
+	 * Return points in sub path of this path.
+	 * @param offset offset at which new path is to begin.
+	 * @param length length of new path.
+	 * @return new path containing part of this path.
+	 */
+	public ArrayList getSubPathPoints(double offset, double length)
+	{
+		float coords[] = new float[6];
+		int segmentType;
+		double sumDistances = 0.0;
+		double xStart = 0.0, yStart = 0.0;
+		double xEnd = 0.0, yEnd = 0.0;
+		double xMoveTo = 0.0, yMoveTo = 0.0;
+		boolean addingPoints = false;
+		ArrayList points = new ArrayList();
+		double angle = 0.0;
+
+		PathIterator pi = mPath.getPathIterator(Constants.IDENTITY_MATRIX,
+			Constants.MM_PER_INCH / Constants.getScreenResolution());
+
+		while (!pi.isDone())
+		{
+			segmentType = pi.currentSegment(coords);
+			if (segmentType == PathIterator.SEG_MOVETO)
+			{
+				xStart = xMoveTo = coords[0];
+				yStart = yMoveTo = coords[1];
+			}
+			else
+			{
+				if (segmentType == PathIterator.SEG_CLOSE)
+				{
+					xEnd = xMoveTo;
+					yEnd = yMoveTo;
+				}
+				else
+				{
+					xEnd = coords[0];
+					yEnd = coords[1];
+				}
+				double distance = Math.sqrt((xEnd - xStart) * (xEnd - xStart) +
+					(yEnd - yStart) * (yEnd - yStart));
+
+				if (sumDistances + distance >= offset)
+				{
+					int nPoints = points.size();
+					if (nPoints == 0)
+					{
+						/*
+						 * Found line segment on which sub path begins.
+						 * Calculate exact point at start offset on line.
+						 */
+						double d;
+						if (distance > 0)
+						{
+							d = (offset - sumDistances) / distance;
+							if (d < 0)
+								distance += -d * distance;
+						}
+						else
+						{
+							d = 0.0;
+						}
+
+						xStart += d * (xEnd - xStart);
+						yStart += d * (yEnd - yStart);
+						points.add(new Point2D.Double(xStart, yStart));
+						addingPoints = true;
+					}
+
+					if (addingPoints)
+					{
+						if (sumDistances + distance > offset + length)
+						{
+							/*
+							 * Current point is beyond end.
+							 * Find exact point at distance length on line.
+							 */
+							double d;
+							if (distance > 0) 
+								d = ((offset + length) - sumDistances) / distance;
+							else
+								d = 0.0;
+
+							xStart += d * (xEnd - xStart);
+							yStart += d * (yEnd - yStart);
+							points.add(new Point2D.Double(xStart, yStart));
+
+							addingPoints = false;
+						}
+						else
+						{
+							points.add(new Point2D.Double(xEnd, yEnd));
+							angle = Math.atan2(yEnd - yStart, xEnd - xStart);
+						}
+					}
+				}
+				sumDistances += distance;
+
+				xStart = xEnd;
+				yStart = yEnd;
+			}
+			pi.next();
+		}
+
+		/*
+		 * Extend final segment, if necessary, to be long enough to contain
+		 * whole length.
+		 */
+		if (addingPoints)
+		{
+			double remainingDistance = offset + length - sumDistances;
+			xEnd += Math.cos(angle) * remainingDistance;
+			yEnd += Math.sin(angle) * remainingDistance;
+			points.add(new Point2D.Double(xEnd, yEnd));
+		}
+		return(points);
+	}
+
+	/**
 	 * Clear path, removing all coordinates.
 	 */
 	public void reset()
