@@ -103,7 +103,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, doc/${ant.project.name}.pdf, doc/*.mapyrus, manifest, ${ant.project.name}.jar, src/**, COPYING, NEWS, VERSION" excludes="**/CVS, build/classes/**"/>
+<fileset dir="." includes="build/**, build.xml, doc/**, manifest, ${ant.project.name}.jar, src/**, NEWS, VERSION" excludes="**/CVS, build/classes/**, doc/*.eps, doc/*.dvi"/>
 </zip>
 </target>
 
