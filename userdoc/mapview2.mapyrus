@@ -18,7 +18,7 @@ end
 #
 begin savannah
 	key "box", "Grassland"
-	clip "in"
+	clip "inside"
 	stripepath 5, 0
 	samplepath 5, 0
 	color "#44cc44"
@@ -47,7 +47,7 @@ end
 #
 begin wheatfield
 	key "box", "Wheat Field"
-	clip "in"
+	clip "inside"
 	stripepath 6, 10
 	samplepath 6, 0
 	color "orange"
@@ -71,7 +71,7 @@ end
 #
 begin barerock
 	key "box", "Bare Rock",
-	clip "in"
+	clip "inside"
 	stripepath 6, 45
 	samplepath 6, 0
 	color "#cccccc"
@@ -100,7 +100,7 @@ end
 #
 begin marsh
 	key "box", "Marsh"
-	clip "in"
+	clip "inside"
 	stripepath 6, 45
 	samplepath 6, 0
 	color "#a52a2a"

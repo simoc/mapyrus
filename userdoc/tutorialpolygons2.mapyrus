@@ -1,10 +1,10 @@
 begin hatch45
-  clip "in"
+  clip "inside"
   stripepath 2, 45
   stroke
 end
 begin hatchMinus45
-  clip "in"
+  clip "inside"
   stripepath 2, -45
   stroke
 end

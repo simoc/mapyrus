@@ -1,5 +1,5 @@
 begin borderthick c
-  clip "in"
+  clip "inside"
   color c
   linestyle 5
   stroke

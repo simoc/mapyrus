@@ -6,6 +6,6 @@ draw 45, 5
 arc -1, 45, 15, 45, 25
 draw 35, 25, 35, 10, 5, 10, 5, 5
 stroke
-clip "in"
+clip "inside"
 stripepath 3, 60
 stroke

@@ -7,7 +7,7 @@ end
 begin shield_interior
   color "white"
   fill
-  clip "in"
+  clip "inside"
   # fill shield with diamond pattern.
   stripepath 4, -45
   samplepath 8, 0

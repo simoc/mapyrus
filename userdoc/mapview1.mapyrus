@@ -16,7 +16,7 @@ done
 # Show seaward side of coastline with thick blue line.
 #
 begin outerCoastline
-	clip "out"
+	clip "outside"
 	linestyle 6, "round", "round"
 	color "rgb", 0.2, 0.8, 1
 	stroke

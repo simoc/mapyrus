@@ -10,7 +10,7 @@ end
 begin plusfill
   color "#804040"
   stroke
-  clip "in"
+  clip "inside"
 
   # Replace path with sample points covering the whole polygon.
   #
