@@ -336,6 +336,16 @@ public class ContextStack
 	}
 
 	/**
+	 * Add point to path with straight line segment relative to last point.
+	 * @param x X coordinate distance to move, relative to last point.
+	 * @param y Y coordinate distance to move, relative to last point.
+	 */
+	public void rlineTo(double x, double y) throws MapyrusException
+	{
+		getCurrentContext().rlineTo(x, y);
+	}
+
+	/**
 	 * Add circular arc to path from last point to a new point, given centre and direction.
 	 * @param direction positive for clockwise, negative for anti-clockwise.
 	 * @param xCentre X coordinate of centre point of arc.
@@ -459,6 +469,32 @@ public class ContextStack
 		throws MapyrusException
 	{
 		getCurrentContext().guillotine(x1, y1, x2, y2);
+	}
+
+	/**
+	 * Mark rectangular area on page (x1, y1) and (x2, y2) as protected.
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 */
+	public void protect(double x1, double y1, double x2, double y2)
+		throws MapyrusException
+	{
+		getCurrentContext().setPageMask(x1, y1, x2, y2, 1);
+	}
+
+	/**
+	 * Mark rectangular area on page (x1, y1) and (x2, y2) as unprotected.
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 */
+	public void unprotect(double x1, double y1, double x2, double y2)
+		throws MapyrusException
+	{
+		getCurrentContext().setPageMask(x1, y1, x2, y2, 0);
 	}
 
 	/**
