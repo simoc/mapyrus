@@ -421,6 +421,14 @@ public class ContextStack
 	}
 
 	/**
+	 * Replace path defining polygon with a sinkhole point.
+	 */
+	public void createSinkhole()
+	{
+		getCurrentContext().createSinkhole();
+	}
+
+	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke() throws IOException, MapyrusException
