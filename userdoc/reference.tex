@@ -826,7 +826,17 @@ Extras:
 Comma-separated list of
 attribute fields to read from the DBF database file accompanying the
 Shape file.  By default, all fields are read.  Reading fewer attribute
-fields improves performance. \\
+fields improves performance.
+
+\vspace{10pt}
+\texttt{xmin=\textit{x1}},
+\texttt{ymin=\textit{y1}},
+\texttt{xmax=\textit{x2}},
+\texttt{ymax=\textit{y2}}
+
+Bounding rectangle of data to fetch.  Data outside this rectangle is
+not fetched.  Setting bounding rectangle to same values as world
+coordinate values in \texttt{worlds} command improves performance. \\
 
 \hline
 
@@ -924,6 +934,29 @@ font name.
 
 Tutorial Sections \ref{psfonts} and \ref{ttffonts}
 describe different font formats.
+
+\subsubsection{icon}
+
+\begin{alltt}
+icon \textit{filename}
+icon \textit{filename}, \textit{size}
+\end{alltt}
+
+Displays an image icon at each \texttt{move} point in
+the current path.  The icon is centered at each point.
+\textit{filename} is a the name of a file or URL containing the icon.
+The icon must be either \texttt{PNG}, \texttt{GIF} or \texttt{JPEG}
+image format.
+
+\textit{size} is the size for the icon in millimetres.  If no size
+is given or size is zero then the icon is displayed at its natural size,
+as it would appear in an image viewer with one image pixel per display
+pixel.
+The image is scaled and rotated according to the current \texttt{scale}
+and \texttt{rotate} settings.
+
+In PostScript files, transparent icons are displayed with an opaque
+white background.
 
 \subsubsection{justify}
 
