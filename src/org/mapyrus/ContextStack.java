@@ -243,9 +243,19 @@ public class ContextStack
 		 * color is white, otherwise contrasting color is black.
 		 */
 		if (darkness > (3 + 4 + 3) * 255 / 2)
-			contrast = new Color(0, 0, 0, alpha);
+		{
+			if (alpha == 255)
+				contrast = Color.BLACK;
+			else
+				contrast = new Color(0, 0, 0, alpha);
+		}
 		else
-			contrast = new Color(255, 255, 255, alpha);
+		{
+			if (alpha == 255)
+				contrast = Color.WHITE;
+			else
+				contrast = new Color(255, 255, 255, alpha);
+		}
 
 		getCurrentContext().setColor(contrast);
 	}
