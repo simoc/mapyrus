@@ -49,22 +49,25 @@ public class Expression
 	private static final int DIVIDE_OPERATION = 6;
 	private static final int MODULO_OPERATION = 7;
 
-	private static final int LEXICAL_EQUALS_OPERATION = 8;	/* 'foo' eq 'foo' */
-	private static final int LEXICAL_NOT_EQUALS_OPERATION = 9;	/* 'foo' ne 'qw' */
-	private static final int LEXICAL_GREATER_THAN_OPERATION = 10;	/* 'qw' gt 'foo' */
-	private static final int LEXICAL_LESS_THAN_OPERATION = 11;	/* 'foo' lt 'qw' */
-	private static final int LEXICAL_GREATER_EQUAL_OPERATION = 12;	/* 'qw' ge 'foo' */
-	private static final int LEXICAL_LESS_EQUAL_OPERATION = 13;	/* 'foo' le 'qw' */
+	private static final int LEXICAL_EQUALS_OPERATION = 100;	/* 'foo' eq 'foo' */
+	private static final int LEXICAL_NOT_EQUALS_OPERATION = 101;	/* 'foo' ne 'qw' */
+	private static final int LEXICAL_GREATER_THAN_OPERATION = 102;	/* 'qw' gt 'foo' */
+	private static final int LEXICAL_LESS_THAN_OPERATION = 103;	/* 'foo' lt 'qw' */
+	private static final int LEXICAL_GREATER_EQUAL_OPERATION = 104;	/* 'qw' ge 'foo' */
+	private static final int LEXICAL_LESS_EQUAL_OPERATION = 105;	/* 'foo' le 'qw' */
 
-	private static final int NUMERIC_EQUALS_OPERATION = 14;	/* 77 == 77 */
-	private static final int NUMERIC_NOT_EQUALS_OPERATION = 15;	/* 7 != 77 */
-	private static final int NUMERIC_GREATER_THAN_OPERATION = 16;	/* 77 > 7 */
-	private static final int NUMERIC_LESS_THAN_OPERATION = 17;	/* 7 < 77 */
-	private static final int NUMERIC_GREATER_EQUAL_OPERATION = 18;	/* 77 >= 7 */
-	private static final int NUMERIC_LESS_EQUAL_OPERATION = 19;	/* 7 <= 77 */
+	private static final int NUMERIC_EQUALS_OPERATION = 200;	/* 77 == 77 */
+	private static final int NUMERIC_NOT_EQUALS_OPERATION = 201;	/* 7 != 77 */
+	private static final int NUMERIC_GREATER_THAN_OPERATION = 202;	/* 77 > 7 */
+	private static final int NUMERIC_LESS_THAN_OPERATION = 203;	/* 7 < 77 */
+	private static final int NUMERIC_GREATER_EQUAL_OPERATION = 204;	/* 77 >= 7 */
+	private static final int NUMERIC_LESS_EQUAL_OPERATION = 205;	/* 7 <= 77 */
+
+	private static final int ASSIGN_OPERATION = 300;	/* a = 77 */
 	
-	private static final int AND_OPERATION = 20;
-	private static final int OR_OPERATION = 21;
+	private static final int AND_OPERATION = 400;
+	private static final int OR_OPERATION = 401;
+	private static final int NOT_OPERATION = 402;
 
 	/*
 	 * Names and types of functions we allow on numbers and strings.
@@ -238,6 +241,138 @@ public class Expression
 			return(traverse(this, context, interpreterFilename));
 		}
 
+		/**
+		 * Evalute internal function.
+		 * @param context is context containing variable values
+		 * @param interpreterFilename name of file being interpreted.
+		 * @return result of function
+		 */
+		private Argument evaluateFunction(ContextStack context,
+			String interpreterFilename)
+			throws MapyrusException
+		{
+			Argument leftValue, rightValue, thirdValue;
+			Argument retval;
+			String s;
+			double l, d = 0.0;
+
+			/*
+			 * Evaluate function.
+			 */
+			if (mFunction == ROUND_FUNCTION || mFunction == RANDOM_FUNCTION ||
+				mFunction == LOG10_FUNCTION)
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				l = leftValue.getNumericValue();
+						
+				if (mFunction == ROUND_FUNCTION)
+					d = Math.round(l);
+				else if (mFunction == RANDOM_FUNCTION)
+					d = Math.random() * l;
+				else
+				{
+					if (l <= 0.0)
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
+	
+					d = Math.log(l) / LOG_OF_10;
+				}
+				retval = new Argument(d);
+			}
+			else if (mFunction == LENGTH_FUNCTION)
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				retval = new Argument(leftValue.toString().length());
+			}
+			else if (mFunction == MATCH_FUNCTION)
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				rightValue = traverse(mRightBranch, context, interpreterFilename);
+	
+				/*
+				 * Find index of start of regular expression in string.
+				 */
+				Pattern pattern = compileRegex(rightValue.toString());
+				Matcher matcher = pattern.matcher(leftValue.toString());
+				if (matcher.find())
+					retval = new Argument(matcher.start() + 1);
+				else
+					retval = Argument.numericZero;
+			}
+			else if (mFunction == REPLACE_FUNCTION)
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				rightValue = traverse(mRightBranch, context, interpreterFilename);
+				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
+	
+				/*
+				 * Replace all occurrences of pattern given in second string
+				 * with the third string.
+				 */
+				Pattern pattern = compileRegex(rightValue.toString());
+				Matcher matcher = pattern.matcher(leftValue.toString());
+				if (matcher.find())
+				{
+					/*
+					 * Replace all matching patterns.
+					 */
+					retval = new Argument(Argument.STRING, matcher.replaceAll(thirdValue.toString()));
+				}
+				else
+				{
+					/*
+					 * No match so return original string.
+					 */
+					retval = leftValue;
+				}
+			}
+			else if (mFunction == TEMPNAME_FUNCTION)
+			{
+				/*
+				 * Generate temporary file with given suffix.
+				 */
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				retval = new Argument(Argument.STRING,
+					TransientFileFactory.generate(leftValue.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
+			}
+			else /* SUBSTR_FUNCTION */
+			{
+				int startIndex, extractLen, len;
+	
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				s = leftValue.toString();
+				rightValue = traverse(mRightBranch, context, interpreterFilename);
+				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
+	
+				/*
+				 * Convert to zero-based indexing used by java.
+				 */
+				startIndex = (int)(Math.floor(rightValue.getNumericValue()));
+				startIndex--;
+				if (startIndex < 0)
+					startIndex = 0;
+				extractLen = (int)(Math.floor(thirdValue.getNumericValue()));
+						
+				len = s.length();
+				if (extractLen < 1 || startIndex >= len)
+				{
+					/*
+					 * Substring is totally to the left or right of
+					 * the string.  So substring is empty. 
+					 */
+					retval = Argument.emptyString;
+				}
+				else
+				{
+					if (startIndex + extractLen > len)
+						extractLen = len - startIndex;
+	
+					retval = new Argument(Argument.STRING,
+						s.substring(startIndex, startIndex + extractLen));
+				}
+			}
+			return(retval);
+		}
+		
 		/*
 		 * Recursively traverse binary expression tree to
 		 * determine its value.
@@ -246,7 +381,7 @@ public class Expression
 			String interpreterFilename) throws MapyrusException
 		{
 			Argument retval;
-			Argument leftValue, rightValue, thirdValue;
+			Argument leftValue, rightValue;
 			int returnType = Argument.NUMERIC;
 			double l, r, d = 0.0;
 			String s = null;
@@ -271,120 +406,36 @@ public class Expression
 			}
 			else if (t.mIsFunction)
 			{
+				retval = t.evaluateFunction(context, interpreterFilename);
+			}
+			else if (t.mOperation == NOT_OPERATION)
+			{
 				/*
-				 * Evaluate function.
+				 * Negation operates on a single expression.
 				 */
-				if (t.mFunction == ROUND_FUNCTION || t.mFunction == RANDOM_FUNCTION ||
-					t.mFunction == LOG10_FUNCTION)
+				leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+				if (leftValue.getType() == Argument.NUMERIC)
 				{
-					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
 					l = leftValue.getNumericValue();
-					
-					if (t.mFunction == ROUND_FUNCTION)
-						d = Math.round(l);
-					else if (t.mFunction == RANDOM_FUNCTION)
-						d = Math.random() * l;
-					else
-					{
-						if (l <= 0.0)
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
-
-						d = Math.log(l) / LOG_OF_10;
-					}
-					retval = new Argument(d);
+					retval = NumericalAnalysis.equals(l, 0.0) ?
+						Argument.numericOne : Argument.numericZero;
 				}
-				else if (t.mFunction == LENGTH_FUNCTION)
+				else
 				{
-					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
-					retval = new Argument(leftValue.toString().length());
+					retval = (leftValue.getStringValue().length() == 0) ?
+						Argument.numericOne : Argument.numericZero;
 				}
-				else if (t.mFunction == MATCH_FUNCTION)
-				{
-					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
-					rightValue = traverse(t.mRightBranch, context, interpreterFilename);
+			}
+			else if (t.mOperation == ASSIGN_OPERATION)
+			{
+				String varName = t.mLeftBranch.mLeafArg.getVariableName();
+				rightValue = traverse(t.mRightBranch, context, interpreterFilename);
+				context.defineVariable(varName, rightValue);
 
-					/*
-					 * Find index of start of regular expression in string.
-					 */
-					Pattern pattern = compileRegex(rightValue.toString());
-					Matcher matcher = pattern.matcher(leftValue.toString());
-					if (matcher.find())
-						retval = new Argument(matcher.start() + 1);
-					else
-						retval = Argument.numericZero;
-				}
-				else if (t.mFunction == REPLACE_FUNCTION)
-				{
-					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
-					rightValue = traverse(t.mRightBranch, context, interpreterFilename);
-					thirdValue = traverse(t.mThirdFunctionExpression, context, interpreterFilename);
-
-					/*
-					 * Replace all occurrences of pattern given in second string
-					 * with the third string.
-					 */
-					Pattern pattern = compileRegex(rightValue.toString());
-					Matcher matcher = pattern.matcher(leftValue.toString());
-					if (matcher.find())
-					{
-						/*
-						 * Replace all matching patterns.
-						 */
-						retval = new Argument(Argument.STRING, matcher.replaceAll(thirdValue.toString()));
-					}
-					else
-					{
-						/*
-						 * No match so return original string.
-						 */
-						retval = leftValue;
-					}
-				}
-				else if (t.mFunction == TEMPNAME_FUNCTION)
-				{
-					/*
-					 * Generate temporary file with given suffix.
-					 */
-					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
-					retval = new Argument(Argument.STRING,
-						TransientFileFactory.generate(leftValue.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
-				}
-				else /* SUBSTR_FUNCTION */
-				{
-					int startIndex, extractLen, len;
-
-					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
-					s = leftValue.toString();
-					rightValue = traverse(t.mRightBranch, context, interpreterFilename);
-					thirdValue = traverse(t.mThirdFunctionExpression, context, interpreterFilename);
-
-					/*
-					 * Convert to zero-based indexing used by java.
-					 */
-					startIndex = (int)(Math.floor(rightValue.getNumericValue()));
-					startIndex--;
-					if (startIndex < 0)
-						startIndex = 0;
-					extractLen = (int)(Math.floor(thirdValue.getNumericValue()));
-					
-					len = s.length();
-					if (extractLen < 1 || startIndex >= len)
-					{
-						/*
-						 * Substring is totally to the left or right of
-						 * the string.  So substring is empty. 
-						 */
-						retval = Argument.emptyString;
-					}
-					else
-					{
-						if (startIndex + extractLen > len)
-							extractLen = len - startIndex;
-
-						retval = new Argument(Argument.STRING,
-							s.substring(startIndex, startIndex + extractLen));
-					}
-				}
+				/*
+				 * Return value of assignment is the assigned value.
+				 */
+				retval = rightValue;
 			}
 			else
 			{
@@ -585,7 +636,7 @@ public class Expression
 		ExpressionTreeNode expr, b;
 		int op1, op2, op3;
 
-		expr = parseComparison(p);
+		expr = parseNotBoolean(p);
 		while (true)
 		{
 			/*
@@ -601,7 +652,7 @@ public class Expression
 					op3 = p.read();
 					if (op3 == 'd' || op3 == 'D')
 					{
-						b = parseComparison(p);
+						b = parseNotBoolean(p);
 						expr = new ExpressionTreeNode(expr, AND_OPERATION, b);
 					}
 					else
@@ -611,6 +662,112 @@ public class Expression
 						p.unread(op1);
 						break;
 					}
+				}
+				else
+				{
+					p.unread(op2);
+					p.unread(op1);
+					break;
+				}
+			}
+			else				
+			{
+				p.unread(op1);
+				break;
+			}
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse expression including "not" boolean operations.
+	 */
+	private ExpressionTreeNode parseNotBoolean(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode b, expr = null;
+		int op1, op2, op3, op4;
+
+		/*
+		 * If next three characters spell "not" then parse
+		 * expression to be negated.
+		 */
+		op1 = p.readNonSpace();
+		if (op1 == 'n' || op1 == 'N')
+		{
+			op2 = p.read();
+			if (op2 == 'o' || op2 == 'O')
+			{
+				op3 = p.read();
+				if (op3 == 't' || op3 == 'T')
+				{
+					op4 = p.read();
+					if (!Character.isLetterOrDigit((char)op4) && op4 != '_' && op4 != '.')
+					{
+						b = parseNotBoolean(p);
+						expr = new ExpressionTreeNode(b, NOT_OPERATION, null);
+					}
+					else
+					{
+						p.unread(op4);
+						p.unread(op3);
+						p.unread(op2);
+						p.unread(op1);
+					}
+				}
+				else
+				{
+					p.unread(op3);
+					p.unread(op2);
+					p.unread(op1);
+				}
+			}
+			else
+			{
+				p.unread(op2);
+				p.unread(op1);
+			}
+		}
+		else				
+		{
+			p.unread(op1);
+		}
+
+		if (expr == null)
+			expr = parseAssignment(p);
+		return(expr);
+	}
+
+	/*
+	 * Parse expression including assignment to variables.
+	 */
+	private ExpressionTreeNode parseAssignment(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, value;
+		int op1, op2;
+
+		expr = parseComparison(p);
+		while (true)
+		{
+			/*
+			 * If next character is '=' then we have an assignment
+			 * to a variable.
+			 */
+			op1 = p.readNonSpace();
+			if (op1 == '=')
+			{
+				op2 = p.read();
+				if (op2 != '=')
+				{
+					/*
+					 * Check that lefthandside of an assignment is a variable name.
+					 */
+					if (!(expr.mIsLeaf && expr.mLeafArg.getType() == Argument.VARIABLE))
+						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+							MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+					value = parseAssignment(p);
+					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
 				}
 				else
 				{
@@ -642,8 +799,8 @@ public class Expression
 		while (true)
 		{
 			/*
-		 	 * What type of comparison have we got?
-		 	 */
+			 * What type of comparison have we got?
+			 */
 			opType = NO_OPERATION;
 			op1 = p.readNonSpace();
 			if (op1 == '<' || op1 == '>' || op1 == '!' || op1 == '=')
