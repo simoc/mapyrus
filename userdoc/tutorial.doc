@@ -71,6 +71,18 @@ Tutorial
 
 <tr>
 <td>
+<a href="#psfonts">Using PostScript Fonts In PostScript Output</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#ttffonts">Using TrueType Fonts In Output to Image Formats</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#httpserver">Setting Up Mapyrus As An HTTP Server</a>
 </td>
 </tr>
@@ -665,6 +677,57 @@ include endex.doc
 
 include hr.doc
 
+<a name="psfonts"></a>
+<h3>Using Fonts In PostScript Output</h3>
+<p>
+
+PostScript printers and
+<a href="http://www.ghostscript.com">Ghostscript</a>
+understand a limited number of fonts,
+normally only <tt>Courier</tt>,
+<tt>Helvetica</tt>, <tt>Times-Roman</tt> and the bold
+and italic variations of these fonts.
+<p>
+When a PostScript printer prints a file containing an unknown font,
+a substitute font is used.
+<p>
+To make a font known to the printer, include the definition of
+the font in the PostScript file being printed.
+<p>
+A PostScript Type 1 font definition file has suffix
+<tt>.pfa</tt>.
+PostScript font definition files are included in a PostScript file using the
+<i>extras</i> <tt>pfafiles</tt>
+option to the
+<a href="reference.html#newpage">newpage</a>
+command.  Include filenames of PostScript font definition
+files for all fonts to be used in the page that are not known by the printer.
+<p>
+A PostScript Type 1 font definition file is a text file and
+the first line contains the name of the font defined in the file.
+<p>
+To convert a True Type Font file to a PostScript Type 1 font
+use the freely available
+<a href="http://ttf2pt1.sourceforge.net">ttf2pt1</a>
+program.  The following command converts the font in
+the file <tt>BEANTOWN.TTF</tt>
+to a PostScript Type 1 font in file <tt>BEANTOWN.pfa</tt>.
+
+include beginex.doc
+ttf2pt1 -e BEANTOWN.TTF BEANTOWN
+include endex.doc
+
+include hr.doc
+
+<a name="ttffonts"></a>
+<h3>Using TrueType Fonts In Output to Image Formats</h3>
+<p>
+
+// TODO explain newpage command.
+how to know name of font from file?
+
+include hr.doc
+
 <a name="httpserver"></a>
 <h3>Setting Up Mapyrus As An HTTP Server</h3>
 <p>
@@ -782,6 +845,14 @@ and Mapyrus commands demonstrate this.
 include beginex.doc
 include tutorialhtmlpage2.mpy
 include endex.doc
+
+include hr.doc
+
+<a name="htmladd"></a>
+<h3>Returning Additional Information From Mapyrus HTTP Server</h3>
+<p>
+
+// TODO explain overview windows, legends, returning query information
 
 include hr.doc
 
