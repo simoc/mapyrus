@@ -59,6 +59,12 @@ public class Argument
 	public static final Argument numericOne = new Argument(1.0);
 
 	/**
+	 * Constant for numeric value minus one.
+	 * Avoids allocating many arguments for this commonly used value.
+	 */
+	public static final Argument numericMinusOne = new Argument(-1.0);
+
+	/**
 	 * Constant for empty string.
 	 * Avoids allocating many arguments for this commonly used value.
 	 */

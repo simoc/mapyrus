@@ -1016,7 +1016,7 @@ public class Expression
 			/*
 			 * Expand expression to negate value.
 			 */
-			ExpressionTreeNode left = new ExpressionTreeNode(new Argument(-1.0));
+			ExpressionTreeNode left = new ExpressionTreeNode(Argument.numericMinusOne);
 			expr = new ExpressionTreeNode(left, MULTIPLY_OPERATION, expr);
 		}
 
