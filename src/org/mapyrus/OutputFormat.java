@@ -1088,7 +1088,7 @@ public class OutputFormat
 			writePostScriptLine("/Decode [0 1 0 1 0 1]");
 		}
 		writePostScriptLine("/ImageMatrix [" + reducedPixelWidth + " 0 0 " +
-			-reducedPixelHeight + " 0 " + reducedPixelWidth + "]");
+			-reducedPixelHeight + " 0 " + reducedPixelHeight + "]");
 		writePostScriptLine("/DataSource currentfile /ASCII85Decode filter");
 		writePostScriptLine(">>");
 
