@@ -41,6 +41,7 @@ import javax.swing.ImageIcon;
 
 import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
+import org.mapyrus.font.StringDimension;
 
 /**
  * Contexts for interpretation that are pushed and popped as procedure
@@ -736,16 +737,16 @@ public class ContextStack
 	}
 
 	/**
-	 * Returns width of a string, drawn to current page with current font.
-	 * @param s string to calculate width for.
-	 * @return width of string in millimetres.
+	 * Returns height and width of a string, drawn to current page with current font.
+	 * @param s string to calculate dimensions for.
+	 * @return height and width of string in millimetres.
 	 */	
-	public double getStringWidth(String s) throws MapyrusException
+	public StringDimension getStringDimension(String s) throws MapyrusException
 	{
-		double retval = 0.0;
+		StringDimension retval;
 		try
 		{
-			retval = getCurrentContext().getStringWidth(s);
+			retval = getCurrentContext().getStringDimension(s);
 		}
 		catch (IOException e)
 		{
