@@ -1,8 +1,7 @@
 begin asset
   # Draw filled square
   #
-  move -1, -1
-  draw -1, 1, 1, 1, 1, -1
+  box -1, -1, 1, 1
   fill
 end
 
