@@ -415,7 +415,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getWorlds()
 	 */
-	public Rectangle2D getWorlds()
+	public Rectangle2D.Double getWorlds()
 	{
 		return(mExtents);
 	}
@@ -489,11 +489,11 @@ public class ShapefileDataset implements GeographicDataset
 					
 					shapeInExtents = mQueryExtents.contains(path[2], path[3]);
 				}
-				else if (mShapeFileType == POLYLINE)
+				else if (mShapeFileType == POLYLINE || mShapeFileType == POLYGON)
 				{
 					/*
-					 * Read bounding box of polyline.  Find if it intersects
-					 * with query extents.
+					 * Read bounding box of polyline or polygon.
+					 * Find if it intersects with query extents.
 					 */
 					xMin = readLittleEndianDouble(mShapeStream);
 					yMin = readLittleEndianDouble(mShapeStream);
@@ -504,7 +504,7 @@ public class ShapefileDataset implements GeographicDataset
 					if (shapeInExtents)
 					{
 						/*
-						 * Read polyline coordinates.
+						 * Read polyline or polygon coordinates.
 						 */
 						nParts = readLittleEndianInt(mShapeStream);
 						nPoints = readLittleEndianInt(mShapeStream);
@@ -554,7 +554,7 @@ public class ShapefileDataset implements GeographicDataset
 					else
 					{
 						/*
-						 * Line is outside query extents, skip it.
+						 * Shape is outside query extents, skip it.
 						 */
 					}
 				}
