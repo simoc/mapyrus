@@ -88,8 +88,6 @@ class Preprocessor
 	 */
 	private void openIncludedFile(String filename) throws MalformedURLException, IOException, MapyrusException
 	{
-		LineNumberReader in;
-		InputStream urlStream;
 		FileOrURL f;
 
 		FileOrURL includingFile = (FileOrURL)mFileStack.getLast();
@@ -175,7 +173,6 @@ class Preprocessor
 	public int read() throws IOException, MapyrusException
 	{
 		int c;
-		int i;
 		LineNumberReader reader;
 
 		/*
@@ -358,8 +355,6 @@ class Preprocessor
 	public static void main(String []args) throws IOException, MapyrusException,
 		InterruptedException
 	{
-		BufferedReader in;
-		int c;
 		String s;
 		Preprocessor p;
 		PrintWriter writer;
