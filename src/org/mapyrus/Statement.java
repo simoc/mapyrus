@@ -28,6 +28,11 @@ public class Statement
 	public static final int NEWPAGE = 11;
 	public static final int PRINT = 12;
 	
+	/*
+	 * Statement type for call to user defined procedure block.
+	 */
+	public static final int CALL = 13;
+	
 	private int mType;
 	
 	/*
@@ -43,7 +48,7 @@ public class Statement
 	 */
 	String mBlockName;
 	Vector mStatementBlock;
-	Expression []mParameters;
+	Vector mParameters;
 	
 	/*
 	 * Name of variable in assignment.
@@ -58,9 +63,9 @@ public class Statement
 	 * @returns numeric code for this statement, or -1 if statement
 	 * is unknown.
 	 */
-	public static int getStatementType(String s)
+	private int getStatementType(String s)
 	{
-		int retval = -1;
+		int retval = CALL;
 		String sLower = s.toLowerCase();
 
 		if (sLower.equals("color") || sLower.equals("colour"))
@@ -103,13 +108,16 @@ public class Statement
 	}
 	
 	/**
-	 * Creates a plain statement.
-	 * @param type is the type of statement.
+	 * Creates a plain statement, either a built-in command or
+	 * a call to a procedure block that the user has defined.
+	 * @param keyword is the name statement.
 	 * @param expressions are the arguments for this statement.
 	 */
-	public Statement(int type, Expression []expressions)
+	public Statement(String keyword, Expression []expressions)
 	{
-		mType = type;
+		mType = getStatementType(keyword);
+		if (mType == CALL)
+			mBlockName = keyword;
 		mExpressions = expressions;
 	}
 
@@ -144,7 +152,7 @@ public class Statement
 	 * @param parameters variable names of parameters to this procedure.
 	 * @param statements statements that make up this procedure block.
 	 */
-	public Statement(String blockName, Expression []parameters, Vector statements)
+	public Statement(String blockName, Vector parameters, Vector statements)
 	{
 		mBlockName = blockName;
 		mParameters = parameters;
@@ -188,9 +196,9 @@ public class Statement
 	
 	/**
 	 * Return variable names of parameters to a procedure.
-	 * @return array of variable names.
+	 * @return list of parameter names.
 	 */
-	public Expression []getBlockParameters()
+	public Vector getBlockParameters()
 	{
 		return(mParameters);
 	}
