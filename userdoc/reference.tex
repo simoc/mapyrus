@@ -959,6 +959,29 @@ font name.
 Tutorial Sections \ref{psfonts} and \ref{ttffonts}
 describe different font formats.
 
+\subsubsection{guillotine}
+
+\begin{alltt}
+guillotine \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+\end{alltt}
+
+Cuts path against a rectangle.
+Any part of the path inside or
+on the boundary of the rectangle remains.
+Any part of the path outside the rectangle is removed.
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of the rectangle to cut against.
+
+The four corner points of the rectangle
+are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
+The path is always cut against a rectangle
+aligned with the X and Y axes of the page, regardless of any rotation angle.
+
 \subsubsection{icon}
 
 \begin{alltt}
