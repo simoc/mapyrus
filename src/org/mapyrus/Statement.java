@@ -96,6 +96,7 @@ public class Statement
 		mStatementTypeLookup.put("linewidth", new Integer(LINEWIDTH));
 		mStatementTypeLookup.put("move", new Integer(MOVE));
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
+		mStatementTypeLookup.put("arc", new Integer(ARC));
 		mStatementTypeLookup.put("clearpath", new Integer(CLEARPATH));
 		mStatementTypeLookup.put("slicepath", new Integer(SLICEPATH));
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
