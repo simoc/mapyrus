@@ -23,10 +23,8 @@
 package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -67,10 +65,22 @@ public class MIFDataset implements GeographicDataset
 	private static final Argument DEFAULT_SIZE = new Argument(4.0);
 	private static final Argument DEFAULT_FONT = new Argument(Argument.STRING, "MapInfo Symbols");
 
-	private LineNumberReader mMIFFile;
-	private MIDReader mMIDFile;
 	private String mFilename;
-	
+
+	/*
+	 * Extents of dataset.  Can only be found by scanning all records in
+	 * dataset.
+	 */
+	private double mXMin;
+	private double mYMin;
+	private double mXMax;
+	private double mYMax;
+
+	/*
+	 * Iterator to records in dataset.
+	 */
+	private Iterator mAllRowsIterator;
+
 	/*
 	 * Next line to read from MIF file.
 	 */
@@ -87,160 +97,11 @@ public class MIFDataset implements GeographicDataset
 	private boolean []mMIDFieldsToFetch;
 	private int mNMIDFieldsToFetch;
 
-	private class MIDReader
-	{
-		/*
-		 * Types of attribute fields encountered in .mid file. 
-		 */	
-		public static final int NUMERIC_FIELD = 0;
-		public static final int STRING_FIELD = 1;
-		public static final int LOGICAL_FIELD = 2;
-
-		private BufferedInputStream mFile;
-		private String mFilename;
-		private byte mFieldDelimiter;
-		private StringBuffer mFieldBuffer;
-		private int mRowCounter;
-
-		public MIDReader(String filename, char delimiter) throws IOException
-		{		
-			mFile = new BufferedInputStream(new FileInputStream(filename));
-			mFilename = filename;
-			mFieldDelimiter = (byte)delimiter;
-			mFieldBuffer = new StringBuffer();
-			mRowCounter = 1;
-		}
-
-		/**
-		 * Read next row from MID file.
-		 * @param row row to add fields to.
-		 * @return row of fields.
-		 * @throws IOException
-		 * @throws MapyrusException
-		 */
-		public Row getRow(Row row)
-			throws IOException, MapyrusException
-		{
-			Argument field;
-
-			for (int i = 0; i < mMIDFieldTypes.length; i++)
-			{
-				mFieldBuffer.setLength(0);
-
-				int c = mFile.read();
-				boolean openedQuotes = (c == '"');
-				if (openedQuotes)
-					c = mFile.read();
-
-				/*
-				 * Read each character of field value.
-				 */
-				boolean closedQuotes = false;
-				while (c != mFieldDelimiter || (openedQuotes && !closedQuotes))
-				{
-					if (c == -1)
-					{
-						throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
-							": " + mFilename);
-					}
-
-					/*
-					 * End of line marks end of last field.
-					 */
-					if (c == '\r' || c == '\n')
-					{
-						if (i != mMIDFieldTypes.length - 1)
-						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.MISSING_FIELD) +
-								": " + mFilename + ":" + mRowCounter);
-						}
-
-						/*
-						 * Accept all kinds of line endings: "\n", "\r\n", "\r".
-						 */
-						if (c == '\r')
-						{
-							mFile.mark(2);
-							c = mFile.read();
-							if (c != '\n')
-								mFile.reset();
-						}
-						break;
-					}
-
-					if (openedQuotes && c == '"')
-					{
-						closedQuotes = true;
-					}
-					else
-					{
-						mFieldBuffer.append((char)c);
-					}
-					c = mFile.read();
-				}
-
-				if (mMIDFieldsToFetch[i])
-				{
-					/*
-					 * Convert field to Mapyrus Argument object, depending on the
-					 * field type.
-					 * Use constants for frequently occurring field values.
-					 */
-					String fieldValue = mFieldBuffer.toString();
-					if (mMIDFieldTypes[i] == NUMERIC_FIELD)
-					{
-						if (fieldValue.equals("0"))
-						{
-							field = Argument.numericZero;
-						}
-						else
-						{
-							double d = Double.parseDouble(fieldValue);
-							field = new Argument(d);
-						}
-					}
-					else if (mMIDFieldTypes[i] == LOGICAL_FIELD)
-					{
-						c = mFieldBuffer.charAt(0);
-						field = (c == 'T' || c == 't') ? Argument.numericOne : Argument.numericZero;
-					}
-					else if (mFieldBuffer.length() == 0)
-					{
-						field = Argument.emptyString;
-					}
-					else
-					{
-						field = new Argument(Argument.STRING, fieldValue);
-					}
-					row.add(field);
-				}
-			}
-
-			mRowCounter++;
-			return(row);
-		}
-
-		/*
-		 * Close MID file.
-		 */
-		public void close()
-		{
-			try
-			{
-				if (mFile != null)
-					mFile.close();
-			}
-			catch (IOException e)
-			{
-			}
-			mFile = null;
-		}
-	}
 
 	/**
 	 * Parse MIF file header.
 	 */
-	private void parseMIFHeader(HashSet midFieldsToFetch) throws IOException
+	private void parseMIFHeader(LineNumberReader reader, HashSet midFieldsToFetch) throws IOException
 	{
 		String line, lowercaseLine;
 		boolean finishedHeader = false;
@@ -256,7 +117,7 @@ public class MIFDataset implements GeographicDataset
 		/*
 		 * First line of MIF must contain keyword 'version'. 
 		 */
-		line = mMIFFile.readLine();
+		line = reader.readLine();
 		if (line == null || (!line.toLowerCase().startsWith("version")))
 		{
 			throw new EOFException(MapyrusMessages.get(MapyrusMessages.NOT_MIF_FILE) +
@@ -346,7 +207,7 @@ public class MIFDataset implements GeographicDataset
 			if (lowercaseLine.equals("data"))
 				finishedHeader = true;
 			else
-				line = mMIFFile.readLine();
+				line = reader.readLine();
 		}
 
 		/*
@@ -366,7 +227,7 @@ public class MIFDataset implements GeographicDataset
 				": " + mFilename);
 		}
 
-		mMIFNextLine = mMIFFile.readLine();
+		mMIFNextLine = reader.readLine();
 	}
 
 	/**
@@ -400,40 +261,76 @@ public class MIFDataset implements GeographicDataset
 			}
 		}
 
-		mFilename = filename;
-		mMIFFile = new LineNumberReader(new FileReader(filename));
-		parseMIFHeader(extrasMIDFields);
-
-		/*
-		 * If file with .mid extension exists then open that file too.
-		 */
-		String midFilename;
-		if (filename.endsWith(".mif"))
-			midFilename = filename.substring(0, filename.length() - 4) + ".mid";
-		else if (filename.endsWith(".MIF"))
-			midFilename = filename.substring(0, filename.length() - 4) + ".MID";
-		else
+		LineNumberReader mifFile = null;
+		MIDReader midFile = null;
+		try
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_MIF_FILE) +
-				": " + filename);
-		}
+			mFilename = filename;
+			mifFile = new LineNumberReader(new FileReader(filename));
+			parseMIFHeader(mifFile, extrasMIDFields);
 
-		/*
-		 * If .MID file exists and we need to read some attribute
-		 * columns then open it.
-		 */
-		File f = new File(midFilename);
-		if (f.canRead() && mNMIDFieldsToFetch > 0)
-		{
-			mMIDFile = new MIDReader(midFilename, mDelimiter);
+			/*
+			 * If file with .mid extension exists then open that file too.
+			 */
+			String midFilename;
+			if (filename.endsWith(".mif"))
+				midFilename = filename.substring(0, filename.length() - 4) + ".mid";
+			else if (filename.endsWith(".MIF"))
+				midFilename = filename.substring(0, filename.length() - 4) + ".MID";
+			else
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_MIF_FILE) +
+					": " + filename);
+			}
+
+			/*
+			 * If .MID file exists and we need to read some attribute
+			 * columns then open it.
+			 */
+			File f = new File(midFilename);
+			if (f.canRead() && mNMIDFieldsToFetch > 0)
+			{
+				midFile = new MIDReader(midFilename, mMIDFieldTypes,
+					mMIDFieldsToFetch, mDelimiter);
+			}
+			else
+			{
+				/*
+				 * No attributes available, only geometry.
+				 */
+				midFile = null;
+				mFieldNames = GEOMETRY_FIELDS;
+			}
+
+			/*
+			 * Only way to find extents of dataset is to scan whole file.
+			 * Do this once and store them all in memory to avoid parsing
+			 * the file a second time.
+			 */
+			mXMin = mYMin = Float.MAX_VALUE;
+			mXMax = mYMax = -Float.MAX_VALUE;
+
+			fetchAllRows(mifFile, midFile);
 		}
-		else
+		finally
 		{
 			/*
-			 * No attributes available, only geometry.
+			 * Ensure that any files we open are closed again.
 			 */
-			mMIDFile = null;
-			mFieldNames = GEOMETRY_FIELDS;
+			if (mifFile != null)
+			{
+				try
+				{
+					mifFile.close();
+				}
+				catch (IOException e)
+				{
+				}
+			}
+			if (midFile != null)
+			{
+				mifFile.close();
+			}
 		}
 	}
 
@@ -465,12 +362,12 @@ public class MIFDataset implements GeographicDataset
 	}
 
 	/**
-	 * Return extents of text file.  We do not know this.
-	 * @return degree values covering the whole world
+	 * Return extents of MIF file.
+	 * @return world extents.
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
-		return new Rectangle2D.Double(-180.0, -90.0, 180.0, 90.0);
+		return new Rectangle2D.Double(mXMin, mYMin, mXMax - mXMin, mYMax - mYMin);
 	}
 
 	/**
@@ -507,19 +404,38 @@ public class MIFDataset implements GeographicDataset
 	}
 
 	/**
+	 * Accumulate extents of all geometry in dataset.
+	 * @param x X Coordinate in geometry.
+	 * @param y Y Coordinate in geometry.
+	 */
+	private void accumulateExtents(double x, double y)
+	{
+		if (x < mXMin)
+			mXMin = x;
+		if (x > mXMax)
+			mXMax = x;
+
+		if (y < mYMin)
+			mYMin = y;
+		if (y > mYMax)
+			mYMax = y;
+	}
+
+	/**
 	 * Parse (X, Y) coordinate value from string.
 	 * @param line string to parse from.
 	 * @param geometry geometry array to add coordinate to.
 	 * @param offset offset in geometry array to add X and Y values to.
 	 */
-	private void parseXYCoordinate(String line, double []geometry, int offset)
+	private void parseXYCoordinate(LineNumberReader reader, String line,
+		double []geometry, int offset)
 		throws MapyrusException
 	{
 		int spaceIndex = line.indexOf(' ');
 		if (spaceIndex < 0)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE) +
-				": " + mFilename + ":" + mMIFFile.getLineNumber());
+				": " + mFilename + ":" + reader.getLineNumber());
 		}
 
 		/*
@@ -536,16 +452,20 @@ public class MIFDataset implements GeographicDataset
 
 		geometry[offset] = x;
 		geometry[offset + 1] = y;
+
+		accumulateExtents(x, y);
 	}
 
 	/**
 	 * Parse list of (X, Y) coordinates from MIF file,
 	 * with one pair of coordinates on each line.
+	 * @param reader file to read from.
 	 * @param nPoints number of points to parse.
 	 * @param geometryType type of geometry being parsed.
 	 * @return geometry in Mapyrus geometry format.
 	 */
-	private double []parseCoordinates(int nPoints, int geometryType)
+	private double []parseCoordinates(LineNumberReader reader,
+		int nPoints, int geometryType)
 		throws IOException, MapyrusException
 	{
 		double []geometry;
@@ -561,7 +481,7 @@ public class MIFDataset implements GeographicDataset
 		 */
 		for (int i = 0; i < nPoints; i++)
 		{
-			String line = mMIFFile.readLine();
+			String line = reader.readLine();
 			if (line == null)
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
@@ -569,7 +489,7 @@ public class MIFDataset implements GeographicDataset
 			}
 
 			geometry[geometryIndex] = op;
-			parseXYCoordinate(line, geometry, geometryIndex + 1);
+			parseXYCoordinate(reader, line, geometry, geometryIndex + 1);
 			geometryIndex += 3;
 			op = Argument.LINETO;
 		}
@@ -581,7 +501,8 @@ public class MIFDataset implements GeographicDataset
 	 * @param nSections number of geometries to read.
 	 * @param geometryType type of each geometry being read.
 	 */
-	private double []parseCoordinateList(int nSections, int geometryType)
+	private double []parseCoordinateList(LineNumberReader reader,
+		int nSections, int geometryType)
 		throws IOException, MapyrusException
 	{
 		ArrayList sections = new ArrayList(nSections);
@@ -593,14 +514,14 @@ public class MIFDataset implements GeographicDataset
 		 */
 		for (int i = 0; i < nSections; i++)
 		{
-			String line = mMIFFile.readLine();
+			String line = reader.readLine();
 			if (line == null)
 			{
 				throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
 					": " + mFilename);
 			}
 			int nPoints = Integer.parseInt(line.trim());
-			geometry = parseCoordinates(nPoints, geometryType);
+			geometry = parseCoordinates(reader, nPoints, geometryType);
 			sections.add(geometry);
 			totalGeometryLength += geometry.length;
 		}
@@ -640,12 +561,14 @@ public class MIFDataset implements GeographicDataset
 
 	/**
 	 * Read next geometry from MIF file.
+	 * @param reader file to read from.
 	 * @param row row to add geometry to.
 	 * @return row with added geometry, or null if EOF reached.
 	 * @throws IOException
 	 * @throws MapyrusException
 	 */
-	private Row parseGeometry(Row row) throws IOException, MapyrusException
+	private Row parseGeometry(LineNumberReader reader, Row row)
+		throws IOException, MapyrusException
 	{
 		double []geometry = null;
 		String penWidth, penPattern, penColor;
@@ -663,7 +586,7 @@ public class MIFDataset implements GeographicDataset
 		 */
 		while (mMIFNextLine != null && mMIFNextLine.length() == 0)
 		{
-			mMIFNextLine = mMIFFile.readLine();
+			mMIFNextLine = reader.readLine();
 		}
 
 		if (mMIFNextLine != null)
@@ -682,6 +605,8 @@ public class MIFDataset implements GeographicDataset
 					geometry[2] = Argument.MOVETO;
 					geometry[3] = x;
 					geometry[4] = y;
+
+					accumulateExtents(x, y);
 				}
 				else if (geometryType.equals("line") && st.countTokens() == 4)
 				{
@@ -698,6 +623,9 @@ public class MIFDataset implements GeographicDataset
 					geometry[5] = Argument.LINETO;
 					geometry[6] = x2;
 					geometry[7] = y2;
+
+					accumulateExtents(x1, y1);
+					accumulateExtents(x2, y2);
 				}
 				else if (geometryType.equals("pline") && st.countTokens() >= 1)
 				{
@@ -706,19 +634,19 @@ public class MIFDataset implements GeographicDataset
 					{
 						token = st.nextToken();
 						int nSections = Integer.parseInt(token);
-						geometry = parseCoordinateList(nSections, Argument.GEOMETRY_LINESTRING);
+						geometry = parseCoordinateList(reader, nSections, Argument.GEOMETRY_LINESTRING);
 					}
 					else
 					{
 						int nPoints = Integer.parseInt(token);
-						geometry = parseCoordinates(nPoints, Argument.GEOMETRY_LINESTRING);
+						geometry = parseCoordinates(reader, nPoints, Argument.GEOMETRY_LINESTRING);
 					}
 				}
 				else if (geometryType.equals("region") && st.countTokens() == 1)
 				{
 					String token = st.nextToken();
 					int nRegions = Integer.parseInt(token);
-					geometry = parseCoordinateList(nRegions, Argument.GEOMETRY_POLYGON);
+					geometry = parseCoordinateList(reader, nRegions, Argument.GEOMETRY_POLYGON);
 				}
 				else if ((geometryType.equals("arc") || geometryType.equals("rect") ||
 					geometryType.equals("roundrect") || geometryType.equals("ellipse")) &&
@@ -731,7 +659,7 @@ public class MIFDataset implements GeographicDataset
 					
 					if (geometryType.equals("roundrect") || geometryType.equals("arc"))
 					{
-						String line = mMIFFile.readLine();
+						String line = reader.readLine();
 						if (line == null)
 						{
 							throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
@@ -757,6 +685,9 @@ public class MIFDataset implements GeographicDataset
 					geometry[14] = Argument.LINETO;
 					geometry[15] = x1;
 					geometry[16] = y1;
+
+					accumulateExtents(x1, y1);
+					accumulateExtents(x2, y2);
 				}
 				else if (geometryType.equals("multipoint") && st.countTokens() == 1)
 				{
@@ -768,7 +699,7 @@ public class MIFDataset implements GeographicDataset
 					int index = 2;
 					for (int i = 0; i < nPoints; i++)
 					{
-						String line = mMIFFile.readLine();
+						String line = reader.readLine();
 						if (line == null)
 						{
 							throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
@@ -777,7 +708,7 @@ public class MIFDataset implements GeographicDataset
 						geometry[index] = Argument.GEOMETRY_POINT;
 						geometry[index + 1] = 1;
 						geometry[index + 2] = Argument.MOVETO;
-						parseXYCoordinate(line, geometry, index + 3);
+						parseXYCoordinate(reader, line, geometry, index + 3);
 						index += 5;
 					}
 				}
@@ -795,7 +726,7 @@ public class MIFDataset implements GeographicDataset
 					 * the MIF file is screwed up.
 					 */
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES) +
-						": " + mFilename + ":" + mMIFFile.getLineNumber());
+						": " + mFilename + ":" + reader.getLineNumber());
 				}
 
 				/*
@@ -803,7 +734,7 @@ public class MIFDataset implements GeographicDataset
 				 * and skip 'SMOOTH', 'CENTER' and lines that we are not
 				 * interested in. 
 				 */
-				mMIFNextLine = mMIFFile.readLine();
+				mMIFNextLine = reader.readLine();
 				boolean finishedGeometry = false;
 				while (mMIFNextLine != null && (!finishedGeometry))
 				{
@@ -885,7 +816,7 @@ public class MIFDataset implements GeographicDataset
 						}
 
 						if (!finishedGeometry)
-							mMIFNextLine = mMIFFile.readLine();
+							mMIFNextLine = reader.readLine();
 					}
 				}
 			}
@@ -998,21 +929,34 @@ public class MIFDataset implements GeographicDataset
 	}
 
 	/**
-	 * Fetch next row from MIF file.
-	 * @return row, or null if reached end of file.
+	 * Fetch all rows from MIF file into memory.
+	 * This enables us to calculate extents of file.
 	 */
-	public Row fetch() throws MapyrusException
+	private void fetchAllRows(LineNumberReader mifFile, MIDReader midFile)
+		throws MapyrusException
 	{
-		Row row = new Row();
+		ArrayList allRows = new ArrayList();
 
 		try
 		{
-			row = parseGeometry(row);
-			if (row != null)
+			Row row = null;
+			do
 			{
-				if (mMIDFile != null)
-					mMIDFile.getRow(row);
+				row = new Row();
+				row = parseGeometry(mifFile, row);
+				if (row != null)
+				{
+					if (midFile != null)
+						midFile.getRow(row);
+					allRows.add(row);
+				}
 			}
+			while (row != null);
+
+			/*
+			 * Keep only iterator for walking through rows one at a time.
+			 */
+			mAllRowsIterator = allRows.iterator();
 		}
 		catch (IOException e)
 		{
@@ -1026,30 +970,33 @@ public class MIFDataset implements GeographicDataset
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
 				": " + mFilename + ": " + e.getMessage());
 		}
+	}
+
+	/**
+	 * Fetch next row from MIF file.
+	 * @return row, or null if reached end of file.
+	 */
+	public Row fetch() throws MapyrusException
+	{
+		Row row;
+
+		if (mAllRowsIterator.hasNext())
+		{
+			row = (Row)mAllRowsIterator.next();
+		}
+		else
+		{
+			row = null;
+			mAllRowsIterator = null;
+		}
 		return(row);
 	}
 
 	/**
-	 * Close MapInfo files.
+	 * Close MapInfo files.  Nothing to do.
 	 */
 	public void close() throws MapyrusException
 	{
-		if (mMIFFile != null)
-		{
-			try
-			{
-				mMIFFile.close();
-			}
-			catch (IOException e)
-			{
-			}
-		}
-		if (mMIDFile != null)
-		{
-				mMIDFile.close();
-		}
-
-		mMIFFile = null;
-		mMIDFile = null;
+		mAllRowsIterator = null;
 	}
 }
