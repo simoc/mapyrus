@@ -36,7 +36,7 @@ to be used in combination with Mapyrus are included in the
 \texttt{-classpath} option.
 
 \vspace{10pt}
-\texttt{java -D\textit{variable}=\textit{value} \dots -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} org.mapyrus.Mapyrus \textit{filename}}
+\texttt{java -D\textit{variable}=\textit{value} \dots\ -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} org.mapyrus.Mapyrus \textit{filename}}
 \vspace{10pt}
 
 Mapyrus runs as an HTTP Server when started with the
@@ -51,7 +51,7 @@ Mapyrus runs as an HTTP Server when started with the
 The variables available for configuring Mapyrus at startup are
 shown in Table \ref{startupvariables}.
 
-\begin{table}[h]
+\begin{table}[htb]
 \begin{tabular}{|l|p{7cm}|}
 \hline
 Variable & Description \\
@@ -119,7 +119,7 @@ Available operators are shown in Table \ref{operators}.
 Available functions are shown in Table \ref{functions}.
 
 
-\begin{table}[h]
+\begin{table}[htb]
 \begin{tabular}{|l|p{7cm}|}
 \hline
 Operator & Description \\
@@ -127,7 +127,7 @@ Operator & Description \\
 \hline
 
 \texttt{(}, \texttt{)} & parentheses \\
-\texttt{*}, \texttt{/}, \texttt{*}, \texttt{x}, &
+\texttt{*}, \texttt{/}, \texttt{*}, \texttt{x} &
 numeric multiplication, numeric division, modulo (works
 with non-integer values too), string repetition \\
 
@@ -159,7 +159,7 @@ Logical and, or, not \\
 \end{table}
 
 
-\begin{table}[h]
+\begin{table}[htb]
 \begin{tabular}{|l|p{7cm}|}
 \hline
 Function Name & Description \\
@@ -276,7 +276,7 @@ are automatically deleted after 5 minutes. \\
 \label{functions}
 \end{table}
 
-An argument or expression is assigned to a named variable using the the
+An argument or expression is assigned to a named variable using the
 \texttt{let} command and an equals sign (\texttt{=}).  A variable name begins
 with a letter or dollar sign (\texttt{\$}) and contains only letters, numbers,
 dots (\texttt{.}) and underbars (\texttt{\_}).  Variable names are
@@ -419,11 +419,13 @@ Mapyrus maintains the internal variables shown in Table \ref{internalvariables}.
 
 \begin{longtable}{|p{5cm}|p{7cm}|}
 \hline
+\label{internalvariables}
 Variable Name & Description \\
 \hline
 \hline
 \endfirsthead
 \hline
+\caption{Internal Variables} \\
 \endfoot
 
 \hline
@@ -461,7 +463,7 @@ The name of the file or URL being interpreted. \\
 \hline
 
 \texttt{Mapyrus.freeMemory} &
-The amount of free memory in the Java Virtual Machine, in bytes. \\
+The amount of free memory that Java has available, in bytes. \\
 
 \hline
 
@@ -545,7 +547,7 @@ A string representation of the current date and time. \\
 \hline
 
 \texttt{Mapyrus.totalMemory} &
-The total amount of memory in the Java Virtual Machine, in bytes. \\
+The total amount of memory available to Java, in bytes. \\
 
 \hline
 
@@ -570,17 +572,19 @@ The real-world scale factor, determined by
 dividing of the X axis world coordinate range
 by the page width. \\
 
-\label{internalvariables}
 \end{longtable}
-%\caption{Internal Variables}
 
 \subsection{Commands}
 
-Commands are listed alphabetically.  Some commands accept arguments in several
-ways.  For these commands, each combination of arguments is listed.
+Commands are listed alphabetically.  The arguments required for each command
+are given.  Some commands accept arguments in several ways.  For these
+commands, each combination of arguments is given.
 
 \subsubsection{addpath}
-\texttt{addpath} \textit{geometry-field} [, \textit{geometry-field} ...]
+
+\begin{alltt}
+addpath \textit{geometry-field} [, \textit{geometry-field} ...]
+\end{alltt}
 
 Adds geometry in each \textit{geometry-field} to current path.
 A \textit{geometry-field} is geometry fetched from a dataset
@@ -593,8 +597,9 @@ and \texttt{rotate} values.
 
 \subsubsection{arc}
 
-\texttt{arc} \textit{direction}, \textit{xCenter}, \textit{yCenter},
-\textit{xEnd}, \textit{yEnd}
+\begin{alltt}
+arc \textit{direction}, \textit{xCenter}, \textit{yCenter}, \textit{xEnd}, \textit{yEnd}
+\end{alltt}
 
 Adds a circular arc to the current path.  The arc begins at
 the last point added to the path and ends at (\textit{xEnd}, \textit{yEnd})
@@ -613,13 +618,17 @@ and \textit{rotate} values.
 
 \subsubsection{clearpath}
 
-\texttt{clearpath}
+\begin{alltt}
+clearpath
+\end{alltt}
 
 Removes all points from the current path.
 
 \subsubsection{clip}
 
-\texttt{clip}
+\begin{alltt}
+clip
+\end{alltt}
 
 Sets a clip path containing the area covered by the current path.
 Opposite of the \texttt{protect} command.
@@ -629,19 +638,16 @@ clipped until the procedure is complete.  Otherwise, the area
 remains permanently clipped for the page.
 When more than one path is clipped, drawing is limited to
 areas inside all clip paths.
-The current path is not modified by this command.
+The current path is not.
 
 \subsubsection{color}
 
-\texttt{color} \textit{name} [, \textit{alpha}]
-
-\texttt{color} \texttt{\"\#}\textit{hexdigits}\texttt{\"} [, \textit{alpha}]
-
-\texttt{color \"rgb\"}, \textit{red}, \textit{green},
-\textit{blue} [, \textit{alpha}]
-
-\texttt{color "hsb"}, \textit{hue}, \textit{saturation},
-\textit{brightness} [, \textit{alpha}]
+\begin{alltt}
+color \textit{name} [, \textit{alpha}]
+color "\#\textit{hexdigits}" [, \textit{alpha}]
+color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
+color "hsb", \textit{hue}, \textit{saturation}, \textit{brightness} [, \textit{alpha}]
+\end{alltt}
 
 Sets color for drawing.  Named colors refer to colors in the file
 \texttt{/usr/lib/X11/rgb.txt}, or the file given as a startup variable (see
@@ -663,7 +669,9 @@ The spelling \texttt{colour} is also accepted for this command.
 
 \subsubsection{dataset}
 
-\texttt{dataset} \textit{type}, \textit{name}, \textit{extras}
+\begin{alltt}
+dataset \textit{type}, \textit{name}, \textit{extras}
+\end{alltt}
 
 Defines a dataset to read from.  A dataset contains geographic data,
 geometry, attributes, a lookup table, data to write to standard
@@ -676,7 +684,7 @@ as \textit{variable=value} values, separated by whitespace.
 The following dataset types and options are available:
 
 
-\begin{table}[h]
+\begin{table}[htb]
 \begin{tabular}{|p{2cm}|p{10cm}|}
 \hline
 Dataset Type & Description and Extras \\
@@ -783,7 +791,9 @@ is all whitespace characters.
 
 \subsubsection{draw}
 
-\texttt{draw} \textit{x}, \textit{y}, ...
+\begin{alltt}
+draw \textit{x}, \textit{y}, ...
+\end{alltt}
 
 Adds one or more straight line segments to the current path.
 A straight line segment is added from the previously defined point
@@ -795,7 +805,9 @@ and \texttt{rotate} values.
 
 \subsubsection{fetch}
 
-\texttt{fetch}
+\begin{alltt}
+fetch
+\end{alltt}
 
 Fetches next record from current dataset.
 For each field in the record, a variable is defined with the name
@@ -806,16 +818,20 @@ to ensure that another record is available from the dataset.
 
 \subsubsection{fill}
 
-\texttt{fill}
+\begin{alltt}
+fill
+\end{alltt}
 
 Flood fills the current path with the current color.
 The winding rule is used for determining the inside and outside
 regions of polygons containing islands.
-The current path is not modified by this command.
+The current path is not modified.
 
 \subsubsection{font}
 
-\texttt{font} \textit{name}, \textit{size}
+\begin{alltt}
+font \textit{name}, \textit{size}
+\end{alltt}
 
 Sets font for labelling with the \texttt{label} command.
 Font \textit{name} and \textit{size} are the name and size in
@@ -841,12 +857,14 @@ font names (\texttt{Serif}, \texttt{SansSerif},
 \texttt{Monospaced}, \texttt{Dialog}, or \texttt{DialogInput}) or a TrueType
 font name.
 
-Tutorial sections \ref{psfonts} and \ref{ttffonts}
+Tutorial Sections \ref{psfonts} and \ref{ttffonts}
 describe different font formats.
 
 \subsubsection{import}
 
-\texttt{import} [\textit{xMin}, \textit{yMin}, \textit{xMax}, \textit{yMax}]
+\begin{alltt}
+import [\textit{xMin}, \textit{yMin}, \textit{xMax}, \textit{yMax}]
+\end{alltt}
 
 Begin importing records from the dataset set with the \texttt{dataset} command.
 After beginning an import, each record is fetched in turn with a \texttt{fetch}
@@ -857,7 +875,9 @@ given then all records in the dataset are imported.
 
 \subsubsection{justify}
 
+\begin{alltt}
 justify \textit{justification}
+\end{alltt}
 
 Sets justification for labelling with the \texttt{label} command.
 \textit{justification} is a string containing either
@@ -868,14 +888,13 @@ vertically.
 
 \subsubsection{key}
 
-\texttt{key} \textit{type}, \textit{description}, [\textit{arg1}, \textit{arg2} ...]
+\begin{alltt}
+key \textit{type}, \textit{description}, [\textit{arg1}, \textit{arg2} ...]
+\end{alltt}
 
-Defines an entry for a legend.
-The procedure containing this command will be called with arguments
-\textit{arg1}, \textit{arg2} ... to display a sample of the symbol
-when the legend is generated with a
-\texttt{legend} command.
-The \texttt{key}
+Defines an entry for a legend.  The procedure containing this command will be
+called with arguments \textit{arg1}, \textit{arg2} ... to display a sample of
+the symbol when a legend is generated with a \texttt{legend} command.  This
 command is ignored if used outside of a procedure.
 
 \textit{type} is either
@@ -893,18 +912,22 @@ and different arguments.
 
 \subsubsection{label}
 
-\texttt{label} \textit{string} [, \textit{string} ...]
+\begin{alltt}
+label \textit{string} [, \textit{string} ...]
+\end{alltt}
 
 Draws a label at each point in the path set with the \texttt{move} command,
 using the font, justification and rotation set with the \texttt{font},
 \texttt{justify} and \texttt{rotate} commands.  \textit{string} values are
 separated by spaces.  If \textit{string} contains newline characters
-(\texttt{\textbackslash}) then labels are displayed as multiple lines, one below the other,
-with each line justified independently.
+(\texttt{\textbackslash{}n}) then labels are displayed as multiple lines, one
+below the other, with each line justified independently.
 
 \subsubsection{legend}
 
-\texttt{legend} \textit{size}
+\begin{alltt}
+legend \textit{size}
+\end{alltt}
 
 Displays legend entries defined with
 \texttt{key} commands at points defined with
@@ -938,28 +961,27 @@ current \texttt{color}, \texttt{font} and \texttt{justify} settings.
 
 \subsubsection{let}
 
-\texttt{let} \textit{var} = \textit{expression}, \dots
+\begin{alltt}
+let \textit{var} = \textit{expression}, \dots
+\end{alltt}
 
-Assigns result of evaluating \textit{expression}
-to a variable with name \textit{var}.
-The variable is globally accessible, unless defined as local to the
-current procedure with a
-\texttt{local} command.
+Assigns result of evaluating \textit{expression} to a variable with name
+\textit{var}.  The variable is globally accessible unless defined as local to
+the current procedure with a \texttt{local} command.
 
-Variable \textit{var} is either a simple variable name, an
-array, or an array element of the form \textit{var}[\textit{index}].
+Variable \textit{var} is either a simple variable name, an array, or an array
+element of the form \textit{var}[\textit{index}].
 
 Several variables are assigned by separating each 
 \textit{var} and \textit{expression} pair by a comma.
 
 \subsubsection{linestyle}
 
-\texttt{linestyle} \textit{width}
-
-\texttt{linestyle} \textit{width}, \textit{cap}, \textit{join}
-
-\texttt{linestyle} \textit{width}, \textit{cap}, \textit{join},
-\textit{phase}, \textit{dash length}, ...
+\begin{alltt}
+linestyle \textit{width}
+linestyle \textit{width}, \textit{cap}, \textit{join}
+linestyle \textit{width}, \textit{cap}, \textit{join}, \textit{phase}, \textit{dash length}, ...
+\end{alltt}
 
 Sets style line drawing by the \texttt{stroke}
 command.
@@ -976,7 +998,9 @@ at which to begin.
 
 \subsubsection{local}
 
-\texttt{local} \textit{name}, [\textit{name} ...]
+\begin{alltt}
+local \textit{name}, [\textit{name} ...]
+\end{alltt}
 
 Declares the listed variable names as local to a procedure.
 The variables are not visible outside the enclosing procedure
@@ -984,7 +1008,9 @@ and their values are lost when the procedure ends.
 
 \subsubsection{move}
 
-\texttt{move} \textit{x}, \textit{y}
+\begin{alltt}
+move \textit{x}, \textit{y}
+\end{alltt}
 
 Adds the point (\textit{x}, \textit{y}) to the current path.  The
 point is first transformed through any world coordinate
@@ -994,8 +1020,9 @@ and \texttt{rotate} values.
 
 \subsubsection{newpage}
 
-\texttt{newpage} \textit{format}, \textit{filename}, \textit{width},
-\textit{height}, \textit{resolution}, \textit{extras}
+\begin{alltt}
+newpage \textit{format}, \textit{filename}, \textit{width}, \textit{height}, \textit{resolution}, \textit{extras}
+\end{alltt}
 
 Begins output of a new page to a file.  Any previous output is closed.  The
 path, clipping path and world coordinates are cleared.  The new page has a
@@ -1029,17 +1056,19 @@ command.  The operating system command is executed and Mapyrus
 writes the page to the standard input of the executing
 operating system command.
 Mapyrus executes the operating command directly.  Set \textit{filename} to
-\texttt{"| sh \textit{myscript.sh}"}
+\texttt{"| sh myscript.sh"}
 or
-\texttt{"| cmd \textit{myscript.bat}"}
+\texttt{"| cmd myscript.bat"}
 to execute the command in a sub-shell if 
 environment variables, file redirection or other shell features are
 required.
 
 \textit{extras} defines further options for the new page, given as
 \textit{variable=value} values, separated by whitespace.
+See Table \ref{outputformats} on page \pageref{outputformats}
+for options available for each type of output.
 
-\begin{table}[h]
+\begin{table}[htb]
 \begin{tabular}{|p{3cm}|p{9cm}|}
 \hline
 File Format & Extras \\
@@ -1087,7 +1116,9 @@ by Mapyrus. \\
 
 \subsubsection{print}
 
-\texttt{print} \textit{string} [, \textit{string} ...]
+\begin{alltt}
+print \textit{string} [, \textit{string} ...]
+\end{alltt}
 
 Prints each \textit{string} to standard output,
 separated by spaces.
@@ -1095,7 +1126,9 @@ A newline is added after the final \textit{string}.
 
 \subsubsection{protect}
 
-\texttt{protect}
+\begin{alltt}
+protect
+\end{alltt}
 
 Defines a clip path to protect the area of the page covered by the current path
 and prevent it from being overwritten by later drawing commands.  Opposite of
@@ -1107,7 +1140,9 @@ modified by this command.
 
 \subsubsection{rotate}
 
-\texttt{rotate} \textit{angle}
+\begin{alltt}
+rotate \textit{angle}
+\end{alltt}
 
 Rotates the coordinate system, adding to any existing rotation.  \textit{angle}
 is given in degrees, measured counter-clockwise.  All later coordinates given
@@ -1116,7 +1151,9 @@ rotated by this angle.
 
 \subsubsection{samplepath}
 
-\texttt{samplepath} \textit{spacing}, \textit{offset}
+\begin{alltt}
+samplepath \textit{spacing}, \textit{offset}
+\end{alltt}
 
 Replaces current path with equally spaced points along the path.
 \textit{offset} is the distance along the path at which to place first point,
@@ -1131,7 +1168,9 @@ replaced by a single point at the beginning or end of the path.
 
 \subsubsection{scale}
 
-\texttt{scale} \textit{factor}
+\begin{alltt}
+scale \textit{factor}
+\end{alltt}
 
 Scales the coordinate system, adding to any existing scaling.  \textit{factor}
 is scale factor for X and Y axes.  All later coordinates given in
@@ -1140,7 +1179,9 @@ scaled by this factor.
 
 \subsubsection{shiftpath}
 
-\texttt{shiftpath} \textit{x}, \textit{y}
+\begin{alltt}
+shiftpath \textit{x}, \textit{y}
+\end{alltt}
 
 Shifts all points in the current path \textit{x} millimetres along the X axis
 and \textit{y} millimetres along the Y axis.  Shift values are scaled and
@@ -1150,7 +1191,9 @@ polygons.
 
 \subsubsection{stripepath}
 
-\texttt{stripepath} \textit{spacing}, \textit{angle}
+\begin{alltt}
+stripepath \textit{spacing}, \textit{angle}
+\end{alltt}
 
 Replaces current path with equally spaced parallel lines that completely cover
 the path.  \textit{spacing} is the distance between lines, measured in
@@ -1160,14 +1203,18 @@ with a \texttt{clip} command to produce a hatched fill pattern.
 
 \subsubsection{stroke}
 
-\texttt{stroke}
+\begin{alltt}
+stroke
+\end{alltt}
 
 Draws the current path using the current color and linestyle.
-The current path is not modified by this command.
+The current path is not.
 
 \subsubsection{worlds}
 
-\texttt{worlds} \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2} [, \textit{units}]
+\begin{alltt}
+worlds \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2} [, \textit{units}]
+\end{alltt}
 
 Defines a world coordinate system for the page with
 (\textit{x1}, \textit{y1}) in the lower-left corner of the page and
@@ -1184,7 +1231,7 @@ If not given, units are assumed to be metres.
 
 If Mapyrus encounters an error when interpreting commands,
 an error message is printed including the filename and line number
-at which the error occurs and Mapyrus exits immediately.
+at which the error occurred and Mapyrus exits immediately.
 The Java interpreter exits with a non-zero status.
 If an error occurs when using the HTTP Server
 option, an HTTP failure status and the error message
@@ -1193,24 +1240,20 @@ handling the next request.
 
 \subsection{Mapyrus HTTP Server}
 
-Mapyrus runs as an HTTP server when started with the
-\texttt{-s}
-command line option.
+Mapyrus runs as an HTTP server when started with the \texttt{-s} command line
+option.
 
-The HTTP server accepts and replies to requests from HTTP clients
-on the given port number.
-If port number is 0 then any free port number is used.  The port
+The HTTP server accepts and replies to requests from HTTP clients on the given
+port number.  If port number is 0 then any free port number is used.  The port
 number used is written to the log file or to standard output.
 
-The HTTP server is multi-threaded to enable several requests to
-be handled simultaneously.  If the HTTP server
-receives an HTTP request for a file with a suffix
-matching a well-known MIME type (\texttt{html}, \texttt{txt}, \texttt{ps},
-\texttt{pdf}, \texttt{zip} or a web image format),
-then the contents of that file are returned by the HTTP server to the
-HTTP client.
-Requests for files with no suffix, or with unknown file suffix are
-interpreted by Mapyrus using the following steps.
+The HTTP server is multi-threaded to enable several requests to be handled
+simultaneously.  If the HTTP server receives an HTTP request for a file with a
+suffix matching a well-known MIME type (\texttt{html}, \texttt{txt},
+\texttt{ps}, \texttt{pdf}, \texttt{zip} or a web image format), then the
+contents of that file are returned by the HTTP server to the HTTP client.
+Requests for files with no suffix, or with unknown file suffix are interpreted
+by Mapyrus using the following steps.
 
 \begin{enumerate}
 \item
@@ -1251,7 +1294,7 @@ If communication between HTTP client and Mapyrus is blocked for longer than
 When all threads in the HTTP server are busy handling requests,
 further requests are queued.
 
-Logging of HTTP requests is controlled by setting a
-startup variable (see \ref{startupvariables} at startup defining
-a logging configuration file.
+Logging of HTTP requests is controlled by setting a startup variable (see Table
+\ref{startupvariables} on page \pageref{startupvariables}) defining a logging
+configuration file.
 
