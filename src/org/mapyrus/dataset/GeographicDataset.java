@@ -27,7 +27,7 @@ import java.util.Hashtable;
 import org.mapyrus.*;
 
 /**
- * Interface to a vector geographic format.  Provides methods to open and query
+ * Interface to a vector geographic format.  Provides methods to open and read
  * data from a vector geographic format.
  */
 public interface GeographicDataset
@@ -44,7 +44,7 @@ public interface GeographicDataset
 	 * @return metadata table.
 	 */
 	public Hashtable getMetadata();
-	
+
 	/**
 	 * Return list of names of fields in this dataset.
 	 * @return array of names.
@@ -56,24 +56,10 @@ public interface GeographicDataset
 	 * @return extents.
 	 */
 	public Rectangle2D.Double getWorlds();
-	
+
 	/**
-	 * Query the dataset.  Finds all data inside or crossing the area of interest
-	 * and matching the where clause.  Makes results available to be fetched.
-	 * Resolution value is a hint to allow an appropriate level of detail to be
-	 * returned in fetched geometry data.  
-	 * Only one query can be made on a dataset at one time, beginning a
-	 * new query closes the last one.
-	 * 
-	 * @param extents is area of interest for this query.
-	 * @param resolution is minimum distance between coordinate values.
-	 */
-	public void query(Rectangle2D.Double extents, double resolution)
-		throws MapyrusException;
-		
-	/**
-	 * Fetch next row that is a result of current query.
-	 * @return row returns next row result, or null if there is no row available.
+	 * Fetch next row of data from dataset.
+	 * @return row returns next row of data, or null if there is no row available.
 	 */
 	public Row fetch() throws MapyrusException;
 	
