@@ -449,6 +449,19 @@ public class ContextStack
 	}
 
 	/**
+	 * Replace path with path cut to rectangle defined by (x1, y1) and (x2, y2).
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 */
+	public void guillotine(double x1, double y1, double x2, double y2)
+		throws MapyrusException
+	{
+		getCurrentContext().guillotine(x1, y1, x2, y2);
+	}
+
+	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke() throws IOException, MapyrusException
