@@ -954,6 +954,14 @@ public class ContextStack
 			{
 				retval = new Argument(mLegendEntries.size());
 			}
+			else if (c == 'k' && varName.equals(INTERNAL_VARIABLE_PREFIX + "key.next"))
+			{
+				LegendEntry top = mLegendEntries.first();
+				if (top == null)
+					retval = Argument.emptyString;
+				else
+					retval = new Argument(Argument.STRING, top.getTypeString());
+			}
 			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + PAGE_VARIABLE + "."))
 			{
 				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + PAGE_VARIABLE.length() + 1);
