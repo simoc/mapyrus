@@ -1,0 +1,16 @@
+newpage "eps", "tutoriallines6.eps", 80, 40
+
+move 10, 10
+draw 17, 33, 27, 33, 27, 30, 24, 30, 25, 16, 36, 19, 40, 25
+arc 1, 41, 19, 37, 8
+hexagon 70, 20, 8
+color "blue"
+stroke
+
+# Show dashed lines to the left and right of original line.
+#
+parallelpath 1, -1
+color "indigo"
+linestyle 0.1, "round", "round", 0, 2, 1
+stroke
+
