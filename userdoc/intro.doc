@@ -6,7 +6,7 @@ Introduction
 </h2>
 
 Mapyrus is software for creating plots of points, lines, polygons and text
-to PostScript and web image output formats.
+to PostScript, Portable Document Format (PDF) and web image output formats.
 <p>
 
 The software combines the following three components.
@@ -21,11 +21,15 @@ to be be defined.  For example,
 <p>
 <img src="turtle1.png">
 &nbsp;
+&nbsp;
 <img src="turtle2.png">
+&nbsp;
 &nbsp;
 <img src="turtle3.png">
 &nbsp;
+&nbsp;
 <img src="turtle4.png">
+&nbsp;
 &nbsp;
 <img src="turtle5.png">
 <p>
@@ -49,7 +53,7 @@ symbolized maps and graphs.  For example,
 
 </li>
 <li>
-Mapyrus runs as a stand-alone program, or as a multi-threaded HTTP server.
+Mapyrus runs as a stand-alone program, or as a Java Servlet.
 This makes development of simple web applications easy, showing
 maps or graphs of datasets.
 
@@ -64,6 +68,12 @@ http://localhost:8071/mapyrusdemo?layer1=on&layer2=off&x1=11.03&x2=11.07&y1=52.4
 <p>
 Please note that:
 <ol>
+<li>
+Mapyrus is written in Java so as to be operating system independent
+and take advantage of Java security, multi-threading,
+Java2D and JDBC capabilities.
+</li>
+
 <li>
 Mapyrus has no graphical user interface.
 Commands are typed into the terminal window in which the software is running,
