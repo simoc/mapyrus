@@ -1,4 +1,4 @@
-newpage "png", "tutorial21.png", 70, 20, 96
+newpage "png", "tutorialvar1.png", 70, 20, 96
 
 x = 5
 counter = 1
