@@ -666,7 +666,7 @@ public class OutputFormat
 				String flag = token.substring(17);
 				lineAntiAliasing = flag.equalsIgnoreCase("true");
 			}
-			else if (token.startsWith("update="))
+			else if (token.startsWith("update=") && mOutputType != SVG)
 			{
 				String flag = token.substring(7);
 				mIsUpdatingFile = flag.equalsIgnoreCase("true");
