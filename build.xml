@@ -48,32 +48,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="doc" depends="jar" description="Build documentation and examples">
 <!-- Delete documentation generated previously -->
 <delete>
-<fileset dir="doc" includes="*.dvi,*.pdf,*.aux,*.log,*.eps"/>
+<fileset dir="doc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
 </delete>
 <replace file="doc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
+<replace file="doc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
 
 <!-- Generate all examples, doing tutorial examples separately so -->
 <!-- it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="contact.mpy turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy turtle6.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
+<arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutorialfirst1.mpy"/>
+<arg line="tutorialfirst1.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutorialfirst2.mpy"/>
+<arg line="tutorialfirst2.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutorialfirst3.mpy"/>
+<arg line="tutorialfirst3.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutorialvar1.mpy tutorialvar2.mpy"/>
+<arg line="tutorialvar1.mapyrus tutorialvar2.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutoriallines1.mpy tutoriallines2.mpy tutoriallines3.mpy tutoriallines4.mpy tutoriallines5.mpy tutorialpolygons1.mpy tutorialpolygons2.mpy tutorialpolygons3.mpy tutorialpolygons4.mpy tutorialprocedures1.mpy tutorialprocedures2.mpy tutoriallabels1.mpy tutoriallabels2.mpy tutorialdatasets1.mpy tutorialdatasets2.mpy tutorialdatasets3.mpy tutoriallegend1.mpy tutoriallegend2.mpy tutorialattribute1.mpy tutorialscalebar1.mpy tutorialshadow1.mpy"/>
+<arg line="tutoriallines1.mapyrus tutoriallines2.mapyrus tutoriallines3.mapyrus tutoriallines4.mapyrus tutoriallines5.mapyrus tutorialpolygons1.mapyrus tutorialpolygons2.mapyrus tutorialpolygons3.mapyrus tutorialpolygons4.mapyrus tutorialprocedures1.mapyrus tutorialprocedures2.mapyrus tutoriallabels1.mapyrus tutoriallabels2.mapyrus tutorialdatasets1.mapyrus tutorialdatasets2.mapyrus tutorialdatasets3.mapyrus tutoriallegend1.mapyrus tutoriallegend2.mapyrus tutorialattribute1.mapyrus tutorialscalebar1.mapyrus tutorialshadow1.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutorialrand1.mpy tutorialrand2.mpy tutorialrand3.mpy tutorialpiechart1.mpy"/>
+<arg line="tutorialrand1.mapyrus tutorialrand2.mapyrus tutorialrand3.mapyrus tutorialpiechart1.mapyrus"/>
 </java>
 
 <!-- Build LaTex documentation into PDF file -->
@@ -88,7 +89,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </exec>
 
 <exec dir="doc" executable="dvipdf" failonerror="true">
-<arg line="${ant.project.name}.dvi ../${ant.project.name}.pdf"/>
+<arg line="${ant.project.name}.dvi ${ant.project.name}.pdf"/>
 </exec>
 
 </target>
@@ -98,7 +99,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, ${ant.project.name}.pdf, doc/*.mpy, manifest, ${ant.project.name}.jar, src/**, COPYING, NEWS, VERSION" excludes="**/CVS, build/classes/**"/>
+<fileset dir="." includes="build/**, build.xml, doc/${ant.project.name}.pdf, doc/*.mapyrus, manifest, ${ant.project.name}.jar, src/**, COPYING, NEWS, VERSION" excludes="**/CVS, build/classes/**"/>
 </zip>
 </target>
 
@@ -109,9 +110,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </delete>
 <delete>
 <fileset dir="." includes="${ant.project.name}.jar"/>
-<fileset dir="." includes="${ant.project.name}.pdf"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
-<fileset dir="doc" includes="*.eps, *.aux, *.log"/>
+<fileset dir="doc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
 </delete>
 </target>
 
