@@ -1694,6 +1694,24 @@ stroke
 Draws the current path using the current color and linestyle.
 The current path is not.
 
+\subsubsection{triangle}
+
+\begin{alltt}
+triangle \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{rotation}
+\end{alltt}
+
+Adds an equilateral triangle to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and distance
+\textit{radius}
+from the center point to each vertex.
+
+The triangle is rotated clockwise \textit{rotation} degrees.
+
+The center point, radius and rotation are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
 \subsubsection{unprotect}
 
 \begin{alltt}
