@@ -1,6 +1,6 @@
 % @(#) $Id$
 
-\section{Tutorial}
+\section{Tutorial and Cookbook}
 
 The folllowing examples demonstrate how to use Mapyrus.  Each example is also
 included as a file in the \texttt{doc} subdirectory.  All example files
@@ -361,6 +361,20 @@ with output shown in Figure \ref{tutoriallabels3}.
 \includegraphics{tutoriallabels3.eps}
 \caption{Highlighted Labels}
 \label{tutoriallabels3}
+\end{figure}
+
+The \texttt{sinkhole} command is used determine a position
+for a label in a polygon.  This command
+replaces the current path defining a polygon with a single point in
+the middle of the polygon.  This is demonstrated in the following
+example, with output shown in Figure \ref{tutorialsinkhole}.
+
+\verbatiminput{tutorialsinkhole.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialsinkhole.eps}
+\caption{Labelling Polygons}
+\label{tutorialsinkhole}
 \end{figure}
 
 \subsection{Displaying Data Stored In Text Files}
