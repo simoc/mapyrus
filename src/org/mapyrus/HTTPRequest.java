@@ -375,7 +375,7 @@ public class HTTPRequest extends Thread
 	{
 		ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
 		BufferedOutputStream outStream = null;
-		BufferedReader inReader;
+		BufferedReader inReader = null;
 		BufferedInputStream inStream = null;
 		String reply;
 		String contentType;
@@ -387,6 +387,7 @@ public class HTTPRequest extends Thread
 		{
 			inReader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 			parseRequest(inReader);
+
 			if (mMimeType == null)
 			{
 				/*
@@ -399,8 +400,31 @@ public class HTTPRequest extends Thread
 					context.setImagemapPoint(mImagemapPoint);
 				}
 				PrintStream printStream = new PrintStream(byteArrayStream);
-				mInterpreter.interpret(context, f, printStream);
-				context.closeContextStack();
+
+				try
+				{
+					mInterpreter.interpret(context, f, printStream);
+					context.closeContextStack();
+					context = null;
+				}
+				finally
+				{
+					/*
+					 * Ensure that context is always closed.
+					 */
+					try
+					{
+						if (context != null)
+							context.closeContextStack();
+					}
+					catch (IOException e)
+					{
+					}
+					catch (MapyrusException e)
+					{
+					}
+				}
+
 				printStream.flush();
 			}
 			else
@@ -487,9 +511,6 @@ public class HTTPRequest extends Thread
 						mLogger.fine(getName() + ": " +
 							MapyrusMessages.get(MapyrusMessages.HTTP_RETURNED) + ": " + counter);
 					}
-
-					inStream.close();
-					inStream = null;
 				}
 			}
 			else
@@ -511,10 +532,7 @@ public class HTTPRequest extends Thread
 					mErrorMessage + Constants.LINE_SEPARATOR;
 				outStream.write(reply.getBytes());
 			}
-
 			outStream.flush();
-			mSocket.close();
-			mSocket = null;
 		}
 		catch (IOException e)
 		{
@@ -523,10 +541,30 @@ public class HTTPRequest extends Thread
 				mReturnStatus = false;
 				mErrorMessage = e.toString();
 			}
-
+		}
+		finally
+		{
 			/*
 			 * Make sure socket to HTTP client is closed in all circumstances.
-			 */			
+			 */
+			try
+			{
+				if (outStream != null)
+					outStream.close();
+			}
+			catch (IOException e2)
+			{
+			}
+
+			try
+			{
+				if (inReader != null)
+					inReader.close();
+			}
+			catch (IOException e2)
+			{
+			}
+
 			try
 			{
 				if (mSocket != null)
@@ -535,13 +573,13 @@ public class HTTPRequest extends Thread
 			catch (IOException e2)
 			{
 			}
-			
+
+			/*
+			 * Make sure any file being read by this request is closed
+			 * in all circumstances.
+			 */
 			try
 			{
-				/*
-				 * Make sure any file being read by this request is closed
-				 * in all circumstances.
-				 */
 				if (inStream != null)
 					inStream.close();
 			}
