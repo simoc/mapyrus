@@ -432,7 +432,8 @@ class Preprocessor
 		return(getCurrentFilename() + " line " + getCurrentLineNumber());
 	}
 
-	private static void processLine(String s) throws IOException, InterruptedException
+	private static void processLine(PrintWriter writer, String s)
+		throws IOException, InterruptedException
 	{
 		/*
 		 * Execute lines with commands, echo all other lines.
@@ -445,7 +446,7 @@ class Preprocessor
 		}
 		else
 		{
-			System.out.println(s);
+			writer.println(s);
 		}
 	}
 
@@ -457,31 +458,32 @@ class Preprocessor
 	{
 		BufferedReader in;
 		int c;
-		int i = 0;
 		String s;
 		Preprocessor p;
+		PrintWriter writer;
 
 		/*
-		 * Read from first file given on command line, or standard input
-		 * if no files are given.
+		 * Read from first file, write to second file.
 		 */
-		if (args.length == 0 || (args.length == 1 && args[0].equals("-")))
-			p = new Preprocessor(new InputStreamReader(System.in), "stdin");
-		else
-			p = new Preprocessor(args[0]);
-
-		do
+		if (args.length != 2)
 		{
-			/*
-			 * Read each line from each file given on command line.
-			 */
-			while ((s = p.readLine()) != null)
-				processLine(s);
-			i++;
-			if (i < args.length)
-				p = new Preprocessor(args[i]);
+			System.err.println("Usage: [infile] [outfile]");
+			System.err.println("Read from one file, expand include and exec lines,");
+			System.err.println("write output to other file.");
+			System.exit(1);
 		}
-		while (i < args.length);
+		
+		p = new Preprocessor(args[0]);
+		writer = new PrintWriter(new FileWriter(args[1]));
+
+		/*
+		 * Read each line from first file, writing to second file.
+		 */
+		while ((s = p.readLine()) != null)
+			processLine(writer, s);
+		writer.close();
+
+		System.exit(0);
 	}
 }
 
