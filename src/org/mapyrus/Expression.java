@@ -33,6 +33,14 @@ import java.io.*;
  * a binary tree holding the expression.  The expression can be later 
  * be evaluated and the tree is evaluated to a single value.
  *
+ * For example, the expression '(a * 2) + 7' is represented by the tree:
+ * <pre>
+ *       +
+ *      / \
+ *     *   7
+ *    / \
+ *   a   2
+ * </pre>
  */
 public class Expression
 {
@@ -64,10 +72,12 @@ public class Expression
 	private static final int NUMERIC_LESS_EQUAL_OPERATION = 205;	/* 7 <= 77 */
 
 	private static final int ASSIGN_OPERATION = 300;	/* a = 77 */
-	
+
 	private static final int AND_OPERATION = 400;
 	private static final int OR_OPERATION = 401;
 	private static final int NOT_OPERATION = 402;
+	
+	private static final int HASHMAP_REFERENCE = 500;		/* a[77] */
 
 	/*
 	 * Names and types of functions we allow on numbers and strings.
@@ -428,14 +438,63 @@ public class Expression
 			}
 			else if (t.mOperation == ASSIGN_OPERATION)
 			{
-				String varName = t.mLeftBranch.mLeafArg.getVariableName();
 				rightValue = traverse(t.mRightBranch, context, interpreterFilename);
-				context.defineVariable(varName, rightValue);
+				if (t.mLeftBranch.mIsLeaf)
+				{
+					/*
+					 * Simple assignment: a = b.
+					 */
+					String varName = t.mLeftBranch.mLeafArg.getVariableName();
+					context.defineVariable(varName, rightValue);
+				}
+				else
+				{
+					/*
+					 * Assign value as entry in a hashmap: a[55] = "foo".
+					 */
+					String hashMapName = t.mLeftBranch.mLeftBranch.mLeafArg.getVariableName();
+					Argument key = traverse(t.mLeftBranch.mRightBranch, context,
+						interpreterFilename);
+					if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HASHMAP_KEY));
+					}
+					context.defineHashMapEntry(hashMapName, key.getStringValue(),
+						rightValue);
+				}
 
 				/*
-				 * Return value of assignment is the assigned value.
+				 * Return value assigned.
 				 */
 				retval = rightValue;
+			}
+			else if (t.mOperation == HASHMAP_REFERENCE)
+			{
+				/*
+				 * Lookup an individual entry in a hash map from a hash map
+				 * variable name and key.
+				 */
+				String varName = t.mLeftBranch.mLeafArg.getStringValue();
+				Argument key = traverse(t.mRightBranch, context, interpreterFilename);
+				if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HASHMAP_KEY));
+				}
+				Argument hashMapVar = context.getVariableValue(varName, interpreterFilename);
+				if (hashMapVar == null || hashMapVar.getType() != Argument.HASHMAP)
+				{
+					/*
+					 * No hash map exists with this name so return empty string.
+					 */
+					retval = Argument.emptyString;
+				}
+				else
+				{
+					/*
+					 * Return value assigned to this key value in hash map.
+					 */
+					retval = hashMapVar.getHashMapEntry(key.getStringValue());
+				}
 			}
 			else
 			{
@@ -579,6 +638,113 @@ public class Expression
 					else
 						retval = new Argument(Argument.STRING, s);
 				}
+			}
+			return(retval);
+		}
+		
+		/**
+		 * String representation of an expression tree.
+		 * @return expression as a string.
+		 */
+		public String toString()
+		{
+			String retval;
+			StringBuffer sb;
+			
+			if (mIsLeaf)
+			{
+				retval = mLeafArg.toString();
+			}
+			else
+			{
+				String operation = "";
+				switch (mOperation)
+				{
+					case PLUS_OPERATION:
+						operation = "+";
+						break;
+					case CONCAT_OPERATION:
+						operation = ".";
+						break;
+					case MINUS_OPERATION:
+						operation = "-";
+						break;
+					case MULTIPLY_OPERATION:
+						operation = "*";
+						break;
+					case REPEAT_OPERATION:
+						operation = "x";
+						break;
+					case DIVIDE_OPERATION:
+						operation = "/";
+						break;
+					case MODULO_OPERATION:
+						operation = "%";
+						break;
+					case LEXICAL_EQUALS_OPERATION:
+						operation = "eq";
+						break;
+					case LEXICAL_NOT_EQUALS_OPERATION:
+						operation = "ne";
+						break;
+					case LEXICAL_GREATER_THAN_OPERATION:
+						operation = "gt";
+						break;
+					case LEXICAL_LESS_THAN_OPERATION:
+						operation = "lt";
+						break;
+					case LEXICAL_GREATER_EQUAL_OPERATION:
+						operation = "ge";
+						break;
+					case LEXICAL_LESS_EQUAL_OPERATION:
+						operation = "le";
+						break;
+					case NUMERIC_EQUALS_OPERATION:
+						operation = "==";
+						break;
+					case NUMERIC_NOT_EQUALS_OPERATION:
+						operation = "!=";
+						break;
+					case NUMERIC_GREATER_THAN_OPERATION:
+						operation = ">";
+						break;
+					case NUMERIC_LESS_THAN_OPERATION:
+						operation  = "<";
+						break;
+					case NUMERIC_GREATER_EQUAL_OPERATION:
+						operation = ">=";
+						break;
+					case NUMERIC_LESS_EQUAL_OPERATION:
+						operation = "<=";
+						break;
+					case ASSIGN_OPERATION:
+						operation = "=";
+						break;
+					case AND_OPERATION:
+						operation = "and";
+						break;
+				 	case OR_OPERATION:
+				 		operation  = "or";
+				 		break;
+				 	case NOT_OPERATION:
+				 		operation = "not";
+				 		break;
+					case HASHMAP_REFERENCE:
+						operation = "[";
+						break;
+				}
+				
+				sb = new StringBuffer();
+				sb.append(mLeftBranch.toString());
+				sb.append(' ');
+				sb.append(operation);
+				sb.append(' ');
+
+				if (mOperation != NOT_OPERATION)
+					sb.append(mRightBranch.toString());
+				if (mOperation == HASHMAP_REFERENCE)
+					sb.append(']');
+				retval = sb.toString();
 			}
 			return(retval);
 		}
@@ -761,11 +927,25 @@ public class Expression
 				if (op2 != '=')
 				{
 					/*
-					 * Check that lefthandside of an assignment is a variable name.
+					 * Check that lefthandside of an assignment is a variable name,
+					 * or an element in a hashmap.
 					 */
-					if (!(expr.mIsLeaf && expr.mLeafArg.getType() == Argument.VARIABLE))
-						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
-							MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+					if (expr.mIsLeaf)
+					{
+						if (expr.mLeafArg.getType() != Argument.VARIABLE)
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+						}
+					}
+					else
+					{
+						if (expr.mOperation != HASHMAP_REFERENCE)
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+						}
+					}
 					value = parseAssignment(p);
 					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
 				}
@@ -1175,8 +1355,39 @@ public class Expression
 			}
 			else
 			{
-				p.unread(c);
-				expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));
+				/*
+				 * Is this a reference to a value in an hashmap?
+				 */
+				if (Character.isWhitespace((char)c) && c != '\n')
+					c = p.readNonSpace();
+				if (c == '[')
+				{
+					/*
+					 * Parse opening '[', hashmap key, then closing ']'.
+					 */
+					expr = parseOrBoolean(p);
+					c = p.readNonSpace();
+					if (c != ']')
+					{
+						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+							": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": ']'");
+					}
+					Argument key = new Argument(Argument.VARIABLE, buf.toString());
+					
+					/*
+					 * Expression tree for the hashmap reference a["foo"] is:
+					 *      []
+					 *     /  \
+					 *    b   "foo"
+					 */
+					expr = new ExpressionTreeNode(new ExpressionTreeNode(key),
+						HASHMAP_REFERENCE, expr);
+				}
+				else
+				{
+					p.unread(c);
+					expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));
+				}
 			}	
 		}
 		else
