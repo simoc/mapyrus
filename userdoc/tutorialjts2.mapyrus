@@ -3,6 +3,7 @@ begin locpt name
   fill
   clearpath
   move 2, 0
+  font "Helvetica", 3.5
   label name
 end
 
