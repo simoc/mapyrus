@@ -36,10 +36,9 @@ public class Expression
 	private static final int OR_OPERATION = 14;
 
 	/*
-	 * Line separator replaces '\n', '\r', or '\r\n' sequences in expressions.
+	 * Line separator replaces '\n' sequences in expressions.
 	 */
-// XXX expand these sequences when parsing expressions.
-//	private static final String mLineSeparator = System.getProperty("line.separator");
+	private static final String mLineSeparator = System.getProperty("line.separator");
 
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
@@ -553,18 +552,20 @@ public class Expression
 						": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 				}
 
-				if (c == '\\' && lastC != '\\')
+				if (lastC == '\\')
 				{
 					/*
-					 * Ignore all escaped characters except '\\'.
+					 * '\\' compressed to single backslash,
+					 * '\n' converted to a newline.  Escaping
+					 * of other characters is ignored.
 					 */
+					if (c == 'n')
+						buf.append(mLineSeparator);
+					else
+						buf.append((char)c);
 				}
-				else
+				else if (c != '\\')
 				{
-					/*
-					 * Compress '\\' in string into
-					 * a single backslash.
-					 */
 					buf.append((char)c);
 				}
 				lastC = c;
