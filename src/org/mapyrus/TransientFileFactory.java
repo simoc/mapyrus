@@ -47,11 +47,12 @@ public class TransientFileFactory
 	/**
 	 * Generate unique filename for use as temporary filename
 	 * and schedule it to be automatically deleted.
+	 * @param suffix is suffix for temporary filename.
 	 * @param lifespan number of milliseconds after which the file
 	 * is to be automatically deleted.
 	 * @return unique filename.
 	 */
-	public static synchronized String generate(int lifespan)
+	public static synchronized String generate(String suffix, int lifespan)
 	{
 		String retval;
 		int random = (int)(Math.random() * 100000);
@@ -82,7 +83,7 @@ public class TransientFileFactory
 		 * Include random number in filename to
 		 * make it unpredictable.
 		 */
-		retval = "tmp" + mCounter + "a" + random;
+		retval = "tmp" + mCounter + "a" + random + "." + suffix;
 		mCounter++;
 
 		/*
@@ -130,7 +131,7 @@ public class TransientFileFactory
 	{
 		for (int i = 0; i < 100; i++)
 		{
-			String s = generate(30000);
+			String s = generate("png", 30000);
 			System.out.println(s);
 		}
 	}
