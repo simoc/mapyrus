@@ -150,10 +150,11 @@ public class Context
 	private OutputFormat mOutputFormat;
 	
 	/*
-	 * Flag true if output defined in this context.  In this case
-	 * we must close the output file when this context is finished.
+	 * Flag true if output and dataset defined in this context.  In this case
+	 * we must close the output file and dataset when this context is finished.
 	 */
 	private boolean mOutputDefined;
+	private boolean mDatasetDefined;
 
 	/*
 	 * Dataset currently being read from, the next row to provide to caller
@@ -185,6 +186,7 @@ public class Context
 
 		mOutputFormat = null;
 		mOutputDefined = false;
+		mDatasetDefined = false;
 		mAttributesPending = mAttributesChanged = 0;
 		mDataset = null;
 	}
@@ -250,6 +252,7 @@ public class Context
 		{
 			mOutputFormat.saveState();
 		}
+		mDatasetDefined = false;
 
 		mAttributesPending = existing.mAttributesPending;
 		mAttributesChanged = 0;
@@ -439,11 +442,20 @@ public class Context
 			mOutputFormat = null;
 			mOutputDefined = false;
 		}
+
+		/*
+		 * Close any dataset we opened in this context.
+		 */
+		if (mDatasetDefined)
+		{
+			mDataset.close();
+		}
+
+		mDataset = null;
 		mPath = mExistingPath = null;
 		mClippingPaths = null;
 		mVars = null;
 		mLocalVars = null;
-		mDataset = null;
 		return(mAttributesChanged);
 	}
 
@@ -629,8 +641,13 @@ public class Context
 	 */
 	public void setDataset(GeographicDataset dataset) throws MapyrusException
 	{
-// TODO close any previous dataset first.
+		/*
+		 * Clear any previous dataset defined in this context.
+		 */
+		if (mDataset != null && mDatasetDefined)
+			mDataset.close();
 		mDataset = new Dataset(dataset);
+		mDatasetDefined = true;
 	}
 
 	/**
