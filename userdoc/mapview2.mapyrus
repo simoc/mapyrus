@@ -15,7 +15,7 @@ end
 # Fill polygon with 'v' symbols.
 #
 begin savannah
-	key "Grassland", "box"
+	key "box", "Grassland"
 	clip
 	stripepath 5, 0
 	samplepath 5, 0
@@ -44,7 +44,7 @@ end
 # Fill polygon with wheat symbols.
 #
 begin wheatfield
-	key "Wheat Field", "box"
+	key "box", "Wheat Field"
 	clip
 	stripepath 6, 10
 	samplepath 6, 0
@@ -68,7 +68,7 @@ end
 # Fill polygon with rock symbols.
 #
 begin barerock
-	key "Bare Rock", "box"
+	key "box", "Bare Rock",
 	clip
 	stripepath 6, 45
 	samplepath 6, 0
@@ -97,7 +97,7 @@ end
 # Fill polygon with marsh symbols.
 #
 begin marsh
-	key "Marsh", "box"
+	key "box", "Marsh"
 	clip
 	stripepath 6, 45
 	samplepath 6, 0
@@ -107,7 +107,7 @@ begin marsh
 end
 
 begin water
-	key "Water", "box"
+	key "box", "Water"
 	color "#80b2ff"
 	fill
 end
