@@ -53,10 +53,10 @@ Reference
 <a href="#justify">justify</a>,
 <a href="#label">label</a>,
 <a href="#let">let</a>,
+<a href="#linestyle">linestyle</a>,
 <br>
 &nbsp;
 &nbsp;
-<a href="#linestyle">linestyle</a>,
 <a href="#local">local</a>,
 <a href="#move">move</a>,
 <a href="#newpage">newpage</a>,
@@ -65,6 +65,7 @@ Reference
 <a href="#rotate">rotate</a>,
 <a href="#samplepath">samplepath</a>,
 <a href="#scale">scale</a>,
+<a href="#shiftpath">shiftpath</a>,
 <a href="#stripepath">stripepath</a>,
 <a href="#stroke">stroke</a>,
 <a href="#worlds">worlds</a>
@@ -668,6 +669,13 @@ The name of the file or URL being interpreted.
 
 <tr>
 <td>
+<tt>Mapyrus.freeMemory</tt>
+<td>
+The amount of free memory in the Java Virtual Machine, in bytes.
+
+
+<tr>
+<td>
 <tt>Mapyrus.path.length</tt>
 <br>
 <tt>Mapyrus.path.area</tt>
@@ -771,6 +779,12 @@ The elapsed processing time, measured in seconds.
 <tt>Mapyrus.timestamp</tt>
 <td>
 A string representation of the current date and time.
+
+<tr>
+<td>
+<tt>Mapyrus.totalMemory</tt>
+<td>
+The total amount of memory in the Java Virtual Machine, in bytes.
 
 <tr>
 <td>
@@ -1241,7 +1255,7 @@ information on converting TrueType fonts to PostScript Type 1 format.
 </tr>
 <tr>
 <td>
-<tt>png</tt>, <tt>jepg</tt>
+<tt>png</tt>, <tt>jpeg</tt>
 <td>
 <tt>ttffiles=<i>filename</i>,<i>filename2</i>,...</tt>
 <br>
@@ -1347,6 +1361,22 @@ All later coordinates given in
 <a href="#arc">arc</a> and
 <a href="#arc">addpath</a>
 commands are scaled by this factor.
+
+include hr.doc
+
+<p>
+<a name="shiftpath"></a>
+<tt>shiftpath</tt> <i>x</i>, <i>y</i>
+<p>
+Shifts all points in the current path <i>x</i> millimetres along the X axis
+and <i>y</i> millimetres along the Y axis.
+Shift values are scaled and rotated by <a href="#scale">scale</a>
+and
+<a href="#rotate">rotate</a>
+values.
+Use this command repeatedly following a 
+<a href="#protect">protect</a> command to
+produce a shadow effect for polygons.
 
 include hr.doc
 
