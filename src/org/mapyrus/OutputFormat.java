@@ -1281,15 +1281,13 @@ public class OutputFormat
 			writeLine("gr");
 			retval = true;
 		}
-		else if (mOutputType == SVG)
+		else 
 		{
-			writeLine("</g>");
-			retval = true;
-		}
-		else
-		{
+			if (mOutputType == SVG)
+				writeLine("</g>");
+
 			/*
-			 * Can't restore state when drawing to an image.  Caller
+			 * Can't restore state when drawing to an image or SVG file.  Caller
 			 * must set everything to correct values again.
 			 */
 			retval = false;
