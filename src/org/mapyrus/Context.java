@@ -28,7 +28,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import au.id.chenery.mapyrus.dataset.GeographicDataset;
@@ -127,9 +128,11 @@ public class Context
 	private ArrayList mClippingPaths;
 	
 	/*
-	 * Currently defined variables.
+	 * Currently defined variables and variables that are local
+	 * to this context.
 	 */
-	private Hashtable mVars;
+	private HashMap mVars;
+	private HashSet mLocalVars;
 
 	/*
 	 * Output device we are drawing to.
@@ -169,6 +172,7 @@ public class Context
 		mXScaling = mYScaling = mScalingMagnitude = 1.0;
 		mRotation = 0.0;
 		mVars = null;
+		mLocalVars = null;
 		mPath = null;
 		mClippingPaths = null;
 
@@ -207,10 +211,11 @@ public class Context
 		mDatasetRowCount = 0;
 
 		/*
-		 * Only create variable lookup table when some values are
+		 * Only create variable lookup tables when some values are
 		 * defined locally.
 		 */
 		mVars = null;
+		mLocalVars = null;
 
 		/*
 		 * Don't copy path -- it can be large.
@@ -404,6 +409,7 @@ public class Context
 		mPath = mExistingPath = null;
 		mClippingPaths = null;
 		mVars = null;
+		mLocalVars = null;
 		return(mAttributesSet);
 	}
 					
@@ -1294,7 +1300,33 @@ public class Context
 			
 		return(retval);
 	}
-	
+
+	/**
+	 * Indicates that a variable is to be stored locally in this context
+	 * and not be made available to other contexts.
+	 * @param varName name of variable to be treated as local.
+	 */
+	public void setLocalScope(String varName)
+	{
+		/*
+		 * Record that variable is local.
+		 */
+		if (mLocalVars == null)
+			mLocalVars = new HashSet();
+		mLocalVars.add(varName);
+	}
+
+	/**
+	 * Returns true if variable has been defined local in this context
+	 * with @see setLocalScope().
+	 * @param varName is name of variable to check.
+	 * @return true if variable defined local.
+	 */
+	public boolean hasLocalScope(String varName)
+	{
+		return(mLocalVars != null && mLocalVars.contains(varName));
+	}
+
 	/**
 	 * Define variable in current context, replacing any existing
 	 * variable with the same name.
@@ -1307,7 +1339,7 @@ public class Context
 		 * Create new variable.
 		 */
 		if (mVars == null)
-			mVars = new Hashtable();
+			mVars = new HashMap();
 		mVars.put(varName, value);
 	}
 }
