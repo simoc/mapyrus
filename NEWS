@@ -1,6 +1,12 @@
 Mapyrus Major Change History
 Copyright (C) 2003 Simon Chenery.
 
+0.44, June 2004
+
+* Add wordwrap, stringheight functions for labelling sentences.
+* Add Mapyrus.screen.* variables to query screen resolution and size.
+* Add plus command to draw commonly used '+' symbol.
+
 0.43, May 2004
 
 * Add rdraw, circle, hexagon commands.
