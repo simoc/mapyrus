@@ -97,32 +97,25 @@ public class Mapyrus
 	}
 
 	/**
-	 * Read, parse and execute commands.
-	 * Can be called repeatedly to interpret many files.
-	 * Graphics state and variables are retained between calls.
-	 * An interpreter cannot be used again if it throws an exception.
-	 * The BufferedImage passed is set as the initial output page.
-	 * This enables Mapyrus to draw into a buffer that the application
+	 * Set output page for Mapyrus interpreter.
+	 * This enables Mapyrus to draw into a buffer that an application
 	 * later displays in a window.
-	 * @param commands lines of commands to interpret.
-	 * @param stdout stream to write stdout of interpreter into.
 	 * @param image buffered image to use as initial output page.
 	 * @param extras extras settings for output page.
-	 * @throws IOException if reading or writing files fails.
-	 * @throws MapyrusException if there is an error interpreting commands.
+	 * @throws IOException
+	 * @throws MapyrusException if there is an error accessing image.
 	 */
-	public void interpret(String []commands, PrintStream stdout,
-		BufferedImage image, String extras)
+	public void setPage(BufferedImage image, String extras)
 		throws IOException, MapyrusException
 	{
 		if (extras == null)
 			extras = "";
 		mContext.setOutputFormat(image, extras);
-		interpret(commands, stdout);
 	}
 
 	/**
-	 * Flush pending output from interpreter and close it. 
+	 * Flush any pending output to an output file and close output file.
+	 * Close any dataset being accessed.
 	 * @throws IOException
 	 * @throws MapyrusException
 	 */
