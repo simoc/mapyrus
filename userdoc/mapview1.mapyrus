@@ -1,5 +1,5 @@
 # @(#) $Id$
-newpage "eps", "mapview1.eps", 80, 80
+newpage "eps", "mapview1.eps", 80, 80, "isolatinfonts=Helvetica-Bold"
 clearpath
 
 # Import coastline of Australia.
@@ -71,7 +71,7 @@ begin temperatureHistogram name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a
 	label "20"
 	clearpath
 	move 6, 5
-	label "300\260C"
+	label "30\260C"
 
 	# Label city below the place where the graph goes.
 	#
