@@ -102,6 +102,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <arg line="tutorialjts1.mapyrus tutorialjts2.mapyrus"/>
 </java>
 
+<!-- Create PostScript file showing legend for all sample symbols -->
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
+<sysproperty key="show_symbols_legend" value="1"/>
+<arg line="symbols.mapyrus"/>
+</java>
+
 <!-- Build LaTex documentation into PDF file -->
 <!-- Run LaTeX three times so that all cross references are resolved. -->
 
