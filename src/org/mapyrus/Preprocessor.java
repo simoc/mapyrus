@@ -82,6 +82,22 @@ class Preprocessor
 	}
 
 	/**
+	 * Reads next character that is not a space.
+	 * @return next non-space character.
+	 */
+	public int readNonSpace() throws IOException, GfException
+	{
+		int c;
+
+		do
+		{
+			c = read();
+		}
+		while (Character.isWhitespace((char)c) && c != '\n');
+		return(c);
+	}
+
+	/**
 	 * Reads next character.
 	 * Blocks if another character is not available.
 	 * @return next character from wherever user input is coming from, or -1
@@ -170,6 +186,12 @@ class Preprocessor
 		/*
 		 * Push character back into line we are reading from.
 		 */
+		if (c == -1)
+		{
+			/*
+			 * Don't allow EOF sentinel to be pushed back.
+			 */
+		}
 		if (mCurrentLine == null)
 		{
 			mCurrentLine = new StringBuffer(cs.toString());
@@ -209,7 +231,7 @@ class Preprocessor
 			try
 			{
 				in = (LineNumberReader)mFileStack.getLast();
-				s.concat(":" + in.getLineNumber());
+				s = s.concat(":" + in.getLineNumber());
 			}
 			catch(NoSuchElementException e)
 			{
