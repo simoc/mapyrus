@@ -2,24 +2,12 @@ begin capitalCity name
   # Draw a labelled dot marking a capital city.
   #
   color "red"
-  font "Helvetica", 2.5
   box -1, -1, 1, 1
   fill
 
-  # If point is close to the right side of the
-  # page then draw name to the left of the dot.
-  #
-  let margin = Mapyrus.page.width * 0.8
-  if Mapyrus.path.min.x > margin
-  then
-    justify "right"
-    clearpath
-    move -2, 0
-  else
-    justify "left"
-    clearpath
-    move 2, 0
-  endif
+  clearpath
+  move 2, 0
+  font "Helvetica", 2.5
   color "black"
   label name
 end
@@ -29,22 +17,16 @@ end
 #
 newpage "eps", "tutorialdatasets1.eps", 85, 85
 
-# Draw black outline around edge of image.
-#
-color "black"
-box 0.1, 0.1, Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1
-stroke
-
-# Draw label at each position read from text file.
-#
 dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiters=,"
-worlds 150, -45, 170, -5
+worlds 150, -45, 180, -5
 while Mapyrus.fetch.more
 do
+  # Draw label at each position read from text file.
+  #
   fetch
   print "DEBUG:", $0
   clearpath
   move $1, $2
-  let cityAndCountry = $3 . '\n(' . $4 . ')'
-  capitalCity cityAndCountry
+  let cityAndCountryName = $3 . '\n(' . $4 . ')'
+  capitalCity cityAndCountryName
 done
