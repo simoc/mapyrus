@@ -55,7 +55,7 @@ done
 
 # Read positions and names of towns and cities from file.
 #
-dataset "textfile", "locations.txt", "delimiters=,"
+dataset "textfile", "locations.txt", "delimiter=,"
 while Mapyrus.fetch.more
 do
   fetch

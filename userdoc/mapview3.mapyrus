@@ -107,7 +107,7 @@ move 2, Mapyrus.page.height / 2
 
 # Read names of railway stations and branch lines for display.
 #
-dataset "textfile", "stations.dat", "delimiters=, comment=#"
+dataset "textfile", "stations.dat", "delimiter=, comment=#"
 
 branchline 'STRAIGHT'
 

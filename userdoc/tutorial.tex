@@ -603,7 +603,7 @@ commands,
 \begin{verbatim}
 newpage "png", "simplistic.png", 100, 100, "background=white"
 worlds 1000, 1000, 2000, 2000
-dataset "textfile", "-", "delimiters=|"
+dataset "textfile", "-", "delimiter=|"
 while Mapyrus.fetch.more
 do
   fetch
@@ -631,7 +631,7 @@ psql -A -t -c 'select AsText(Geom) from ROADS' pogo | \
   java -classpath mapyrus.jar org.mapyrus.Mapyrus -e '
 newpage "png", "simplistic.png", 100, 100, "background=white"
 worlds 170000, 470000, 220000, 540000
-dataset "textfile", "-", "delimiters=|"
+dataset "textfile", "-", "delimiter=|"
 while Mapyrus.fetch.more
 do
   fetch
