@@ -1,0 +1,66 @@
+# Setup for generating a temporary 300x300 pixel image
+#
+t = tempname("png")
+imageSizeInPixels = 300
+resolutionDPI = 96
+newpage "png", t, 25.4 / resolutionDPI * imageSizeInPixels, 25.4 / resolutionDPI * imageSizeInPixels, resolutionDPI
+
+# The first time this URL is accessed the area to view is not given.
+# So set it to cover the whole dataset.
+#
+dataset "shapefile", "/tmp/roads.shp", "dbffields="
+if x1 eq ""
+then
+	x1 = Mapyrus.dataset.min.x
+	y1 = Mapyrus.dataset.min.y
+	x2 = Mapyrus.dataset.max.x
+	y2 = Mapyrus.dataset.max.y
+else
+	xDiff = x2 - x1
+	yDiff = y2 - y1
+
+	# Location clicked in imagemap is new centre point of map.
+	# Calculate this location in world coordinates.
+	#
+	xCentre = x1 + (Mapyrus.imagemap.x / imageSizeInPixels) * xDiff
+	yCentre = y2 - (Mapyrus.imagemap.y / imageSizeInPixels) * yDiff
+
+	# Set new coordinates zoomed 2X to new centre point.
+	#
+	x1 = xCentre - xDiff / 4
+	y1 = yCentre - yDiff / 4
+	x2 = xCentre + xDiff / 4
+	y2 = yCentre + yDiff / 4
+endif
+
+worlds x1, y1, x2, y2
+
+# Find the world coordinates again, as they have been expanded
+# to fill the square image we are drawing to.
+#
+x1 = Mapyrus.worlds.min.x
+y1 = Mapyrus.worlds.min.y
+x2 = Mapyrus.worlds.max.x
+y2 = Mapyrus.worlds.max.y
+
+import
+while Mapyrus.import.moreRecords
+do
+	clearpath
+	fetch
+	addpath GEOMETRY
+	stroke
+done
+
+# Send HTML page back to client containing to image we've created
+# with URL giving current world coordinates so further zooming can
+# be calculated.
+#
+url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . '&x2=' . x2 . '&y2=' . y2
+print '<html>'
+print '<h1>Header</h1>
+<p>
+<a href="' . url . '">'
+print '<img src="' . t . '" ismap>'
+print '</a>'
+
