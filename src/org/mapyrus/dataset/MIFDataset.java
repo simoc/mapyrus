@@ -251,6 +251,7 @@ public class MIFDataset implements GeographicDataset
 
 		mFieldNames = GEOMETRY_FIELDS;
 		mNMIDFieldsToFetch = 0;
+		mDelimiter = '\t';
 
 		/*
 		 * First line of MIF must contain keyword 'version'. 
