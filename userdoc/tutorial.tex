@@ -562,13 +562,23 @@ Data is read from a relational database using
 the Java JDBC interface and a JDBC driver provided
 as part of the database.  The JAR file containing the
 JDBC driver must be included in the \texttt{-classpath} option.
+
 For example, when accessing a PostgreSQL database from a Linux
-machine, use a command like:
+machine, ensure that the \texttt{postgresql-jdbc} package is
+installed and use a command like:
 
 \begin{alltt}
 java -classpath mapyrus.jar:/usr/share/pgsql/pg73b1jdbc1.jar \textbackslash
   org.mapyrus.Mapyrus tutorialdataset5.mapyrus
 \end{alltt}
+
+The JDBC driver for PostgreSQL is available for other platforms from
+\newline
+\texttt{http://jdbc.postgresql.org}.
+
+A JDBC driver for MySQL is available from
+\newline
+\texttt{http://www.mysql.com/products/connector/j}.
 
 Each field in a database table has a name.
 Fields fetched with the
