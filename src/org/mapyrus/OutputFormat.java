@@ -167,10 +167,11 @@ public class OutputFormat
 	 * @param width width of page in mm.
 	 * @param height height of page in mm.
 	 * @param resolution resolution of page in DPI.
+	 * @param turnPage flag true when page is to be rotated 90 degrees.
 	 * @param fontList list of PostScript fonts to include in header.
 	 */
 	private void writePostScriptHeader(double width, double height,
-		int resolution, ArrayList fontList)
+		int resolution, boolean turnPage, ArrayList fontList)
 		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
@@ -183,7 +184,11 @@ public class OutputFormat
 			mWriter.print(" EPSF-3.0");
 		mWriter.println("");
 
-		mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
+		if (turnPage)
+			mWriter.println("%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
+		else
+			mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
+
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
@@ -239,7 +244,17 @@ public class OutputFormat
 		mWriter.println("1 setlinewidth 0 setlinecap 0 setlinejoin");
 		mWriter.println("[] 0 setdash 0 setgray 10 setmiterlimit");
 
-		/*
+		if (turnPage)
+		{
+			/*
+			 * Turn page 90 degrees so that a landscape orientation page appears
+			 * on a portrait page.
+			 */
+			mWriter.println("% Turn page 90 degrees.");
+			mWriter.println("90 rotate 0 " + heightInPoints + " neg translate");
+		}
+
+		/* 
 		 * Prevent anything being displayed outside bounding box we've just defined.
 		 */
 		mWriter.println("0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
@@ -361,6 +376,7 @@ public class OutputFormat
 		mTTFFonts = new HashMap();
 		mAfmFiles = new ArrayList();
 		int resolution;
+		boolean turnPage = false;
 
 		if (mOutputType == POSTSCRIPT)
 			resolution = 300;
@@ -478,6 +494,15 @@ public class OutputFormat
 					}
 				}
 			}
+			else if (token.startsWith("turnpage="))
+			{
+				String flag = token.substring(9);
+				if (flag.equalsIgnoreCase("true") || flag.equalsIgnoreCase("yes") ||
+					flag.equalsIgnoreCase("1"))
+				{
+					turnPage = true;
+				}
+			}
 		}
 	
 		/*
@@ -489,7 +514,7 @@ public class OutputFormat
 				
 			mSuppliedFontResources = new HashSet();
 	
-			writePostScriptHeader(width, height, resolution, fontList);
+			writePostScriptHeader(width, height, resolution, turnPage, fontList);
 	
 			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
