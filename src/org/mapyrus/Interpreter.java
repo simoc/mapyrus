@@ -768,6 +768,10 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.SINKHOLE:
+				context.createSinkhole();
+				break;
+
 			case Statement.STROKE:
 				if (nExpressions > 0)
 				{
