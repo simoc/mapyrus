@@ -266,7 +266,7 @@ public class ShapefileDataset implements GeographicDataset
 			i--;
 
 		if (i == offset)
-			retval = new String();
+			retval = "";
 		else
 			retval = new String(buf, offset, i - offset + 1);
 		return(retval);
@@ -284,11 +284,11 @@ public class ShapefileDataset implements GeographicDataset
 		Vector dbfFields = new Vector();
 		int nBytesRead;
 
-		mDBFStream.skip(4);
+		mDBFStream.skipBytes(4);
 		nDBFRecords = readLittleEndianInt(mDBFStream);
 		headerLength = readLittleEndianShort(mDBFStream);
 		mDBFRecordLength = readLittleEndianShort(mDBFStream);
-		mDBFStream.skip(20);
+		mDBFStream.skipBytes(20);
 		nBytesRead = 32;
 
 		/*
@@ -338,7 +338,14 @@ public class ShapefileDataset implements GeographicDataset
 			 */			
 			mFieldNames[i] = unpackString(dbfField, 0, 11);
 			mShapeFieldTypes[i] = dbfField[11];
-			mShapeFieldLengths[i] = dbfField[16];
+			
+			/*
+			 * Length is unsigned byte value.
+			 */
+			if (dbfField[16] > 0)
+				mShapeFieldLengths[i] = dbfField[16];
+			else
+				mShapeFieldLengths[i] = 256 + dbfField[16];
 
 			/*
 			 * Convert shape field type to our representation of field types.
@@ -362,7 +369,7 @@ public class ShapefileDataset implements GeographicDataset
 		 */
 		int skipBytes = headerLength - nBytesRead;
 		if (skipBytes > 0)
-			mDBFStream.skip(skipBytes);
+			mDBFStream.skipBytes(skipBytes);
 	}
 
 	/**
@@ -464,6 +471,7 @@ public class ShapefileDataset implements GeographicDataset
 				recordNumber = mShapeStream.readInt();
 				recordLength = mShapeStream.readInt() * 2;
 				shapeType = readLittleEndianInt(mShapeStream);
+				nBytes = 4;
 
 				if (mShapeFileType == POINT)
 				{
@@ -477,8 +485,8 @@ public class ShapefileDataset implements GeographicDataset
 					
 					path[2] = readLittleEndianDouble(mShapeStream);
 					path[3] = readLittleEndianDouble(mShapeStream);
-					if (recordLength > 20)
-						mShapeStream.skip(recordLength - 20);
+					nBytes += 16;
+					
 					shapeInExtents = mQueryExtents.contains(path[2], path[3]);
 				}
 				else if (mShapeFileType == POLYLINE)
@@ -491,6 +499,7 @@ public class ShapefileDataset implements GeographicDataset
 					yMin = readLittleEndianDouble(mShapeStream);
 					xMax = readLittleEndianDouble(mShapeStream);
 					yMax = readLittleEndianDouble(mShapeStream);
+					nBytes += 4 * 8;
 					shapeInExtents = mQueryExtents.intersects(xMin, yMin, xMax - xMin, yMax - yMin);
 					if (shapeInExtents)
 					{
@@ -499,10 +508,12 @@ public class ShapefileDataset implements GeographicDataset
 						 */
 						nParts = readLittleEndianInt(mShapeStream);
 						nPoints = readLittleEndianInt(mShapeStream);
+						nBytes += 2 * 4;
 
 						int []parts = new int[nParts];
 						for (i = 0; i < nParts; i++)
 							parts[i] = readLittleEndianInt(mShapeStream);
+						nBytes += nParts * 4;
 
 						path = new double[nPoints * 3 + 1];
 
@@ -516,6 +527,7 @@ public class ShapefileDataset implements GeographicDataset
 							 */
 							x = readLittleEndianDouble(mShapeStream);
 							y = readLittleEndianDouble(mShapeStream);
+							nBytes += 2 * 8;
 							if (partIndex < nParts && parts[partIndex] == i)
 							{
 								path[pathIndex] = PathIterator.SEG_MOVETO;
@@ -538,22 +550,21 @@ public class ShapefileDataset implements GeographicDataset
 							pathIndex += 3;
 						}
 						path[0] = pathIndex;
-						
-						/*
-						 * Skip any remaining bytes at end of record.
-						 */
-						nBytes = nPoints * 16 + nParts * 4 + 4 * 8 + 2 * 4 + 4;
-						if (nBytes < recordLength)
-							mShapeStream.skip(recordLength - nBytes);
 					}
 					else
 					{
 						/*
 						 * Line is outside query extents, skip it.
 						 */
-						mShapeStream.skip(recordLength - 4 * 8 - 4);
 					}
 				}
+
+				/*
+				 * Skip until end of this record in shape file.
+				 */		
+				if (nBytes < recordLength)
+					mShapeStream.skipBytes(recordLength - nBytes);
+
 				mBytesRead += recordLength + 8;
 
 				/*
