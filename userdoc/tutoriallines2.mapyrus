@@ -8,9 +8,9 @@ draw 45, 5
 arc 0, 45, 15, 45, 25
 draw 35, 25, 35, 10, 5, 10
 
-linestyle 1, 'butt', 'round'
+linestyle 2.5, 'butt', 'round'
 color 'black'
 stroke
-linestyle 1, 'butt', 'round', 1, 2, 2
-color 'grey'
+linestyle 1.8, 'butt', 'round', 1, 2, 2
+color 'yellow'
 stroke
