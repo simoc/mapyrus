@@ -3,8 +3,7 @@ begin capitalCity name
   #
   color "red"
   font "Helvetica", 2.5
-  move -1, -1
-  draw -1, 1, 1, 1, 1, -1
+  box -1, -1, 1, 1
   fill
 
   # If point is close to the right side of the
@@ -34,8 +33,7 @@ newpage "eps", "tutorialdatasets1.eps", 85, 85, 96
 #
 color "black"
 move 0.1, 0.1
-draw 0.1, Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1, \
-  Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1, 0.1, 0.1, 0.1
+box 0.1, 0.1, Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1
 stroke
 
 # Draw label at each position read from text file.
