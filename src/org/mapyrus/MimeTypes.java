@@ -41,7 +41,7 @@ public class MimeTypes
 		 */
 		mMimeTypes.put("gif", "image/gif");
 		mMimeTypes.put("jpeg", "image/jpeg");
-		mMimeTypes.put("jpeg", "image/jpeg");
+		mMimeTypes.put("jpg", "image/jpeg");
 		mMimeTypes.put("png", "image/png");
 		mMimeTypes.put("htm", "text/html");
 		mMimeTypes.put("html", "text/html");
