@@ -23,6 +23,7 @@
 package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
@@ -93,18 +94,23 @@ public class TextfileDataset implements GeographicDataset
 	 * Open text file, possibly containing geographic data for querying.
 	 * @param filename name of text file to open.
 	 * @param extras options specific to text file datasets, given as var=value pairs.
+	 * @param stdin standard input stream of interpreter.
 	 */	
-	public TextfileDataset(String filename, String extras)
+	public TextfileDataset(String filename, String extras, InputStream stdin)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
 		StringTokenizer st;
 		String token;
 
 		/*
-		 * Check if we should start a program and read its output instead
-		 * of just reading from a file.
+		 * Check if we should read standard input, start a program and
+		 * read its output, or just read a plain file.
 		 */
-		if (filename.endsWith("|"))
+		if (filename.equals("-"))
+		{
+			mReader = new LineNumberReader(new InputStreamReader(stdin));
+		}
+		else if (filename.endsWith("|"))
 		{
 			String command = filename.substring(0, filename.length() - 1).trim();
 			mProcess = Runtime.getRuntime().exec(command);

@@ -23,6 +23,7 @@
 package org.mapyrus.dataset;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.mapyrus.Constants;
 import org.mapyrus.MapyrusException;
@@ -38,11 +39,12 @@ public class DatasetFactory
 	 * Opens a dataset to read geometry from.
 	 * @param type is format of dataset, for example, "text".
 	 * @param name is name of dataset to open.
-	 * @param extras are special options for this dataset type such as database connection
-	 * information, or instructions for interpreting data.
+	 * @param extras are special options for this dataset type such as
+	 * database connection information, or instructions for interpreting data.
+	 * @param stdin standard input stream of interpreter.
 	 */
 	public static GeographicDataset open(String type, String name,
-		String extras) throws MapyrusException
+		String extras, InputStream stdin) throws MapyrusException
 	{
 		GeographicDataset retval = null;
 		String errorMessage = null;
@@ -56,7 +58,7 @@ public class DatasetFactory
 		try
 		{
 			if (type.equalsIgnoreCase("textfile"))
-				retval = new TextfileDataset(name, extras);
+				retval = new TextfileDataset(name, extras, stdin);
 			else if (type.equalsIgnoreCase("shapefile"))
 				retval = new ShapefileDataset(name, extras);
 			else if (type.equalsIgnoreCase("jdbc"))
