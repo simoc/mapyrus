@@ -50,6 +50,7 @@ public class MapyrusMessages
 	public static final String HTTP_NOT_FOUND = "httpnotfound";
 	public static final String HTTP_RETURNED = "httpreturned";
 	public static final String HTTP_RETURN = "httpreturn";
+	public static final String HTTP_THREADED_SERVER = "httpthreadedserver";
 	public static final String HTTP_TIMEOUT = "httptimeout";
 	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INVALID_ARC = "invalidarc";
