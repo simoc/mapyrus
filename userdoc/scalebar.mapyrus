@@ -50,7 +50,7 @@ begin scalebar scale, units
 	# Blank out background behind scale bar.
 	#
 	clearpath
-	color "#eeee99"
+	color "white"
 	box 0, 0, mmScaleSize, 10
 	fill
 	clearpath
