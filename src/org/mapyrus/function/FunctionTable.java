@@ -88,31 +88,34 @@ public class FunctionTable
 
 		f = new Round();
 		mFunctions.put(f.getName(), f);
-		
+
+		f = new Rpad();
+		mFunctions.put(f.getName(), f);
+
 		f = new Sin();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Split();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Spool();
 		mFunctions.put(f.getName(), f);
 
 		f = new Sqrt();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Stringheight();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Stringwidth();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Substr();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Tan();
 		mFunctions.put(f.getName(), f);
-		
+
 		f = new Tempname();
 		mFunctions.put(f.getName(), f);
 
