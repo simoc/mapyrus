@@ -1,0 +1,84 @@
+# @(#) $Id$
+
+# Draw a piechart given sizes, labels and colors of slices.
+#
+begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
+
+	local radius
+	local counter, total
+	local angle, just
+
+	let radius = 8
+	linestyle 0.01
+	font "Helvetica", 3
+	rotate 90
+
+	# Sum up values of all slices.
+	#
+	let counter = 1, total = 0
+	while counter <= nSlices
+	do
+		let total = total + sliceSizes[counter]
+		let counter = counter + 1
+	done
+
+	# Draw each pie slice.
+	#
+	let counter = 1
+	while counter <= nSlices
+	do
+		# Skip empty slices
+		#
+		if sliceSizes[counter] > 0
+		then
+			let angle = -sliceSizes[counter] / total * 360
+			clearpath
+			move 0, 0
+			draw radius, 0
+			arc 1, 0, 0, radius * cos(angle), radius * sin(angle)
+			draw 0, 0
+			color sliceColors[counter]
+			fill
+			color "black"
+			stroke
+
+			# Draw label adjacent to pie slice with
+			# a line back into pie.
+			#
+			rotate angle / 2
+			if sliceLabels[counter] ne ""
+			then
+				# Calculate alignment for label, based on its
+				# position in pie.
+				#
+				if Mapyrus.rotation > -90 and Mapyrus.rotation < 90
+				then
+					let just = "left"
+				else
+					let just = "right"
+				endif
+				if Mapyrus.rotation > 45 and Mapyrus.rotation < 135
+				then
+					let just = just . ",bottom"
+				elif Mapyrus.rotation > -135 and Mapyrus.rotation < -45
+				then
+					let just = just . ",top"
+				else
+					let just = just . ",middle"
+				endif
+				justify just
+
+				clearpath
+				move radius + 2, 0
+				label sliceLabels[counter]
+				draw radius - 3, 0
+				stroke
+			endif
+
+			# Rotate axes ready to draw next slice.
+			#
+			rotate angle / 2
+		endif
+		let counter = counter + 1
+	done
+end

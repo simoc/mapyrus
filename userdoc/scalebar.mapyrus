@@ -1,0 +1,130 @@
+# @(#) $Id$
+begin scalebar scale, units
+
+	local worldBarLength
+	local power10, lastPower10
+	local digit
+	local mmBarLength, mmScaleSize
+	local unitDivider, unitLabel
+	local toggle, counter, x
+
+	# 10mm long bars in a scale look good.  What distance does this
+	# represent in world coordinates?
+	#
+	let worldBarLength = (10 / 1000) * scale
+
+	# Find the largest power of ten that is smaller than this distance.
+	#
+	let power10=1
+	let lastPower10=1
+	while power10 < worldBarLength
+	do
+		let lastPower10 = power10
+		let power10 = power10 * 10
+	done
+
+	# Adjust this world coordinate bar length so it is a nice round
+	# multiple of some number.  For example, bars of length 233142 
+	# are changed to 200000, 81123 is changed to 100000.
+	#
+	let digit=substr(worldBarLength, 1, 1)
+	if digit eq '1'
+	then
+		let worldBarLength = lastPower10
+	elif digit eq '2'
+	then
+		let worldBarLength = lastPower10 * 2
+	elif digit lt '8'
+	then
+		let worldBarLength = lastPower10 * 5
+	else
+		let worldBarLength = lastPower10 * 10
+	endif
+
+	let mmBarLength = (worldBarLength * 1000) / scale
+
+	# Overall length of scale bar on page in mm.
+	#
+	let mmScaleSize = 45
+
+	# Blank out background behind scale bar.
+	#
+	color "#eeee99"
+	box 0, 0, mmScaleSize, 10
+	fill
+	clearpath
+
+	color "black"
+	linestyle 0.1
+	font 'Helvetica', 2.5
+	justify 'centre'
+
+	# If measurements are in thousands, or larger units then we can
+	# label bars with values divided by 1000 and show units as
+	# 'thousands of ...'.  Less zeros in labels makes scale easier to read.
+	#
+	if worldBarLength >= 1000
+	then
+		if worldBarLength >= 1000000
+		then
+			let unitDivider = 1000000
+			if units eq 'meters' or units eq 'metres' or units eq 'm'
+			then
+				let unitLabel = "thousands of kilometers"
+			else
+				let unitLabel = "millions of " . units
+			endif
+		else
+			let unitDivider = 1000
+			if units eq 'meters' or units eq 'metres' or units eq 'm'
+			then
+				let unitLabel = "kilometers"
+			else
+				let unitLabel = "thousands of " . units
+			endif
+		endif
+	else
+		let unitDivider = 1
+		let unitLabel = units
+	endif
+
+	let toggle = "off"
+	let counter = 0
+	let x = 2
+	while x + mmBarLength < mmScaleSize - 5
+	do
+		clearpath
+		move x, 4
+
+		label (worldBarLength / unitDivider) * counter
+		let counter = counter + 1
+
+		# Display bars alternately as black and empty rectangles.
+		#
+		clearpath
+		box x, 7, x + mmBarLength, 9
+		if toggle eq "off"
+		then
+			stroke
+			let toggle = "on"
+		else
+			fill
+			stroke
+			let toggle = "off"
+		endif
+		let x = x + mmBarLength
+
+		if x + mmBarLength >= mmScaleSize - 5
+		then
+			clearpath
+			move x, 4
+			label (worldBarLength / unitDivider) * counter
+		endif
+	done
+
+	# Show units under scalebar.
+	#
+	clearpath
+	move mmScaleSize / 2, 1
+	label unitLabel
+end
