@@ -322,11 +322,11 @@ public class TextfileDataset implements GeographicDataset
 	/**
 	 * Return extents in text file.  These are not known until the whole
 	 * file is scanned.
-	 * @return null, extents of text file not known.
+	 * @return degree values covering the whole world
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
-		return null;
+		return new Rectangle2D.Double(-180.0, -90.0, 180.0, 90.0);
 	}
 
 	/**
