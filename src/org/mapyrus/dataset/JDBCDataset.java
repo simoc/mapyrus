@@ -186,13 +186,13 @@ public class JDBCDataset implements GeographicDataset
 			for (int i = 0; i < columnCount; i++)
 			{
 				mFieldNames[i] = resultSetMetadata.getColumnName(i + 1);
-				
+
 				/*
 				 * Check that field name is acceptable for defining as variable name.
 				 */
 				char c = mFieldNames[i].charAt(0);
 				boolean isValidName = (Character.isLetter((char)c) || c == '$');
-				
+
 				if (isValidName)
 				{
 					int j = 1;
@@ -213,10 +213,36 @@ public class JDBCDataset implements GeographicDataset
 				mFieldTypes[i] = resultSetMetadata.getColumnType(i + 1);
 			}
 		}
-		catch (SQLException e)
+		catch (SQLException e1)
 		{
-			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
-				e.getSQLState() + ": " + mSql);
+			/*
+			 * Free any database statement created for this statement.
+			 */
+			try
+			{
+				close();
+			}
+			catch (MapyrusException e)
+			{
+			}
+
+			throw new MapyrusException(e1.getErrorCode() + ": " + e1.getMessage() + ": " +
+				e1.getSQLState() + ": " + mSql);
+		}
+		catch (MapyrusException e2)
+		{
+			/*
+			 * Free any database statement created for this statement.
+			 */
+			try
+			{
+				close();
+			}
+			catch (MapyrusException e)
+			{
+			}
+
+			throw e2;
 		}
 	}
 
@@ -358,8 +384,6 @@ public class JDBCDataset implements GeographicDataset
 	{
 		try
 		{
-			if (mResultSet != null)
-				mResultSet.close();
 			if (mStatement != null)
 				mStatement.close();
 		}
