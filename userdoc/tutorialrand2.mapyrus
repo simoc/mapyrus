@@ -1,21 +1,21 @@
 begin cobblestone
-	# Draw a square area of cobblestones, rotated
-	# a random multiple of 90 degrees
-	#
-	let r = round(random(4))
-	rotate r * 90
-	color "black"
-	linestyle 0.2
-	move -1.8, -1.8
-	draw -1.6, -0.2, -0.3, -0.3, -0.4, -1.5, -1.8, -1.8
-	move 0.3, -1.7
-	draw 0.2, 1.8, 1.8, 1.7, 1.6, -1.8, 0.3, -1.7
-	move -1.7, -0.3
-	draw -1.8, 1.8, -0.2, 1.6, -0.3, 0.2, -1.7, -0.3
-	stroke
+  # Draw a square area of cobblestones, rotated
+  # a random multiple of 90 degrees
+  #
+  let r = round(random(4))
+  rotate r * 90
+  color "black"
+  linestyle 0.2
+  move -1.8, -1.8
+  draw -1.6, -0.2, -0.3, -0.3, -0.4, -1.5, -1.8, -1.8
+  move 0.3, -1.7
+  draw 0.2, 1.8, 1.8, 1.7, 1.6, -1.8, 0.3, -1.7
+  move -1.7, -0.3
+  draw -1.8, 1.8, -0.2, 1.6, -0.3, 0.2, -1.7, -0.3
+  stroke
 end
 
-newpage "png", "tutorialrand2.png", 40, 40, 96
+newpage "eps", "tutorialrand2.eps", 40, 40, 300
 clearpath
 move 4, 8
 draw 36, 8, 36, 32, 12, 32, 12, 24, 4, 24

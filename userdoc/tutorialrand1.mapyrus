@@ -1,26 +1,26 @@
 begin tree
-	# Draw a clump of 15 randomly sized and randomly colored
-	# circles representing a tree viewed from above.
-	#
-	let i = 0
-	while i < 15
-	do
-		clearpath
-		color "hsb", 0.3, 1.0, 0.3 + random(0.4)
-		let radius = random(1) + 2
-		let x = 0
-		move x, 0
-		arc 1, x + radius, 0, x, 0
-		fill
-		color "black"
-		linestyle 0.1
-		stroke
-		rotate 360 / 5
-		let i = i + 1
-	done
+  # Draw a clump of 15 randomly sized and randomly colored
+  # circles representing a tree viewed from above.
+  #
+  let i = 0
+  while i < 15
+  do
+    clearpath
+    color "hsb", 0.3, 1.0, 0.3 + random(0.4)
+    let radius = random(1) + 2
+    let x = 0
+    move x, 0
+    arc 1, x + radius, 0, x, 0
+    fill
+    color "black"
+    linestyle 0.1
+    stroke
+    rotate 360 / 5
+    let i = i + 1
+  done
 end
 
-newpage "png", "tutorialrand1.png", 40, 40, 96
+newpage "eps", "tutorialrand1.eps", 40, 40, 300
 move 8, 8
 move 24, 10
 move 7, 31
