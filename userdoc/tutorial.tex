@@ -1370,6 +1370,7 @@ web browser.  Mapyrus receives the request, executes the commands in the file
 standard output to the web browser.
 
 \subsection{Passing Variables To Mapyrus HTTP Server Through URLs}
+\label{urlvariables}
 
 To vary the display that is created by the Mapyrus HTTP Server, include
 variables in the URL.  For example,
@@ -1386,7 +1387,7 @@ Note that variable names are always uppercase.
 
 For applications that manage state
 and provide a graphical user interface (such as clients written in
-Java or Visual Basic), use this method for returning data to the
+Java or PHP), use this method for returning data to the
 application.
 
 \subsection{Returning HTML Pages From Mapyrus HTTP Server}
@@ -1448,24 +1449,42 @@ on page \pageref{tutorialscalebar}.
 Restrict datasets to a limited scale range by checking the
 internal variable
 \texttt{Mapyrus.worlds.scale} before displaying a dataset.
-\end{itemize}
 
-\subsection{Using Imagemaps With Mapyrus HTTP Server}
-
-When Mapyrus receives a URL requested by the user
-clicking on an HTML imagemap, the
-internal variables
+\item
+Return a map image as an HTML imagemap.  This enables the user to click
+in the map to re-center or zoom the display.  When the user clicks
+in the map another HTTP request is generated.  When Mapyrus receives
+an HTTP request from a mouse click in an image map the internal variables
 \texttt{Mapyrus.imagemap.x} and
 \texttt{Mapyrus.imagemap.y} are automatically set with the pixel position
 clicked in the image (with origin in top-left corner of the image).
-Use these variables to re-center, or zoom the display to the
-point clicked in the imagemap.
+Use these variables to calculate the new area to display.
+\end{itemize}
 
-The following example demonstrates
-using these variables to generate a new image, based on the
-position clicked in the imagemap.
+\subsection{Using Mapyrus In A PHP Application}
 
-\verbatiminput{tutorialimagemap1.mapyrus}
+Make the output of Mapyrus available to a PHP application by running as an
+HTTP server, as described in section \ref{tutorialhttpserver}
+on page \pageref{tutorialhttpserver}.
+
+This avoids restarting Java each time a map is to be displayed.
+
+Web format images are requested and fetched by the PHP
+application and returned to the web browser using a
+web page containing the following PHP functions.
+
+\begin{verbatim}
+<?php
+header("Content-type: image/png");
+$im = imagecreatefrompng("http://localhost:8410/tutorialhttpserver1.mapyrus");
+imagepng($im);
+imagedestroy($im);
+?>
+\end{verbatim}
+
+Pass variables to Mapyrus in the URL to vary the map display,
+as described in section \ref{urlvariables}
+on page \pageref{urlvariables}.
 
 \subsection{Combining Mapyrus With Other Software}
 
@@ -1530,23 +1549,6 @@ do
   label $0
   let y = y - 4
 done' > ls.png
-\end{verbatim}
-
-A Java Virtual Machine takes more than one second to start on many computers.
-For applications that must start Mapyrus many times to perform short tasks,
-start Mapyrus as an HTTP server and make HTTP requests instead so that
-startup time is eliminated.
-Most programming languages include a method of making HTTP requests.
-From Perl use the libwww-perl modules.
-
-Use lynx\footnote{Available from http://www.lynx.browser.org} or
-w3m\footnote{Available from http://w3m.sourceforge.net}
-from languages without the ability to make
-HTTP requests.  For example,
-
-\begin{verbatim}
-w3m -dump_source \
-  http://localhost:8410/wsrv.mapyrus?plz=81673&zoomlevel=3 > m.png
 \end{verbatim}
 
 \subsection{Building Mapyrus From Source}
