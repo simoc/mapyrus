@@ -7,6 +7,7 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
  
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -183,7 +184,7 @@ public class GeometricPath
 
 		for (int i = 0; i < areas.length; i++)
 			totalArea += areas[i];
-		return(totalArea);
+		return(Math.abs(totalArea));
 	}
 
 	/**
