@@ -1325,6 +1325,42 @@ public class Context
 		 */
 		if (mVars == null)
 			mVars = new HashMap();
+
+		/*
+		 * Clone hashmap variables to avoid changes to entries
+		 * in one variable being visible to others.
+		 */
+		if (value.getType() == Argument.HASHMAP)
+			value = (Argument)value.clone();
 		mVars.put(varName, value);
+	}
+
+	/**
+	 * Define an key-value entry in a hashmap in current context,
+	 * replacing any existing entry with the same key.
+	 * @param hashMapName name of hashmap to add entry to.
+	 * @param key is key to add.
+	 * @param value is value to add.
+	 */
+	public void defineHashMapEntry(String hashMapName, String key, Argument value)
+	{
+		if (mVars == null)
+			mVars = new HashMap();
+
+		/*
+		 * Create new entry in a hash map.
+		 */
+		Argument arg = (Argument)mVars.get(hashMapName);
+		if (arg == null || arg.getType() != Argument.HASHMAP)
+		{
+			/*
+			 * No hash map with this name used before,
+			 * create new one.
+			 */
+			arg = new Argument();
+			mVars.put(hashMapName, arg);
+			
+		}
+		arg.addHashMapEntry(key, value);
 	}
 }
