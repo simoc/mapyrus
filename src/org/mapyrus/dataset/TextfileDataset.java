@@ -308,7 +308,7 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see net.sourceforge.mapyrus.GeographicDataset#getMetadata()
+	 * @see au.id.chenery.mapyrus.GeographicDataset#getMetadata()
 	 */
 	public Hashtable getMetadata()
 	{
@@ -365,7 +365,8 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * Read next row from file and split it into fields.  Build fields into Row structure.
+	 * Read next row from file and split it into fields.
+	 * Build fields into Row structure.
 	 */
 	private boolean readNextRow(Row row) throws MapyrusException
 	{
