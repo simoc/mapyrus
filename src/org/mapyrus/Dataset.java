@@ -72,14 +72,6 @@ public class Dataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getGeometryFieldIndexes(). 
-	 */	
-	public int []getFieldIndexes()
-	{
-		return(mDataset.getGeometryFieldIndexes());
-	}
-
-	/**
 	 * Begins new query on dataset, closing any previous query.
 	 * @param extents is area of interest for this query.
 	 * @param resolution is minimum distance between coordinate values.
