@@ -11,9 +11,10 @@ begin pollution reading
   key "point", "pollution 80 ppm", 80
   key "point", "pollution 90 ppm", 90
 
-  # Reading is a percentage. Convert it to color between green and red.
+  # Reading is a value in range 0-100. Convert reading to
+  # a color in the range green-yellow-red.
   #
-  color interpolate("0 green 100 red", reading)
+  color interpolate("0 green 50 yellow 100 red", reading)
   box -1, -1, 1, 1
   fill
 end
