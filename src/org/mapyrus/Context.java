@@ -151,9 +151,9 @@ public class Context
 		mXScaling = existing.mXScaling;
 		mYScaling = existing.mYScaling;
 		mRotation = existing.mRotation;
-		mDataset = existing.mDataset;
-		mDatasetRow = existing.mDatasetRow;
-		mDatasetRowCount = existing.mDatasetRowCount;
+		mDataset = null;
+		mDatasetRow = null;
+		mDatasetRowCount = 0;
 
 		/*
 		 * Only create variable lookup table when values defined locally.
