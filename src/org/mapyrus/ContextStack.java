@@ -498,6 +498,21 @@ public class ContextStack
 	}
 
 	/**
+	 * Determine whether part of a rectangular area of page is protected.
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 * @return true if part of this rectangular region is protected.
+	 */
+	public boolean isProtected(double x1, double y1, double x2, double y2)
+		throws MapyrusException
+	{
+		boolean isZero = getCurrentContext().isPageMaskAllZero(x1, y1, x2, y2);
+		return(!isZero);
+	}
+
+	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke() throws IOException, MapyrusException
