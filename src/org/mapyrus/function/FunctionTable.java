@@ -59,6 +59,9 @@ public class FunctionTable
 		f = new Lower();
 		mFunctions.put(f.getName(), f);
 
+		f = new Lpad();
+		mFunctions.put(f.getName(), f);
+
 		f = new Log10();
 		mFunctions.put(f.getName(), f);
 
