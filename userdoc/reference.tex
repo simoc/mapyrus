@@ -1360,6 +1360,22 @@ is given in degrees, measured counter-clockwise.  All later coordinates given
 in \texttt{move}, \texttt{draw}, \texttt{arc} and \texttt{addpath} commands are
 rotated by this angle.
 
+\subsubsection{rdraw}
+
+\begin{alltt}
+rdraw \textit{dx}, \textit{dy}, ...
+\end{alltt}
+
+Adds one or more straight line segments to the current path
+using relative distances.
+A straight line segment is added from the previously defined point
+a relative distance (\textit{dx}, \textit{dy}).  Each further
+point adds a line segment relative to the point before.
+Points are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
 \subsubsection{samplepath}
 
 \begin{alltt}
