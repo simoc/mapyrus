@@ -94,7 +94,6 @@ public class MapyrusMessages
 	public static final String UNEXPECTED_VALUES = "unexpectedvalues";
 	public static final String UNMATCHED_BRACKET = "unmatchedbracket";
 	public static final String VARIABLE_EXPECTED = "variableexpected";
-	public static final String VARIABLE_LOCAL = "variablelocal";
 	public static final String VARIABLE_UNDEFINED = "variableundefined";
 	public static final String WRONG_COORDINATE = "wrongcoordinate";
 	public static final String WRONG_FUNCTION_VALUES = "wrongfunctionvalues";
