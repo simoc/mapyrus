@@ -1,0 +1,110 @@
+
+# Draw a piechart given sizes, labels and colors of slices.
+#
+begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
+	let radius = 8
+	linestyle 0.01
+	font "Helvetica", 3
+	rotate 90
+
+	# Sum up values of all slices.
+	#
+	let counter = 1, total = 0
+	while counter <= nSlices
+	do
+		let total = total + sliceSizes[counter]
+		let counter = counter + 1
+	done
+
+	# Draw each pie slice.
+	#
+	let counter = 1
+	while counter <= nSlices
+	do
+		# Skip empty slices
+		#
+		if sliceSizes[counter] > 0
+		then
+			let angle = -sliceSizes[counter] / total * 360
+			clearpath
+			move 0, 0
+			draw radius, 0
+			arc 1, 0, 0, radius * cos(angle), radius * sin(angle)
+			draw 0, 0
+			color sliceColors[counter]
+			fill
+			color "black"
+			stroke
+
+			# Draw label adjacent to pie slice with a line back into pie.
+			#
+			rotate angle / 2
+			if sliceLabels[counter] ne ""
+			then
+				# Calculate alignment for label, based on its
+				# position in pie.
+				#
+				if Mapyrus.rotation > -90 and Mapyrus.rotation < 90
+				then
+					let just = "left"
+				else
+					let just = "right"
+				endif
+				if Mapyrus.rotation > 45 and Mapyrus.rotation < 135
+				then
+					let just = just . ",bottom"
+				elif Mapyrus.rotation > -135 and Mapyrus.rotation < -45
+				then
+					let just = just . ",top"
+				else
+					let just = just . ",middle"
+				endif
+				justify just
+
+				clearpath
+				move radius + 2, 0
+				label sliceLabels[counter]
+				draw radius - 3, 0
+				stroke
+			endif
+
+			# Rotate axes ready to draw next slice.
+			#
+			rotate angle / 2
+		endif
+		let counter = counter + 1
+	done
+end
+
+newpage "png", "tutorialpiechart1.png", 90, 40, 96
+
+# Set fixed colors and labels for all pies.
+#
+let colors[1] = "green", colors[2] = "orange"
+let colors[3] = "yellow", colors[4] = "#606c30"
+
+let labels[1] = "Apples", labels[2] = "Oranges"
+let labels[3] = "Bananas", labels[4] = "Olives"
+
+# Set production levels for first site.  Then draw piechart.
+#
+let production[1] = 7000, production[2] = 2000, production[3] = 1500, production[4] = 500
+clearpath
+move 22, 15
+piechart 4, production, labels, colors
+
+# Set production levels for second site.  Then draw piechart.
+# Pass dummy variable for labels array to demonstrate omitting labels.
+#
+let production[1] = 5000, production[2] = 3000, production[3] = 2500, production[4] = 500
+clearpath
+move 42, 28
+piechart 4, production, dummy, colors
+
+# Set production levels for third site.  Then draw piechart.
+#
+let production[1] = 9000, production[2] = 1000, production[3] = 3500, production[4] = 2000
+clearpath
+move 70, 12
+piechart 4, production, labels, colors
+
