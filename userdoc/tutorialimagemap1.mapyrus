@@ -7,7 +7,7 @@ let imageSizeInPixels = Mapyrus.page.width / Mapyrus.page.resolution.mm
 # The first time this URL is accessed the area to view is not given.
 # So set it to cover the whole dataset.
 #
-dataset "shapefile", "/tmp/roads.shp", "dbffields="
+dataset "shapefile", "coastline.shp", "dbffields="
 if x1 eq ""
 then
 	let x1 = Mapyrus.dataset.min.x
