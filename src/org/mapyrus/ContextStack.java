@@ -456,6 +456,8 @@ public class ContextStack
 		throws IOException, MapyrusException
 	{
 		BufferedImage icon;
+		boolean isDigits = false;
+		int digitsType = 0;
 
 		/*
 		 * Have we opened icon before and cached it?
@@ -466,12 +468,33 @@ public class ContextStack
 			URL url;
 
 			/*
-			 * Check if icon is "inlined" as hex digits.
+			 * Check if icon is "inlined" as hex or binary digits.
 			 */
-			if (filename.startsWith("#") ||
-				filename.startsWith("0x") || filename.startsWith("0X"))
+			if (filename.length() >= 3)
 			{
-				Bitmap bitmap = new Bitmap(filename, getCurrentContext().getColor());
+				char c1 = filename.charAt(0);
+				char c2 = Character.toLowerCase(filename.charAt(1));
+				if (c1 == '#')
+				{
+					isDigits = true;
+					digitsType = Bitmap.HEX_DIGIT_BITMAP;
+				}
+				else if (c1 == '0' && c2 == 'x')
+				{
+					isDigits = true;
+					digitsType = Bitmap.HEX_DIGIT_BITMAP;
+				}
+				else if ((c1 == '0' || c1 == '1') && (c2 == '0' || c2 == '1'))
+				{
+					isDigits = true;
+					digitsType = Bitmap.BINARY_DIGIT_BITMAP;
+				}
+			}
+
+			if (isDigits)
+			{
+				Bitmap bitmap = new Bitmap(filename, digitsType,
+					getCurrentContext().getColor());
 				icon = bitmap.getBufferedImage();
 			}
 			else
@@ -492,8 +515,10 @@ public class ContextStack
 
 			/*
 			 * Do not cache large icons, load them each time they are needed.
+			 * Do not cache an icon given as hex digits as we may want
+			 * it in a different color next time.
 			 */
-			if (icon.getHeight(null) * icon.getWidth(null) <= 128 * 128)
+			if ((!isDigits) && icon.getHeight() * icon.getWidth() <= 128 * 128)
 				mIconCache.put(filename, icon);
 		}
 		getCurrentContext().drawIcon(icon, size);

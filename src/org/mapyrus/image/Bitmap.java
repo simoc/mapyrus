@@ -29,17 +29,26 @@ import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 
 /*
- * Holds bitmap image created from a string of hexadecimal digits.
+ * Holds bitmap image created from a string of hexadecimal or binary digits.
  */
 public class Bitmap
 {
+	public static final int HEX_DIGIT_BITMAP = 0;
+	public static final int BINARY_DIGIT_BITMAP = 1;
+
 	private BufferedImage mBitmap;
 
-	public Bitmap(String definition, Color c) throws MapyrusException
+	/**
+	 * Create new bitmap from hex or binary digit string.
+	 * @param definition string containing digits
+	 * @param digitsType either HEX_DIGIT_BITMAP or BINARY_DIGIT_BITMAP.
+	 * @param c color for bitmap.
+	 */
+	public Bitmap(String definition, int digitsType, Color c) throws MapyrusException
 	{
 		int index = 0;
 		int nameLength = definition.length();
-		byte []bits = new byte[nameLength * 8];
+		byte []bits = new byte[nameLength * 4];
 		int nBits = 0;
 
 		/*
@@ -49,21 +58,30 @@ public class Bitmap
 		while (index < nameLength)
 		{
 			int c1 = definition.charAt(index);
-			int c2;
+			int c2 = 0;
 
 			c1 = hexValue(c1);
 
 			/*
 			 * Check for "0x" sequence and ignore it if found.
 			 */
-			if (c1 == 0 && index + 1 < nameLength)
+			if (digitsType == HEX_DIGIT_BITMAP &&
+				c1 == 0 && index + 1 < nameLength)
 			{
 				c2 = definition.charAt(index + 1);
 				if (c2 == 'x' || c2 == 'X')
 					c1 = -1;
 			}
 
-			if (c1 >= 0)
+			if (digitsType == BINARY_DIGIT_BITMAP && (c1 == 0 || c1 == 1))
+			{
+				/*
+				 * Add 1 bit from this binary digit.
+				 */
+				bits[nBits] = (byte)(c1);
+				nBits++;
+			}
+			else if (digitsType == HEX_DIGIT_BITMAP && c1 >= 0)
 			{
 				/*
 				 * Add 4 bits from this hex digit.
