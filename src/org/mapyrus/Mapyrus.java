@@ -102,7 +102,7 @@ public class Mapyrus
 	{
 		try
 		{
-			interpreter.interpret(f, filename);
+			interpreter.interpret(f, filename, System.out);
 		}
 		catch (MapyrusException e)
 		{
@@ -170,7 +170,7 @@ public class Mapyrus
 			initialise();
 			f = new BufferedReader(new InputStreamReader(System.in));
 			context = new ContextStack();
-			Interpreter interpreter = new Interpreter(context, System.out);
+			Interpreter interpreter = new Interpreter(context);
 
 			processFile(f, "standard input", interpreter);
 			
@@ -193,7 +193,7 @@ public class Mapyrus
 		{	
 			initialise();
 			context = new ContextStack();
-			Interpreter interpreter = new Interpreter(context, System.out);
+			Interpreter interpreter = new Interpreter(context);
 
 			/*
 			 * Process each file and URL given as command line argument.
