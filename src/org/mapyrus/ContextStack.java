@@ -706,11 +706,24 @@ public class ContextStack
 	}
 
 	/**
-	 * Draw label positioned at (or along) currently defined path.
+	 * Draw label positioned at current point.
+	 * @param label label to draw.
 	 */
 	public void label(String label) throws IOException, MapyrusException
 	{
 		getCurrentContext().label(label);
+	}
+
+	/**
+	 * Draw label along currently defined path.
+	 * @param spacing spacing between letters.
+	 * @param offset offset along path at which to begin label.
+	 * @param label label to draw.
+	 */
+	public void flowLabel(double spacing, double offset,
+		String label) throws IOException, MapyrusException
+	{
+		getCurrentContext().flowLabel(spacing, offset, label);
 	}
 
 	/**
