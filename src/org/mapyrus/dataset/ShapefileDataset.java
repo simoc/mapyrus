@@ -97,14 +97,6 @@ public class ShapefileDataset implements GeographicDataset
 	private int mBytesRead;
 	private byte []mDBFRecord;
 
-	/*
-	 * Row and geometry returned for each result fetched for query.
-	 * Path containing geometry for each row.  Used for each shape to avoid
-	 * continually allocating and freeing memory.
-	 */
-	private Row mRow;
-	private double []mPath;
-
 	/**
 	 * Open ESRI shape file containing geographic data for querying.
 	 * @param filename name of shape file to open, with or without shp suffix.
@@ -244,7 +236,7 @@ public class ShapefileDataset implements GeographicDataset
 		mShapeStream.readInt();
 		mShapeStream.readInt();
 		mShapeStream.readInt();
-		mShapeFileLength = (mShapeStream.readInt() * 2 - 100);
+		mShapeFileLength = mShapeStream.readInt() * 2 - 100;
 		int version = readLittleEndianInt(mShapeStream);
 		mShapeFileType = readLittleEndianInt(mShapeStream);
 		xMin = readLittleEndianDouble(mShapeStream);
@@ -430,9 +422,7 @@ public class ShapefileDataset implements GeographicDataset
 		{
 			mBytesRead = 0;
 			mQueryExtents = extents;
-			mPath = new double[100];
 			mDBFRecord = new byte[mDBFRecordLength];
-			mRow = new Row();
 		}
 		else
 		{
@@ -456,6 +446,8 @@ public class ShapefileDataset implements GeographicDataset
 		int i, shapeType;
 		int nBytes, nParts, nPoints, partIndex, pathIndex;
 		boolean shapeInExtents = false;
+		Row row;
+		double path[] = null;
 
 		try
 		{
@@ -463,7 +455,7 @@ public class ShapefileDataset implements GeographicDataset
 			 * Keep reading until we get a shape inside the extents or we reach
 			 * the end of the file.
 			 */
-			mRow.clear();
+			row = new Row();
 			while (!shapeInExtents && mBytesRead < mShapeFileLength)
 			{
 				/*
@@ -479,14 +471,15 @@ public class ShapefileDataset implements GeographicDataset
 					 * Read point coordinates, see if they are inside
 					 * query extents.
 					 */
-					mPath[0] = 4;
-					mPath[1] = PathIterator.SEG_MOVETO;
+					path = new double[4];
+					path[0] = 4;
+					path[1] = PathIterator.SEG_MOVETO;
 					
-					mPath[2] = readLittleEndianDouble(mShapeStream);
-					mPath[3] = readLittleEndianDouble(mShapeStream);
+					path[2] = readLittleEndianDouble(mShapeStream);
+					path[3] = readLittleEndianDouble(mShapeStream);
 					if (recordLength > 20)
 						mShapeStream.skip(recordLength - 20);
-					shapeInExtents = mQueryExtents.contains(mPath[2], mPath[3]);
+					shapeInExtents = mQueryExtents.contains(path[2], path[3]);
 				}
 				else if (mShapeFileType == POLYLINE)
 				{
@@ -511,13 +504,7 @@ public class ShapefileDataset implements GeographicDataset
 						for (i = 0; i < nParts; i++)
 							parts[i] = readLittleEndianInt(mShapeStream);
 
-						/*
-						 * Make path array longer if this polyline has more points
-						 */
-						int nEls = nPoints * 3 + 1;
-						if (mPath.length < nEls)
-							mPath = new double[nEls];
-
+						path = new double[nPoints * 3 + 1];
 
 						partIndex = 0;
 						pathIndex = 1;
@@ -531,7 +518,7 @@ public class ShapefileDataset implements GeographicDataset
 							y = readLittleEndianDouble(mShapeStream);
 							if (partIndex < nParts && parts[partIndex] == i)
 							{
-								mPath[pathIndex] = PathIterator.SEG_MOVETO;
+								path[pathIndex] = PathIterator.SEG_MOVETO;
 								partIndex++;
 							}
 							else if (x == lastX && y == lastY)
@@ -543,14 +530,14 @@ public class ShapefileDataset implements GeographicDataset
 							}
 							else
 							{
-								mPath[pathIndex] = PathIterator.SEG_LINETO;
+								path[pathIndex] = PathIterator.SEG_LINETO;
 							}
 								
-							mPath[pathIndex + 1] = lastX = x;
-							mPath[pathIndex + 2] = lastY = y;
+							path[pathIndex + 1] = lastX = x;
+							path[pathIndex + 2] = lastY = y;
 							pathIndex += 3;
 						}
-						mPath[0] = pathIndex;
+						path[0] = pathIndex;
 						
 						/*
 						 * Skip any remaining bytes at end of record.
@@ -625,7 +612,7 @@ public class ShapefileDataset implements GeographicDataset
 									break;
 							}
 						}
-						mRow.add(arg);
+						row.add(arg);
 
 						fieldIndex += mShapeFieldLengths[i];
 					}
@@ -633,7 +620,7 @@ public class ShapefileDataset implements GeographicDataset
 					/*
 					 * Add geometry as final field.
 					 */
-					mRow.add(new Argument(mPath));
+					row.add(new Argument(path));
 				}
 			}
 		}
@@ -646,7 +633,7 @@ public class ShapefileDataset implements GeographicDataset
 		 * Return next row, or null if we did not find one.
 		 */
 		if (shapeInExtents)
-			return(mRow);
+			return(row);
 		else
 			return(null);
 	}
