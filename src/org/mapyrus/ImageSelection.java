@@ -30,6 +30,7 @@ import java.io.IOException;
 
 /**
  * Hold an image being copied to system clipboard for a cut-and-paste operation. 
+ * Taken from example at http://forum.java.sun.com.
  */
 public class ImageSelection implements Transferable
 {
