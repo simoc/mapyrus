@@ -25,6 +25,8 @@ package org.mapyrus;
 import java.awt.Color;
 import java.awt.MediaTracker;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
@@ -34,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
@@ -414,6 +414,30 @@ public class ContextStack
 	}
 
 	/**
+	 * Convert hexadecimal character to integer value.
+	 * @param hexDigit hex character to convert
+	 * @return value of hex digit, or -1 if character is not a hex digit. 
+	 */
+	private int hexValue(int hexDigit)
+	{
+		int retval = -1;
+
+		if (hexDigit >= '0' && hexDigit <= '9')
+		{
+			retval = hexDigit - '0';
+		}
+		else if (hexDigit >= 'a' && hexDigit <= 'f')
+		{
+			retval = hexDigit - 'a' + 10;
+		}
+		else if (hexDigit >= 'A' && hexDigit <= 'F')
+		{
+			retval = hexDigit - 'A' + 10;
+		}
+		return(retval);
+	}
+
+	/**
 	 * Draws icon on page.
 	 * @param filename file containing icon.
 	 * @param size size for icon on page in millimetres.
@@ -432,25 +456,104 @@ public class ContextStack
 			URL url;
 
 			/*
-			 * Load icon from either a URL, or as a plain file.
+			 * Check if icon is "inlined" as hex digits.
 			 */
-			try
+			if (filename.startsWith("#") ||
+				filename.startsWith("0x") || filename.startsWith("0X"))
 			{
-				url = new URL(filename);
-				icon = new ImageIcon(url);
-			}
-			catch (MalformedURLException e)
-			{
-				icon = new ImageIcon(filename);
-			}
+				int index = 0;
+				int nameLength = filename.length();
+				byte []bits = new byte[nameLength * 8];
+				int nBits = 0;
 
-			/*
-			 * Open icon and cache it.
-			 */
-			if (icon.getImageLoadStatus() != MediaTracker.COMPLETE)
+				/*
+				 * Convert all hex digits into a list of bits from which we
+				 * can make an image.
+				 */
+				while (index < nameLength)
+				{
+					int c1 = filename.charAt(index);
+					int c2;
+
+					c1 = hexValue(c1);
+
+					/*
+					 * Check for "0x" sequence and ignore it if found.
+					 */
+					if (c1 == 0 && index + 1 < nameLength)
+					{
+						c2 = filename.charAt(index + 1);
+						if (c2 == 'x' || c2 == 'X')
+							c1 = -1;
+					}
+
+					if (c1 >= 0)
+					{
+						/*
+						 * Add 4 bits from this hex digit.
+						 */
+						bits[nBits] = (byte)(c1 & 8);
+						bits[nBits + 1] = (byte)(c1 & 4);
+						bits[nBits + 2] = (byte)(c1 & 2);
+						bits[nBits + 3] = (byte)(c1 & 1);
+						nBits += 4;
+					}
+					index++;
+				}
+
+				/*
+				 * Calculate size of square image from number of bits.
+				 */
+				int iconSize = (int)Math.round(Math.sqrt(nBits));
+				if (nBits == 0 || iconSize * iconSize != nBits)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HEX_ICON) +
+						": " + filename);
+				}
+
+				/*
+				 * Create image and set pixels on/off as defined in hex digits.
+				 */
+				BufferedImage bufferedImage =
+					new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_4BYTE_ABGR);
+				Color c = getCurrentContext().getColor();
+				int rgbPixel = c.getRGB();
+				int bitIndex = 0;
+				for (int y = iconSize - 1; y >= 0; y--)
+				{
+					for (int x = 0; x < iconSize; x++)
+					{
+						if (bits[bitIndex++] != 0)
+							bufferedImage.setRGB(x, y, rgbPixel);
+						else
+							bufferedImage.setRGB(x, y, 0xffffff);
+					}
+				}
+				icon = new ImageIcon(bufferedImage);
+			}
+			else
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_ICON) +
-					": " + filename);
+				/*
+				 * Load icon from either a URL, or as a plain file.
+				 */
+				try
+				{
+					url = new URL(filename);
+					icon = new ImageIcon(url);
+				}
+				catch (MalformedURLException e)
+				{
+					icon = new ImageIcon(filename);
+				}
+	
+				/*
+				 * Open icon and cache it.
+				 */
+				if (icon.getImageLoadStatus() != MediaTracker.COMPLETE)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_ICON) +
+						": " + filename);
+				}
 			}
 			mIconCache.put(filename, icon);
 		}
