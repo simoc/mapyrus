@@ -346,6 +346,7 @@ public class OutputFormat
 		/*
 		 * Set plotting units to millimetres.
 		 */
+		mWriter.println("% Set scaling so that (x, y) coordinates are given in millimetres");
 		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
 			" div dup scale");
 	}
