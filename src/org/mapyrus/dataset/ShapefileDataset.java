@@ -205,7 +205,7 @@ public class ShapefileDataset implements GeographicDataset
 		}
 		catch(FileNotFoundException e)
 		{
-			mProjection = "undef";
+			mProjection = "";
 		}
 
 		/*
