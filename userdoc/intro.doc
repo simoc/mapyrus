@@ -42,17 +42,14 @@ Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
 appearance of the geographic data.  For example,
+<p>
 
 <table>
-<tr>
+<tr align="center">
 <td>
 <img src="mapview1.png">
 <td>
-<img src="mapview2.png">
-<td>
 <img src="mapview3.png">
-<td>
-<img src="mapview4.png">
 <tr align="center">
 
 <td>
@@ -64,11 +61,23 @@ of Australian Cities
 (degrees Celsius)
 </b>
 <td>
-<b>Mineral Types</b>
-<td>
 <b>
 Railways Lines in East Kent
 </b>
+
+<tr align="center">
+<td>
+<img src="mapview2.png">
+<td>
+<img src="mapview4.png">
+
+<tr align="center">
+<td>
+<b>Vegetation Classes</b>
+
+<td>
+<b>
+Inventory Levels at Warehouses
 
 </table>
 <p>
@@ -76,8 +85,8 @@ Railways Lines in East Kent
 </li>
 <li>
 Mapyrus runs as a stand-alone program suitable for use in a script and for
-batch tasks, or as a simple HTTP server providing map and graph images and
-text reports in a web-based application.
+batch tasks, or as an HTTP server providing map and graph images and
+text reports to a web-based application.
 </li>
 </ol>
 
