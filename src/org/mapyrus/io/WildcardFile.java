@@ -36,6 +36,18 @@ import java.util.StringTokenizer;
  */
 public class WildcardFile
 {
+	private static boolean mFilenamesCaseInsensitive;
+
+	static
+	{
+		/*
+		 * If running on Windows then filenames are case insensitive.
+		 * So the pattern "*.txt" will match filenames "foo.txt" and "BAR.TXT".
+		 */
+		String osname = System.getProperty("os.name");
+		mFilenamesCaseInsensitive = (osname != null && osname.toUpperCase().indexOf("WIN") >= 0);
+	};
+
 	/*
 	 * Base directory of all matching files.
 	 */
@@ -54,6 +66,10 @@ public class WildcardFile
 		 * Separate wildcard pattern into directory and filename.
 		 */
 		String base, pattern;
+		
+		if (mFilenamesCaseInsensitive)
+			wildcard = wildcard.toUpperCase();
+
 		int wildcardIndex = wildcard.indexOf('*');
 		if (wildcardIndex < 0)
 			wildcardIndex = wildcard.length();
@@ -119,10 +135,22 @@ public class WildcardFile
 		if (filenames == null)
 			return(retval);
 
+		/*
+		 * On operating systems where filenames not case sensitive,
+		 * convert all filenames to upper case and match against uppercase
+		 * wildcard pattern.
+		 */
+		if (mFilenamesCaseInsensitive)
+		{
+			for (int i = 0; i < filenames.length; i++)
+				filenames[i] = filenames[i].toUpperCase();
+		}
+
 		Arrays.sort(filenames);
 		for (int i = 0; i < filenames.length; i++)
 		{
 			boolean matched = true;
+
 			String filename = filenames[i];
 
 			for (int j = index; j < nFilenameParts && matched; j++)
