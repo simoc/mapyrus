@@ -1053,7 +1053,7 @@ and \texttt{rotate} values.
 \subsubsection{newpage}
 
 \begin{alltt}
-newpage \textit{format}, \textit{filename}, \textit{width}, \textit{height}, \textit{resolution}, \textit{extras}
+newpage \textit{format}, \textit{filename}, \textit{width}, \textit{height}, \textit{extras}
 \end{alltt}
 
 Begins output of a new page to a file.  Any previous output is closed.  The
@@ -1075,9 +1075,8 @@ file format to use for output, one of:
 See section \ref{pdf} for
 information on converting PostScript output to PDF format.
 
-\textit{width} and \textit{height} are the dimensions of the page,
+\textit{width} and \textit{height} are the dimensions of the page
 in millimetres.
-\textit{resolution} is given as a dots-per-inch value.
 
 \textit{filename} is the name of the file to write the page to.
 If \textit{filename} is a dash (\texttt{-})
@@ -1126,11 +1125,24 @@ information on converting TrueType fonts to PostScript Type 1 format.
 Comma-separated list of PostScript Type 1 font names for
 which ISO Latin1 character encoding is required.  Use ISO Latin1 encoding
 when extended characters such as accented characters
-or a copyright symbol are to be displayed from the font. \\
+or a copyright symbol are to be displayed from the font.
+
+\vspace{10pt}
+\texttt{resolution=\textit{value}}
+
+Resolution for page, given as a dots-per-inch value.  Replaces
+default value of 300. \\
 
 \hline
 
 \texttt{png}, \texttt{jpeg} &
+
+\texttt{resolution=\textit{value}}
+
+Resolution for page, given as a dots-per-inch value.  Replaces
+default value of 96.
+
+\vspace{10pt}
 \texttt{ttffiles=\textit{filename},\textit{filename2},...}
 
 Comma-separated list of TrueType font filenames
