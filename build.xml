@@ -1,3 +1,21 @@
+<!--
+This file is part of Mapyrus.
+
+Mapyrus is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+Mapyrus is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Mapyrus; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+-->
+
 <!-- $Id$ -->
 <project name="mapyrus" default="dist" basedir=".">
 
@@ -34,13 +52,13 @@
 <!-- Use preprocessor inside Mapyrus which expands macros in -->
 <!-- documentation to generate final HTML files -->
 <delete>
-<fileset dir="doc" includes="**/*.html"/>
+<fileset dir="doc" includes="*/*.html"/>
 </delete>
-<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes">
-<arg line="doc/mapyrus.doc doc/mapyrus.html"/>
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="mapyrus.doc mapyrus.html"/>
 </java>
-<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes">
-<arg line="doc/intro.doc doc/intro.html"/>
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="intro.doc intro.html"/>
 </java>
 </target>
 
