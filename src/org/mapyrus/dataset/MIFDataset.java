@@ -758,6 +758,36 @@ public class MIFDataset implements GeographicDataset
 					geometry[15] = x1;
 					geometry[16] = y1;
 				}
+				else if (geometryType.equals("multipoint") && st.countTokens() == 1)
+				{
+					String token = st.nextToken();
+					int nPoints = Integer.parseInt(token);
+					geometry = new double[2 + nPoints * 5];
+					geometry[0] = Argument.GEOMETRY_MULTIPOINT;
+					geometry[1] = nPoints;
+					int index = 2;
+					for (int i = 0; i < nPoints; i++)
+					{
+						String line = mMIFFile.readLine();
+						if (line == null)
+						{
+							throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+								": " + mFilename);
+						}
+						geometry[index] = Argument.GEOMETRY_POINT;
+						geometry[index + 1] = 1;
+						geometry[index + 2] = Argument.MOVETO;
+						parseXYCoordinate(line, geometry, index + 3);
+						index += 5;
+					}
+				}
+				else if (geometryType.equals("none"))
+				{
+					/*
+					 * No geometry for this record.
+					 */
+					geometry = Argument.emptyGeometry.getGeometryValue();
+				}
 				else
 				{
 					/*
