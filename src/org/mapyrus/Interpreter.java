@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import net.sourceforge.mapyrus.Context;
 
 public class Interpreter
 {
@@ -79,6 +80,21 @@ public class Interpreter
 	private Hashtable mStatementBlocks;
 	
 	/*
+	 * Static world coordinate system units lookup table.
+	 */
+	private static Hashtable mWorldUnitsLookup;
+	
+	static
+	{
+		mWorldUnitsLookup = new Hashtable();
+		mWorldUnitsLookup.put("m", new Integer(Context.WORLD_UNITS_METRES));
+		mWorldUnitsLookup.put("metres", new Integer(Context.WORLD_UNITS_METRES));
+		mWorldUnitsLookup.put("meters", new Integer(Context.WORLD_UNITS_METRES));
+		mWorldUnitsLookup.put("feet", new Integer(Context.WORLD_UNITS_FEET));
+		mWorldUnitsLookup.put("ft", new Integer(Context.WORLD_UNITS_FEET));
+	}
+	
+	/*
 	 * Execute a single statement, changing the path, context or generating
 	 * some output.
 	 */
@@ -91,6 +107,7 @@ public class Interpreter
 		Argument []args = null;
 		double degrees;
 		double x1, y1, x2, y2;
+		int units;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -310,7 +327,7 @@ public class Interpreter
 				break;
 
 			case Statement.WORLDS:
-				if (nExpressions == 4 &&
+				if ((nExpressions == 4 || nExpressions == 5) &&
 					args[0].getType() == Argument.NUMERIC &&
 					args[1].getType() == Argument.NUMERIC &&
 					args[2].getType() == Argument.NUMERIC &&
@@ -320,12 +337,37 @@ public class Interpreter
 					y1 = args[1].getNumericValue();
 					x2 = args[2].getNumericValue();
 					y2 = args[3].getNumericValue();
+					if (nExpressions == 5)
+					{
+						Integer i;
+						if (args[4].getType() == Argument.STRING)
+						{
+							i = (Integer)mWorldUnitsLookup.get(args[4].getStringValue());
+							if (i == null)
+							{
+								throw new MapyrusException("Unknown world units value '" +
+									args[4].getStringValue() + "' at " +
+									st.getFilenameAndLineNumber());
+							}
+							units = i.intValue();
+						}
+						else
+						{
+							throw new MapyrusException("Invalid world units value at " +
+								st.getFilenameAndLineNumber());
+						}
+					}
+					else
+					{
+						units = Context.WORLD_UNITS_METRES;
+					}
+					
 					if (x2 - x1 == 0.0 || y2 - y1 == 0.0)
 					{
 						throw new MapyrusException("Zero world coordinate range at " +
 							st.getFilenameAndLineNumber());
 					}	
-					context.setWorlds(x1, y1, x2, y2);
+					context.setWorlds(x1, y1, x2, y2, units);
 				}
 				else
 				{
