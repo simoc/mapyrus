@@ -81,6 +81,13 @@ public class Argument
 	 */
 	public static final Argument emptyString = new Argument(Argument.STRING, "");
 
+	/**
+	 * Constant for empty geometry.
+	 * Avoids allocating many arguments for null geometries.
+	 */
+	public static final Argument emptyGeometry = new Argument(Argument.GEOMETRY_POINT,
+		new double[]{Argument.GEOMETRY_POINT, 0});
+
 	private int mType;
 	private double mNumericValue;
 	private String mStringValue;
