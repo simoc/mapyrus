@@ -1,6 +1,20 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004 Simon Chenery.
 
+0.50, December 2004
+
+* Change scalebar procedure to take (X, Y) position as parameters.
+* Downsample images displayed in PostScript files to reduce file size.
+* Fix non-square images to display in correct position in PostScript file.
+* Fix display of rotated ellipses.
+* Correctly handle binary database table fields returned as WKB geometry
+  values by PostGIS "AsBinary(the_geom)".
+* Add manual section demonstrating how Mapyrus is used in a PHP application.
+* Add repeat keyword for simple loops.
+* Add bounding box test to make contains() and overlaps() functions work
+  more efficiently.
+* Add "screen" output type to show output in a window on the screen.
+
 0.49, November 2004
 
 * Add display of GIS data provided by ogrinfo program (part of OGR library).
