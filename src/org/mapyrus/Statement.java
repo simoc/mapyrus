@@ -20,8 +20,10 @@ public class Statement
 	public static final int MOVE = 5;
 	public static final int DRAW = 6;
 	public static final int STROKE = 7;
-	public static final int NEWPAGE = 8;
-	public static final int PRINT = 9;
+	public static final int FILL = 8;
+	public static final int SCALE = 9;
+	public static final int NEWPAGE = 10;
+	public static final int PRINT = 11;
 	
 	private int mType;
 	Statement mThenStatement;
@@ -60,6 +62,14 @@ public class Statement
 		else if (sLower.equals("stroke"))
 		{
 			retval = STROKE;
+		}
+		else if (sLower.equals("fill"))
+		{
+			retval = FILL;
+		}
+		else if (sLower.equals("scale"))
+		{
+			retval = SCALE;
 		}
 		else if (sLower.equals("newpage"))
 		{
