@@ -85,7 +85,16 @@ public class JDBCDataset implements GeographicDataset
 			 * Some operations can be optimised if database
 			 * knows that this connection is read-only.
 			 */
-			retval.setReadOnly(true);
+			try
+			{
+				retval.setReadOnly(true);
+			}
+			catch (UnsupportedOperationException e)
+			{
+				/*
+				 * No problem if database does not support read-only operation.
+				 */
+			}
 			mDbs.put(url, retval);
 		}
 		return(retval);
@@ -173,7 +182,19 @@ public class JDBCDataset implements GeographicDataset
 			 * field names and types it returns.
 			 */
 			mStatement = connection.createStatement();
-			mStatement.setQueryTimeout(Constants.DB_CONNECTION_TIMEOUT);
+
+			try
+			{
+				/*
+				 * Set timeout for SQL statement execution but just continue
+				 * anyway if database does not support it.
+				 */
+				mStatement.setQueryTimeout(Constants.DB_CONNECTION_TIMEOUT);
+			}
+			catch (SQLException e)
+			{
+			}
+
 			mResultSet = mStatement.executeQuery(mSql);
 			ResultSetMetaData resultSetMetadata = mResultSet.getMetaData();
 
