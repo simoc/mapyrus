@@ -1,0 +1,11 @@
+# Create landscape page 50mm wide and 30mm high.
+newpage "eps", "tutorialturnpage1.eps", 50, 30, "turnpage=true"
+# Draw page border.
+linestyle 4
+box 0, 0, Mapyrus.page.width, Mapyrus.page.height
+stroke
+# Draw horizontal label on page.
+clearpath
+move 5, 10
+font "Palatino", 8
+label "Horizontal"
