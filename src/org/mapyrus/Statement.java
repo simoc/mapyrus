@@ -78,6 +78,7 @@ public class Statement
 	public static final int LET = 45;
 	public static final int KEY = 46;
 	public static final int LEGEND = 47;
+	public static final int MIMETYPE = 48;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -167,6 +168,7 @@ public class Statement
 		mStatementTypeLookup.put("let", new Integer(LET));
 		mStatementTypeLookup.put("key", new Integer(KEY));
 		mStatementTypeLookup.put("legend", new Integer(LEGEND));
+		mStatementTypeLookup.put("mimetype", new Integer(MIMETYPE));
 	}
 
 	/**
@@ -179,7 +181,7 @@ public class Statement
 	{
 		int retval;
 		Integer type = (Integer)mStatementTypeLookup.get(s.toLowerCase());
-		
+
 		if (type == null)
 			retval = CALL;
 		else
