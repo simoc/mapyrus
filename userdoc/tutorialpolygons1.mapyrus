@@ -1,5 +1,5 @@
 newpage "eps", "tutorialpolygons1.eps", 60, 30
-color "orange"
+color "forestgreen"
 clearpath
 move 5, 5
 draw 45, 5
