@@ -22,6 +22,7 @@
  */
 package org.mapyrus;
 
+import java.awt.geom.AffineTransform;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
@@ -62,6 +63,11 @@ public class Constants
 	 */
 	public static final DecimalFormatSymbols US_DECIMAL_FORMAT_SYMBOLS =
 		new DecimalFormatSymbols(Locale.US); 
+
+	/*
+	 * Identity matrix for coordinate transformations.
+	 */
+	public static final AffineTransform IDENTITY_MATRIX = new AffineTransform();
 
 	/*
 	 * Maximum number of threads to run simultaneously handling HTTP requests.
