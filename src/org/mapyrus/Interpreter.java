@@ -77,19 +77,6 @@ public class Interpreter
 	private static final int AT_PARAM = 4;	/* at parameter to a procedure block */
 	private static final int AT_PARAM_SEPARATOR = 5;	/* at separator between parameters */
 
-
-	private static final int AT_BLOCK_NAME = 6;	/* expecting procedure block name */
-	private static final int AT_BLOCK_PARAM = 7;
-	
-	private static final int AT_IF_TEST = 8;	/* at expression to test in if ... then block */
-	private static final int AT_THEN_KEYWORD = 9;	/* at "then" keyword in if ... then block */
-	private static final int AT_ELSE_KEYWORD = 10;	/* at "else" keyword in if ... then block */
-	private static final int AT_ENDIF_KEYWORD = 11;	/* at "endif" keyword in if ... then block */
-
-	private static final int AT_WHILE_TEST = 8;	/* at expression to test in while loop block */
-	private static final int AT_DO_KEYWORD = 9;	/* at "do" keyword in while loop block */
-	private static final int AT_DONE_KEYWORD = 10;	/* at "done" keyword in while loop block */
-
 	/*
 	 * Literals for linestyles.
 	 */
@@ -1363,12 +1350,8 @@ public class Interpreter
 	{
 		int c;
 		ParsedStatement retval = null;
-		Statement statement;
-		ArrayList procedureStatements = null;
-		int state;
 		boolean finishedStatement = false;
 
-		state = AT_STATEMENT;
 		c = readSkipComments(preprocessor);
 		finishedStatement = false;
 		while (!finishedStatement)
