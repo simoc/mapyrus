@@ -50,10 +50,13 @@ public class OutputFormat
 	/*
 	 * Write PostScript file header.
 	 */
-	private void writePostScriptHeader(int width, int height)
+	private void writePostScriptHeader(double width, double height)
 	{
+		long widthInPoints = Math.round(width / MM_PER_INCH * POINTS_PER_INCH);
+		long heightInPoints = Math.round(height / MM_PER_INCH * POINTS_PER_INCH);
+		
 		mWriter.println("%!PS-Adobe-3.0");
-		mWriter.println("%%BoundingBox: 0 0 " + width + " " + height);
+		mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%Creator: " + Mapyrus.PROGRAM_NAME);
 		mWriter.println("%%EndComments");
@@ -74,17 +77,35 @@ public class OutputFormat
 	 * Sets correct background, rendering hints and transformation
 	 * for buffered image we will plot to.
 	 */
-	private void setupBufferedImage()
+	private void setupBufferedImage(int resolution)
 	{
-		int resolution;
 		double scale;
-		
+	
 		mGraphics2D.setColor(Color.WHITE);
 		mGraphics2D.fillRect(0, 0, mImage.getWidth(), mImage.getHeight());
 		
+		scale = resolution / MM_PER_INCH;
+		
+		/*
+		 * Set transform with origin in lower-left corner and
+		 * Y axis increasing upwards.
+		 */
+		mGraphics2D.translate(0, mImage.getHeight());
+		mGraphics2D.scale(scale, -scale);
+	}
+
+	/**
+	 * Return resolution to use for image files we create.
+	 * @return resolution to use for images as dots per inch value.
+	 */
+	private int getResolution()
+	{
+		int resolution;
+			
 		/*
 		 * If a display resolution is given as a property then use that,
-		 * otherwise assume 72 DPI.
+		 * otherwise assume 72 DPI.  That is, an image 100mm wide will be made
+		 * 720 pixels wide.
 		 */
 		try
 		{
@@ -103,27 +124,20 @@ public class OutputFormat
 		{
 			resolution = POINTS_PER_INCH;
 		}
-
-		scale = resolution / MM_PER_INCH;
 		
-		/*
-		 * Set transform with origin in lower-left corner and
-		 * Y axis increasing upwards.
-		 */
-		mGraphics2D.translate(0, mImage.getHeight());
-		mGraphics2D.scale(scale, -scale);
+		return(resolution);
 	}
 
 	/**
 	 * Creates new graphics file, ready for drawing to.
 	 * @param filename name of image file output will be saved to
 	 * (suffix determines the graphics format used).
-	 * @param width is the page width (in points).
-	 * @param height is the page height (in points).
+	 * @param width is the page width (in mm).
+	 * @param height is the page height (in mm).
 	 * @param extras contains extra settings for this output.
 	 */
 	public OutputFormat(String filename,
-		int width, int height, String extras)
+		double width, double height, String extras)
 		throws IOException, MapyrusException
 	{
 		int dotIndex;
@@ -179,10 +193,13 @@ public class OutputFormat
 			 * when user has finished drawing to it.
 			 */
 			mOutputType = IMAGE_FILE;
-			mImage = new BufferedImage(width, height,
+			int resolution = getResolution();
+			int widthInPixels = (int)Math.round(width / MM_PER_INCH * resolution);
+			int heightInPixels = (int)Math.round(height / MM_PER_INCH * resolution);
+			mImage = new BufferedImage(widthInPixels, heightInPixels,
 				BufferedImage.TYPE_3BYTE_BGR);
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
-			setupBufferedImage();
+			setupBufferedImage(resolution);
 		}
 		mOutputFile = new File(filename);
 	}
@@ -197,7 +214,7 @@ public class OutputFormat
 		mOutputType = BUFFERED_IMAGE;
 		mImage = image;
 		mGraphics2D = (Graphics2D)(mImage.getGraphics());
-		setupBufferedImage();
+		setupBufferedImage(getResolution());
 	}
 	 
 	/**
@@ -212,7 +229,10 @@ public class OutputFormat
 			 */
 			if (mFormatName.equals("PS"))
 			{
-					mWriter.println("showpage");
+				/*
+				 * showpage is not included in Encapsulated PostScript files.
+				 */
+				mWriter.println("showpage");
 			}
 			mWriter.println("%%EOF");
 			mWriter.close();
