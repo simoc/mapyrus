@@ -42,7 +42,10 @@ What was included in each version.
 
 <tr>
 <td>
-<a href="http://www.chenery.id.au/mapyrus/mapyrus.zip"/>Download</a>
+<!-- Make sure link for download includes correct version number -->
+<a href="http://www.chenery.id.au/mapyrus/mapyrus-
+include VERSION
+.zip"/>Download</a>
 </td>
 <td>
 Download current version of the software.
