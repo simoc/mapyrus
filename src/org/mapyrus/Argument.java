@@ -87,11 +87,16 @@ public class Argument
 	public Argument(int type, String s)
 	{
 		mType = type;
-		mNumericValue = Double.NaN;
+
 		if (type == STRING)
 			mStringValue = s;
 		else
 			mVarname = s;
+			
+		/*
+		 * We don't know the numeric value of this argument.
+		 */
+		mNumericValue = Double.NaN;
 	}
 
 	/**
@@ -140,6 +145,11 @@ public class Argument
 	{
 		if (mType == STRING && Double.isNaN(mNumericValue))
 		{
+			/*
+			 * Argument is a string that we've not tried
+			 * converting to a number before.  Find it's numeric
+			 * value now.
+			 */
 			try
 			{
 				mNumericValue = Double.parseDouble(mStringValue);
