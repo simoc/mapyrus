@@ -923,6 +923,22 @@ measured at different times to show trends in the attribute data.
 To display values of several attributes at point locations, draw a
 piechart or histogram (see page \pageref{piechart}) at each point.
 
+When reading from a relational database table,
+SQL aggregate functions are available for calculating
+statistics from the data.
+
+The following SQL statement demonstrates calculating how many
+standard deviations each reading is from the average.  Use
+the result of this calculation to control the display of the data,
+showing readings that are far from average differently to readings
+that are close to average.
+
+\begin{verbatim}
+select X, Y, (Reading - (select AVG(Reading) from Pollution)) /
+(select STDDEV(Reading) from Pollution) as R from Pollution
+\end{verbatim}
+
+
 \subsection{Displaying A Scalebar}
 \label{tutorialscalebar}
 
