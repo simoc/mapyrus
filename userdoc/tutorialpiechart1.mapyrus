@@ -31,9 +31,34 @@ piechart 4, production, dummy, colors
 
 # Set production levels for third site.  Then draw piechart.
 #
-let production[1] = 9000, production[2] = 1000
-let production[3] = 3500, production[4] = 2000
+let production[1] = 8000, production[2] = 2000
+let production[3] = 4500, production[4] = 3500
 clearpath
-move 70, 12
+move 70, 14
 piechart 4, production, labels, colors
 
+# Include file containing procedure to diplay histogram.
+#
+include histogram.mapyrus
+
+newpage "eps", "tutorialhistogram1.eps", 80, 20
+
+# Draw small histogram with four values without any labels.
+#
+move 20, 7
+let maxProduction = 10000
+histogram colors, dummy, production, maxProduction, 6
+
+# Set different production levels and draw another small histogram.
+#
+let production[1] = 6000, production[2] = 4000
+let production[3] = 3500, production[4] = 4500
+clearpath
+move 40, 14
+histogram colors, dummy, production, maxProduction, 6
+
+# Draw a larger histogram with a label for each bar.
+#
+clearpath
+move 60, 5
+histogram colors, labels, production, maxProduction, 12
