@@ -53,6 +53,12 @@ Tutorial
 
 <tr>
 <td>
+<a href="#datasets"/>Displaying Geographic Information System Datasets</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#pdf"/>Generating Portable Document Format (PDF) Output</a>
 </td>
 </tr>
@@ -329,8 +335,12 @@ include endex.doc
 <img src="tutorialpolygons1.png">
 <p>
 
-To fill a polygon with cross-hatching use two procedures to
-draw each set of hatch lines at different angles.  This is
+To fill a polygon with cross-hatching use procedures to
+draw each set of hatch lines at different angles.  Two procedures
+are required so the graphics state is saved
+// TODO describe save state and stripepath stuff.
+
+This is
 demonstrated in the following example.
 
 include beginex.doc
@@ -454,6 +464,86 @@ include endex.doc
 <img src="tutorialrand3.png">
 <p>
 
+<a name="datasets"></a>
+<h3>Displaying Geographic Information System Datasets</h3>
+<p>
+Mapyrus reads geographic data and associated relational attributes
+from geographic information system (GIS) datasets.  The simplest
+source of data is a text file, with one record per line.
+The name and type of dataset to read is given in a
+<a href="reference.html#dataset">dataset</a>
+command.
+An
+<a href="reference.html#import">import</a>
+command is used to begin reading from the dataset.
+Each record is retrieved with a
+<a href="reference.html#fetch">fetch</a>
+command in a loop and a variable is assigned for each field in the record.
+For a text file, fields are assigned to variables
+<tt>$1</tt>, <tt>$2</tt>, <tt>$3</tt>, ...
+and the whole record is assigned to variable
+<tt>$0</tt>.
+<p>
+The following example demonstrates reading a text file
+and displaying the geographic data that it contains.
+
+include beginex.doc
+include tutorialdatasets1.txt
+include endex.doc
+
+include beginex.doc
+include tutorialdatasets1.mpy
+include endex.doc
+
+<img src="tutorialdatasets1.png">
+<p>
+Export files of 
+GIS datasets are also read as text files.  A loop
+and counter are used to read all coordinates making up
+lines and polygons.
+The following example demonstrates reading and displaying a
+<a href="www.genaware.com">GenaMap</a> format export file
+containing line features.
+
+include beginex.doc
+include streets.EE
+include endex.doc
+
+include beginex.doc
+include tutorialdatasets2.mpy
+include endex.doc
+
+<img src="tutorialdatasets2.png">
+<p>
+
+Reading data from an ESRI Shape file format is similar to reading a text file.
+A Shape file defines a bounding rectangle so the
+<a href="reference.html#internalvars">variables</a>
+<tt>Mapyrus.dataset.min.x</tt>,
+<tt>Mapyrus.dataset.min.y</tt>,
+<tt>Mapyrus.dataset.max.x</tt>,
+and
+<tt>Mapyrus.dataset.max.y</tt>
+are used to set world coordinates to the bounding rectangle of the dataset.
+<p>
+An ESRI Shape file also defines field names.  Fields
+fetched with the
+<a href="reference.html#fetch">fetch</a>
+command are assigned to these variable names.  The
+geometry for each record is assigned to a variable named
+<tt>GEOMETRY</tt> and is added to the current path with the
+<a href="reference.html#addpath">addpath</a>
+command.
+<p>
+The following example demonstrates reading an ESRI Shape file
+containing attribute fields named HOTELNAME and STARRATING.
+
+include beginex.doc
+include tutorialdatasets3.mpy
+include endex.doc
+
+<img src="tutorialdatasets3.png">
+<p>
 
 <a name="pdf"></a>
 <h3>Generating Portable Document Format (PDF) Output</h3>
@@ -616,8 +706,19 @@ include endex.doc
 <h3>Accessing Mapyrus From Other Software</h3>
 <p>
 
-Talk about startup time for stand-alone
-remote access via URL.
+Pass parameters to java
+-D option
+Mapyrus works well with
+Give <tt>-</tt> as output file in
+<a href="reference.html#newpage">newpage</a>
+command to write image file to standard output.
+<p>
+A Java JVM takes more than one second to start on some computers.  For
+applications that must start Mapyrus many times to perform short tasks it is
+better to start Mapyrus as an HTTP server and make HTTP requests.
+<p>
+Most languages have a built-in method of making HTTP requests.
+lynx
 
 Starting as server makes immediately available
 of the display.
@@ -632,8 +733,12 @@ python, perl
 make web request
 
 Shell script
+
 include beginex.doc
-lynx -dump http://localhost:8410/wsrv.mpy?gemeinde=Erding > g.png
+tmpFile=$$.png
+lynx -dump http://localhost:8410/wsrv.mpy?gemeinde=Erding > $tmpFile
+mailx -s ' -a $tmpFile
+/bin/rm $tmpFile
 include endex.doc
 
 include beginex.doc
