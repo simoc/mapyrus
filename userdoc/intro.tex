@@ -3,12 +3,15 @@
 \section{Introduction}
 
 %BEGINHTML <<this keyword marks parts of text to extract for HTML page>>
-Mapyrus is software for creating plots of points, lines, polygons and labels 
+Mapyrus is software for
+creating plots of points, lines, polygons and labels 
 to PostScript (high resolution, up to A0 paper size),
 Portable Document Format (PDF) and web image output formats.
-Mapyrus is an Open Source project and is implemented entirely in Java.
 
-The software combines the following three features.
+Mapyrus is freely-available and is implemented entirely in Java,
+using Java's 2D Graphics, JDBC and multi-threading capabilities.
+
+The software combines the following four features.
 
 \begin{enumerate}
 \item
@@ -38,7 +41,7 @@ to be be defined.  See Figure \ref{turtle}.
 
 Reading and displaying of geographic information
 systems (GIS) datasets, text files, or tables held in a relational database
-(including spatial databases such as PostGIS and Oracle Spatial).
+(including spatial databases such as PostGIS).
 Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
@@ -95,17 +98,20 @@ graph images and text reports to a web-based application.
 As a Java API embedded in a Java application.
 \end{enumerate}
 
+\item
+Integration with the freely-available
+\textit{Java Topology Suite} from Vivid Solutions
+(\texttt{www.vividsolutions.com}).
+This library provides geometrical algorithms
+such as buffering, convex hull calculation and polygon intersection.
 
 \end{enumerate}
+
 %ENDHTML
 
 Please note that:
 
 \begin{itemize}
-\item
-Mapyrus is written in Java so as to be platform independent
-and take advantage of Java multi-threading, security,
-Java2D and JDBC capabilities.
 
 \item
 Mapyrus has no graphical user interface.
