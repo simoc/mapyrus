@@ -26,14 +26,13 @@ begin pollution reading
   # Draw small filled square.
   #
   color "hsb", hue, sat, bright
-  move -1, -1
-  draw -1, 1, 1, 1, 1, -1
+  box -1, -1, 1, 1
   fill
 end
 
 # Display points showing pollution levels in different colors.
 #
-newpage "eps", "tutorialattribute1.eps", 60, 30, 300
+newpage "eps", "tutorialattribute1.eps", 60, 30, 96
 
 clearpath
 move 10, 10
