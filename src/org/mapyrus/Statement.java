@@ -22,7 +22,7 @@ public class Statement
 	public static final int BLOCK = 4;
 	
 	public static final int COLOR = 10;
-	public static final int LINEWIDTH = 11;
+	public static final int LINESTYLE = 11;
 	public static final int MOVE = 12;
 	public static final int DRAW = 13;
 	public static final int ARC = 14;
@@ -93,7 +93,7 @@ public class Statement
 		mStatementTypeLookup = new Hashtable();
 		mStatementTypeLookup.put("color", new Integer(COLOR));
 		mStatementTypeLookup.put("colour", new Integer(COLOR));
-		mStatementTypeLookup.put("linewidth", new Integer(LINEWIDTH));
+		mStatementTypeLookup.put("linestyle", new Integer(LINESTYLE));
 		mStatementTypeLookup.put("move", new Integer(MOVE));
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
 		mStatementTypeLookup.put("arc", new Integer(ARC));
