@@ -78,7 +78,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </java>
 
 <!-- Build LaTex documentation into PDF file -->
-<!-- Run LaTeX twice so that all cross references are resolved. -->
+<!-- Run LaTeX three times so that all cross references are resolved. -->
+
+<exec dir="doc" executable="latex" failonerror="true">
+<arg line="${ant.project.name}.tex"/>
+</exec>
 
 <exec dir="doc" executable="latex" failonerror="true">
 <arg line="${ant.project.name}.tex"/>
