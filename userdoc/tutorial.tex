@@ -378,6 +378,16 @@ example, with output shown in Figure \ref{tutorialsinkhole}.
 \label{tutorialsinkhole}
 \end{figure}
 
+If polygons are partially outside the page then
+use the \texttt{guillotine} command to chop the
+polygon at the edge of the page before using the \texttt{sinkhole}
+command.
+
+To calculate two label positions for a polygon, use the \texttt{guillotine}
+command to cut the polygon into left and right (or top and bottom)
+halves and use the \texttt{sinkhole} command to calculate a
+position in each half.
+
 \subsection{Displaying Data Stored In Text Files}
 
 The simplest source of data is a text file, with one record per line.  The
