@@ -92,12 +92,24 @@ public class Constants
 	 * SQL queries.
 	 */
 	public static final int DB_CONNECTION_TIMEOUT = 30;
-	
+
+	/*
+	 * Maximum number of icons to cache in memory.
+	 */
+	public static final int ICON_CACHE_SIZE = 64;
+
 	/*
 	 * Number of points and millimetres per inch.
 	 */
 	public static final int POINTS_PER_INCH = 72;
 	public static final double MM_PER_INCH = 25.4;
+
+	/*
+	 * Screen resolution, in dots per inch.
+	 * Most displays will be a bit different but it is not easy
+	 * to obtain this information.
+	 */
+	public static final int SCREEN_RESOLUTION = 96;
 
 	/*
 	 * Line separator in text files.
