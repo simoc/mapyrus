@@ -1,0 +1,52 @@
+# @(#) $Id$
+
+# Show a gradiated bar with colors ranging from one HSB value to another.
+#
+begin colorRange h1, s1, b1, h2, s2, b2, nColors
+
+	# Label bar with starting and ending HSB color values.
+	#
+	font 'Helvetica', 'plain', 2.5
+	color "black"
+	justify 'left'
+	clearpath
+	move -18, 6
+	label "H " . h1 . " S " . s1 . " B " . b1
+
+	justify 'right'
+	clearpath
+	move 18, -3
+	label "H " . h2 . " S " . s2 . " B " . b2
+
+	# Step through range of colors, drawing a rectangle in
+	# each intermediate color between the start and end colors.
+	#
+	hStep = (h2 - h1) / nColors
+	sStep = (s2 - s1) / nColors
+	bStep = (b2 - b1) / nColors
+
+	xStep = 36 / nColors
+	x = -18
+	while x < 18
+	do
+		clearpath
+		color 'hsb', h1, s1, b1
+		move x, 0
+		draw x, 5, x + xStep, 5, x + xStep, 0
+		fill
+
+		x = x + xStep
+		h1 = h1 + hStep
+		s1 = s1 + sStep
+		b1 = b1 + bStep
+	done
+end
+
+newpage "png", "turtle5.png", 40, 30, 96
+clearpath
+move 20, 20
+colorRange 0, 0.95, 0.95, 0.25, 0.95, 0.95, 100
+clearpath
+move 20, 5
+colorRange 0.71, 0.09, 0.93, 0.71, 0.69, 0.69, 100
+
