@@ -86,6 +86,7 @@ public class MapyrusMessages
 	public static final String INVALID_LINESTYLE = "invalidlinestyle";
 	public static final String INVALID_MIME_TYPE = "invalidmimetype";
 	public static final String INVALID_NUMBER = "invalidnumber";
+	public static final String INVALID_OGC_WKB = "invalidogcwkb";
 	public static final String INVALID_OGC_WKT = "invalidogcwkt";
 	public static final String INVALID_OUTPUT = "invalidoutput";
 	public static final String INVALID_PAGE = "invalidpage";
