@@ -34,7 +34,7 @@ public class Expression
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
-	class ExpressionTreeNode
+	private class ExpressionTreeNode
 	{
 		boolean mIsLeaf;
 		Argument mLeafArg;
@@ -71,7 +71,7 @@ public class Expression
 		 * @param context variable definitions and other context information.
 		 * @return numeric or string value of the expression.
 		 */
-		public Argument evaluate(Context context) throws MapyrusException
+		public Argument evaluate(ContextStack context) throws MapyrusException
 		{
 			return(traverse(this, context));
 		}
@@ -80,7 +80,7 @@ public class Expression
 		 * Recursively traverse binary expression tree to
 		 * determine its value.
 		 */
-		private Argument traverse(ExpressionTreeNode t, Context context)
+		private Argument traverse(ExpressionTreeNode t, ContextStack context)
 			throws MapyrusException
 		{
 			Argument retval;
@@ -532,7 +532,7 @@ public class Expression
 	 * @param vars are all currently defined variables and their values.
 	 * @return the evaluated expression, either a string or a number.
 	 */
-	public Argument evaluate(Context context) throws MapyrusException
+	public Argument evaluate(ContextStack context) throws MapyrusException
 	{
 		return(mExprTree.evaluate(context));
 	}
@@ -543,7 +543,7 @@ public class Expression
 		{
 			Preprocessor p;
 			Expression e1, e2;
-			Context context = new Context();
+			ContextStack context = new ContextStack();
 			Argument a1, a2;
 
 			context.defineVariable("pi", new Argument(3.1415));
