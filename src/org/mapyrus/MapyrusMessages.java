@@ -79,6 +79,7 @@ public class MapyrusMessages
 	public static final String INVALID_FONT = "invalidfont";
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_FORMAT = "invalidformat";
+	public static final String INVALID_GEOIMAGE = "invalidgeoimage";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
 	public static final String INVALID_GRADIENT_FILL = "invalidgradientfill";
 	public static final String INVALID_GRASS_FILE = "invalidgrassfile";
