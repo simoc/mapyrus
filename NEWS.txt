@@ -1,6 +1,14 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004 Simon Chenery.
 
+0.49, November 2004
+
+* Add wedge command to draw pie slices.
+* Add ellipse command.
+* Add newpage update=true option to enable existing files to be edited.
+* Add more examples to manual.
+* Add display of vector data provided through OGR interface by ogrinfo program.
+
 0.48, September 2004
 
 * Add eval command, like the eval command found in Perl and UNIX scripting.
