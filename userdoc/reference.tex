@@ -1404,11 +1404,12 @@ file format to use for output, one of:
 \item
 \texttt{eps} for Encapsulated PostScript output.
 \item
-\texttt{ps} for PostScript output.
+\texttt{ps}, \texttt{postscript} or \texttt{application/postscript}
+for PostScript output.
 \item
-\texttt{jpeg} for JPEG image output.
+\texttt{jpeg} or \texttt{image/jpeg} for JPEG image output.
 \item
-\texttt{png} for PNG image output.
+\texttt{png} or \texttt{image/png} for PNG image output.
 \end{itemize}
 
 See section \ref{pdf} for
@@ -1448,7 +1449,7 @@ File Format & Extras \\
 \hline
 \hline
 
-\texttt{ps}, \texttt{eps} &
+PostScript, Encapsulated PostScript &
 \texttt{pfafiles=\textit{filename},\textit{filename2},...}
 
 Comma-separated list of PostScript Type 1 font filenames
@@ -1485,7 +1486,7 @@ as a portrait page. \\
 
 \hline
 
-\texttt{png}, \texttt{jpeg} &
+PNG, JPEG images &
 
 \texttt{resolution=\textit{value}}
 
