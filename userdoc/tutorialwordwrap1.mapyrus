@@ -1,30 +1,30 @@
 begin caption message, width
-  local numLines, topY
+  local height
 
-  # Word wrap message then count number of lines in wrapped message.
+  # Word wrap message then find width and height of wrapped message.
   #
   font 'Helvetica-Narrow', 3
   let message = wordwrap(message, width)
-  let numLines = length(split(message, "\n"))
+  let width = stringwidth(message)
+  let height = stringheight(message)
 
-  # Draw a box behind label, leaving a 1mm gap around the text.
+  # Draw a box behind label, leaving a 0.5mm gap around the text.
   # Then draw label inside box.
   #
   color "Light Yellow"
-  let topY = 3 * numLines + 1
-  box -width / 2 - 1, 0, width / 2 + 1, topY
+  box -width / 2 - 0.5, -0.5, width / 2 + 0.5, height + 0.5
   fill
   color "Black"
   stroke
 
   clearpath
-  move -width / 2, topY - 3
+  move -width / 2, height - 3
   label message
 end
 
 newpage "eps", "tutorialwordwrap1.eps", 95, 30
 move 30, 15
-caption "SYDNEY: Fine with a late southerly change.", 35
+caption "SYDNEY: Fine with a late southerly change.", 30
 
 clearpath
 move 70, 9
