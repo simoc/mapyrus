@@ -337,40 +337,64 @@ public class ColorDatabase
 
 	/**
 	 * Return color structure from named color.
-	 * @param colorName is color to lookup.
+	 * @param colorName is named color or to lookup or hex value.
+	 * @param alpha alpha channel value for color.
 	 * @return color definition, or null if color not known.
 	 */	
-	public static Color getColor(String colorName)
+	public static Color getColor(String colorName, int alpha)
+		throws MapyrusException
 	{
 		Color retval;
 
-		retval = (Color)(mColors.get(colorName));
-		if (retval == null)
+		if (colorName.startsWith("#") || colorName.startsWith("0x") || colorName.startsWith("0X"))
 		{
+			int startIndex = (colorName.charAt(0) == '#') ? 1 : 2;
+
 			/*
-			 * Convert color name to lower case and
-			 * strip whitespace, then look it up again.
+			 * Parse color from a 6 digit hex value like '#ff0000',
+			 * as used in HTML pages.
 			 */
-			int nChars = colorName.length();
-			char c;
-			StringBuffer sb = new StringBuffer(nChars);
-			
-			for (int i = 0; i < nChars; i++)
+			try
 			{
-				c = colorName.charAt(i);
-				if (!Character.isWhitespace(c))
-				{
-					sb.append(Character.toLowerCase(c));
-				}
+				int rgb = Integer.parseInt(colorName.substring(startIndex), 16);
+				rgb = (rgb & 0xffffff);
+				retval = new Color(rgb | (alpha << 24), true);
 			}
-			retval = (Color)mColors.get(sb.toString());
-			if (retval != null)
+			catch (NumberFormatException e)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + colorName);
+			}
+		}
+		else
+		{
+			retval = (Color)(mColors.get(colorName));
+			if (retval == null)
 			{
 				/*
-				 * Add this variation of color name to database so it can
-				 * be looked up directly next time.
+				 * Convert color name to lower case and
+				 * strip whitespace, then look it up again.
 				 */
-				mColors.put(colorName, retval);
+				int nChars = colorName.length();
+				char c;
+				StringBuffer sb = new StringBuffer(nChars);
+				
+				for (int i = 0; i < nChars; i++)
+				{
+					c = colorName.charAt(i);
+					if (!Character.isWhitespace(c))
+					{
+						sb.append(Character.toLowerCase(c));
+					}
+				}
+				retval = (Color)mColors.get(sb.toString());
+				if (retval != null)
+				{
+					/*
+					 * Add this variation of color name to database so it can
+					 * be looked up directly next time.
+					 */
+					mColors.put(colorName, retval);
+				}
 			}
 		}
 		return(retval);

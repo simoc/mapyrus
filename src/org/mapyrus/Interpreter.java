@@ -141,9 +141,8 @@ public class Interpreter
 	private void setColor(ContextStack context, Argument []args, int nArgs)
 		throws MapyrusException
 	{
-		int alpha = 0;
-		float decimalAlpha = 0.0f;
-		boolean hasAlpha = false;
+		int alpha = 255;
+		float decimalAlpha = 1.0f;
 
 		if (nArgs == 1 || nArgs == 2)
 		{
@@ -162,56 +161,24 @@ public class Interpreter
 					decimalAlpha = 1.0f;
 
 				alpha = (int)Math.round(decimalAlpha * 255.0);
-				hasAlpha = true;
 			}
 
-			if (color.startsWith("#") || color.startsWith("0x"))
+			if (color.equals("contrast"))
 			{
-				int startIndex = (color.charAt(0) == '#') ? 1 : 2;
-
-				/*
-				 * Parse color from a 6 digit hex value like '#ff0000',
-				 * as used in HTML pages.
-				 */
-				try
-				{
-					int rgb = Integer.parseInt(color.substring(startIndex), 16);
-					rgb = (rgb & 0xffffff);
-					c = new Color(rgb | (alpha << 24), hasAlpha);
-				}
-				catch (NumberFormatException e)
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + color);
-				}
+				context.contrastColor(alpha);
+				return;
 			}
-			else
+
+			/*
+			 * Find named color of hex value in color database.
+			 */
+			c = ColorDatabase.getColor(color, alpha);
+			if (c == null)
 			{
-				if (color.equals("contrast"))
-				{
-					if (!hasAlpha)
-						alpha = 255;
-					context.contrastColor(alpha);
-					return;
-				}
-
-				/*
-				 * Find named color in color name database.
-				 */
-				c = ColorDatabase.getColor(color);
-				if (c == null)
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
-						": " + color);
-				}
-
-				/*
-				 * Add transparency value to color, if given.
-				 */
-				if (hasAlpha)
-				{
-					c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
-				}
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+					": " + color);
 			}
+
 			context.setColor(c);
 		}
 		else if (nArgs == 4 || nArgs == 5)
@@ -233,7 +200,6 @@ public class Interpreter
 					decimalAlpha = 1.0f;
 
 				alpha = (int)Math.round(decimalAlpha * 255.0);
-				hasAlpha = true;
 			}
 
 			/*
@@ -255,7 +221,8 @@ public class Interpreter
 				 * Set HSB color.
 				 */
 				int rgb = Color.HSBtoRGB(c1, c2, c3);
-				context.setColor(new Color(rgb | (alpha << 24), hasAlpha));
+				rgb = (rgb & 0xffffff);
+				context.setColor(new Color(rgb | (alpha << 24), true));
 			}
 			else if (colorType.equalsIgnoreCase("rgb"))
 			{
@@ -267,10 +234,7 @@ public class Interpreter
 				/*
 				 * Set RGB color.
 				 */
-				if (hasAlpha)
-					context.setColor(new Color(c1, c2, c3, decimalAlpha));
-				else
-					context.setColor(new Color(c1, c2, c3));
+				context.setColor(new Color(c1, c2, c3, decimalAlpha));
 			}
 			else
 			{
