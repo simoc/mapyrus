@@ -1,0 +1,1238 @@
+% @(#) $Id$
+
+\section{Reference}
+
+\subsection{Software Requirements}
+
+Mapyrus requires:
+\begin{itemize}
+\item
+Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4 or higher,
+or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4 or higher.
+\item
+The Ghostscript PostScript interpreter from 
+\texttt{http://www.ghostscript.com}
+if creation of PDF files is required.
+\end{itemize}
+
+\subsection{Usage}
+
+The Mapyrus software is contained in a single Java JAR file.
+Start Mapyrus in a Java interpreter with the following command.
+
+\vspace{10pt}
+\texttt{java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
+\vspace{10pt}
+
+\textit{install-path} is the directory in which
+Mapyrus is installed.  \textit{filename} is the name of a file
+or a URL for Mapyrus to read from.  If \textit{filename} is \texttt{-}
+then standard input is read.  If several filenames and URLs are
+given then they are read in turn.
+
+Variables passed to Mapyrus using the Java \texttt{-D} option
+are available in the Mapyrus interpreter.  Other JAR files
+to be used in combination with Mapyrus are included in the
+\texttt{-classpath} option.
+
+\vspace{10pt}
+\texttt{java -D\textit{variable}=\textit{value} \dots -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} org.mapyrus.Mapyrus \textit{filename}}
+\vspace{10pt}
+
+Mapyrus runs as an HTTP Server when started with the
+\texttt{-s} option.
+
+\vspace{10pt}
+\texttt{java -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} org.mapyrus.Mapyrus -s \textit{port} \textit{filename} \dots}
+\vspace{10pt}
+
+\subsubsection{Startup Configuration}
+
+The variables available for configuring Mapyrus at startup are
+shown in Table \ref{startupvariables}.
+
+\begin{table}[h]
+\begin{tabular}{|l|p{7cm}|}
+\hline
+Variable & Description \\
+\hline
+\hline
+
+\texttt{Mapyrus.rgb.file=\textit{filename}} &
+Defines an X Windows color names file to use for color
+name lookup in the
+\texttt{color} command.  Default value is
+\texttt{/usr/lib/X11/rgb.txt} \\
+
+\hline
+
+\texttt{java.util.logging.config.file=\textit{filename}} &
+Defines file controlling logging for the
+HTTP Server option.
+See the Java Logging Overview
+\footnote{Found at \texttt{http://java.sun.com/j2se/1.4/docs/guide/util/logging/overview.html}}
+and Java java.util.LogManager API documentation
+\footnote{Found at \texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/LogManager.html}}
+for format of the file defining logging properties.
+Default logging writes only errors to error output. \\
+
+\hline
+
+\texttt{jdbc.drivers=\textit{class}} &
+Defines class containing JDBC 1.0 (or higher) driver to load at startup.
+A JDBC driver is required for connecting to a relational database and
+is provided as part of a relational database.
+See the Java JDBC DriverManager API documentation
+\footnote{Found at \texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/sql/DriverManager.html}}
+for details.
+The JAR file containing the class must be included in the \texttt{-classpath}
+option when starting Mapyrus. \\
+
+\hline
+\end{tabular}
+\caption{Startup Variables}
+\label{startupvariables}
+\end{table}
+
+\subsection{Language}
+
+Mapyrus interprets commands read from one or more plain text files.
+Each command begins on a separate line.
+
+Any part of a line following a hash (\texttt{\#}) character that is not part of
+a literal string is interpreted as a comment and is ignored.  Leading and
+trailing spaces or tabs on a line are also ignored.  A backslash
+(\texttt{\textbackslash}) character at the end of a line is interpreted as a
+line continuation and the line and next line are joined into a single line.
+
+A line beginning with the word \texttt{include}, followed by a filename
+or URL includes commands from another file.
+
+Each command is passed zero or more arguments separated by commas.
+An argument is a number, a string literal in single quotes (\texttt{\'})
+or double quotes (\texttt{\"}), a variable name, an array, an
+array element or an expression.
+
+An expression contains arguments and operators and functions
+on those arguments, like in BASIC, C, or Python.
+Available operators are shown in Table \ref{operators}.
+Available functions are shown in Table \ref{functions}.
+
+
+\begin{table}[h]
+\begin{tabular}{|l|p{7cm}|}
+\hline
+Operator & Description \\
+\hline
+\hline
+
+\texttt{(}, \texttt{)} & parentheses \\
+\texttt{*}, \texttt{/}, \texttt{*}, \texttt{x}, &
+numeric multiplication, numeric division, modulo (works
+with non-integer values too), string repetition \\
+
+\hline
+
+\texttt{+}, \texttt{-}, \texttt{.} & numeric addition,
+numeric subtraction, string concatenation \\
+
+\hline
+
+\texttt{<=}, \texttt{<}, \texttt{==},
+\texttt{!=}, \texttt{>}, \texttt{>=},
+\texttt{lt}, \texttt{le}, \texttt{eq},
+\texttt{ne}, \texttt{gt}, \texttt{ge} &
+numeric comparisons and string comparisons \\
+
+\hline
+
+\texttt{and},
+\texttt{or},
+\texttt{not} &
+Logical and, or, not \\
+
+\hline
+
+\end{tabular}
+\caption{Operators}
+\label{operators}
+\end{table}
+
+
+\begin{table}[h]
+\begin{tabular}{|l|p{7cm}|}
+\hline
+Function Name & Description \\
+\hline
+\hline
+
+\texttt{ceil(\textit{n})} &
+Returns the smallest integer value that is not less than \textit{n}. \\
+
+\hline
+
+\texttt{cos(\textit{n})} &
+Returns the cosine of angle \textit{n}, given in degrees. \\
+
+\hline
+
+\texttt{floor(\textit{n})} &
+Returns the largest integer value that is not larger than \textit{n}. \\
+
+\hline
+
+\texttt{length(\textit{v})} &
+If \textit{v} is an array, then the number of elements in the
+array is returned.  Otherwise the string length of \textit{v} is returned. \\
+
+\hline
+
+\texttt{log10(\textit{n})} &
+Returns the base 10 logarithm of \textit{n}. \\
+
+\hline
+
+\texttt{match(\textit{str}, \textit{regex})} &
+Returns the index in the string \textit{str}, where the regular expression
+\textit{regex} is first matched.  The index of the first character is 1.
+If the regular expression does not match \textit{str}, then 0 is returned.
+The \textit{Java API documentation}
+\footnote{Found at \texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html}}
+describes the syntax of regular expressions. \\
+
+\hline
+
+\texttt{max(\textit{a}, \textit{b})} &
+Returns the larger of values \textit{a} and \textit{b}. \\
+
+\hline
+
+\texttt{min(\textit{a}, \textit{b})} &
+Returns the smaller of values \textit{a} and \textit{b}. \\
+
+\hline
+
+\texttt{pow(\textit{a}, \textit{b})} &
+Returns \textit{a} to the power \textit{b}. \\
+
+\hline
+
+\texttt{random(\textit{n})} &
+Generates a random floating point number between 0 and \textit{n}. \\
+
+\hline
+
+\texttt{replace(\textit{str}, \textit{regex}, \textit{replacement})} &
+Returns the string \textit{str}, with all occurrences of the regular
+expression \textit{regex} replaced by \textit{replacement}. \\
+
+\hline
+
+\texttt{round(\textit{n})} &
+Returns \textit{n} rounded to nearest whole number. \\
+
+\hline
+
+\texttt{sin(\textit{n})} &
+Returns the sine of angle \textit{n}, given in degrees. \\
+
+\hline
+
+\texttt{split(\textit{str}, \textit{regex})} &
+Splits the string \textit{str} into an array of strings, delimited by the
+regular expression \textit{regex}.
+The array of split strings is returned,
+with the first string having array index 1, the
+second string having index 2, and so on. \\
+
+\hline
+
+\texttt{sqrt(\textit{n})} &
+Returns square root of \textit{n}. \\
+
+\hline
+
+\texttt{substr(\textit{str}, \textit{offset}, \textit{n})} &
+Returns a substring of the string \textit{str}, beginning at the
+character with index \textit{offset} that is \textit{n} characters long.
+The first character in \textit{str} has an index of 1. \\
+
+\hline
+
+\texttt{tan(\textit{n})} &
+Returns the trigonometric tangent of angle \textit{n}, given in degrees. \\
+
+\hline
+
+\texttt{tempname(\textit{suffix})} &
+Returns a unique temporary filename with given file suffix,
+for use when running as an HTTP server.
+Temporary files returned by this function
+are automatically deleted after 5 minutes. \\
+
+\hline
+\end{tabular}
+\caption{Functions}
+\label{functions}
+\end{table}
+
+An argument or expression is assigned to a named variable using the the
+\texttt{let} command and an equals sign (\texttt{=}).  A variable name begins
+with a letter or dollar sign (\texttt{\$}) and contains only letters, numbers,
+dots (\texttt{.}) and underbars (\texttt{\_}).  Variable names are
+case-sensitive.  Variables and array elements that are accessed without having
+been defined have a value of zero, or an empty string.
+
+Variables accepted as parameters to a procedure, or declared in the procedure
+with the local command are local to that procedure and not visible outside the
+procedure.  All other variables are global.
+
+Array elements are accessed by giving the index between
+square brackets (\texttt{[} and \texttt{]}).
+The index is any string or number value.
+Multi-dimension arrays are available by using
+indexes named \textit{index1}\texttt{."}\textit{c}\texttt{".}\textit{index2},
+where \textit{c} is any character that never appears in an index.
+
+The \texttt{if}, \texttt{while} and \texttt{for}
+flow control structures
+found in other languages are available:
+
+\texttt{if} \textit{condition} \texttt{then}
+\textit{then-commands} ...
+\texttt{else}
+\textit{else-commands} ...
+\texttt{endif}
+
+Executes \textit{then-commands} if \textit{condition} evaluates to
+a non-zero value, otherwise \textit{else-commands} are executed.
+The \texttt{else} part is optional.
+Compound tests are built using the \texttt{elif} keyword:
+
+\texttt{if} \textit{condition} \texttt{then}
+  \textit{commands} ...
+\texttt{elif} \textit{condition} \texttt{then}
+  \textit{commands} ...
+\texttt{endif}
+
+The \texttt{while} keyword defines a loop in which
+\textit{commands} will be executed for as long
+as \textit{condition} continues to evaluate to a non-zero value:
+
+\texttt{while} \textit{condition} \texttt{do}
+  \textit{commands} ...
+\texttt{done}
+
+The \texttt{for} ... \texttt{in} keywords define a loop in which
+each element of \textit{array} is assigned to variable \textit{var}
+and \textit{commands} are executed.
+Elements in \textit{array} are accessed in no particular order:
+
+\texttt{for} \textit{var} \texttt{in} \textit{array} \texttt{do}
+  \textit{commands} ...
+\texttt{done}
+
+Procedures group frequently used commands together, save
+graphics state when they begin and restore it when they end,
+isolating the calling procedure from any changes:
+
+\texttt{begin} \textit{name} [\textit{arg1}, ...]
+  \textit{commands} ...
+\texttt{end}
+
+A procedure is defined to take a fixed number of arguments.
+All procedure names are global and following the same naming
+rules as variables.
+Procedure definitions within a procedure are not allowed.
+
+A procedure is called from any place where a command is accepted
+and the number of arguments passed must match the number 
+in the procedure definition.
+
+Before commands in the procedure are executed
+the graphics state is saved.
+The graphics state is restored when the procedure finishes.
+The graphics state contains:
+
+\begin{enumerate}
+\item
+The path defined with
+\texttt{move},
+\texttt{draw},
+\texttt{arc} and
+\texttt{addpath}
+commands.
+
+\item
+The clip path defined with
+\texttt{clip} and
+\texttt{protect}
+commands.
+
+\item
+Current drawing settings set by
+\texttt{color},
+\texttt{linestyle},
+\texttt{font} and \texttt{justify}
+commands.
+
+\item
+Transformations set by \texttt{rotate} and \texttt{scale} commands.
+\end{enumerate}
+
+Any new page created in a procedure with a
+\texttt{newpage}
+command is completed when the procedure finishes and output
+returns to the page being created before the procedure was called.
+
+Any dataset being imported is global.  It is not saved and not restored.
+
+Any world coordinate system set with the \texttt{worlds} command is cleared
+before the commands in the procedure are executed.  This enables the calling
+procedure to work in a world coordinate system and the called procedure to draw
+at these world coordinate positions using measurements in millimetres.
+
+If the current path contains only \texttt{move} points and no straight line or
+arc segments when a procedure is called then the procedure is called
+repeatedly, one time for each move point, with the origin (0, 0) translated to
+the \texttt{move} point each time and the path reset to empty.  Therefore,
+coordinates in the called procedure are relative to the move point.  This
+enables drawing commands in the called procedure to be given in millimetres,
+relative to each \texttt{move} point.
+
+\subsection{Internal Variables}
+
+All Java standard system properties (\texttt{os.arch}, \texttt{user.dir}, etc.)
+are defined as variables in Mapyrus.
+
+Mapyrus maintains the internal variables shown in Table \ref{internalvariables}.
+
+\begin{table}[h]
+\begin{tabular}{|p{6cm}|p{7cm}|}
+\hline
+Variable Name & Description \\
+\hline
+\hline
+
+\texttt{Mapyrus.dataset.fieldnames} &
+An array containing the names of fields being imported from
+the current dataset.  The first fieldname has array index 1. \\
+
+\hline
+
+\texttt{Mapyrus.dataset.projection} &
+A description of the projection (coordinate system) in which coordinates
+of the current dataset are stored.
+Projection descriptions are not standardised between dataset formats.
+Different dataset formats will return different descriptions for the same
+projection. \\
+
+\hline
+
+\texttt{Mapyrus.dataset.min.x},
+\texttt{Mapyrus.dataset.min.y},
+\texttt{Mapyrus.dataset.max.x},
+\texttt{Mapyrus.dataset.max.y} &
+The bounding rectangle of all data in the current dataset. \\
+
+\hline
+
+\texttt{Mapyrus.filename} &
+The name of the file or URL being interpreted. \\
+
+\hline
+
+\texttt{Mapyrus.freeMemory} &
+The amount of free memory in the Java Virtual Machine, in bytes. \\
+
+\hline
+
+\texttt{Mapyrus.imagemap.x},
+\texttt{Mapyrus.imagemap.y} &
+The pixel position of the point clicked in an HTML imagemap and
+passed to Mapyrus, for use when running as an HTTP server.
+Both values are set to -1 if no imagemap point passed in current URL. \\
+
+\hline
+
+\texttt{Mapyrus.import.count} &
+The number of records already fetched from the current dataset. \\
+
+\hline
+
+\texttt{Mapyrus.import.more} &
+Flag value set to 1 if another record is available
+for \texttt{fetch}
+command, or 0 if no more records available. \\
+
+\hline
+
+\texttt{Mapyrus.key.count} &
+The number of legend entries defined with
+\texttt{key} commands that have not yet
+been displayed with a
+\texttt{legend} command. \\
+
+\hline
+
+\texttt{Mapyrus.page.format},
+\texttt{Mapyrus.page.height},
+\texttt{Mapyrus.page.width},
+\texttt{Mapyrus.page.resolution.dpi},
+\texttt{Mapyrus.page.resolution.mm} &
+The file format, page height, page width
+and resolution that were passed to the
+\texttt{newpage} command.  File format is in lowercase.
+Height and width are in millimetres.  Resolution is available
+as either a dots-per-inch value, or a distance in millimetres between
+dots. \\
+
+\hline
+
+\texttt{Mapyrus.path.length},
+\texttt{Mapyrus.path.area},
+\texttt{Mapyrus.path.min.x},
+\texttt{Mapyrus.path.min.y},
+\texttt{Mapyrus.path.max.x},
+\texttt{Mapyrus.path.max.y},
+\texttt{Mapyrus.path.width},
+\texttt{Mapyrus.path.height} &
+The length of the current path on the page measured in millimetres,
+the area of the current path measured in square millimetres
+and the bounding rectangle of the current path. \\
+
+\hline
+
+\texttt{Mapyrus.rotation} &
+The current rotation angle in degrees set by
+\texttt{rotate} command.
+Returned value is normalised to fall in the
+range -180 to +180 degrees. \\
+
+\hline
+
+\texttt{Mapyrus.scale} &
+The current scale factor set by \texttt{scale} command. \\
+
+\hline
+
+\texttt{Mapyrus.timer} &
+The elapsed processing time, measured in seconds. \\
+
+\hline
+
+\texttt{Mapyrus.timestamp} &
+A string representation of the current date and time. \\
+
+\hline
+
+\texttt{Mapyrus.totalMemory} &
+The total amount of memory in the Java Virtual Machine, in bytes. \\
+
+\hline
+
+\texttt{Mapyrus.version} &
+The version of the software. \\
+
+\hline
+
+\texttt{Mapyrus.worlds.min.x},
+\texttt{Mapyrus.worlds.min.y},
+\texttt{Mapyrus.worlds.max.x},
+\texttt{Mapyrus.worlds.max.y},
+\texttt{Mapyrus.worlds.width},
+\texttt{Mapyrus.worlds.height} &
+The bounding rectangle of world coordinates set with the 
+\texttt{worlds} command. \\
+
+\hline
+
+\texttt{Mapyrus.worlds.scale} &
+The real-world scale factor, determined by
+dividing of the X axis world coordinate range
+by the page width.
+
+\end{tabular}
+\caption{Internal Variables}
+\label{internalvariables}
+\end{table}
+
+\subsection{Commands}
+
+Commands are listed alphabetically.  Some commands accept arguments in several
+ways.  For these commands, each combination of arguments is listed.
+
+\subsubsection{addpath}
+\texttt{addpath} \textit{geometry-field} [, \textit{geometry-field} ...]
+
+Adds geometry in each \textit{geometry-field} to current path.
+A \textit{geometry-field} is geometry fetched from a dataset
+with a \texttt{fetch} command.
+
+Coordinates are transformed through any
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
+\subsubsection{arc}
+
+\texttt{arc} \textit{direction}, \textit{xCenter}, \textit{yCenter},
+\textit{xEnd}, \textit{yEnd}
+
+Adds a circular arc to the current path.  The arc begins at
+the last point added to the path and ends at (\textit{xEnd}, \textit{yEnd})
+with center at (\textit{xCenter}, \textit{yCenter}).
+If \textit{direction} is a positive number, the arc travels clockwise,
+otherwise the arc travels in an anti-clockwise direction.
+If the begin and end points are the same then the arc is a complete circle.
+A straight line segment is first added to the path if
+the distance from the beginning point to the center is different
+to the distance from the center to the end point.
+
+Points are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
+\subsubsection{clearpath}
+
+\texttt{clearpath}
+
+Removes all points from the current path.
+
+\subsubsection{clip}
+
+\texttt{clip}
+
+Sets a clip path containing the area covered by the current path.
+Opposite of the \texttt{protect} command.
+Later drawing commands are limited to draw only inside this area.
+If the path is clipped in a procedure, then the area remains
+clipped until the procedure is complete.  Otherwise, the area
+remains permanently clipped for the page.
+When more than one path is clipped, drawing is limited to
+areas inside all clip paths.
+The current path is not modified by this command.
+
+\subsubsection{color}
+
+\texttt{color} \textit{name} [, \textit{alpha}]
+
+\texttt{color} \texttt{\"\#}\textit{hexdigits}\texttt{\"} [, \textit{alpha}]
+
+\texttt{color \"rgb\"}, \textit{red}, \textit{green},
+\textit{blue} [, \textit{alpha}]
+
+\texttt{color "hsb"}, \textit{hue}, \textit{saturation},
+\textit{brightness} [, \textit{alpha}]
+
+Sets color for drawing.  Named colors refer to colors in the file
+\texttt{/usr/lib/X11/rgb.txt}, or the file given as a startup variable (see
+Table \ref{startupvariables}).  \textit{hexdigits} is a 6 digit hexadecimal
+value defining RGB values, as used in HTML pages.  Values for RGB colors and
+Hue-saturation-brightness (HSB) colors are given as intensities in the range
+0-1.
+
+The alpha value is optional and defines transparency as a value in the range
+0-1.  An alpha value of 1 is completely opaque and the color overwrites
+underlying colors.  An alpha value of 0 is completely transparent and the color
+is not visible.  Intermediate values are partially transparent and the color is
+blended with colors of underlying shapes on the page.
+
+Colors are opaque if an alpha value is not given.  Transparency is not
+available for PostScript output and all colors are opaque.
+
+The spelling \texttt{colour} is also accepted for this command.
+
+\subsubsection{dataset}
+
+\texttt{dataset} \textit{type}, \textit{name}, \textit{extras}
+
+Defines a dataset to read from.  A dataset contains geographic data,
+geometry, attributes, a lookup table, data to write to standard
+output, or a combination of these.
+
+\textit{dataset} is the filename of the dataset to read.
+\textit{type} is the type of dataset and
+\textit{extras} defines further options for accessing the dataset, given
+as \textit{variable=value} values, separated by whitespace.
+The following dataset types and options are available:
+
+
+\begin{table}[h]
+\begin{tabular}{|p{3cm}|p{10cm}|}
+\hline
+Dataset Type & Description and Extras \\
+\hline
+\hline
+
+\texttt{jdbc} &
+for accessing data held in a relational database with
+an SQL \texttt{select} statement via JDBC.
+\textit{name} contains the SQL query to execute.
+For each fetched record, field values are assigned to variables
+with the name of the fields.
+Field values that are NULL are converted to either an empty string,
+or numeric zero, depending on their type.
+
+Some databases convert all field names to upper case, or to lowercase.
+Use a field name alias for fields that are the result of an expression.
+
+Extras:
+
+\texttt{driver=\textit{string}}
+
+The name of the Java class containing a JDBC 1.0 (or higher)
+driver for connecting to the database.
+This class name is required if not given in the startup variable
+\texttt{jdbc.drivers} (see \ref{startupvariables}).
+The JAR file containing the class must be included in the \texttt{-classpath}
+option when starting Mapyrus.
+
+\texttt{url=\textit{string}}
+
+URL containing the database name, host and other information for identifying
+the database to connect to.
+The format of this string is database dependent.
+The database remains connected after use and the connection is reused in later
+\texttt{dataset} commands with the same \texttt{url} value.
+When Mapyrus is run using the HTTP Server option,
+requests using with the same \texttt{url} value share a
+single database connection.
+
+\texttt{user=\textit{string}}
+
+Username for connecting to the database.
+
+\texttt{password=\textit{string}}
+
+Password for connecting to the database.
+
+\texttt{wktfields=\textit{field1},\textit{field2},...}
+
+Comma-separated list of
+fieldnames that contain OGC Well Known Text geometry strings.
+These fields are read as geometry values suitable for the
+\texttt{addpath} command.
+See the
+\textit{OpenGIS Simple Features Specification For SQL}
+for a description of geometry strings.
+
+Other values are set as properties for the JDBC driver. \\
+
+\hline
+
+\texttt{shapefile} &
+for accessing data in ESRI Shape file format.
+The geometry for each fetched record is assigned to a variable named
+\texttt{GEOMETRY}, attribute field values are assigned to
+variables with attribute field names.
+
+Extras:
+
+\texttt{dbffields=\textit{field1},\textit{field2},...}
+
+Comma-separated list of
+attribute fields to read from the DBF database file accompanying the
+Shape file.  By default, all fields are read.  Reading fewer attribute
+fields improves performance. \\
+
+\texttt{textfile} &
+for accessing data from a delimited text file, with one
+record per line.  Fields in fetched record
+are assigned to variables
+\texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots
+and the whole record is assigned to variable
+\texttt{\$0}.
+
+Extras:
+
+\texttt{comment=\textit{string}}
+
+Character string at start of a line marking a comment line that
+is to be ignored.  Default value is a hash character (\texttt{\#}).
+
+\texttt{delimeters=\textit{string}}
+
+Characters separating fields in the text file.  Default value
+is all whitespace characters.
+
+\end{tabular}
+\caption{Dataset Types}
+\label{datasettypes}
+\end{table}
+
+\subsubsection{draw}
+
+\texttt{draw} \textit{x}, \textit{y}, ...
+
+Adds one or more straight line segments to the current path.
+A straight line segment is added from the previously defined point
+to (\textit{x}, \textit{y}) and then to each further point given.
+Points are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
+\subsubsection{fetch}
+
+\texttt{fetch}
+
+Fetches next record from current dataset.
+For each field in the record, a variable is defined with the name
+of the field and the value of the field for the next record.
+Before fetching a record, check the variable
+\texttt{Mapyrus.import.more}
+to ensure that another record is available from the dataset.
+
+\subsubsection{fill}
+
+\texttt{fill}
+
+Flood fills the current path with the current color.
+The winding rule is used for determining the inside and outside
+regions of polygons containing islands.
+The current path is not modified by this command.
+
+\subsubsection{font}
+
+\texttt{font} \textit{name}, \textit{size}
+
+Sets font for labelling with the \texttt{label} command.
+Font \textit{name} and \textit{size} are the name and size in
+millimetres of the font to use.
+
+If a scale factor was set with the
+\texttt{scale} command
+then font size is scaled by this factor.
+
+If a rotation was set with the
+\texttt{rotate} command
+then labels follow current rotation angle.
+If no rotation is set then labels are displayed
+horizontally.
+
+Font \textit{name}
+depends on the output format set with the
+\texttt{newpage} command.
+For PostScript output, \textit{name} is the name of a PostScript Type 1
+font.
+For output to an image format, \textit{name} is one of the Java Logical
+font names (\texttt{Serif}, \texttt{SansSerif},
+\texttt{Monospaced}, \texttt{Dialog}, or \texttt{DialogInput}) or a TrueType
+font name.
+
+Tutorial sections \ref{psfonts} and \ref{ttffonts}
+describe different font formats.
+
+\subsubsection{import}
+
+\texttt{import} [\textit{xMin}, \textit{yMin}, \textit{xMax}, \textit{yMax}]
+
+Begin importing records from the dataset set with the \texttt{dataset} command.
+After beginning an import, each record is fetched in turn with a \texttt{fetch}
+command.  If a bounding rectangle is given and the current dataset contains
+geographic fields then only records where the geographic field is inside or
+crossing the bounding rectangle are imported.  If no bounding rectangle is
+given then all records in the dataset are imported.
+
+\subsubsection{justify}
+
+justify \textit{justification}
+
+Sets justification for labelling with the \texttt{label} command.
+\textit{justification} is a string containing either
+\texttt{left}, \texttt{right}, \texttt{center} for justifying labels
+horizontally and/or
+\texttt{top}, \texttt{middle}, \texttt{bottom} for justifying labels
+vertically.
+
+\subsubsection{key}
+
+\texttt{key} \textit{type}, \textit{description}, [\textit{arg1}, \textit{arg2} ...]
+
+Defines an entry for a legend.
+The procedure containing this command will be called with arguments
+\textit{arg1}, \textit{arg2} ... to display a sample of the symbol
+when the legend is generated with a
+\texttt{legend} command.
+The \texttt{key}
+command is ignored if used outside of a procedure.
+
+\textit{type} is either
+\texttt{point} to display the legend entry as a single point,
+\texttt{line} to display the legend entry as a horizontal line,
+\texttt{zigzag} to display the legend entry as a zig-zag line,
+or
+\texttt{box} to display the legend as a box.
+\textit{description} is the label for the legend entry.
+
+If a procedure displays more than one type of type of symbol depending
+on the arguments passed to it then use a separate
+\texttt{key} command for each, with different descriptions
+and different arguments.
+
+\subsubsection{label}
+
+\texttt{label} \textit{string} [, \textit{string} ...]
+
+Draws a label at each point in the path set with the \texttt{move} command,
+using the font, justification and rotation set with the \texttt{font},
+\texttt{justify} and \texttt{rotate} commands.  \textit{string} values are
+separated by spaces.  If \textit{string} contains newline characters
+(\texttt{\textbackslash}) then labels are displayed as multiple lines, one below the other,
+with each line justified independently.
+
+\subsubsection{legend}
+
+\texttt{legend} \textit{size}
+
+Displays legend entries defined with
+\texttt{key} commands at points defined with
+\texttt{move} commands.
+
+Each legend entry corresponds to a procedure and a set of arguments.  The first
+legend entry is displayed at the first \texttt{move} point by calling the
+procedure in which the first legend entry was defined.  Then the second legend
+entry is displayed at the second \texttt{move} point.  This continues until
+either all legend entries are displayed or all move points are used.
+
+The variable
+\texttt{Mapyrus.key.count}
+contains the number of legend entries that remain to be displayed.
+
+If there are more legend entries than 
+\texttt{move} points then some legend entries
+remain undisplayed and will be displayed in the next legend.
+
+Legend entries are displayed in the order in which they
+are encountered in called procedures.
+
+Legend entries in procedures that were never called are
+not included in the legend.  Therefore, the legend only shows
+entries that were actually displayed.
+
+\textit{size} defines the size of each legend entry, in millimetres.
+
+The description label is displayed to the right of each legend entry, using the
+current \texttt{color}, \texttt{font} and \texttt{justify} settings.
+
+\subsubsection{let}
+
+\texttt{let} \textit{var} = \textit{expression}, \dots
+
+Assigns result of evaluating \textit{expression}
+to a variable with name \textit{var}.
+The variable is globally accessible, unless defined as local to the
+current procedure with a
+\texttt{local} command.
+
+Variable \textit{var} is either a simple variable name, an
+array, or an array element of the form \textit{var}[\textit{index}].
+
+Several variables are assigned by separating each 
+\textit{var} and \textit{expression} pair by a comma.
+
+\subsubsection{linestyle}
+
+\texttt{linestyle} \textit{width}
+
+\texttt{linestyle} \textit{width}, \textit{cap}, \textit{join}
+
+\texttt{linestyle} \textit{width}, \textit{cap}, \textit{join},
+\textit{phase}, \textit{dash length}, ...
+
+Sets style line drawing by the \texttt{stroke}
+command.
+Line \textit{width} given in millimetres.
+\textit{cap} is the style to use at the ends of lines, either
+\texttt{butt}, \texttt{round} or \texttt{square}.
+\textit{join} is the style to use where lines join, either
+\texttt{bevel}, \texttt{miter} or \texttt{round}.
+One or more \textit{dash length} values are given, alternating
+between the length of one dash and the length of space between
+dashes in a dash pattern.  Each \textit{dash length} is given in millimetres.
+\textit{phase} is the offset in millimetres into the dash pattern 
+at which to begin.
+
+\subsubsection{local}
+
+\texttt{local} \textit{name}, [\textit{name} ...]
+
+Declares the listed variable names as local to a procedure.
+The variables are not visible outside the enclosing procedure
+and their values are lost when the procedure ends.
+
+\subsubsection{move}
+
+\texttt{move} \textit{x}, \textit{y}
+
+Adds the point (\textit{x}, \textit{y}) to the current path.  The
+point is first transformed through any world coordinate
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
+\subsubsection{newpage}
+
+\texttt{newpage} \textit{format}, \textit{filename}, \textit{width},
+\textit{height}, \textit{resolution}, \textit{extras}
+
+Begins output of a new page to a file.  Any previous output is closed.  The
+path, clipping path and world coordinates are cleared.  The new page has a
+white background, with origin in the lower-left corner.  \textit{format} is the
+file format to use for output, one of:
+
+\begin{itemize}
+\item
+\texttt{eps} for Encapsulated PostScript output.
+\item
+\texttt{ps} for PostScript output.
+\item
+\texttt{jpeg} for JPEG image output.
+\item
+\texttt{png} for PNG image output.
+\end{itemize}
+
+See section \ref{pdf} for
+information on converting PostScript output to PDF format.
+
+\textit{width} and \textit{height} are the dimensions of the page,
+in millimetres.
+\textit{resolution} is given as a dots-per-inch value.
+
+\textit{filename} is the name of the file to write the page to.
+If \textit{filename} is a dash (\texttt{-})
+then the page is written to standard output.
+If \textit{filename} begins with a pipe (\texttt{|}) then the rest
+of \textit{filename} is interpreted as an operating system
+command.  The operating system command is executed and Mapyrus
+writes the page to the standard input of the executing
+operating system command.
+Mapyrus executes the operating command directly.  Set \textit{filename} to
+\texttt{"| sh \textit{myscript.sh}"}
+or
+\texttt{"| cmd \textit{myscript.bat}"}
+to execute the command in a sub-shell if 
+environment variables, file redirection or other shell features are
+required.
+
+\textit{extras} defines further options for the new page, given as
+\textit{variable=value} values, separated by whitespace.
+
+\begin{table}[h]
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+File Format & Extras \\
+\hline
+\hline
+
+\texttt{ps}, \texttt{eps} &
+\texttt{pfafiles=\textit{filename},\textit{filename2},...}
+
+Comma-separated list of PostScript Type 1 font filenames
+to include in this PostScript file.
+A PostScript Type 1 font is defined in a file
+with suffix \texttt{.pfa}.  Include
+files for all PostScript fonts to be used in this
+page that are not known by the printer.
+
+See section \ref{psfonts} for
+information on converting TrueType fonts to PostScript Type 1 format. \\
+
+\hline
+
+\texttt{png}, \texttt{jpeg} &
+\texttt{ttffiles=\textit{filename},\textit{filename2},...}
+
+Comma-separated list of TrueType font filenames
+to load for this page.
+A TrueType font is defined in a file
+with suffix \texttt{.ttf}.
+
+Do not use this option on operating systems that support
+TrueType fonts (Windows, Mac).  All TrueType
+fonts are already available from the operating system.
+
+On operating systems that do not support TrueType fonts
+(Linux, UNIX) include filenames of all TrueType
+fonts to be used on this page.  These fonts are loaded
+by Mapyrus. \\
+
+\hline
+
+\end{tabular}
+\caption{Output Formats}
+\label{outputformats}
+\end{table}
+
+\subsubsection{print}
+
+\texttt{print} \textit{string} [, \textit{string} ...]
+
+Prints each \textit{string} to standard output,
+separated by spaces.
+A newline is added after the final \textit{string}.
+
+\subsubsection{protect}
+
+\texttt{protect}
+
+Defines a clip path to protect the area of the page covered by the current path
+and prevent it from being overwritten by later drawing commands.  Opposite of
+the \texttt{clip} command.  If the path is protected in a procedure, then the
+area remains protected until the procedure is complete.  Otherwise, the area
+remains permanently protected for the page.  When more than one area is
+protected, the union of all areas is protected.  The current path is not
+modified by this command.
+
+\subsubsection{rotate}
+
+\texttt{rotate} \textit{angle}
+
+Rotates the coordinate system, adding to any existing rotation.  \textit{angle}
+is given in degrees, measured counter-clockwise.  All later coordinates given
+in \texttt{move}, \texttt{draw}, \texttt{arc} and \texttt{addpath} commands are
+rotated by this angle.
+
+\subsubsection{samplepath}
+
+\texttt{samplepath} \textit{spacing}, \textit{offset}
+
+Replaces current path with equally spaced points along the path.
+\textit{offset} is the distance along the path at which to place first point,
+given in millimetres.  \textit{spacing} is the distance between points, given
+in millimetres.  The sign of \textit{spacing} controls the direction in which
+the path is travelled.  If \textit{spacing} is a positive value, the path is
+travelled from the beginning towards the end.  If \textit{spacing} is a
+negative value, then the absolute value of \textit{spacing} is used and the
+path is travelled from the end towards the beginning.  Using a very large
+postive or negative value for \textit{spacing} results in current path being
+replaced by a single point at the beginning or end of the path.
+
+\subsubsection{scale}
+
+\texttt{scale} \textit{factor}
+
+Scales the coordinate system, adding to any existing scaling.  \textit{factor}
+is scale factor for X and Y axes.  All later coordinates given in
+\texttt{move}, \texttt{draw}, \texttt{arc} and \texttt{addpath} commands are
+scaled by this factor.
+
+\subsubsection{shiftpath}
+
+\texttt{shiftpath} \textit{x}, \textit{y}
+
+Shifts all points in the current path \textit{x} millimetres along the X axis
+and \textit{y} millimetres along the Y axis.  Shift values are scaled and
+rotated by \texttt{scale} and \texttt{rotate} values.  Use this command
+repeatedly following a \texttt{protect} command to produce a shadow effect for
+polygons.
+
+\subsubsection{stripepath}
+
+\texttt{stripepath} \textit{spacing}, \textit{angle}
+
+Replaces current path with equally spaced parallel lines that completely cover
+the path.  \textit{spacing} is the distance between lines, measured in
+millimetres.  \textit{angle} is angle of each line, measured in
+counter-clockwise in degrees, with zero being horizontal.  Follow this command
+with a \texttt{clip} command to produce a hatched fill pattern.
+
+\subsubsection{stroke}
+
+\texttt{stroke}
+
+Draws the current path using the current color and linestyle.
+The current path is not modified by this command.
+
+\subsubsection{worlds}
+
+\texttt{worlds} \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2} [, \textit{units}]
+
+Defines a world coordinate system for the page with
+(\textit{x1}, \textit{y1}) in the lower-left corner of the page and
+(\textit{x2}, \textit{y2}) in the upper-right corner, replacing any existing
+world coordinate system.
+The world coordinate range is expanded in the X or Y axis,
+if necessary, to maintain uniform scaling.
+
+\textit{units} define the units of the world coordinates,
+either \texttt{metres}, \texttt{meters} or \texttt{feet}.
+If not given, units are assumed to be metres.
+
+\subsection{Error Handling}
+
+If Mapyrus encounters an error when interpreting commands,
+an error message is printed including the filename and line number
+at which the error occurs and Mapyrus exits immediately.
+The Java interpreter exits with a non-zero status.
+If an error occurs when using the HTTP Server
+option, an HTTP failure status and the error message
+are returned to the HTTP client.  The HTTP server continues,
+handling the next request.
+
+\subsection{Mapyrus HTTP Server}
+
+Mapyrus runs as an HTTP server when started with the
+\texttt{-s}
+command line option.
+
+The HTTP server accepts and replies to requests from HTTP clients
+on the given port number.
+If port number is 0 then any free port number is used.  The port
+number used is written to the log file or to standard output.
+
+The HTTP server is multi-threaded to enable several requests to
+be handled simultaneously.  If the HTTP server
+receives an HTTP request for a file with a suffix
+matching a well-known MIME type (\texttt{html}, \texttt{txt}, \texttt{ps},
+\texttt{pdf}, \texttt{zip} or a web image format),
+then the contents of that file are returned by the HTTP server to the
+HTTP client.
+Requests for files with no suffix, or with unknown file suffix are
+interpreted by Mapyrus using the following steps.
+
+\begin{enumerate}
+\item
+Set any parameters passed in the URL (following the \texttt{?} character in
+the URL or passed in an HTML form) as variables in Mapyrus.
+\item
+Read and execute the commands from the filename given in the URL.
+\item
+Capture the standard output of these commands and return it to the
+to HTTP client.  An HTML page is returned if
+\texttt{print} commands are used.  An image file is
+returned if the
+\texttt{newpage} command is used with output file set
+to standard output.
+An HTTP error state is returned if the request fails.
+\end{enumerate}
+
+Requests using either GET or POST methods are accepted by Mapyrus.
+
+The HTTP server runs forever and
+is stateless.  Each HTTP request is independent and
+variables, graphics state and legend entries are not shared between
+requests.  Cookies are not used.
+Any files or URLs given on the command line when Mapyrus is started
+are interpreted before accepting HTTP requests.
+Procedures defined in these files
+are available when interpreting HTTP requests.  This enables
+common procedures to be loaded only once at startup and not with every
+HTTP request.
+
+Files are not cached and are read for each HTTP request.
+
+For security, the HTTP server only replies to requests
+from the directory in which Mapyrus was started.
+Requests for files from other directories return an error to the HTTP client.
+If communication between HTTP client and Mapyrus is blocked for longer than
+5 minutes then the HTTP request is cancelled.
+When all threads in the HTTP server are busy handling requests,
+further requests are queued.
+
+Logging of HTTP requests is controlled by setting a
+startup variable (see \ref{startupvariables} at startup defining
+a logging configuration file.
+
