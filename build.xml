@@ -59,13 +59,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Delete -->
 <delete>
 <fileset dir="doc" includes="*.html"/>
-<fileset dir="doc" includes="*.png" excludes="mapyrus.png"/>
+<fileset dir="doc" includes="*.png" excludes="mapyrus.png,sampleurl.png"/>
 </delete>
 <copy file="VERSION" todir="doc"/>
 
-<!-- Generate all examples -->
+<!-- Generate all examples, doing tutorial examples separately so
+it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy mapview1.mpy mapview2.mpy mapview3.mpy"/>
+<arg line="turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialfirst1.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialfirst2.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialfirst3.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialfirst4.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialvar1.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialrand1.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialrand2.mpy"/>
+</java>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorialrand3.mpy"/>
 </java>
 
 <!-- Use preprocessor inside Mapyrus which expands macros in -->
@@ -99,9 +124,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
 <target name="dist" depends="init, jar, doc, jni" description="Build package for distribution">
-<!-- Build zip file with software, source, documentation and examples -->
-<zip destfile="${ant.project.name}-${version}.zip" basedir="." update="false"
-includes="doc/*.html, doc/*.png, doc/COPYING, ${ant.project.name}.jar, src/**"/>
+<!-- Build zip file with everything -->
+<zip destfile="${ant.project.name}-${version}.zip" update="false">
+<fileset dir="." excludes="**/CVS, build/classes/**"/>
+</zip>
 </target>
 
 
