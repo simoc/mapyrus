@@ -31,7 +31,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import java.util.ArrayList;
 import au.id.chenery.mapyrus.*;
 
 /**
@@ -101,14 +100,8 @@ public class TextfileDataset implements GeographicDataset
 	public TextfileDataset(String filename, String extras, String []geometryFieldNames)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
-		String header, fieldType;
 		StringTokenizer st;
-		ArrayList list;
-		int i, j;
-		Integer fType;
 		String token;
-		boolean foundGeometryField;
-		String nextLine;
 		BufferedReader bufferedReader;
 
 		/*
