@@ -15,7 +15,7 @@ Added arrays,
 <tt>for</tt> ... <tt>in</tt> array looping and <tt>split</tt> function.
 <br>
 Added mathematical functions <tt>ceil</tt>, <tt>cos</tt>
-<tt>floor</tt>, <tt>log10</tt>,
+<tt>floor</tt>, <tt>log10</tt>, <tt>max</tt>, <tt>min</tt>,
 <tt>pow</tt>, <tt>sin</tt>, <tt>sqrt</tt>, <tt>tan</tt>.
 <br>
 Added access to datasets in an RDBMS through JDBC.
