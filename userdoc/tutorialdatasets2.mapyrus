@@ -1,18 +1,3 @@
-begin streetNameLabel name
-  if Mapyrus.rotation > 90 or Mapyrus.rotation < -90
-  then
-    # Ensure labels are always 'right way up'
-    # and readable.
-    #
-    rotate 180
-  endif
-  move 0, 1
-  color 'black'
-  font 'Helvetica', 2.5
-  justify 'center'
-  label name
-end
-
 # Draw the GenaMap export file streets.EE into a PNG file.
 #
 newpage "eps", "tutorialdatasets2.eps", 60, 60
@@ -24,33 +9,25 @@ do
   #
   fetch
   let nCoords = substr($0, 51, 5)
-  let tag = substr($0, 16, 32)
-  # Strip trailing spaces and abbreviate street names.
+
+  # Fetch first point of feature and add it to path.
   #
-  let tag = trim(tag)
-  let tag = replace(tag, 'AVENUE$', 'AVE')
-  let tag = replace(tag, 'STREET$', 'ST')
-  let tag = replace(tag, 'ROAD$', 'RD')
-  fetch
   clearpath
+  fetch
   move $1, $2
-  let i = 1
-  while i < nCoords
+
+  let i = 2
+  while i <= nCoords
   do
-    # Add all coordinates for this feature to the path.
+    # Add the rest of feature's coordinates to the path.
     #
     fetch
     draw $1, $2
     let i = i + 1
   done
+
+  # Draw each line in red.
+  #
   color 'red'
   stroke
-  # Label each street at midpoint of line but
-  # don't label short streets.
-  #
-  if Mapyrus.path.length > 15
-  then
-    samplepath 99999, Mapyrus.path.length / 2
-    streetNameLabel tag
-  endif
 done
