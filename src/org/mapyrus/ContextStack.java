@@ -325,16 +325,24 @@ public class ContextStack
 
 	/**
 	 * Sets transformation from real world coordinates to page coordinates.
-	 * @param x1 minimum X world coordinate.
-	 * @param y1 minimum Y world coordinate.
-	 * @param x2 maximum X world coordinate.
-	 * @param y2 maximum Y world coordinate.
-	 * @param units of world coordinates (WORLD_UNITS_METRES, WORLD_UNITS_FEET, etc)
+	 * @param wx1 minimum X world coordinate.
+	 * @param wy1 minimum Y world coordinate.
+	 * @param wx2 maximum X world coordinate.
+	 * @param wy2 maximum Y world coordinate.
+	 * @param px1 millimetre position on page of wx1.
+	 * @param py1 millimetre position on page of wy1.
+	 * @param px2 millimetre position on page of wx2, or 0 to use whole page.
+	 * @param py2 millimetre position on page of wy2, or 0 to use whole page.
+	 * @param units units of world coordinates (WORLD_UNITS_METRES,WORLD_UNITS_FEET, etc.)
+	 * @param allowDistortion if true then different scaling in X and Y axes allowed.
 	 */
-	public void setWorlds(double x1, double y1, double x2, double y2, int units)
+	public void setWorlds(double wx1, double wy1, double wx2, double wy2,
+		double px1, double py1, double px2, double py2,
+		int units, boolean allowDistortion)
 		throws MapyrusException
 	{
-		getCurrentContext().setWorlds(x1, y1, x2, y2, units);
+		getCurrentContext().setWorlds(wx1, wy1, wx2, wy2, px1, py1, px2, py2,
+			units, allowDistortion);
 	}
 
 	/**
