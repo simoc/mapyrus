@@ -152,11 +152,6 @@ public class OutputFormat
 	private double mResolution;
 	
 	/*
-	 * Indentation for PostScript commands.
-	 */
-	private int mPostScriptIndent;
-
-	/*
 	 * Justification for labels as fraction of string height and width
 	 * to move string in X and Y direction to achieve correct justification.
 	 */
@@ -696,7 +691,6 @@ public class OutputFormat
 
 			writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
-			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
 
 			if (mIsUpdatingFile)
@@ -992,10 +986,6 @@ public class OutputFormat
 	 */
 	private void writePostScriptLine(String line)
 	{
-		for (int i = 0; i < mPostScriptIndent; i++)
-		{
-			mWriter.print(' ');
-		}
 		mWriter.println(line);
 	}
 
@@ -1142,7 +1132,6 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			writePostScriptLine("gs");
-			mPostScriptIndent++;
 		}
 	}
 
@@ -1158,7 +1147,6 @@ public class OutputFormat
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
-			mPostScriptIndent--;
 			writePostScriptLine("gr");
 			retval = true;
 		}
