@@ -95,7 +95,7 @@ public class Mapyrus
 	{
 		BufferedReader f;
 		Reader []readers;
-		Context context;
+		ContextStack context;
 		
 		args = new String[1];
 		args[0] = "/home/simonc/expr.txt";
@@ -128,14 +128,14 @@ public class Mapyrus
 			 */
 			initialise();
 			f = new BufferedReader(new InputStreamReader(System.in));
-			context = new Context();
+			context = new ContextStack();
 			Interpreter interpreter = new Interpreter(context);
 
 			processFile(f, interpreter);
 			
 			try
 			{
-				context.closeOutputFormat();
+				context.closeContextStack();
 			}
 			catch (IOException e)
 			{
@@ -174,7 +174,7 @@ public class Mapyrus
 			}
 
 			initialise();
-			context = new Context();
+			context = new ContextStack();
 			Interpreter interpreter = new Interpreter(context);
 			
 			/*
@@ -219,7 +219,7 @@ public class Mapyrus
 			
 			try
 			{
-				context.closeOutputFormat();
+				context.closeContextStack();
 			}
 			catch (IOException e)
 			{
