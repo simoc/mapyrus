@@ -25,6 +25,8 @@ package org.mapyrus;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
+import org.mapyrus.geom.LineEquation;
+
 /**
  * A geometric path.  A series of coordinates, either separate or joined together
  * as part of a line or polygon.  Coordinate pairs are joined with either
@@ -436,6 +438,176 @@ public class GeometricPath
 		}
 		retval.mNLineTos = mNLineTos;
 		retval.mRotations = (ArrayList)(mRotations.clone());
+
+		return(retval);
+	}
+
+	/**
+	 * Create paths parallel to original path.
+	 * @param distances list of parallel distances for new paths.
+	 * @param lineEquations equations of each line segment of original path.
+	 * @param path path to add to.
+	 * @param isClosed when true, original path interpreted as closed path.
+	 */
+	private GeometricPath createParallelPath(double []distances,
+		ArrayList lineEquations, GeometricPath path, boolean isClosed)
+	{
+		/*
+		 * Create parallel path at each distance given.
+		 */
+		int nEquations = lineEquations.size();
+
+		LineEquation eq, lastEq;
+		for (int i = 0; i < distances.length; i++)
+		{
+			boolean addedMoveTo = false;
+			LineEquation parallelEq = null;
+
+			/*
+			 * For closed paths, first segment must be intersected
+			 * with last segment.
+			 */
+			if (isClosed)
+			{
+				lastEq = (LineEquation)lineEquations.get(nEquations - 1);
+				lastEq = lastEq.createParallel(distances[i]);
+			}
+			else
+			{
+				lastEq = null;
+			}
+
+			for (int j = 0; j < nEquations; j++)
+			{
+				eq = (LineEquation)lineEquations.get(j);
+				parallelEq = eq.createParallel(distances[i]);
+
+				/*
+				 * Find intersection of line parallel to current line segment and
+				 * parallel line segment.  Add this point to path.
+				 */
+				Point2D.Double pt;
+				if (lastEq == null)
+					pt = parallelEq.getStartPoint();
+				else
+					pt = parallelEq.intersect(lastEq, false);
+
+				/*
+				 * Skip parallel line segments that do not intersect.
+				 */
+				if (pt != null)
+				{
+					if (addedMoveTo)
+					{
+							path.lineTo((float)pt.x, (float)pt.y);
+					}
+					else
+					{
+							path.moveTo((float)pt.x, (float)pt.y, 0);
+							addedMoveTo = true;
+					}
+				}
+				lastEq = parallelEq;
+			}
+
+			/*
+			 * Add final point to path, closing the path if original path
+			 * was also closed. 
+			 */
+			if (isClosed)
+			{
+				path.closePath();
+			}
+			else if (parallelEq != null)
+			{
+				Point2D.Double pt = parallelEq.getEndPoint();
+				path.lineTo((float)pt.x, (float)pt.y);
+			}
+		}
+		return(path);
+	}
+
+	/**
+	 * Return new paths at parallel distances to original path.
+	 * @param distances list of parallel distances for new paths.
+	 * @param resolution is size of a pixel in mm, curves are expanded
+	 * to be no less accurate than this value.
+	 * @return new path, parallel to original path.
+	 */
+	public GeometricPath parallelPath(double []distances, double resolution)
+	{
+		PathIterator pi;
+		int segmentType;
+		GeometricPath retval = new GeometricPath();
+		float coords[] = new float[6];
+		float xMoveTo = 0.0f, yMoveTo = 0.0f;
+		float xStart = 0.0f, yStart = 0.0f;
+		float xEnd = 0.0f, yEnd = 0.0f;
+		boolean isPathClosed = false;
+		ArrayList lineEquations = new ArrayList();
+
+		/*
+		 * Flatten arcs in path and make list of line equations
+		 * for each segment of path.
+		 */
+		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		while (!pi.isDone())
+		{
+			segmentType = pi.currentSegment(coords);
+			if (segmentType == PathIterator.SEG_MOVETO)
+			{
+				/*
+				 * Create parallel paths for last sub-path,
+				 * then begin a new path.
+				 */
+				if (!lineEquations.isEmpty())
+				{
+					if (xEnd == xMoveTo && yEnd == yMoveTo)
+						isPathClosed = true;
+					createParallelPath(distances, lineEquations,
+						retval, isPathClosed);
+					lineEquations.clear();
+					isPathClosed = false;
+				}
+
+				xStart = xMoveTo = coords[0];
+				yStart = yMoveTo = coords[1];
+			}
+			else
+			{
+				if (segmentType == PathIterator.SEG_CLOSE)
+				{
+					xEnd = xMoveTo;
+					yEnd = yMoveTo;
+					isPathClosed = true;
+				}
+				else
+				{
+					xEnd = coords[0];
+					yEnd = coords[1];
+				}
+				LineEquation eq = new LineEquation(xStart, yStart, xEnd, yEnd);
+				lineEquations.add(eq);
+				
+				xStart = xEnd;
+				yStart = yEnd;
+			}
+
+			/*
+			 * Move on to next segment in path.
+			 */
+			pi.next();
+		}
+
+		/*
+		 * Add parallel path for final sub-path.
+		 */
+		if (!lineEquations.isEmpty())
+		{
+			if (xEnd == xMoveTo && yEnd == yMoveTo)
+				isPathClosed = true;
+			createParallelPath(distances, lineEquations, retval, isPathClosed);
+		}
 
 		return(retval);
 	}
