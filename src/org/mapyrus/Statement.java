@@ -256,6 +256,15 @@ public class Statement
 	}
 
 	/**
+	 * Returns filename that this statement was read from.
+	 * @return string containing filename.
+	 */
+	public String getFilename()
+	{
+		return(mFilename);
+	}
+	
+	/**
 	 * Returns the type of this statement.
 	 * @return statement type.
 	 */
