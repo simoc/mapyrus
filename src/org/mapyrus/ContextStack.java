@@ -444,7 +444,7 @@ public class ContextStack
 	 * Returns one component of a bounding box.
 	 * @param part the information to be taken from the bounding box, "min.x", "width", etc.
 	 * @param bounds the bounding box to be queried
-	 * @return part of the information from bounding box, or "undef" if part is unknown.
+	 * @return part of the information from bounding box, or null if part is unknown.
 	 */
 	private Argument getBoundingBoxVariable(String part, Rectangle2D bounds)
 	{
@@ -463,7 +463,7 @@ public class ContextStack
 		else if (part.equals("height"))
 			retval = new Argument(bounds.getHeight());
 		else
-			retval = new Argument(Argument.STRING, "undef");
+			retval = null;
 
 		return(retval);
 	}
@@ -488,7 +488,23 @@ public class ContextStack
 			/*
 			 * Return internal/system variable.
 			 */
-			if (sub.equals("timestamp"))
+			if (sub.equals("import.moreRows"))
+			{
+				Dataset dataset = getCurrentContext().getDataset();
+				if (dataset != null && dataset.hasMoreRows())
+					retval = Argument.numericOne;
+				else
+					retval = Argument.numericZero;
+			}
+			else if (sub.equals("import.count"))
+			{
+				Dataset dataset = getCurrentContext().getDataset();
+				if (dataset == null)
+					retval = Argument.numericZero;
+				else
+					retval = new Argument(dataset.getFetchCount());
+			}
+			else if (sub.equals("timestamp"))
 			{
 				Date now = new Date();
 				retval = new Argument(Argument.STRING, now.toString());
@@ -529,22 +545,6 @@ public class ContextStack
 			{
 				retval = new Argument(Constants.MM_PER_INCH /
 					getCurrentContext().getResolution());
-			}
-			else if (sub.equals("import.moreRows"))
-			{
-				Dataset dataset = getCurrentContext().getDataset();
-				if (dataset != null && dataset.hasMoreRows())
-					retval = Argument.numericOne;
-				else
-					retval = Argument.numericZero;
-			}
-			else if (sub.equals("import.count"))
-			{
-				Dataset dataset = getCurrentContext().getDataset();
-				if (dataset == null)
-					retval = Argument.numericZero;
-				else
-					retval = new Argument(dataset.getFetchCount());
 			}
 			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
 			{
