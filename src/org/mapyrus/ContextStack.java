@@ -23,13 +23,20 @@
 package org.mapyrus;
 
 import java.awt.Color;
+import java.awt.MediaTracker;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
-import java.util.Date;
 import java.awt.geom.Rectangle2D;
+
+import javax.swing.ImageIcon;
 
 import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
@@ -73,6 +80,11 @@ public class ContextStack
 	private LegendEntryList mLegendEntries;
 
 	/*
+	 * Cache of icons we've already used and are likely to use again.
+	 */
+	private LRUCache mIconCache;
+
+	/*
 	 * Time at which this context was allocated.
 	 */
 	private long mStartTime;
@@ -93,6 +105,7 @@ public class ContextStack
 		mStartTime = System.currentTimeMillis();
 		mImagemapPoint = null;
 		mLegendEntries = new LegendEntryList();
+		mIconCache = new LRUCache(Constants.ICON_CACHE_SIZE);
 	}
 
 	/**
@@ -333,6 +346,50 @@ public class ContextStack
 	}
 
 	/**
+	 * Draws icon on page.
+	 * @param filename file containing icon.
+	 * @param size size for icon on page in millimetres.
+	 */
+	public void drawIcon(String filename, double size)
+		throws IOException, MapyrusException
+	{
+		ImageIcon icon;
+
+		/*
+		 * Have we opened icon before and cached it?
+		 */
+		icon = (ImageIcon)mIconCache.get(filename);
+		if (icon == null)
+		{
+			URL url;
+
+			/*
+			 * Load icon from either a URL, or as a plain file.
+			 */
+			try
+			{
+				url = new URL(filename);
+				icon = new ImageIcon(url);
+			}
+			catch (MalformedURLException e)
+			{
+				icon = new ImageIcon(filename);
+			}
+
+			/*
+			 * Open icon and cache it.
+			 */
+			if (icon.getImageLoadStatus() != MediaTracker.COMPLETE)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_ICON) +
+					": " + filename);
+			}
+			mIconCache.put(filename, icon);
+		}
+		getCurrentContext().drawIcon(icon, size);
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
@@ -494,7 +551,23 @@ public class ContextStack
 
 		return(retval);
 	}
-	
+
+	/**
+	 * Create string argument from two digit number.
+	 * @param i number to create string from.
+	 * @return argument containing value i.
+	 */	
+	private Argument setTwoDigitNumber(int i)
+	{
+		Argument retval;
+		
+		if (i >= 10)
+			retval = new Argument(Argument.STRING, Integer.toString(i));
+		else
+			retval = new Argument(Argument.STRING, "0" + Integer.toString(i));
+		return(retval);
+	}
+
 	/**
 	 * Returns value of a variable.
 	 * @param varName variable name to lookup.
@@ -535,11 +608,6 @@ public class ContextStack
 				else
 					retval = new Argument(dataset.getFetchCount());
 			}
-			else if (c == 't' && varName.equals(INTERNAL_VARIABLE_PREFIX + "timestamp"))
-			{
-				Date now = new Date();
-				retval = new Argument(Argument.STRING, now.toString());
-			}
 			else if (c == 't' && varName.equals(INTERNAL_VARIABLE_PREFIX + "timer"))
 			{
 				/*
@@ -547,6 +615,65 @@ public class ContextStack
 				 * at the beginning of interpreting a file.
 				 */
 				retval = new Argument((System.currentTimeMillis() - mStartTime) / 1000.0);
+			}
+			else if (c == 't' && varName.startsWith(INTERNAL_VARIABLE_PREFIX + "time."))
+			{
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + "time.".length());
+				GregorianCalendar calendar = new GregorianCalendar();
+
+				if (sub.equals("hour"))
+					retval = setTwoDigitNumber(calendar.get(Calendar.HOUR_OF_DAY));
+				else if (sub.equals("minute"))
+					retval = setTwoDigitNumber(calendar.get(Calendar.MINUTE));
+				else if (sub.equals("second"))
+					retval = setTwoDigitNumber(calendar.get(Calendar.SECOND));
+				else if (sub.equals("day"))
+					retval = setTwoDigitNumber(calendar.get(Calendar.DAY_OF_MONTH));
+				else if (sub.equals("day.name"))
+				{
+					SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+					retval = new Argument(Argument.STRING, sdf.format(calendar.getTime()));
+				}
+				else if (sub.equals("month"))
+					retval = setTwoDigitNumber(calendar.get(Calendar.MONTH) + 1);
+				else if (sub.equals("month.name"))
+				{
+					SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
+					retval = new Argument(Argument.STRING, sdf.format(calendar.getTime()));
+				}
+				else if (sub.equals("week.of.year"))
+					retval = new Argument(calendar.get(Calendar.WEEK_OF_YEAR));
+				else if (sub.equals("day.of.week"))
+				{
+					int dayOfWeek;
+
+					/*
+					 * Convert Java Calendar values for days into values 1-7,
+					 * with Monday=1 like in cron(1) tasks.
+					 */
+					int cd = calendar.get(Calendar.DAY_OF_WEEK);
+					if (cd == Calendar.MONDAY)
+						dayOfWeek = 1;
+					else if (cd == Calendar.TUESDAY)
+						dayOfWeek = 2;
+					else if (cd == Calendar.WEDNESDAY)
+						dayOfWeek = 3;
+					else if (cd == Calendar.THURSDAY)
+						dayOfWeek = 4;
+					else if (cd == Calendar.FRIDAY)
+						dayOfWeek = 5;
+					else if (cd == Calendar.SATURDAY)
+						dayOfWeek = 6;
+					else
+						dayOfWeek = 7;
+					retval = new Argument(dayOfWeek);
+				}
+				else if (sub.equals("year"))
+					retval = new Argument(calendar.get(Calendar.YEAR));
+				else if (sub.equals("stamp"))	
+					retval = new Argument(Argument.STRING, calendar.getTime().toString());
+				else
+					retval = null;
 			}
 			else if (c == 'v' && varName.equals(INTERNAL_VARIABLE_PREFIX + "version"))
 			{
