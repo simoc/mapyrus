@@ -32,7 +32,7 @@ import com.vividsolutions.jts.io.WKTReader;
 
 /**
  * Function returning intersection of two geometries.
- * For example, the intsection of two overlapping polygons is a small polygon. 
+ * For example, the intersection of two overlapping polygons is a small polygon. 
  */
 public class Intersection extends Function
 {
