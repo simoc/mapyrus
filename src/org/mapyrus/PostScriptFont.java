@@ -115,8 +115,8 @@ public class PostScriptFontDatabase
 	 */
 	public static void load() throws MapyrusException, IOException
 	{
-		String searchPath;
-		
+		String searchPath = null;
+
 		mFontFiles = new HashMap();
 
 		/*
@@ -129,8 +129,10 @@ public class PostScriptFontDatabase
 		}
 		catch (SecurityException e)
 		{
-			searchPath = System.getProperty("user.dir");
 		}
+		
+		if (searchPath == null)
+			searchPath = System.getProperty("user.dir");
 
 		/*
 		 * Search each directory in turn, adding font definitions we find to our list.
