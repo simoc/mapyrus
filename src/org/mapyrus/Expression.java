@@ -77,7 +77,9 @@ public class Expression
 	private static final String LENGTH_FUNCTION_NAME = "length";
 	private static final int MATCH_FUNCTION = 4;	/* match('foobar', 'ob') = 3 */
 	private static final String MATCH_FUNCTION_NAME = "match";
-	private static final int SUBSTR_FUNCTION = 5;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final int REPLACE_FUNCTION = 5;	/* replace('foobar', 'o*', '_') =  'f_bar' */
+	private static final String REPLACE_FUNCTION_NAME = "replace";
+	private static final int SUBSTR_FUNCTION = 6;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
 	/*
@@ -94,6 +96,7 @@ public class Expression
 		mFunctionTypeLookup.put(RANDOM_FUNCTION_NAME, new Integer(RANDOM_FUNCTION));
 		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
 		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
+		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
 		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
 		
 		mFunctionArgumentCount = new byte[SUBSTR_FUNCTION + 1];
@@ -101,6 +104,7 @@ public class Expression
 		mFunctionArgumentCount[RANDOM_FUNCTION] = 1;
 		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
 		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
+		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
 		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
 	}
 
@@ -283,6 +287,33 @@ public class Expression
 						retval = new Argument(matcher.start() + 1);
 					else
 						retval = Argument.numericZero;
+				}
+				else if (t.mFunction == REPLACE_FUNCTION)
+				{
+					leftValue = traverse(t.mLeftBranch, context);
+					rightValue = traverse(t.mRightBranch, context);
+					thirdValue = traverse(t.mThirdFunctionExpression, context);
+
+					/*
+					 * Replace all occurrences of pattern given in second string
+					 * with the third string.
+					 */
+					Pattern pattern = compileRegex(rightValue.toString());
+					Matcher matcher = pattern.matcher(leftValue.toString());
+					if (matcher.find())
+					{
+						/*
+						 * Replace all matching patterns.
+						 */
+						retval = new Argument(Argument.STRING, matcher.replaceAll(thirdValue.toString()));
+					}
+					else
+					{
+						/*
+						 * No match so return original string.
+						 */
+						retval = leftValue;
+					}
 				}
 				else /* SUBSTR_FUNCTION */
 				{
