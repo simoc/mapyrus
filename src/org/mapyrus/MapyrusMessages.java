@@ -69,7 +69,9 @@ public class MapyrusMessages
 	public static final String MISSING_FIELD = "missingfield";
 	public static final String MISSING_FILENAME = "missingfilename";
 	public static final String NESTED_PROC = "nestedproc";
+	public static final String NO_OUTPUT = "nooutput";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
+	public static final String NOT_NUMERIC_VALUE = "notnumericvalue";
 	public static final String NOT_SHAPE_FILE = "notshapefile";
 	public static final String NOT_STRING_OPERATION = "notstringoperation";
 	public static final String NOT_TEXT_FILE = "nottextfile";
