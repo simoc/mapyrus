@@ -6,10 +6,9 @@ begin quarterLabel
     return
   endif
 
-  # Tick
+  # Draw triangle pointing to position on line.
   #
-  move -2, -2
-  draw 0, 0, 2, -2
+  triangle 0, -1, 1, 0
   fill
 
   # Label
