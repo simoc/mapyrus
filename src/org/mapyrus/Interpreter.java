@@ -69,12 +69,11 @@ public class Interpreter
 	/*
 	 * States during parsing statements.
 	 */
-	private static final int AT_STATEMENT = 1;		/* at start of a statement */
-	private static final int AT_ARG = 2;		/* at argument to a statement */
-	private static final int AT_ARG_SEPARATOR = 3;	/* at separator between arguments */
+	private static final int AT_ARGUMENT = 1;		/* at start of arguments to a statement */
+	private static final int AT_SEPARATOR = 2;	/* at separator between arguments */
 
-	private static final int AT_PARAM = 4;	/* at parameter to a procedure block */
-	private static final int AT_PARAM_SEPARATOR = 5;	/* at separator between parameters */
+	private static final int AT_PARAM = 3;	/* at parameter to a procedure block */
+	private static final int AT_PARAM_SEPARATOR = 4;	/* at separator between parameters */
 
 	/*
 	 * Literals for linestyles.
@@ -769,8 +768,11 @@ public class Interpreter
 			case Statement.LOCAL:
 				break;
 
-			case Statement.ASSIGN:
-				context.defineVariable(st.getAssignedVariable(), mExecuteArgs[0]);
+			case Statement.LET:
+				/*
+				 * Nothing to do -- any variables were assigned during expression
+				 * evaluation above.
+				 */
 				break;
 		}		
 	}
@@ -869,20 +871,20 @@ public class Interpreter
 		ArrayList expressions = new ArrayList();
 		Expression expr;
 		Statement retval = null;
-		boolean isAssignmentStatement = false;
 		boolean finishedStatement = false;
 		int c;
 
-		state = AT_STATEMENT;
+		state = AT_ARGUMENT;
 		c = readSkipComments(preprocessor);
-		finishedStatement = false;
+
+		/*
+		 * Keep parsing statement until we get to the end of the
+		 * line or end of file.
+		 */
 		while (!finishedStatement)
 		{
 			if (c == -1 || c == '\n')
 			{
-				/*
-				 * End of line or end of file signifies end of statement.
-				 */
 				finishedStatement = true;
 			}
 			else if (Character.isWhitespace((char)c))
@@ -892,22 +894,12 @@ public class Interpreter
 				 */
 				c = readSkipComments(preprocessor);
 			}
-			else if (state == AT_STATEMENT)
+			else if (state == AT_SEPARATOR)
 			{
 				/*
-				 * Is this an assignment statement of the form: var = value
+				 * Expect a ',' between arguments to a
+				 * statement or procedure block.
 				 */
-				isAssignmentStatement = (c == '=');
-				if (isAssignmentStatement)
-					c = readSkipComments(preprocessor);
-				state = AT_ARG;
-			}
-			else if (state == AT_ARG_SEPARATOR)
-			{
-				/*
-				 * Expect a ',' between arguments and parameters to
-				 * procedure block.
-				 */ 
 				if (c != ARGUMENT_SEPARATOR)
 				{
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
@@ -915,60 +907,31 @@ public class Interpreter
 						": '" + ARGUMENT_SEPARATOR + "'");
 				}
 				c = readSkipComments(preprocessor);
-				state = AT_ARG;
-			}
-			else if (state == AT_ARG)
-			{
-					/*
-					 * Parse an expression.
-					 */
-					preprocessor.unread(c);
-					expr = new Expression(preprocessor);
-					expressions.add(expr);
-
-					state = AT_ARG_SEPARATOR;
-					c = readSkipComments(preprocessor);
+				state = AT_ARGUMENT;
 			}
 			else
 			{
 				/*
-				 * Parsing is lost.  Don't know what is wrong.
+				 * Parse an expression.
 				 */
-				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": " + MapyrusMessages.get(MapyrusMessages.PARSE_ERROR));
+				preprocessor.unread(c);
+				expr = new Expression(preprocessor);
+				expressions.add(expr);
+
+				c = readSkipComments(preprocessor);
+				state = AT_SEPARATOR;
 			}
 		}
 
 		/*
 		 * Build a statement structure for what we just parsed.
 		 */
-		if (c == -1 && state == AT_STATEMENT)
+		if (c == -1 && expressions.size() == 0)
 		{
 			/*
 			 * Could not parse anything before we got EOF.
 			 */
 			retval = null;
-		}
-		else if (isAssignmentStatement)
-		{
-			/*
-			 * Exactly one expression is assigned in a statement.
-			 */
-			if (expressions.size() > 1)
-			{
-				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": " + MapyrusMessages.get(MapyrusMessages.TOO_MANY_EXPRESSIONS));
-			}
-			else if (expressions.size() == 0)
-			{
-				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": " + MapyrusMessages.get(MapyrusMessages.NO_EXPRESSION));
-			}
-
-			retval = new Statement(keyword, (Expression)expressions.get(0));
-
-			retval.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
-					preprocessor.getCurrentLineNumber());
 		}
 		else
 		{
@@ -983,7 +946,6 @@ public class Interpreter
 			retval.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
 					preprocessor.getCurrentLineNumber());
 		}
-
 		return(retval);
 	}
 
