@@ -121,6 +121,7 @@ public class MapyrusMessages
 	public static final String INVALID_TRIANGLE = "invalidtriangle";
 	public static final String INVALID_VARIABLE = "invalidvariable";
 	public static final String INVALID_WEDGE = "invalidwedge";
+	public static final String INVALID_WMS_REQUEST = "invalidwmsrequest";
 	public static final String INVALID_WORLDS = "invalidworlds";
 	public static final String INVALID_WORLD_UNITS = "invalidworldunits";
 	public static final String JOINED_THREAD = "joinedthread";
