@@ -47,6 +47,11 @@ public class ContextStack
 	private static final int MAX_STACK_LENGTH = 30;
 	
 	/*
+	 * Prefix for internal variables.
+	 */
+	private static final String INTERNAL_VARIABLE_PREFIX = Constants.PROGRAM_NAME + ".";
+	
+	/*
 	 * Variable names for geometry of currently defined path,
 	 * world coordinate system, coordinate system we are projecting from
 	 * and dataset we are reading from.
@@ -454,7 +459,7 @@ public class ContextStack
 	private Argument getBoundingBoxVariable(String part, Rectangle2D bounds)
 	{
 		Argument retval;
-		
+
 		if (part.equals("min.x"))
 			retval = new Argument(bounds.getMinX());
 		else if (part.equals("min.y"))
@@ -482,18 +487,20 @@ public class ContextStack
 	{
 		Argument retval = null;
 		String sub;
+		char c;
 		double d;
 		int i;
 		Rectangle2D bounds;
 
-		if (varName.startsWith(Constants.PROGRAM_NAME + "."))
+		if (varName.startsWith(INTERNAL_VARIABLE_PREFIX) &&
+			varName.length() > INTERNAL_VARIABLE_PREFIX.length())
 		{
-			sub = varName.substring(Constants.PROGRAM_NAME.length() + 1);
-		
+			c = varName.charAt(INTERNAL_VARIABLE_PREFIX.length());
+
 			/*
 			 * Return internal/system variable.
 			 */
-			if (sub.equals("import.moreRecords"))
+			if (c == 'i' && varName.equals(INTERNAL_VARIABLE_PREFIX + "import.moreRecords"))
 			{
 				Dataset dataset = getCurrentContext().getDataset();
 				if (dataset != null && dataset.hasMoreRows())
@@ -501,7 +508,7 @@ public class ContextStack
 				else
 					retval = Argument.numericZero;
 			}
-			else if (sub.equals("import.count"))
+			else if (c == 'i' && varName.equals(INTERNAL_VARIABLE_PREFIX + "import.count"))
 			{
 				Dataset dataset = getCurrentContext().getDataset();
 				if (dataset == null)
@@ -509,12 +516,12 @@ public class ContextStack
 				else
 					retval = new Argument(dataset.getFetchCount());
 			}
-			else if (sub.equals("timestamp"))
+			else if (c == 't' && varName.equals(INTERNAL_VARIABLE_PREFIX + "timestamp"))
 			{
 				Date now = new Date();
 				retval = new Argument(Argument.STRING, now.toString());
 			}
-			else if (sub.equals("elapsedtime"))
+			else if (c == 'e' && varName.equals(INTERNAL_VARIABLE_PREFIX + "elapsedtime"))
 			{
 				/*
 				 * The elapsed time in seconds since this context was created
@@ -522,25 +529,25 @@ public class ContextStack
 				 */
 				retval = new Argument((System.currentTimeMillis() - mStartTime) / 1000.0);
 			}
-			else if (sub.equals("version"))
+			else if (c == 'v' && varName.equals(INTERNAL_VARIABLE_PREFIX + "version"))
 			{
 				retval = new Argument(Argument.STRING, Constants.getVersion());
 			}
-			else if (sub.equals("rotation"))
+			else if (c == 'r' && varName.equals(INTERNAL_VARIABLE_PREFIX + "rotation"))
 			{
 				retval = new Argument(Math.toDegrees(getCurrentContext().getRotation()));
 			}
-			else if (sub.equals("scale.x"))
+			else if (c == 's' && varName.equals(INTERNAL_VARIABLE_PREFIX + "scale.x"))
 			{
 				retval = new Argument(getCurrentContext().getScalingX());
 			}
-			else if (sub.equals("scale.y"))
+			else if (c == 's' && varName.equals(INTERNAL_VARIABLE_PREFIX + "scale.y"))
 			{
 				retval = new Argument(getCurrentContext().getScalingY());
 			}
-			else if (sub.startsWith(PAGE_VARIABLE))
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + PAGE_VARIABLE + "."))
 			{
-				sub = sub.substring(PAGE_VARIABLE.length() + 1);
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + PAGE_VARIABLE.length() + 1);
 				if (sub.equals("width"))
 					retval = new Argument(getCurrentContext().getPageWidth());
 				else if (sub.equals("height"))
@@ -555,9 +562,9 @@ public class ContextStack
 				else
 					retval = null;
 			}
-			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + GEOMETRY_VARIABLE + "."))
 			{
-				sub = sub.substring(GEOMETRY_VARIABLE.length() + 1);
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + GEOMETRY_VARIABLE.length() + 1);
 				if (sub.equals("length"))
 					retval = new Argument(getCurrentContext().getPathLength());
 				else if (sub.equals("area"))
@@ -572,10 +579,10 @@ public class ContextStack
 					retval = getBoundingBoxVariable(sub, bounds);
 				}
 			}
-			else if (sub.startsWith(WORLDS_VARIABLE + "."))
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + WORLDS_VARIABLE + "."))
 			{
 				bounds = getCurrentContext().getWorldExtents();
-				sub = sub.substring(WORLDS_VARIABLE.length() + 1);
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + WORLDS_VARIABLE.length() + 1);
 				if (sub.equals("scale"))
 				{
 					retval = new Argument(getCurrentContext().getWorldScale());
@@ -585,13 +592,13 @@ public class ContextStack
 					retval = getBoundingBoxVariable(sub, bounds);
 				}
 			}
-			else if (sub.startsWith(UNPROJECTED_VARIABLE + "."))
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + UNPROJECTED_VARIABLE + "."))
 			{
 				bounds = getCurrentContext().getUnprojectedExtents();
-				sub = sub.substring(UNPROJECTED_VARIABLE.length() + 1);
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + UNPROJECTED_VARIABLE.length() + 1);
 				retval = getBoundingBoxVariable(sub, bounds);
 			}
-			else if (sub.startsWith(DATASET_VARIABLE + "."))
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + DATASET_VARIABLE + "."))
 			{
 				Dataset dataset = getCurrentContext().getDataset();
 				if (dataset == null)
@@ -604,7 +611,7 @@ public class ContextStack
 				}
 				else
 				{
-					sub = sub.substring(DATASET_VARIABLE.length() + 1);
+					sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + DATASET_VARIABLE.length() + 1);
 					if (sub.equals("projection"))
 					{
 						String projection = dataset.getProjection();
