@@ -191,7 +191,7 @@ public class Expression
 			Argument rightValue = null;
 			Argument thirdValue = null;
 			Argument fourthValue = null;
-			Argument retval;
+			Argument retval = null;
 			int nArgs = 0;
 
 			/*
@@ -221,20 +221,25 @@ public class Expression
 			/*
 			 * Evaluate function.
 			 */
-			if (nArgs == 0)
-				retval = mFunction.evaluate(context);
-			else if (nArgs == 1)
-				retval = mFunction.evaluate(context, leftValue);
-			else if (nArgs == 2)
-				retval = mFunction.evaluate(context, leftValue, rightValue);
-			else if (nArgs == 3)
-				retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue);
-			else if (nArgs == 4)
-				retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue, fourthValue);
-			else
+			try
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
-					": " + mFunction.getName());
+				if (nArgs == 0)
+					retval = mFunction.evaluate(context);
+				else if (nArgs == 1)
+					retval = mFunction.evaluate(context, leftValue);
+				else if (nArgs == 2)
+					retval = mFunction.evaluate(context, leftValue, rightValue);
+				else if (nArgs == 3)
+					retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue);
+				else if (nArgs == 4)
+					retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue, fourthValue);
+			}
+			catch (MapyrusException e)
+			{
+				/*
+				 * Prepend function name to error message.
+				 */
+				throw new MapyrusException(mFunction.getName() + ": " + e.getMessage());
 			}
 
 			return(retval);
