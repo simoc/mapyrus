@@ -220,6 +220,19 @@ class Preprocessor
 			if (Character.isWhitespace(trimmed.charAt(INCLUDE_KEYWORD.length())))
 			{
 				String filename = trimmed.substring(INCLUDE_KEYWORD.length() + 1).trim();
+				int filenameLen = filename.length();
+				if (filenameLen > 1)
+				{
+					/*
+					 * Strip any quotes or angle brackets around the filename.
+					 */
+					if ((filename.startsWith("\"") && filename.endsWith("\"")) ||
+						(filename.startsWith("'") && filename.endsWith("'")) ||
+						(filename.startsWith("<") && filename.endsWith(">")))
+					{
+						filename = filename.substring(1, filenameLen - 1);
+					}
+				}
 
 				/*
 				 * Open included file and start
