@@ -467,42 +467,31 @@ public class Expression
 	}
 
 	ExpressionTreeNode mExprTree;
-
+	
 	/*
-	 * Parse expression including "and" boolean operations.
+	 * Parse expression including "or" boolean operations.
 	 */
-	private ExpressionTreeNode parseAndBoolean(Preprocessor p)
+	private ExpressionTreeNode parseOrBoolean(Preprocessor p)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, b;
-		int op1, op2, op3;
+		int op1, op2;
 
-		expr = parseOrBoolean(p);
+		expr = parseAndBoolean(p);
 		while (true)
 		{
 			/*
-			 * If next three characters spell "and" then parse
+			 * If next two characters spell "or" then parse
 			 * right hand side of expression.
 			 */
 			op1 = p.readNonSpace();
-			if (op1 == 'a' || op1 == 'A')
+			if (op1 == 'o' || op1 == 'O')
 			{
 				op2 = p.read();
-				if (op2 == 'n' || op2 == 'N')
+				if (op2 == 'r' || op2 == 'R')
 				{
-					op3 = p.read();
-					if (op3 == 'd' || op3 == 'D')
-					{
-						b = parseOrBoolean(p);
-						expr = new ExpressionTreeNode(expr, AND_OPERATION, b);
-					}
-					else
-					{
-						p.unread(op3);
-						p.unread(op2);
-						p.unread(op1);
-						break;
-					}
+					b = parseAndBoolean(p);
+					expr = new ExpressionTreeNode(expr, OR_OPERATION, b);
 				}
 				else
 				{
@@ -521,29 +510,40 @@ public class Expression
 	}
 
 	/*
-	 * Parse expression including "or" boolean operations.
+	 * Parse expression including "and" boolean operations.
 	 */
-	private ExpressionTreeNode parseOrBoolean(Preprocessor p)
+	private ExpressionTreeNode parseAndBoolean(Preprocessor p)
 		throws IOException, MapyrusException
 	{
-		ExpressionTreeNode expr, comp;
-		int op1, op2;
+		ExpressionTreeNode expr, b;
+		int op1, op2, op3;
 
 		expr = parseComparison(p);
 		while (true)
 		{
 			/*
-			 * If next two characters spell "or" then parse
+			 * If next three characters spell "and" then parse
 			 * right hand side of expression.
 			 */
 			op1 = p.readNonSpace();
-			if (op1 == 'o' || op1 == 'O')
+			if (op1 == 'a' || op1 == 'A')
 			{
 				op2 = p.read();
-				if (op2 == 'r' || op2 == 'R')
+				if (op2 == 'n' || op2 == 'N')
 				{
-					comp = parseComparison(p);
-					expr = new ExpressionTreeNode(expr, OR_OPERATION, comp);
+					op3 = p.read();
+					if (op3 == 'd' || op3 == 'D')
+					{
+						b = parseComparison(p);
+						expr = new ExpressionTreeNode(expr, AND_OPERATION, b);
+					}
+					else
+					{
+						p.unread(op3);
+						p.unread(op2);
+						p.unread(op1);
+						break;
+					}
 				}
 				else
 				{
@@ -869,7 +869,7 @@ public class Expression
 
 		if (c == '(')
 		{
-			expr = parseAndBoolean(p);
+			expr = parseOrBoolean(p);
 
 			c = p.readNonSpace();
 			if (c != ')')
@@ -933,7 +933,7 @@ public class Expression
 								": " + buf.toString());
 						}
 					}
-					functionExpressions[i] = parseAndBoolean(p);
+					functionExpressions[i] = parseOrBoolean(p);
 				}
 
 				c = p.readNonSpace();
@@ -983,7 +983,7 @@ public class Expression
 	 */
 	public Expression(Preprocessor p) throws IOException, MapyrusException
 	{
-		mExprTree = parseAndBoolean(p);
+		mExprTree = parseOrBoolean(p);
 	}
 
 	/**
