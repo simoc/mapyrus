@@ -5,6 +5,25 @@ include header.doc
 Versions
 </h2>
 
+<h3>0.32, December 2003</h3>
+<p>
+Improved HTML documentation.
+<br>
+Improved PostScript and TrueType font handling.
+<br>
+Added arrays,
+<tt>for</tt> ... <tt>in</tt> array looping and <tt>split</tt> function.
+<br>
+Added mathematical functions <tt>ceil</tt>, <tt>cos</tt>
+<tt>floor</tt>, <tt>log10</tt>,
+<tt>pow</tt>, <tt>sin</tt>, <tt>sqrt</tt>, <tt>tan</tt>.
+<br>
+Added access to datasets in an RDBMS through JDBC.
+<br>
+Added <tt>shiftpath</tt> command.
+<p>
+include hr.doc
+
 <h3>0.31, October 2003</h3>
 <p>
 First released version.
