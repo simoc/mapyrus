@@ -38,7 +38,7 @@ public class Interpreter
 	private static final int AT_BLOCK_PARAM = 7;	/* at parameter to a procedure block */
 	private static final int AT_PARAM_SEPARATOR = 8;	/* at separator between parameters */
 
-	private Context mContext;
+	private ContextStack mContext;
 	
 	/*
 	 * Blocks of statements for each procedure defined in
@@ -93,8 +93,9 @@ public class Interpreter
 		throws MapyrusException, IOException
 	{
 		int c;
-		int state = AT_START;
+		int state;
 		String keyword = null;
+		String blockName = null;
 		Vector expressions = null;
 		Expression expr;
 		Statement retval = null;
@@ -106,6 +107,7 @@ public class Interpreter
 
 		do
 		{
+			state = AT_START;
 			c = preprocessor.read();
 			while (true)
 			{
@@ -127,7 +129,7 @@ public class Interpreter
 				}
 				else if (c == '\n')
 				{
-					if (keyword.length() > 0)
+					if (keyword != null && keyword.length() > 0)
 					{
 						/*
 						 * End of line signals
@@ -191,6 +193,7 @@ public class Interpreter
 				else if (state == AT_START || state == AT_BLOCK_NAME)
 				{
 					keyword = parseWord(c, preprocessor);
+					c = preprocessor.read();
 					
 					/*
 					 * Is this a procedure block definition?
@@ -239,6 +242,7 @@ public class Interpreter
 					expr = new Expression(preprocessor);
 					expressions.add(expr);
 					state = AT_ARG_SEPARATOR;
+					c = preprocessor.read();
 				}
 				else if (state == AT_BLOCK_PARAM)
 				{
@@ -247,6 +251,7 @@ public class Interpreter
 					 */
 					procedureParameters.add(parseWord(c, preprocessor));
 					state = AT_PARAM_SEPARATOR;
+					c = preprocessor.read();
 				}
 				else
 				{
@@ -283,21 +288,6 @@ public class Interpreter
 				throw new MapyrusException("No procedure name given at " +
 					preprocessor.getCurrentFilenameAndLine());
 			}
-			else if (isAssignmentStatement)
-			{
-				if (expressions.size() > 1)
-				{
-					throw new MapyrusException("Too many expressions in assignment at " +
-						preprocessor.getCurrentFilenameAndLine());
-				}
-				else if (expressions.size() == 0)
-				{
-					throw new MapyrusException("No expression in assignment at " +
-						preprocessor.getCurrentFilenameAndLine());
-				}
-				retval = new Statement(keyword,
-					(Expression)expressions.elementAt(0));
-			}
 			else if (keyword.equalsIgnoreCase(END_BLOCK))
 			{
 				/*
@@ -314,51 +304,71 @@ public class Interpreter
 				 * Create single statement for all statements making
 				 * up the procedure.
 				 */
-				retval = new Statement(keyword,
+				retval = new Statement(blockName,
 					procedureParameters,
 					procedureStatements);
 			}
+			else if (state == AT_PARAM_SEPARATOR || state == AT_BLOCK_PARAM)
+			{
+				/*
+				 * Nested procedures are not allowed.
+				 */
+				if (inProcedureBlock)
+				{
+					throw new MapyrusException("Procedure definition within " +
+						"existing procedure at " +
+						preprocessor.getCurrentFilenameAndLine());
+				}
+				inProcedureBlock = true;
+				procedureStatements = new Vector();
+				blockName = keyword;
+
+			}
 			else
 			{
-				if (state == AT_BLOCK_NAME || state == AT_BLOCK_PARAM)
+				Statement statement;
+
+				if (isAssignmentStatement)
 				{
 					/*
-					 * Nested procedures are not allowed.
+					 * Exactly one expression is assigned in a statement.
 					 */
-					if (inProcedureBlock)
+					if (expressions.size() > 1)
 					{
-						throw new MapyrusException("Procedure definition within " +
-							"existing procedure at " +
+						throw new MapyrusException("Too many expressions in assignment at " +
 							preprocessor.getCurrentFilenameAndLine());
 					}
-					inProcedureBlock = true;
-					procedureStatements = new Vector();
+					else if (expressions.size() == 0)
+					{
+						throw new MapyrusException("No expression in assignment at " +
+							preprocessor.getCurrentFilenameAndLine());
+					}
 
+					statement = new Statement(keyword, (Expression)expressions.elementAt(0));
 				}
 				else
-				{
+				{	
 					Expression []a = new Expression[expressions.size()];
-					Statement statement;
 					
 					for (int i = 0; i < a.length; i++)
 					{
 						a[i] = (Expression)expressions.elementAt(i);
 					}
 					statement = new Statement(keyword, a);
-
-					/*
-					 * Add statement to the procedure we are defining, or
-					 * return it for immediate execution if we are not defining
-					 * a procedure.
-					 */			
-					if (inProcedureBlock)
-					{
-						procedureStatements.add(statement);
-					}
-					else
-					{
-						retval = statement;
-					}
+				}
+				
+				/*
+				 * Add statement to the procedure we are defining, or
+				 * return it for immediate execution if we are not defining
+				 * a procedure.
+				 */			
+				if (inProcedureBlock)
+				{
+					procedureStatements.add(statement);
+				}
+				else
+				{
+					retval = statement;
 				}
 			}
 		}
@@ -371,7 +381,7 @@ public class Interpreter
 	 * Exceute a single statement, changing the path, context or generating
 	 * some output.
 	 */
-	private void execute(Statement st, Context context)
+	private void execute(Statement st, ContextStack context)
 		throws MapyrusException, IOException
 	{
 		Expression []expr;
@@ -478,6 +488,10 @@ public class Interpreter
 				}
 				break;
 				
+			case Statement.CLEAR:
+				context.clearPath();
+				break;
+								
 			case Statement.STROKE:
 				context.stroke();
 				break;
@@ -620,7 +634,7 @@ public class Interpreter
 	 * @param context is the context to use during interpretation.  This may be in
 	 * a changed state by the time interpretation is finished.
 	 */
-	public Interpreter(Context context)
+	public Interpreter(ContextStack context)
 	{
 		super();
 		mContext = context;
