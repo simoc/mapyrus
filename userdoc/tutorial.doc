@@ -190,6 +190,58 @@ The output of this example is.
 <h3>Building Procedures</h3>
 <p>
 
+Store frequently used sequences of commands in a procedure.
+A procedure has a unique name, takes a fixed number of arguments and
+may be called from any place where a command is expected.
+<p>
+Private variables in a procedure are defined with the 
+<a href="reference.html#local">local</a>
+command.
+<p>
+When a procedure is called, the
+<a href="reference.html#gstate">graphics state</a>
+is saved, the commands for the procedure are executed and then the
+graphics state is restored before returning.
+
+The following example shows a simple procedure named <tt>trail</tt>
+and its output.
+
+include beginex.doc
+include tutorialprocedures1.mpy
+include endex.doc
+
+<p>
+<img src="tutorialprocedures1.png">
+<p>
+
+If the current path contains only points added with
+<a href="reference.html#move">move</a>
+commands when a procedure is called, then the
+procedure is called once for each point with the origin
+moved to that point.  This permits several symbols to be drawn
+easily and is demonstrated in the following example.
+
+include beginex.doc
+include tutorialprocedures2.mpy
+include endex.doc
+
+<p>
+<img src="tutorialprocedures2.png">
+<p>
+
+Put frequently used procedures in a separate file and use an
+<a href="reference.html#language">include</a>
+line to include it in other files.  When this is done for the
+previous example, the file is split in the following way.
+
+include beginex.doc
+include tutorialprocedures3.mpy
+include endex.doc
+
+include beginex.doc
+include tutorialprocedures4.mpy
+include endex.doc
+
 <a name="lines"/></a>
 <h3>Displaying Lines</h3>
 <p>
@@ -329,12 +381,50 @@ include endex.doc
 <h3>Displaying Labels</h3>
 <p>
 
+Labels are displayed using the
+<a href="reference.html#move">move</a>
+command to define one or more points for labelling, followed by a
+<a href="reference.html#label">label</a>
+command.  The font and justification for labels
+are set with the
+<a href="reference.html#font">font</a>
+and
+<a href="reference.html#justify">justify</a>
+commands.
+Setting fonts, justification and displaying multiple lines
+are demonstrated in the following example.
+
+include beginex.doc
+include tutoriallabels1.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallabels1.png">
+<p>
+
+Labels are displayed horizontally.  Rotate
+the axes with the
+<a href="reference.html#rotate">rotate</a>
+command before setting the font to display labels at an angle.
+Drawing labels one pixel offset from original position
+and in a different color highlights the label.
+These two techniques are demonstrated in the following
+example.
+
+include beginex.doc
+include tutoriallabels2.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallabels2.png">
+<p>
+
 <a name="rand"/></a>
 <h3>Random Effects</h3>
 <p>
 Random effects are generated using the
 <a href="reference.html#random">random</a>
-function.
+function and help give a less mechanical appearance.
 The following example demonstrates setting
 size and color randomly.
 
