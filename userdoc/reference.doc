@@ -468,12 +468,15 @@ command, or 0 if no more records available.
 <br>
 <tt>Mapyrus.page.width</tt>
 <br>
-<tt>Mapyrus.page.resolution</tt>
+<tt>Mapyrus.page.resolution.dpi</tt>
+<br>
+<tt>Mapyrus.page.resolution.mm</tt>
 <td>
 The file format, page height, page width
 and resolution that were passed to the
 <a href="#newpage">newpage</a> command.  File format is in lowercase.
-Height and width are in millimetres, resolution is in dots-per-inch.
+Height and width are in millimetres.  Resolution is available
+as either a dots-per-inch value, or a distance in millimetres.
 
 <tr>
 <td>
