@@ -361,6 +361,22 @@ to display a border around the outside of a polygon instead.
 \label{tutorialpolygons4}
 \end{figure}
 
+To display polygons with a gradient fill pattern use
+the \texttt{gradientfill} command.
+This command fills the current path with colors that fade
+across the polygon.
+The following example demonstrates fading from olive at the
+lower-left corner of each polygon to white in all other corners
+of the polygon.  The output is shown in Figure \ref{tutorialgradient}.
+
+\verbatiminput{tutorialgradient.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialgradient.eps}
+\caption{Displaying Polygons With Gradient Fill}
+\label{tutorialgradient}
+\end{figure}
+
 \subsection{Displaying Labels}
 
 Labels are displayed using the \texttt{move}
