@@ -11,21 +11,9 @@ begin pollution reading
   key "point", "pollution 80 ppm", 80
   key "point", "pollution 90 ppm", 90
 
-  # Set HSB colors for minimum and maximum readings.
+  # Reading is a percentage. Convert it to color between green and red.
   #
-  let hueMin = 0.53, satMin = 0.75, brightMin = 0.90
-  let hueMax = 0.03, satMax = 1.00, brightMax = 0.90
-
-  # Reading is a percentage, in the range 0 to 100.
-  # Convert it to a color between minimum and maximum values.
-  #
-  let hue = hueMin + (reading / 100) * (hueMax - hueMin)
-  let sat = satMin + (reading / 100) * (satMax - satMin)
-  let bright = brightMin + (reading / 100) * (brightMax - brightMin)
-
-  # Draw small filled square.
-  #
-  color "hsb", hue, sat, bright
+  color interpolate("0 green 100 red", reading)
   box -1, -1, 1, 1
   fill
 end
