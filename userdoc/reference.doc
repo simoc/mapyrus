@@ -913,18 +913,6 @@ attribute fields to read from the DBF database file accompanying the
 Shape file.  By default, all fields are read.  Reading fewer attribute
 fields improves performance.
 
-<tr>
-<td>
-<tt>sql</tt>
-<td>
-for accessing data from an RDBMS.
-<p>
-Extras:
-<p>
-<tt>jdbc=<i>connection-string</i></tt> 
-<br>
-The JDBC connection string for connecting to the RDBMS.
-
 </table>
 
 
