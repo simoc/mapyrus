@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 begin scalebar scale, units
 
 	# 10mm long bars in a scale look good.  What distance does this
@@ -43,7 +41,7 @@ begin scalebar scale, units
 
 	# Blank out background behind scale bar.
 	#
-	color "#eeeeee"
+	color "#eeee99"
 	move 0, 0
 	draw 0, 10, mmScaleSize, 10, mmScaleSize, 0, 0, 0
 	fill
@@ -65,7 +63,7 @@ begin scalebar scale, units
 			unitDivider = 1000000
 			if units eq 'meters' or units eq 'metres' or units eq 'm'
 			then
-				unitLabel = "thousands of km"
+				unitLabel = "thousands of kilometers"
 			else
 				unitLabel = "millions of " . units
 			endif
@@ -73,7 +71,7 @@ begin scalebar scale, units
 			unitDivider = 1000
 			if units eq 'meters' or units eq 'metres' or units eq 'm'
 			then
-				unitLabel = "kilometres"
+				unitLabel = "kilometers"
 			else
 				unitLabel = "thousands of " . units
 			endif
