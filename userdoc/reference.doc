@@ -51,12 +51,14 @@ Reference
 <a href="#font">font</a>,
 <a href="#import">import</a>,
 <a href="#justify">justify</a>,
+<a href="#key">key</a>,
 <a href="#label">label</a>,
+<a href="#legend">legend</a>,
 <a href="#let">let</a>,
-<a href="#linestyle">linestyle</a>,
 <br>
 &nbsp;
 &nbsp;
+<a href="#linestyle">linestyle</a>,
 <a href="#local">local</a>,
 <a href="#move">move</a>,
 <a href="#newpage">newpage</a>,
@@ -692,29 +694,6 @@ The name of the file or URL being interpreted.
 <td>
 The amount of free memory in the Java Virtual Machine, in bytes.
 
-
-<tr>
-<td>
-<tt>Mapyrus.path.length</tt>
-<br>
-<tt>Mapyrus.path.area</tt>
-<br>
-<tt>Mapyrus.path.min.x</tt>
-<br>
-<tt>Mapyrus.path.min.y</tt>
-<br>
-<tt>Mapyrus.path.max.x</tt>
-<br>
-<tt>Mapyrus.path.max.y</tt>
-<br>
-<tt>Mapyrus.path.width</tt>
-<br>
-<tt>Mapyrus.path.height</tt>
-<td>
-The length of the current path on the page measured in millimetres,
-the area of the current path measured in square millimetres
-and the bounding rectangle of the current path.
-
 <tr>
 <td>
 <tt>Mapyrus.imagemap.x</tt>,
@@ -740,6 +719,15 @@ command, or 0 if no more records available.
 
 <tr>
 <td>
+<tt>Mapyrus.key.count</tt>
+<td>
+The number of legend entries defined with
+<a href="#key">key</a> commands that have not yet
+been displayed with a
+<a href="#legend">legend</a> command.
+
+<tr>
+<td>
 <tt>Mapyrus.page.format</tt>
 <br>
 <tt>Mapyrus.page.height</tt>
@@ -756,6 +744,28 @@ and resolution that were passed to the
 Height and width are in millimetres.  Resolution is available
 as either a dots-per-inch value, or a distance in millimetres between
 dots.
+
+<tr>
+<td>
+<tt>Mapyrus.path.length</tt>
+<br>
+<tt>Mapyrus.path.area</tt>
+<br>
+<tt>Mapyrus.path.min.x</tt>
+<br>
+<tt>Mapyrus.path.min.y</tt>
+<br>
+<tt>Mapyrus.path.max.x</tt>
+<br>
+<tt>Mapyrus.path.max.y</tt>
+<br>
+<tt>Mapyrus.path.width</tt>
+<br>
+<tt>Mapyrus.path.height</tt>
+<td>
+The length of the current path on the page measured in millimetres,
+the area of the current path measured in square millimetres
+and the bounding rectangle of the current path.
 
 <tr>
 <td>
@@ -943,7 +953,10 @@ underlying colors.
 An alpha value of 0 is completely transparent and the color is not visible.
 Intermediate values are partially transparent and the color is blended with
 colors of underlying shapes on the page.
+<p>
 Colors are opaque if an alpha value is not given.
+Transparency is not available for PostScript output and all colors
+are opaque.
 <p>
 The spelling <tt>colour</tt> is also accepted for this command.
 
@@ -1186,6 +1199,35 @@ vertically.
 include hr.doc
 
 <p>
+<a name="key"></a>
+<tt>key</tt> <i>type</i>, <i>description</i>, [<i>arg1</i>, <i>arg2</i> ...]
+<p>
+Defines an entry for a legend.
+The procedure containing this command will be called with arguments
+<i>arg1</i>, <i>arg2</i> ... to display a sample of the symbol
+when the legend is generated with a
+<a href="#legend">legend</a> command.
+The
+<a href="#key">key</a>
+command is ignored if used outside of a procedure.
+<p>
+
+<i>type</i> is either
+<tt>point</tt> to display the legend entry as a single point,
+<tt>line</tt> to display the legend entry as a horizontal line,
+or
+<tt>box</tt> to display the legend as a box.
+<i>description</i> is the label for the legend entry.
+<p>
+
+If a procedure displays more than one type of type of symbol depending
+on the arguments passed to it then use a separate
+<a href="#key">key</a> command for each, with different descriptions
+and different arguments.
+
+include hr.doc
+
+<p>
 <a name="label"></a>
 <tt>label</tt> <i>string</i> [, <i>string</i> ...]
 <p>
@@ -1200,6 +1242,52 @@ commands.
 If <i>string</i> contains newline characters (<tt>\n</tt>) then
 labels are displayed as multiple lines, one below the other,
 with each line justified independently.
+
+include hr.doc
+
+<p>
+<a name="legend"></a>
+<tt>legend</tt> <i>size</i>
+<p>
+Displays legend entries defined with
+<a href="#key">key</a> commands at points defined with
+<a href="#move">move</a> commands.
+<p>
+Each legend entry corresponds to a procedure and a set of
+arguments.
+The first legend entry is displayed at the first
+<a href="#move">move</a>
+point by calling the procedure in which the first legend entry was
+defined.  Then the second legend entry is displayed at the second
+<a href="#move">move</a>
+point.
+This continues until either all legend entries are displayed
+or all move points are used.
+<p>
+The variable
+<tt>Mapyrus.key.count</tt>
+contains the number of legend entries that remain to be displayed.
+<p>
+If there are more legend entries than 
+<a href="#move">move</a> points then some legend entries
+remain undisplayed and will be displayed in the next legend.
+<p>
+Legend entries are displayed in the order in which they
+are encountered in called procedures.
+<p>
+Legend entries in procedures that were never called are
+not included in the legend.  Therefore, the legend only shows
+entries that were actually displayed.
+<p>
+
+<i>size</i> defines the size of each legend entry, in millimetres.
+<p>
+
+The description label is displayed to
+the right of each legend entry, using the current
+<a href="#color">color</a>,
+<a href="#font">font</a> and
+<a href="#justify">justify</a> settings.
 
 include hr.doc
 
@@ -1570,7 +1658,7 @@ Requests using either GET or POST methods are accepted by Mapyrus.
 <p>
 The HTTP server runs forever and
 is stateless.  Each HTTP request is independent and
-variables and graphics state are not shared between
+variables, graphics state and legend entries are not shared between
 requests.  Cookies are not used.
 Any files or URLs given on the command line when Mapyrus is started
 are interpreted before accepting HTTP requests.
