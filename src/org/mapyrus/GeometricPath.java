@@ -410,6 +410,38 @@ public class GeometricPath
 	}
 
 	/**
+	 * Return new path, with all coordinates in path shifted by a fixed amount.
+	 * @param xShift distance in millimetres to shift X coordinate values.
+	 * @param yShift distance in millimetres to shift Y coordinate values.
+	 */
+	public GeometricPath translatePath(double xShift, double yShift)
+	{
+		GeometricPath retval = new GeometricPath();
+
+		/*
+		 * Create translated copy of path. 
+		 */
+		retval.mPath = (GeneralPath)(mPath.clone());
+		AffineTransform translateTransform =
+			AffineTransform.getTranslateInstance(xShift, yShift);
+		retval.mPath.transform(translateTransform);
+		
+		/*
+		 * Replace list of moveto points and rotations too.
+		 */
+		for (int i = 0; i < mMoveTos.size(); i++)
+		{
+			Point2D.Float pt = (Point2D.Float)mMoveTos.get(i);
+			pt = new Point2D.Float((float)(pt.x + xShift), (float)(pt.y + yShift));
+			retval.mMoveTos.add(pt);
+		}
+		retval.mNLineTos = mNLineTos;
+		retval.mRotations = (ArrayList)(mRotations.clone());
+
+		return(retval);
+	}
+
+	/**
 	 * Create new path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
