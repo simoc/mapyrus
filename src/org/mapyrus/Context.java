@@ -25,7 +25,9 @@ package org.mapyrus;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -39,6 +41,7 @@ import javax.swing.ImageIcon;
 
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.geom.Sinkhole;
+import org.mapyrus.geom.SutherlandHodgman;
 
 /**
  * Maintains state information during interpretation inside a single procedure block.
@@ -921,7 +924,7 @@ public class Context
 		 */
 		if (mPath == null || mPath.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MOVETO));
-		
+
 		/*
 		 * Transform to correct world coordinate system.
 		 */
@@ -1013,9 +1016,15 @@ public class Context
 	 */
 	public void closePath()
 	{
-		GeometricPath path = getDefinedPath();
-		if (path != null)
-			path.closePath();
+		if (mPath != null)
+		{
+			mPath.closePath();
+		}
+		else if (mExistingPath != null)
+		{
+			mPath = new GeometricPath(mExistingPath);
+			mPath.closePath();
+		}
 	}
 
 	/**
@@ -1061,6 +1070,84 @@ public class Context
 			Point2D pt = Sinkhole.calculate(path.getShape());
 			mPath = new GeometricPath();
 			mPath.moveTo((float)pt.getX(), (float)pt.getY(), 0);
+		}
+	}
+
+	/**
+	 * Replace path defining polygon with a sinkhole point.
+	 */
+	public void guillotine(double x1, double y1, double x2, double y2)
+		throws MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null)
+		{
+			double srcPts[] = new double[4];
+			float dstPts[] = new float[6];
+
+			srcPts[0] = x1;
+			srcPts[1] = y1;
+
+			srcPts[2] = x2;
+			srcPts[3] = y2;
+
+			/*
+			 * Transform rectangle to correct world coordinate system.
+			 */
+			if (mProjectionTransform != null)
+			{
+				mProjectionTransform.forwardTransform(srcPts);
+			}
+
+			/*
+			 * Transform rectangle from world coordinates
+			 * to millimetre position on page.
+			 */
+			if (mWorldCtm != null)
+				mWorldCtm.transform(srcPts, 0, srcPts, 0, 2);
+			mCtm.transform(srcPts, 0, dstPts, 0, 2);
+
+			double resolution = getResolution();
+			Rectangle2D.Double rect = new Rectangle2D.Double(dstPts[0], dstPts[1],
+				dstPts[2] - dstPts[0], dstPts[3] - dstPts[1]);
+				
+			/*
+			 * Return immediately if shape is completely inside or outside
+			 * clip rectangle.
+			 */
+			GeneralPath s = path.getShape();
+			Rectangle2D bounds = s.getBounds2D();
+			if (rect.contains(bounds))
+				return;
+			if (!rect.intersects(bounds))
+			{
+				mPath = new GeometricPath();
+				return;
+			}
+
+			GeneralPath p = SutherlandHodgman.clip(s, rect, resolution);
+
+			/*
+			 * Copy clipped path back to current path.
+			 */
+			if (mPath == path)
+				mPath.reset();
+			else
+				mPath = new GeometricPath();
+			float []coords = dstPts;
+			PathIterator pi = p.getPathIterator(Constants.IDENTITY_MATRIX);
+			while (!pi.isDone())
+			{
+				int segmentType = pi.currentSegment(coords);
+				if (segmentType == PathIterator.SEG_MOVETO)
+					mPath.moveTo(coords[0], coords[1], 0);
+				else if (segmentType == PathIterator.SEG_LINETO)
+					mPath.lineTo(coords[0], coords[1]);
+				else if (segmentType == PathIterator.SEG_CLOSE)
+					mPath.closePath();
+				pi.next();
+			}
 		}
 	}
 
