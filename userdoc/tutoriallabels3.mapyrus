@@ -32,15 +32,13 @@ shiftpath stringwidth(h1), 0
 font "Palatino-Italic", 8
 label h2
 
-# Draw label with pink surround to highlight it.
+# Draw black label with pink outline to highlight it.
 #
-color "pink"
-clearpath
-let onePixel = Mapyrus.screen.resolution.mm
-move 40, 23 - onePixel, 40, 23 + onePixel
-move 40 - onePixel, 23, 40 + onePixel, 23
-label h1
-color "black"
 clearpath
 move 40, 23
+color "pink"
+font "Helvetica", 8, "outlinewidth=2"
+label h1
+color "black"
+font "Helvetica", 8
 label h1
