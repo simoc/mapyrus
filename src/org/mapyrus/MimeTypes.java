@@ -37,15 +37,22 @@ public class MimeTypes
 	 */
 	public static String get(String extension)
 	{
-		/*
-		 * Convert SVG MIME type ourselves as it does not
-		 * yet appear in my MIME type database.
-		 */
 		String retval;
 		if (extension.equalsIgnoreCase("svg") ||
 			extension.equalsIgnoreCase("svgz"))
 		{
+			/*
+			 * Convert SVG MIME type ourselves as it does not
+			 * yet appear in my MIME type database.
+			 */
 			retval = "image/svg+xml";
+		}
+		else if (extension.equalsIgnoreCase("tfw"))
+		{
+			/*
+			 * Geoferencing files for images are text files.
+			 */
+			retval = "text/plain";
 		}
 		else
 		{
