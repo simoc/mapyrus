@@ -73,9 +73,15 @@ public class Mapyrus
 		{
 			interpreter.interpret(f, filename);
 		}
+		catch (MapyrusException e)
+		{
+			System.err.println(e.getMessage());
+			return(false);
+		}
 		catch (Exception e)
 		{
 			System.err.println(e.getMessage());
+			e.printStackTrace();
 			return(false);
 		}		
 		return(true);
