@@ -48,8 +48,8 @@ public class WorldCoordinateTransform
 			newProjection = define(description);
 			if (newProjection < 0)
 			{
-				throw new MapyrusException("Failed to define coordinate system '" +
-					description + "'");
+				throw new MapyrusException("Coordinate system definition failed: " +
+					description);
 			}
 			definition = new Integer(newProjection);
 			mDefinedCoordinateSystems.put(description, definition);
@@ -87,9 +87,9 @@ public class WorldCoordinateTransform
 				if (id.intValue() == p2)
 					destName = s;
 			}
-			throw new MapyrusException("Failed to transform coordinates " +
-				coords[nTransformed * 2] + " " + coords[nTransformed * 2 + 1] +
-				" from '" + sourceName + "' to '" + destName + "'");
+			throw new MapyrusException("Failed to transform coordinates: " +
+				sourceName + " " + destName + ": " +
+				coords[nTransformed * 2] + " " + coords[nTransformed * 2 + 1]);
 		}
 	}
 

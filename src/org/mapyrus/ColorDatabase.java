@@ -129,8 +129,8 @@ public class ColorDatabase
 					}
 					catch (NumberFormatException e)
 					{
-						throw new MapyrusException("Invalid color at line " +
-							reader.getLineNumber() + " in " + filename);
+						throw new MapyrusException(filename + ":" +
+							reader.getLineNumber() + ": invalid color");
 					}
 				}
 			}

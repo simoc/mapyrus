@@ -283,8 +283,7 @@ public class ShapefileDataset implements GeographicDataset
 		magic = mShapeStream.readInt();
 		if (magic != MAGIC_NUMBER)
 		{
-			throw new MapyrusException("File '" + mFilename +
-				".shp' is not ESRI shape file format.");
+			throw new MapyrusException(mFilename + ": File not ESRI shape file format");
 		}
 
 		mShapeStream.readInt();

@@ -179,7 +179,7 @@ public class TextfileDataset implements GeographicDataset
 			fieldNames = readLine();
 			fieldNameDelimiters = mDelimiters;
 			if (fieldNames == null)
-				throw new MapyrusException("Unexpected end of file in '" + filename + "'");
+				throw new MapyrusException(filename + ": Unexpected end of file");
 		}
 
 		if (fieldTypes != null)
@@ -191,7 +191,7 @@ public class TextfileDataset implements GeographicDataset
 			fieldTypes = readLine();
 			fieldTypeDelimiters = mDelimiters;
 			if (fieldNames == null)
-				throw new MapyrusException("Unexpected end of file in '" + filename + "'");
+				throw new MapyrusException(filename + ": Unexpected end of file");
 		}
 
 		st = createStringTokenizer(fieldNames, fieldNameDelimiters);
@@ -225,8 +225,8 @@ public class TextfileDataset implements GeographicDataset
 		 */		
 		if (i != mFieldTypes.length || st.hasMoreTokens())
 		{
-			throw new MapyrusException("Different number of field " +
-				"names and field types in '" + filename + "'");
+			throw new MapyrusException(filename +
+				": Different number of field names and field types");
 		}
 
 		/*
@@ -251,9 +251,8 @@ public class TextfileDataset implements GeographicDataset
 				{
 					if (mFieldTypes[j] == Argument.STRING)
 					{
-						throw new MapyrusException("Field '" + mFieldNames[j] +
-							"' is wrong type for geometry in file '" +
-							filename + "'");
+						throw new MapyrusException(filename + ": " + mFieldNames[j] +
+							": Field is wrong type for geometry");
 					}
 					list.add(new Integer(j));
 					foundGeometryField = true;
@@ -262,8 +261,8 @@ public class TextfileDataset implements GeographicDataset
 			
 			if (foundGeometryField == false)
 			{
-				throw new MapyrusException("Geometry field '" +
-					mFieldNames[j] + "' not found in file '" + filename + "'");
+				throw new MapyrusException(filename + ": " + mFieldNames[j] +
+					"Geometry field not found");
 			}
 		}
 
@@ -361,8 +360,7 @@ public class TextfileDataset implements GeographicDataset
 		}
 		catch (IOException e)
 		{
-			throw new MapyrusException("Error reading file '" + mFilename +
-				"': " +e.getMessage());
+			throw new MapyrusException(mFilename + ": " + e.getMessage());
 		}
 		
 		/*
@@ -389,9 +387,8 @@ public class TextfileDataset implements GeographicDataset
 				}
 				catch (NumberFormatException e)
 				{
-					throw new MapyrusException("Invalid numeric value '" +
-						fieldValue + "' in file " + mFilename + " line " +
-						mReader.getLineNumber());
+					throw new MapyrusException(mFilename + ":" + mReader.getLineNumber() +
+						": Invalid numeric value: " + fieldValue);
 				}
 			}
 			else
@@ -407,8 +404,8 @@ public class TextfileDataset implements GeographicDataset
 		 */
 		if (i != mFieldNames.length)
 		{
-			throw new MapyrusException("Missing fields in file " +
-				mFilename + " line " + mReader.getLineNumber());
+			throw new MapyrusException(mFilename + ":" + mReader.getLineNumber() +
+				": Missing fields");
 		}
 		return(true);
 	}

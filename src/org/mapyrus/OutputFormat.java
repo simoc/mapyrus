@@ -358,8 +358,8 @@ public class OutputFormat
 			
 			if (mWriter.checkError())
 			{
-				throw new MapyrusException("Error writing to PostScript file " +
-					mFilename);
+				throw new MapyrusException(mFilename +
+					": Error writing to PostScript file");
 			}
 		}
 		else if (mOutputType == IMAGE_FILE)
@@ -387,14 +387,13 @@ public class OutputFormat
 			}
 			catch (InterruptedException e)
 			{
-				throw new MapyrusException(e.getMessage() +
-					" during output to " + mFilename);
+				throw new MapyrusException(mFilename + ": " + e.getMessage());
 			}
 			
 			if (retval != 0)
 			{
-				throw new MapyrusException(mFilename +
-					"returned failure status " + retval);
+				throw new MapyrusException("Process returned failure status: " +
+					mFilename);
 			}
 		}
 	}

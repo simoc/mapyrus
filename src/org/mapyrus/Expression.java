@@ -102,8 +102,8 @@ public class Expression
 					retval = context.getVariableValue(t.mLeafArg.getVariableName());
 					if (retval == null)
 					{
-						throw new MapyrusException("Variable " +
-							t.mLeafArg.getVariableName() + " not defined");
+						throw new MapyrusException("Variable not defined: " +
+							t.mLeafArg.getVariableName());
 					}
 				}
 				else
@@ -128,8 +128,8 @@ public class Expression
 						context.getVariableValue(leftValue.getVariableName());
 					if (leftVarValue == null)
 					{
-						throw new MapyrusException("Variable " +
-							leftValue.getVariableName() + " not defined");
+						throw new MapyrusException("Variable not defined: " +
+							leftValue.getVariableName());
 					}
 					leftValue = leftVarValue;
 				}
@@ -139,8 +139,8 @@ public class Expression
 						context.getVariableValue(rightValue.getVariableName());
 					if (rightVarValue == null)
 					{
-						throw new MapyrusException("Variable " +
-							rightValue.getVariableName() + " not defined");
+						throw new MapyrusException("Variable not defined: " +
+							rightValue.getVariableName());
 					}
 					rightValue = rightVarValue;
 				}
@@ -516,8 +516,8 @@ public class Expression
 			{
 				if (c == -1)
 				{
-					throw new MapyrusException("Unexpected end of file in string at " +
-						p.getCurrentFilenameAndLineNumber());
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": unexpected end of file in string");
 				}
 
 				if (c == '\\' && lastC != '\\')
@@ -583,8 +583,8 @@ public class Expression
 
 			if (!parsedDigit)
 			{
-				throw new MapyrusException("Invalid number in expression at " +
-					p.getCurrentFilenameAndLineNumber());
+				throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+					": invalid number in expression");
 			}
 
 			if (c == 'e' || c == 'E')
@@ -602,8 +602,8 @@ public class Expression
 				 */
 				if (!Character.isDigit((char)c))
 				{
-					throw new MapyrusException("Invalid number in expression at " +
-						p.getCurrentFilenameAndLineNumber());
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": invalid number in expression");
 				}
 
 				while (Character.isDigit((char)c))
@@ -636,7 +636,8 @@ public class Expression
 
 		if (c == -1)
 		{
-			throw new MapyrusException("Unexpected end of file at " + p.getCurrentFilenameAndLineNumber());
+			throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+				": unexpected end of file");
 		}
 
 		if (c == '(')
@@ -646,8 +647,8 @@ public class Expression
 			c = p.readNonSpace();
 			if (c != ')')
 			{
-				throw new MapyrusException("Unmatched '(' in expression at " +
-					p.getCurrentFilenameAndLineNumber());
+				throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+					": unmatched '(' in expression");
 			}
 		}
 		else if (Character.isLetter((char)c))
@@ -672,8 +673,8 @@ public class Expression
 			/*
 			 * It's nothing that we understand.
 			 */
-			throw new MapyrusException("Invalid expression at " +
-				p.getCurrentFilenameAndLineNumber());
+			throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+				": invalid expression");
 		}
 
 		if (hasUnaryMinus)

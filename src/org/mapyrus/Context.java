@@ -875,10 +875,10 @@ public class Context
 	public Row fetchDatasetRow() throws MapyrusException
 	{
 		if (mDataset == null)
-			throw new MapyrusException("No current dataset to fetch from");
+			throw new MapyrusException("No dataset defined");
 
 		if (mDatasetRow == null)
-			throw new MapyrusException("No more rows to fetch from dataset");
+			throw new MapyrusException("No more rows in dataset");
 
 		/*
 		 * Return row we've already fetched.

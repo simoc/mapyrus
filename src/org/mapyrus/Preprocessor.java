@@ -156,7 +156,7 @@ class Preprocessor
 			URL url = new URL(filename);
 			if (!url.openConnection().getContentType().startsWith("text/plain"))
 			{
-				throw new MapyrusException("Not a plain text file");
+				throw new MapyrusException("Not a plain text file: " + filename);
 			}
 
 			urlStream = url.openStream();
@@ -176,7 +176,7 @@ class Preprocessor
 				URL url = new URL(lastURL, filename);
 				if (!url.openConnection().getContentType().startsWith("text/plain"))
 				{
-					throw new MapyrusException("Not a plain text file");
+					throw new MapyrusException("Not a plain text file: " + filename);
 				}
 
 				urlStream = url.openStream();
@@ -312,6 +312,7 @@ class Preprocessor
 				if (st.hasMoreTokens())
 				{
 					String filename = st.nextToken();
+
 					/*
 					 * Open included file and start
 					 * reading from it.
@@ -322,8 +323,8 @@ class Preprocessor
 					}
 					catch (Exception e)
 					{
-						throw new MapyrusException("Cannot include " + filename + " from " +
-							getCurrentFilenameAndLineNumber() + ": " + e.getMessage());
+						throw new MapyrusException(getCurrentFilenameAndLineNumber() +
+							": " + e.getMessage());
 					}
 
 					mCurrentLine = null;
@@ -331,8 +332,8 @@ class Preprocessor
 				}
 				else
 				{
-					throw new MapyrusException("Missing include filename at " +
-						getCurrentFilenameAndLineNumber());
+					throw new MapyrusException(getCurrentFilenameAndLineNumber() +
+						": Missing filename");
 				}
 			}
 		}

@@ -219,7 +219,7 @@ public class Statement
 	 */
 	public String getFilenameAndLineNumber()
 	{
-		return(mFilename + " line " + mLineNumber);
+		return(mFilename + ":" + mLineNumber);
 	}
 
 	/**

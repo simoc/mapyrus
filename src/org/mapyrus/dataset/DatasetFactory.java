@@ -41,7 +41,7 @@ public class DatasetFactory
 			else if (type.equalsIgnoreCase("shapefile"))
 				retval = new ShapefileDataset(name, extras, geometryFieldNames);
 			else
-				throw new MapyrusException("Dataset type '" + type + "' not available");
+				throw new MapyrusException("Dataset type not available: " + type);
 		}
 		catch (IOException e)
 		{
@@ -53,7 +53,8 @@ public class DatasetFactory
 			if (errorMessage == null)
 				errorMessage = "";
 
-			throw new MapyrusException("Error opening dataset '" + name + "': " + errorMessage);
+			throw new MapyrusException("Error opening dataset: " + name +
+				System.getProperty("line.separator") + errorMessage);
 		}
 		return(retval);
 	}
