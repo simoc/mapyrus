@@ -23,8 +23,8 @@
 package org.mapyrus.font;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
@@ -39,7 +39,7 @@ import org.mapyrus.MapyrusMessages;
 public class AdobeFontMetrics
 {
 	private String mFontName;
-	
+
 	private int mCharWidth;
 	private short []mCharWidths;
 
@@ -157,13 +157,14 @@ public class AdobeFontMetrics
 	}
 
 	/**
-	 * Create font metrics information for a font.
-	 * @param filename name of .afm file.
-	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
-	 */
-	public AdobeFontMetrics(String filename, HashSet ISOLatin1EncodedFonts) throws IOException, MapyrusException
+	 * Create Adobe Font Metrics for a font by reading an AFM file.
+	 * @param r file to read from.
+	 * @param filename filename being read (for any error message).
+	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
+	 */	
+	public AdobeFontMetrics (BufferedReader r, String filename, HashSet ISOLatin1EncodedFonts)
+		throws IOException, MapyrusException
 	{
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
 		String line;
 		boolean inCharMetrics = false;
 		boolean finishedParsing = false;
@@ -175,7 +176,7 @@ public class AdobeFontMetrics
 
 		try
 		{
-			line = bufferedReader.readLine();
+			line = r.readLine();
 			if (line == null || (!line.startsWith("StartFontMetrics")))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
@@ -251,7 +252,7 @@ public class AdobeFontMetrics
 						mCharWidths[charIndex] = charWidth;
 					}
 				}
-				line = bufferedReader.readLine();
+				line = r.readLine();
 			}
 		}
 		catch (NumberFormatException e)
@@ -259,7 +260,6 @@ public class AdobeFontMetrics
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
 				": " + filename + ": " + e.getMessage());
 		}
-		bufferedReader.close();
 	}
 
 	/**
@@ -308,4 +308,3 @@ public class AdobeFontMetrics
 		return((int)pointLen);
 	}
 }
-
