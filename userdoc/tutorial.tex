@@ -21,7 +21,7 @@ Enter the following lines into a text file named \texttt{first.mapyrus}.
 Each line in the file is a command for Mapyrus.  The first line sets output to
 a 30mm square Encapsulated PostScript format file named
 \texttt{tutorialfirst1.eps} with the \texttt{newpage} command.  The second and
-third lines set the color for drawing to black, with lines drawn 4 millimetres
+third lines set the color for drawing to indigo, with lines drawn 4 millimetres
 wide with rounded ends and corners.  The fourth and fifth lines define a path
 on the page giving coordinates in millimetres.  The sixth line is a
 \texttt{stroke} command to draw the path just defined onto the page using the
@@ -72,7 +72,11 @@ Change the file \texttt{first.mapyrus} to contain the following lines.
 
 This example demonstrates drawing circular arcs,
 giving the direction (a positive value for clockwise and a negative
-value for anti-clockwise), center point and end point and
+value for anti-clockwise), center point and end point,
+drawing line segments relative to the last point in the path
+with the \texttt{rdraw} command,
+closing the path back to the starting point
+with the \texttt{closepath} command and
 yet another way of defining color.
 After being filled, the path remains and is used again to draw the outline
 of the shape.
