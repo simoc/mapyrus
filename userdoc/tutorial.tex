@@ -665,6 +665,23 @@ Individual Legend PostScript Files \\
 \label{tutoriallegend2}
 \end{figure}
 
+To show the number of times a legend entry has been used on
+a map, include the special string \texttt{(\#)} in legend entry descriptions.
+This string is replaced in the legend by the number of times the legend entry
+was encountered whilst executing commands.
+This feature is demontrated in the following example,
+with output shown in 
+Figure \ref{tutoriallegend3}.
+
+\verbatiminput{tutoriallegend3.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutoriallegend3.eps}
+\includegraphics{tutoriallegend3legend.eps}
+\caption{Displaying Frequency Count Of Legend Entries}
+\label{tutoriallegend3}
+\end{figure}
+
 \subsection{Using Attributes To Control Display}
 
 Use attributes of geographic data to control
