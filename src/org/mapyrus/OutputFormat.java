@@ -1003,11 +1003,39 @@ public class OutputFormat
 		double width, double height, double rotation)
 		throws IOException, MapyrusException
 	{
-		int j;
 		int pixelWidth, pixelHeight;
+		int step;
 
 		pixelWidth = image.getWidth();
 		pixelHeight = image.getHeight();
+
+		/*
+		 * Calculate reduction in image size so that it is 
+		 * an appropriate size for the resolution of the page.
+		 */
+		if (pixelWidth <= 16 || pixelHeight <= 16)
+		{
+			step = 1;
+		}
+		else
+		{
+			double bestPixelWidth = width / mResolution;
+			double bestPixelHeight = height / mResolution;
+
+			/*
+			 * Keep reducing image 1/2, 1/3, 1/4, ... until it reaches the
+			 * resolution of the page.  Use that reduction for image.
+			 */
+			step = 1;
+			while (pixelHeight / (step + 1) > bestPixelHeight &&
+				pixelWidth / (step + 1) > bestPixelWidth)
+			{
+				step++;
+			}
+		}
+
+		int reducedPixelWidth = (pixelWidth + step - 1) / step;
+		int reducedPixelHeight = (pixelHeight + step - 1) / step;
 
 		/*
 		 * Check if image is a single color.
@@ -1044,10 +1072,11 @@ public class OutputFormat
 			writePostScriptLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
 		}
 
+		writePostScriptLine("% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
 		writePostScriptLine("<<");
 		writePostScriptLine("/ImageType 1");
-		writePostScriptLine("/Width " + pixelWidth);
-		writePostScriptLine("/Height " + pixelHeight);
+		writePostScriptLine("/Width " + reducedPixelWidth);
+		writePostScriptLine("/Height " + reducedPixelHeight);
 		if (singleColor != null)
 		{
 			writePostScriptLine("/BitsPerComponent 1");
@@ -1058,8 +1087,8 @@ public class OutputFormat
 			writePostScriptLine("/BitsPerComponent 8");
 			writePostScriptLine("/Decode [0 1 0 1 0 1]");
 		}
-		writePostScriptLine("/ImageMatrix [" + pixelWidth + " 0 0 " +
-			-pixelHeight + " 0 " + pixelHeight + "]");
+		writePostScriptLine("/ImageMatrix [" + reducedPixelWidth + " 0 0 " +
+			-reducedPixelHeight + " 0 " + reducedPixelWidth + "]");
 		writePostScriptLine("/DataSource currentfile /ASCII85Decode filter");
 		writePostScriptLine(">>");
 
@@ -1074,45 +1103,48 @@ public class OutputFormat
 		ASCII85Writer ascii85 = new ASCII85Writer(mWriter);
 		int byteValue = 0;
 		int bitCounter = 0;
-		for (j = 0; j < pixelWidth * pixelHeight; j++)
+		for (int row = 0; row < pixelHeight; row += step)
 		{
-			int pixel = image.getRGB(j % pixelWidth, j / pixelWidth);
-
-			if (singleColor != null)
+			for (int col = 0; col < pixelWidth; col += step)
 			{
-				/*
-				 * Pixel is set in PostScript image if it is transparent.
-				 */
-				int nextBit = ((pixel >> 24) == 0) ? 1 : 0;
+				int pixel = image.getRGB(col, row);
 
-				/*
-				 * Store next pixel value as a single bit in a byte.
-				 * If we've completed a byte or reached the end of a row
-				 * then write byte out and begin next byte.
-				 */
-				nextBit <<= (7 - bitCounter);
-				byteValue |= nextBit;
-				bitCounter++;
-
-				if (bitCounter == 8 || (j + 1) % pixelWidth == 0)
+				if (singleColor != null)
 				{
-					ascii85.write(byteValue);
-					byteValue = bitCounter = 0;
-				}
-			}
-			else
-			{
-				/*
-				 * Ignore transparency, we want only red, green, blue components
-				 * of pixel.
-				 */
-				int blue = (pixel & 0xff);
-				int green = ((pixel >> 8) & 0xff);
-				int red = ((pixel >> 16) & 0xff);
+					/*
+					 * Pixel is set in PostScript image if it is transparent.
+					 */
+					int nextBit = ((pixel >> 24) == 0) ? 1 : 0;
 
-				ascii85.write(red);
-				ascii85.write(green);
-				ascii85.write(blue);
+					/*
+					 * Store next pixel value as a single bit in a byte.
+					 * If we've completed a byte or reached the end of a row
+					 * then write byte out and begin next byte.
+					 */
+					nextBit <<= (7 - bitCounter);
+					byteValue |= nextBit;
+					bitCounter++;
+	
+					if (bitCounter == 8 || (col + step >= pixelWidth))
+					{
+						ascii85.write(byteValue);
+						byteValue = bitCounter = 0;
+					}
+				}
+				else
+				{
+					/*
+					 * Ignore transparency, we want only red, green, blue components
+					 * of pixel.
+					 */
+					int blue = (pixel & 0xff);
+					int green = ((pixel >> 8) & 0xff);
+					int red = ((pixel >> 16) & 0xff);
+	
+					ascii85.write(red);
+					ascii85.write(green);
+					ascii85.write(blue);
+				}
 			}
 		}
 		ascii85.close();
