@@ -585,7 +585,7 @@ public class GeometricPath
 		rotateTransform.translate(bounds.getMinX(), bounds.getMinY());
 		rotateTransform.rotate(angle);
 		y = yMin;
-		while (y < yMax)
+		while (y <= yMax)
 		{
 			pts[0] = xMin;
 			pts[1] = pts[3] = y;
