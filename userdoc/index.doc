@@ -1,4 +1,4 @@
-include doc/header.doc
+include header.doc
 <!-- @(#) $Id$ -->
 
 <table>
@@ -28,7 +28,7 @@ requirements for running the software.
 </tr>
 <tr>
 <td>
-<a href="legal.html"/>Versions</a>
+<a href="version.html"/>Versions</a>
 </td>
 <td>
 What was included in each version.
