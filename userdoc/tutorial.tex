@@ -745,20 +745,36 @@ display the scalebar in a separate file from the map.
 \label{tutorialscalebar1}
 \end{figure}
 
-\subsection{Displaying Piecharts}
+\subsection{Displaying Piecharts And Histograms}
 
-Piecharts are used to represent relative values of several attributes at
+Piecharts and histograms
+are used to represent relative values of several attributes at
 different locations.  For example, production levels or voting patterns.  The
-following example demonstrates this using fixed data values
+following example demonstrate this using fixed data values.
 In a real application this information is read from a
 database or GIS dataset.
 
-The included file \texttt{piechart.mapyrus} (available in the \texttt{userdoc}
-subdirectory) defines a procedure named \texttt{piechart}.  This procedure
-performs the task of displaying a piechart.  Include this file and call the
-\texttt{piechart} procedure whenever piecharts are to be displayed.
+The included files
+\texttt{piechart.mapyrus}
+and
+\texttt{histogram.mapyrus}
+(available in the \texttt{userdoc}
+subdirectory) define procedures named
+\texttt{piechart}
+and
+\texttt{histogram}.
+These procedures
+perform the task of displaying piecharts and histograms.
+Include one of these files and call the
+\texttt{piechart}
+or
+\texttt{histogram}
+procedure whenever piecharts or histograms are to be displayed.
 
-The output is shown in Figure \ref{tutorialpiechart1}.
+The output of this example is shown in Figures
+\ref{tutorialpiechart1}
+and
+\ref{tutorialhistogram1}.
 
 \verbatiminput{tutorialpiechart1.mapyrus}
 
@@ -766,6 +782,12 @@ The output is shown in Figure \ref{tutorialpiechart1}.
 \includegraphics{tutorialpiechart1.eps}
 \caption{Displaying Piecharts}
 \label{tutorialpiechart1}
+\end{figure}
+
+\begin{figure}[htb]
+\includegraphics{tutorialhistogram1.eps}
+\caption{Displaying Histograms}
+\label{tutorialhistogram1}
 \end{figure}
 
 \subsection{Random Effects}
