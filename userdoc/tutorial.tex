@@ -793,6 +793,20 @@ each image as it is displayed to avoid overwriting neighbouring
 images.  To define a clip polygon for a geo-referenced image, use
 the \texttt{clipfile} option to the \texttt{geoimage} command.
 
+An alternative method of clipping an image is to use the
+\texttt{clip} command to set a clip path to polygons read from a dataset.
+The following example demonstrates this, clipping the image so
+that only parts of the image inside coastline polygons are displayed.
+The output is shown in Figure \ref{tutorialgeoimage2}.
+
+\verbatiminput{tutorialgeoimage2.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialgeoimage2.eps}
+\caption{Clipping Geo-Referenced Images}
+\label{tutorialgeoimage2}
+\end{figure}
+
 \subsection{Updating Existing Output Files}
 
 To edit or draw over an existing image file or PostScript file use
