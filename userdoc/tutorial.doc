@@ -71,6 +71,12 @@ Tutorial
 
 <tr>
 <td>
+<a href="#legend">Displaying A Legend</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#attribute">Using Attributes To Control Display</a>
 </td>
 </tr>
@@ -733,6 +739,132 @@ in a loop and ending when the limit is exceeded.
 
 include hr.doc
 
+<a name="legend"></a>
+<h3>Displaying A Legend</h3>
+<p>
+
+A cartographic rule is that a map display must include a legend.  The
+<a href="reference.html#key">key</a> command is used to save each
+entry to be include in a legend and the
+<a href="reference.html#legend">legend</a>
+command displays the legend.
+<p>
+
+A <a href="reference.html#key">key</a> command
+in a procedure defines a legend entry.  Mapyrus saves each legend
+entry encountered whilst executing commands.
+Each legend entry has a description label and a type, defining
+whether the entry appears as a point, line or box in the legend.
+<p>
+
+When display of all data is complete, points for legend
+entries are defined with
+<a href="reference.html#move">move</a> commands
+and the
+<a href="reference.html#legend">legend</a> command
+is used to display each legend entry.  Each legend entry is automatically
+displayed by calling the procedure in which it was defined.
+<p>
+
+If insufficient 
+<a href="reference.html#move">move</a> points are defined
+then some legend entries remain undisplayed.
+<p>
+
+Display the legend in a separate image file
+to prevent overwriting the map.
+
+<p>
+This is demonstrated in the following example.
+Note that the legend entry in the procedure <tt>road</tt> is
+not included in the legend because this procedure is not
+executed in the example.
+
+include beginex.doc
+include tutoriallegend1.mpy
+include endex.doc
+
+<table border=1>
+<tr>
+<td>
+
+<tt>tutoriallegend1.png</tt>
+<br>
+<img src="tutoriallegend1.png">
+</td>
+<td>
+
+<tt>tutoriallegend1legend.png</tt>
+<br>
+<img src="tutoriallegend1legend.png">
+</td>
+</tr>
+</table>
+
+<p>
+
+To display each legend entry in a separate image file
+use a loop, checking the
+<a href="reference.html#internalvars">
+internal variable
+</a>
+<tt>Mapyrus.key.count</tt> to find how many legend
+entries remain to be displayed.
+<p>
+
+In each loop iteration, create a new image file, set a single
+<a href="reference.html#move">move</a> point
+and then display a single legend entry with a
+<a href="reference.html#legend">legend</a> command.
+Continue until all legend entries are displayed.
+<p>
+
+This is demonstrated in the following example, with the separate
+legend entry image files combined in an HTML table.
+
+include beginex.doc
+include tutoriallegend2.mpy
+include endex.doc
+
+<img src="tutoriallegend2.png">
+<p>
+
+<table border=1>
+
+<tr>
+<td>
+<b>Legend</b>
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="tutoriallegend2legend1.png">
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="tutoriallegend2legend2.png">
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="tutoriallegend2legend3.png">
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="tutoriallegend2legend4.png">
+</td>
+</tr>
+
+</table>
+
+include hr.doc
+
 <a name="attribute"></a>
 <h3>Using Attributes To Control Display</h3>
 <p>
@@ -751,13 +883,27 @@ maximum values and calculate the color for each point or polygon
 using linear interpolation.  This is demonstrated in the following
 example by passing a <tt>reading</tt> attribute value for each point
 that is displayed.
-Each point is labelled to show how the coloring works.
+A legend is also created to show how the coloring works.
 
 include beginex.doc
 include tutorialattribute1.mpy
 include endex.doc
 
+<table border=1>
+<tr>
+<td>
+<tt>tutorialattribute1.png</tt>
+<br>
 <img src="tutorialattribute1.png">
+</td>
+<td>
+<tt>tutorialattribute1legend.png</tt>
+<br>
+<img src="tutorialattribute1legend.png">
+</td>
+</tr>
+</table>
+
 <p>
 Further examples are varying the size of a symbol depending on a
 population or measurement value, varying line width depending on
@@ -774,7 +920,7 @@ include hr.doc
 <a name="scalebar"></a>
 <h3>Displaying A Scalebar</h3>
 <p>
-A cartographic rule is that a map display must include a scalebar.
+Another cartographic rule is that a map display must include a scalebar.
 The following example demonstrates generates two images using the
 <a href="reference.html#internalvars">
 internal variable
