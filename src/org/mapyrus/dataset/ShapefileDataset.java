@@ -189,17 +189,19 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * Determine full names of .shp and .dbf files.
 		 */
-		if (filename.endsWith(".shp"))
+		if (filename.endsWith(".shp") || filename.endsWith(".dbf") ||
+			filename.endsWith(".shx"))
 		{
-			shapeFilename = filename;
 			mFilename = filename.substring(0, filename.length() - 4);
+			shapeFilename = mFilename + ".shp";
 			dbfFilename = mFilename + ".dbf";
 			prjFilename = mFilename + ".prj";
 		}
-		else if (filename.endsWith(".SHP"))
+		else if (filename.endsWith(".SHP") || filename.endsWith(".DBF") ||
+			filename.endsWith(".SHX"))
 		{
-			shapeFilename = filename;
 			mFilename = filename.substring(0, filename.length() - 4);
+			shapeFilename = mFilename + ".SHP";
 			dbfFilename = mFilename + ".DBF";
 			prjFilename = mFilename + ".PRJ";
 		}
