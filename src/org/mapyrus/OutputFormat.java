@@ -1015,8 +1015,8 @@ public class OutputFormat
 		int j;
 		int pixelWidth, pixelHeight;
 
-		pixelWidth = image.getWidth(null);
-		pixelHeight = image.getHeight(null);
+		pixelWidth = image.getWidth();
+		pixelHeight = image.getHeight();
 
 		/*
 		 * Check if image is a single color.
@@ -1085,7 +1085,7 @@ public class OutputFormat
 		int bitCounter = 0;
 		for (j = 0; j < pixelWidth * pixelHeight; j++)
 		{
-			int pixel = image.getRGB(j % pixelWidth, j / pixelHeight);
+			int pixel = image.getRGB(j % pixelWidth, j / pixelWidth);
 
 			if (singleColor != null)
 			{
