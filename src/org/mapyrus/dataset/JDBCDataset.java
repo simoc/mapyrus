@@ -25,7 +25,6 @@ package org.mapyrus.dataset;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -59,11 +58,6 @@ public class JDBCDataset implements GeographicDataset
 	 */
 	private String []mFieldNames;
 	private int []mFieldTypes;
-
-	/*
-	 * Flags fields returned from SQL query that are OGC WKT geometry type.
-	 */
-	private boolean []mIsWKTField;
 
 	/**
 	 * Initialise and return single shared database connection.
@@ -115,7 +109,6 @@ public class JDBCDataset implements GeographicDataset
 		String url = null;
 		Properties properties = new Properties();
 		Connection connection;
-		HashSet WKTFieldNames = new HashSet();
 
 		mSql = filename;
 
@@ -133,17 +126,6 @@ public class JDBCDataset implements GeographicDataset
 					driver = value;
 				else if (key.equals("url"))
 					url = value;
-				else if (key.equals("wktfields"))
-				{
-					/*
-					 * Build lookup table of fields that are OGC WKT geometry.
-					 */
-					StringTokenizer st2 = new StringTokenizer(value, ",");
-					while (st2.hasMoreTokens())
-					{
-						WKTFieldNames.add(st2.nextToken().toLowerCase());
-					}
-				}
 				else
 				{
 					properties.put(key, value);
@@ -201,7 +183,6 @@ public class JDBCDataset implements GeographicDataset
 			int columnCount = resultSetMetadata.getColumnCount();
 			mFieldNames = new String[columnCount];
 			mFieldTypes = new int[columnCount];
-			mIsWKTField = new boolean[columnCount];
 			for (int i = 0; i < columnCount; i++)
 			{
 				mFieldNames[i] = resultSetMetadata.getColumnName(i + 1);
@@ -230,18 +211,6 @@ public class JDBCDataset implements GeographicDataset
 				}
 
 				mFieldTypes[i] = resultSetMetadata.getColumnType(i + 1);
-				if (WKTFieldNames.contains(mFieldNames[i].toLowerCase()))
-				{
-					/*
-					 * Check that field returns a string.
-					 */
-					if (mFieldTypes[i] != Types.CHAR && mFieldTypes[i] != Types.VARCHAR &&
-						mFieldTypes[i] != Types.LONGVARCHAR)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FIELD_NOT_OGC_TEXT) + ": " + mFieldNames[i]);
-					}
-					mIsWKTField[i] = true;
-				}
 			}
 		}
 		catch (SQLException e)
@@ -338,8 +307,6 @@ public class JDBCDataset implements GeographicDataset
 						String fieldValue = mResultSet.getString(i + 1);
 						if (fieldValue == null)
 							arg = Argument.emptyString;
-						else if (mIsWKTField[i])
-							arg = new Argument(fieldValue);
 						else
 							arg = new Argument(Argument.STRING, fieldValue);
 					}
