@@ -47,6 +47,8 @@ import org.mapyrus.logging.SingleLineFormatter;
  */
 public class Mapyrus
 {
+	private static final String OUT_OF_MEMORY_MESSAGE = "Out of memory.  Use Java -Xmx option to increase memory\navailable to Mapyrus.  For example, java -Xmx256m -classpath ...\n";
+
 	private Interpreter mInterpreter;
 	private ContextStack mContext;
 
@@ -231,7 +233,18 @@ public class Mapyrus
 			System.err.println(e.getMessage());
 			e.printStackTrace();
 			return(false);
-		}		
+		}
+		catch (OutOfMemoryError e)
+		{
+			/*
+			 * Tell user to make more memory available.
+			 * Use literal strings, do not look them up in property file as
+			 * this may fail if no more memory is available.
+			 */
+			System.err.println(OUT_OF_MEMORY_MESSAGE);
+			e.printStackTrace();
+			return(false);
+		}
 		return(true);
 	}
 	
@@ -396,6 +409,10 @@ public class Mapyrus
 			catch (MapyrusException e)
 			{
 				logger.severe(e.getMessage());
+			}
+			catch (OutOfMemoryError e)
+			{
+				logger.severe(OUT_OF_MEMORY_MESSAGE);
 			}
 			finally
 			{
