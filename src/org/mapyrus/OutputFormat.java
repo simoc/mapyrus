@@ -45,8 +45,8 @@ public class OutputFormat
 	/*
 	 * Format for coordinates and colors in PostScript files.
 	 */	
-	DecimalFormat mLinearFormat;
-	DecimalFormat mColorFormat;
+	private DecimalFormat mLinearFormat;
+	private DecimalFormat mColorFormat;
 		
 	/*
 	 * File or image that drawing commands are
@@ -278,6 +278,8 @@ public class OutputFormat
 	/**
 	 * Restore state saved with saveState().
 	 * @return true if saved state was successfully restored.
+	 * Only PostScript format can be successfully restored, caller
+	 * will have to reset values for other formats.
 	 */
 	public boolean restoreState()
 	{
