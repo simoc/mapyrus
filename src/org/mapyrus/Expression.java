@@ -70,13 +70,15 @@ public class Expression
 	private static final int NUMERIC_GREATER_EQUAL_OPERATION = 204;	/* 77 >= 7 */
 	private static final int NUMERIC_LESS_EQUAL_OPERATION = 205;	/* 7 <= 77 */
 
-	private static final int ASSIGN_OPERATION = 300;	/* a = 77 */
+	private static final int CONDITIONAL_OPERATION = 300;	/* a == 77 ? "yes" : "no" */
 
-	private static final int AND_OPERATION = 400;
-	private static final int OR_OPERATION = 401;
-	private static final int NOT_OPERATION = 402;
+	private static final int ASSIGN_OPERATION = 400;	/* a = 77 */
+
+	private static final int AND_OPERATION = 500;
+	private static final int OR_OPERATION = 501;
+	private static final int NOT_OPERATION = 502;
 	
-	private static final int HASHMAP_REFERENCE = 500;		/* a[77] */
+	private static final int HASHMAP_REFERENCE = 600;		/* a[77] */
 
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
@@ -121,6 +123,25 @@ public class Expression
 			mLeftBranch = left;
 			mRightBranch = right;
 			mOperation = operation;
+		}
+
+		/**
+		 * Create a node joining three sub-expressions with an
+		 * operation between them.
+		 * @param left is left hand side of expression.
+		 * @param operation is operation between expressions.
+		 * @param right is right hand side of expression.
+		 * @param third is third sub-expression in operation.
+		 */
+		public ExpressionTreeNode(ExpressionTreeNode left,
+			int operation,
+			ExpressionTreeNode right, ExpressionTreeNode third)
+		{
+			mIsLeaf = mIsFunction = false;			
+			mLeftBranch = left;
+			mRightBranch = right;
+			mOperation = operation;
+			mThirdFunctionExpression = third;
 		}
 
 		/**
@@ -357,6 +378,17 @@ public class Expression
 					retval = hashMapVar.getHashMapEntry(key.getStringValue());
 				}
 			}
+			else if (t.mOperation == CONDITIONAL_OPERATION)
+			{
+				/*
+				 * Test condition and return value for true, or value for false.
+				 */
+				leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+				if (leftValue.getNumericValue() != 0)
+					retval = traverse(t.mRightBranch, context, interpreterFilename);
+				else
+					retval = traverse(t.mThirdFunctionExpression, context, interpreterFilename);
+			}
 			else
 			{
 				/*
@@ -578,6 +610,9 @@ public class Expression
 					case NUMERIC_LESS_EQUAL_OPERATION:
 						operation = "<=";
 						break;
+					case CONDITIONAL_OPERATION:
+						operation = "?";
+						break;
 					case ASSIGN_OPERATION:
 						operation = "=";
 						break;
@@ -605,6 +640,8 @@ public class Expression
 					sb.append(mRightBranch.toString());
 				if (mOperation == HASHMAP_REFERENCE)
 					sb.append(']');
+				if (mOperation == CONDITIONAL_OPERATION)
+					sb.append(" : ").append(mThirdFunctionExpression.toString());
 				retval = sb.toString();
 			}
 			return(retval);
@@ -774,7 +811,7 @@ public class Expression
 		ExpressionTreeNode expr, value;
 		int op1, op2;
 
-		expr = parseComparison(p);
+		expr = parseConditional(p);
 		while (true)
 		{
 			/*
@@ -805,7 +842,7 @@ public class Expression
 						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 					}
-					value = parseAssignment(p);
+					value = parseConditional(p);
 					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
 				}
 				else
@@ -817,6 +854,48 @@ public class Expression
 			else				
 			{
 				p.unread(op1);
+				break;
+			}
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse conditional expression, like: hour < 12 ? "AM" : "PM"
+	 */
+	private ExpressionTreeNode parseConditional(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, trueExpr, falseExpr;
+		int op;
+
+		expr = parseComparison(p);
+		while (true)
+		{
+			op = p.readNonSpace();
+			if (op == '?')
+			{
+				/*
+				 * Parse full expression for true and false cases so expression
+				 * i == 1 ? j == 2 ? 3 : 4 : 5
+				 * is parsed correctly using "right associativity".
+				 */
+				trueExpr = parseOrBoolean(p);
+				op = p.readNonSpace();
+				if (op == ':')
+				{
+					falseExpr = parseOrBoolean(p);
+					expr = new ExpressionTreeNode(expr, CONDITIONAL_OPERATION, trueExpr, falseExpr);
+				}
+				else
+				{
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+						MapyrusMessages.get(MapyrusMessages.INVALID_CONDITIONAL));
+				}
+			}
+			else				
+			{
+				p.unread(op);
 				break;
 			}
 		}
