@@ -24,6 +24,7 @@ package org.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
@@ -36,8 +37,6 @@ import java.util.HashSet;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
 
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
@@ -1474,7 +1473,7 @@ public class Context
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.
 	 */
-	public void drawIcon(ImageIcon icon, double size)
+	public void drawIcon(Image icon, double size)
 		throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
@@ -1511,6 +1510,51 @@ public class Context
 		{	
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_CLIP);
 			mOutputFormat.fill(path.getShape());
+		}
+	}
+
+	/**
+	 * Fill currently defined path with gradient fill pattern.
+	 * @param c1 color for lower-left corner of image.
+	 * @param c2 color for lower-right corner of image.
+	 * @param c3 color for top-left corner of image.
+	 * @param c4 color for top-right corner of image.
+	 * @param c5 color for center of image, if null then not used.
+	 */
+	public void gradientFill(Color c1, Color c2, Color c3, Color c4, Color c5)
+		throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null && mOutputFormat != null)
+		{
+			Rectangle2D bounds = path.getBounds2D();
+
+			/*
+			 * Temporarily set clipping path to be inside the current path.
+			 */
+			mOutputFormat.saveState();
+			if (mClippingPaths == null)
+				mClippingPaths = new ArrayList();
+			ArrayList copy = (ArrayList)mClippingPaths.clone();
+			clipInside();
+			setGraphicsAttributes(ATTRIBUTE_CLIP);
+
+			/*
+			 * Draw gradiated image pattern covering complete current path.
+			 */
+			BufferedImage image = GradientFillFactory.getImage(c1, c2, c3, c4, c5);
+			ArrayList coords = new ArrayList();
+			coords.add(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
+			mOutputFormat.drawIcon(coords, image,
+				Math.max(bounds.getWidth(), bounds.getHeight()), 0.0, 1.0);
+
+			/*
+			 * Restore original clipping path.
+			 */
+			mClippingPaths = copy;
+			mOutputFormat.setClipAttribute(mClippingPaths);
+			mOutputFormat.restoreState();
 		}
 	}
 
