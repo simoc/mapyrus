@@ -40,17 +40,17 @@ public class Mapyrus
 		{
 			
 			"Usage:",
-			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar [filename|URL] ...",
+			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar [filename | URL] ...",
 			"",
 			PROGRAM_NAME + " reads each file and URL in turn.",
 			"If filename is '-' then reads from standard input.",
 			"If no filenames or URLs  are given then a GUI is started",
 			"for commands to be entered interactively.",
 			"",
-			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar server [port]",
+			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar httpserver [port]",
 			"",
-			PROGRAM_NAME + " runs as a server, accepting connections",
-			"on the given TCP/IP port.",
+			PROGRAM_NAME + " runs as an HTTP server, accepting HTTP GET",
+			"requests on the given TCP/IP port.",
 		};
 		
 		System.out.println(PROGRAM_NAME + " version " + getVersion());
@@ -169,7 +169,7 @@ public class Mapyrus
 			boolean isServer = false;
 			int startIndex = 0;
 			
-			if (args[0].equals("server"))
+			if (args[0].equals("httpserver"))
 			{
 				int port;
 				isServer = true;
