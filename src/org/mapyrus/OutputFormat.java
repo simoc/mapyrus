@@ -231,6 +231,25 @@ public class OutputFormat
 	}
 
 	/**
+	 * Indicates whether an image format is supported or not. 
+	 * @param formatName
+	 * @return true if creation of images in given format is supported.
+	 */
+	private boolean isSupportedImageFormat(String formatName)
+	{
+		boolean found = false;
+		String knownFormats[] = ImageIO.getWriterFormatNames();
+		for (int i = 0; i < knownFormats.length && found == false; i++)
+		{
+			if (formatName.equalsIgnoreCase(knownFormats[i]))
+			{
+				found = true;
+			}
+		}
+		return(found);
+	}
+
+	/**
 	 * Creates new graphics file, ready for drawing to.
 	 * @param filename name of image file output will be saved to.
 	 * If filename begins with '|' character then output is piped as
@@ -258,17 +277,7 @@ public class OutputFormat
 		}	
 		else
 		{
-			boolean found = false;
-			String knownFormats[] = ImageIO.getWriterFormatNames();
-			for (int i = 0; i < knownFormats.length && found == false; i++)
-			{
-				if (mFormatName.equalsIgnoreCase(knownFormats[i]))
-				{
-					found = true;
-				}
-			}
-
-			if (found == false)
+			if (!isSupportedImageFormat(mFormatName))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OUTPUT) +
 					": " + format);
