@@ -1488,6 +1488,24 @@ public class Context
 	}
 
 	/**
+	 * Includes Encsapsulated PostScript file in page.
+	 * @param EPS filename.
+	 * @param size size for EPS file on page in millimetres.
+	 */
+	public void drawEPS(String filename, double size)
+		throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null && mOutputFormat != null)
+		{
+			setGraphicsAttributes(ATTRIBUTE_CLIP);
+			mOutputFormat.drawEPS(path.getMoveTos(), filename,
+				size, mRotation, mScaling);
+		}
+	}
+
+	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke() throws IOException, MapyrusException

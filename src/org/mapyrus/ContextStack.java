@@ -525,6 +525,17 @@ public class ContextStack
 	}
 
 	/**
+	 * Includes Encsapsulated PostScript file in page.
+	 * @param EPS filename.
+	 * @param size size for EPS file on page in millimetres.
+	 */
+	public void drawEPS(String filename, double size)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().drawEPS(filename, size);
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
