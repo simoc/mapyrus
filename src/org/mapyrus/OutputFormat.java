@@ -409,7 +409,7 @@ public class OutputFormat
 						 * Accept wildcards in filenames.
 						 */
 						WildcardFile wildcard = new WildcardFile(pfaFilename);
-						Iterator it = wildcard.getMatchingFiles();
+						Iterator it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
 							fontList.add(new PostScriptFont((String)it.next()));
 					}
@@ -427,7 +427,7 @@ public class OutputFormat
 						 * Accept wildcards in filenames.
 						 */
 						WildcardFile wildcard = new WildcardFile(afmFilename);
-						Iterator it = wildcard.getMatchingFiles();
+						Iterator it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
 						{
 							mAfmFiles.add(it.next());
@@ -484,7 +484,7 @@ public class OutputFormat
 					if (ttfFilename.length() > 0)
 					{
 						WildcardFile wildcard = new WildcardFile(ttfFilename);
-						Iterator it = wildcard.getMatchingFiles();
+						Iterator it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
 						{
 							String s = (String)it.next();
