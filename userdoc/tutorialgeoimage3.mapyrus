@@ -1,0 +1,16 @@
+newpage "eps", "tutorialgeoimage3.eps", 85, 85
+
+let x1 = 150, y1 = -45, x2 = 180, y2 = -5
+worlds x1, y1, x2, y2
+
+# Build URL to fetch area covered by page from a Web Mapping Service.
+#
+let url = "http://localhost/wms.cgi?VERSION=1.1.1&REQUEST=GetMap&"
+let url = url . "LAYERS=cities&STYLES=&SRS=EPSG:4326&FORMAT=image/png&"
+let url = url . "BBOX=" . x1 . "," . y1 . "," . x2 . "," . y2 . "&"
+let url = url . "WIDTH=" . (round(x2 - x1) * 10) . "&"
+let url = url . "HEIGHT=" . (round(y2 - y1) * 10)
+
+# Fetch and display image.
+#
+geoimage url
