@@ -62,11 +62,6 @@ public class TextfileDataset implements GeographicDataset
 	private Rectangle2D.Double mQueryExtents;
 
 	/*
-	 * Flag true when a row has already been read and is available to be fetched.
-	 */
-	private boolean mRowAvailable;
-
-	/*
 	 * Row of fields returned from each fetch.
 	 */
 	private Row mRow;
@@ -348,8 +343,6 @@ public class TextfileDataset implements GeographicDataset
 	{
 		mQueryExtents = extents;
 
-		mRowAvailable = false;
-
 		/*
 		 * Create row for returning results of this query.
 		 */
@@ -482,33 +475,13 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see net.sourceforge.mapyrus.GeographicDataset#hasMoreRows(Object)
-	 */
-	public boolean hasMoreRows() throws MapyrusException
-	{
-		if (mRowAvailable == false)
-			mRowAvailable = readMatchingRow();
-		return(mRowAvailable);
-	}
-
-	/**
 	 * @see net.sourceforge.mapyrus.GeographicDataset#fetch(Object, Row)
 	 */
 	public Row fetch() throws MapyrusException
 	{
-		/*
-		 * Fetch next row if it has not been read already.
-		 */
-		if (mRowAvailable == false)
-			mRowAvailable = readMatchingRow();
-
-		if (mRowAvailable == false)
-			throw new MapyrusException("No more rows to fetch from '" + mFilename + "'");
-
-		/*
-		 * Return current row, this row is no longer available.
-		 */
-		mRowAvailable = false;
-		return(mRow);
+		if (readMatchingRow())
+			return(mRow);
+		else
+			return(null);
 	}
 }
