@@ -33,6 +33,9 @@ import java.util.HashSet;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
 import org.mapyrus.dataset.GeographicDataset;
 
 /**
@@ -1034,6 +1037,23 @@ public class Context
 
 		if (path != null)
 			mPath = path.translatePath(coords[0], coords[1]);
+	}
+
+	/**
+	 * Draw image icon at current point on path.
+	 * @param icon icon to draw.
+	 * @param size size for icon in millimetres.
+	 */
+	public void drawIcon(ImageIcon icon, double size)
+		throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null && mOutputFormat != null)
+		{
+			setGraphicsAttributes(ATTRIBUTE_CLIP);
+			mOutputFormat.drawIcon(path.getMoveTos(), icon, size, mRotation, mScaling);
+		}
 	}
 
 	/**
