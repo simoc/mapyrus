@@ -1290,10 +1290,14 @@ public class Interpreter
 				break;
 
 			case Statement.GEOIMAGE:
-				if (nExpressions == 1)
+				if (nExpressions == 1 || nExpressions == 2)
 				{
 					String filename = mExecuteArgs[0].getStringValue();
-					context.drawGeoImage(filename);
+					if (nExpressions == 2)
+						extras = mExecuteArgs[1].getStringValue();
+					else
+						extras = "";
+					context.drawGeoImage(filename, extras);
 				}
 				else
 				{
