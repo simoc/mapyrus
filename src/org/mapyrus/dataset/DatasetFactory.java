@@ -40,10 +40,9 @@ public class DatasetFactory
 	 * @param name is name of dataset to open.
 	 * @param extras are special options for this dataset type such as database connection
 	 * information, or instructions for interpreting data.
-	 * @param geometryFieldNames is list of names of fields containing geometry.
 	 */
 	public static GeographicDataset open(String type, String name,
-		String extras, String []geometryFieldNames) throws MapyrusException
+		String extras) throws MapyrusException
 	{
 		GeographicDataset retval = null;
 		String errorMessage = null;
@@ -57,11 +56,11 @@ public class DatasetFactory
 		try
 		{
 			if (type.equalsIgnoreCase("textfile"))
-				retval = new TextfileDataset(name, extras, geometryFieldNames);
+				retval = new TextfileDataset(name, extras);
 			else if (type.equalsIgnoreCase("shapefile"))
-				retval = new ShapefileDataset(name, extras, geometryFieldNames);
+				retval = new ShapefileDataset(name, extras);
 			else if (type.equalsIgnoreCase("jdbc"))
-				retval = new JDBCDataset(name, extras, geometryFieldNames);
+				retval = new JDBCDataset(name, extras);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET_TYPE) +
