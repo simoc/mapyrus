@@ -23,8 +23,6 @@
 package au.id.chenery.mapyrus;
 
 import java.io.*;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points, lines and polygons
@@ -95,14 +93,20 @@ public class Mapyrus
 	}
 	
 	/**
-	 * Parse and interpret a file.  Trap any exceptions.
+	 * Parse and interpret commands from a file.  Trap any exceptions.
+	 * @param f open file or URL to read.
+	 * @param interpreter interpreter in which to run commands.
+	 * @param closeFile if set to true file is closed after we finish reading it.
 	 * @return flag indicating whether interpretation succeeeded.
 	 */
-	private static boolean processFile(Reader f, String filename, Interpreter interpreter)
+	private static boolean processFile(FileOrURL f, Interpreter interpreter,
+		boolean closeFile)
 	{
 		try
 		{
-			interpreter.interpret(f, filename, System.out);
+			interpreter.interpret(f, System.out);
+			if (closeFile)
+				f.getReader().close();
 		}
 		catch (MapyrusException e)
 		{
@@ -144,9 +148,10 @@ public class Mapyrus
 	 */
 	public static void main(String []args)
 	{
-		BufferedReader f;
-		Reader []readers;
+		FileOrURL f = null;
 		ContextStack context;
+		int i;
+		boolean readingStdin;
 		
 		/*
 		 * Parse command line arguments -- these are the files and URLs
@@ -162,93 +167,47 @@ public class Mapyrus
 			printUsage();
 			System.exit(1);
 		}
-		else if (args[0].equals("-"))
+
+		initialise();
+		context = new ContextStack();
+		Interpreter interpreter = new Interpreter(context);
+
+		i = 0;
+		while (i < args.length)
 		{
-			/*
-			 * Read from standard input.
-			 */
-			initialise();
-			f = new BufferedReader(new InputStreamReader(System.in));
-			context = new ContextStack();
-			Interpreter interpreter = new Interpreter(context);
-
-			processFile(f, "standard input", interpreter);
-			
-			try
-			{
-				context.closeContextStack();
-			}
-			catch (IOException e)
-			{
-				System.err.println(e.getMessage());
-				System.exit(1);
-			}
-			catch (MapyrusException e)
-			{
-				System.err.println(e.getMessage());
-				System.exit(1);
-			}
-		}
-		else
-		{	
-			initialise();
-			context = new ContextStack();
-			Interpreter interpreter = new Interpreter(context);
-
-			/*
-			 * Process each file and URL given as command line argument.
-			 */
-			for (int i = 0; i < args.length; i++)
+			readingStdin = args[i].equals("-");
+			if (readingStdin)
 			{
 				/*
-				 * Try it as a URL.  If that does not work then open it as a file
+				 * Read from standard input.
+				 */
+				f = new FileOrURL(new InputStreamReader(System.in), "standard input");
+			}
+			else
+			{
+				/*
+				 * Read from a file or URL.
 				 */
 				try
 				{
-					URL url = new URL(args[i]);
-					f = new BufferedReader(new InputStreamReader(url.openStream()));
-					if (processFile(f, args[i], interpreter) == false)
-					{
-						System.exit(1);
-					}
-				}
-				catch (MalformedURLException e)
-				{
-					try
-					{
-						f = new BufferedReader(new FileReader(args[i]));
-						if (processFile(f, args[i], interpreter) == false)
-						{
-							System.exit(1);
-						}
-					}
-					catch (FileNotFoundException e2)
-					{
-						System.err.println(e2.getMessage());
-						System.exit(1);
-					}
+					f = new FileOrURL(args[i]);
 				}
 				catch (IOException e)
 				{
 					System.err.println(e.getMessage());
 					System.exit(1);
 				}
+				catch (MapyrusException e)
+				{
+					System.err.println(e.getMessage());
+					System.exit(1);
+				}
 			}
-			
-			try
-			{
-				context.closeContextStack();
-			}
-			catch (IOException e)
-			{
-				System.err.println(e.getMessage());
+
+			if (!processFile(f, interpreter, !readingStdin))
 				System.exit(1);
-			}
-			catch (MapyrusException e)
-			{
-				System.err.println(e.getMessage());
-				System.exit(1);
-			}
+
+			i++;
 		}
 		System.exit(0);
 	}
