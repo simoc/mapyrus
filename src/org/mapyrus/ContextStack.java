@@ -477,11 +477,7 @@ public class ContextStack
 			/*
 			 * Return internal/system variable.
 			 */
-			if (sub.equals("random"))
-			{
-				retval = new Argument(Math.random());
-			}
-			else if (sub.equals("timestamp"))
+			if (sub.equals("timestamp"))
 			{
 				Date now = new Date();
 				retval = new Argument(Argument.STRING, now.toString());
