@@ -22,8 +22,11 @@
  */
 package au.id.chenery.mapyrus;
 
+import java.io.File;
+
 /**
- * A temporary file that is automatically deleted once it expires.
+ * A temporary file that is automatically deleted once it expires,
+ * or when the JVM terminates.
  */
 public class TransientFile
 {
@@ -39,6 +42,9 @@ public class TransientFile
 	{
 		mFilename = filename;
 		mExpiryTimestamp = expiry;	
+
+		File f = new File(filename);
+		f.deleteOnExit();
 	}
 
 	/**
