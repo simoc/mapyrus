@@ -24,11 +24,16 @@ public class MapyrusMessages
 	public static final String INVALID_COLOR = "invalidcolor";
 	public static final String INVALID_COLOR_TYPE = "invalidcolortype";
 	public static final String INVALID_COORDINATE = "invalidcoordinate";
+	public static final String INVALID_DASH_PHASE = "invaliddashphase";
+	public static final String INVALID_DASH_PATTERN = "invaliddashpattern";
 	public static final String INVALID_DATASET = "invaliddataset";
 	public static final String INVALID_DATASET_TYPE = "invaliddatasettype";
+	public static final String INVALID_END_CAP = "invalidendcap";
 	public static final String INVALID_EXPRESSION = "invalidexpression";
 	public static final String INVALID_KEYWORD = "invalidkeyword";
+	public static final String INVALID_LINE_JOIN = "invalidlinejoin";
 	public static final String INVALID_LINE_WIDTH = "invalidlinewidth";
+	public static final String INVALID_LINESTYLE = "invalidlinestyle";
 	public static final String INVALID_NUMBER = "invalidnumber";
 	public static final String INVALID_OUTPUT = "invalidoutput";
 	public static final String INVALID_PAGE = "invalidpage";
@@ -50,6 +55,7 @@ public class MapyrusMessages
 	public static final String NO_EXPRESSION = "noexpression";
 	public static final String NO_GEOMETRY_FIELD = "nogeometryfield";
 	public static final String NO_ROWS = "norows";
+	public static final String NUMERIC_OVERFLOW = "numericoverflow";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
 	public static final String PARSE_ERROR = "parseerror";
 	public static final String PROCESS_ERROR = "processerror";
