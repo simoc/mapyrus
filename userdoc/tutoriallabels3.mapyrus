@@ -36,9 +36,9 @@ label h2
 #
 color "pink"
 clearpath
-let smallOffset = 0.3
-move 40, 23 - smallOffset, 40, 23 + smallOffset
-move 40 - smallOffset, 23, 40 + smallOffset, 23
+let onePixel = Mapyrus.screen.resolution.mm
+move 40, 23 - onePixel, 40, 23 + onePixel
+move 40 - onePixel, 23, 40 + onePixel, 23
 label h1
 color "black"
 clearpath
