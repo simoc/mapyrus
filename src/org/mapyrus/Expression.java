@@ -366,7 +366,7 @@ public class Expression
 				if (c == -1)
 				{
 					throw new MapyrusException("Unexpected end of file in string at " +
-						p.getCurrentFilenameAndLine());
+						p.getCurrentFilenameAndLineNumber());
 				}
 
 				if (c == '\\' && lastC != '\\')
@@ -419,11 +419,12 @@ public class Expression
 					 */
 					if (parsedDecimalPoint)
 					{
-						throw new MapyrusException("Invalid number in expression at " + p.getCurrentFilenameAndLine());
+						throw new MapyrusException("Invalid number in expression at " +
+							p.getCurrentFilenameAndLineNumber());
 					}
 					parsedDecimalPoint = true;
 				}
-				c = p.readNonSpace();
+				c = p.read();
 			}
 			p.unread(c);
 
@@ -444,7 +445,7 @@ public class Expression
 
 		if (c == -1)
 		{
-			throw new MapyrusException("Unexpected end of file at " + p.getCurrentFilenameAndLine());
+			throw new MapyrusException("Unexpected end of file at " + p.getCurrentFilenameAndLineNumber());
 		}
 
 		if (c != '(')
@@ -472,7 +473,7 @@ public class Expression
 				 * It's nothing that we understand.
 				 */
 				throw new MapyrusException("Invalid expression at " +
-					p.getCurrentFilenameAndLine());
+					p.getCurrentFilenameAndLineNumber());
 			}
 		}
 
@@ -481,7 +482,8 @@ public class Expression
 		c = p.readNonSpace();
 		if (c != ')')
 		{
-			throw new MapyrusException("Unmatched '(' in expression at " + p.getCurrentFilenameAndLine());
+			throw new MapyrusException("Unmatched '(' in expression at " +
+				p.getCurrentFilenameAndLineNumber());
 		}
 
 		if (hasUnaryMinus)
