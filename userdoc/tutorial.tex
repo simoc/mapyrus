@@ -754,13 +754,14 @@ understand a limited number of fonts,
 normally only 35 basic fonts including
 AvantGarde,
 Bookman,
-CharterBT,
 Courier,
 Helvetica,
 NewCenturySchlbk,
 Palatino,
 Symbol,
-Times-Roman
+Times-Roman,
+ZapfChancery,
+ZapfDingbats
 and the bold
 and oblique (italic) variations of these fonts.
 
@@ -770,19 +771,25 @@ a substitute font is used.
 To make a font known to the printer, include the definition of
 the font in the PostScript file being printed.
 
-A PostScript Type 1 font definition file has suffix \texttt{.pfa}.  PostScript
-font definition files are included in a PostScript file using the
-\textit{extras} \texttt{pfafiles} option to the \texttt{newpage} command.
+A PostScript Type 1 font is defined in two files with suffixes
+\texttt{.pfa} and \texttt{.afm}.  PostScript
+font definition files are included in a PostScript file created
+by Mapyrus using the
+\textit{extras} \texttt{pfafiles} and \texttt{afmfiles}
+options to the \texttt{newpage} command.
 Include filenames of PostScript font definition files for all fonts to be used
 in the page that are not known by the printer.
 
-A PostScript Type 1 font definition file is a text file and
-the first line contains the name of the font defined in the file.
+PostScript Type 1 font definition files are text files and
+the first line of the file with \texttt{.pfa} suffix
+contains the name of the font defined in the file.
 
 To convert a True Type Font file to a PostScript Type 1 font use the
 ttf2pt1\footnote{Available from http://ttf2pt1.sourceforge.net} program.  The
 following command converts the font in the file \texttt{BEANTOWN.TTF} to a
-PostScript Type 1 font in file \texttt{BEANTOWN.pfa}.
+PostScript Type 1 font in files
+\texttt{BEANTOWN.pfa} and
+\texttt{BEANTOWN.afm}.
 
 \begin{verbatim}
 ttf2pt1 -e BEANTOWN.TTF BEANTOWN
