@@ -123,3 +123,10 @@ warehouse "Harthof", 19
 clearpath
 move 11.357, 48.298
 warehouse "Feldkirchen", 7
+
+# Add key at bottom left of page showing how many units one box represents.
+#
+worlds 0, 0, Mapyrus.page.width, Mapyrus.page.height
+clearpath
+move 7, 7
+warehouse "represents 1000 units", 1
