@@ -933,6 +933,7 @@ public class OutputFormat
 		else if (mFormatName.equals("svg") ||
 			mFormatName.equals("image/svg+xml"))
 		{
+			mFormatName = "svg";
 			mOutputType = SVG;
 		}
 		else if (mFormatName.equals("screen"))
@@ -2298,6 +2299,51 @@ public class OutputFormat
 	}
 
 	/**
+	 * Fill currently defined path with gradient fill pattern.
+	 * @param shape current path to be filled.
+	 * @param isVerticalGradient true if vertical color gradient to be used,
+	 * false for horizontal.
+	 * @param c1 color for left or bottom of path.
+	 * @param c2 color for right or top of path.
+	 */
+	public void gradientFill(Shape shape, boolean isVerticalGradient, Color c1, Color c2)
+	{
+		if (mOutputType == SVG)
+		{
+			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			{
+				String uniqueId = "g" + System.currentTimeMillis();
+				writeLine("<defs>");
+				writeLine("<linearGradient id=\"" + uniqueId + "\"");
+
+				/*
+				 * SVG supports only horizontal gradients (default) or vertical
+				 * gradients.
+				 */
+				if (isVerticalGradient)
+					writeLine("x1=\"0%\" y1=\"100%\" x2=\"0%\" y2=\"0%\"");
+
+				writeLine(">");
+				writeLine("<stop offset=\"0%\" stop-color=\"" +
+					ColorDatabase.toHexString(c1) + "\"/>");
+				writeLine("<stop offset=\"100%\" stop-color=\"" +
+						ColorDatabase.toHexString(c2) + "\"/>");
+				writeLine("</linearGradient>");
+				writeLine("</defs>");
+				writeLine("<path d=\"");
+				writeShape(shape);
+				writeLine("\"");
+
+				if (mIsClipPathActive)
+				{
+					writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
+				}
+				writeLine("  fill=\"url(#" + uniqueId + ")\" stroke=\"none\"/>");
+			}
+		}
+	}
+
+	/**
 	 * Set clip region to inside of currently defined path on output page.
 	 */
 	public void clip(Shape shape)
@@ -2523,6 +2569,11 @@ public class OutputFormat
 						py = mPageHeight - (y - yInc);
 					}
 
+					/*
+					 * Shift text to correct vertical alignment.
+					 */
+					py -= mJustificationShiftY * font.getSize2D();
+					
 					writeLine("<text x=\"" + mCoordinateDecimal.format(px) +
 						"\" y=\"" + mCoordinateDecimal.format(py) +
 						"\" text-anchor=\"" + anchor + "\"");
@@ -2530,10 +2581,13 @@ public class OutputFormat
 					String fontName = font.getName();
 
 					/*
-					 * Change default Java font name to something sensible.
+					 * Change default Java font names to something sensible.
 					 */
-					if (fontName.equalsIgnoreCase("sansserif"))
-							fontName = "Courier";
+					if (fontName.equalsIgnoreCase("sansserif") ||
+						fontName.equalsIgnoreCase("dialog"))
+					{
+						fontName = "Courier";
+					}
 
 					writeLine("  font-family=\"" + fontName + "\" " +
 						"font-size=\"" + font.getSize2D() + "\" " +
