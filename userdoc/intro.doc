@@ -45,8 +45,7 @@ systems (GIS) datasets, text files, or tables held in a relational database
 (including spatial databases such as
 <a href="http://postgis.refractions.org">PostGIS</a>
 and
-<a href="http://www.oracle.com">Oracle Spatial</a>
-).
+<a href="http://www.oracle.com">Oracle Spatial</a>).
 Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
@@ -97,10 +96,15 @@ Inventory Levels at Warehouses
 
 </li>
 <li>
-Mapyrus runs as a stand-alone program suitable for integration into
-scripts and batch tasks,
+Mapyrus runs as either
+a stand-alone program for integration into
+scripts and batch tasks  (this is suitable for generating a one-off
+map or a series of similar maps from a template,
+showing different areas, or using different criteria for each map)
 or as a self-contained web server providing HTML pages, map and
 graph images and text reports to a web-based application.
+</ul>
+
 </li>
 </ol>
 
