@@ -40,7 +40,10 @@ public class MapyrusMessages
 	public static final String EXPECTED = "expected";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
+	public static final String HTTP_HEADER = "httpheader";
 	public static final String HTTP_NOT_FOUND = "httpnotfound";
+	public static final String HTTP_RETURNED = "httpreturned";
+	public static final String HTTP_RETURN = "httpreturn";
 	public static final String HTTP_TIMEOUT = "httptimeout";
 	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INVALID_ARC = "invalidarc";
@@ -122,8 +125,9 @@ public class MapyrusMessages
 	}
 
 	/**
-	 * Returns message for current locale for message a key.
-	 * @return full message
+	 * Returns message for current locale from message key.
+	 * @param key key of message to fetch.
+	 * @return full message.
 	 */
 	public static String get(String key)
 	{
