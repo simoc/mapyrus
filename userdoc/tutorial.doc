@@ -105,6 +105,12 @@ Tutorial
 </td>
 </tr>
 
+<tr>
+<td>
+<a href="#building"/>Building Mapyrus From Source</a>
+</td>
+</tr>
+
 </table>
 
 include hr.doc
@@ -835,6 +841,47 @@ For example,
 include beginex.doc
 w3m -dump_source http://localhost:8410/wsrv.mpy?landkreis=Erding&zoomlevel=3 > myfile.png
 include endex.doc
+
+include hr.doc
+
+<a name="building"></a>
+<h3>Building Mapyrus From Source</h3>
+<p>
+To build Mapyrus from source code, the following development tools
+are required:
+
+<ul>
+<li>
+<a href="http://jakarta.apache.org/"/>Ant</a> build tool.
+<li>
+<a href="http://java.sun.com/"/>Java 2 SDK 1.4</a>, or higher.
+</ul>
+
+The build process build is defined in the file <tt>build.xml</tt>
+in the Mapyrus installation directory.  To build the software,
+documentation and zip file for distribution,
+create a terminal window, change to the directory in which
+Mapyrus is installed and execute the following command.
+
+include beginex.doc
+ant -v
+include endex.doc
+
+The build process also
+generates the HTML manual and manual examples in the <tt>doc</tt>
+subdirectory from source files.
+
+<p>
+All source code is in Java and contains
+<a href="http://java.sun.com/j2se/javadoc/index.html">
+javadoc
+</a>
+style comments.
+<p>
+To view and edit the source code, use a 
+development environment such as
+<a href="http://www.eclipse.org/"/>Eclipse</a>
+and import the source code into a new project.
 
 include footer.doc
 
