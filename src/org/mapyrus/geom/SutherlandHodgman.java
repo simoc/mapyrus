@@ -178,7 +178,7 @@ public class SutherlandHodgman
 							 * Segment starts outside boundary and ends inside.
 							 * Add segment from boundary to end.
 							 */
-							xInt = xStart + (xEnd - xStart) * (yEnd - v) / (yEnd - yStart); 
+							xInt = xStart + (xEnd - xStart) * (yStart - v) / (yStart - yEnd); 
 							yInt = v;
 
 							if (isFirstSegment)
@@ -225,7 +225,7 @@ public class SutherlandHodgman
 							 * Add segment from boundary to end.
 							 */
 							xInt = v;
-							yInt = yStart + (yEnd - yStart) * (xEnd - v) / (xEnd - xStart); 
+							yInt = yStart + (yEnd - yStart) * (xStart - v) / (xStart - xEnd);
 
 							if (isFirstSegment)
 								s2.moveTo(xInt, yInt);
