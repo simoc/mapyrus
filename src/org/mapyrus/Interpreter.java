@@ -17,20 +17,26 @@ import java.awt.Color;
 public class Interpreter
 {
 	/*
-	 * Characters starting a comment on a line.
+	 * Character starting a comment on a line.
+	 * Character separating arguments to a statement.
 	 * Tokens around definition of a procedure.
 	 */
-	private static final int COMMENT_CHAR = '#';
+	private static final char COMMENT_CHAR = '#';
+	private static final char ARGUMENT_SEPARATOR = ',';
 	private static final String BEGIN_BLOCK = "begin";
 	private static final String END_BLOCK = "end";
+	
 	/*
 	 * States during expression parsing.
 	 */
-	private static final int AT_START = 1;
-	private static final int AT_START_ARGS = 2;
-	private static final int IN_ARGS = 3;
-	private static final int IN_COMMENT = 4;
-	private static final int AT_BLOCK_NAME = 5;
+	private static final int AT_START = 1;		/* at start of a statement */
+	private static final int AT_START_ARGS = 2;	/* got statement name, now expecting arguments */
+	private static final int AT_ARG = 3;		/* at argument to a statement */
+	private static final int AT_ARG_SEPARATOR = 4;	/* at separator between arguments */
+	private static final int IN_COMMENT = 5;	/* in comment, ignoring rest of line */
+	private static final int AT_BLOCK_NAME = 6;	/* expecting procedure block name */
+	private static final int AT_BLOCK_PARAM = 7;	/* at parameter to a procedure block */
+	private static final int AT_PARAM_SEPARATOR = 8;	/* at separator between parameters */
 
 	private Context mContext;
 	
@@ -39,6 +45,44 @@ public class Interpreter
 	 * this interpreter.
 	 */
 	private Hashtable mStatementBlocks;
+
+	/**
+	 * Parse a statement name or variable name.
+	 * @param c is first character of name.
+	 * @param preprocessor is source to continue reading from.
+	 * @return word parsed from preprocessor.
+	 */
+	private String parseWord(int c, Preprocessor preprocessor)
+		throws IOException, MapyrusException
+	{
+		StringBuffer word = new StringBuffer();
+
+		/*
+		 * A statement or procedure name begins with a keyword
+		 * which must begin with a letter.
+		 */
+		if (!Character.isLetter((char)c))
+		{
+			throw new MapyrusException("Invalid keyword at " +
+				preprocessor.getCurrentFilenameAndLine());
+		}
+		
+		/*
+		 * Read in whole word.
+		 */
+		do
+		{
+			word.append((char)c);
+			c = preprocessor.read();
+		}
+		while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_');
+
+		/*
+		 * Put back the character we read that is not part of the word.	
+		 */	
+		preprocessor.unread(c);
+		return(word.toString());
+	}
 	
 	/**
 	 * Reads, parses and returns next statement.
@@ -50,14 +94,13 @@ public class Interpreter
 	{
 		int c;
 		int state = AT_START;
-		StringBuffer keyword = new StringBuffer();
-		Vector expressions = new Vector();
+		String keyword = null;
+		Vector expressions = null;
 		Expression expr;
 		Statement retval = null;
 		Vector procedureStatements = null;
-		Expression []procedureParameters = null;
+		Vector procedureParameters = null;
 		boolean isAssignmentStatement = false;
-		boolean isProcedureStatement = false;
 		boolean inProcedureBlock = false;
 		boolean atEOF = false;
 
@@ -117,39 +160,61 @@ public class Interpreter
 					 */
 					c = preprocessor.read();
 				}
-				else if (state == AT_START || state == AT_BLOCK_NAME)
+				else if (state == AT_ARG_SEPARATOR)
 				{
 					/*
-					 * A statement or procedure name begins with a keyword
-					 * which must begin with a letter.
+					 * Skip separator between arguments.
 					 */
-					if (!Character.isLetter((char)c))
+					if (c != ARGUMENT_SEPARATOR)
 					{
-						throw new MapyrusException("Invalid statement at " +
+						throw new MapyrusException("Expecting '" +
+							ARGUMENT_SEPARATOR + "' at " +
 							preprocessor.getCurrentFilenameAndLine());
 					}
-	
+					state = AT_ARG;
+					c = preprocessor.read();
+				}
+				else if (state == AT_PARAM_SEPARATOR)
+				{
 					/*
-					 * Read in whole keyword.
+					 * Skip separator between parameters.
 					 */
-					do
+					if (c != ARGUMENT_SEPARATOR)
 					{
-						keyword.append((char)c);
-						c = preprocessor.read();
+						throw new MapyrusException("Expecting '" +
+							ARGUMENT_SEPARATOR + "' at " +
+							preprocessor.getCurrentFilenameAndLine());
 					}
-					while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_');
+					state = AT_BLOCK_PARAM;
+					c = preprocessor.read();
+				}
+				else if (state == AT_START || state == AT_BLOCK_NAME)
+				{
+					keyword = parseWord(c, preprocessor);
 					
 					/*
-					 * Is this a subroutine definition?
+					 * Is this a procedure block definition?
 					 */
-					if (state == AT_START && keyword.toString().equalsIgnoreCase(BEGIN_BLOCK))
+					if (state == AT_START && keyword.equalsIgnoreCase(BEGIN_BLOCK))
 					{
 						state = AT_BLOCK_NAME;
-						isProcedureStatement = true;
+						procedureParameters = new Vector();
+					}
+					else if (state == AT_BLOCK_NAME)
+					{
+						/*
+						 * After parsing procedure block name we parse parameters for
+						 * this procedure block definition.
+						 */
+						state = AT_BLOCK_PARAM;
 					}
 					else
 					{
+						/*
+						 * After parsing statement we parse arguments to statement.
+						 */
 						state = AT_START_ARGS;
+						expressions = new Vector();
 					}
 				}
 				else if (state == AT_START_ARGS)
@@ -158,35 +223,38 @@ public class Interpreter
 					 * Is this an assignment statement or
 					 * some other kind of statement?
 					 */
-					isAssignmentStatement = (!isProcedureStatement && c == '=');
+					isAssignmentStatement = (c == '=');
 					if (isAssignmentStatement)
 					{
 						c = preprocessor.read();
 					}
-					else
-					{
-						preprocessor.unread(c);
-					}
-					state = IN_ARGS;
+					state = AT_ARG;
 				}
-				
-				if (state == IN_ARGS)
+				else if (state == AT_ARG)
 				{
 					/*
 					 * Parse an expression.
 					 */
+					preprocessor.unread(c);
 					expr = new Expression(preprocessor);
 					expressions.add(expr);
+					state = AT_ARG_SEPARATOR;
+				}
+				else if (state == AT_BLOCK_PARAM)
+				{
 					/*
-					 * After an expression we expect a ',' and then another expression,
-					 * or a newline.
+					 * Parse a parameter name for procedure block.
 					 */
-					c = preprocessor.read();
-					if (c != '\n' && c != ',' && c!= COMMENT_CHAR)
-					{
-						throw new MapyrusException("Expecting ',' between expressions at " +
-							preprocessor.getCurrentFilenameAndLine());
-					}
+					procedureParameters.add(parseWord(c, preprocessor));
+					state = AT_PARAM_SEPARATOR;
+				}
+				else
+				{
+					/*
+					 * Parsing is lost.  Don't know what is wrong.
+					 */
+					throw new MapyrusException("Error at " +
+						preprocessor.getCurrentFilenameAndLine());
 				}
 			}
 	
@@ -198,7 +266,7 @@ public class Interpreter
 				if (inProcedureBlock)
 				{
 					throw new MapyrusException("Unfinished procedure " +
-						keyword.toString() + " at " +
+						keyword + " at " +
 						preprocessor.getCurrentFilenameAndLine());
 				}
 
@@ -227,10 +295,10 @@ public class Interpreter
 					throw new MapyrusException("No expression in assignment at " +
 						preprocessor.getCurrentFilenameAndLine());
 				}
-				retval = new Statement(keyword.toString(),
+				retval = new Statement(keyword,
 					(Expression)expressions.elementAt(0));
 			}
-			else if (keyword.toString().equalsIgnoreCase(END_BLOCK))
+			else if (keyword.equalsIgnoreCase(END_BLOCK))
 			{
 				/*
 				 * Finish procedure currently being defined.
@@ -246,22 +314,13 @@ public class Interpreter
 				 * Create single statement for all statements making
 				 * up the procedure.
 				 */
-				retval = new Statement(keyword.toString(),
+				retval = new Statement(keyword,
 					procedureParameters,
 					procedureStatements);
 			}
 			else
 			{
-				int statementType;
-				Expression []a = new Expression[expressions.size()];
-				Statement statement;
-				
-				for (int i = 0; i < a.length; i++)
-				{
-					a[i] = (Expression)expressions.elementAt(i);
-				}
-
-				if (isProcedureStatement)
+				if (state == AT_BLOCK_NAME || state == AT_BLOCK_PARAM)
 				{
 					/*
 					 * Nested procedures are not allowed.
@@ -274,19 +333,18 @@ public class Interpreter
 					}
 					inProcedureBlock = true;
 					procedureStatements = new Vector();
-					procedureParameters = a;
+
 				}
 				else
 				{
-					statementType = Statement.getStatementType(keyword.toString());
-		
-					if (statementType < 0)
+					Expression []a = new Expression[expressions.size()];
+					Statement statement;
+					
+					for (int i = 0; i < a.length; i++)
 					{
-						throw new MapyrusException("Keyword " + keyword +
-							" not recognized " + preprocessor.getCurrentFilenameAndLine());
+						a[i] = (Expression)expressions.elementAt(i);
 					}
-				
-					statement = new Statement(statementType, a);
+					statement = new Statement(keyword, a);
 
 					/*
 					 * Add statement to the procedure we are defining, or
@@ -501,6 +559,54 @@ public class Interpreter
 			if (st.getType() == Statement.BLOCK)
 			{
 				mStatementBlocks.put(st.getBlockName(), st);
+			}
+			else if (st.getType() == Statement.CALL)
+			{
+				/*
+				 * Find the statements for the procedure block we are calling.
+				 */
+				Statement block = (Statement)mStatementBlocks.get(st.getBlockName());
+				if (block == null)
+				{
+					throw new MapyrusException("Procedure not defined: " +
+						st.getBlockName());
+				}
+				
+				/*
+				 * Check that correct number of parameters are being passed.
+				 */
+				Vector formalParameters = block.getBlockParameters();
+				Expression []actualParameters = st.getExpressions();
+				if (actualParameters.length != formalParameters.size())
+				{
+					throw new MapyrusException("Wrong number of parameters " +
+						"in call to " + st.getBlockName());
+				}
+
+				/*
+				 * Save state and set parameters passed to the procedure.
+				 */
+				Argument []args = new Argument[actualParameters.length];
+				for (int i = 0; i < args.length; i++)
+					args[i] = actualParameters[i].evaluate(mContext);
+				
+				mContext.saveState();
+				for (int i = 0; i < args.length; i++)
+				{
+					mContext.defineVariable((String)formalParameters.elementAt(i), args[i]);
+				}
+				 				
+				/*
+				 * Execute each of the statements in the procedure block.
+				 */
+				Vector v = block.getStatementBlock();
+				for (int i = 0; i < v.size(); i++)
+				{
+					st = (Statement)v.elementAt(i);
+					execute(st, mContext);
+				}
+				
+				mContext.restoreState();
 			}
 			else
 			{
