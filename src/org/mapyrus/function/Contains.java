@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.awt.geom.Rectangle2D;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -73,6 +75,20 @@ public class Contains extends Function
 	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
 		throws MapyrusException
 	{
+		/*
+		 * First geometry cannot contain second if it's bounding
+		 * box does not contain bounding box of second geometry.
+		 */
+		Rectangle2D.Double rect1 = arg1.getGeometryBoundingBox();
+		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
+		if (rect1 == null || rect2 == null)
+			return(Argument.numericZero);
+		if (rect2.getMinX() <= rect1.getMinX() || rect2.getMaxX() >= rect1.getMaxX() ||
+			rect2.getMinY() <= rect1.getMinY() || rect2.getMaxY() >= rect1.getMaxY())
+		{
+			return(Argument.numericZero);
+		}
+
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
 		return(isContaining(wkt1, wkt2));
@@ -85,8 +101,19 @@ public class Contains extends Function
 	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
 		throws MapyrusException
 	{
+		double x = arg2.getNumericValue();
+		double y = arg3.getNumericValue();
+
+		/*
+		 * Geometry cannot possibly contain point if it's
+		 * bounding box does not contain the point.
+		 */
+		Rectangle2D.Double rect = arg1.getGeometryBoundingBox();
+		if (rect == null || (!rect.contains(x, y)))
+			return(Argument.numericZero);
+
 		String wkt1 = arg1.toString();
-		String wkt2 = "POINT (" + arg2.getNumericValue() + " " + arg3.getNumericValue() + ")";
+		String wkt2 = "POINT (" + x + " " + y + ")";
 		return(isContaining(wkt1, wkt2));
 	}
 
