@@ -11,8 +11,7 @@ begin trail grade
     color "gray"
     linestyle 0.5, 'butt', 'bevel', 0, 2, 2
   else
-    # Unmaintained track is dotted line,
-    # one pixel on, one pixel off.
+    # Unmaintained track is dotted line.
     #
     color "#A52A2A"
     linestyle 0.5, 'butt', 'bevel', 0, 1, 1
