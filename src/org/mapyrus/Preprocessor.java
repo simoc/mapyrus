@@ -109,44 +109,6 @@ class Preprocessor
 		mFileStack.add(f);
 	}
 
-	/**
-	 * Reads next line.
-	 * @return line read, or null if end of stream is already reached.
-	 */
-	private String readLine() throws IOException, MapyrusException
-	{
-		StringBuffer retval = new StringBuffer();
-		int c;
-
-		do
-		{
-			/*
-			 * If nothing can be read then return null.
-			 */
-			c = read();
-			if (c == -1 && retval.length() == 0)
-				return(null);
-
-			/*
-			 * Consider '\r', \n', '\r\n' as line terminators.
-			 */
-			if (c == '\r')
-			{
-				c = read();
-				if (c != '\n')
-				{
-					unread(c);
-					c = '\n';
-				}
-			}
-			else if (c != '\n')
-			{
-				retval.append((char)c);
-			}
-		}
-		while (c != -1 && c != '\n');
-		return(retval.toString());
-	}
 
 	/**
 	 * Reads next character that is not a space.
