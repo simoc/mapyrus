@@ -229,6 +229,17 @@ Returns a substring of the string <i>str</i>, beginning at the
 character with index <i>offset</i> that is <i>n</i> characters long.
 The first character in <i>str</i> has an index of 1.
 
+<tr>
+<td>
+<a name="tempname"></a>
+<tt>tempname(<i>suffix</i>)<tt>
+<td>
+Returns a unique temporary filename with given file suffix,
+for use when running as an HTTP server.
+Temporary files returned by this function
+are automatically deleted after 5 minutes.
+
+
 </table>
 
 <p>
