@@ -42,6 +42,7 @@ public class AdobeFontMetrics
 
 	private int mCharWidth;
 	private short []mCharWidths;
+	private boolean mIsFixedPitch;
 
 	/*
 	 * Lookup table of ISOLatin1 character indexes for named extended characters.
@@ -173,6 +174,7 @@ public class AdobeFontMetrics
 
 		// TODO handle fonts with more than 256 characters. 
 		mCharWidths = new short[256];
+		mIsFixedPitch = false;
 
 		try
 		{
@@ -211,6 +213,10 @@ public class AdobeFontMetrics
 					st.nextToken();	/* yMin */
 					int xMax = Integer.parseInt(st.nextToken());
 					mCharWidth = xMax;
+				}
+				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
+				{
+					mIsFixedPitch = true;
 				}
 				else if (line.startsWith("StartCharMetrics"))
 				{
@@ -291,20 +297,33 @@ public class AdobeFontMetrics
 		int total = 0;
 		int sLength = s.length();
 		int c;
+		double pointLen;
 
-		/*
-		 * Add up widths of all characters in string.
-		 */
-		for (int i = 0; i < sLength; i++)
+		if (mIsFixedPitch)
 		{
-			c = s.charAt(i);
-			if (c >= 0 && c < mCharWidths.length)
-				total += mCharWidths[c];
-			else
-				total += mCharWidth;
+			/*
+			 * All characters are same width so width of string
+			 * depends only on length of string.
+			 */
+			int spaceIndex = 32;
+			// TODO read AFM standard to check that dividing by 1000 is correct.
+			pointLen = s.length() * (mCharWidths[spaceIndex] / 1000.0) * pointSize;
 		}
-
-		double pointLen = (double)total / mCharWidth * pointSize;
+		else
+		{
+			/*
+			 * Add up widths of all characters in string.
+			 */
+			for (int i = 0; i < sLength; i++)
+			{
+				c = s.charAt(i);
+				if (c >= 0 && c < mCharWidths.length)
+					total += mCharWidths[c];
+				else
+					total += mCharWidth;
+			}
+			pointLen = (double)total / mCharWidth * pointSize;
+		}
 		return((int)pointLen);
 	}
 }
