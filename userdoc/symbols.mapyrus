@@ -464,6 +464,63 @@ begin quadrants title, q1, q2, q3, q4, qLabels
 	label title
 end
 
+begin windname name
+	font "Helvetica", 3
+	justify "center"
+	move 0, -Mapyrus.screen.resolution.mm
+	move 0, Mapyrus.screen.resolution.mm
+	move Mapyrus.screen.resolution.mm, 0
+	move -Mapyrus.screen.resolution.mm, 0
+	color "white"
+	label name
+	clearpath
+	move 0, 0
+	color "black"
+	label name
+end
+
+begin windindicator bearing, strength, name
+	# Draw a line with feathered tail showing wind direction and strength.
+	#
+	key "point", "Wind from SW at force 2", 45, 2, ""
+	key "point", "Wind from SE at force 5", 315, 5, ""
+	local s, y
+
+	# Draw the label above or below the origin point
+	# so that it does not interfere with the wind indicator.
+	#
+	let s = cos(bearing) > 0 ? -5 : 2.5
+	move 0, s
+	windname name
+
+	rotate -bearing
+
+	clearpath
+	circle 0, 0, 1
+	move 0, 1
+	let y = 6
+	draw 0, y
+	while strength > 0
+	do
+		move 0, y
+		if strength == 1
+		then
+			rdraw 1.2, 0.35
+		else
+			rdraw 2.4, 0.7
+		endif
+		let y = y - 1
+		let strength = strength - 2
+	done
+
+	linestyle 1
+	color "white"
+	stroke
+	linestyle 0.1
+	color "black"
+	stroke
+end
+
 begin speechbubble message
 	# Draw a speech bubble containing a message at a point.
 	#
@@ -1883,6 +1940,7 @@ then
 	trafficlights ""
 	quadrants "", 1, 1, 1, 1, 0
 	speechbubble ""
+	windindicator 0, 1, ""
 	bordercrossing
 	crosshair
 	lighthouse
@@ -2002,7 +2060,7 @@ then
 			# Display lines with bigger entries so that
 			# any pattern along the line is visible.
 			#
-			legend 20
+			legend 16
 		else
 			legend 8
 		endif
