@@ -777,7 +777,6 @@ public class Expression
 		StringBuffer buf = new StringBuffer();
 		ExpressionTreeNode expr;
 		int c, lastC, quote;
-		int type;
 
 		c = p.readNonSpace();
 		if (c == '\'' || c == '"')
