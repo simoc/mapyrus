@@ -303,6 +303,18 @@ Returns \textit{a} to the power \textit{b}. \\
 
 \hline
 
+\texttt{protected(\textit{x1}, \textit{y1}, \textit{x2}, \textit{y2})} &
+Returns 1 if any part of the given rectangular region
+has been protected using the \texttt{protect}
+command.
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of the rectangle, in current world coordinate
+units.
+Otherwise 0 is returned. \\
+
+\hline
+
 \texttt{random(\textit{n})} &
 Generates a random floating point number between 0 and \textit{n}. \\
 
@@ -501,7 +513,8 @@ Any new page created in a procedure with a
 command is completed when the procedure finishes and output
 returns to the page being created before the procedure was called.
 
-Any dataset being read is global.  It is not saved and not restored.
+Any dataset being read is global and protected regions are global.
+They are not saved and not restored.
 
 Any world coordinate system set with the \texttt{worlds} command is cleared
 before the commands in the procedure are executed.  This enables the calling
@@ -1481,6 +1494,28 @@ stroke
 
 Draws the current path using the current color and linestyle.
 The current path is not.
+
+\subsubsection{unprotect}
+
+\begin{alltt}
+unprotect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+\end{alltt}
+
+Clears all protected regions from the page in a rectangular
+area.
+
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of the rectangle to clear.
+
+The four corner points of the rectangle
+are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
+The rectangular region cleared is always aligned with the X
+and Y axes of the page, regardless of any rotation angle.
 
 \subsubsection{worlds}
 
