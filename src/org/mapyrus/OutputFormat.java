@@ -359,7 +359,10 @@ public class OutputFormat
 		mAfmFiles = new ArrayList();
 		int resolution;
 
-		resolution = (mOutputType == POSTSCRIPT) ? 300 : Constants.SCREEN_RESOLUTION;
+		if (mOutputType == POSTSCRIPT)
+			resolution = 300;
+		else
+			resolution = Constants.getScreenResolution();
 
 		/*
 		 * Reading all font metrics information takes some time.
@@ -1200,7 +1203,7 @@ public class OutputFormat
 		if (size <= 0.0)
 		{
 			size = Math.max(pixelWidth, pixelHeight) * (Constants.MM_PER_INCH /
-				Constants.SCREEN_RESOLUTION);
+				Constants.getScreenResolution());
 		}
 		size *= scaling;
 
@@ -1327,7 +1330,7 @@ public class OutputFormat
 				/*
 				 * Scale transformation so that units are in pixels.
 				 */
-				double mmPerPixel = Constants.MM_PER_INCH / Constants.SCREEN_RESOLUTION;
+				double mmPerPixel = Constants.MM_PER_INCH / Constants.getScreenResolution();
 				affine.scale(mmPerPixel, mmPerPixel * -1);
 
 				/*
