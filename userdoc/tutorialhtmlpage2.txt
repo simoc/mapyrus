@@ -10,7 +10,7 @@ Geographic Position
 @placeholder_coordinates@
 <p>
 
-<table bgcolor="#ffcfff">
+<table bgcolor="#ffdfff">
 <tr align="center">
 
 <td>&nbsp;</td>
