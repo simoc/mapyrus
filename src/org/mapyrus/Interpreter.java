@@ -111,6 +111,73 @@ public class Interpreter
 	}
 
 	/**
+	 * Parses all combinations of color setting.  Sets values passed
+	 * by user in graphics context.
+	 * @param context graphics context to set linestyle into.
+	 * @param arguments to color statement.
+	 */	
+	private void setColor(ContextStack context, Argument []args)
+		throws MapyrusException
+	{
+		int nExpressions;
+
+		if (args != null)
+			nExpressions = args.length;
+		else
+			nExpressions = 0;
+
+		if (nExpressions == 1 && args[0].getType() == Argument.STRING)
+		{
+			/*
+			 * Find named color in color name database.
+			 */
+			Color c = ColorDatabase.getColor(args[0].getStringValue());
+			if (c == null)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+					": " + args[0].getStringValue());
+			}
+			context.setColor(c);
+		}
+		else if (nExpressions == 4 &&
+			args[0].getType() == Argument.STRING &&
+			args[1].getType() == Argument.NUMERIC &&
+			args[2].getType() == Argument.NUMERIC &&
+			args[3].getType() == Argument.NUMERIC)
+		{
+			String colorType = args[0].getStringValue();
+			float c1 = (float)args[1].getNumericValue();
+			float c2 = (float)args[2].getNumericValue();
+			float c3 = (float)args[3].getNumericValue();
+			
+			if (colorType.equalsIgnoreCase("hsb"))
+			{
+				/*
+				 * Set HSB color.
+				 */
+				int rgb = Color.HSBtoRGB(c1, c2, c3);
+				context.setColor(new Color(rgb));
+			}
+			else if (colorType.equalsIgnoreCase("rgb"))
+			{		
+				/*
+				 * Set RGB color.
+				 */
+				context.setColor(new Color(c1, c2, c3));
+			}
+			else
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR_TYPE) +
+					": " + colorType);
+			}
+		}
+		else
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
+		}
+	}
+
+	/**
 	 * Parses all combinations of linestyle setting.  Sets values passed
 	 * by user, with defaults for the values they did not give.
 	 * @param context graphics context to set linestyle into.
@@ -333,56 +400,7 @@ public class Interpreter
 		switch (type)
 		{
 			case Statement.COLOR:
-// TODO separate this out into setColor() method.
-				if (nExpressions == 1 && args[0].getType() == Argument.STRING)
-				{
-					/*
-					 * Find named color in color name database.
-					 */
-					Color c = ColorDatabase.getColor(args[0].getStringValue());
-					if (c == null)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
-							": " + args[0].getStringValue());
-					}
-					context.setColor(c); 
-				}
-				else if (nExpressions == 4 &&
-					args[0].getType() == Argument.STRING &&
-					args[1].getType() == Argument.NUMERIC &&
-					args[2].getType() == Argument.NUMERIC &&
-					args[3].getType() == Argument.NUMERIC)
-				{
-					String colorType = args[0].getStringValue();
-					float c1 = (float)args[1].getNumericValue();
-					float c2 = (float)args[2].getNumericValue();
-					float c3 = (float)args[3].getNumericValue();
-					
-					if (colorType.equalsIgnoreCase("hsb"))
-					{
-						/*
-						 * Set HSB color.
-						 */
-						int rgb = Color.HSBtoRGB(c1, c2, c3);
-						context.setColor(new Color(rgb));
-					}
-					else if (colorType.equalsIgnoreCase("rgb"))
-					{		
-						/*
-						 * Set RGB color.
-						 */
-						context.setColor(new Color(c1, c2, c3));
-					}
-					else
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR_TYPE) +
-							": " + colorType);
-					}
-				}
-				else
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
-				}
+				setColor(context, args);
 				break;
 
 			case Statement.LINESTYLE:
