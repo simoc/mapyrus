@@ -150,7 +150,7 @@ public class OutputFormat
 		mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%LanguageLevel: 2");
-		mWriter.println("%%Creator: " + Mapyrus.PROGRAM_NAME);
+		mWriter.println("%%Creator: " + Constants.PROGRAM_NAME);
 		mWriter.println("%%DocumentRequiredResources: (atend)");
 		mWriter.println("%%EndComments");
 		mWriter.println("");
