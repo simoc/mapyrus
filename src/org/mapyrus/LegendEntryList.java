@@ -22,6 +22,7 @@
  */
 package org.mapyrus;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.HashSet;
 
@@ -126,6 +127,11 @@ public class LegendEntryList
 	 */
 	public LegendEntry pop()
 	{
+		/*
+		 * Ensure that entries are returned in alphabetical order.
+		 */
+		Collections.sort(mLegendList);
+
 		LegendEntry retval = (LegendEntry)mLegendList.removeFirst();
 		mLegendSet.remove(hash(retval.getBlockName(), retval.getDescription()));
 		return(retval);

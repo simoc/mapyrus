@@ -27,7 +27,7 @@ package org.mapyrus;
  * org.mapyrus.LegendEntryList list and used after map display
  * for generating a legend.
  */
-public class LegendEntry
+public class LegendEntry implements Comparable
 {
 	/*
 	 * Available types of legend entries.
@@ -56,7 +56,25 @@ public class LegendEntry
 		mType = type;
 		mDescription = description;
 	}
-	
+
+	/**
+	 * Compare legend entry with another.
+	 * @param o legend entry to compare with.
+	 * @return -1, 0, 1, depending whether this object is less, equal, or greater than o.
+	 */
+	public int compareTo(Object o)
+	{
+		LegendEntry entry = (LegendEntry)o;
+		
+		/*
+		 * Sort by legend type, then by description.
+		 */
+		int retval = this.mType - entry.mType;
+		if (retval == 0)
+			retval = this.mDescription.compareTo(entry.mDescription);
+		return(retval);
+	}
+
 	/**
 	 * Return procedure block name for a legend entry.
 	 * @return block name.
