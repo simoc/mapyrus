@@ -1,5 +1,5 @@
-# This file is tutorialprocedures4.mpy
-include tutorialprocedures3.mpy
+# This file is tutorialprocedures4.mapyrus
+include tutorialprocedures3.mapyrus
 
 newpage "eps", "tutorialprocedures4.eps", 60, 30
 clearpath
