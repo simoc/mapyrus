@@ -744,12 +744,13 @@ public class Expression
 				{
 					/*
 					 * '\\' compressed to single backslash,
-					 * '\n' converted to a newline.  Escaping
-					 * of other characters is ignored.
+					 * '\n' converted to a newline, '\r' is stripped -- it
+					 * is not useful since we use Java's line separator internally.
+					 * Escaping of other characters is ignored.
 					 */
 					if (c == 'n')
 						buf.append(Constants.LINE_SEPARATOR);
-					else
+					else if (c != 'r')
 						buf.append((char)c);
 				}
 				else if (c != '\\')
