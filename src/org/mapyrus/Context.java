@@ -1438,4 +1438,33 @@ public class Context
 		}
 		arg.addHashMapEntry(key, value);
 	}
+
+	/**
+	 * Returns width of a string, drawn to current page with current font.
+	 * @param s string to calculate width for.
+	 * @return width of string in millimetres.
+	 */	
+	public double getStringWidth(String s) throws IOException, MapyrusException
+	{
+		double retval;
+
+		if (mOutputFormat != null)
+		{
+			/*
+			 * Make sure current font is set *and* pass current font
+			 * to stringWidth calculation as some output formats set
+			 * the font and then forget it.
+			 */
+			setGraphicsAttributes(ATTRIBUTE_FONT);
+			retval = mOutputFormat.getStringWidth(s, mFontName, mFontSize);
+		}
+		else
+		{
+			/*
+			 * Not possible to accurately calculate width if no page defined.
+			 */
+			retval = 0.0;
+		}
+		return(retval / mScaling);
+	}	
 }
