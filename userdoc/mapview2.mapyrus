@@ -114,7 +114,7 @@ worlds 40000, 40000, 50000, 45000
 #
 dataset "textfile", "vegetation.dat", "comment=#"
 import
-while Mapyrus.import.moreRows
+while Mapyrus.import.moreRecords
 do
 	fetch
 	nCoords = $1

@@ -85,7 +85,7 @@ worlds -20000, 5500000, 900000, 6600000
 #
 dataset "textfile", "uk_utm.dat", "comment=#"
 import
-while Mapyrus.import.moreRows
+while Mapyrus.import.moreRecords
 do
 	fetch
 	nCoords = $1

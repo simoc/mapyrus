@@ -60,7 +60,7 @@ begin branchline side
 	endif
 
 	finished = 0
-	while Mapyrus.import.moreRows and finished == 0
+	while Mapyrus.import.moreRecords and finished == 0
 	do
 		fetch
 		if $1 eq '***'

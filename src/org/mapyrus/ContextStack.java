@@ -493,7 +493,7 @@ public class ContextStack
 			/*
 			 * Return internal/system variable.
 			 */
-			if (sub.equals("import.moreRows"))
+			if (sub.equals("import.moreRecords"))
 			{
 				Dataset dataset = getCurrentContext().getDataset();
 				if (dataset != null && dataset.hasMoreRows())
