@@ -116,7 +116,7 @@ public class HTTPRequest extends Thread
 		for (int i = 0; i < len && retval; i++)
 		{
 			char c = word.charAt(i);
-			retval = (Character.isLetterOrDigit(c) || (c == '$' && i == 0) || c == '.' || c == '_');
+			retval = (Character.isLetterOrDigit(c) || (c == '$' && i == 0) || ((c == '.' || c == '_' || c == ':') && i > 0));
 		}
 		return(retval);
 	}
