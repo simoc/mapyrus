@@ -139,16 +139,18 @@ public class ContextStack
 	 */
 	public void setTranslation(double x, double y)
 	{
-		getCurrentContext().setTranslation(x, y);
+		if (x != 0.0 || y != 0.0)
+			getCurrentContext().setTranslation(x, y);
 	}
-	
+
 	/**
 	 * Sets rotation for subsequent coordinates.
 	 * @param angle is rotation angle in degrees, going anti-clockwise.
 	 */
 	public void setRotation(double angle)
 	{
-		getCurrentContext().setRotation(angle);
+		if (angle != 0.0)
+			getCurrentContext().setRotation(angle);
 	}
 
 	/**
@@ -177,6 +179,16 @@ public class ContextStack
 	public void clearPath()
 	{
 		getCurrentContext().clearPath();
+	}
+
+	/**
+	 * Replace path with regularly spaced points along it.
+	 * @param spacing is distance between points.
+	 * @param offset is starting offset of first point.
+	 */
+	public void slicePath(double spacing, double offset)
+	{
+		getCurrentContext().slicePath(spacing, offset);
 	}
 	
 	/**
@@ -253,6 +265,10 @@ public class ContextStack
 			else if (sub.equals("version"))
 			{
 				retval = new Argument(Argument.STRING, Mapyrus.getVersion());
+			}
+			else if (sub.equals("path.length"))
+			{
+				retval = new Argument(getCurrentContext().getPathLength());
 			}
 			else
 			{
