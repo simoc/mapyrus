@@ -1,0 +1,46 @@
+newpage "eps", "tutoriallabels3.eps", 80, 30
+
+# Draw label, then underline it.
+#
+font "Helvetica-Narrow-Bold", 6
+let h1 = "Abcdefg", h2 = "Hij"
+move 5, 5
+label h1
+draw 5 + stringwidth(h1), 5
+stroke
+
+# Draw box, then label inside it.
+#
+clearpath
+box 5, 20 - 2, 5 + stringwidth(h1), 26
+fill
+clearpath
+move 5, 20
+color "yellow"
+label h1
+
+# Draw one label, then another immediately following it
+# in a different color.
+#
+font "Palatino-Roman", 6
+clearpath
+color "red"
+move 40, 10
+label h1
+color "blue"
+clearpath
+move 40 + stringwidth(h1), 10
+label h2
+
+# Draw label with pink surround to highlight it.
+#
+color "pink"
+clearpath
+let smallOffset = 0.3
+move 40, 25 - smallOffset, 40, 25 + smallOffset
+move 40 - smallOffset, 25, 40 + smallOffset, 25
+label h1
+color "black"
+clearpath
+move 40, 25
+label h1
