@@ -506,19 +506,20 @@ public class GeometricPath
 				/*
 				 * Calculate equally spaced points along this line segment.
 				 */
-				while (nextOffset < segmentLength)
+				int i = 0;
+				while (nextOffset + i * spacing <= segmentLength)
 				{
-					x = (float)(xStart + nextOffset * cosAngle);
-					y = (float)(yStart + nextOffset * sinAngle);
+					x = (float)(xStart + (nextOffset + i * spacing) * cosAngle);
+					y = (float)(yStart + (nextOffset + i * spacing) * sinAngle);
 
 					retval.moveTo(x, y, segmentAngle);
-
-					nextOffset += spacing;
+					i++;
 				}
 
 				/*
 				 * Get ready for next line segment.
 				 */
+				nextOffset += spacing * i;
 				nextOffset -= segmentLength;
 				xStart = xEnd;
 				yStart = yEnd;
@@ -576,7 +577,7 @@ public class GeometricPath
 			xMax = Math.max(xMax, pts[i * 2]);
 			yMax = Math.max(yMax, pts[i * 2 + 1]);
 		}
-
+// TODO align stripes on spacing so neighbouring paths match.
 		/*
 		 * Create stripes horizontally through rotated rectangle.
 		 */
