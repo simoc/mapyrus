@@ -231,7 +231,7 @@ public class Expression
 			Argument retval;
 			Argument leftValue, rightValue, thirdValue;
 			int returnType = Argument.NUMERIC;
-			double d = 0.0;
+			double l, r, d = 0.0;
 			String s = null;
 
 			if (t.mIsLeaf)
@@ -355,7 +355,8 @@ public class Expression
 					 * Repeat string N times.
 					 */
 					StringBuffer sb = new StringBuffer();
-					for (int i = 0; i < rightValue.getNumericValue(); i++)
+					int repeatCount = (int)(Math.floor(rightValue.getNumericValue()));
+					for (int i = 0; i < repeatCount; i++)
 					{
 						sb.append(leftValue.toString());
 					}
@@ -367,34 +368,39 @@ public class Expression
 					returnType = Argument.NUMERIC;
 					break;
 				case NUMERIC_EQUALS_OPERATION:
-// TODO do soft numeric comparisons to protect against round-off.
-					d = (leftValue.getNumericValue() ==
-						rightValue.getNumericValue()) ? 1 : 0;
+					l = leftValue.getNumericValue();
+					r = rightValue.getNumericValue();
+					d = NumericalAnalysis.equals(l, r) ? 1 : 0;
 					returnType = Argument.NUMERIC;
 					break;
 				case NUMERIC_NOT_EQUALS_OPERATION:
-					d = (leftValue.getNumericValue() !=
-						rightValue.getNumericValue()) ? 1 : 0;
+					l = leftValue.getNumericValue();
+					r = rightValue.getNumericValue();
+					d = NumericalAnalysis.equals(l, r) ? 0 : 1;
 					returnType = Argument.NUMERIC;
 					break;
 				case NUMERIC_GREATER_THAN_OPERATION:
-					d = (leftValue.getNumericValue() >
-						rightValue.getNumericValue()) ? 1 : 0;
+					l = leftValue.getNumericValue();
+					r = rightValue.getNumericValue();
+					d = (l > r && (!NumericalAnalysis.equals(l, r))) ? 1 : 0;
 					returnType = Argument.NUMERIC;
 					break;
 				case NUMERIC_GREATER_EQUAL_OPERATION:
-					d = (leftValue.getNumericValue() >=
-						rightValue.getNumericValue()) ? 1 : 0;
+					l = leftValue.getNumericValue();
+					r = rightValue.getNumericValue();
+					d = (l > r || NumericalAnalysis.equals(l, r)) ? 1 : 0;
 					returnType = Argument.NUMERIC;
 					break;
 				case NUMERIC_LESS_THAN_OPERATION:
-					d = (leftValue.getNumericValue() <
-						rightValue.getNumericValue()) ? 1 : 0;
+					l = leftValue.getNumericValue();
+					r = rightValue.getNumericValue();
+					d = (l < r && (!NumericalAnalysis.equals(l, r))) ? 1 : 0;
 					returnType = Argument.NUMERIC;
 					break;
 				case NUMERIC_LESS_EQUAL_OPERATION:
-					d = (leftValue.getNumericValue() <=
-						rightValue.getNumericValue()) ? 1 : 0;
+					l = leftValue.getNumericValue();
+					r = rightValue.getNumericValue();
+					d = (l < r || NumericalAnalysis.equals(l, r)) ? 1 : 0;
 					returnType = Argument.NUMERIC;
 					break;
 				case AND_OPERATION:
