@@ -37,7 +37,7 @@ public class OutputFormat
 	 * Number of points and millimetres per inch.
 	 */
 	private static final int POINTS_PER_INCH = 72;
-	private static final double MM_PER_INCH = 25.4;
+	public static final double MM_PER_INCH = 25.4;
 
 	/*
 	 * Format for coordinates and colors in PostScript files.
@@ -60,10 +60,11 @@ public class OutputFormat
 	private Process mOutputProcess;
 
 	/*
-	 * Page dimensions.
+	 * Page dimensions and resolution.
 	 */
 	private double mPageWidth;
 	private double mPageHeight;
+	private double mResolution;
 	
 	/*
 	 * Indentation for PostScript commands.
@@ -108,7 +109,7 @@ public class OutputFormat
 	 * Sets correct background, rendering hints and transformation
 	 * for buffered image we will plot to.
 	 */
-	private void setupBufferedImage(int resolution)
+	private void setupBufferedImage(double resolution)
 	{
 		double scale;
 	
@@ -126,40 +127,6 @@ public class OutputFormat
 	}
 
 	/**
-	 * Return resolution to use for image files we create.
-	 * @return resolution to use for images as dots per inch value.
-	 */
-	private int getResolution()
-	{
-		int resolution;
-			
-		/*
-		 * If a display resolution is given as a property then use that,
-		 * otherwise assume 72 DPI.  That is, an image 100mm wide will be made
-		 * 720 pixels wide.
-		 */
-		try
-		{
-			String property = System.getProperty(Mapyrus.PROGRAM_NAME + ".resolution");
-			if (property != null)
-				resolution = Integer.parseInt(property);
-			else
-				resolution = POINTS_PER_INCH;
-			
-		}
-		catch (SecurityException e)
-		{
-			resolution = POINTS_PER_INCH;
-		}
-		catch (NumberFormatException e)
-		{
-			resolution = POINTS_PER_INCH;
-		}
-		
-		return(resolution);
-	}
-
-	/**
 	 * Creates new graphics file, ready for drawing to.
 	 * @param filename name of image file output will be saved to.
 	 * If filename begins with '|' character then output is piped as
@@ -167,10 +134,11 @@ public class OutputFormat
 	 * @param format is the graphics format to use.
 	 * @param width is the page width (in mm).
 	 * @param height is the page height (in mm).
+	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
 	 */
 	public OutputFormat(String filename, String format,
-		double width, double height, String extras)
+		double width, double height, double resolution, String extras)
 		throws IOException, MapyrusException
 	{
 		mFormatName = format.toUpperCase();
@@ -232,7 +200,6 @@ public class OutputFormat
 			 * Create a BufferedImage to draw into.  We'll save it to a file
 			 * when user has finished drawing to it.
 			 */
-			int resolution = getResolution();
 			int widthInPixels = (int)Math.round(width / MM_PER_INCH * resolution);
 			int heightInPixels = (int)Math.round(height / MM_PER_INCH * resolution);
 			mImage = new BufferedImage(widthInPixels, heightInPixels,
@@ -244,27 +211,9 @@ public class OutputFormat
 		mPostScriptIndent = 0;
 		mPageWidth = width;
 		mPageHeight = height;
+		mResolution = MM_PER_INCH / resolution;
 	}
 
-	/**
-	 * Set a buffered image as output.
-	 * @param image is the image to draw to.
-	 */
-	public OutputFormat(BufferedImage image)
-		throws IOException, MapyrusException
-	{
-		int resolution = getResolution();
-		
-		mOutputType = BUFFERED_IMAGE;
-		mImage = image;
-		mGraphics2D = (Graphics2D)(mImage.getGraphics());
-		setupBufferedImage(resolution);
-		mPipedOutput = false;
-		mPostScriptIndent = 0;
-		mPageWidth = (double)mImage.getWidth() / resolution;
-		mPageWidth = (double)mImage.getHeight() / resolution;
-	}
-	
 	/**
 	 * Return page width.
 	 * @return width in millimetres.
@@ -281,6 +230,15 @@ public class OutputFormat
 	public double getPageHeight()
 	{
 		return(mPageHeight);
+	}
+
+	/**
+	 * Return resolution of page as a distance measurement.
+	 * @return distance in millimetres between centres of adjacent pixels.
+	 */
+	public double getResolution()
+	{
+		return(mResolution);
 	}
 
 	/*
@@ -451,6 +409,16 @@ public class OutputFormat
 				
 				case PathIterator.SEG_CLOSE:
 					writePostScriptLine("closepath");
+					break;
+					
+				case PathIterator.SEG_CUBICTO:
+					writePostScriptLine(mLinearFormat.format(coords[0]) + " " +
+						mLinearFormat.format(coords[1]) + " " +
+						mLinearFormat.format(coords[2]) + " " +
+						mLinearFormat.format(coords[3]) + " " +
+						mLinearFormat.format(coords[4]) + " " +
+						mLinearFormat.format(coords[5]) + " " +
+						"curveto");
 					break;
 			}
 			pi.next();			
