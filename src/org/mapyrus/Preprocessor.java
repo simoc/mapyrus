@@ -99,9 +99,23 @@ class Preprocessor
 
 		if (f.isURL())
 		{
-			String contentType = f.getURLContentType();
+			/*
+			 * Check that we are reading a plain text type of URL.
+			 */
+			String contentType;
+			try
+			{
+				contentType = f.getURLContentType();
+			}
+			catch (IOException e)
+			{
+				f.getReader().close();
+				throw e;
+			}
+
 			if (!contentType.startsWith("text/"))
 			{
+				f.getReader().close();
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_TEXT_FILE) +
 					": " + f.toString());
 			}
@@ -159,8 +173,8 @@ class Preprocessor
 			 * Got end-of-file.  Close file and continue reading any file that included
 			 * this one.
 			 */
-			reader.close();
 			mFileStack.removeLast();
+			reader.close();
 			if (mFileStack.size() > 0)
 			{
 				mCurrentLine = null;
@@ -319,5 +333,29 @@ class Preprocessor
 	public String getCurrentFilenameAndLineNumber()
 	{
 		return(getCurrentFilename() + ":" + getCurrentLineNumber());
+	}
+
+	/**
+	 * Close preprocessor, closing all files it was reading.
+	 * The preprocessor cannot be used again after calling this method.
+	 */
+	public void close()
+	{
+		while (!mFileStack.isEmpty())
+		{
+			FileOrURL f = (FileOrURL)mFileStack.removeLast();
+			Reader reader = f.getReader();
+			try
+			{
+				reader.close();
+			}
+			catch (IOException e)
+			{
+				/*
+				 * Ignore any errors, we just want to close all open files we were reading.
+				 */
+			}
+		}
+		mFileStack = null;
 	}
 }
