@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.StringReader;
 
 /**
  * Language interpreter.  Parse and executes commands read from file, or
@@ -1279,6 +1280,25 @@ public class Interpreter
 				break;	
 
 			case Statement.LOCAL:
+				break;
+
+			case Statement.EVAL:
+				if (nExpressions == 1)
+				{
+					/*
+					 * Run evaluated argument as a command.  This allows
+					 * commands to be built and executed on-the-fly.
+					 */
+					String command = mExecuteArgs[0].getStringValue();
+					StringReader stringReader = new StringReader(command);
+					String filename = "(in eval)";
+					FileOrURL f = new FileOrURL(stringReader, filename);
+					interpret(context, f, mStdoutStream);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_EVAL));
+				}
 				break;
 
 			case Statement.LET:
