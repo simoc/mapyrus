@@ -23,7 +23,7 @@ done
 # Add a scalebar.
 #
 clearpath
-scalebar Mapyrus.worlds.scale, "m"
+scalebar Mapyrus.worlds.scale, "m", 0, 0
 
 # Begin a new page.
 #
@@ -48,4 +48,4 @@ done
 # Add a scalebar to this map display too.
 #
 clearpath
-scalebar Mapyrus.worlds.scale, "m"
+scalebar Mapyrus.worlds.scale, "m", 0, 0

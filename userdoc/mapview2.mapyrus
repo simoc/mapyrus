@@ -79,7 +79,7 @@ legend 7
 #
 newpage "eps", "mapview2scalebar.eps", 50, 15, "background=white"
 clearpath
-scalebar scale, "m"
+scalebar scale, "m", 0, 0
 
 # Draw north arrow for the map.
 #
@@ -87,4 +87,3 @@ newpage "eps", "mapview2north.eps", 20, 20, "background=white"
 clearpath
 move 10, 10
 nsew
-
