@@ -48,8 +48,8 @@ public class Constants
 
 	/*
 	 * Time in milliseconds to wait to begin handling an HTTP request.  If
-	 * HTTP server is to busy to begin handling request within this time then
-	 * request is cancelled and an error is returned to HTTP client.
+	 * HTTP server is too busy to begin handling request within this time
+	 * then request is cancelled and an error is returned to HTTP client.
 	 */
 	public static final int HTTP_TIMEOUT = 30 * 1000;
 
