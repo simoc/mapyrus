@@ -3,8 +3,13 @@
 include hr.doc
 Version
 include VERSION
-<center>
+<table width="100%">
+<tr>
+<td align="right">
 <a href="index.html">Mapyrus Home</a>
-</center>
+</td>
+</tr>
+</table>
 </body>
 </html>
+

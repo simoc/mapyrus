@@ -3,6 +3,13 @@
 <body bgcolor="#ffffff">
 <img src="mapyrus.png" alt="Mapyrus Logo using
 free BEANTOWN.TTF font from www.fontalicious.com">
-<p>
+
+<table width="100%">
+<tr>
+<td align="right">
+<a href="index.html">Mapyrus Home</a>
+</td>
+</tr>
+</table>
 include hr.doc
 
