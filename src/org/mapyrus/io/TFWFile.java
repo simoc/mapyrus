@@ -35,7 +35,7 @@ import org.mapyrus.MapyrusMessages;
  * Extents for an a geo-referenced image read from a '.tfw' file
  * for an image.
  */
-public class TFWFile
+public class TFWFile implements GeoImageBoundingBox
 {
 	Rectangle2D.Double mBounds;
 
