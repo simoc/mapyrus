@@ -67,6 +67,12 @@ public class Interpreter
 	private static final String DONE_KEYWORD = "done";
 
 	/*
+	 * Keywords for for ... in ... do ... done block.
+	 */
+	private static final String FOR_KEYWORD = "for";
+	private static final String IN_KEYWORD = "in";
+
+	/*
 	 * States during parsing statements.
 	 */
 	private static final int AT_ARGUMENT = 1;		/* at start of arguments to a statement */
@@ -1160,6 +1166,109 @@ public class Interpreter
 		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
 		return(new ParsedStatement(statement));		 
 	}
+
+	/**
+	 * Reads and parses "for" loop statement.
+	 * Parses variable name, "in" keyword, arrayname, "do" keyword,
+	 * some statements, and then "done" keyword.
+	 * @param preprocessor is source to read from.
+	 * @return parsed loop as single statement.
+	 */
+	private ParsedStatement parseForStatement(Preprocessor preprocessor,
+		boolean inProcedureDefn)
+		throws IOException, MapyrusException
+	{
+		ParsedStatement st;
+		Expression var, arrayExpr;
+		ArrayList loopStatements = new ArrayList();
+		Statement statement;
+		String currentFilename = preprocessor.getCurrentFilename();
+		int currentLineNumber = preprocessor.getCurrentLineNumber();
+
+		var = new Expression(preprocessor);
+
+		/*
+		 * Expect to parse "in" keyword.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside for loop.
+			 */
+			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
+		}
+		else if (st.isStatement() ||
+			st.getKeywordType() != ParsedStatement.PARSED_IN)
+		{
+			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + IN_KEYWORD);
+		}
+
+		arrayExpr = new Expression(preprocessor);
+
+		/*
+		 * Expect to parse "do" keyword.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside while loop.
+			 */
+			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
+		}
+		else if (st.isStatement() ||
+			st.getKeywordType() != ParsedStatement.PARSED_DO)
+		{
+			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + DO_KEYWORD);
+		}
+		
+		/*
+		 * Now we want some statements to execute each time through the loop.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside loop.
+			 */
+			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
+		}
+		while (st.isStatement())
+		{
+			loopStatements.add(st.getStatement());
+			st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+			if (st == null)
+			{
+				/*
+				* Should not reach end of file inside loop
+				*/
+				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+					": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
+			}
+		}
+		
+		/*
+		 * Expect "done" after statements.
+		 */
+		if (st.getKeywordType() != ParsedStatement.PARSED_DONE)
+		{
+			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + DONE_KEYWORD);
+		}
+
+		statement = new Statement(var, arrayExpr, loopStatements);
+		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
+		return(new ParsedStatement(statement));		 
+	}
 	
 	/**
 	 * Reads and parses conditional statement.
@@ -1314,7 +1423,9 @@ public class Interpreter
 		mKeywordLookup.put(DO_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_DO));
 		mKeywordLookup.put(DONE_KEYWORD,
-			new ParsedStatement(ParsedStatement.PARSED_DONE));						
+			new ParsedStatement(ParsedStatement.PARSED_DONE));
+		mKeywordLookup.put(IN_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_IN));
 	}
 
 	/**
@@ -1380,6 +1491,10 @@ public class Interpreter
 				{
 					retval = parseWhileStatement(preprocessor, inProcedureDefn);
 				}
+				else if (lower.equals(FOR_KEYWORD))
+				{
+					retval = parseForStatement(preprocessor, inProcedureDefn);
+				}
 				else
 				{
 					/*
@@ -1404,7 +1519,7 @@ public class Interpreter
 		return(retval);
 	}
 
-	/*
+	/**
 	 * Reads and parses a single statement.
 	 * @param preprocessor is source to read statement from.
 	 * @return next statement read and parsed.
@@ -1534,7 +1649,7 @@ public class Interpreter
 				}
 			}
 		}
-		else if (statementType == Statement.LOOP)
+		else if (statementType == Statement.WHILE_LOOP)
 		{
 			/*
 			 * Find expression to test and loop statements to execute.
@@ -1579,6 +1694,58 @@ public class Interpreter
 				{
 					throw new MapyrusException(statement.getFilenameAndLineNumber() +
 						": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
+				}
+			}
+		}
+		else if (statementType == Statement.FOR_LOOP)
+		{
+			/*
+			 * Find hashmap to loop through and the variable to assign
+			 * each hashmap key into.
+			 */
+			Expression []varExpr = statement.getExpressions();
+			Expression hashMapExpr = statement.getForHashMap();
+
+			ArrayList v = statement.getLoopStatements();
+			Argument hashMapVar;
+			String varName = varExpr[0].getVariableName();
+
+			try
+			{
+				hashMapVar = hashMapExpr.evaluate(mContext, statement.getFilename());
+			}
+			catch (MapyrusException e)
+			{
+				throw new MapyrusException(statement.getFilenameAndLineNumber() +
+					": " + e.getMessage());
+			}
+
+			if (varName == null)
+			{
+				throw new MapyrusException(statement.getFilenameAndLineNumber() +
+					": " + MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+			}
+			if (hashMapVar.getType() == Argument.HASHMAP)
+			{
+				/*
+				 * Take a copy of current keys in hashmap so that changes to the hashmap
+				 * during the loop have no effect.
+				 */
+				Object []keys = hashMapVar.getHashMapKeys();
+				for (int i = 0; i < keys.length; i++)
+				{
+					String currentKey = (String)keys[i];
+					mContext.defineVariable(varName,
+						new Argument(Argument.STRING, currentKey));
+	
+					/*
+					 * Execute each of the statements.
+					 */	
+					for (int j = 0; j < v.size(); j++)
+					{
+						Statement st = (Statement)v.get(j);
+						executeStatement(st);
+					}
 				}
 			}
 		}
