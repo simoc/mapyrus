@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
+import org.mapyrus.Constants;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 import org.mapyrus.Row;
@@ -60,17 +61,18 @@ public class MIFDataset implements GeographicDataset
 			"SYMBOLSHAPE", "SYMBOLCOLOR", "SYMBOLSIZE", "SYMBOLFONT", "SYMBOLSTYLE"};
 
 	/*
-	 * Default color and font for geometry, if not defined in MIF file.
+	 * Default color, size  and font for geometry, if not defined in MIF file.
 	 */
 	private static final Argument DEFAULT_COLOR = new Argument(Argument.STRING, "0x000000");
-	private static final Argument DEFAULT_FONT = new Argument(Argument.STRING, "Helvetica");
+	private static final Argument DEFAULT_SIZE = new Argument(4.0);
+	private static final Argument DEFAULT_FONT = new Argument(Argument.STRING, "MapInfo Symbols");
 
 	private LineNumberReader mMIFFile;
 	private MIDReader mMIDFile;
 	private String mFilename;
 	
 	/*
-	 * Next line 
+	 * Next line to read from MIF file.
 	 */
 	private String mMIFNextLine;
 
@@ -266,26 +268,7 @@ public class MIFDataset implements GeographicDataset
 		while (line != null && !finishedHeader)
 		{
 			lowercaseLine = line.toLowerCase();
-			if (lowercaseLine.startsWith("delimiter"))
-			{
-				int quoteIndex = lowercaseLine.indexOf('"');
-				if (quoteIndex > 0)
-					mDelimiter = line.charAt(quoteIndex + 1);
-			}
-			else if (lowercaseLine.startsWith("coordsys"))
-			{
-				mProjection = line.substring(8).trim();
-			}
-			else if (lowercaseLine.startsWith("columns"))
-			{
-				nMIDColumns = Integer.parseInt(line.substring(7).trim());
-				mMIDFieldTypes  = new int[nMIDColumns];
-				mMIDFieldsToFetch = new boolean[nMIDColumns];
-
-				if (nMIDColumns > 0)
-					inColumnDefinition = true;
-			}
-			else if (inColumnDefinition)
+			if (inColumnDefinition)
 			{
 				StringTokenizer st = new StringTokenizer(line, " (");
 				if (st.countTokens() >= 2)
@@ -338,6 +321,26 @@ public class MIFDataset implements GeographicDataset
 				if (counter == nMIDColumns)
 					inColumnDefinition = false;
 			}
+			else if (lowercaseLine.startsWith("delimiter"))
+			{
+				int quoteIndex = lowercaseLine.indexOf('"');
+				if (quoteIndex > 0)
+					mDelimiter = line.charAt(quoteIndex + 1);
+			}
+			else if (lowercaseLine.startsWith("coordsys"))
+			{
+				mProjection = line.substring(8).trim();
+			}
+			else if (lowercaseLine.startsWith("columns"))
+			{
+				nMIDColumns = Integer.parseInt(line.substring(7).trim());
+				mMIDFieldTypes  = new int[nMIDColumns];
+				mMIDFieldsToFetch = new boolean[nMIDColumns];
+
+				if (nMIDColumns > 0)
+					inColumnDefinition = true;
+			}
+
 
 			if (lowercaseLine.equals("data"))
 				finishedHeader = true;
@@ -415,7 +418,8 @@ public class MIFDataset implements GeographicDataset
 		}
 
 		/*
-		 * If .MID file exists and we need to read some attribute columns then open it.
+		 * If .MID file exists and we need to read some attribute
+		 * columns then open it.
 		 */
 		File f = new File(midFilename);
 		if (f.canRead() && mNMIDFieldsToFetch > 0)
@@ -501,6 +505,12 @@ public class MIFDataset implements GeographicDataset
 		return(retval.toString());
 	}
 
+	/**
+	 * Parse (X, Y) coordinate value from string.
+	 * @param line string to parse from.
+	 * @param geometry geometry array to add coordinate to.
+	 * @param offset offset in geometry array to add X and Y values to.
+	 */
 	private void parseXYCoordinate(String line, double []geometry, int offset)
 		throws MapyrusException
 	{
@@ -527,6 +537,13 @@ public class MIFDataset implements GeographicDataset
 		geometry[offset + 1] = y;
 	}
 
+	/**
+	 * Parse list of (X, Y) coordinates from MIF file,
+	 * with one pair of coordinates on each line.
+	 * @param nPoints number of points to parse.
+	 * @param geometryType type of geometry being parsed.
+	 * @return geometry in Mapyrus geometry format.
+	 */
 	private double []parseCoordinates(int nPoints, int geometryType)
 		throws IOException, MapyrusException
 	{
@@ -538,25 +555,41 @@ public class MIFDataset implements GeographicDataset
 		int geometryIndex = 2;
 		int op = Argument.MOVETO;
 
+		/*
+		 * Read an (X, Y) coordinate pair from each line.
+		 */
 		for (int i = 0; i < nPoints; i++)
 		{
 			String line = mMIFFile.readLine();
+			if (line == null)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+					": " + mFilename);
+			}
 
 			geometry[geometryIndex] = op;
 			parseXYCoordinate(line, geometry, geometryIndex + 1);
-			geometryIndex += 3;	
+			geometryIndex += 3;
 			op = Argument.LINETO;
 		}
 		return(geometry);
 	}
 
+	/**
+	 * Parse simple or multi-geometry from MIF file.
+	 * @param nSections number of geometries to read.
+	 * @param geometryType type of each geometry being read.
+	 */
 	private double []parseCoordinateList(int nSections, int geometryType)
 		throws IOException, MapyrusException
 	{
 		ArrayList sections = new ArrayList(nSections);
-		int totalLength = 2;
+		int totalGeometryLength = 2;
 		double []geometry = null;
 
+		/*
+		 * Parse coordinates for each sub-geometry.
+		 */
 		for (int i = 0; i < nSections; i++)
 		{
 			String line = mMIFFile.readLine();
@@ -568,22 +601,29 @@ public class MIFDataset implements GeographicDataset
 			int nPoints = Integer.parseInt(line.trim());
 			geometry = parseCoordinates(nPoints, geometryType);
 			sections.add(geometry);
-			totalLength += geometry.length;
+			totalGeometryLength += geometry.length;
 		}
 
 		double []retval;
 		if (nSections == 1)
 		{
+			/*
+			 * A single geometry can be returned directly.
+			 */
 			retval = geometry;
 		}
 		else
 		{
-			retval = new double[totalLength];
+			/*
+			 * Join all geometries together into a MULTILINESTRING
+			 * or MULTIPOLYGON.
+			 */
+			retval = new double[totalGeometryLength];
 			if (geometryType == Argument.GEOMETRY_LINESTRING)
 				retval[0] = Argument.GEOMETRY_MULTILINESTRING;
 			else
 				retval[0] = Argument.GEOMETRY_MULTIPOLYGON;
-				
+
 			retval[1] = nSections;
 			int index = 2;
 			Iterator it = sections.iterator();
@@ -597,6 +637,13 @@ public class MIFDataset implements GeographicDataset
 		return(retval);
 	}
 
+	/**
+	 * Read next geometry from MIF file.
+	 * @param row row to add geometry to.
+	 * @return row with added geometry, or null if EOF reached.
+	 * @throws IOException
+	 * @throws MapyrusException
+	 */
 	private Row parseGeometry(Row row) throws IOException, MapyrusException
 	{
 		double []geometry = null;
@@ -666,6 +713,50 @@ public class MIFDataset implements GeographicDataset
 						geometry = parseCoordinates(nPoints, Argument.GEOMETRY_LINESTRING);
 					}
 				}
+				else if (geometryType.equals("region") && st.countTokens() == 1)
+				{
+					String token = st.nextToken();
+					int nRegions = Integer.parseInt(token);
+					geometry = parseCoordinateList(nRegions, Argument.GEOMETRY_POLYGON);
+				}
+				else if ((geometryType.equals("arc") || geometryType.equals("rect") ||
+					geometryType.equals("roundrect") || geometryType.equals("ellipse")) &&
+					st.countTokens() == 4)
+				{
+					double x1 = Double.parseDouble(st.nextToken());
+					double y1 = Double.parseDouble(st.nextToken());
+					double x2 = Double.parseDouble(st.nextToken());
+					double y2 = Double.parseDouble(st.nextToken());
+					
+					if (geometryType.equals("roundrect") || geometryType.equals("arc"))
+					{
+						String line = mMIFFile.readLine();
+						if (line == null)
+						{
+							throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+								": " + mFilename);
+						}
+					}
+
+					geometry = new double[17];
+					geometry[0] = Argument.GEOMETRY_POLYGON;
+					geometry[1] = 5;
+					geometry[2] = Argument.MOVETO;
+					geometry[3] = x1;
+					geometry[4] = y1;
+					geometry[5] = Argument.LINETO;
+					geometry[6] = x1;
+					geometry[7] = y2;
+					geometry[8] = Argument.LINETO;
+					geometry[9] = x2;
+					geometry[10] = y2;
+					geometry[11] = Argument.LINETO;
+					geometry[12] = x2;
+					geometry[13] = y1;
+					geometry[14] = Argument.LINETO;
+					geometry[15] = x1;
+					geometry[16] = y1;
+				}
 				else
 				{
 					/*
@@ -678,11 +769,12 @@ public class MIFDataset implements GeographicDataset
 
 				/*
 				 * Read any color and symbol information for this geometry
-				 * and skip 'SMOOTH', 'CENTER' and lines that we are not interested in. 
+				 * and skip 'SMOOTH', 'CENTER' and lines that we are not
+				 * interested in. 
 				 */
 				mMIFNextLine = mMIFFile.readLine();
 				boolean finishedGeometry = false;
-				if (mMIFNextLine != null && (!finishedGeometry))
+				while (mMIFNextLine != null && (!finishedGeometry))
 				{
 					st = new StringTokenizer(mMIFNextLine, " (,)");
 					if (st.hasMoreTokens())
@@ -708,13 +800,19 @@ public class MIFDataset implements GeographicDataset
 						}
 						else if (token.equals("symbol"))
 						{
+							boolean isIcon = false;
 							if (st.countTokens() >= 3)
 							{
 								symbolShape = st.nextToken();
+								if (symbolShape.startsWith("\""))
+								{
+									symbolShape = symbolShape.substring(1, symbolShape.length() - 1);
+									isIcon = true;
+								}
 								symbolColor = st.nextToken();
 								symbolSize = st.nextToken();
 							}
-							if (st.hasMoreTokens())
+							if (st.hasMoreTokens() && (!isIcon))
 							{
 								/*
 								 * Font name included too.
@@ -725,13 +823,14 @@ public class MIFDataset implements GeographicDataset
 								{
 									/*
 									 * Font name may be multiple words.
-									 * Join strings until font name ends with matching quote.
+									 * Join strings until font name ends
+									 * with matching quote.
 									 */
 									while (!symbolFont.endsWith("\""))
 									{
-										symbolFont = symbolFont + st.nextToken();
+										symbolFont = symbolFont + " " + st.nextToken();
 									}
-									symbolFont = symbolFont.substring(1, symbolFont.length() - 2);
+									symbolFont = symbolFont.substring(1, symbolFont.length() - 1);
 								}
 							}
 							if (st.hasMoreTokens())
@@ -748,13 +847,14 @@ public class MIFDataset implements GeographicDataset
 						else
 						{
 							/*
-							 * This line is not part of the preceding geometry, it must be
-							 * start of next geometry. 
+							 * This line is not part of the preceding geometry,
+							 * it must be start of next geometry. 
 							 */
 							finishedGeometry = true;
 						}
 
-						mMIFNextLine = mMIFFile.readLine();
+						if (!finishedGeometry)
+							mMIFNextLine = mMIFFile.readLine();
 					}
 				}
 			}
@@ -771,7 +871,14 @@ public class MIFDataset implements GeographicDataset
 			if (penWidth == null)
 				row.add(Argument.numericOne);
 			else
-				row.add(new Argument(Double.parseDouble(penWidth)));
+			{
+				/*
+				 * Convert pixel width to millimetres.
+				 */
+				double w = (Integer.parseInt(penWidth) & 7);
+				w = w / Constants.getScreenResolution() * Constants.MM_PER_INCH;
+				row.add(new Argument(w));
+			}
 
 			if (penPattern == null)
 				row.add(Argument.numericZero);
@@ -789,33 +896,55 @@ public class MIFDataset implements GeographicDataset
 				row.add(new Argument(Double.parseDouble(brushPattern)));
 
 			if (brushForeColor == null)
-				row.add(Argument.numericZero);
+				row.add(DEFAULT_COLOR);
 			else
 				row.add(new Argument(Argument.STRING, intToColor(brushForeColor)));
 
 			if (brushBackColor == null)
-				row.add(Argument.numericZero);
+				row.add(DEFAULT_COLOR);
 			else
 				row.add(new Argument(Argument.STRING, intToColor(brushBackColor)));
 
 			/*
-			 * Shape may be either a number or an image filename.
+			 * Shape may be either an ASCII character code or an image filename.
 			 */
 			if (symbolShape == null)
 				row.add(Argument.emptyString);
 			else
+			{
+				try
+				{
+					char c = (char)Short.parseShort(symbolShape);
+					if (c > 31)
+						symbolShape = Character.toString(c);
+					else
+						symbolShape = "";
+				}
+				catch (NumberFormatException e)
+				{
+				}
 				row.add(new Argument(Argument.STRING, symbolShape));
+			}
 
 			if (symbolColor == null)
-				row.add(Argument.numericZero);
+				row.add(DEFAULT_COLOR);
 			else
 				row.add(new Argument(Argument.STRING, intToColor(symbolColor)));
 
 			if (symbolSize == null)
-				row.add(Argument.numericOne);
+			{
+				row.add(DEFAULT_SIZE);
+			}
 			else
-				row.add(new Argument(Double.parseDouble(symbolSize)));
-				
+			{
+				/*
+				 * Convert symbol size in pixels to millimetres.
+				 */
+				double s = Double.parseDouble(symbolSize);
+				s = s / Constants.getScreenResolution() * Constants.MM_PER_INCH;
+				row.add(new Argument(s));
+			}
+
 			if (symbolFont == null)
 				row.add(DEFAULT_FONT);
 			else
@@ -825,6 +954,10 @@ public class MIFDataset implements GeographicDataset
 				row.add(Argument.numericZero);
 			else
 				row.add(new Argument(Double.parseDouble(symbolStyle)));
+		}
+		else
+		{
+			row = null;
 		}
 
 		return(row);
@@ -840,15 +973,8 @@ public class MIFDataset implements GeographicDataset
 
 		try
 		{
-			parseGeometry(row);
-			if (row.isEmpty())
-			{
-				/*
-				 * Reached end of file.
-				 */
-				row = null;
-			}
-			else
+			row = parseGeometry(row);
+			if (row != null)
 			{
 				if (mMIDFile != null)
 					mMIDFile.getRow(row);
@@ -857,6 +983,14 @@ public class MIFDataset implements GeographicDataset
 		catch (IOException e)
 		{
 			throw new MapyrusException(e.getMessage());
+		}
+		catch (NumberFormatException e)
+		{
+			/*
+			 * Catch any error parsing geometry coordinates from MIF file.
+			 */
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+				": " + mFilename + ": " + e.getMessage());
 		}
 		return(row);
 	}
