@@ -168,6 +168,18 @@ public class ContextStack
 	}
 
 	/**
+	 * Sets transformation from real world coordinates to page coordinates.
+	 * @param x1 minimum X world coordinate.
+	 * @param y1 minimum Y world coordinate.
+	 * @param x2 maximum X world coordinate.
+	 * @param y2 maximum Y world coordinate.
+	 */
+	public void setWorlds(double x1, double y1, double x2, double y2)
+	{
+		getCurrentContext().setWorlds(x1, y1, x2, y2);
+	}
+
+	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.

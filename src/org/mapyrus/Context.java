@@ -45,6 +45,11 @@ public class Context
 	private double mRotation;
 	
 	/*
+	 * Transformation matrix from world coordinates to page coordinates.
+	 */
+	private AffineTransform mWorldCtm;
+	
+	/*
 	 * Coordinates making up path.
 	 */
 	private GeometricPath mPath;
@@ -86,6 +91,7 @@ public class Context
 		mLineWidth = 0.1;
 	
 		mCtm = new AffineTransform();
+		mWorldCtm = null;
 		mXScaling = mYScaling = 1.0;
 		mRotation = 0.0;
 		mVars = null;
@@ -106,6 +112,7 @@ public class Context
 		mColor = existing.mColor;
 		mLineWidth = existing.mLineWidth;
 		mCtm = new AffineTransform(existing.mCtm);
+		mWorldCtm = null;
 		mXScaling = existing.mXScaling;
 		mYScaling = existing.mYScaling;
 		mRotation = existing.mRotation;
@@ -301,6 +308,24 @@ public class Context
 	}
 
 	/**
+	 * Sets transformation from real world coordinates to page coordinates.
+	 * @param x1 minimum X world coordinate.
+	 * @param y1 minimum Y world coordinate.
+	 * @param x2 maximum X world coordinate.
+	 * @param y2 maximum Y world coordinate.
+	 */
+	public void setWorlds(double x1, double y1, double x2, double y2)
+	{
+		/*
+		 * Setup CTM from world coordinates to page coordinates.
+		 */
+		mWorldCtm = new AffineTransform();
+		mWorldCtm.scale(mOutputFormat.getPageWidth() / (x2 - x1),
+			mOutputFormat.getPageHeight() / (y2 - y1));
+		mWorldCtm.translate(-x1, -y1);
+	}
+	
+	/**
 	 * Returns X scaling value in current transformation.
 	 * @return m00 element from transformation matrix.
 	 */
@@ -334,16 +359,22 @@ public class Context
 	 */
 	public void moveTo(double x, double y)
 	{
-		double srcPts[] = {x, y};
+		double srcPts[] = new double[2];
 		float dstPts[] = new float[3];
+
+		srcPts[0] = x;
+		srcPts[1] = y;
 		
 		/*
-		 * Transform point to millimetre position on page.
-		 */
+		 * Transform point from world coordinates
+		 * to millimetre position on page.
+		 */		
+		if (mWorldCtm != null)
+			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
-			
+
 		/*
 		 * Set no rotation for point.
 		 */
@@ -359,12 +390,18 @@ public class Context
 	 */
 	public void lineTo(double x, double y)
 	{
-		double srcPts[] = {x, y};
+		double srcPts[] = new double[2];
 		float dstPts[] = new float[2];
 
+		srcPts[0] = x;
+		srcPts[1] = y;
+
 		/*
-		 * Transform point to millimetre position on page.
+		 * Transform point from world coordinates
+		 * to millimetre position on page.
 		 */		
+		if (mWorldCtm != null)
+			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
@@ -549,7 +586,7 @@ public class Context
 			retval = path.getMoveTos();
 		return(retval);
 	}
-	
+
 	/**
 	 * Returns bounding box of this geometry.
 	 * @return bounding box, or null if no path is defined.
