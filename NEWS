@@ -1,13 +1,13 @@
 Mapyrus Major Change History
 Copyright (C) 2003 Simon Chenery.
 
-0.42, March 2004
+0.42, April 2004
 
 * Add Java API and change licensing to LGPL.
 * Added stringwidth function.
 * Added closepath, guillotine commands.
 * Improved tutorial examples.
-* Added interface to Vivid Solutions 'Java Topology Suite'.
+* Added geometric functions using Vivid Solutions 'Java Topology Suite'.
 
 0.41, February 2004
 
