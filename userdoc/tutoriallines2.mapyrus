@@ -14,7 +14,6 @@ newpage "eps", "tutoriallines2.eps", 60, 30
 clearpath
 move 5, 5
 bezier 5, 30, 55, 5, 55, 25
-stroke
-samplepath 5, 2.5
+samplepath 3, 1.5
 let spikeCounter = 0
 spike
