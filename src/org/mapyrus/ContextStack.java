@@ -40,7 +40,12 @@ public class ContextStack
 	 * Stack of contexts, with current context in last slot.
 	 */
 	private LinkedList mStack;
-	
+
+	/*
+	 * Time at which this context was allocated.
+	 */
+	private long mStartTime;
+
 	/**
 	 * Create new stack of contexts to manage state as procedure blocks
 	 * are called.
@@ -49,6 +54,7 @@ public class ContextStack
 	{
 		mStack = new LinkedList();
 		mStack.add(new Context());
+		mStartTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -461,6 +467,14 @@ public class ContextStack
 			{
 				Date now = new Date();
 				retval = new Argument(Argument.STRING, now.toString());
+			}
+			else if (sub.equals("elapsedtime"))
+			{
+				/*
+				 * The elapsed time in seconds since this context was created
+				 * at the beginning of interpreting a file.
+				 */
+				retval = new Argument((System.currentTimeMillis() - mStartTime) / 1000.0);
 			}
 			else if (sub.equals("version"))
 			{
