@@ -34,17 +34,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.attribute.HashDocAttributeSet;
-import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -53,6 +46,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * A window displaying an image created by Mapyrus.
@@ -101,34 +95,25 @@ public class MapyrusFrame
 		mMutex = new Mutex();
 		mMutex.lock();
 
+		/*
+		 * Add menubar and menu options.
+		 */
 		JMenuBar menubar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
+		JMenu fileMenu = new JMenu(MapyrusMessages.get(MapyrusMessages.FILE));
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 
-		JMenuItem pngExportItem = new JMenuItem("Export as PNG");
+		JMenuItem pngExportItem = new JMenuItem(MapyrusMessages.get(MapyrusMessages.EXPORT_AS_PNG));
 		pngExportItem.setMnemonic(KeyEvent.VK_E);
 		fileMenu.add(pngExportItem);
 		pngExportItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				export("png");
+				exportToPNG();
 			}
 		});
 
-		JMenuItem printItem = new JMenuItem("Print");
-		printItem.setMnemonic(KeyEvent.VK_P);
-		fileMenu.addSeparator();
-		fileMenu.add(printItem);
-		printItem.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				print();
-			}
-		});
-
-		JMenuItem exitItem = new JMenuItem("Exit");
+		JMenuItem exitItem = new JMenuItem(MapyrusMessages.get(MapyrusMessages.EXIT));
 		exitItem.setMnemonic(KeyEvent.VK_X);
 		fileMenu.addSeparator();
 		fileMenu.add(exitItem);
@@ -171,58 +156,49 @@ public class MapyrusFrame
 		mFrame.setVisible(true);
 	}
 
-	/**
-	 * Print image.
+	/*
+	 * File filter limiting file selection to PNG images. 
 	 */
-	private void print()
+	private class PNGImageFilter extends FileFilter
 	{
-		PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
-
-		if (defaultPrintService == null)
+		public boolean accept(File f)
 		{
-			JOptionPane.showMessageDialog(mFrame,
-				MapyrusMessages.get(MapyrusMessages.NO_DEFAULT_PRINTER),
-				"Print Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			boolean retval = f.isDirectory();
+			if (!retval)
+			{
+				String name = f.getName();
+				retval = name.endsWith(".png") || name.endsWith(".PNG");
+			}
+			return(retval);
 		}
 
-		try
+		public String getDescription()
 		{
-			DocPrintJob pj = defaultPrintService.createPrintJob();
-			DocFlavor flavor = new DocFlavor("application/x-java-jvm-local-objectref",
-				"java.awt.image.renderable.RenderableImage");
-			HashDocAttributeSet attribSet = new HashDocAttributeSet();
-			SimpleDoc doc = new SimpleDoc(mImage, flavor, attribSet);
-
-			HashPrintRequestAttributeSet attribs = new HashPrintRequestAttributeSet();
-			pj.print(doc, attribs);
-		}
-		catch (PrintException e)
-		{
-			JOptionPane.showMessageDialog(mFrame, e.getMessage(),
-				"Print Error", JOptionPane.ERROR_MESSAGE);
+			return(MapyrusMessages.get(MapyrusMessages.PNG_IMAGE_FILES));
 		}
 	}
 
 	/**
-	 * Export image to a file.
-	 * @param format file format to export to.
+	 * Export image to a PNG file.
 	 */
-	private void export(String format)
+	private void exportToPNG()
 	{
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setFileFilter(new PNGImageFilter());
+
 		int retval = fileChooser.showSaveDialog(mFrame);
 		if (retval == JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
 				File selectedFile = fileChooser.getSelectedFile();
-				ImageIO.write(mImage, format, selectedFile);
+				FileOutputStream outStream = new FileOutputStream(selectedFile);
+				ImageIO.write(mImage, "png", outStream);
 			}
 			catch (IOException e)
 			{
-				System.err.println(e.getMessage());
+				JOptionPane.showMessageDialog(mFrame, e.getMessage(), Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
