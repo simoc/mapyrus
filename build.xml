@@ -36,6 +36,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="jar" depends="compile" description="Build jar file from classes">
 <copy file="src/${messagefile}" tofile="build/classes/${messagefile}"/>
 <jar jarfile="lib/${ant.project.name}.jar" basedir="build/classes" manifest="manifest"/>
+<!-- Run jar file with a command to print version number to a file -->
+<!-- Then load the version number as a property -->
+<echo message="print Mapyrus.version" file="version.mpy"/>
+<java jar="lib/${ant.project.name}.jar" fork="yes" output="VERSION">
+<arg line="version.mpy"/>
+</java>
+<delete file="version.mpy"/>
+<loadfile property="version" srcFile="VERSION">
+<filterchain><striplinebreaks/></filterchain>
+</loadfile>
+<echo message="Version ${version}"/>
 </target>
 
 <target name="jni" depends="compile" description="Build JNI shared libraries">
@@ -49,31 +60,64 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </target>
 
 <target name="doc" depends="jar" description="Build documentation and examples">
+<!-- Delete -->
+<delete>
+<fileset dir="doc" includes="*.html"/>
+<fileset dir="doc" includes="*.png" excludes="mapyrus.png"/>
+</delete>
+
+<!-- Generate all examples -->
+<java jar="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy mapview1.mpy"/>
+</java>
+
 <!-- Use preprocessor inside Mapyrus which expands macros in -->
 <!-- documentation to generate final HTML files -->
-<delete>
-<fileset dir="doc" includes="*/*.html"/>
-</delete>
+<copy file="VERSION" todir="doc"/>
 <java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="mapyrus.doc mapyrus.html"/>
+<arg line="index.doc index.html"/>
 </java>
+
 <java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="intro.doc intro.html"/>
 </java>
+
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="tutorial.doc tutorial.html"/>
+</java>
+
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="reference.doc reference.html"/>
+</java>
+
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="version.doc version.html"/>
+</java>
+
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="license.doc license.html"/>
+</java>
+<delete file="doc/VERSION"/>
+
 </target>
 
 
 <target name="dist" depends="jar, doc, jni" description="Build package for distribution">
+<!-- Build zip file with software, source, documentation and examples -->
+<zip destfile="${ant.project.name}-${version}.zip" basedir="." update="false"
+includes="doc/*.html, doc/*.png, lib/${ant.project.name}.jar, src/**"/>
 </target>
 
 
 <target name="clean" description="Remove everything we have built">
+<delete file="VERSION"/>
+<delete file="version.mpy"/>
 <delete dir="build/classes" includes="**/*.class"/>
 <delete file="lib/${ant.project.name}.jar"/>
 <delete>
-<fileset dir="doc" includes="**/*.html"/>
-<fileset dir="doc" includes="**/*.png"/>
-<fileset dir="jni" excludes="**/*.c"/>
+<fileset includes="${ant.project.name}*.zip"/>
+<fileset dir="doc" includes="*.html, *.png" excludes="mapyrus.png"/>
+<fileset dir="jni" excludes="*.c"/>
 </delete>
 </target>
 
