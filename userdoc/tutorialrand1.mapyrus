@@ -9,8 +9,7 @@ begin tree
     color "hsb", 0.3, 1.0, 0.3 + random(0.4)
     let radius = random(1) + 2
     let x = 0
-    move x, 0
-    arc 1, x + radius, 0, x, 0
+    circle x + radius, 0, radius
     fill
     color "black"
     linestyle 0.1
