@@ -271,6 +271,15 @@ public class Interpreter
 				context.fill();
 				break;
 				
+			case Statement.CLIP:
+				if (nExpressions > 0)
+				{
+					throw new MapyrusException("Unexpected arguments at " +
+						st.getFilenameAndLineNumber());
+				}
+				context.clip();
+				break;	
+							
 			case Statement.SCALE:
 				if (nExpressions == 2 &&
 					args[0].getType() == Argument.NUMERIC &&
