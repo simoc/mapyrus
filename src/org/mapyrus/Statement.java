@@ -36,8 +36,9 @@ public class Statement
 	 * Possible types of statements.
 	 */
 	public static final int CONDITIONAL = 2;
-	public static final int LOOP = 3;
-	public static final int BLOCK = 4;
+	public static final int WHILE_LOOP = 3;
+	public static final int FOR_LOOP = 4;
+	public static final int BLOCK = 5;
 
 	public static final int COLOR = 10;
 	public static final int LINESTYLE = 11;
@@ -95,7 +96,12 @@ public class Statement
 	private ArrayList mParameters;
 	
 	private Expression []mExpressions;
-	
+
+	/*
+	 * HashMap to walk through for a 'for' loop.
+	 */	
+	private Expression mForHashMapExpression;
+
 	/*
 	 * Filename and line number within file that this 
 	 * statement was read from.
@@ -211,9 +217,23 @@ public class Statement
 	 */
 	public Statement(Expression test, ArrayList loopStatements)
 	{
-		mType = LOOP;
+		mType = WHILE_LOOP;
 		mExpressions = new Expression[1];
 		mExpressions[0] = test;
+		mLoopStatements = loopStatements;
+	}
+
+	/**
+	 * Create a while loop block of statements.
+	 * @param test is expression to test before each iteration of loop.
+	 * @param loopStatements is statements to execute for each loop iteration.
+	 */
+	public Statement(Expression var, Expression arrayVar, ArrayList loopStatements)
+	{
+		mType = FOR_LOOP;
+		mExpressions = new Expression[1];
+		mExpressions[0] = var;
+		mForHashMapExpression = arrayVar;
 		mLoopStatements = loopStatements;
 	}
 
@@ -280,14 +300,23 @@ public class Statement
 	}
 
 	/**
-	 * Returns list of statements in while loop statement.
+	 * Returns list of statements in while or for loop statement.
 	 * @return list of statements.
 	 */	
 	public ArrayList getLoopStatements()
 	{
 		return(mLoopStatements);
 	}
-	
+
+	/**
+	 * Returns hashmap expression to walk through in a for loop statement.
+	 * @return expression evaluating to a hashmap.
+	 */	
+	public Expression getForHashMap()
+	{
+		return(mForHashMapExpression);
+	}
+
 	/**
 	 * Return name of procedure block.
 	 * @return name of procedure.
