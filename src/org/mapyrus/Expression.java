@@ -21,6 +21,7 @@
  */
 package au.id.chenery.mapyrus;
 
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -45,7 +46,6 @@ public class Expression
 	private static final int MULTIPLY_OPERATION = 4;	/* 'qw' * 2 = 'qwqw' */
 	private static final int DIVIDE_OPERATION = 5;
 
-	private static final int CONTAINS_OPERATION = 6; /* 'foobar' ~ '^f' = 1 */
 	private static final int EQUALS_OPERATION = 7;
 	private static final int NOT_EQUALS_OPERATION = 8;
 	private static final int GREATER_THAN_OPERATION = 9;
@@ -55,6 +55,44 @@ public class Expression
 
 	private static final int AND_OPERATION = 13;
 	private static final int OR_OPERATION = 14;
+
+	/*
+	 * Names and types of functions we allow on numbers and strings.
+	 */
+	private static final int ROUND_FUNCTION = 1;	/* round(3.14) = 3 */
+	private static final String ROUND_FUNCTION_NAME = "round";
+	private static final int RANDOM_FUNCTION = 2;	/* random(3) = [0, 3) */
+	private static final String RANDOM_FUNCTION_NAME = "random";
+	private static final int LENGTH_FUNCTION = 3;	/* length("foo") = 3 */
+	private static final String LENGTH_FUNCTION_NAME = "length";
+	private static final int MATCH_FUNCTION = 4;	/* match('foobar', 'ob') = 3 */
+	private static final String MATCH_FUNCTION_NAME = "match";
+	private static final int SUBSTR_FUNCTION = 5;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final String SUBSTR_FUNCTION_NAME = "substr";
+
+	/*
+	 * Lookup tables of functions and the number of
+	 * arguments that they each take.
+	 */
+	private static final HashMap mFunctionTypeLookup;
+	private static final byte[] mFunctionArgumentCount;
+	
+	static
+	{
+		mFunctionTypeLookup = new HashMap();
+		mFunctionTypeLookup.put(ROUND_FUNCTION_NAME, new Integer(ROUND_FUNCTION));
+		mFunctionTypeLookup.put(RANDOM_FUNCTION_NAME, new Integer(RANDOM_FUNCTION));
+		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
+		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
+		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
+		
+		mFunctionArgumentCount = new byte[SUBSTR_FUNCTION + 1];
+		mFunctionArgumentCount[ROUND_FUNCTION] = 1;
+		mFunctionArgumentCount[RANDOM_FUNCTION] = 1;
+		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
+		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
+		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
+	}
 
 	/*
 	 * Maximum number of compiled regular expressions we'll cache.
@@ -112,28 +150,57 @@ public class Expression
 		int mOperation;
 		ExpressionTreeNode mLeftBranch, mRightBranch;
 
-		/*
+		boolean mIsFunction;
+		int mFunction;
+		ExpressionTreeNode mThirdFunctionExpression;
+
+		/**
 		 * Create a leaf value containing either a number,
 		 * string or variable name.
+		 * @param arg is leaf argument value.
 		 */
 		public ExpressionTreeNode(Argument arg)
 		{
 			mIsLeaf = true;
+			mIsFunction = false;
 			mLeafArg = arg;
 		}
 	
-		/*
+		/**
 		 * Create a node joining two sub-expressions with an
 		 * operation between them.
+		 * @param left is left hand side of expression.
+		 * @param operation is operation between left and right handside expressions.
+		 * @param right is right hand side of expression.
 		 */
 		public ExpressionTreeNode(ExpressionTreeNode left,
 			int operation,
 			ExpressionTreeNode right)
 		{
-			mIsLeaf = false;			
+			mIsLeaf = mIsFunction = false;			
 			mLeftBranch = left;
 			mRightBranch = right;
 			mOperation = operation;
+		}
+
+		/**
+		 * Create a node containing a call to a function.
+		 * @param functionType is identifier of function being called.
+		 * @param arg1 is first argument to function.
+		 * @param arg2 is second argument to function (or null for single
+		 * argument functions).
+		 * @param arg3 is third argument to function (or null for functions
+		 * with less than 3 arguments)
+		 */
+		public ExpressionTreeNode(int functionType, ExpressionTreeNode arg1,
+			ExpressionTreeNode arg2, ExpressionTreeNode arg3)
+		{
+			mIsLeaf = false;
+			mIsFunction = true;
+			mFunction = functionType;
+			mLeftBranch = arg1;
+			mRightBranch = arg2;
+			mThirdFunctionExpression = arg3;
 		}
 
 		/**
@@ -154,7 +221,7 @@ public class Expression
 			throws MapyrusException
 		{
 			Argument retval;
-			Argument leftValue, rightValue;
+			Argument leftValue, rightValue, thirdValue;
 			int op;
 			double d;
 
@@ -175,6 +242,93 @@ public class Expression
 				else
 				{
 					retval = t.mLeafArg;
+				}
+			}
+			else if (t.mIsFunction)
+			{
+				/*
+				 * Evaluate function.
+				 */
+				if (t.mFunction == ROUND_FUNCTION || t.mFunction == RANDOM_FUNCTION)
+				{
+					leftValue = traverse(t.mLeftBranch, context);
+					if (leftValue.getType() != Argument.NUMERIC)
+					{
+						String message = MapyrusMessages.get(MapyrusMessages.NUMERIC_FUNCTION) + ": ";
+						if (t.mFunction == ROUND_FUNCTION)
+							throw new MapyrusException(message + ROUND_FUNCTION_NAME);
+						else
+							throw new MapyrusException(message + RANDOM_FUNCTION_NAME);
+					}
+					
+					if (t.mFunction == ROUND_FUNCTION)
+						d = Math.round(leftValue.getNumericValue());
+					else
+						d = Math.random() * leftValue.getNumericValue();
+					retval = new Argument(d);
+				}
+				else if (t.mFunction == LENGTH_FUNCTION)
+				{
+					leftValue = traverse(t.mLeftBranch, context);
+					retval = new Argument(leftValue.toString().length());
+				}
+				else if (t.mFunction == MATCH_FUNCTION)
+				{
+					leftValue = traverse(t.mLeftBranch, context);
+					rightValue = traverse(t.mRightBranch, context);
+
+					/*
+					 * Find index of start of regular expression in string.
+					 */
+					Pattern pattern = compileRegex(rightValue.toString());
+					Matcher matcher = pattern.matcher(leftValue.toString());
+					if (matcher.find())
+						retval = new Argument(matcher.start() + 1);
+					else
+						retval = Argument.numericZero;
+				}
+				else /* SUBSTR_FUNCTION */
+				{
+					String s;
+					int startIndex, extractLen, len;
+
+					leftValue = traverse(t.mLeftBranch, context);
+					s = leftValue.toString();
+					rightValue = traverse(t.mRightBranch, context);
+					thirdValue = traverse(t.mThirdFunctionExpression, context);
+					if (rightValue.getType() != Argument.NUMERIC ||
+						thirdValue.getType() != Argument.NUMERIC)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_FUNCTION) +
+							": " + SUBSTR_FUNCTION_NAME);
+					}
+					
+					/*
+					 * Convert to zero-based indexing used by java.
+					 */
+					startIndex = (int)(Math.floor(rightValue.getNumericValue()));
+					startIndex--;
+					if (startIndex < 0)
+						startIndex = 0;
+					extractLen = (int)(Math.floor(thirdValue.getNumericValue()));
+					
+					len = s.length();
+					if (extractLen < 1 || startIndex >= len)
+					{
+						/*
+						 * Substring is totally to the left or right of
+						 * the string.  So substring is empty. 
+						 */
+						retval = Argument.emptyString;
+					}
+					else
+					{
+						if (startIndex + extractLen > len)
+							extractLen = len - startIndex;
+
+						retval = new Argument(Argument.STRING,
+							s.substring(startIndex, startIndex + extractLen));
+					}
 				}
 			}
 			else
@@ -330,12 +484,6 @@ public class Expression
 							d = l.equals(r) ? 1 : 0;
 						else if (op == NOT_EQUALS_OPERATION)
 							d = l.equals(r) ? 0 : 1;
-						else if (op == CONTAINS_OPERATION)
-						{
-								Pattern pattern = compileRegex(r);
-								Matcher matcher = pattern.matcher(l);
-								d = matcher.find() ? 1 : 0;
-						}
 						else if (op == GREATER_THAN_OPERATION)
 							d = (l.compareTo(r) > 0) ? 1 : 0;
 						else if (op == GREATER_EQUAL_OPERATION)
@@ -496,10 +644,6 @@ public class Expression
 					else if (op1 == '>')
 						opType = GREATER_THAN_OPERATION;
 				}
-			}
-			else if (op1 == '~')
-			{
-				opType = CONTAINS_OPERATION;
 			}
 			else if (op1 == '=')
 			{
@@ -757,7 +901,7 @@ public class Expression
 		{
 			/*
 			 * It does not look like a numeric expression or a string
-			 * expression so maybe it is a variable name.
+			 * expression so maybe it is a variable name or function.
 			 */
 			buf.append((char)c);
 			c = p.read();
@@ -767,8 +911,66 @@ public class Expression
 				buf.append((char)c);
 				c = p.read();
 			}
-			p.unread(c);
-			expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));	
+			
+			/*
+			 * Is this a function call like "round(3.14)"?
+			 */
+			Integer functionType = (Integer)(mFunctionTypeLookup.get(buf.toString()));
+			if (functionType != null)
+			{
+				/*
+				 * Parse opening '(', arguments for this function, then closing ')'.
+				 */
+				if (Character.isWhitespace((char)c))
+					c = p.readNonSpace();
+				if (c != '(')
+				{
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": '('");
+				}
+
+				int nArgs = mFunctionArgumentCount[functionType.intValue()];
+				ExpressionTreeNode functionExpressions[] = new ExpressionTreeNode[Math.max(nArgs, 3)];
+
+				/*
+				 * Parse expression for each function argument.
+				 */
+				for (int i = 0; i < functionExpressions.length; i++)
+					functionExpressions[i] = null;
+				for (int i = 0; i < nArgs; i++)
+				{
+					if (i > 0)
+					{
+						/*
+						 * Parse comma before next value.
+						 */
+						c = p.readNonSpace();
+						if (c != ',')
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+								": " + MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES) +
+								": " + buf.toString());
+						}
+					}
+					functionExpressions[i] = parseAndBoolean(p);
+				}
+
+				c = p.readNonSpace();
+				if (c != ')')
+				{
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": " + MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES) +
+						": " + buf.toString());
+				}
+
+				expr = new ExpressionTreeNode(functionType.intValue(),
+					functionExpressions[0], functionExpressions[1], functionExpressions[2]);
+			}
+			else
+			{
+				p.unread(c);
+				expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));
+			}	
 		}
 		else
 		{
@@ -790,6 +992,7 @@ public class Expression
 
 		return(expr);
 	}
+
 	/**
 	 * Read an arithmetic or string expression and create a tree from it
 	 * that can later be evaluated.
