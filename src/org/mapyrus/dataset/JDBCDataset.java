@@ -324,7 +324,9 @@ public class JDBCDataset implements GeographicDataset
 						mFieldTypes[i] == Types.LONGVARCHAR)
 					{
 						String fieldValue = mResultSet.getString(i + 1);
-						if (mIsWKTField[i])
+						if (fieldValue == null)
+							arg = Argument.emptyString;
+						else if (mIsWKTField[i])
 							arg = new Argument(fieldValue);
 						else
 							arg = new Argument(Argument.STRING, fieldValue);
@@ -333,13 +335,21 @@ public class JDBCDataset implements GeographicDataset
 						mFieldTypes[i] == Types.VARBINARY ||
 						mFieldTypes[i] == Types.LONGVARBINARY)
 					{
-						arg = new Argument(Argument.STRING, mResultSet.getString(i + 1));
+						String fieldValue = mResultSet.getString(i + 1);
+						if (fieldValue == null)
+							arg = Argument.emptyString;
+						else
+							arg = new Argument(Argument.STRING, fieldValue);
 					}
 					else if (mFieldTypes[i] == Types.DATE ||
 						mFieldTypes[i] == Types.TIME ||
 						mFieldTypes[i] == Types.TIMESTAMP)
 					{
-						arg = new Argument(Argument.STRING, mResultSet.getString(i + 1));
+						String fieldValue = mResultSet.getString(i + 1);
+						if (fieldValue == null)
+							arg = Argument.emptyString;
+						else
+							arg = new Argument(Argument.STRING, fieldValue);
 					}
 					else
 					{
