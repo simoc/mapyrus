@@ -5,9 +5,10 @@ package au.id.chenery.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -86,16 +87,21 @@ public class Interpreter
 	 * Blocks of statements for each procedure defined in
 	 * this interpreter.
 	 */
-	private Hashtable mStatementBlocks;
+	private HashMap mStatementBlocks;
+	
+	/*
+	 * Line separator, for convenience.
+	 */
+	private static final String mLineSeparator = System.getProperty("line.separator");
 
 	/*
 	 * Static world coordinate system units lookup table.
 	 */
-	private static Hashtable mWorldUnitsLookup;
+	private static HashMap mWorldUnitsLookup;
 
 	static
 	{
-		mWorldUnitsLookup = new Hashtable();
+		mWorldUnitsLookup = new HashMap();
 		mWorldUnitsLookup.put("m", new Integer(Context.WORLD_UNITS_METRES));
 		mWorldUnitsLookup.put("metres", new Integer(Context.WORLD_UNITS_METRES));
 		mWorldUnitsLookup.put("meters", new Integer(Context.WORLD_UNITS_METRES));
@@ -203,6 +209,96 @@ public class Interpreter
 		context.setLinestyle(width, cap, join, dashPhase, dashes);	
 	}
 	
+	/**
+	 * Parse justification for labels and then set it.
+	 * @param context graphics context to set justification value into.
+	 * @param justify value given in statement.
+	 */
+	private void setJustify(ContextStack context, String justify)
+	{
+		int justifyCode;
+		justify = justify.toLowerCase();
+
+		if (justify.indexOf("center") >= 0 ||
+			justify.indexOf("centre") >= 0)
+		{
+			justifyCode = OutputFormat.JUSTIFY_CENTER;
+		}
+		else if (justify.indexOf("right") >= 0)
+		{
+			justifyCode = OutputFormat.JUSTIFY_RIGHT;
+		}
+		else
+		{
+			justifyCode = OutputFormat.JUSTIFY_LEFT;
+		}
+	
+		if (justify.indexOf("top") >= 0)
+		{
+			justifyCode |= OutputFormat.JUSTIFY_TOP;
+		}
+		else if (justify.indexOf("middle") >= 0)
+		{
+			justifyCode |= OutputFormat.JUSTIFY_MIDDLE;
+		}
+		else
+		{
+			justifyCode |= OutputFormat.JUSTIFY_BOTTOM;
+		}
+		context.setJustify(justifyCode);
+	}
+
+	/**
+	 * Parse font for labels and then set it.
+	 * @param context graphics context to set font into.
+	 * @param args arguments to statement.
+	 */
+	private void setFont(ContextStack context, Argument []args) throws MapyrusException
+	{
+		int nExpressions;
+		int styleCode;
+		String style;
+		double size;
+
+		if (args == null)
+			nExpressions = 0;
+		else		
+			nExpressions = args.length;
+
+		if (nExpressions == 3 && args[0].getType() == Argument.STRING &&
+			args[1].getType() == Argument.STRING &&
+			args[2].getType() == Argument.NUMERIC)
+		{
+			style = args[1].getStringValue().toLowerCase();
+			if (style.equals("plain"))
+				styleCode = Font.PLAIN;
+			else if (style.equals("bold"))
+				styleCode = Font.BOLD;
+			else if (style.equals("italic"))
+				styleCode = Font.ITALIC;
+			else if (style.equals("bolditalic"))
+				styleCode = Font.BOLD | Font.ITALIC;
+			else
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT_STYLE) +
+					": " + style);
+			}
+	
+			size = args[2].getNumericValue();
+			if (size <= 0.0)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT_SIZE) +
+					": " + size);
+			}
+	
+			context.setFont(args[0].getStringValue(), styleCode, size);
+		}
+		else
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT));
+		}
+	}
+
 	/*
 	 * Execute a single statement, changing the path, context or generating
 	 * some output.
@@ -217,7 +313,6 @@ public class Interpreter
 		double degrees;
 		double x1, y1, x2, y2;
 		int units;
-		int i;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -228,7 +323,7 @@ public class Interpreter
 		if (nExpressions > 0)
 		{
 			args = new Argument[nExpressions];
-			for (i = 0; i < nExpressions; i++)
+			for (int i = 0; i < nExpressions; i++)
 			{
 				args[i] = expr[i].evaluate(context);
 			}
@@ -238,6 +333,7 @@ public class Interpreter
 		switch (type)
 		{
 			case Statement.COLOR:
+// TODO separate this out into setColor() method.
 				if (nExpressions == 1 && args[0].getType() == Argument.STRING)
 				{
 					/*
@@ -292,7 +388,18 @@ public class Interpreter
 			case Statement.LINESTYLE:
 				setLinestyle(context, args);
 				break;
-			
+
+			case Statement.FONT:
+				setFont(context, args);
+				break;
+
+			case Statement.JUSTIFY:
+				if (nExpressions == 1 && args[0].getType() == Argument.STRING)
+					setJustify(context, args[0].getStringValue());
+				else
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_JUSTIFY));
+				break;
+		
 			case Statement.MOVE:
 			case Statement.DRAW:
 				if (nExpressions > 0 && nExpressions % 2 == 0)
@@ -300,7 +407,7 @@ public class Interpreter
 					/*
 					 * Check that all coordindate values are numbers.
 					 */
-					for (i = 0; i < nExpressions; i++)
+					for (int i = 0; i < nExpressions; i++)
 					{
 						if (args[i].getType() != Argument.NUMERIC)
 						{
@@ -309,7 +416,7 @@ public class Interpreter
 						}
 					}
 					
-					for (i = 0; i < nExpressions; i += 2)
+					for (int i = 0; i < nExpressions; i += 2)
 					{
 						/*
 						 * Add point to path.
@@ -409,7 +516,31 @@ public class Interpreter
 				}
 				context.clip();
 				break;	
-							
+
+			case Statement.LABEL:
+				String label;
+
+				/*
+				 * Label with a single line of text, or multiple lines.
+				 */
+				if (nExpressions == 1)
+				{
+					label = args[0].toString();
+				}
+				else
+				{
+					StringBuffer s = new StringBuffer();
+					for (int i = 0; i < nExpressions; i++)
+					{
+						if (i > 0)
+							s.append(mLineSeparator);
+						s.append(args[i].toString());
+					}
+					label = s.toString();
+				}
+				context.label(label);
+				break;
+						
 			case Statement.SCALE:
 				if (nExpressions == 2 &&
 					args[0].getType() == Argument.NUMERIC &&
@@ -501,7 +632,7 @@ public class Interpreter
 					/*
 					 * All arguments are strings.
 					 */
-					for (i = 0; i < nExpressions; i++)
+					for (int i = 0; i < nExpressions; i++)
 					{
 						if (args[i].getType() != Argument.STRING)
 							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET));
@@ -511,7 +642,7 @@ public class Interpreter
 					 * Build array of geometry field names.
 					 */					
 					String []geometryFieldNames = new String[nExpressions - 3];
-					for (i = 0; i < geometryFieldNames.length; i++)
+					for (int i = 0; i < geometryFieldNames.length; i++)
 						geometryFieldNames[i] = args[i + 3].getStringValue();
 
 					context.setDataset(args[0].getStringValue(),
@@ -537,7 +668,7 @@ public class Interpreter
 				int []geometryFieldIndexes = context.getDatasetGeometryFieldIndexes();
 				String []fieldNames = context.getDatasetFieldNames();
 				double x = 0.0;
-				for (i = 0; i < row.size(); i++)
+				for (int i = 0; i < row.size(); i++)
 				{
 					Argument field = (Argument)row.get(i);
 					if (index < geometryFieldIndexes.length &&
@@ -609,7 +740,7 @@ public class Interpreter
 				/*
 				 * Print to stdout each of the expressions passed.
 				 */
-				for (i = 0; i <nExpressions; i++)
+				for (int i = 0; i <nExpressions; i++)
 				{
 					System.out.print(args[i].toString());
 				}
@@ -1175,11 +1306,11 @@ public class Interpreter
 	/*
 	 * Static keyword lookup table for fast keyword lookup.
 	 */
-	private static Hashtable mKeywordLookup;
+	private static HashMap mKeywordLookup;
 
 	static
 	{
-		mKeywordLookup = new Hashtable();
+		mKeywordLookup = new HashMap();
 		mKeywordLookup.put(END_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_END));
 		mKeywordLookup.put(THEN_KEYWORD,
@@ -1551,6 +1682,6 @@ public class Interpreter
 	public Interpreter(ContextStack context)
 	{
 		mContext = context;
-		mStatementBlocks = new Hashtable();
+		mStatementBlocks = new HashMap();
 	}
 }
