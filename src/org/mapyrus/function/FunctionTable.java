@@ -116,6 +116,9 @@ public class FunctionTable
 		f = new Upper();
 		mFunctions.put(f.getName(), f);
 
+		f = new Wordwrap();
+		mFunctions.put(f.getName(), f);
+
 		try
 		{
 			/*
