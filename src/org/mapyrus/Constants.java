@@ -100,6 +100,13 @@ public class Constants
 	 */
 	public static final int DB_CONNECTION_TIMEOUT = 30;
 
+ 	/*
+ 	 * Timeout in seconds after which an idle database connection
+ 	 * is closed and a new connection is made.
+ 	 * This prevents a socket timeout.
+ 	 */
+ 	public static final int DB_IDLE_TIMEOUT = 600;
+
 	/*
 	 * Maximum number of icons to cache in memory.
 	 */
