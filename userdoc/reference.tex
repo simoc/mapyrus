@@ -1394,13 +1394,26 @@ Only the outline of each letter is drawn, no part of the letter is filled. \\
 
 \begin{alltt}
 geoimage \textit{filename} [, \textit{extras} ]
+geoimage \textit{url} [, \textit{extras} ]
+geoimage \textit{WebMapServiceUrl} [, \textit{extras} ]
 \end{alltt}
 
 Displays a geo-referenced image.
 
-\textit{filename} is the name of a GIF, JPEG or PNG format image file.
+\textit{filename} or
+\textit{url}
+is the name of a GIF, JPEG or PNG format image file.
 An associated "worlds" file with suffix \texttt{.tfw} must exist,
 defining the world coordinate range covered by the image.
+
+\textit{webMapServiceUrl} is a URL request to an
+OGC Web Mapping Service (WMS)
+for an image.  The request type must be \texttt{GetMap}.
+The world coordinate range for the image is parsed from the
+\texttt{BBOX} parameter in the URL.
+See the Web Map Service Implementation specification at
+\texttt{http://www.opengis.org}
+for details of all parameters that must be included in the URL.
 
 \textit{extras} defines further options for the image, given as
 \textit{variable=value} values, separated by whitespace.
@@ -2230,7 +2243,7 @@ Extra & Description \\
 \hline
 \endfirsthead
 \hline
-\caption{Font Extras} \\
+\caption{Worlds Extras} \\
 \endfoot
 
 \hline
