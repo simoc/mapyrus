@@ -2,17 +2,17 @@
 # they are out of range.
 #
 let maxZoomlevel=5
-if zoomlevel eq '' or zoomlevel < 0
+if ZOOMLEVEL eq '' or ZOOMLEVEL < 0
 then
-	let zoomlevel=0
-elif zoomlevel > maxZoomlevel
+	let ZOOMLEVEL=0
+elif ZOOMLEVEL > maxZoomlevel
 then
-	let zoomlevel=maxZoomlevel
+	let ZOOMLEVEL=maxZoomlevel
 endif
 
-if labels ne 'on' and labels ne 'off'
+if LABELS ne 'on' and LABELS ne 'off'
 then
-	let labels='off'
+	let LABELS='off'
 endif
 
 # Create temporary PNG file containing map display for this HTTP request.
@@ -23,10 +23,10 @@ newpage "png", imageFile, 100, 100
 # Display part of dataset, zooming in on centre based on zoom level.
 #
 dataset "shapefile", "coastline.shp", "dbffields="
-let x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
-let y1 = Mapyrus.dataset.min.y + Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
-let x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
-let y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
+let x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (ZOOMLEVEL / (maxZoomlevel * 2 + 1))
+let y1 = Mapyrus.dataset.min.y + Mapyrus.dataset.height * (ZOOMLEVEL / (maxZoomlevel * 2 + 1))
+let x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (ZOOMLEVEL / (maxZoomlevel * 2 + 1))
+let y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (ZOOMLEVEL / (maxZoomlevel * 2 + 1))
 
 worlds x1, y1, x2, y2
 while Mapyrus.fetch.more
@@ -41,7 +41,7 @@ do
 done
 let recordCount = Mapyrus.fetch.count
 
-if labels eq 'on'
+if LABELS eq 'on'
 then
 	# Display point map containing labels.
 	#
@@ -72,12 +72,12 @@ print '<img src="' . imageFile . '">'
 #
 print '<form method=get action="' . Mapyrus.filename . '">'
 print 'Zoom level'
-print '<select name=zoomlevel size=1>'
+print '<select name=ZOOMLEVEL size=1>'
 let i = 0
 while i <= maxZoomlevel
 do
 	print '<option value=' . i
-	if i == zoomlevel
+	if i == ZOOMLEVEL
 	then
 		# Select current zoom factor in pop-up list.
 		#
@@ -91,13 +91,13 @@ print '</select>'
 
 # Add toggle button for labels on/off.
 #
-print '&nbsp;<input type=checkbox name=labels value=on'
-if labels eq 'on'
+print '&nbsp;<input type=checkbox name=LABELS value=on'
+if LABELS eq 'on'
 then
 	print ' checked'
 endif
 print '> Display Labels'
-print '&nbsp;<input type="submit" name="submit" value="Redisplay">'
+print '&nbsp;<input type="submit" name="SUBMIT" value="Redisplay">'
 print '</form>'
 
 print '<br>Record count ' . recordCount
