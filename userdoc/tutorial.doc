@@ -59,7 +59,25 @@ Tutorial
 
 <tr>
 <td>
-<a href="#datasets">Displaying Geographic Information System Datasets</a>
+<a href="#textfile">Displaying Data Stored In Text Files</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#shapefile">Displaying Data Stored In Shape Files</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#jdbc">Displaying Data Stored In A Database</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#performance">Display Performance</a>
 </td>
 </tr>
 
@@ -558,15 +576,13 @@ include tutorialpiechart1.mpy
 include endex.doc
 
 <img src="tutorialpiechart1.png">
-<p>
+
 include hr.doc
 
-<a name="datasets"></a>
-<h3>Displaying Geographic Information System Datasets</h3>
+<a name="textfile"></a>
+<h3>Displaying Data Stored In Text Files</h3>
 <p>
-Mapyrus reads geographic data and associated relational attributes
-from geographic information system (GIS) datasets.  The simplest
-source of data is a text file, with one record per line.
+The simplest source of data is a text file, with one record per line.
 The name and type of dataset to read is given in a
 <a href="reference.html#dataset">dataset</a>
 command.
@@ -576,7 +592,7 @@ command is used to begin reading from the dataset.
 Each record is retrieved with a
 <a href="reference.html#fetch">fetch</a>
 command in a loop and a variable is assigned for each field in the record.
-For a text file, fields are assigned to variables
+Fields are assigned to variables
 <tt>$1</tt>, <tt>$2</tt>, <tt>$3</tt>, ...
 and the whole record is assigned to variable
 <tt>$0</tt>.
@@ -631,9 +647,15 @@ include tutorialdatasets2.mpy
 include endex.doc
 
 <img src="tutorialdatasets2.png">
+
+include hr.doc
+
+<a name="shapefile"></a>
+<h3>Displaying Data Stored In Shape Files</h3>
 <p>
 
-Reading data from an ESRI Shape file format is similar to reading a text file.
+Reading data from an ESRI Shape file format is similar to reading a
+<a href="#textfile">text file</a>.
 A Shape file defines a bounding rectangle so the
 <a href="reference.html#internalvars">variables</a>
 <tt>Mapyrus.dataset.min.x</tt>,
@@ -653,7 +675,7 @@ geometry for each record is assigned to a variable named
 command.
 <p>
 The following example demonstrates reading an ESRI Shape file
-containing attribute fields named <tt>HOTELNAME</tt>
+containing points and attribute fields named <tt>HOTELNAME</tt>
 and
 <tt>STARRATING</tt>.
 
@@ -662,6 +684,55 @@ include tutorialdatasets3.mpy
 include endex.doc
 
 <img src="tutorialdatasets3.png">
+<p>
+
+include hr.doc
+
+<a name="jdbc"></a>
+<h3>Displaying Data Stored In A Database</h3>
+<p>
+Data is read from a relational database using
+the Java JDBC interface using a JDBC driver provided
+as part of the database.
+Each field in a database table has a name.
+Fields fetched with the
+<a href="reference.html#fetch">fetch</a>
+command are assigned to variables with the same name as the field.
+In the following example three fields are fetched from each
+row and assigned to variables named
+<tt>longitude</tt>, <tt>latitude</tt> and <tt>assetcode</tt>.
+<p>
+An SQL <tt>where</tt> clause is used to limit data read from
+the database to inside the area of interest.
+
+include beginex.doc
+include tutorialdatasets4.mpy
+include endex.doc
+
+For databases supporting the
+<a href="http://www.opengis.org">
+OpenGIS Simple Features Specification For SQL
+</a>, define geometry fields being fetched with the
+<tt>wktfields</tt> option.  Fetched
+geometry fields are added to the current path
+directly with an
+<a href="reference.html#addpath">addpath</a>
+command.
+The following example demonstrates fetching
+a geometry field named <tt>geom</tt> from the
+database and displaying it.
+
+include beginex.doc
+include tutorialdatasets5.mpy
+include endex.doc
+
+include hr.doc
+
+<a name="performance"></a>
+<h3>Display Performance</h3>
+<p>
+
+The following techniques help improve the display speed of large datasets.
 <p>
 
 Check the
@@ -674,6 +745,36 @@ then the details will not be legible so skip display of the detailed
 part of the dataset.
 For example, display all streets when zoomed in,
 but only highways when zoomed out.
+
+<p>
+Store two copies of the same data.
+One at high resolution and one at low resolution.
+Select the dataset with the resolution closest to the
+current display scale.
+
+<p>
+For dense data, with many points very close to each other,
+skip every second piece of data in the dataset using
+two 
+<a href="reference.html#fetch">fetch</a>
+commands together.
+When the dataset is in a database this is more effectively
+done by ignoring odd numbered rows using an SQL statement like:
+
+include beginex.doc
+select X, Y, Freq from SCATTER where MOD(rowid, 2) = 0
+include endex.doc
+
+<p>
+Set an upper limit on the number of rows fetched or the
+time for display by checking the
+<a href="reference.html#internalvars">
+internal variables
+</a>
+<tt>Mapyrus.import.count</tt>
+and
+<tt>Mapyrus.timer</tt>
+in a loop and ending when the limit is exceeded.
 
 include hr.doc
 
@@ -805,6 +906,8 @@ Additional TrueType fonts are installed using operating system commands.
 A TrueType font is defined in a binary file with suffix
 <tt>.ttf</tt>.
 The name of a TrueType font normally does not match the filename exactly.
+MicroSoft Windows Explorer and font display programs show the name of
+a font contained in a TrueType font file.
 <p>
 Other operating systems do not support TrueType fonts.  To use
 TrueType fonts on other operating systems using the
@@ -815,7 +918,6 @@ command.  Include filenames of TrueType font definition files
 to be used in the page.
 
 <p>
-// TODO how to know name of font from file?
 
 include hr.doc
 
@@ -947,8 +1049,26 @@ include hr.doc
 <a name="htmladd"></a>
 <h3>Returning Additional Information From Mapyrus HTTP Server</h3>
 <p>
+Further ideas for building a complete HTML application are:
+<p>
 
-// TODO explain overview windows, legends, returning query information
+For datasets covering a wide area generate two images for
+each HTML page: a detailed map display and an overview map display
+with a box showing the position of the detailed map in the dataset.
+
+<p>
+Generate an image containing a
+<a href="#scalebar">
+scalebar
+</a>
+and include this in the HTML page.
+
+<p>
+Restrict layers to a limited scale range by checking the
+<a href="reference.html#internalvars">
+internal variable
+</a>
+<tt>Mapyrus.worlds.scale</tt>.
 
 include hr.doc
 
