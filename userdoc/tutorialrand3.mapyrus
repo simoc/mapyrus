@@ -1,7 +1,7 @@
 begin x
 	# Draw 'x' symbol.
 	#
-	color "#C5C500"
+	color "#0000A0"
 	linestyle 0.1
 	move -0.7, -0.7
 	draw 0.7, 0.7
