@@ -84,7 +84,7 @@ public class ShapefileDataset implements GeographicDataset
 	private static final byte DBF_NUMBER = 'N';
 	private static final byte DBF_FLOATING = 'F';
 	private static final byte DBF_LOGICAL = 'L';
-	
+
 	/*
 	 * Empty path for null shapes.
 	 */
@@ -862,5 +862,22 @@ public class ShapefileDataset implements GeographicDataset
 			return(row);
 		else
 			return(null);
+	}
+
+	/**
+	 * Closes dataset.
+	 */
+	public void close() throws MapyrusException
+	{
+		try
+		{
+			mShapeStream.close();
+			if (mDBFStream != null)
+				mDBFStream.close();
+		}
+		catch (IOException e)
+		{
+			throw new MapyrusException(e.getMessage());
+		}
 	}
 }
