@@ -14,9 +14,9 @@ web browser.
 
 \subsection{First Steps}
 
-Enter the following lines into a text file named \texttt{first.txt}.
+Enter the following lines into a text file named \texttt{first.mapyrus}.
 
-\verbatiminput{tutorialfirst1.mpy}
+\verbatiminput{tutorialfirst1.mapyrus}
 
 Each line in the file is a command for Mapyrus.  The first line sets output to
 a 30mm square Encapsulated PostScript format file named
@@ -28,14 +28,15 @@ on the page giving coordinates in millimetres.  The sixth line is a
 current color and line style.
 
 Open a terminal window and run Mapyrus using following command to execute the
-commands in the file \texttt{first.txt} (\textit{install-dir} is the directory
+commands in the file \texttt{first.mapyrus}
+(\textit{install-dir} is the directory
 in which Mapyrus is installed).
 
 \begin{alltt}
-java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus first.txt
+java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
 \end{alltt}
 
-When Mapyrus reaches the end of the file \texttt{first.txt}
+When Mapyrus reaches the end of the file \texttt{first.mapyrus}
 the output file \texttt{tutorialfirst1.eps} is saved and Mapyrus exits.
 When the PostScript file is then printed, it appears as in
 Figure \ref{tutorialfirst1}.
@@ -47,9 +48,9 @@ Figure \ref{tutorialfirst1}.
 \end{figure}
 
 
-Change the file \texttt{first.txt} to contain the following lines.
+Change the file \texttt{first.mapyrus} to contain the following lines.
 
-\verbatiminput{tutorialfirst2.mpy}
+\verbatiminput{tutorialfirst2.mapyrus}
 
 In this example, color is set as a hex value instead of a name,
 a rectangle is defined with the \texttt{box} command
@@ -65,9 +66,9 @@ Figure \ref{tutorialfirst2} shows the output of these commands.
 \label{tutorialfirst2}
 \end{figure}
 
-Change the file \texttt{first.txt} to contain the following lines.
+Change the file \texttt{first.mapyrus} to contain the following lines.
 
-\verbatiminput{tutorialfirst3.mpy}
+\verbatiminput{tutorialfirst3.mapyrus}
 
 This example demonstrates drawing circular arcs,
 giving the direction (a positive value for clockwise and a negative
@@ -100,7 +101,7 @@ following example.  The variable
 is set by Mapyrus automatically.
 The output of this example is shown in Figure \ref{tutorialvar1}.
 
-\verbatiminput{tutorialvar1.mpy}
+\verbatiminput{tutorialvar1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialvar1.eps}
@@ -114,7 +115,7 @@ functions
 and stepping through a string one element at a time.
 The output of this example is shown in Figure \ref{tutorialvar2}.
 
-\verbatiminput{tutorialvar2.mpy}
+\verbatiminput{tutorialvar2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialvar2.eps}
@@ -139,7 +140,7 @@ graphics state is restored before returning.
 The following example shows a simple procedure named \texttt{trail}.
 The output of this example is shown in Figure \ref{tutorialprocedures1}.
 
-\verbatiminput{tutorialprocedures1.mpy}
+\verbatiminput{tutorialprocedures1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialprocedures1.eps}
@@ -154,7 +155,7 @@ moved to that point.  This permits several symbols to be drawn
 easily and is demonstrated in the following example.  The 
 output of this example is shown in Figure \ref{tutorialprocedures2}.
 
-\verbatiminput{tutorialprocedures2.mpy}
+\verbatiminput{tutorialprocedures2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialprocedures2.eps}
@@ -168,11 +169,11 @@ Put frequently used procedures in a separate file and use an
 line to include it in other files.  When this is done for the
 previous example, the procudure is put in a file.
 
-\verbatiminput{tutorialprocedures3.mpy}
+\verbatiminput{tutorialprocedures3.mapyrus}
 
 and the file containing the commands to execute
 
-\verbatiminput{tutorialprocedures4.mpy}
+\verbatiminput{tutorialprocedures4.mapyrus}
 
 \subsection{Displaying Lines}
 
@@ -183,7 +184,7 @@ command to replace the path with evenly spaced sample points and
 then call a procedure to draw a symbol at each sample point.
 The following example demonstrates this.
 
-\verbatiminput{tutoriallines1.mpy}
+\verbatiminput{tutoriallines1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines1.eps}
@@ -196,7 +197,7 @@ combining solid and dashed linestyles.
 For best results display all lines with a solid linestyle,
 then display all lines again with a dashed linestyle.
 
-\verbatiminput{tutoriallines2.mpy}
+\verbatiminput{tutoriallines2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines2.eps}
@@ -209,7 +210,7 @@ thin linestyles and symbols at sampled points.
 For best results display all lines with a thick linestyle,
 then display all lines again with a thin linestyle.
 
-\verbatiminput{tutoriallines3.mpy}
+\verbatiminput{tutoriallines3.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines3.eps}
@@ -220,7 +221,7 @@ then display all lines again with a thin linestyle.
 The following examples demonstrate creating sample points
 from the path to generate further line styles.
 
-\verbatiminput{tutoriallines4.mpy}
+\verbatiminput{tutoriallines4.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines4.eps}
@@ -228,7 +229,7 @@ from the path to generate further line styles.
 \label{tutoriallines4}
 \end{figure}
 
-\verbatiminput{tutoriallines5.mpy}
+\verbatiminput{tutoriallines5.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines5.eps}
@@ -248,7 +249,7 @@ command to replace the path with evenly spaced stripes and
 then draw each stripe.  The following example demonstrates this,
 with the output shown in Figure \ref{tutorialpolygons1}.
 
-\verbatiminput{tutorialpolygons1.mpy}
+\verbatiminput{tutorialpolygons1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialpolygons1.eps}
@@ -265,7 +266,7 @@ remains unmodified in the calling procedure.
 This is demonstrated in the following example, with the output
 shown in Figure \ref{tutorialpolygons2}.
 
-\verbatiminput{tutorialpolygons2.mpy}
+\verbatiminput{tutorialpolygons2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialpolygons2.eps}
@@ -279,7 +280,7 @@ polygon, then call a procedure to draw a symbol at each point.
 This is demonstrated in the following example, with the output
 shown in Figure \ref{tutorialpolygons3}.
 
-\verbatiminput{tutorialpolygons3.mpy}
+\verbatiminput{tutorialpolygons3.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialpolygons3.eps}
@@ -296,7 +297,7 @@ in Figure \ref{tutorialpolygons4}.
 Use the \texttt{protect} command instead of \texttt{clip}
 to display a border around the outside of a polygon.
 
-\verbatiminput{tutorialpolygons4.mpy}
+\verbatiminput{tutorialpolygons4.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialpolygons4.eps}
@@ -314,7 +315,7 @@ Setting fonts, justification and displaying multiple lines
 are demonstrated in the following example, with output
 shown in Figure \ref{tutoriallabels1}.
 
-\verbatiminput{tutoriallabels1.mpy}
+\verbatiminput{tutoriallabels1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallabels1.eps}
@@ -328,7 +329,7 @@ one pixel offset from original position and in a different color highlights the
 label.  These two techniques are demonstrated in the following example,
 with output shown in Figure \ref{tutoriallabels2}.
 
-\verbatiminput{tutoriallabels2.mpy}
+\verbatiminput{tutoriallabels2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallabels2.eps}
@@ -357,7 +358,7 @@ Figure \ref{tutorialdatasets1}.
 \label{tutorialdatasets1txt}
 \end{figure}
 
-\verbatiminput{tutorialdatasets1.mpy}
+\verbatiminput{tutorialdatasets1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialdatasets1.eps}
@@ -390,7 +391,7 @@ The output is shown in Figure \ref{tutorialdatasets2}.
 \label{streetsEE}
 \end{figure}
 
-\verbatiminput{tutorialdatasets2.mpy}
+\verbatiminput{tutorialdatasets2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialdatasets2.eps}
@@ -417,7 +418,7 @@ and attribute fields named \texttt{HOTELNAME} and \texttt{STARRATING}.  The
 attribute fields are used as labels and to control the appearance of the
 symbols.
 
-\verbatiminput{tutorialdatasets3.mpy}
+\verbatiminput{tutorialdatasets3.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialdatasets3.eps}
@@ -441,7 +442,7 @@ row and assigned to variables named
 An SQL where clause is used to limit data read from
 the database to inside the area of interest.
 
-\verbatiminput{tutorialdatasets4.mpy}
+\verbatiminput{tutorialdatasets4.mapyrus}
 
 For databases supporting the \textit{OpenGIS Simple Features Specification For
 SQL}, list the geometry fields being fetched with the \texttt{wktfields}
@@ -450,7 +451,7 @@ added to the current path directly with an \texttt{addpath} command.  The
 following example demonstrates fetching a geometry field named \texttt{geom}
 from the database and displaying it.
 
-\verbatiminput{tutorialdatasets5.mpy}
+\verbatiminput{tutorialdatasets5.mapyrus}
 
 \subsection{Display Performance}
 
@@ -505,7 +506,7 @@ Note that the legend entry for the procedure \texttt{road} is
 not included in the legend because this procedure is not
 executed in the example.
 
-\verbatiminput{tutoriallegend1.mpy}
+\verbatiminput{tutoriallegend1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallegend1.eps}
@@ -527,7 +528,7 @@ PostScript file inserted into a table.  The output is shown in Figure
 \ref{tutoriallegend2}.  This approach is also useful for inserting legend
 entries into an HTML table.
 
-\verbatiminput{tutoriallegend2.mpy}
+\verbatiminput{tutoriallegend2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallegend2.eps}
@@ -568,7 +569,7 @@ example by passing a \texttt{reading} attribute value for each point
 that is displayed.  The output is shown in Figure \ref{tutorialattribute1}.
 A legend is also created to show how the coloring works.
 
-\verbatiminput{tutorialattribute1.mpy}
+\verbatiminput{tutorialattribute1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialattribute1.eps}
@@ -604,7 +605,7 @@ An alternative approach for displaying scalebars is to save the scale value in
 a variable, use the \texttt{newpage} command to create a new output file and
 display the scalebar in a separate file from the map.
 
-\verbatiminput{tutorialscalebar1.mpy}
+\verbatiminput{tutorialscalebar1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialscalebar1.eps}
@@ -628,7 +629,7 @@ performs the task of displaying a piechart.  Include this file and call the
 
 The output is shown in Figure \ref{tutorialpiechart1}.
 
-\verbatiminput{tutorialpiechart1.mpy}
+\verbatiminput{tutorialpiechart1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialpiechart1.eps}
@@ -643,7 +644,7 @@ function and help give a less mechanical appearance.
 The following example demonstrates setting size and color randomly.
 The output is shown in Figure \ref{tutorialrand1}.
 
-\verbatiminput{tutorialrand1.mpy}
+\verbatiminput{tutorialrand1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialrand1.eps}
@@ -654,7 +655,7 @@ The output is shown in Figure \ref{tutorialrand1}.
 The next example demonstrates setting rotation randomly, with output shown in
 Figure \ref{tutorialrand2}.
 
-\verbatiminput{tutorialrand2.mpy}
+\verbatiminput{tutorialrand2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialrand2.eps}
@@ -665,7 +666,7 @@ Figure \ref{tutorialrand2}.
 The next example demonstrates setting position randomly for polygon fill, with
 output shown in Figure \ref{tutorialrand3}.
 
-\verbatiminput{tutorialrand3.mpy}
+\verbatiminput{tutorialrand3.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialrand3.eps}
@@ -684,7 +685,7 @@ demonstrated in the following example, with output shown in Figure
 \texttt{shiftpath} command to draw the highlight on a different side of the
 polygon.
 
-\verbatiminput{tutorialshadow1.mpy}
+\verbatiminput{tutorialshadow1.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutorialshadow1.eps}
@@ -765,13 +766,13 @@ files to be used in the page.
 \label{tutorialhttpserver}
 
 Enter the following lines into a text file named
-\texttt{tutorialhttpserver1.mpy}.
+\texttt{tutorialhttpserver1.mapyrus}.
 
-\verbatiminput{tutorialhttpserver1.mpy}
+\verbatiminput{tutorialhttpserver1.mapyrus}
 
 Copy the file \texttt{coastline.shp} from the \texttt{doc} subdirectory in the
 Mapyrus installation into the same directory as the file
-\texttt{tutorialhttpserver1.mpy}.  In a terminal window, change to the
+\texttt{tutorialhttpserver1.mapyrus}.  In a terminal window, change to the
 directory containing the two files and start Mapyrus as an HTTP server on port
 8410 with the following command
 (where \textit{install-dir} is the directory in which Mapyrus is installed).
@@ -780,9 +781,9 @@ directory containing the two files and start Mapyrus as an HTTP server on port
 java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus -s 8410
 \end{alltt}
 
-Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver1.mpy} in a
+Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver1.mapyrus} in a
 web browser.  Mapyrus receives the request, executes the commands in the file
-\texttt{tutorialhttpserver1.mpy} and returns the PNG image that is written to
+\texttt{tutorialhttpserver1.mapyrus} and returns the PNG image that is written to
 standard output to the web browser.
 
 \subsection{Passing Variables To Mapyrus HTTP Server Through URLs}
@@ -791,13 +792,13 @@ To vary the display that is created by the Mapyrus HTTP Server, include
 variables in the URL.  For example,
 
 \begin{verbatim}
-http://localhost:8410/tutorialurl.mpy?x1=11&y1=48&x2=12&y2=49&labels=off
+http://localhost:8410/tutorialurl.mapyrus?x1=11&y1=48&x2=12&y2=49&labels=off
 \end{verbatim}
 
 The variables \texttt{x1}, \texttt{y1}, \texttt{x2}, \texttt{y2}
 and \texttt{labels} are automatically set in Mapyrus with the values
 passed in the URL before interpreting
-the commands in the file \texttt{tutorialurl.mpy}.
+the commands in the file \texttt{tutorialurl.mapyrus}.
 
 For applications that manage state
 and provide a graphical user interface (such as clients written in
@@ -813,7 +814,7 @@ unique filenames using the
 \texttt{tempname}
 function and return references to the images in the HTML.
 
-The example file \texttt{tutorialhtmlpage1.mpy} demonstrates
+The example file \texttt{tutorialhtmlpage1.mapyrus} demonstrates
 this, displaying ESRI Shape file
 \texttt{coastline.shp}
 and text file
@@ -826,7 +827,7 @@ In a terminal window change to this directory and
 start Mapyrus with the HTTP Server option, as described in section
 \ref{tutorialhttpserver}.
 Then enter the URL
-\texttt{http://localhost:8410/tutorialhtmlpage1.mpy}
+\texttt{http://localhost:8410/tutorialhtmlpage1.mapyrus}
 in a web browser.
 
 To simplify editing of HTML pages for an application, setup
@@ -837,7 +838,7 @@ independently from Mapyrus.
 In Mapyrus, return the HTML pages with the placeholders
 replaced by real values using the
 \texttt{replace}
-function.  The Mapyrus commands in the file \texttt{tutorialhtmlpage2.mpy}
+function.  The Mapyrus commands in the file \texttt{tutorialhtmlpage2.mapyrus}
 and the template HTML file \texttt{tutorialhtmlpage2.txt}
 demonstrate this.  Both files are found in the
 \texttt{doc} subdirectory.
@@ -877,7 +878,7 @@ The following example demonstrates
 using these variables to generate a new image, based on the
 position clicked in the imagemap.
 
-\verbatiminput{tutorialimagemap1.mpy}
+\verbatiminput{tutorialimagemap1.mapyrus}
 
 \subsection{Combining Mapyrus With Other Software}
 
@@ -901,13 +902,13 @@ The following examples demonstrate these methods.
 
 \begin{verbatim}
 java -DDATADIR=$DATADIR -DNameidx=Q7B80L -classpath mapyrus.jar \
-  org.mapyrus.Mapyrus mycommands.txt | pngtopnm | ppmtopgm | \
+  org.mapyrus.Mapyrus mycommands.mapyrus | pngtopnm | ppmtopgm | \
   pgmtopbm | pbmtoascii -2x4
 \end{verbatim}
 
 \begin{verbatim}
 java -classpath mapyrus.jar org.mapyrus.Mapyrus \
-  $HOME/common.txt mycommands.txt > myfile.ps
+  $HOME/common.mapyrus mycommands.mapyrus > myfile.ps
 gs -sDEVICE=faxg3 -sOutputFile=myfile.fax \
   -TextAlphaBits=4 myfile.ps
 \end{verbatim}
@@ -927,7 +928,7 @@ HTTP requests.  For example,
 
 \begin{verbatim}
 w3m -dump_source \
-  http://localhost:8410/wsrv.mpy?plz=81673&zoomlevel=3 > m.png
+  http://localhost:8410/wsrv.mapyrus?plz=81673&zoomlevel=3 > m.png
 \end{verbatim}
 
 \subsection{Building Mapyrus From Source}
