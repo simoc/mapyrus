@@ -23,6 +23,7 @@
 
 package org.mapyrus;
 
+import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -93,6 +94,7 @@ public class Argument
 	private String mStringValue;
 	private String mVarname;
 	private double []mGeometryValue;
+	private Rectangle2D.Double mGeometryBoundingBox;
 	private HashMap mHashMap;
 
 	/**
@@ -641,6 +643,119 @@ public class Argument
 			parseGeometry(mStringValue, st, 0);
 		}
 		return(mGeometryValue);
+	}
+
+	/**
+	 * Returns bounding box of a geometry argument.
+	 * @param geometry array containing geometry coordinates.
+	 * @param index index at which to start parsing geometry, returns
+	 * array index beyond geometry that was scanned.
+	 * @param boundingBox current bounding box of geometry already scanned.
+	 * @return minimum bounding rectangle, or null if geometry is empty.
+	 */
+	private Rectangle2D.Double getGeometryBoundingBox(double []geometry,
+		int index[], Rectangle2D.Double boundingBox)
+	{
+		int i = index[0];
+		int geometryType = (int)geometry[i];
+		int count = (int)geometry[i + 1];
+		int retval;
+		double x, y;
+
+		/*
+		 * Return nothing if geometry is empty.
+		 */
+		if (count == 0)
+		{
+			i += 2;
+		}
+		else
+		{
+			switch (geometryType)
+			{
+				case GEOMETRY_POINT:
+					x = geometry[i + 3];
+					y = geometry[i + 4];
+					if (boundingBox == null)
+						boundingBox = new Rectangle2D.Double(x, y, 0, 0);
+					else
+						boundingBox.add(x, y);
+					i += 5;
+					break;
+				case GEOMETRY_LINESTRING:
+				case GEOMETRY_POLYGON:
+					x = geometry[i + 3];
+					y = geometry[i + 4];
+
+					if (boundingBox == null)
+						boundingBox = new Rectangle2D.Double(x, y, 0, 0);
+					else
+						boundingBox.add(x, y);
+
+					int nextIndex = 6;
+					for (int j = 1; j < count; j++)
+					{
+						x = geometry[i + nextIndex];
+						y = geometry[i + nextIndex + 1];
+						boundingBox.add(x, y);
+						nextIndex += 3;
+					}
+					i += 2 + count * 3;
+					break;
+				case GEOMETRY_MULTIPOINT:
+				case GEOMETRY_MULTILINESTRING:
+				case GEOMETRY_MULTIPOLYGON:
+				case GEOMETRY_COLLECTION:
+					i += 2;
+					index[0] = i;
+
+					for (int j = 0; j < count; j++)
+					{
+						/*
+						 * Add bounding box of each sub-geometry
+						 * to our geometry.
+						 */
+						boundingBox = getGeometryBoundingBox(geometry,
+							index, boundingBox);
+					}
+					i = index[0];
+					break;
+			}
+		}
+
+		/*
+		 * Return index of where parsing of next geometry should
+		 * begin.
+		 */
+		index[0] = i;
+
+		return(boundingBox);
+	}
+
+	/**
+	 * Returns bounding box of a geometry argument.
+	 * @return minimum bounding rectangle, or null if geometry is empty.
+	 */
+	public Rectangle2D.Double getGeometryBoundingBox() throws MapyrusException
+	{
+		Rectangle2D.Double retval = mGeometryBoundingBox;
+
+		if (retval == null)
+		{
+			/*
+			 * Calculate the bounding box the first time it is requested,
+			 * then remember it for later.
+			 * Don't remember bounding rectangle for points -- we can
+			 * easily calculate this each time it is needed.
+			 */
+			double geometry[] = getGeometryValue();
+			int index[] = new int[1];
+			index[0] = 0;
+			retval = getGeometryBoundingBox(geometry, index, null);
+			if (geometry[0] != GEOMETRY_POINT)
+				mGeometryBoundingBox = retval;
+		}
+		return(retval);
 	}
 
 	/**
