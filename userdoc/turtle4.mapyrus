@@ -4,9 +4,8 @@ begin scissors
   #
   color "black"
   linestyle 0.3
-  move -1, 0
-  arc 1, -1, 1, -1, 0
-  arc 1, -1, -1, -1, 0
+  circle -1, 1, 1
+  circle -1, -1, 1
   stroke
   clearpath
   move 0, 1
