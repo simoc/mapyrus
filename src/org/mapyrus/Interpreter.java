@@ -390,7 +390,7 @@ public class Interpreter
 				break;
 
 			case Statement.IMPORT:
-				if (nExpressions > 3)
+				if (nExpressions >= 3)
 				{
 					/*
 					 * All arguments are strings.
