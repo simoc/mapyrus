@@ -32,13 +32,13 @@ import java.util.ResourceBundle;
  */
 public class MapyrusMessages
 {
+	public static final String CANNOT_OPEN_URL = "cannotopenurl";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
 	public static final String DEFINE_TRANSFORM = "definetransform";
 	public static final String ERROR_PS = "errorps";
 	public static final String EXPECTED = "expected";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
-
 	public static final String INVALID_ARC = "invalidarc";
 	public static final String INVALID_COLOR = "invalidcolor";
 	public static final String INVALID_COLOR_TYPE = "invalidcolortype";
