@@ -34,8 +34,9 @@ public class Statement
 	public static final int CLIP = 19;
 	public static final int SCALE = 20;
 	public static final int ROTATE = 21;
-	public static final int NEWPAGE = 22;
-	public static final int PRINT = 23;
+	public static final int WORLDS = 22;
+	public static final int NEWPAGE = 23;
+	public static final int PRINT = 24;
 
 	
 	/*
@@ -100,6 +101,7 @@ public class Statement
 		mStatementTypeLookup.put("clip", new Integer(CLIP));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
+		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 	}

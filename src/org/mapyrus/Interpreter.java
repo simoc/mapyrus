@@ -307,7 +307,26 @@ public class Interpreter
 						st.getFilenameAndLineNumber());
 				}
 				break;
-					
+
+			case Statement.WORLDS:
+				if (nExpressions == 4 &&
+					args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC &&
+					args[2].getType() == Argument.NUMERIC &&
+					args[3].getType() == Argument.NUMERIC)
+				{
+					context.setWorlds(args[0].getNumericValue(),
+						args[1].getNumericValue(),
+						args[2].getNumericValue(),
+						args[3].getNumericValue());
+				}
+				else
+				{
+					throw new MapyrusException("Invalid worlds values at " +
+						st.getFilenameAndLineNumber());
+				}
+				break;
+
 			case Statement.NEWPAGE:
 				if (nExpressions == 4 &&
 					args[0].getType() == Argument.STRING &&
