@@ -478,9 +478,9 @@ public class OutputFormat
 		 */
 		if (mOutputType == POSTSCRIPT)
 		{
-			mLinearFormat = new DecimalFormat("#.##");
-			mColorFormat = new DecimalFormat("#.###");
-			mRotationFormat = new DecimalFormat("#.####");
+			mLinearFormat = new DecimalFormat("#.##", Constants.US_DECIMAL_FORMAT_SYMBOLS);
+			mColorFormat = new DecimalFormat("#.###", Constants.US_DECIMAL_FORMAT_SYMBOLS);
+			mRotationFormat = new DecimalFormat("#.####", Constants.US_DECIMAL_FORMAT_SYMBOLS);
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 			
 			mSuppliedFontResources = new HashSet();

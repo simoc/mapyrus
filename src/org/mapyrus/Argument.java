@@ -593,9 +593,9 @@ public class Argument
 			 * to give more significant digits.
 			 */				
 			if (absValue != 0 && (absValue < 0.01 || absValue > 10000000.0))
-				format = new DecimalFormat("#.################E0");
+				format = new DecimalFormat("#.################E0", Constants.US_DECIMAL_FORMAT_SYMBOLS);
 			else
-				format = new DecimalFormat("#.################");
+				format = new DecimalFormat("#.################", Constants.US_DECIMAL_FORMAT_SYMBOLS);
 
 			retval = format.format(mNumericValue);
 		}
