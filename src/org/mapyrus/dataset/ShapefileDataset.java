@@ -232,38 +232,57 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * If there is an accompanying .prj file with the projection then read it.
 		 */
+		BufferedReader prjReader = null;
 		try
 		{
-			BufferedReader prjReader = new BufferedReader(new FileReader(prjFilename));
+			prjReader = new BufferedReader(new FileReader(prjFilename));
 			mProjection = prjReader.readLine();
 		}
 		catch(FileNotFoundException e)
 		{
 			mProjection = "";
 		}
-
-		/*
-		 * Read shape header, checking magic number and reading everything with
-		 * correct byte order.
-		 */
-		readShapeHeader();
-
-		/*
-		 * Read header from database file to get names and types of other fields.
-		 */
-		readDBFHeader(extrasDBFFields);
-
-		if (mQueryExtents.intersects(mExtents))
+		finally
 		{
-			mBytesRead = 0;
-			mDBFRecord = new byte[mDBFRecordLength];
+			if (prjReader != null)
+				prjReader.close();
 		}
-		else
+
+		try
 		{
 			/*
-			 * Shape file does not overlap current extents.  Fetch will return nothing.
+			 * Read shape header, checking magic number and reading everything with
+			 * correct byte order.
 			 */
-			mBytesRead = mShapeFileLength;
+			readShapeHeader();
+
+			/*
+			 * Read header from database file to get names and types of other fields.
+			 */
+			readDBFHeader(extrasDBFFields);
+
+			if (mQueryExtents.intersects(mExtents))
+			{
+				mBytesRead = 0;
+				mDBFRecord = new byte[mDBFRecordLength];
+			}
+			else
+			{
+				/*
+				 * Shape file does not overlap current extents.  Fetch will return nothing.
+				 */
+				mBytesRead = mShapeFileLength;
+			}
+		}
+		catch (IOException e1)
+		{
+			close();
+			throw e1;
+		}
+		catch (MapyrusException e2)
+		{
+			close();
+			throw e2;
 		}
 	}
 
@@ -915,15 +934,28 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	public void close() throws MapyrusException
 	{
+		/*
+		 * Always close both files being read.
+		 */
 		try
 		{
 			mShapeStream.close();
-			if (mDBFStream != null)
-				mDBFStream.close();
 		}
 		catch (IOException e)
 		{
 			throw new MapyrusException(e.getMessage());
+		}
+		finally
+		{
+			try
+			{
+				if (mDBFStream != null)
+					mDBFStream.close();
+			}
+			catch (IOException e)
+			{
+				throw new MapyrusException(e.getMessage());
+			}
 		}
 	}
 }
