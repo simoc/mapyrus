@@ -42,6 +42,7 @@ public class MapyrusMessages
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
 	public static final String FIELD_NOT_OGC_TEXT = "fieldnotogctext";
+	public static final String FILE_NOT_FOUND = "filenotfound";
 	public static final String GEOMETRY_NOT_NUMERIC = "geometrynotnumeric";
 	public static final String HASHMAP_NOT_NUMERIC = "hashmapnotnumeric";
 	public static final String HTTP_HEADER = "httpheader";
