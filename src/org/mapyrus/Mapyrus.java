@@ -28,6 +28,7 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points, lines and polygons
@@ -182,8 +183,19 @@ public class Mapyrus
 			System.exit(1);
 		}
 
-		logger.config(Constants.PROGRAM_NAME + " " + Constants.getVersion());
-		logger.config(MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port);
+		/*
+		 * Log startup configuration information and write it to
+		 * the terminal too so user cannot miss it.
+		 */
+		String version = Constants.PROGRAM_NAME + " " + Constants.getVersion();
+		String accepting = MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port;
+		if (logger.isLoggable(Level.CONFIG))
+		{
+			logger.config(version);
+			logger.config(accepting);
+		}
+		System.out.println(version);
+		System.out.println(accepting);
 
 		while (true)
 		{
