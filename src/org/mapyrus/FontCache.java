@@ -28,8 +28,6 @@ import java.awt.Font;
  */
 public class FontCache extends LRUCache
 {
-	private static final String cvsid = "@(#) $Id$";
-
 	/*
 	 * Number of fonts to cache in memory.
 	 */
