@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 
 public class Interpreter
 {
@@ -1001,6 +1003,27 @@ public class Interpreter
 		}
 	}
 
+	private void makeCall(Statement block, Vector parameters, Argument []args)
+		throws IOException, MapyrusException
+	{
+		Statement statement;
+
+		for (int i = 0; i < args.length; i++)
+		{
+			mContext.defineVariable((String)parameters.elementAt(i), args[i]);
+		}
+
+		/*
+		 * Execute each of the statements in the procedure block.
+		 */
+		Vector v = block.getStatementBlock();
+		for (int i = 0; i < v.size(); i++)
+		{
+			statement = (Statement)v.elementAt(i);
+			executeStatement(statement);
+		}
+	}
+
 	/**
 	 * Recursive function for executing statements.
 	 * @param preprocessor is source to read statements from.
@@ -1029,7 +1052,8 @@ public class Interpreter
 			
 			if (test.getType() != Argument.NUMERIC)
 			{
-				throw new MapyrusException("Invalid expression at " + statement.getFilenameAndLineNumber());
+				throw new MapyrusException("Invalid expression at " +
+					statement.getFilenameAndLineNumber());
 			}
 			
 			if (test.getNumericValue() != 0.0)
@@ -1061,7 +1085,8 @@ public class Interpreter
 			
 			if (test.getType() != Argument.NUMERIC)
 			{
-				throw new MapyrusException("Invalid expression at " + statement.getFilenameAndLineNumber());
+				throw new MapyrusException("Invalid expression at " +
+					statement.getFilenameAndLineNumber());
 			}
 			
 			/*
@@ -1081,7 +1106,8 @@ public class Interpreter
 				test = expr[0].evaluate(mContext);
 				if (test.getType() != Argument.NUMERIC)
 				{
-					throw new MapyrusException("Invalid expression at " + statement.getFilenameAndLineNumber());
+					throw new MapyrusException("Invalid expression at " +
+						statement.getFilenameAndLineNumber());
 				}
 			}
 		}
@@ -1090,11 +1116,13 @@ public class Interpreter
 			/*
 			 * Find the statements for the procedure block we are calling.
 			 */
-			Statement block = (Statement)mStatementBlocks.get(statement.getBlockName());
+			Statement block =
+				(Statement)mStatementBlocks.get(statement.getBlockName());
 			if (block == null)
 			{
-				throw new MapyrusException("Procedure not defined: " +
-					statement.getBlockName() + " at " + statement.getFilenameAndLineNumber());
+				throw new MapyrusException("Procedure '" +
+					statement.getBlockName() + "' not defined at " +
+					statement.getFilenameAndLineNumber());
 			}
 			
 			/*
@@ -1108,7 +1136,7 @@ public class Interpreter
 					"in call to " + statement.getBlockName() +
 					" at " + statement.getFilenameAndLineNumber());
 			}
-			
+
 			try
 			{
 				/*
@@ -1125,25 +1153,45 @@ public class Interpreter
 				throw new MapyrusException(e.getMessage() + " at " +
 					statement.getFilenameAndLineNumber());
 			}
-			
-			mContext.saveState();
-			for (int i = 0; i < args.length; i++)
-			{
-				mContext.defineVariable((String)formalParameters.elementAt(i), args[i]);
-			}
-			 				
+
 			/*
-			 * Execute each of the statements in the procedure block.
+			 * If one or more "move" points are defined without
+			 * any lines then call the procedure block repeatedly
+			 * with the origin transformed to each of move points
+			 * in turn.
 			 */
-			Vector v = block.getStatementBlock();
-			for (int i = 0; i < v.size(); i++)
+			int moveToCount = mContext.getMoveToCount();
+			int lineToCount = mContext.getLineToCount();
+			if (moveToCount > 0 && lineToCount == 0)
 			{
-				statement = (Statement)v.elementAt(i);
-				executeStatement(statement);
+				/*
+				 * Step through path, setting origin and rotation for each
+				 * point and then calling procedure block.
+				 */
+				float coords[];
+				Vector moveTos = mContext.getMoveTos();
+				
+				for (int i = 0; i < moveToCount; i++)
+				{
+					mContext.saveState();
+					coords = (float [])moveTos.elementAt(i);
+					mContext.setTranslation(coords[0], coords[1]);
+					mContext.setRotation(coords[2]);
+					makeCall(block, formalParameters, args);
+					mContext.restoreState();
+				}
 			}
-			
-			mContext.restoreState();
-		}			
+			else
+			{
+				/*
+				 * Execute statements in procedure block.  Surround statments
+				 * with a save/restore so nothing can be changed by accident.
+				 */
+				mContext.saveState();
+				makeCall(block, formalParameters, args);
+				mContext.restoreState();
+			}
+		}
 		else
 		{
 			execute(statement, mContext);
