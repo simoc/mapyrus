@@ -463,11 +463,11 @@ public class OutputFormat
 	 * @param fontSize is size for labelling in millimetres.
 	 * @param fontRotation is rotation angle for font, in degrees,
 	 * measured counter-clockwise.
-	 * @param is clip path.
+	 * @param clipPaths are polygons to clip against, or null if there are no clip polygons.
 	 */
 	public void setAttributes(Color color, BasicStroke linestyle, int justify,
 		String fontName, int fontStyle, double fontSize, double fontRotation,
-		Shape clipPath)
+		ArrayList clipPaths)
 	{
 		int cap, join;
 		String styleName;
@@ -598,8 +598,17 @@ public class OutputFormat
 			 */
 			mGraphics2D.setColor(color);
 			mGraphics2D.setStroke(linestyle);
-			mGraphics2D.setClip(clipPath);
 			mGraphics2D.setFont(font);
+
+			mGraphics2D.setClip(null);
+			if (clipPaths != null)
+			{
+				for (int i = 0; i < clipPaths.size(); i++)
+				{
+					GeometricPath clipPath = (GeometricPath)(clipPaths.get(i));
+					mGraphics2D.clip(clipPath.getShape());
+				}
+			}
 		}
 	}
 
@@ -688,7 +697,7 @@ public class OutputFormat
 			mGraphics2D.fill(shape);
 		}
 	}
-	
+
 	/**
 	 * Set clip region to inside of currently defined path on output page.
 	 */
@@ -708,7 +717,7 @@ public class OutputFormat
 			{
 				/*
 				 * Clip region is outside page.  Clip to simple rectangle
-				 * outisde page instead so that nothing is shown.
+				 * outside page instead so that nothing is shown.
 				 */
 				writePostScriptShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f));
 			}
