@@ -1178,6 +1178,48 @@ public class OutputFormat
 	}
 
 	/**
+	 * Determines single color used in an image.
+	 * @param pixels RGB pixel values for image.
+	 * @return single non-transparent color used in an image, or null if
+	 * image has many colors.
+	 */
+	private Color getSingleImageColor(int []pixels)
+	{
+		Color singleColor = Color.BLACK;
+		boolean foundDifferentColors = false;
+		boolean foundFirstColor = false;
+		int pixelRGB = 0;
+		int i = 0;
+
+		/*
+		 * Check if all pixels are the same color, or transparent.
+		 */
+		while ((!foundDifferentColors) && i < pixels.length)
+		{
+			if ((pixels[i] & 0xff000000) != 0)
+			{
+				/*
+				 * Pixel is not transparent.
+				 */
+				if (!foundFirstColor)
+				{
+					foundFirstColor = true;
+					singleColor = new Color(pixels[i] & 0xffffff);
+				}
+				else
+				{
+					foundDifferentColors = (pixels[i] != singleColor.getRGB());
+				}
+			}
+			i++;
+		}
+
+		if (foundDifferentColors)
+			singleColor = null;
+		return(singleColor);
+	}
+
+	/**
 	 * Draw icon at points on page.
 	 * @param pointList is list of Point2D objects at which to draw icon.
 	 * @param icon image to draw.
@@ -1239,23 +1281,60 @@ public class OutputFormat
 			}
 
 			/*
+			 * Check if image is a single color.
+			 * Draw single color images with transparent background
+			 * using PostScript 'imagemask' operator.
+			 * Draw other images as RGB images using 'image' operator.
+			 */
+			Color singleColor = getSingleImageColor(pixels);
+
+			/*
 			 * Build ASCII85 encoded string containing all pixel values.
 			 */
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream(pixels.length * 2);
 			ASCII85OutputStream ascii85 = new ASCII85OutputStream(outStream);
+			int byteValue = 0;
+			int bitCounter = 0;
 			for (j = 0; j < pixels.length; j++)
 			{
-				/*
-				 * Ignore transparency, we want only red, green, blue components.
-				 */
 				int pixel = pixels[j];
-				int blue = (pixel & 0xff);
-				int green = ((pixel >> 8) & 0xff);
-				int red = ((pixel >> 16) & 0xff);
 				
-				ascii85.write(red);
-				ascii85.write(green);
-				ascii85.write(blue);
+				if (singleColor != null)
+				{
+					/*
+					 * Pixel is set in PostScript image if it is transparent.
+					 */
+					int nextBit = ((pixel >> 24) == 0) ? 1 : 0;
+
+					/*
+					 * Store next pixel value as a single bit in a byte.
+					 * If we've completed a byte or reached the end of a row
+					 * then write byte out and begin next byte.
+					 */
+					nextBit <<= (7 - bitCounter);
+					byteValue |= nextBit;
+					bitCounter++;
+
+					if (bitCounter == 8 || (j + 1) % pixelWidth == 0)
+					{
+						ascii85.write(byteValue);
+						byteValue = bitCounter = 0;
+					}
+				}
+				else
+				{
+					/*
+					 * Ignore transparency, we want only red, green, blue components
+					 * of pixel.
+					 */
+					int blue = (pixel & 0xff);
+					int green = ((pixel >> 8) & 0xff);
+					int red = ((pixel >> 16) & 0xff);
+
+					ascii85.write(red);
+					ascii85.write(green);
+					ascii85.write(blue);
+				}
 			}
 			ascii85.close();
 
@@ -1295,18 +1374,39 @@ public class OutputFormat
 					 * Shift image left and down half it's size so that it is displayed centred.
 					 */
 					writePostScriptLine("-0.5 -0.5 translate");
+					
+					/*
+					 * Set color for drawing single color images.
+					 */
+					if (singleColor != null)
+					{
+						float []c = singleColor.getColorComponents(null);
+						writePostScriptLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
+					}
 
 					writePostScriptLine("<<");
 					writePostScriptLine("/ImageType 1");
 					writePostScriptLine("/Width " + pixelWidth);
 					writePostScriptLine("/Height " + pixelHeight);
-					writePostScriptLine("/BitsPerComponent 8");
-					writePostScriptLine("/Decode [0 1 0 1 0 1]");
+					if (singleColor != null)
+					{
+						writePostScriptLine("/BitsPerComponent 1");
+						writePostScriptLine("/Decode [0 1]");
+					}
+					else
+					{
+						writePostScriptLine("/BitsPerComponent 8");
+						writePostScriptLine("/Decode [0 1 0 1 0 1]");
+					}
 					writePostScriptLine("/ImageMatrix [" + pixelWidth + " 0 0 " +
 						-pixelHeight + " 0 " + pixelHeight + "]");
 					writePostScriptLine("/DataSource currentfile /ASCII85Decode filter");
 					writePostScriptLine(">>");
-					writePostScriptLine("image");
+					
+					if (singleColor != null)
+						writePostScriptLine("imagemask");
+					else
+						writePostScriptLine("image");
 					
 					/*
 					 * Write pixels and ASCII85 end-of-data marker.
