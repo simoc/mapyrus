@@ -1,0 +1,126 @@
+# @(#) $Id$
+
+# Draw highlighted label
+#
+begin highlightlabel name
+	font "Helvetica", "bold", 3
+	color "white"
+	clearpath
+	move -25.4 / Mapyrus.page.resolution, 0
+	move 25.4 / Mapyrus.page.resolution, 0
+	move 0, -25.4 / Mapyrus.page.resolution
+	move 0, 25.4 / Mapyrus.page.resolution
+	label name
+
+	clearpath
+	move 0, 0
+	color "black"
+	label name
+end
+
+# Draw a cube, viewed from the side and above.
+#
+begin box
+	linestyle 0.1
+
+	# Draw top side of box
+	#
+	move -1, 1
+	draw -2.73, 0, -0.73, 0, 1, 1, -1, 1
+
+	# Draw right side of box
+	#
+	move 1, 1
+	draw 1, -1, -0.73, -2, -0.73, 0
+
+	# Draw front side of box
+	#
+	move -2.73, -2
+	draw -2.73, 0, -0.73, 0, -0.73, -2, -2.73, -2
+
+	color "yellow"
+	fill
+	color "black"
+	stroke
+end
+
+begin warehouse name, inventory
+
+	# Draw stacks of boxes showing inventory level at warehouse.
+	#
+	x = 0
+	y = 0
+	while inventory > 0
+	do
+		move x * 2, y
+		inventory = inventory - 1
+		x = x + 1
+		if x == 5
+		then
+			x = 0
+			y = y + 2
+		endif
+	done
+	box
+
+	# Show warehouse name under boxes.
+	#
+	clearpath
+	move -4, -5
+	highlightlabel name
+end
+
+newpage "png", "mapview4.png", 60, 60, 96
+
+# Use blue background for sea.
+#
+color "rgb", 0.2, 0.8, 1
+move 0, 0
+draw 0, Mapyrus.page.height, Mapyrus.page.width, Mapyrus.page.height, Mapyrus.page.width, 0
+fill
+
+worlds -20000, 5500000, 900000, 6600000
+
+# Import polygon of United Kingdom
+#
+dataset "textfile", "uk_utm.dat", "comment=#"
+import
+while Mapyrus.import.moreRows
+do
+	fetch
+	nCoords = $1
+
+	# Add all coordinate for this polygon to path.
+	#
+	fetch
+	clearpath
+	move $1, $2
+
+	i = 1
+	while i < nCoords
+	do
+		fetch
+		draw $1, $2
+		i = i + 1
+	done
+
+	color "#00c033"
+	fill
+	color "black"
+	linestyle 0.1
+	stroke
+done
+
+# Display symbols showing inventory levels at warehouses.
+#
+worlds -20000, 5500000, 900000, 6600000
+clearpath
+move 600000, 5650000
+warehouse "Portsmouth", 2
+clearpath
+move 500000, 5750000
+warehouse "Bristol", 19
+clearpath
+move 400000, 6200000
+warehouse "Glasgow", 7
+
