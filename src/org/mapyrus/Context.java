@@ -1111,7 +1111,28 @@ public class Context
 			double resolution = getResolution();
 			Rectangle2D.Double rect = new Rectangle2D.Double(dstPts[0], dstPts[1],
 				dstPts[2] - dstPts[0], dstPts[3] - dstPts[1]);
-				
+
+			/*
+			 * If path is made up of only move points then keep those
+			 * that fall inside rectangle. 
+			 */
+			if (path.getLineToCount() == 0 && path.getMoveToCount() > 0)
+			{
+				ArrayList moveTos = path.getMoveTos();
+				ArrayList moveToRotations = path.getMoveToRotations();
+				mPath = new GeometricPath();
+				for (int i = 0; i < moveTos.size(); i++)
+				{
+					Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
+					if (rect.outcode(pt) == 0)
+					{
+						Double rotation = (Double)(moveToRotations.get(i));
+						mPath.moveTo(pt.x, pt.y, rotation.doubleValue());
+					}
+				}
+				return;
+			}
+
 			/*
 			 * Return immediately if shape is completely inside or outside
 			 * clip rectangle.
@@ -1125,6 +1146,8 @@ public class Context
 				mPath = new GeometricPath();
 				return;
 			}
+
+
 
 			GeneralPath p = SutherlandHodgman.clip(s, rect, resolution);
 
