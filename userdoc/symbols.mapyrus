@@ -1,0 +1,534 @@
+# @(#) $Id$
+# Geometric shapes, symbols, line styles and fill patterns  commonly
+# used on maps and charts.
+#
+# There are no restrictions on the use of this file.  Feel free to
+# change the size, color or shape or legend description of the symbols
+# to suit your purposes.
+#
+# If you create additional symbols and would like to share them, please
+# e-mail a copy to <mapyrus@chenery.id.au> so that they can be added to
+# this file.
+#
+print 'timer=', Mapyrus.timer
+
+begin circle1
+	key "point", "circle1"
+	linestyle 0.1
+	move -2, 0
+	arc 1, 0, 0, -2, 0
+	closepath
+	stroke
+end
+
+begin triangle1
+	key "point", "triangle1"
+	linestyle 0.1
+	move -1, -0.866
+	draw 0, 0.866, 1, -0.866
+	closepath
+	stroke
+end
+
+begin square1
+	key "point", "square1"
+	linestyle 0.1
+	box -1, -1, 1, 1
+	stroke
+end
+
+begin square2
+	key "point", "square2"
+	linestyle 0.1
+	box -1, -1, 1, 1
+	fill
+end
+
+begin pentagon1
+	key "point", "pentagon1"
+	linestyle 0.1
+	move -1, -1.376
+	local i
+	let i = 0
+	while i < 4
+	do
+		rdraw 2, 0
+		rotate 72
+		let i = i + 1
+	done
+	closepath
+	stroke
+end
+
+begin hexagon1
+	key "point", "hexagon1"
+	linestyle 0.1
+	move -1, -2
+	local i
+	let i = 0
+	while i < 5
+	do
+		rdraw 2, 0
+		rotate 60
+		let i = i + 1
+	done
+	closepath
+	stroke
+end
+
+begin octagon1 
+	key "point", "octagon1"
+	linestyle 0.1
+	move -0.848, -0.848
+	local i
+	let i = 0
+	while i < 7
+	do
+		rdraw 1.656, 0
+		rotate 45
+		let i = i + 1
+	done
+	closepath
+	stroke
+end
+
+begin decagon1 
+end
+
+begin x1 
+	key "point", "x1"
+	linestyle 0.1
+	move 1, -1
+	draw -1, 1
+	move -1, -1
+	draw 1, 1
+	stroke
+end
+
+begin plus1 
+	key "point", "plus1"
+	linestyle 0.1
+	move -1, 0
+	draw 1, 0
+	move 0, -1
+	draw 0, 1
+	stroke
+end
+
+begin sixpointstar1
+end
+
+begin eightpointstar1
+end
+
+begin shipwreck
+	key "point", "Shipwreck"
+	color "black"
+	linestyle 0.1
+	move 0, 0
+	draw -0.7, 1.4
+
+	rdraw 0.8, 0
+	rdraw -1.6, 0
+	move -0.7, 1.4
+	rdraw 0.4, 0.692
+	rdraw -0.8, -1.385
+	stroke
+
+	clearpath
+	move -2, -1
+	draw 2, 1, 2, -1
+	closepath
+	fill
+end
+
+begin viewpoint
+	key "point", "Viewpoint"
+	color "green"
+	local i
+	let i = 0
+	while i < 12
+	do
+		clearpath
+		move 0.5, 0
+		draw 2, 0.15, 2.05, 0, 2, -0.15
+		closepath
+		fill
+		rotate 30
+		let i = i + 1
+	done
+end
+
+begin trigstation
+	key "point", "Trig. Station"
+	color "red"
+	linestyle 0.1
+	move 0, 0
+	draw 0, 2
+	move -1, 1
+	draw 1, 1
+	stroke
+
+	clearpath
+	move 0, 0
+	draw 1.5, -1.5
+	draw -1.5, -1.5
+	closepath
+	fill
+end
+
+#windmill
+
+begin bordercrossing
+	key "point", "Border Crossing"
+	color "white"
+	linestyle 0.4
+	move -1.5, 0
+	arc 1, 0, 0, -1.5, 0
+	closepath
+	fill
+	color "pink"
+	move -1.5, 0
+	draw 1.5, 0
+	stroke
+end
+
+begin lighthouse
+	key "point", "Lighthouse"
+	color "black"
+	linestyle 0.1
+	move -1.1, 0
+	draw 1.1, 0
+
+	box -0.7, 2.1, 0.7, 3
+
+	move 1.4, 2.3
+	draw 2.3, 2.1
+	move 1.4, 2.8
+	draw 2.3, 3
+
+	move -1.4, 2.3
+	draw -2.3, 2.1
+	move -1.4, 2.8
+	draw -2.3, 3
+	stroke
+
+	clearpath
+	move -0.7, 0
+	draw -0.7, 2.1, 0.7, 2.1, 0.7, 0
+	closepath
+	fill
+end
+
+#boatramp
+#airport
+
+begin information
+	key "point", "Information"
+	color "darkgreen"
+	move -2, 0
+	arc 1, 0, 0, -2, 0
+	fill
+	clearpath
+	move -0.1, 0.6
+	color "white"
+	font "Courier-Italic", 4
+	justify "center, middle"
+	label "i"
+end
+
+begin sbahn
+	key "point", "S-Bahn Station"
+	color "green"
+	move -2, 0
+	arc 1, 0, 0, -2, 0
+	fill
+	clearpath
+	move -0.1, 0.6
+	color "white"
+	font "Helvetica-Bold", 4
+	justify "center, middle"
+	label "S"
+end
+
+begin ubahn
+	key "point", "U-bahn Station"
+	color "blue"
+	box -2, -2, 2, 2
+	fill
+	clearpath
+	move -0.1, 0.6
+	color "white"
+	font "Helvetica-Bold", 4
+	justify "center, middle"
+	label "U"
+end
+
+begin parking
+	key "point", "Parking"
+	color "dodgerblue"
+	box -2, -2, 2, 2
+	fill
+	clearpath
+	move -0.1, 0.5
+	color "white"
+	font "Helvetica-Bold", 4
+	justify "center, middle"
+	label "P"
+end
+
+begin tree
+	key "point", "Tree"
+	color "forestgreen"
+	linestyle 0.1
+	move -1, 0
+	draw 1, 0
+	move 0, 0
+	draw 0, 1
+	stroke
+	clearpath
+	move -1, 1
+	draw 0, 3, 1, 1
+	closepath
+	fill
+end
+
+begin radiotower
+	key "point", "Radio Tower"
+	linestyle 0.1
+	move -1, 0
+	arc 1, 0, 0, -1, 0
+	fill
+	clearpath
+	move 0.707, 0.707
+	rdraw 0.5, 1, -1, 0, 0.5, 1
+	stroke
+end
+
+begin church
+	key "point", "Church"
+	color "black"
+	linestyle 0.1
+	move -1, 0
+	arc 1, 0, 0, -1, 0
+	fill
+	clearpath
+	move 0, 1
+	draw 0, 3
+	move -1, 2
+	draw 1, 2
+	stroke
+end
+
+begin hospital
+	key "point", "Hospital"
+	color "white"
+	linestyle 0.1
+	box -2, -2, 2, 2
+	fill
+	color "black"
+	stroke
+	color "red"
+	clearpath
+	box -1.5, -0.4, 1.5, 0.4
+	box -0.4, -1.5, 0.4, 1.5
+	fill
+end
+
+begin tent
+	key "point", "Camping"
+	linestyle 0.2
+	move -1.5, 0
+	draw 0, 2.8, 1.5, 0
+	closepath
+	color "white"
+	fill
+	color "maroon"
+	stroke
+	clearpath
+	box -0.5, 0, 0.5, 1
+	fill
+end
+
+begin hut
+	key "point", "Hut"
+	linestyle 0.1
+	color "maroon"
+	move -1.3, 0
+	draw 1.3, 0
+	box -1, 0, 1, 1.5
+	stroke
+	clearpath
+	move -1.3, 1.5
+	draw 0, 2.8, 1.3, 1.5
+	closepath
+	fill
+end
+
+begin fairground
+	key "point", "Fairground"
+	linestyle 0.1
+	color "orange"
+	move 0, 4
+	draw -2, 3.3, 0, 2.6
+	closepath
+	fill
+
+	color "red"
+	clearpath
+	box -1, 0, 1, 2
+	fill
+	clearpath
+	move 0, 2
+	draw 0, 4
+	stroke
+end
+
+begin school
+	key "point", "School"
+	color "white"
+	box -1, 0, 3, 3
+	fill
+	clearpath
+	color "crimson"
+	linestyle 0.1
+	box 0, 0, 3, 2
+	move 3, 2
+	draw 2.5, 3, -0.5, 3, -1, 2, -1, 0, 0, 0
+	move 0, 2
+	draw -0.5, 3
+	box 0.7, 0.7, 1.3, 1.4
+	box 1.8, 0.7, 2.4, 1.4
+	stroke
+end
+
+begin postoffice
+	key "point", "Post Office"
+	linestyle 0.2
+	color "lightyellow"
+	box -2, 0, 2, 2
+	fill
+	color "darkgrey"
+	move -2, 2
+	draw 0, 1, 2, 2
+	stroke
+end
+
+begin library
+	key "point", "Library"
+	color "lightblue"
+	linestyle 0.1
+	move 0, 0
+	draw 2, -0.5, 2, 2.5, 0, 3, -2, 2.5, -2, -0.5
+	closepath
+	fill
+	color "black"
+	stroke
+	move 0, 0
+	draw 0, 3
+	move 0.5, 2
+	draw 1.5, 1.8
+	move 0.5, 1.2
+	draw 1.5, 1
+	stroke
+end
+
+begin police
+	key "point", "Police"
+	box -1, 0, 2, 3
+	color "white"
+	fill
+	color "blue"
+	linestyle 0.1
+	stroke
+	clearpath
+	box -1, 0, 0, 1
+	box -1, 2, 0, 3
+	box 0, 1, 1, 2
+	box 1, 0, 2, 1
+	box 1, 2, 2, 3
+	fill
+end
+
+begin cemetary
+	key "point", "Cemetary"
+	color "saddlebrown"
+	clearpath
+	box -0.5, -1, 0.5, 3
+	fill
+	clearpath
+	box -1.7, 1.6, 1.7, 2.2
+	fill
+end
+
+#u-bahn
+#camping
+#vehicle
+#buildings
+
+#north arrow
+#
+#roads
+begin railway1
+end
+
+begin railway2
+end
+
+print 'timer=', Mapyrus.timer
+
+if 0 #allSymbolsLegend = 1
+then
+	move 0, 0
+	circle1
+	triangle1
+	square1
+	pentagon1
+	octagon1
+	hexagon1
+	x1
+	plus1
+	shipwreck
+	lighthouse
+	trigstation
+	viewpoint
+	sbahn
+	ubahn
+	tree
+	hospital
+	radiotower
+	parking
+	tent
+	cemetary
+	hut
+	church
+	bordercrossing
+	information
+	library
+	school
+	fairground
+	postoffice
+	police
+
+	newpage "eps", "allsymbols.eps", 210, 297
+	#newpage "png", "allsymbols.png", 210, 297
+	color "white"
+	box 0, 0, Mapyrus.page.width, Mapyrus.page.height
+	fill
+	color "black"
+	font "Helvetica", 3
+	let x = 10, y = Mapyrus.page.height - 10
+	while Mapyrus.key.count > 0
+	do
+		clearpath
+		move x, y
+		legend 10
+		let y = y - 10
+		if y < 10
+		then
+			let x = x + 50
+			let y = Mapyrus.page.height - 10
+		endif
+	done
+endif
+
