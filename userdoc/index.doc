@@ -1,0 +1,52 @@
+include doc/header.doc
+<!-- @(#) $Id$ -->
+
+<table>
+<tr>
+<td>
+<a href="intro.html"/>Introduction</a>
+</td>
+<td>
+What is Mapyrus?  What is it not?
+</td>
+</tr>
+<tr>
+<td>
+<a href="tutorial.html"/>Tutorial</a>
+</td>
+<td>
+The quickest way to get familiar with the software.
+</td>
+<tr>
+<td>
+<a href="reference.html"/>Reference</a>
+</td>
+<td>
+All the commands and options and
+requirements for running the software.
+</td>
+</tr>
+<tr>
+<td>
+<a href="legal.html"/>Versions</a>
+</td>
+<td>
+What was included in each version.
+</td>
+</tr>
+<tr>
+<td>
+<a href="license.html"/>Licensing</a>
+</td>
+<td>
+Mapyrus uses the GNU Public License.
+</td>
+</tr>
+</table>
+<p>
+<hr>
+
+Send comments, bug reports and requests concerning Mapyrus to
+<a href="mailto:simon_chenery@yahoo.com">
+simon_chenery@yahoo.com</a>.
+

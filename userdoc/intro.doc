@@ -1,0 +1,66 @@
+include doc/header.doc
+<!-- @(#) $Id$ -->
+
+<h2>
+Introduction
+</h2>
+
+Mapyrus is software for creating plots of points, lines, polygons and text
+to various output formats.
+<p>
+
+The software combines the following three components.
+<ol>
+<li>
+A Logo or turtle graphics program.  An imaginary pen is moved around a page,
+drawing shapes that appear on the screen, or are saved in an image file.
+Reusable routines are built up using a BASIC-like language.
+Branching and looping contructs allow complex shapes, symbols and patterns
+to be be defined.  For example,
+
+exec java -jar lib/mapyrus.jar doc/turtle.txt
+<p>
+<img src="turtle.png">
+<p>
+<!-- [sun, fractal, text bubble] -->
+
+</li>
+<li>
+Reading and displaying of geographic information system (GIS) datasets.
+Drawing routines are applied to mapping data to produce annotated and
+symbolized maps.
+
+Xexec java -jar lib/mapyrus.jar doc/mapview.txt
+<img src="mapview.png">
+<!-- [example map view] -->
+
+</li>
+<li>
+Mapyrus runs as a stand-alone program, or as a multi-threaded server, or as a
+servlet and is able to create web format images or PostScript plot files.
+Develop web applications
+
+WMS
+
+<pre>
+http://localhost:8071/mapyrusdemo?layer1=on&layer2=off&x1=11.03&x2=11.07&y1=52.44&y2=52.48
+</pre>
+
+</ol>
+<p>
+&nbsp;
+<p>
+Please note that:
+<ol>
+<li>
+Mapyrus has only a simple graphical user interface.  Commands
+are typed into the interface, or into a text file which is then read.
+</li>
+
+<li>
+Mapyrus cannot display three dimensional data and, in fact, has nothing to do
+with 3D.
+</li>
+</ol>
+
+include doc/footer.doc

@@ -1,0 +1,64 @@
+# @(#) $Id$
+begin sunray
+	colour "yellow"
+	move 0, 3
+	draw 3, 0, 0, -3, 0, 3
+	fill
+end
+begin sun
+	# Draw orange circle for sun
+	move -8, 0
+	arc 1, 0, 0, -8, 0
+	colour "rgb", 1, 0.6, 0
+	fill
+	# Draw 8 rays pointing out from perimeter of circle
+	i = 0
+	while i < 8
+	do
+		clearpath
+		rotate 360 / 8
+		move 9, 0
+		sunray
+		i = i + 1
+	done
+end
+#
+begin fernbranch length
+	if length > 1
+	then
+		# Draw right branch (and its shorter sub-branches),
+		# then left branch
+		rotate 20
+		move 0, 0
+		draw 0, length
+		stroke
+		clearpath
+		move 0, length
+		fernbranch length * 0.75
+
+		rotate -40
+		move 0, 0
+		draw 0, length
+		stroke
+		clearpath
+		move 0, length
+		fernbranch length * 0.75
+	endif
+end
+begin fern
+	colour "rgb", 0, 0.7, 0
+	linewidth 0.1
+	# Draw stem, then call recursive procedure to draw all branches
+	move 0, 0
+	draw 0, 4
+	stroke
+	clearpath
+	move 0, 4
+	fernbranch 6
+end
+newpage "png", "doc/turtle.png", 160, 30, 96
+move 30, 15
+sun
+clearpath
+move 80, 4
+fern
