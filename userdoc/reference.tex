@@ -1240,7 +1240,7 @@ If the label would appear upside down on the page, then it is rotated
 \subsubsection{font}
 
 \begin{alltt}
-font \textit{name}, \textit{size}
+font \textit{name}, \textit{size} [, \textit{extras} ...]
 \end{alltt}
 
 Sets font for labelling with the \texttt{label} command.
@@ -1269,6 +1269,36 @@ font name.
 
 Tutorial Sections \ref{psfonts} and \ref{ttffonts}
 describe different font formats.
+
+\textit{extras} defines further options for the font, given as
+\textit{variable=value} values, separated by whitespace.
+See Table \ref{fontextras}
+for available options.
+
+\begin{longtable}{|l|p{7cm}|}
+\hline
+\label{fontextras}
+Extra & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Font Extras} \\
+\endfoot
+
+\hline
+Extra & Description \\
+\hline
+\hline
+\endhead
+
+\texttt{outlinewidth=\textit{width}} &
+
+Sets line width to use for drawing outline of each letter in label.
+Only the outline of each letter is drawn, no part of the letter is filled. \\
+
+\hline
+\end{longtable}
 
 \subsubsection{guillotine}
 
