@@ -71,6 +71,7 @@ public class MapyrusMessages
 	public static final String INVALID_FIELD_NAME = "invalidfieldname";
 	public static final String INVALID_FONT = "invalidfont";
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
+	public static final String INVALID_FORMAT = "invalidformat";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
 	public static final String INVALID_GRASS_FILE = "invalidgrassfile";
 	public static final String INVALID_HASHMAP_KEY = "invalidhashmapkey";
@@ -90,7 +91,6 @@ public class MapyrusMessages
 	public static final String INVALID_OGC_WKB = "invalidogcwkb";
 	public static final String INVALID_OGC_WKT = "invalidogcwkt";
 	public static final String INVALID_OPTION = "invalidoption";
-	public static final String INVALID_OUTPUT = "invalidoutput";
 	public static final String INVALID_PAGE = "invalidpage";
 	public static final String INVALID_PAGE_RANGE = "invalidpagerange";
 	public static final String INVALID_PAGE_SIZE = "invalidpagesize";
@@ -139,6 +139,7 @@ public class MapyrusMessages
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
 	public static final String PARSE_ERROR = "parseerror";
 	public static final String PROCESS_ERROR = "processerror";
+	public static final String READ_ONLY = "readonly";
 	public static final String RECURSION = "recursion";
 	public static final String STARTED_THREAD = "startedthread";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
