@@ -58,7 +58,6 @@ public class OutputFormat
 	/*
 	 * Type of output currently being generated.
 	 */
-	private static final int BUFFERED_IMAGE = 1;
 	private static final int IMAGE_FILE = 2;
 	private static final int POSTSCRIPT = 3;
 
@@ -534,7 +533,6 @@ public class OutputFormat
 	{
 		int cap, join;
 		String styleName;
-		int pointSize;
 
 		/*
 		 * Calculate fraction of string height and width to move text to get required
