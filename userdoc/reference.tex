@@ -616,6 +616,23 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
+\subsubsection{box}
+
+\begin{alltt}
+box \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+\end{alltt}
+
+Adds a rectangle to the current path.
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of the rectangle.
+
+The four corner points of the box
+are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
 \subsubsection{clearpath}
 
 \begin{alltt}
