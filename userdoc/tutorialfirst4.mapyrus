@@ -8,7 +8,7 @@ scale Mapyrus.screen.resolution.mm
 
 clearpath
 color "Firebrick"
-hexagon 25, 25, 22
+hexagon 25, 25, 25
 fill
 
 clearpath
@@ -25,7 +25,7 @@ stroke
 clearpath
 color "indigo"
 wedge 150, 10, 30, 45, 90
-stroke
+fill
 
 clearpath
 color "black"
