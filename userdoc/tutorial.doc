@@ -337,11 +337,11 @@ include endex.doc
 
 To fill a polygon with cross-hatching use procedures to
 draw each set of hatch lines at different angles.  Two procedures
-are required so the graphics state is saved
-// TODO describe save state and stripepath stuff.
-
-This is
-demonstrated in the following example.
+are used so that modifying the current path with the
+<a href="reference.html#stripepath">stripepath</a>
+command is isolated and the original path remains unmodified in
+the calling procedure.
+This is demonstrated in the following example.
 
 include beginex.doc
 include tutorialpolygons2.mpy
@@ -724,7 +724,7 @@ to post-process image output and convert images to other formats.
 The following examples demonstrate this.
 
 include beginex.doc
-java -DDATADIR=$DATADIR -Dfoo=bar -jar mapyrus.jar mycommands.txt | pngtopnm | ppmtopgm | pgmtopbm | pbmtoascii -2x4
+java -DDATADIR=$DATADIR -DNameidx=Q7B80L -jar mapyrus.jar mycommands.txt | pngtopnm | ppmtopgm | pgmtopbm | pbmtoascii -2x4
 include endex.doc
 
 include beginex.doc
@@ -734,7 +734,8 @@ include endex.doc
 
 A Java Virtual Machine takes more than one second to start on many computers.
 For applications that must start Mapyrus many times to perform short tasks,
-start Mapyrus as an HTTP server and make HTTP requests instead.
+start Mapyrus as an HTTP server and make HTTP requests instead so that
+startup time is eliminated.
 Most languages include method of making HTTP requests.
 From Perl use the
 <a href="www.cpan.org">libwww-perl</a> modules.
@@ -746,7 +747,7 @@ languages without the ability to make HTTP requests.
 For example,
 
 include beginex.doc
-lynx -dump http://localhost:8410/wsrv.mpy?gemeinde=Erding > myfile.png
+lynx -dump http://localhost:8410/wsrv.mpy?landkreis=Erding&zoomlevel=3 > myfile.png
 include endex.doc
 
 include footer.doc
