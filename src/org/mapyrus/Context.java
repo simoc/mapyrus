@@ -24,7 +24,6 @@ package au.id.chenery.mapyrus;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -120,9 +119,12 @@ public class Context
 	private GeometricPath mExistingPath;
 
 	/*
-	 * Coordinates making up the clipping path.
+	 * List of clip polygons making up the complete clipping path.
+	 * We need a list of clip polygons instead of a single clip
+	 * polygon to preserve the inside/outside of each individual
+	 * clip polygon.
 	 */
-	private GeometricPath mClippingPath;
+	private ArrayList mClippingPaths;
 	
 	/*
 	 * Currently defined variables.
@@ -160,7 +162,7 @@ public class Context
 		mFontStyle = Font.PLAIN;
 		mFontSize = 5;
 		mFontRotation = 0;
-	
+
 		mCtm = new AffineTransform();
 		mProjectionTransform = null;
 		mWorldCtm = null;
@@ -168,7 +170,7 @@ public class Context
 		mRotation = 0.0;
 		mVars = null;
 		mPath = null;
-		mClippingPath = null;
+		mClippingPaths = null;
 		mOutputFormat = null;
 		mOutputDefined = false;
 		mAttributesChanged = true;
@@ -223,9 +225,15 @@ public class Context
 			mExistingPath = existing.mPath;
 		else
 			mExistingPath = existing.mExistingPath;
-			
-		mClippingPath = existing.mClippingPath;
-			
+
+		/*
+		 * Copy list of paths we must clip against.
+		 */
+		if (existing.mClippingPaths != null)			
+			mClippingPaths = (ArrayList)(existing.mClippingPaths.clone());
+		else
+			mClippingPaths = null;
+
 		mOutputFormat = existing.mOutputFormat;
 		mOutputDefined = false;
 
@@ -313,15 +321,8 @@ public class Context
 	{
 		if (mAttributesChanged)
 		{
-			Shape clip;
-			
-			if (mClippingPath != null)
-				clip = mClippingPath.getShape();
-			else
-				clip = null;
-				
 			mOutputFormat.setAttributes(mColor, mLinestyle, mJustify,
-				mFontName, mFontStyle, mFontSize, mFontRotation, clip);
+				mFontName, mFontStyle, mFontSize, mFontRotation, mClippingPaths);
 			mAttributesChanged = false;
 		}
 	}
@@ -361,6 +362,7 @@ public class Context
 			 */
 			mWorldExtents = null;
 			mWorldCtm = null;
+// TODO should clip path and other graphics attributes be cleared too?
 		}
 
 		mOutputFormat = new OutputFormat(filename, format,
@@ -397,7 +399,8 @@ public class Context
 			mOutputFormat = null;
 			mOutputDefined = false;
 		}
-		mPath = mExistingPath = mClippingPath = null;
+		mPath = mExistingPath = null;
+		mClippingPaths = null;
 		mVars = null;
 		return(mAttributesSet);
 	}
@@ -624,10 +627,10 @@ public class Context
 	 * Returns world coordinate extents being shown on page.
 	 * @return rectangular area covered by extents.
 	 */
-	public Rectangle2D.Double getWorldExtents()
+	public Rectangle2D.Double getWorldExtents() throws MapyrusException
 	{
 		Rectangle2D.Double retval;
-		
+
 		if (mWorldExtents != null)
 		{
 			retval = mWorldExtents;
@@ -640,7 +643,7 @@ public class Context
 		}
 		else
 		{
-			retval = new Rectangle2D.Double(0, 0, 1, 1);
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));
 		}
 		return(mWorldExtents);
 	}
@@ -960,19 +963,78 @@ public class Context
 	}
 
 	/**
-	 * Set clipping to show only inside of currently defined path.
+	 * Clip to show only area outside currently defined path,
+	 * protecting what is inside path.
+	 */
+	public void protect() throws MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+		GeometricPath protectedPath;
+
+		if (path != null && mOutputFormat != null)
+		{
+			/*
+			 * Add a rectangle around the edge of the page as the new polygon
+			 * perimeter.  The path becomes an island in the polygon (with
+			 * opposite direction so winding rule works) and only
+			 * the area outside the path is then visible.  
+			 */
+			float width = (float)(mOutputFormat.getPageWidth());
+			float height = (float)(mOutputFormat.getPageHeight());
+
+			protectedPath = new GeometricPath();
+			protectedPath.moveTo(0.0f, 0.0f, 0.0);
+			if (path.isClockwise(getResolution()))
+			{
+				/*
+				 * Outer rectange should be anti-clockwise.
+				 */
+				protectedPath.lineTo(width, 0.0f);
+				protectedPath.lineTo(width, height);
+ 				protectedPath.lineTo(0.0f, height);
+			}
+			else
+			{
+				/*
+				 * Outer rectangle should be clockwise.
+				 */
+				protectedPath.lineTo(0.0f, height);
+				protectedPath.lineTo(width, height);
+				protectedPath.lineTo(width, 0.0f);
+			}
+			protectedPath.closePath();
+			protectedPath.append(path, false);
+
+			mAttributesChanged = mAttributesSet = true;
+			mOutputFormat.clip(protectedPath.getShape());
+
+			/*
+			 * Add this polygon to list of paths we are clipping against.
+			 */
+			if (mClippingPaths == null)
+				mClippingPaths = new ArrayList();
+			mClippingPaths.add(protectedPath);
+		}
+	}
+
+	/**
+	 * Clip to show only inside of currently defined path.
 	 */
 	public void clip()
 	{
 		GeometricPath path = getDefinedPath();
+		GeometricPath clipPath;
 
 		if (path != null && mOutputFormat != null)
 		{
-			mClippingPath = new GeometricPath(path);
+			clipPath = new GeometricPath(path);
+			if (mClippingPaths == null)
+				mClippingPaths = new ArrayList();
+			mClippingPaths.add(clipPath);
 			mAttributesChanged = mAttributesSet = true;
 			if (mOutputFormat != null)
 			{
-				mOutputFormat.clip(mClippingPath.getShape());
+				mOutputFormat.clip(clipPath.getShape());
 			}
 		}
 	}
