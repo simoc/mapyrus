@@ -1,9 +1,12 @@
-newpage "png", "tutoriallabels1.png", 120, 30, 96
+newpage "eps", "tutoriallabels1.eps", 125, 30, 96, \
+  "isolatinfonts=Times-Roman"
 
-# Draw a simple label.
+# Draw a label containing o with umlaut and degree symbol.
+# These characters entered in ISO encoding so font is
+# marked for ISO encoding in newpage command above.
 #
 color "black"
-font 'Helvetica-Bold', 12
+font 'Times-Roman', 12
 clearpath
 move 2, 15
 label 'Köln 17°'
@@ -11,7 +14,7 @@ label 'Köln 17°'
 # Draw a three line centered label.
 #
 clearpath
-move 77, 18
+move 67, 18
 color "red"
 font 'Helvetica', 4
 justify 'center'
@@ -22,7 +25,15 @@ label 'For Free Advice Call\n1-800-HOTLINE\n24 hours a day'
 clearpath
 justify 'left'
 color "Orange"
-move 95, 5
-move 100, 15
-move 105, 25
+move 85, 5
+move 90, 15
+move 95, 25
 label 'READY'
+
+# Draw characters for pi and theta from Symbols font.
+#
+color "black"
+font 'Symbol', 12
+clearpath
+move 110, 10
+label 'pq'
