@@ -355,6 +355,12 @@ public class Context
 			mOutputFormat.closeOutputFormat();
 			mOutputFormat = null;
 			mOutputDefined = false;
+
+			/*
+			 * Clear world extents from previous page.
+			 */
+			mWorldExtents = null;
+			mWorldCtm = null;
 		}
 
 		mOutputFormat = new OutputFormat(filename, format,
