@@ -1,10 +1,10 @@
 # Setup for generating a temporary 300x300 pixel image
 #
-t = tempname("png")
+tmpPNGFile = tempname("png")
 imageSizeInPixels = 300
 resolutionDPI = 96
 imageSizeInMM = 25.4 / resolutionDPI * imageSizeInPixels
-newpage "png", t, imageSizeInMM, imageSizeInMM, resolutionDPI
+newpage "png", tmpPNGFile, imageSizeInMM, imageSizeInMM, resolutionDPI
 
 # The first time this URL is accessed the area to view is not given.
 # So set it to cover the whole dataset.
@@ -61,8 +61,8 @@ done
 #
 url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . '&x2=' . x2 . '&y2=' . y2
 print '&lt;html>'
-print '&lt;h1>Header</h1>&lt;p>'
+print '&lt;h1>Header&lt;/h1>&lt;p>'
 print '&lt;a href="' . url . '">'
-print '&lt;img src="' . t . '" ismap>'
+print '&lt;img src="' . tmpPNGFile . '" ismap>'
 print '&lt;/a>'
 
