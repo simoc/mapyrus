@@ -21,7 +21,13 @@
 </target>
 
 <target name="jni" depends="compile" description="Build JNI shared libraries">
-<javah file="bla"/>
+<javah class="au.id.chenery.mapyrus.WorldCoordinateTransform" destdir="jni" classpath="build/classes"/>
+<exec executable="gcc" dir="jni" os="Linux">
+<arg line="-c -I${java.home}/../include -I${java.home}/../include/linux -I. -fPIC -shared -o libmapyrusproj.so projinterface.c"/>
+</exec>
+<exec executable="gcc" dir="jni" os="SunOS">
+<arg line="-c -I${java.home}/../include -I${java.home}/../include/sunos -I. -fPIC -G -o libmapyrusproj.so projinterface.c"/>
+</exec>
 </target>
 
 <target name="doc" depends="jar" description="Build documentation and examples">
@@ -44,10 +50,12 @@
 
 
 <target name="clean" description="Remove everything we have built">
-<delete dir="build/classes"/>
+<delete dir="build/classes" includes="**/*.class"/>
 <delete file="lib/${ant.project.name}.jar"/>
 <delete>
 <fileset dir="doc" includes="**/*.html"/>
+<fileset dir="doc" includes="**/*.png"/>
+<fileset dir="jni" excludes="**/*.c"/>
 </delete>
 </target>
 
