@@ -36,7 +36,7 @@ public class DatasetFactory
 		 */		
 		try
 		{
-			// XXX dynamically load class for datasets for easier extensionsibility.
+			// TODO dynamically load class for datasets for easier extensionsibility.
 			if (type.equalsIgnoreCase("textfile"))
 				retval = new TextfileDataset(name, extras, geometryFieldNames);
 			else if (type.equalsIgnoreCase("shapefile"))

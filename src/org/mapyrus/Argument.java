@@ -152,7 +152,7 @@ public class Argument
 		}
 		else if (mType == GEOMETRY)
 		{
-			// XXX return GEOMTERY in OGC well known text format.
+			// TODO return GEOMTERY in OGC well known text format.
 			retval = "POINT ( 10 10 )";
 		}
 		return(retval);
