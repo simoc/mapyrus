@@ -43,14 +43,14 @@ public class ColorDatabase
 	/**
 	 * Load global color name database from a file.
 	 */
-	public static void initialise() throws MapyrusException, IOException
+	public static void load() throws MapyrusException, IOException
 	{
 		String filename, line;
 		StringTokenizer st;
 		LineNumberReader reader = null;
 		
 		mColors = new HashMap();
-		
+
 		/*
 		 * If user gave name of file as property then use that.
 		 */
@@ -157,30 +157,54 @@ public class ColorDatabase
 	}
 
 	/**
+	 * Add new color to color database.  Synchronized to protect against two
+	 * threads modifying database at the same time.
+	 * @param colorName name of color to add.
+	 * @param color color to add to database.
+	 */
+	private static synchronized void putColor(String colorName, Color color)
+	{
+		mColors.put(colorName, color);
+	}
+
+	/**
 	 * Return color structure from named color.
 	 * @param colorName is color to lookup.
 	 * @return color definition, or null if color not known.
 	 */	
 	public static Color getColor(String colorName)
 	{
-		String s = colorName.toLowerCase();
-		int nChars = s.length();
-		char c;
-		StringBuffer b = new StringBuffer(nChars);
-		
-		/*
-		 * Remove whitespace from color name.
-		 */
-		for (int i = 0; i < nChars; i++)
+		Color retval;
+
+		retval = (Color)(mColors.get(colorName));
+		if (retval == null)
 		{
-			c = s.charAt(i);
-			if (!Character.isWhitespace(c))
+			/*
+			 * Convert color name to lower case and
+			 * strip whitespace, then look it up again.
+			 */
+			int nChars = colorName.length();
+			char c;
+			StringBuffer sb = new StringBuffer(nChars);
+			
+			for (int i = 0; i < nChars; i++)
 			{
-				b.append(c);
+				c = colorName.charAt(i);
+				if (!Character.isWhitespace(c))
+				{
+					sb.append(Character.toLowerCase(c));
+				}
+			}
+			retval = (Color)mColors.get(sb.toString());
+			if (retval != null)
+			{
+				/*
+				 * Add this variation of color name to database so it can
+				 * be looked up directly next time.
+				 */
+				putColor(colorName, retval);
 			}
 		}
-		
-		Color retval = (Color)mColors.get(b.toString());
 		return(retval);
 	}
 }

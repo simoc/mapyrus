@@ -129,7 +129,7 @@ public class Mapyrus
 	{
 		try
 		{
-			ColorDatabase.initialise();
+			ColorDatabase.load();
 		}
 		catch (IOException e)
 		{
