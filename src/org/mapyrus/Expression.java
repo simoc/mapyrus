@@ -10,7 +10,7 @@
  */
 import java.lang.String;
 import java.util.Hashtable;
-import java.io.IOException;
+import java.io.*;
 
 public class Expression
 {
@@ -20,14 +20,13 @@ public class Expression
 	 */
 	private static final int PLUS_OPERATION = 1;
 	private static final int MINUS_OPERATION = 2;
-	private static final int MULTIPLY_OPERATION = 3;
+	private static final int MULTIPLY_OPERATION = 3;	/* 'qw' * 2 = 'qwqw' */
 	private static final int DIVIDE_OPERATION = 4;
-	private static final int REPETITION_OPERATION = 5; /* 'qw' x 2 = 'qwqw' */
-	private static final int CONTAINS_OPERATION = 6; /* 'foo' ~ 'o' = 1 */
 
+	private static final int CONTAINS_OPERATION = 6; /* 'foo' ~ 'o' = 1 */
 	private static final int EQUALS_OPERATION = 7;
-	private static final int GREATER_OPERATION = 8;
-	private static final int LESS_OPERATION = 9;
+	private static final int GREATER_THAN_OPERATION = 8;
+	private static final int LESS_THAN_OPERATION = 9;
 
 	private static final int AND_OPERATION = 10;
 	private static final int OR_OPERATION = 11;
@@ -125,16 +124,15 @@ public class Expression
 				}
 
 				/*
-				 * Check types for operation.  Repetition requires a string and a number
+				 * Check types for operation.  Multiplying a string by a number is OK
 				 * but everything else requires matching types.
 				 */
 				op = t.mOperation;
-				if (op == REPETITION_OPERATION)
+				if (op == MULTIPLY_OPERATION && leftValue.getType() == Argument.STRING)
 				{
-					if (leftValue.getType() != Argument.STRING ||
-						rightValue.getType() != Argument.STRING)
+					if (rightValue.getType() != Argument.NUMERIC)
 					{
-						throw new MapyrusException("Wrong types for repetition");
+						throw new MapyrusException("Wrong types for mulitplication");
 					}
 				}
 				else if (leftValue.getType() != rightValue.getType())
@@ -158,9 +156,9 @@ public class Expression
 						d = l * r;
 					else if (op == DIVIDE_OPERATION)
 						d = l / r;
-					else if (op == GREATER_OPERATION)
+					else if (op == GREATER_THAN_OPERATION)
 						d = (l > r) ? 1 : 0;
-					else if (op == LESS_OPERATION)
+					else if (op == LESS_THAN_OPERATION)
 						d = (l < r) ? 1 : 0;
 					else if (op == EQUALS_OPERATION)
 						d = (l == r) ? 1 : 0;
@@ -184,7 +182,7 @@ public class Expression
 				{
 					String s;
 					String l = leftValue.getStringValue();
-					if (op == REPETITION_OPERATION)
+					if (op == MULTIPLY_OPERATION)
 					{
 						/*
 						 * Repeat string N times.
@@ -192,7 +190,7 @@ public class Expression
 						s = new String();
 						for (int i = 0; i < rightValue.getNumericValue(); i++)
 						{
-							s.concat(l);
+							s = s + l;
 						}
 						retval = new Argument(Argument.STRING, s);
 					}
@@ -206,9 +204,9 @@ public class Expression
 						String r = rightValue.getStringValue();
 						if (op == CONTAINS_OPERATION)
 							d = (l.indexOf(r) > 0) ? 1 : 0;
-						if (op == GREATER_OPERATION)
+						else if (op == GREATER_THAN_OPERATION)
 							d = (l.compareTo(r) > 0) ? 1 : 0;
-						else if (op == LESS_OPERATION)
+						else if (op == LESS_THAN_OPERATION)
 							d = (l.compareTo(r) < 0) ? 1 : 0;
 						else if (op == EQUALS_OPERATION)
 							d = l.equals(r) ? 1 : 0;
@@ -226,6 +224,45 @@ public class Expression
 
 	ExpressionTreeNode mExprTree;
 
+	/*
+	 * Parse a conditional expression.
+	 */
+	private ExpressionTreeNode parseCondition(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, cond;
+		int op;
+
+		cond = parseExpression(p);
+		while (true)
+		{
+			op = p.readNonSpace();
+			if (op == '~' || op == '<' || op == '=' || op == '>')
+			{
+				int opType;
+
+				expr = parseExpression(p);
+				
+				if (op == '~')
+					opType = CONTAINS_OPERATION;
+				else if (op == '<')
+					opType = LESS_THAN_OPERATION;
+				else if (op == '=')
+					opType = EQUALS_OPERATION;
+				else
+					opType = GREATER_THAN_OPERATION;
+
+				cond = new ExpressionTreeNode(cond, opType, expr);
+			}
+			else				
+			{
+				p.unread(op);
+				break;
+			}
+		}
+		return(cond);
+	}
+	
 	/*
 	 * Parse expression.
 	 */
@@ -268,16 +305,14 @@ public class Expression
 		while (true)
 		{
 			op = p.readNonSpace();
-			if (op == '*' || op == '/' || op == 'x')
+			if (op == '*' || op == '/')
 			{
 				int opType;
 				
 				if (op == '*')
 					opType = MULTIPLY_OPERATION;
-				else if (op == '/')
-					opType = DIVIDE_OPERATION;
 				else
-					opType = REPETITION_OPERATION;
+					opType = DIVIDE_OPERATION;
 
 				factor = parseFactor(p);
 				term = new ExpressionTreeNode(term, opType, factor);
@@ -421,7 +456,7 @@ public class Expression
 			}
 		}
 
-		nestedExpression = parseExpression(p);
+		nestedExpression = parseCondition(p);
 
 		c = p.readNonSpace();
 		if (c != ')')
@@ -451,7 +486,7 @@ public class Expression
 	 */
 	public Expression(Preprocessor p) throws IOException, MapyrusException
 	{
-		mExprTree = parseExpression(p);
+		mExprTree = parseCondition(p);
 	}
 
 	/**
@@ -462,7 +497,7 @@ public class Expression
 	{
 		mExprTree = new ExpressionTreeNode(new Argument(d));
 	}
-	
+
 	/**
 	 * Create an expression containing a simple string value.
 	 * @param s is string to store as expression.
@@ -480,6 +515,55 @@ public class Expression
 	public Argument evaluate(Hashtable vars) throws MapyrusException
 	{
 		return(mExprTree.evaluate(vars));
+	}
+
+	public static void main(String []args)
+	{
+		try
+		{
+			Preprocessor p;
+			Expression e1, e2;
+			Hashtable h = new Hashtable();
+			Argument a1, a2;
+
+			h.put("pi", new Argument(3.1415));
+			
+			/*
+			 * Read two expressions separated by a comma or newline.
+			 */
+			p = new Preprocessor(args[0]);
+			e1 = new Expression(p);
+			p.read();
+			e2 = new Expression(p);
+			a1 = e1.evaluate(h);
+			a2 = e2.evaluate(h);
+			if (a1.getType() == Argument.NUMERIC)
+			{
+				System.out.println("a1=" + a1.getNumericValue());
+			}
+			else
+			{
+				System.out.println("a1 = " + a1.getStringValue());
+			}
+			
+			if (a2.getType() == Argument.NUMERIC)
+			{
+				System.out.println("a2=" + a2.getNumericValue());
+			}
+			else
+			{
+				System.out.println("a2 = " + a2.getStringValue());
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+		}
+		catch (IOException e)
+		{
+		}
+		catch (MapyrusException e)
+		{
+		}
 	}
 }
 
