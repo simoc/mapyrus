@@ -26,6 +26,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -101,7 +102,8 @@ public class Interpreter
 	public static final String JOIN_ROUND_STRING = "round";
 	
 	private ContextStack mContext;
-	
+	private PrintStream mStdoutStream;
+
 	/*
 	 * Blocks of statements for each procedure defined in
 	 * this interpreter.
@@ -605,9 +607,13 @@ public class Interpreter
 				}
 
 				if (type == Statement.PRINT)
-					System.out.println(label);
+				{
+					mStdoutStream.println(label);
+				}
 				else if (nChars > 0)
+				{
 					context.label(label);
+				}
 				break;
 						
 			case Statement.SCALE:
@@ -735,7 +741,7 @@ public class Interpreter
 						args[1].getStringValue(),
 						(int)args[2].getNumericValue(),
 						(int)args[3].getNumericValue(),
-						(int)args[4].getNumericValue(), "extras");
+						(int)args[4].getNumericValue(), "extras", mStdoutStream);
 				}
 				else
 				{
@@ -1704,12 +1710,14 @@ public class Interpreter
 	/**
 	 * Create new language interpreter.
 	 * @param context is the context to use during interpretation.
-	 * This may be in a changed state by the time interpretation
+	 * @param stdout is stream to use for standard output by this intepreter.
+	 * The context may be in a changed state by the time interpretation
 	 * is finished.
 	 */
-	public Interpreter(ContextStack context)
+	public Interpreter(ContextStack context, PrintStream stdout)
 	{
 		mContext = context;
+		mStdoutStream = stdout;
 		mStatementBlocks = new HashMap();
 	}
 }
