@@ -20,7 +20,7 @@ color "yellow"
 label h1
 
 # Draw one label, then another immediately following it
-# in a different color.
+# in a different color and font.
 #
 font "Palatino-Roman", 6
 clearpath
@@ -28,8 +28,8 @@ color "red"
 move 40, 10
 label h1
 color "blue"
-clearpath
-move 40 + stringwidth(h1), 10
+shiftpath stringwidth(h1), 0
+font "Palatino-Italic", 8
 label h2
 
 # Draw label with pink surround to highlight it.
