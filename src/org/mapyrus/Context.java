@@ -1853,33 +1853,45 @@ public class Context
 
 		if (path != null && mOutputFormat != null)
 		{
-			Rectangle2D bounds = path.getBounds2D();
+			if (mOutputFormat.getPageFormat().equals("svg"))
+			{
+				boolean isVertical = c1.equals(c2); 
+				if (isVertical)
+					mOutputFormat.gradientFill(path.getShape(), isVertical, c1, c3);
+				else
+					mOutputFormat.gradientFill(path.getShape(), isVertical, c1, c2);
+			}
+			else
+			{
 
-			/*
-			 * Temporarily set clipping path to be inside the current path.
-			 */
-			mOutputFormat.saveState();
-			if (mClippingPaths == null)
-				mClippingPaths = new ArrayList();
-			ArrayList copy = (ArrayList)mClippingPaths.clone();
-			clipInside();
-			setGraphicsAttributes(ATTRIBUTE_CLIP);
-
-			/*
-			 * Draw gradiated image pattern covering complete current path.
-			 */
-			BufferedImage image = GradientFillFactory.getImage(c1, c2, c3, c4, c5);
-			ArrayList coords = new ArrayList();
-			coords.add(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
-			mOutputFormat.drawIcon(coords, image,
-				Math.max(bounds.getWidth(), bounds.getHeight()), 0.0, 1.0);
-
-			/*
-			 * Restore original clipping path.
-			 */
-			mClippingPaths = copy;
-			mOutputFormat.setClipAttribute(mClippingPaths);
-			mOutputFormat.restoreState();
+				Rectangle2D bounds = path.getBounds2D();
+	
+				/*
+				 * Temporarily set clipping path to be inside the current path.
+				 */
+				mOutputFormat.saveState();
+				if (mClippingPaths == null)
+					mClippingPaths = new ArrayList();
+				ArrayList copy = (ArrayList)mClippingPaths.clone();
+				clipInside();
+				setGraphicsAttributes(ATTRIBUTE_CLIP);
+	
+				/*
+				 * Draw gradiated image pattern covering complete current path.
+				 */
+				BufferedImage image = GradientFillFactory.getImage(c1, c2, c3, c4, c5);
+				ArrayList coords = new ArrayList();
+				coords.add(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
+				mOutputFormat.drawIcon(coords, image,
+					Math.max(bounds.getWidth(), bounds.getHeight()), 0.0, 1.0);
+	
+				/*
+				 * Restore original clipping path.
+				 */
+				mClippingPaths = copy;
+				mOutputFormat.setClipAttribute(mClippingPaths);
+				mOutputFormat.restoreState();
+			}
 		}
 	}
 
