@@ -22,178 +22,104 @@
  */
 package au.id.chenery.mapyrus;
  
-import java.util.HashMap;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.StringTokenizer;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * PostScript font definitions.
- * Provides lookup table, returning a PostScript font definitions for a named font.
- * Font definitions are read from .pfa files in search path given as system property.
+ * A PostScript Type 1 font, read from a .pfa font definition file.
+ * Provides methods to parse the font file and include it in another
+ * PostScript file.
  */
-public class PostScriptFontDatabase
+public class PostScriptFont
 {
 	/*
-	 * Font name to font filename lookup table.
+	 * Name of font given in header of font file.
 	 */
-	static private HashMap mFontFiles;
+	private String mFontName;
+
+	/*
+	 * Contents of font file.
+	 */
+	private StringBuffer mFileContents;
 
 	/**
-	 * Add .pfa font files found in directory to lookup table
-	 * @param dir directory to search.
-	 */	
-	private static void searchDirectory(String dir) throws IOException
-	{
-		File f = new File(dir);
-		if (f.isDirectory())
-		{
-			/*
-			 * Search all files ending with .pfa 
-			 */
-			File []entries = f.listFiles();
-			if (entries != null)
-			{
-				for (int i = 0; i < entries.length; i++)
-				{
-					File entry = entries[i];
-					
-					/*
-					 * Skip directories and files with wrong suffix.
-					 */
-					if (!entry.toString().endsWith(".pfa"))
-						continue;
-					if (!entry.isFile())
-						continue;
-
-					try
-					{
-						BufferedReader bufferedReader = new BufferedReader(new FileReader(entry));
-
-						/*
-						 * First line of file contains font name.  For example,
-						 * %!PS-AdobeFont-1.0: LuxiSerif 1.1000
-						 */
-						String firstLine = bufferedReader.readLine();
-						if (firstLine != null)
-						{
-							StringTokenizer st = new StringTokenizer(firstLine);
-							if (st.countTokens() > 1)
-							{
-								/*
-								 * Add font name and file to lookup table.
-								 * But don't add fonts we've already found
-								 * earlier in the search path.
-								 */
-								String magicToken = st.nextToken();
-								String fontName = st.nextToken();
-								if (magicToken.startsWith("%!PS-AdobeFont") && (!mFontFiles.containsKey(fontName)))
-								{
-									mFontFiles.put(fontName, entry);
-								}
-							}
-						}
-						bufferedReader.close();
-					}				
-					catch (FileNotFoundException e)
-					{
-						/*
-				 	 	 * Ignore files that we cannot open.
-				 	 	 */
-					}
-				}
-			}
-		}
-	}	
-	
-	/**
-	 * Search directories containing PostScript fonts and note which fonts are
-	 * available in each directory.
+	 * Create PostScript Type 1 font from a .pfa file. 
+	 * @param filename name of .pfa file.
 	 */
-	public static void load() throws MapyrusException, IOException
+	public PostScriptFont(String filename) throws IOException, MapyrusException
 	{
-		String searchPath = null;
-
-		mFontFiles = new HashMap();
-
 		/*
-		 * Use search path given as system property, or just current directory
-		 * if not given.
+		 * Only accept filenames with .pfa suffix.
 		 */
-		try
-		{
-			searchPath = System.getProperty(Constants.PROGRAM_NAME + ".postscript.font.path");
-		}
-		catch (SecurityException e)
-		{
-		}
-		
-		if (searchPath == null)
-			searchPath = System.getProperty("user.dir");
+		if (!filename.toLowerCase().endsWith(".pfa"))
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+				": " + filename);
+
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
 
 		/*
-		 * Search each directory in turn, adding font definitions we find to our list.
-		 */		
-		StringTokenizer st = new StringTokenizer(searchPath, File.pathSeparator);
-		while (st.hasMoreTokens())
+		 * First line of file contains PostScript keyword, then font name.  For example,
+		 * %!PS-AdobeFont-1.0: LuxiSerif 1.1000
+		 */
+		String firstLine = bufferedReader.readLine();
+		if (firstLine == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+				": " + filename);
+
+		String magicToken = null;
+		StringTokenizer st = new StringTokenizer(firstLine);
+		if (st.countTokens() > 1)
 		{
-			String token = st.nextToken();
-			searchDirectory(token);
+			magicToken = st.nextToken();
+			mFontName = st.nextToken();
 		}
-	}
-	
-	/**
-	 * Checks whether definition is available for a font. 
-	 * @param fontName name of font to lookup.
-	 * @return true if font definition available for this font.
-	 */
-	public static boolean contains(String fontName)
-	{
-		return(mFontFiles.containsKey(fontName));
-	}
+		if (magicToken == null || (!magicToken.startsWith("%!PS-AdobeFont")))
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+				": " + filename);
 
-	/**
-	 * Return font definition from named font.
-	 * @param fontName is font to lookup.
-	 * @return font definition, or null if font not known.
-	 */	
-	public static String getFontDefinition(String fontName) throws IOException
-	{
-		String retval;
-		String nextLine;
-		StringBuffer sb = new StringBuffer();
-
-		File f = (File)(mFontFiles.get(fontName));
+		/*
+		 * Read entire .pfa file into memory, most files are about 100kb in size.
+		 */
+		mFileContents = new StringBuffer(128 * 1024);
+		mFileContents.append(firstLine);
+		mFileContents.append(Constants.LINE_SEPARATOR);
 		
-		if (f != null)
+		String line;
+		while ((line = bufferedReader.readLine()) != null)
 		{
-			try
-			{
-				/*
-				 * Read PostScript font definition file and return it's contents
-				 * to caller.
-				 */
-				BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
-				while ((nextLine = bufferedReader.readLine()) != null)
-				{
-					sb.append(nextLine);
-					sb.append(Constants.LINE_SEPARATOR);
-				}
-				retval = sb.toString();
-				bufferedReader.close();
-			}
-			catch (FileNotFoundException e)
-			{
-				retval = null;
-			}
+			mFileContents.append(line);
+			mFileContents.append(Constants.LINE_SEPARATOR);
 		}
-		else
-		{
-			retval = null;
-		}
-		return(retval);
+		bufferedReader.close();		 
+	}
+
+	/**
+	 * Return name of font, parsed from .pfa file.
+	 * @return font name.
+	 */
+	public String getName()
+	{
+		return(mFontName);
+	}
+
+	/**
+	 * String representation of PostScript font.
+	 * @return font name.
+	 */
+	public String toString()
+	{
+		return("PostScript Font " + mFontName);
+	}
+
+	/**
+	 * Return definition of font read from .pfa file, suitable for inclusion
+	 * in a PostScript file.
+	 * @return font definition.
+	 */	
+	public String getFontDefinition()
+	{
+		return(mFileContents.toString());
 	}
 }
