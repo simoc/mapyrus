@@ -3,10 +3,8 @@
  */
 package au.id.chenery.mapyrus;
  
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.lang.*;
 import java.util.Vector;
 
 /**

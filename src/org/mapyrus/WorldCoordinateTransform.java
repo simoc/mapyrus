@@ -5,7 +5,6 @@ package au.id.chenery.mapyrus;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.io.*;
 
 /**
  * Interfaces to an external shared library to which we pipe coordinate values

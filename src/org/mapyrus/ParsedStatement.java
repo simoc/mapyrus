@@ -3,8 +3,6 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.io.*;
-
 /**
  * A statement or other keyword, read from a file and parsed.
  * A statement can be a simple statement, a procedure block or

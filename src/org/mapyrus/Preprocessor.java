@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.lang.String;
 import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
 
 /**
  * Wrapper around a Reader to read from a file or URL, whilst expanding
