@@ -85,17 +85,6 @@ scalebar scale, "m"
 #
 newpage "eps", "mapview2north.eps", 20, 20
 clearpath
-move 7, 10
-arc 1, 10, 10, 7, 10
-move 5, 10
-draw 15, 10
-move 10, 5
-draw 10, 15
-draw 9, 14, 11, 14, 10, 15
-stroke
-clearpath
-move 10, 16
-font "Helvetica", 3
-justify "center"
-label "NORTH"
+move 10, 10
+nsew
 
