@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import au.id.chenery.mapyrus.*;
 
 /**
- * Implements reading of geographic datasets from a delimited text file
- * with one geometry plus its attributes per line.
+ * Implements reading of geographic datasets from a delimited text file.
  * Suitable for reading comma separated file or other simplistic file formats.
  */
 public class TextfileDataset implements GeographicDataset
@@ -49,18 +48,6 @@ public class TextfileDataset implements GeographicDataset
 	private Process mProcess;
 	
 	/*
-	 * Names of fields and their types, read from header at start of file.
-	 */
-	private String mFieldNames[];
-	private int mFieldTypes[];
-	
-	/*
-	 * Indices of fields making up geometry.  For example, Lon, Lat values
-	 * or X1, Y1, X2, Y2 values.
-	 */
-	private int mGeometryFieldIndexes[];
-
-	/*
 	 * Field separators.  Normally a comma or keyword 'whitespace' (meaning anything
 	 * blank).
 	 */
@@ -71,28 +58,6 @@ public class TextfileDataset implements GeographicDataset
 	 * are ignored.
 	 */
 	private String mComment;
-
-	/*
-	 * Area being queried.
-	 */
-	private Rectangle2D.Double mQueryExtents;
-
-	/*
-	 * Static field type lookup table for easy lookup.
-	 */
-	private static Hashtable mFieldTypeLookup;
-	
-	static
-	{
-		mFieldTypeLookup = new Hashtable();
-		mFieldTypeLookup.put("number", new Integer(Argument.NUMERIC));
-		mFieldTypeLookup.put("numeric", new Integer(Argument.NUMERIC));
-		mFieldTypeLookup.put("int", new Integer(Argument.NUMERIC));
-		mFieldTypeLookup.put("integer", new Integer(Argument.NUMERIC));
-		mFieldTypeLookup.put("real", new Integer(Argument.NUMERIC));
-		mFieldTypeLookup.put("double", new Integer(Argument.NUMERIC));
-		mFieldTypeLookup.put("float", new Integer(Argument.NUMERIC));
-	}
 
 	/*
 	 * Read next line from file, skipping comment lines.
@@ -127,10 +92,10 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * Open text file containing geographic data for querying.
+	 * Open text file, possibly containing geographic data for querying.
 	 * @param filename name of text file to open.
 	 * @param extras options specific to text file datasets, given as var=value pairs.
-	 * @param geometryFieldNames comma separated list of names of fields containing geometry.
+	 * @param geometryFieldNames ignored, text datasets do not contain geometry.
 	 */	
 	public TextfileDataset(String filename, String extras, String []geometryFieldNames)
 		throws FileNotFoundException, IOException, MapyrusException
@@ -142,8 +107,6 @@ public class TextfileDataset implements GeographicDataset
 		Integer fType;
 		String token;
 		boolean foundGeometryField;
-		String fieldNames = null, fieldTypes = null;
-		String fieldNameDelimiters = null, fieldTypeDelimiters = null;
 		String nextLine;
 		BufferedReader bufferedReader;
 
@@ -178,124 +141,7 @@ public class TextfileDataset implements GeographicDataset
 				mComment = token.substring(8);
 			else if (token.startsWith("delimiters="))
 				mDelimiters = token.substring(11);
-			else if (token.startsWith("fieldnames="))
-				fieldNames = token.substring(11);
-			else if (token.startsWith("fieldtypes="))
-				fieldTypes = token.substring(11);
 		}
-		
-		/*
-		 * If field names and types not given then read them from first two lines
-		 * of file.  Then skip more lines until we get to start of data.
-		 */
-		if (fieldNames != null)
-		{
-			fieldNameDelimiters = ",";
-		}
-		else
-		{
-			fieldNames = readLine();
-			fieldNameDelimiters = mDelimiters;
-			if (fieldNames == null)
-			{
-				throw new MapyrusException(filename + ": " +
-					MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
-			}
-		}
-
-		if (fieldTypes != null)
-		{
-			fieldTypeDelimiters = ",";
-		}
-		else
-		{
-			fieldTypes = readLine();
-			fieldTypeDelimiters = mDelimiters;
-			if (fieldNames == null)
-			{
-				throw new MapyrusException(filename + ": " +
-					MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
-			}
-		}
-
-		st = createStringTokenizer(fieldNames, fieldNameDelimiters);
-		list = new ArrayList();
-		while (st.hasMoreTokens())
-		{
-			list.add((String)st.nextToken());
-		}
-		mFieldNames = new String[list.size()];
-		for (i = 0; i < mFieldNames.length; i++)
-			mFieldNames[i] = (String)list.get(i);
-		
-		mFieldTypes = new int[mFieldNames.length];
-		st = createStringTokenizer(fieldTypes, fieldTypeDelimiters);
-		i = 0;
-		while (st.hasMoreTokens() && i < mFieldTypes.length)
-		{
-			fieldType = st.nextToken();
-			fieldType = fieldType.toLowerCase();
-			fType = (Integer)mFieldTypeLookup.get(fieldType);
-			if (fType == null)
-				mFieldTypes[i] = Argument.STRING;
-			else
-				mFieldTypes[i] = fType.intValue();
-
-			i++;
-		}
-
-		/*
-		 * Make sure name and type given for each field.
-		 */		
-		if (i != mFieldTypes.length || st.hasMoreTokens())
-		{
-			throw new MapyrusException(filename +
-				": " + MapyrusMessages.get(MapyrusMessages.FIELD_MISMATCH));
-		}
-
-		/*
-		 * Caller must give us field names containing geometry.
-		 * We cannot possibly work it out for ourselves here.
-		 */
-		if (geometryFieldNames.length < 2)
-		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_GEOMETRY_FIELD));
-		}
-
-		/*
-		 * Find indexes of fields caller says are the geometry for each row.
-		 */
-		list.clear();
-		for (i = 0; i < geometryFieldNames.length; i++)
-		{
-			foundGeometryField = false;
-			for (j = 0; j < mFieldNames.length && foundGeometryField == false; j++)
-			{
-				if (geometryFieldNames[i].equalsIgnoreCase(mFieldNames[j]))
-				{
-					if (mFieldTypes[j] == Argument.STRING)
-					{
-						throw new MapyrusException(filename + ": " + mFieldNames[j] +
-							": " + MapyrusMessages.get(MapyrusMessages.FIELD_NOT_GEOMETRY));
-					}
-					list.add(new Integer(j));
-					foundGeometryField = true;
-				}
-			}
-			
-			if (foundGeometryField == false)
-			{
-				throw new MapyrusException(filename + ": " + mFieldNames[j] +
-					": " + MapyrusMessages.get(MapyrusMessages.FIELD_NOT_FOUND));
-			}
-		}
-
-		/*
-		 * Save array of fields combined to make geometry for each row.
-		 */
-		mGeometryFieldIndexes = new int[list.size()];
-		for (i = 0; i < list.size(); i++)
-			mGeometryFieldIndexes[i] = ((Integer)(list.get(i))).intValue();
 	}
 
 	/**
@@ -321,30 +167,21 @@ public class TextfileDataset implements GeographicDataset
 	 */
 	public String[] getFieldNames()
 	{
-		return(mFieldNames);
+		return(null);
 	}
 
 	/**
-	 * Return types of fields in this text file.
-	 * @return field types.
-	 */
-	public int[] getFieldTypes()
-	{
-		return(mFieldTypes);
-	}
-
-	/**
-	 * Return indexes of geometry fields in list of field names.
-	 * @return list of field indexes.
+	 * Return null, no geometry fields in text file.
+	 * @return null.
 	 */
 	public int[] getGeometryFieldIndexes()
 	{
-		return(mGeometryFieldIndexes);
+		return(null);
 	}
 	
 	/**
-	 * Return extents in text file.  These are not known until the whole
-	 * file is scanned.
+	 * Return extents in text file.  These are not known unless we
+	 * scan the whole file and we don't want to do that.
 	 * @return degree values covering the whole world
 	 */
 	public Rectangle2D.Double getWorlds()
@@ -354,14 +191,13 @@ public class TextfileDataset implements GeographicDataset
 
 	/**
 	 * Begins a query on a text file dataset.
-	 * @param extents the area of interest for the query.  Geometry outside
-	 * these extents will be skipped.
+	 * @param extents the area of interest for the query.
 	 * @param resolution is hint for minimum distance between coordinate values.
+	 * Text file contains no geometry, so a fetch returns every line in turn.
 	 */
 	public void query(Rectangle2D.Double extents, double resolution)
 		throws MapyrusException
 	{
-		mQueryExtents = extents;
 	}
 
 	/**
@@ -370,11 +206,8 @@ public class TextfileDataset implements GeographicDataset
 	 */
 	private boolean readNextRow(Row row) throws MapyrusException
 	{
-		int i, geometryFieldIndex;
 		StringTokenizer st;
-		String message = null;
 		String fieldValue, nextLine;
-		Argument field;
 
 		/*
 		 * Need next line from file.
@@ -385,9 +218,9 @@ public class TextfileDataset implements GeographicDataset
 		}
 		catch (IOException e)
 		{
-			throw new MapyrusException(mFilename + ": " + e.getMessage());
+			throw new MapyrusException(e.getMessage() + ": " + mFilename);
 		}
-		
+
 		/*
 		 * Return EOF status if no more lines available in file.
 		 */
@@ -395,106 +228,38 @@ public class TextfileDataset implements GeographicDataset
 			return(false);
 
 		/*
-		 * Split line into fields and build a row to be returned.
+		 * First field is entire line to go in the $0 variable.
 		 */
 		row.clear();
-		i = geometryFieldIndex = 0;
+		row.add(new Argument(Argument.STRING, nextLine));
+
+		/*
+		 * Split line into fields and build a row to be returned.
+		 */
 		st = createStringTokenizer(nextLine, mDelimiters);
-		while (st.hasMoreTokens() && i < mFieldNames.length)
+		while (st.hasMoreTokens())
 		{
 			fieldValue = st.nextToken();
-
-			if (mFieldTypes[i] == Argument.NUMERIC)
-			{
-				try
-				{
-					field = new Argument(Double.parseDouble(fieldValue));
-				}
-				catch (NumberFormatException e)
-				{
-					throw new MapyrusException(mFilename + ":" + mReader.getLineNumber() +
-						": " + MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
-						": " + fieldValue);
-				}
-			}
-			else
-			{
-				field = new Argument(Argument.STRING, fieldValue);
-			}
-			row.add(field);
-			i++;
-		}
-		
-		/*
-		 * Make sure we read the correct number of fields.
-		 */
-		if (i != mFieldNames.length)
-		{
-			throw new MapyrusException(mFilename + ":" + mReader.getLineNumber() +
-				": " + MapyrusMessages.get(MapyrusMessages.MISSING_FIELD));
+			row.add(new Argument(Argument.STRING, fieldValue));
 		}
 		return(true);
 	}
 
 	/**
-	 * Gets next row from file that contains geometry crossing the query extents.
+	 * Gets next row from file.
 	 * @return next row read, or null if no row found.
 	 */
 	public Row fetch() throws MapyrusException
 	{
-		boolean retval;
-		boolean rowOutside;
-		int i;
-		Argument x, y;
-		boolean left, right, bottom, top, inX, inY;
-		boolean insideExtents = false;
-		int outcode;
-		boolean nextRowAvailable;
 		Row row = new Row();
 
-		do
+		/*
+		 * Try to read next row.
+		 */
+		if (readNextRow(row))
 		{
-			nextRowAvailable = readNextRow(row);
-			if (nextRowAvailable)
-			{
-				/*
-				 * Walk through points in geometry and see whether
-				 * they cross the area we are querying.
-				 */
-				left = right = bottom = top = inX = inY = false;
-				for (i = 0; i < mGeometryFieldIndexes.length; i += 2)
-				{
-					x = (Argument)(row.get(i));
-					y = (Argument)(row.get(i + 1));
-					outcode = mQueryExtents.outcode(x.getNumericValue(),
-						y.getNumericValue());
-						
-					if ((outcode & Rectangle2D.OUT_LEFT) != 0)
-						left = true;
-					else if ((outcode & Rectangle2D.OUT_RIGHT) != 0)
-						right = true;
-					else
-						inX = true;
-						
-					if ((outcode & Rectangle2D.OUT_BOTTOM) != 0)
-						bottom = true;
-					else if ((outcode & Rectangle2D.OUT_TOP) != 0)
-						top = true;
-					else
-						inY = true;					
-				}
-				
-				/*
-				 * Geometry inside query extents if there is a point inside extents
-				 * (or a point both sides of the extents) in both X and Y axes.
-				 */
-				insideExtents = (inX || (left && right)) && (inY || (bottom && top));
-			}
-		}
-		while (nextRowAvailable && (!insideExtents));
-
-		if (insideExtents)
 			return(row);
+		}
 		else
 		{
 			/*
@@ -512,7 +277,6 @@ public class TextfileDataset implements GeographicDataset
 					throw new MapyrusException(e.getMessage());
 				}
 			}
-			
 			return(null);
 		}
 	}
