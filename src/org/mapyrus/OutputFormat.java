@@ -33,7 +33,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import javax.imageio.*;
+import javax.swing.ImageIcon;
 
+import org.mapyrus.io.ASCII85OutputStream;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -369,7 +373,7 @@ public class OutputFormat
 			}
 		
 			mOutputType = IMAGE_FILE;
-			resolution = 96;
+			resolution = Constants.SCREEN_RESOLUTION;
 		}
 
 		/*
@@ -571,7 +575,22 @@ public class OutputFormat
 		}
 		mWriter.println(line);
 	}
-	
+
+	/**
+	 * Write bytes to PostScript file.
+	 * @param b bytes to write.
+	 */
+	private void writePostScriptBytes(byte []b)
+	{
+		for (int i = 0; i < b.length; i++)
+		{
+			if (i % 72 == 0)
+				mWriter.print(Constants.LINE_SEPARATOR + " ");
+			mWriter.print((char)(b[i]));
+		}
+		mWriter.println("");
+	}
+
 	/**
 	 * Save state, protecting color, linestyle, transform of output.
 	 * This state can be restored later with restoreState().
@@ -988,7 +1007,185 @@ public class OutputFormat
 			pi.next();			
 		}
 	}
-		
+
+	/**
+	 * Draw icon at points on page.
+	 * @param pointList is list of Point2D objects at which to draw icon.
+	 * @param icon image to draw.
+	 * @param size is size of icon in millimeters, or zero for screen size.
+	 * @param rotation rotation angle for icon.
+	 * @param scaling scale factor for icon.
+	 */
+	public void drawIcon(ArrayList pointList, ImageIcon icon, double size,
+		double rotation, double scaling)
+		throws IOException, MapyrusException
+	{
+		int pixelWidth = icon.getIconWidth();
+		int pixelHeight = icon.getIconHeight();
+		Point2D pt;
+		int i, j;
+		double x, y, mmWidth, mmHeight;
+
+		/*
+		 * If size not given then make icon about as large as it would appear
+		 * on the screen in an image viewer, with one image pixel in one screen
+		 * pixel.
+		 */
+		if (size <= 0.0)
+		{
+			size = Math.max(pixelWidth, pixelHeight) * (Constants.MM_PER_INCH /
+				Constants.SCREEN_RESOLUTION);
+		}
+		size *= scaling;
+
+		/*
+		 * Calculate width and height for non-square images.
+		 */
+		if (pixelWidth > pixelHeight)
+		{
+			mmWidth = size;
+			mmHeight = size * ((double)pixelHeight / pixelWidth);
+		}
+		else
+		{
+			mmHeight = size;
+			mmWidth = size * ((double)pixelWidth / pixelHeight);
+		}
+
+		if (mOutputType == POSTSCRIPT)
+		{
+			/*
+			 * Grab pixels of icon.
+			 */
+			int []pixels = new int[pixelWidth * pixelHeight];
+			PixelGrabber grabber = new PixelGrabber(icon.getImage(), 0, 0,
+				pixelWidth, pixelHeight, pixels, 0, pixelWidth);
+			try
+			{
+				grabber.grabPixels();
+			}
+			catch (InterruptedException e)
+			{
+				throw new MapyrusException(e.getMessage());
+			}
+
+			/*
+			 * Build ASCII85 encoded string containing all pixel values.
+			 */
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream(pixels.length * 2);
+			ASCII85OutputStream ascii85 = new ASCII85OutputStream(outStream);
+			for (j = 0; j < pixels.length; j++)
+			{
+				/*
+				 * Ignore transparency, we want only red, green, blue components.
+				 */
+				int pixel = pixels[j];
+				int blue = (pixel & 0xff);
+				int green = ((pixel >> 8) & 0xff);
+				int red = ((pixel >> 16) & 0xff);
+				
+				ascii85.write(red);
+				ascii85.write(green);
+				ascii85.write(blue);
+			}
+			ascii85.close();
+
+			/*
+			 * Draw icon at each position in list.
+			 */
+			for (i = 0; i < pointList.size(); i++)
+			{
+				pt = (Point2D)(pointList.get(i));
+				x = pt.getX();
+				y = pt.getY();
+
+				/*
+				 * Skip points that are outside page.
+				 */
+				if (x + mmWidth >= 0 && x - mmWidth <= mPageWidth &&
+					y + mmHeight >= 0.0 && y - mmHeight <= mPageHeight)
+				{
+					/*
+					 * Write PostScript image directionary entry to draw image.
+					 * Taken from Adobe PostScript Language Reference Manual
+					 * (2nd Edition), p. 234.
+					 */
+					writePostScriptLine("% " + icon.getDescription());
+					writePostScriptLine("gs");
+					writePostScriptLine("/DeviceRGB setcolorspace");
+					
+
+					writePostScriptLine(mLinearFormat.format(x) + " " +
+						mLinearFormat.format(y) + " translate");
+					writePostScriptLine(mRotationFormat.format(rotation) + " radtodeg rotate");
+					writePostScriptLine(mLinearFormat.format(mmWidth) + " " +
+						mLinearFormat.format(mmHeight) + " scale");
+
+					/*
+					 * Image is centred at each point.
+					 * Shift image left and down half it's size so that it is displayed centred.
+					 */
+					writePostScriptLine("-0.5 -0.5 translate");
+
+					writePostScriptLine("<<");
+					writePostScriptLine("/ImageType 1");
+					writePostScriptLine("/Width " + pixelWidth);
+					writePostScriptLine("/Height " + pixelHeight);
+					writePostScriptLine("/BitsPerComponent 8");
+					writePostScriptLine("/Decode [0 1 0 1 0 1]");
+					writePostScriptLine("/ImageMatrix [" + pixelWidth + " 0 0 " +
+						-pixelHeight + " 0 " + pixelHeight + "]");
+					writePostScriptLine("/DataSource currentfile /ASCII85Decode filter");
+					writePostScriptLine(">>");
+					writePostScriptLine("image");
+					
+					/*
+					 * Write pixels and ASCII85 end-of-data marker.
+					 */
+					writePostScriptBytes(outStream.toByteArray());
+					writePostScriptLine("~>");
+
+					writePostScriptLine("gr");
+				}
+			}
+		}
+		else
+		{
+			for (i = 0; i < pointList.size(); i++)
+			{
+				pt = (Point2D)(pointList.get(i));
+				x = pt.getX();
+				y = pt.getY();
+				AffineTransform affine = AffineTransform.getTranslateInstance(x, y);
+
+				/*
+				 * Scale transformation so that units are in pixels.
+				 */
+				double mmPerPixel = Constants.MM_PER_INCH / Constants.SCREEN_RESOLUTION;
+				affine.scale(mmPerPixel, mmPerPixel * -1);
+
+				/*
+				 * Rotate clockwise around point (x, y).
+				 */
+				affine.rotate(-rotation);
+
+				/*
+				 * Scale image to requested size.
+				 */
+				double xScale = (mmWidth / mmPerPixel) / pixelWidth;
+				double yScale = (mmHeight / mmPerPixel) / pixelHeight;
+				affine.scale(xScale, yScale);
+
+				/*
+				 * Shift origin so that middle of image is at point (x, y).
+				 */
+				affine.translate(-pixelWidth / 2.0, -pixelHeight / 2.0);
+
+				mGraphics2D.drawImage(icon.getImage(), affine, null);
+			}
+		}
+	}
+
 	/**
 	 * Draw currently defined path to output page.
 	 */
