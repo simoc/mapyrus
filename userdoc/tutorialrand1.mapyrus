@@ -1,8 +1,7 @@
 begin flower
   # Draw flower with randomly colored petals.
   #
-  let angle = 0
-  while angle < 360
+  repeat 12
   do
     clearpath
     ellipse 5, 0, 3, 1.2
@@ -24,7 +23,6 @@ begin flower
     stroke
 
     rotate 30
-    let angle = angle + 30
   done
 end
 
