@@ -1315,16 +1315,24 @@ Pass parameters from calling environment to Mapyrus using the Java
 \texttt{-D} option.
 
 To use Mapyrus in a pipeline of commands,
-give \texttt{-} as output file in the
+give \texttt{-} as the output filename in a
 \texttt{newpage}
-command to write image to standard output.
+command to write an image file to standard output.
+
+Give \texttt{-} as the input filename in a
+\texttt{dataset}
+command to read standard input as a textfile.
+
+Give Mapyrus commands with the \texttt{-e} option
+instead of reading commands from a file.
 
 Use Mapyrus in combination with the freely available software
 Netpbm\footnote{Available from http://netpbm.sourceforge.net} and
 Ghostscript\footnote{Available from http://www.ghostscript.com} to post-process
 image output and convert images and PostScript output to other formats.
 
-The following examples demonstrate these methods.
+The following three examples demonstrate these methods.
+The first example creates a PNG image file and then converts it to ASCII art.
 
 \begin{verbatim}
 java -DDATADIR=$DATADIR -DNameidx=Q7B80L -classpath mapyrus.jar \
@@ -1332,11 +1340,35 @@ java -DDATADIR=$DATADIR -DNameidx=Q7B80L -classpath mapyrus.jar \
   pgmtopbm | pbmtoascii -2x4
 \end{verbatim}
 
+The second example creates a PostScript file and then converts it
+to a fax format.
+
 \begin{verbatim}
 java -classpath mapyrus.jar org.mapyrus.Mapyrus \
   $HOME/common.mapyrus mycommands.mapyrus > myfile.ps
 gs -sDEVICE=faxg3 -sOutputFile=myfile.fax \
   -TextAlphaBits=4 myfile.ps
+\end{verbatim}
+
+The third example reads a file listing and displays it in an
+PNG image.
+
+\begin{verbatim}
+/bin/ls -l | java -classpath mapyrus.jar org.mapyrus.Mapyrus -e '
+newpage "png", "-", 210, 120, "background=white"  # write to stdout
+font "Courier", 4
+let y = Mapyrus.page.height - 4
+dataset "textfile", "-", ""  # read from stdin
+while Mapyrus.fetch.more
+do
+  fetch 
+  clearpath
+  move 1, y
+  # Display files with suffix "txt" in red, others in black.
+  color match($0, ".txt$") ? "red" : "black"
+  label $0
+  let y = y - 4
+done' > ls.png
 \end{verbatim}
 
 A Java Virtual Machine takes more than one second to start on many computers.
