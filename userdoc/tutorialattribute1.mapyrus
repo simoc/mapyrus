@@ -1,53 +1,54 @@
-begin pollution reading
-  # Define legend entries for various reading values.
+begin temperature t
+  # Define legend entries for various temperatures.
   #
-  key "point", "pollution 10 ppm", 10
-  key "point", "pollution 20 ppm", 20
-  key "point", "pollution 30 ppm", 30
-  key "point", "pollution 40 ppm", 40
-  key "point", "pollution 50 ppm", 50
-  key "point", "pollution 60 ppm", 60
-  key "point", "pollution 70 ppm", 70
-  key "point", "pollution 80 ppm", 80
-  key "point", "pollution 90 ppm", 90
+  key "point", "temperature 20\260C", 20
+  key "point", "temperature 25\260C", 25
+  key "point", "temperature 30\260C", 30
+  key "point", "temperature 35\260C", 35
 
-  # Reading is a value in range 0-100. Convert reading to
+  # Temperature is a value in range 20-35. Convert it to
   # a color in the range green-yellow-red.
   #
-  color interpolate("0 green 50 yellow 100 red", reading)
-  box -1, -1, 1, 1
+  color interpolate("20 green 25 yellow 35 red", t)
+  box -2, -2, 2, 2
   fill
 end
 
-# Display points showing pollution levels in different colors.
+# Display map of Australia.   Then read temperature data from a file
+# and display January temperatures for some cities, with different
+# colors representing different temperatures.
 #
-newpage "eps", "tutorialattribute1.eps", 60, 30
+newpage "eps", "tutorialattribute1.eps", 60, 40
+dataset "shapefile", "coastline.shp", "dbffields="
+worlds -2800000, 4800000, 2150000, 9190000
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  stroke
+done
 
-clearpath
-move 10, 10
-pollution 7
-clearpath
-move 22, 12
-pollution 27
-clearpath
-move 30, 16
-pollution 47
-clearpath
-move 37, 11
-pollution 64
-clearpath
-move 44, 15
-pollution 87
-clearpath
-move 53, 14
-pollution 95
+dataset "textfile", "aust_temperatures.dat", ""
+while Mapyrus.fetch.more
+do
+  fetch
+  let cityname = $1
+  fetch
+  let x = $1, y = $2
+  clearpath
+  move x, y
+  fetch
+  let januaryTemperature = $1
+  temperature januaryTemperature
+  fetch
+done
 
-# Draw legend for pollution readings in a separate PostScript file.
+# Draw legend in separate PostScript file.
 #
-newpage "eps", "tutorialattribute1legend.eps", 40, 50
-clearpath
+newpage "eps", "tutorialattribute1legend.eps", 40, 50, \
+  "isolatinfonts=Helvetica"
 color "black"
-move 5, 5, 5, 10, 5, 15, 5, 20, 5,25, 5, 30, 5, 35, 5, 40, 5, 45
+move 5, 5, 5, 10, 5, 15, 5, 20
 font "Helvetica", 2.5
 legend 4
-
