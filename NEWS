@@ -1,6 +1,15 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004 Simon Chenery.
 
+0.47, September 2004
+
+* Add star command for drawing star shapes.
+* Add option to newpage command to set background color for page.
+* Fix setting of named, transparent colors.
+* Extend manual, describing how to increase available memory.
+* Extend manual, describing how to set -classpath option when accessing RDBMS.
+* Add newpage options to make anti-aliasing of lines and text optional.
+
 0.46, August 2004
 
 * Add roundedbox, triangle commands for drawing shapes.
