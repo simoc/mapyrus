@@ -8,13 +8,13 @@ clearpath
 move 5, 25
 label 'Köln 17°C'
 
-# Draw a two line centered label.
+# Draw a three line centered label.
 #
 clearpath
-move 25, 15
-color "#40D0C0"
+move 25, 18
+color "red"
 justify 'center'
-label 'Gordon International\nPrimary School'
+label 'For Help Call\n1-800-MAPYRUS\n24 hours a day'
 
 # Draw the same label at several points.
 #
