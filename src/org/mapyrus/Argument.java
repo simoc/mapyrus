@@ -657,14 +657,25 @@ public class Argument
 			if (mType == GEOMETRY_LINESTRING)
 				s.append("LINESTRING (");
 			else if (mType == GEOMETRY_POLYGON)
-				s.append("POLYGON ((");
+				s.append("POLYGON (");
 			else
 				s.append("MULTIPOINT (");
 
 			for (int i = 1; i < mGeometryValue[0]; i += 3)
 			{
-				if (i > 1)
+				if (mType == GEOMETRY_POLYGON && mGeometryValue[i] == PathIterator.SEG_MOVETO)
+				{
+					/*
+					 * End last polygon ring and begin next ring.
+					 */
+					if (i > 1)
+						s.append("), ");
+					s.append("(");
+				}
+				else if (i > 1)
+				{
 					s.append(", ");
+				}
 				s.append(mGeometryValue[i + 1]);
 				s.append(" ");
 				s.append(mGeometryValue[i + 2]);
