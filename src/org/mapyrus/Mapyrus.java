@@ -34,8 +34,7 @@ public class Mapyrus
 {
 	public static final String PROGRAM_NAME = "Mapyrus";
 	private static final int DEFAULT_PORT = 8337;
-	private static final String RCS_STATE = "$State$";
-
+	
 	/**
 	 * Get software version information.
 	 * @return version string.
@@ -43,10 +42,9 @@ public class Mapyrus
 	public static String getVersion()
 	{
 		/*
-		 * Strip off RCS stuff around state.
+		 * Current software version number set by ant Replace task during build.
 		 */
-		String rcsState = RCS_STATE.substring(8).replace('$', ' ');
-		return(rcsState.trim());
+		return("@software_version_token@");
 	}
 
 	/*
