@@ -3,7 +3,6 @@
  */
 package au.id.chenery.mapyrus.dataset;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import au.id.chenery.mapyrus.MapyrusException;
