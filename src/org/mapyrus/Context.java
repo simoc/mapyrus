@@ -48,6 +48,7 @@ public class Context
 	 */
 	public static final int WORLD_UNITS_METRES = 1;
 	public static final int WORLD_UNITS_FEET = 2;
+	public static final int WORLD_UNITS_DEGREES = 3;
 
 	/*
 	 * Projection transformation may results in some strange warping.
@@ -684,8 +685,10 @@ public class Context
 			worldWidthInMM = mWorldExtents.width;
 			if (mWorldUnits == WORLD_UNITS_METRES)
 				worldWidthInMM *= 1000.0;
+			else if (mWorldUnits == WORLD_UNITS_FEET)
+				worldWidthInMM *= (1000.0 / 0.3048);
 			else
-				worldWidthInMM *= 1000.0 / 0.3048;
+				worldWidthInMM *= (110000 * 1000.0);
 
 			scale = worldWidthInMM / mOutputFormat.getPageWidth();
 		}
