@@ -1524,6 +1524,29 @@ public class Context
 	}
 
 	/**
+	 * Replace path with selected parts of path.
+	 * @param offsets offsets along existing path to select.
+	 * @param lengths length of existing path to select at each offset.
+	 */
+	public void selectPath(double []offsets, double []lengths)
+		throws MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
+
+		if (path != null)
+		{
+			for (int i = 0; i < offsets.length; i++)
+			{
+				offsets[i] *= mScaling;
+				lengths[i] *= mScaling;
+			}
+
+			mPath = path.selectPath(offsets, lengths, resolution);
+		}
+	}
+
+	/**
 	 * Draw image icon at current point on path.
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.
