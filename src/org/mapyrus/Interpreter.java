@@ -837,7 +837,24 @@ public class Interpreter
 					context.label(label);
 				}
 				break;
-						
+
+			case Statement.ICON:
+				if (nExpressions == 1 || nExpressions == 2)
+				{
+					double size;
+					if (nExpressions == 2)
+						size = mExecuteArgs[0].getNumericValue();
+					else
+						size = 0;
+
+					context.drawIcon(mExecuteArgs[0].getStringValue(), size);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ICON));
+				}
+				break;
+							
 			case Statement.SCALE:
 				if (nExpressions == 1)
 				{
