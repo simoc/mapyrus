@@ -22,6 +22,7 @@
  */
 package org.mapyrus;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,7 +35,12 @@ import java.util.logging.Logger;
  * Main class for Mapyrus, a program for generating plots of points,
  * lines and polygons to various output formats.
  * Runs as either an interpreter for files given on the command
- * line or as an HTTP server.
+ * line, as a library embedded in a Java application, or as an HTTP server.
+ *
+ * An interpreter is not thread-safe.
+ *
+ * When all work with an interpreter is complete call the close() method
+ * to flush and close any output page and datasets still in use.
  */
 public class Mapyrus
 {
@@ -48,6 +54,23 @@ public class Mapyrus
 	{
 		mInterpreter = new Interpreter();
 		mContext = new ContextStack();
+	}
+
+	/**
+	 * Create string reader from string array.
+	 * @param s string to create reader from.
+	 * @return string reader.
+	 */
+	private StringReader makeStringReader(String []s)
+	{
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < s.length; i++)
+		{
+			sb.append(s[i]);
+			sb.append(Constants.LINE_SEPARATOR);
+		}
+		StringReader retval = new StringReader(sb.toString());
+		return(retval);
 	}
 
 	/**
@@ -67,17 +90,35 @@ public class Mapyrus
 		 * Convert commands into a reader that can be parsed one
 		 * character at a time.
 		 */
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < commands.length; i++)
-		{
-			sb.append(commands[i]);
-			sb.append(Constants.LINE_SEPARATOR);
-		}
-		StringReader sr = new StringReader(sb.toString());
-
+		StringReader sr = makeStringReader(commands);
 		FileOrURL f = new FileOrURL(sr, "commands");
 		ColorDatabase.load();
 		mInterpreter.interpret(mContext, f, stdout);
+	}
+
+	/**
+	 * Read, parse and execute commands.
+	 * Can be called repeatedly to interpret many files.
+	 * Graphics state and variables are retained between calls.
+	 * An interpreter cannot be used again if it throws an exception.
+	 * The BufferedImage passed is set as the initial output page.
+	 * This enables Mapyrus to draw into a buffer that the application
+	 * later displays in a window.
+	 * @param commands lines of commands to interpret.
+	 * @param stdout stream to write stdout of interpreter into.
+	 * @param image buffered image to use as initial output page.
+	 * @param extras extras settings for output page.
+	 * @throws IOException if reading or writing files fails.
+	 * @throws MapyrusException if there is an error interpreting commands.
+	 */
+	public void interpret(String []commands, PrintStream stdout,
+		BufferedImage image, String extras)
+		throws IOException, MapyrusException
+	{
+		if (extras == null)
+			extras = "";
+		mContext.setOutputFormat(image, extras);
+		interpret(commands, stdout);
 	}
 
 	/**
@@ -344,8 +385,10 @@ public class Mapyrus
 		return("Java version " + version + " (" + vendor + ") in " + javaHome);
 	}
 
-	/*
+	/**
 	 * Parse command line arguments and start processing.
+	 * Called when Mapyrus is run as a stand-alone interpreter.
+	 * @param args command line arguments.
 	 */
 	public static void main(String []args)
 	{
