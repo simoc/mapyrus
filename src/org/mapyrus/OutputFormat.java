@@ -71,7 +71,7 @@ public class OutputFormat
 	 * Indentation for PostScript commands.
 	 */
 	private int mPostScriptIndent;
-		
+
 	/*
 	 * Write PostScript file header.
 	 */
@@ -103,7 +103,8 @@ public class OutputFormat
 		mWriter.println("/m { moveto } def /l { lineto } def");
 		mWriter.println("/s { stroke } def /f { fill } def");
 		mWriter.println("/gs { gsave } def /gr { grestore } def");
-		mWriter.println("/rgb { setrgbcolor } def /sl { setlinewidth } def");
+		mWriter.println("/rgb { setrgbcolor } def");
+		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap setlinewidth } def");
 	}
 
 	/*
@@ -363,15 +364,60 @@ public class OutputFormat
 	/**
 	 * Set graphics attributes.
 	 * @param color is color to draw in.
-	 * @param lineWidth is width of line to use for drawing.
+	 * @param linestyle is Java2D line width, cap and join style, dash pattern.
 	 * @param is clip path.
 	 */
-	public void setAttributes(Color color, double lineWidth, Shape clipPath)
+	public void setAttributes(Color color, BasicStroke linestyle, Shape clipPath)
 	{
-
+		int cap, join;
+		
 		if (mOutputType == POSTSCRIPT)
 		{
-			writePostScriptLine(mLinearFormat.format(lineWidth) + " sl");
+			/*
+			 * Convert BasicStroke end cap and line join values to PostScript.
+			 */
+			cap = linestyle.getEndCap();
+			if (cap == BasicStroke.CAP_BUTT)
+				cap = 0;
+			else if (cap == BasicStroke.CAP_ROUND)
+				cap = 1;
+			else /* SQUARE */
+				cap = 2;
+
+			join = linestyle.getLineJoin();
+			if (join == BasicStroke.JOIN_MITER)
+				join = 0;
+			else if (join == BasicStroke.JOIN_ROUND)
+				join = 1;
+			else /* BEVEL */
+				join = 2;
+		
+			writePostScriptLine(mLinearFormat.format(linestyle.getLineWidth()) + " " +
+				cap + " " + join + " " +
+				mLinearFormat.format(linestyle.getMiterLimit()) + " sl");
+
+			/*
+			 * If there a dash pattern then set that too.
+			 */
+			float dashes[] = linestyle.getDashArray();
+			if (dashes != null)
+			{
+				StringBuffer s = new StringBuffer("[");
+				for (int i = 0; i < dashes.length; i++)
+				{
+					if (i > 0)
+						s.append(" ");
+					s.append(mLinearFormat.format(dashes[i]));
+				}
+				s.append("] ");
+				s.append(mLinearFormat.format(linestyle.getDashPhase()));
+				s.append(" setdash");
+				writePostScriptLine(s.toString());
+			}
+
+			/*
+			 * Set colour.
+			 */
 			float c[] = color.getRGBColorComponents(null);
 			writePostScriptLine(mColorFormat.format(c[0]) + " " +
 				mColorFormat.format(c[1]) + " " +
@@ -379,8 +425,11 @@ public class OutputFormat
 		}
 		else
 		{
+			/*
+			 * Set color, linestyle and clip path for graphics context.
+			 */
 			mGraphics2D.setColor(color);
-			mGraphics2D.setStroke(new BasicStroke((float)lineWidth));
+			mGraphics2D.setStroke(linestyle);
 			mGraphics2D.setClip(clipPath);
 		}
 	}
