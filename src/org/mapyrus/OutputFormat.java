@@ -282,18 +282,15 @@ public class OutputFormat
 	}
 
 	/*
-	 * Sets correct background, rendering hints and transformation
+	 * Sets correct rendering hints and transformation
 	 * for buffered image we will plot to.
 	 */
 	private void setupBufferedImage(double resolution)
 	{
 		double scale;
-	
-		mGraphics2D.setColor(Color.WHITE);
-		mGraphics2D.fillRect(0, 0, mImage.getWidth(), mImage.getHeight());
-		
+
 		scale = resolution / Constants.MM_PER_INCH;
-		
+
 		/*
 		 * Set transform with origin in lower-left corner and
 		 * Y axis increasing upwards.
@@ -493,8 +490,19 @@ public class OutputFormat
 				 */
 				int widthInPixels = (int)Math.round(width / Constants.MM_PER_INCH * resolution);
 				int heightInPixels = (int)Math.round(height / Constants.MM_PER_INCH * resolution);
+				int imageType;
+
+				/*
+				 * Create images with transparency for all formats except
+				 * JPEG (which does not support it).
+				 */
+				if (mFormatName.equals("jpg") || mFormatName.equals("jpeg"))
+					imageType = BufferedImage.TYPE_3BYTE_BGR;
+				else
+					imageType = BufferedImage.TYPE_INT_ARGB;
+
 				mImage = new BufferedImage(widthInPixels, heightInPixels,
-					BufferedImage.TYPE_3BYTE_BGR);
+					imageType);
 			}
 			else if (mOutputType == INTERNAL_IMAGE)
 			{
