@@ -644,9 +644,9 @@ public class Context
 		}
 		else
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));
+			retval = new Rectangle2D.Double();
 		}
-		return(mWorldExtents);
+		return(retval);
 	}
 
 	/**
