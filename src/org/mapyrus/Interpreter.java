@@ -10,7 +10,6 @@
  */
 
 import java.io.*;
-import java.lang.String;
 import java.util.Vector;
 import java.awt.Color;
 
@@ -265,6 +264,13 @@ public class Interpreter extends Thread
 					/*
 					 * Find named color in color name database.
 					 */
+					Color c = ColorDatabase.getColor(args[0].getStringValue());
+					if (c == null)
+					{
+						throw new MapyrusException("Color not found: " +
+							args[0].getStringValue());
+					}
+					context.setColor(c); 
 				}
 				else if (nExpressions == 4 &&
 					args[0].getType() == Argument.STRING &&
@@ -272,11 +278,12 @@ public class Interpreter extends Thread
 					args[2].getType() == Argument.NUMERIC &&
 					args[3].getType() == Argument.NUMERIC)
 				{
+					String colorType = args[0].getStringValue();
 					float c1 = (float)args[1].getNumericValue();
 					float c2 = (float)args[2].getNumericValue();
 					float c3 = (float)args[3].getNumericValue();
 					
-					if (args[0].getStringValue().equalsIgnoreCase("hsb"))
+					if (colorType.equalsIgnoreCase("hsb"))
 					{
 						/*
 						 * Set HSB color.
@@ -284,12 +291,17 @@ public class Interpreter extends Thread
 						int rgb = Color.HSBtoRGB(c1, c2, c3);
 						context.setColor(new Color(rgb));
 					}
-					else if (args[0].getStringValue().equalsIgnoreCase("rgb"))
+					else if (colorType.equalsIgnoreCase("rgb"))
 					{		
 						/*
 						 * Set RGB color.
 						 */
 						context.setColor(new Color(c1, c2, c3));
+					}
+					else
+					{
+						throw new MapyrusException("Unknown color type: " +
+							colorType);
 					}
 				}
 				break;
@@ -312,8 +324,8 @@ public class Interpreter extends Thread
 					/*
 					 * Add point to path.
 					 */
-					context.moveTo((float)args[0].getNumericValue(),
-						(float)args[1].getNumericValue());
+					context.moveTo(args[0].getNumericValue(),
+						args[1].getNumericValue());
 				}
 				break;
 				
@@ -324,8 +336,8 @@ public class Interpreter extends Thread
 					/*
 					 * Add point to path.
 					 */
-					context.lineTo((float)args[0].getNumericValue(),
-						(float)args[1].getNumericValue());
+					context.lineTo(args[0].getNumericValue(),
+						args[1].getNumericValue());
 				}
 				break;
 				
@@ -333,6 +345,20 @@ public class Interpreter extends Thread
 				context.stroke();
 				break;
 				
+			case Statement.FILL:
+				context.fill();
+				break;
+				
+			case Statement.SCALE:
+				if (nExpressions == 2 &&
+					args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC)
+				{
+					context.setScaling(args[0].getNumericValue(),
+						args[1].getNumericValue());
+				}
+				break;
+					
 			case Statement.NEWPAGE:
 				if (nExpressions == 3 &&
 					args[0].getType() == Argument.STRING &&
@@ -364,14 +390,7 @@ public class Interpreter extends Thread
 						System.out.print(args[i].getNumericValue());
 					}
 				}
-				
-				try
-				{
-					System.out.print(System.getProperty("line.separator"));
-				}
-				catch (SecurityException e)
-				{
-				}
+				System.out.println("");
 				break;
 				
 			case Statement.ASSIGN:
