@@ -4,7 +4,7 @@
 package au.id.chenery.mapyrus;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * A parsed statement.
@@ -20,27 +20,30 @@ public class Statement
 	public static final int CONDITIONAL = 2;
 	public static final int LOOP = 3;
 	public static final int BLOCK = 4;
-	
+
 	public static final int COLOR = 10;
 	public static final int LINESTYLE = 11;
-	public static final int MOVE = 12;
-	public static final int DRAW = 13;
-	public static final int ARC = 14;
-	public static final int CLEARPATH = 15;
-	public static final int SAMPLEPATH = 16;
-	public static final int STRIPEPATH = 17;
-	public static final int STROKE = 18;
-	public static final int FILL = 19;
-	public static final int CLIP = 20;
-	public static final int SCALE = 21;
-	public static final int ROTATE = 22;
-	public static final int WORLDS = 23;
-	public static final int PROJECT = 24;
-	public static final int DATASET = 25;
-	public static final int IMPORT = 26;
-	public static final int FETCH = 27;
-	public static final int NEWPAGE = 28;
-	public static final int PRINT = 29;
+	public static final int FONT = 12;
+	public static final int JUSTIFY = 13;
+	public static final int MOVE = 14;
+	public static final int DRAW = 15;
+	public static final int ARC = 16;
+	public static final int CLEARPATH = 17;
+	public static final int SAMPLEPATH = 18;
+	public static final int STRIPEPATH = 19;
+	public static final int STROKE = 20;
+	public static final int FILL = 21;
+	public static final int CLIP = 22;
+	public static final int LABEL = 23;
+	public static final int SCALE = 24;
+	public static final int ROTATE = 25;
+	public static final int WORLDS = 26;
+	public static final int PROJECT = 27;
+	public static final int DATASET = 28;
+	public static final int IMPORT = 29;
+	public static final int FETCH = 30;
+	public static final int NEWPAGE = 31;
+	public static final int PRINT = 32;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -86,14 +89,16 @@ public class Statement
 	/*
 	 * Static statement type lookup table for fast lookup.
 	 */
-	private static Hashtable mStatementTypeLookup;
+	private static HashMap mStatementTypeLookup;
 	
 	static
 	{
-		mStatementTypeLookup = new Hashtable();
+		mStatementTypeLookup = new HashMap();
 		mStatementTypeLookup.put("color", new Integer(COLOR));
 		mStatementTypeLookup.put("colour", new Integer(COLOR));
 		mStatementTypeLookup.put("linestyle", new Integer(LINESTYLE));
+		mStatementTypeLookup.put("font", new Integer(FONT));
+		mStatementTypeLookup.put("justify", new Integer(JUSTIFY));
 		mStatementTypeLookup.put("move", new Integer(MOVE));
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
 		mStatementTypeLookup.put("arc", new Integer(ARC));
@@ -103,6 +108,7 @@ public class Statement
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
 		mStatementTypeLookup.put("clip", new Integer(CLIP));
+		mStatementTypeLookup.put("label", new Integer(LABEL));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
