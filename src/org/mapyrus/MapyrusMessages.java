@@ -106,6 +106,7 @@ public class MapyrusMessages
 	public static final String NOT_STRING_OPERATION = "notstringoperation";
 	public static final String NOT_TEXT_FILE = "nottextfile";
 	public static final String NO_ARC_START = "noarcstart";
+	public static final String NO_CLIP_SIDE = "noclipside";
 	public static final String NO_DATASET = "nodataset";
 	public static final String NO_EXPRESSION = "noexpression";
 	public static final String NO_GEOMETRY_FIELD = "nogeometryfield";
