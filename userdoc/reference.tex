@@ -400,9 +400,7 @@ commands.
 
 \item
 The clip path defined with
-\texttt{clip} and
-\texttt{protect}
-commands.
+\texttt{clip} commands.
 
 \item
 Current drawing settings set by
@@ -683,18 +681,27 @@ Removes all points from the current path.
 \subsubsection{clip}
 
 \begin{alltt}
-clip
+clip \textit{side}
 \end{alltt}
 
-Sets a clip path containing the area covered by the current path.
-Opposite of the \texttt{protect} command.
-Later drawing commands are limited to draw only inside this area.
+Sets a clip path to the area covered by the current path,
+or excluding the area covered by the current path, depending
+on the value \textit{side}.
+
+If \textit{side} has value \texttt{inside} then
+later drawing commands are limited to draw only inside the area
+covered by current path.
+If \textit{side} has value \texttt{outside} then
+later drawing commands are limited to draw only outside the area
+covered by current path.
+
 If the path is clipped in a procedure, then the area remains
 clipped until the procedure is complete.  Otherwise, the area
 remains permanently clipped for the page.
 When more than one path is clipped, drawing is limited to
-areas inside all clip paths.
-The current path is not.
+areas that satisfy all clip paths.
+
+The current path is not modified by this command.
 
 \subsubsection{closepath}
 
@@ -924,7 +931,7 @@ fill
 Flood fills the current path with the current color.
 The winding rule is used for determining the inside and outside
 regions of polygons containing islands.
-The current path is not modified.
+The current path is not modified by this command.
 
 \subsubsection{font}
 
@@ -1278,20 +1285,6 @@ Prints each \textit{string} to standard output,
 separated by spaces.
 A newline is added after the final \textit{string}.
 
-\subsubsection{protect}
-
-\begin{alltt}
-protect
-\end{alltt}
-
-Defines a clip path to protect the area of the page covered by the current path
-and prevent it from being overwritten by later drawing commands.  Opposite of
-the \texttt{clip} command.  If the path is protected in a procedure, then the
-area remains protected until the procedure is complete.  Otherwise, the area
-remains permanently protected for the page.  When more than one area is
-protected, the union of all areas is protected.  The current path is not
-modified by this command.
-
 \subsubsection{rotate}
 
 \begin{alltt}
@@ -1339,9 +1332,13 @@ shiftpath \textit{x}, \textit{y}
 
 Shifts all points in the current path \textit{x} millimetres along the X axis
 and \textit{y} millimetres along the Y axis.  Shift values are scaled and
-rotated by \texttt{scale} and \texttt{rotate} values.  Use this command
-repeatedly following a \texttt{protect} command to produce a shadow effect for
-polygons.
+rotated by \texttt{scale} and \texttt{rotate} values but are independent
+of any world coordinate transformation.
+
+Use this command
+repeatedly following a \texttt{clip "outside"} command to produce a shadow
+effect for polygons, as shown in 
+Section \ref{tutorialshadow} on page \pageref{tutorialshadow}.
 
 \subsubsection{sinkhole}
 
