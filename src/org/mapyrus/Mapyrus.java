@@ -168,26 +168,20 @@ public class Mapyrus
 			"Java -D option.",
 			"",
 			"Options:",
-			"  -s <port> starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server on the",
-			"            given port.  Refer to manual for detailed instructions.",
-			"  -v        print version information and exit",
-			"  -h        print this message"
+			"  -s <port>     starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server on the",
+			"                given port.  Refer to manual for detailed instructions.",
+			"  -e <commands> runs given commands instead of reading commands from a file",
+			"  -v            print version information and exit",
+			"  -h            print this message"
 		};
 
 		String []license =
 		{
-			Constants.PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for",
-			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
-			"You may redistribute copies of " + Constants.PROGRAM_NAME + " under the terms",
-			"of the GNU Lesser General Public License.  For more information",
-			"about these matters, see the file named COPYING."
+			Constants.PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for MERCHANTABILITY or",
+			"FITNESS FOR A PARTICULAR PURPOSE.  You may redistribute copies of " + Constants.PROGRAM_NAME,
+			"under the terms of the GNU Lesser General Public License.  For more",
+			"information about these matters, see the file named COPYING."
 		};
-
-		System.out.println(Constants.PROGRAM_NAME + " version " +
-			Constants.getVersion() + " " +
-			Constants.getReleaseDate() +
-			" Copyright (C) 2003, 2004 Simon Chenery");
-		System.out.println("");
 
 		for (int i = 0; i < usage.length; i++)
 		{
@@ -464,48 +458,86 @@ public class Mapyrus
 		int i;
 		boolean readingStdin;
 		boolean isHttpServer = false;
-		int argStartIndex = 0;
+		int argIndex = 0;
 		int port = 0;
+		StringBuffer commandsToExecute = new StringBuffer();
+
+		if (args.length == 0)
+			printUsageAndExit();
 
 		/*
 		 * Parse command line arguments -- these are the files and URLs
 		 * to read commands from.
 		 */
-		if (args.length == 0 || (args.length == 1 && (args[0].equals("-h") ||
-			args[0].equals("--help") || args[0].equals("-?"))))
+		while (argIndex < args.length &&
+			args[argIndex].startsWith("-") &&
+			args[argIndex].length() > 1)
 		{
-			/*
-			 * Show usage message and quit.
-			 */
-			printUsageAndExit();
-		}
-		else if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version")))
-		{
-			/*
-			 * Show version number and quit.
-			 */
-			System.out.println(Constants.PROGRAM_NAME + " " +
-				Constants.getVersion() + " " +
-				Constants.getReleaseDate());
-			System.out.println(getJavaConfiguration());
-			System.exit(1);
-		}
-		else if (args[0].equals("-s"))
-		{
-			if (args.length < 2)
+			String arg = args[argIndex];
+			if (arg.equals("-h") || arg.equals("--help") ||
+				arg.equals("-?"))
 			{
+				/*
+			 	* Show usage message and quit.
+			 	*/
 				printUsageAndExit();
 			}
-			try
+			else if (arg.equals("-v") || arg.equals("--version"))
 			{
-				port = Integer.parseInt(args[1]);
+				/*
+			 	* Show version number and quit.
+			 	*/
+				System.out.println(Constants.PROGRAM_NAME + " " +
+					Constants.getVersion() + " " +
+					Constants.getReleaseDate());
+				System.out.println(getJavaConfiguration());
+				System.exit(1);
 			}
-			catch (NumberFormatException e)
+			else if (arg.equals("-s"))
 			{
-				printUsageAndExit();
+				if (argIndex + 1 == args.length)
+					printUsageAndExit();
+
+				try
+				{
+					port = Integer.parseInt(args[1]);
+				}
+				catch (NumberFormatException e)
+				{
+					printUsageAndExit();
+				}
+
+				argIndex += 2;
+				isHttpServer = true;
 			}
-			argStartIndex = 2;
-			isHttpServer = true;
+			else if (arg.equals("-e"))
+			{
+				if (argIndex + 1 == args.length)
+					printUsageAndExit();
+
+				/*
+				 * Commands to be executed given on command line.
+				 */
+				commandsToExecute.append(args[argIndex + 1]);
+				commandsToExecute.append(Constants.LINE_SEPARATOR);
+				argIndex += 2;
+			}
+			else if (arg.equals("--"))
+			{
+				/*
+				 * "--" marks end of options.
+				 */
+				argIndex++;
+				break;
+			}
+			else
+			{
+				/*
+				 * Unknown option.
+				 */
+				System.err.println(MapyrusMessages.get(MapyrusMessages.INVALID_OPTION) + ": " + arg);
+				System.exit(1);
+			}
 		}
 
 		initialise();
@@ -513,47 +545,59 @@ public class Mapyrus
 		context = new ContextStack();
 		Interpreter interpreter = new Interpreter();
 
-		i = argStartIndex;
-		while (i < args.length)
+		if (commandsToExecute.length() > 0)
 		{
-			readingStdin = args[i].equals("-");
-			if (readingStdin)
-			{
-				/*
-				 * Read from standard input.
-				 */
-				f = new FileOrURL(new InputStreamReader(System.in), "standard input");
-			}
-			else
-			{
-				/*
-				 * Read from a file or URL.
-				 */
-				try
-				{
-					f = new FileOrURL(args[i]);
-				}
-				catch (IOException e)
-				{
-					System.err.println(e.getMessage());
-					System.exit(1);
-				}
-				catch (MapyrusException e)
-				{
-					System.err.println(e.getMessage());
-					System.exit(1);
-				}
-			}
-
-	
-			if (!processFile(context, f, interpreter, !readingStdin))
+			/*
+			 * Run commands given as a command line argument.
+			 */
+			f = new FileOrURL(new StringReader(commandsToExecute.toString()), "-e");
+			if (!processFile(context, f, interpreter, false))
 				System.exit(1);
+		}
+		else
+		{
+			i = argIndex;
+			while (i < args.length)
+			{
+				readingStdin = args[i].equals("-");
+				if (readingStdin)
+				{
+					/*
+					 * Read from standard input.
+					 */
+					f = new FileOrURL(new InputStreamReader(System.in), "standard input");
+				}
+				else
+				{
+					/*
+					 * Read from a file or URL.
+					 */
+					try
+					{
+						f = new FileOrURL(args[i]);
+					}
+					catch (IOException e)
+					{
+						System.err.println(e.getMessage());
+						System.exit(1);
+					}
+					catch (MapyrusException e)
+					{
+						System.err.println(e.getMessage());
+						System.exit(1);
+					}
+				}
 
-			i++;
+		
+				if (!processFile(context, f, interpreter, !readingStdin))
+					System.exit(1);
+
+				i++;
+			}
 		}
 
 		/*
-		 * Finished off anything being created in this context.
+		 * Finish off anything being created in this context.
 		 */
 		try
 		{
