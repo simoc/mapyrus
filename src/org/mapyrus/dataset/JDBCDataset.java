@@ -25,6 +25,7 @@ package au.id.chenery.mapyrus.dataset;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -58,6 +59,11 @@ public class JDBCDataset implements GeographicDataset
 	 */
 	private String []mFieldNames;
 	private int []mFieldTypes;
+
+	/*
+	 * Flags fields returned from SQL query that are OGC WKT geometry type.
+	 */
+	private boolean []mIsWKTField;
 
 	/**
 	 * Initialise and return single shared database connection.
@@ -93,10 +99,11 @@ public class JDBCDataset implements GeographicDataset
 		String driver = null;
 		String url = null;
 		Properties properties = new Properties();
-		boolean usePostGIS = false;
 		Connection connection;
-		
+		HashSet WKTFieldNames = new HashSet();
+
 		mSql = filename;
+
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
 		{
@@ -111,13 +118,15 @@ public class JDBCDataset implements GeographicDataset
 					driver = value;
 				else if (key.equals("url"))
 					url = value;
-				else if (token.startsWith("postgis="))
+				else if (key.equals("wktfields"))
 				{
-					Boolean bool = Boolean.valueOf(value);
-					usePostGIS = bool.booleanValue();
-					if (usePostGIS)
+					/*
+					 * Build lookup table of fields that are OGC WKT geometry.
+					 */
+					StringTokenizer st2 = new StringTokenizer(value, ",");
+					while (st2.hasMoreTokens())
 					{
-						// TODO add datatypes required by PostGIS.
+						WKTFieldNames.add(st2.nextToken().toLowerCase());
 					}
 				}
 				else
@@ -134,7 +143,8 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (ClassNotFoundException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " + driver);
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_JDBC_CLASS) +
+				": " + e.getMessage() + ": " + driver);
 		}
 
 		try
@@ -146,8 +156,8 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " +
-				e.getSQLState() + ": " + e.getErrorCode() + ": " + url);
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
+				 e.getSQLState() + ": " + url);
 		}
 
 		try
@@ -164,16 +174,53 @@ public class JDBCDataset implements GeographicDataset
 			int columnCount = resultSetMetadata.getColumnCount();
 			mFieldNames = new String[columnCount];
 			mFieldTypes = new int[columnCount];
+			mIsWKTField = new boolean[columnCount];
 			for (int i = 0; i < columnCount; i++)
 			{
 				mFieldNames[i] = resultSetMetadata.getColumnName(i + 1);
+				
+				/*
+				 * Check that field name is acceptable for defining as variable name.
+				 */
+				char c = mFieldNames[i].charAt(0);
+				boolean isValidName = (Character.isLetter((char)c) || c == '$');
+				
+				if (isValidName)
+				{
+					int j = 1;
+					while (isValidName && j < mFieldNames[i].length())
+					{
+						c = mFieldNames[i].charAt(j);
+						isValidName = (c == '.' || c == '_' ||
+							Character.isLetterOrDigit((char)c));
+						j++;
+					}
+				}
+				if (!isValidName)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FIELD_NAME) +
+						": " + mFieldNames[i]);
+				}
+
 				mFieldTypes[i] = resultSetMetadata.getColumnType(i + 1);
+				if (WKTFieldNames.contains(mFieldNames[i].toLowerCase()))
+				{
+					/*
+					 * Check that field returns a string.
+					 */
+					if (mFieldTypes[i] != Types.CHAR && mFieldTypes[i] != Types.VARCHAR &&
+						mFieldTypes[i] != Types.LONGVARCHAR)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FIELD_NOT_OGC_TEXT) + ": " + mFieldNames[i]);
+					}
+					mIsWKTField[i] = true;
+				} 
 			}
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " +
-				e.getSQLState() + ": " + e.getErrorCode() + ": " + mSql);
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
+				e.getSQLState() + ": " + mSql);
 		}
 	}
 
@@ -276,7 +323,11 @@ public class JDBCDataset implements GeographicDataset
 						mFieldTypes[i] == Types.VARCHAR ||
 						mFieldTypes[i] == Types.LONGVARCHAR)
 					{
-						arg = new Argument(Argument.STRING, mResultSet.getString(i + 1));
+						String fieldValue = mResultSet.getString(i + 1);
+						if (mIsWKTField[i])
+							arg = new Argument(fieldValue);
+						else
+							arg = new Argument(Argument.STRING, fieldValue);
 					}
 					else if (mFieldTypes[i] == Types.BINARY ||
 						mFieldTypes[i] == Types.VARBINARY ||
@@ -305,8 +356,8 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " +
-				e.getSQLState() + ": " + e.getErrorCode());
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
+				e.getSQLState() + ": " + mSql);
 		}
 		return(retval);
 	}
@@ -325,8 +376,8 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " +
-				e.getSQLState() + ": " + e.getErrorCode());
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
+				e.getSQLState());
 		}
 	}
 }
