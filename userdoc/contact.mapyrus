@@ -1,0 +1,14 @@
+# @(#) $Id$
+
+# Show contact e-mail address in an image to reduce chances of
+# spammers getting hold of it.
+#
+newpage "png", "contact.png", 45, 4, 96
+font 'Monospaced', 'plain', Mapyrus.page.resolution.mm * 12
+color '#AF2F5F'
+justify 'left'
+clearpath
+move 1, 1
+user = 'mapyrus'
+domain = 'chenery.id.au'
+label user . '@' . domain
