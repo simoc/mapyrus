@@ -1,6 +1,16 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery.
 
+0.53, March 2005
+
+* Fix bugs in SVG output in saving state, text alignment.
+* Implement gradientfill for SVG output.
+* Add compression option for SVG output.
+* Enable icons inside a Java JAR file to be displayed using
+  resource:au/com/company/filename.png syntax.
+* Use pool of database connections to improve performance when running as an
+  HTTP server.  Also enables Mapyrus to continue running if database restarted.
+
 0.52, March 2005
 
 * Add display of geo-referenced images with .tfw "worlds" file.
