@@ -174,7 +174,8 @@ public class Mapyrus
 		try
 		{
 			/*
-			 * Create socket on given port.  Check port so that
+			 * Create socket on given port.  If port was 0 then it
+			 * is assigned to any free port number.
 			 */
 			serverSocket = new ServerSocket(port);
 			port = serverSocket.getLocalPort();
