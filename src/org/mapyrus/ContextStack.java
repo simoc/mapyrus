@@ -228,6 +228,7 @@ public class ContextStack
 			while (i >= 0 && retval == null)
 			{
 				context = (Context)mStack.get(i);
+				i--;
 				retval = context.getVariableValue(varName);
 			}
 		}
