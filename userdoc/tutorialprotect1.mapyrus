@@ -1,0 +1,65 @@
+begin populatedPlace name
+  box -0.5, -0.5, 0.5, 0.5
+  fill
+  clearpath
+
+  # Calculate size of place name label, then draw it to
+  # the right or the left of the place, wherever there is
+  # space that has not been used before.
+  #
+  let h = 4
+  font "Helvetica", h
+  let w = stringwidth(name)
+  color "yellow"
+  if not protected(1, 0, w + 1, h)
+  then
+    # Draw label inside a box to right of point.
+    # Then mark labelled area as protected.
+    #
+    box 1, 0, w + 1, h
+    fill
+    clearpath
+    move 1, 0
+    justify "left"
+    color "black"
+    label name
+    protect 1, 0, w + 1, h
+  elif not protected(-1, 0, -(w + 1), h)
+  then
+    # Draw label inside a box to left of point.
+    # Then mark labelled area as protected.
+    #
+    box -1, 0, -(w + 1), h
+    fill
+    clearpath
+    move -1, 0
+    justify "right"
+    color "black"
+    label name
+    protect -1, 0, -(w + 1), h
+  endif
+end
+
+# Draw coastline.
+#
+newpage "eps", "tutorialprotect1.eps", 75, 50
+dataset "shapefile", "coastline.shp", ""
+worlds 600000, 5100000, 1500000, 6100000
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  stroke
+done
+
+# Read positions and names of towns and cities from file.
+#
+dataset "textfile", "locations.txt", "delimiters=,"
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  move $1, $2
+  populatedPlace $3
+done
