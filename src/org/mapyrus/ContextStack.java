@@ -474,6 +474,7 @@ public class ContextStack
 	{
 		BufferedImage icon;
 		boolean isDigits = false;
+		boolean isResource = false;
 		int digitsType = 0;
 
 		/*
@@ -506,6 +507,11 @@ public class ContextStack
 					isDigits = true;
 					digitsType = Bitmap.BINARY_DIGIT_BITMAP;
 				}
+				else if (filename.startsWith("resource:"))
+				{
+					isResource = true;
+					filename = filename.substring(9);
+				}
 			}
 
 			if (isDigits)
@@ -517,11 +523,20 @@ public class ContextStack
 			else
 			{
 				/*
-				 * Load icon from either a URL, or as a plain file.
+				 * Load icon from either as a resource from a JAR file,
+				 * a URL, or as a plain file.
 				 */
 				try
 				{
-					url = new URL(filename);
+					if (isResource)
+					{
+						ClassLoader loader = this.getClass().getClassLoader();
+						url = loader.getResource(filename);
+					}
+					else
+					{
+						url = new URL(filename);
+					}
 					icon = ImageIO.read(url);
 				}
 				catch (MalformedURLException e)
