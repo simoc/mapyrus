@@ -437,7 +437,8 @@ done
 The \texttt{for} \dots \texttt{in} keywords define a loop in which
 each element of \textit{array} is assigned to variable \textit{var}
 and \textit{commands} are executed.
-Elements in \textit{array} are accessed in no particular order:
+Elements in \textit{array} are accessed in numerical index order if
+indexes are numeric, otherwise in alphabetical index order:
 
 \begin{alltt}
 for \textit{var} in \textit{array} do
