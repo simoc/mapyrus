@@ -23,15 +23,12 @@
 package org.mapyrus.io;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.mapyrus.MapyrusMessages;
 
 /**
  * Finds files matching a file wildcard pattern containing asterisks.
@@ -51,7 +48,7 @@ public class WildcardFile
 	 */
 	private ArrayList mPatternParts;
 
-	public WildcardFile(String wildcard) throws IOException
+	public WildcardFile(String wildcard)
 	{
 		/*
 		 * Separate wildcard pattern into directory and filename.
@@ -79,12 +76,6 @@ public class WildcardFile
 			mBaseDirectory = new File(System.getProperty("user.dir"));
 		else
 			mBaseDirectory = new File(base);
-
-		if (!mBaseDirectory.isDirectory())
-		{
-			throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
-				": " + mBaseDirectory.toString());
-		}
 
 		/*
 		 * Split filename into pieces, separated by asterisk characters and "/".
@@ -257,18 +248,11 @@ public class WildcardFile
 
 	public static void main(String []args)
 	{
-		try
-		{
-			WildcardFile w = new WildcardFile("/opt/data/shape/bakersfield*/*d/*a*.shp");
-			List list = w.getMatchingFiles();
-			Iterator it = list.iterator();
-			int i = 0;
-			while (it.hasNext())
-				System.out.println(++i + ": " + (String)it.next());
-		}
-		catch (IOException e)
-		{
-			System.err.println(e.getMessage());
-		}
+		WildcardFile w = new WildcardFile("/opt/data/shape/bakersfield*/*/*a*.shp");
+		List list = w.getMatchingFiles();
+		Iterator it = list.iterator();
+		int i = 0;
+		while (it.hasNext())
+			System.out.println(++i + ": " + (String)it.next());
 	}
 }
