@@ -1726,11 +1726,14 @@ Uppercase variable names are used.
 Read and execute the commands from the filename given in the URL.
 \item
 Capture the standard output of these commands and return it to the
-to HTTP client.  An HTML page is returned if
-\texttt{print} commands are used.  An image file is
-returned if the
+HTTP client.
+An image file is returned if the
 \texttt{newpage} command is used with output file set
 to standard output.
+Otherwise the output of any \texttt{print} commands is returned.
+The MIME type set in a \texttt{mimetype} command is returned as
+the content type to the HTTP client.
+
 An HTTP error state is returned if the request fails.
 \end{enumerate}
 
