@@ -274,12 +274,21 @@ public class Context
 	 */
 	public void clearPath()
 	{
-		if (mPath == null)
-			mPath = new GeometricPath();
-		else
+		if (mPath != null)
 			mPath.reset();
 	}
 
+	/**
+	 * Replace path with regularly spaced points along it.
+	 * @param spacing is distance between points.
+	 * @param offset is starting offset of first point.
+	 */
+	public void slicePath(double spacing, double offset)
+	{
+		if (mPath != null)
+			mPath.slicePath(spacing, offset);
+	}
+	
 	/**
 	 * Draw currently defined path.
 	 */
@@ -356,6 +365,21 @@ public class Context
 		return(retval);
 	}
 
+	/**
+	 * Returns geometric length of current path.
+	 * @return length of current path.
+	 */
+	public double getPathLength()
+	{
+		double retval;
+		
+		if (mPath == null)
+			retval = 0.0;
+		else
+			retval = mPath.getLength();
+		return(retval);
+	}
+	
 	/**
 	 * Returns coordinates and rotation angle for each each moveTo point in current path
 	 * @returns list of three element float arrays containing x, y coordinates and
