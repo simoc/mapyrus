@@ -68,6 +68,7 @@ public class OutputFormat
 	/*
 	 * Type of output currently being generated.
 	 */
+	private static final int INTERNAL_IMAGE = 1;
 	private static final int IMAGE_FILE = 2;
 	private static final int POSTSCRIPT = 3;
 
@@ -340,85 +341,26 @@ public class OutputFormat
 			"/" + fontName + " exch definefont pop");
 	}
 
-	/**
-	 * Creates new graphics file, ready for drawing to.
-	 * @param filename name of image file output will be saved to.
-	 * If filename begins with '|' character then output is piped as
-	 * input to that command.
-	 * @param format is the graphics format to use.
-	 * @param width is the page width (in mm).
-	 * @param height is the page height (in mm).
-	 * @param extras contains extra settings for this output.
-	 * @param stdoutStream standard output stream for program.
-	 */
-	public OutputFormat(String filename, String format,
-		double width, double height, String extras,
-		PrintStream stdoutStream)
+	private void setOutput(String filename, double width, double height, String extras)
 		throws IOException, MapyrusException
 	{
-		mFormatName = format.toLowerCase();
-		int resolution;
-
-		/*
-		 * Check that Java can write this image format to a file.
-		 */				
-		if (mFormatName.equals("ps") || mFormatName.equals("eps"))
-		{
-			mOutputType = POSTSCRIPT;
-			resolution = 300;
-		}	
-		else
-		{
-			if (!isSupportedImageFormat(mFormatName))
-			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OUTPUT) +
-					": " + format);
-			}
-		
-			mOutputType = IMAGE_FILE;
-			resolution = Constants.SCREEN_RESOLUTION;
-		}
-
-		/*
-		 * Should we pipe the output to another program
-		 * instead of writing a file?
-		 */
-		mIsPipedOutput = filename.startsWith("|");
-
-		/*
-		 * Are we writing to standard output instead of to a file?
-		 */
-		mIsStandardOutput = filename.equals("-");
-
-		if (mIsPipedOutput)
-		{
-			String pipeCommand = filename.substring(1).trim();
-			mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
-			mOutputStream = mOutputProcess.getOutputStream();
-		}
-		else
-		{
-			if (mIsStandardOutput)
-				mOutputStream = stdoutStream;
-			else
-				mOutputStream = new FileOutputStream(filename);
-		}
-
 		/*
 		 * Parse list of additional options given by caller.
 		 */
-
 		ArrayList fontList = new ArrayList();
 		mEncodeAsISOLatin1 = new HashSet();
 		mTTFFonts = new HashMap();
 		mAfmFiles = new ArrayList();
-		
+		int resolution;
+
+		resolution = (mOutputType == POSTSCRIPT) ? 300 : Constants.SCREEN_RESOLUTION;
+
 		/*
 		 * Reading all font metrics information takes some time.
 		 * Wait until we really need it before loading it.
 		 */
 		mAdobeFontMetrics = null;
-
+	
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
 		{
@@ -462,7 +404,7 @@ public class OutputFormat
 						{
 							mAfmFiles.add(it.next());
 						}
-									
+										
 					}
 				}
 			}
@@ -507,7 +449,7 @@ public class OutputFormat
 				while (st2.hasMoreTokens())
 				{
 					String ttfFilename = st2.nextToken();
-					
+						
 					/*
 					 * Accept wildcards in filenames.
 					 */
@@ -525,31 +467,44 @@ public class OutputFormat
 				}
 			}
 		}
-
+	
 		/*
 		 * Setup file we are writing to.
 		 */
 		if (mOutputType == POSTSCRIPT)
 		{
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
-			
+				
 			mSuppliedFontResources = new HashSet();
-
+	
 			writePostScriptHeader(width, height, fontList);
-
+	
 			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
 		}
 		else
 		{
-			/*
-			 * Create a BufferedImage to draw into.  We'll save it to a file
-			 * when user has finished drawing to it.
-			 */
-			int widthInPixels = (int)Math.round(width / Constants.MM_PER_INCH * resolution);
-			int heightInPixels = (int)Math.round(height / Constants.MM_PER_INCH * resolution);
-			mImage = new BufferedImage(widthInPixels, heightInPixels,
-				BufferedImage.TYPE_3BYTE_BGR);
+
+			if (mOutputType == IMAGE_FILE)
+			{
+				/*
+				 * Create a BufferedImage to draw into.  We'll save it to a file
+				 * when user has finished drawing to it.
+				 */
+				int widthInPixels = (int)Math.round(width / Constants.MM_PER_INCH * resolution);
+				int heightInPixels = (int)Math.round(height / Constants.MM_PER_INCH * resolution);
+				mImage = new BufferedImage(widthInPixels, heightInPixels,
+					BufferedImage.TYPE_3BYTE_BGR);
+			}
+			else if (mOutputType == INTERNAL_IMAGE)
+			{
+				/*
+				 * Calculate width of page, based on image and resolution given
+				 * by user.
+				 */
+				width = mImage.getWidth() / (resolution / Constants.MM_PER_INCH);
+				height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
+			}
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution);
 
@@ -565,12 +520,88 @@ public class OutputFormat
 		mResolution = Constants.MM_PER_INCH / resolution;
 		mFontCache = new FontCache();
 		mJustificationShiftX = mJustificationShiftY = 0.0;
-
+	
 		/*
 		 * Set impossible current font rotation so first font
 		 * accessed will be loaded.
 		 */
 		mFontRotation = Double.MAX_VALUE;
+	}
+
+	/**
+	 * Creates new graphics file, ready for drawing to.
+	 * @param filename name of image file output will be saved to.
+	 * If filename begins with '|' character then output is piped as
+	 * input to that command.
+	 * @param format is the graphics format to use.
+	 * @param width is the page width (in mm).
+	 * @param height is the page height (in mm).
+	 * @param extras contains extra settings for this output.
+	 * @param stdoutStream standard output stream for program.
+	 */
+	public OutputFormat(String filename, String format,
+		double width, double height, String extras,
+		PrintStream stdoutStream)
+		throws IOException, MapyrusException
+	{
+		mFormatName = format.toLowerCase();
+
+		/*
+		 * Check that Java can write this image format to a file.
+		 */				
+		if (mFormatName.equals("ps") || mFormatName.equals("eps"))
+		{
+			mOutputType = POSTSCRIPT;
+		}	
+		else
+		{
+			if (!isSupportedImageFormat(mFormatName))
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OUTPUT) +
+					": " + format);
+			}
+		
+			mOutputType = IMAGE_FILE;
+		}
+
+		/*
+		 * Should we pipe the output to another program
+		 * instead of writing a file?
+		 */
+		mIsPipedOutput = filename.startsWith("|");
+
+		/*
+		 * Are we writing to standard output instead of to a file?
+		 */
+		mIsStandardOutput = filename.equals("-");
+
+		if (mIsPipedOutput)
+		{
+			String pipeCommand = filename.substring(1).trim();
+			mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
+			mOutputStream = mOutputProcess.getOutputStream();
+		}
+		else
+		{
+			if (mIsStandardOutput)
+				mOutputStream = stdoutStream;
+			else
+				mOutputStream = new FileOutputStream(filename);
+		}
+		setOutput(filename, width, height, extras);
+	}
+
+	/**
+	 * Sets image for drawing into.
+	 * @param image is buffered image to draw into.
+	 * @param extras contains extra settings for this output.
+	 */
+	public OutputFormat(BufferedImage image, String extras)
+		throws IOException, MapyrusException
+	{
+		mOutputType = INTERNAL_IMAGE;
+		mFormatName = "png";
+		setOutput("", 0, 0, extras);
 	}
 
 	/**
@@ -773,28 +804,31 @@ public class OutputFormat
 			mImage = null;
 			mGraphics2D = null;
 		}
-		
-		/*
-		 * If we are piping output to another program then wait for
-		 * that program to finish.  Then check that it succeeded.
-		 */
-		if (mIsPipedOutput)
+
+		if (mOutputType == POSTSCRIPT || mOutputType == IMAGE_FILE)
 		{
-			int retval = 0;
-			
-			try
+			/*
+			 * If we are piping output to another program then wait for
+			 * that program to finish.  Then check that it succeeded.
+			 */
+			if (mIsPipedOutput)
 			{
-				retval = mOutputProcess.waitFor();
-			}
-			catch (InterruptedException e)
-			{
-				throw new MapyrusException(mFilename + ": " + e.getMessage());
-			}
-			
-			if (retval != 0)
-			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
-					": " + mFilename);
+				int retval = 0;
+
+				try
+				{
+					retval = mOutputProcess.waitFor();
+				}
+				catch (InterruptedException e)
+				{
+					throw new MapyrusException(mFilename + ": " + e.getMessage());
+				}
+
+				if (retval != 0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
+						": " + retval + ": " + mFilename);
+				}
 			}
 		}
 	}
