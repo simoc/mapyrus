@@ -395,10 +395,12 @@ public class GeometricPath
 		AffineTransform rotateTransform = new AffineTransform();
 		AffineTransform inverseRotateTransform = new AffineTransform();
 		double xMin, yMin, xMax, yMax, y;
-		
+		float startCoords[];
+		float endCoords[] = new float[2];
+
 		/*
-		 * Reverse transform a rectangle with same size as
-		 * the bounding box of the polygon to be striped.
+		 * Create bounding box of polygon at origin, rotated so that
+		 * stripes will be horizontal.
 		 */
 		pts[0] = 0.0;
 		pts[1] = 0.0;
@@ -411,12 +413,12 @@ public class GeometricPath
 		
 		pts[6] = pts[4];
 		pts[7] = 0.0;
-		
+
 		inverseRotateTransform.rotate(-angle);
 		inverseRotateTransform.transform(pts, 0, pts, 0, nPts);
 
 		/*
-		 * Find area covered by transformed rectangle.
+		 * Find area covered by rotated rectangle.
 		 */
 		xMin = xMax = pts[0];
 		yMin = yMax = pts[1];
@@ -428,11 +430,10 @@ public class GeometricPath
 			yMax = Math.max(yMax, pts[i * 2 + 1]);
 		}
 
-		double stripeLength = xMax - xMin;
-		double d, minValue, maxValue;
-		float startCoords[];
-		float endCoords[] = new float[2];
-
+		/*
+		 * Create stripes horizontally through rotated rectangle.
+		 */
+		rotateTransform.translate(bounds.getMinX(), bounds.getMinY());
 		rotateTransform.rotate(angle);
 		y = yMin;
 		while (y < yMax)
@@ -440,15 +441,20 @@ public class GeometricPath
 			pts[0] = xMin;
 			pts[1] = pts[3] = y;
 			pts[2] = xMax;
+			
+			/*
+			 * Transform each stripe back to coordinate system of
+			 * original polygon.
+			 */
 			rotateTransform.transform(pts, 0, pts, 0, 2);
 
 			startCoords = new float[3];
-			startCoords[0] = (float)(pts[0] + bounds.getMinX());
-			startCoords[1] = (float)(pts[1] + bounds.getMinY());
+			startCoords[0] = (float)(pts[0]);
+			startCoords[1] = (float)(pts[1]);
 			startCoords[2] = 0.0f;
 
-			endCoords[0] = (float)(pts[2] + bounds.getMinX());
-			endCoords[1] = (float)(pts[3] + bounds.getMinY());
+			endCoords[0] = (float)(pts[2]);
+			endCoords[1] = (float)(pts[3]);
 
 			newPath.moveTo(startCoords);
 			newPath.lineTo(endCoords);
