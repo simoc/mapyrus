@@ -807,6 +807,19 @@ The output is shown in Figure \ref{tutorialgeoimage2}.
 \label{tutorialgeoimage2}
 \end{figure}
 
+\subsection{Displaying Images From An OGC Web Mapping Service}
+
+An OGC Web Mapping Service (WMS) is an HTTP server that provides
+geo-referenced images.
+To fetch a geo-referenced image from a WMS and display it
+on the page use the \texttt{geoimage} command.
+
+The following example demonstrates building a URL for a WMS request,
+defining the layers to be fetched and world coordinate range
+of the area of interest.
+
+\verbatiminput{tutorialgeoimage3.mapyrus}
+
 \subsection{Updating Existing Output Files}
 
 To edit or draw over an existing image file or PostScript file use
