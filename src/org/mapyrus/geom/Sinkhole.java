@@ -71,6 +71,7 @@ public class Sinkhole
 		Point2D.Double retval;
 		Rectangle2D bounds = s.getBounds2D();
 		double maxBounds = Math.max(bounds.getWidth(), bounds.getHeight());
+		maxBounds += 0.0001;		/* protect against divide by zero */
 		AffineTransform affine =
 			AffineTransform.getScaleInstance(BITMAP_SIZE / maxBounds, BITMAP_SIZE / maxBounds);		
 		affine.translate(-bounds.getMinX(), -bounds.getMinY());
