@@ -24,15 +24,18 @@ public class FontCache extends LRUCache
 	}
 
 	/**
-	 * Hashes font name, style and size into a string.
+	 * Hashes font name, style, size and rotation angle into a string.
 	 * @param name is name of font as defined in java.awt.Font class.
 	 * @param style is a style as defined in java.awt.Font class.
 	 * @param pointSize is size for labelling in points (1/72 inch).
+	 * @param rotation is rotation angle for text in radians, 0 is horizontal, increasing
+	 * counter-clockwise.
 	 * @return desired font, or a default if font could not be found. 
 	 */
-	private String hash(String name, int style, int pointSize)
+	private String hash(String name, int style, int pointSize, double rotation)
 	{
-		String retval = name + "," + style + "," + pointSize;
+		String retval = name + "," + style + "," + pointSize + "," +
+			Math.round(rotation * 1000.0);
 		return(retval);
 	}
 
@@ -41,11 +44,13 @@ public class FontCache extends LRUCache
 	 * @param name is name of font as defined in java.awt.Font class.
 	 * @param style is a style as defined in java.awt.Font class.
 	 * @param pointSize is size for labelling in points (1/72 inch).
+	 * @param rotation is rotation angle for text in radians, 0 is horizontal, increasing
+	 * counter-clockwise.
 	 * @return font from cache, or null if font is not in cache.
 	 */
-	public Font get(String name, int style, int pointSize)
+	public Font get(String name, int style, int pointSize, double rotation)
 	{
-		String key = hash(name, style, pointSize);
+		String key = hash(name, style, pointSize, rotation);
 		Font retval = (Font)get(key);
 		return(retval);
 	}
@@ -57,11 +62,13 @@ public class FontCache extends LRUCache
 	 * @param name is name of font as defined in java.awt.Font class.
 	 * @param style is a style as defined in java.awt.Font class.
 	 * @param pointSize is size for labelling in points (1/72 inch).
+	 * @param rotation is rotation angle for text in radians, 0 is horizontal, increasing
+	 * counter-clockwise.
 	 * @param font is font store in cache.
 	 */	
-	public void put(String name, int style, int pointSize, Font font)
+	public void put(String name, int style, int pointSize, double rotation, Font font)
 	{
-		String key = hash(name, style, pointSize);
+		String key = hash(name, style, pointSize, rotation);
 		put(key, font);
 	}
 }
