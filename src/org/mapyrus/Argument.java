@@ -1,7 +1,7 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
  * Copyright (C) 2003 Simon Chenery.
- *
+ *k
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,8 +24,9 @@
 package org.mapyrus;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
@@ -646,12 +647,49 @@ public class Argument
 	}
 
 	/**
+	 * Comparator for string lists.
+	 * Orders list elements that contain numbers numerically, other
+	 * elements alphabetically.
+	 */
+	private class NumericAndStringComparator implements Comparator
+	{
+		public int compare(Object o1, Object o2)
+		{
+			int retval;
+			String s1 = (String)o1;
+			String s2 = (String)o2;
+
+			try
+			{
+				/*
+				 * If both strings contain numbers then compare them
+				 * numerically.
+				 */
+				int i1 = Integer.parseInt(s1);
+				int i2 = Integer.parseInt(s2);
+				retval = i1 - i2;
+			}  
+			catch (NumberFormatException e)
+			{
+				retval = s1.compareTo(s2);
+			}
+			return(retval);
+		}
+	}
+
+	/**
 	 * Get array of keys in hash map.
 	 * @return keys in this hash map, each object being a string.
 	 */
 	public Object[] getHashMapKeys()
 	{
-		return(mHashMap.keySet().toArray());
+		Object []keys = mHashMap.keySet().toArray();
+		
+		/*
+		 * Return keys in sorted order, either numerically or alphabetically.
+		 */
+		Arrays.sort(keys, new NumericAndStringComparator());
+		return(keys);
 	}
 
 	/**
@@ -775,7 +813,7 @@ public class Argument
 	{
 		String retval = null;
 		DecimalFormat format;
-		StringBuffer s;
+		StringBuffer sb;
 
 		if (mType == STRING)
 			retval = mStringValue;
@@ -801,26 +839,23 @@ public class Argument
 			/*
 			 * Build string of all key, value pairs in the hash map.
 			 */
-			s = new StringBuffer();
-			Iterator it = mHashMap.keySet().iterator();
-			while (it.hasNext())
+			sb = new StringBuffer();
+			Object []keys = getHashMapKeys();
+			for (int i = 0; i < keys.length; i++)
 			{
-				if (s.length() > 0)
-					s.append(' ');
-
-				String key = (String)it.next();
-				s.append(key);
-				s.append(' ');
-				Argument value = (Argument)mHashMap.get(key);
-				s.append(value.getStringValue());
+				sb.append(keys[i]);
+				sb.append(' ');
+				Argument value = (Argument)mHashMap.get(keys[i]);
+				sb.append(value.getStringValue());
+				sb.append(Constants.LINE_SEPARATOR);
 			}
-			retval = s.toString();
+			retval = sb.toString();
 		}
 		else
 		{
-			s = new StringBuffer();
-			createOGCWKT(mGeometryValue, 0, s, true);
-			retval = s.toString().trim();
+			sb = new StringBuffer();
+			createOGCWKT(mGeometryValue, 0, sb, true);
+			retval = sb.toString().trim();
 		}
 		return(retval);
 	}
