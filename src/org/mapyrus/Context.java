@@ -1109,8 +1109,11 @@ public class Context
 			mCtm.transform(srcPts, 0, dstPts, 0, 2);
 
 			double resolution = getResolution();
-			Rectangle2D.Double rect = new Rectangle2D.Double(dstPts[0], dstPts[1],
-				dstPts[2] - dstPts[0], dstPts[3] - dstPts[1]);
+			x1 = Math.min(dstPts[0], dstPts[2]);
+			y1 = Math.min(dstPts[1], dstPts[3]);
+			x2 = Math.max(dstPts[0], dstPts[2]);
+			y2 = Math.max(dstPts[1], dstPts[3]);
+			Rectangle2D.Double rect = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
 
 			/*
 			 * If path is made up of only move points then keep those
@@ -1146,8 +1149,6 @@ public class Context
 				mPath = new GeometricPath();
 				return;
 			}
-
-
 
 			GeneralPath p = SutherlandHodgman.clip(s, rect, resolution);
 
