@@ -1140,6 +1140,24 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.SELECTPATH:
+				if (nExpressions > 0 && nExpressions % 2 == 0)
+				{
+					double []offsets = new double[nExpressions / 2];
+					double []lengths = new double[nExpressions / 2];
+					for (int i = 0; i < nExpressions / 2; i++)
+					{
+						offsets[i] = mExecuteArgs[i * 2].getNumericValue();
+						lengths[i] = mExecuteArgs[i * 2 + 1].getNumericValue();
+					}
+					context.selectPath(offsets, lengths);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+				}
+				break;
+
 			case Statement.SINKHOLE:
 				if (nExpressions > 0)
 				{
