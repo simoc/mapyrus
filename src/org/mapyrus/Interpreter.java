@@ -183,6 +183,8 @@ public class Interpreter
 			{
 				if (color.equals("contrast"))
 				{
+					if (!hasAlpha)
+						alpha = 255;
 					context.contrastColor(alpha);
 					return;
 				}
