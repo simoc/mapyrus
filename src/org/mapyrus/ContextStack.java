@@ -23,6 +23,7 @@
 package au.id.chenery.mapyrus;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -52,15 +53,14 @@ public class ContextStack
 	private static final String INTERNAL_VARIABLE_PREFIX = Constants.PROGRAM_NAME + ".";
 	
 	/*
-	 * Variable names for geometry of currently defined path,
-	 * world coordinate system, coordinate system we are projecting from
-	 * and dataset we are reading from.
+	 * Internal variable names.
 	 */
 	private static final String GEOMETRY_VARIABLE = "geometry";
 	private static final String WORLDS_VARIABLE = "worlds";
 	private static final String UNPROJECTED_VARIABLE = "project";
 	private static final String DATASET_VARIABLE = "dataset";
 	private static final String PAGE_VARIABLE = "page";
+	private static final String IMAGEMAP_VARIABLE = "imagemap";
 	
 	/*
 	 * Stack of contexts, with current context in last slot.
@@ -72,6 +72,11 @@ public class ContextStack
 	 */
 	private long mStartTime;
 
+	/*
+	 * Point clicked in HTML imagemap and passed in HTTP request we are processing.
+	 */
+	private Point mImagemapPoint;
+
 	/**
 	 * Create new stack of contexts to manage state as procedure blocks
 	 * are called.
@@ -81,6 +86,7 @@ public class ContextStack
 		mStack = new LinkedList();
 		mStack.add(new Context());
 		mStartTime = System.currentTimeMillis();
+		mImagemapPoint = null;
 	}
 
 	/**
@@ -133,7 +139,16 @@ public class ContextStack
 		}
 		mStack.add(new Context(getCurrentContext()));
 	}
-				
+
+	/**
+	 * Set point passed in HTML imagemap request.
+	 * @param pt pixel position clicked in image.
+	 */
+	public void setImagemapPoint(Point pt)
+	{
+		mImagemapPoint = pt;				
+	}
+
 	/**
 	 * Sets output file for drawing to.
 	 * @param filename name of image file output will be saved to
@@ -657,6 +672,20 @@ public class ContextStack
 						retval = getBoundingBoxVariable(sub, worlds);
 					}
 				}
+			}
+			else if (varName.equals(INTERNAL_VARIABLE_PREFIX + IMAGEMAP_VARIABLE + ".x"))
+			{
+				if (mImagemapPoint == null)
+					retval = Argument.numericMinusOne;
+				else
+					retval = new Argument(mImagemapPoint.x);
+			}
+			else if (varName.equals(INTERNAL_VARIABLE_PREFIX + IMAGEMAP_VARIABLE + ".y"))
+			{
+				if (mImagemapPoint == null)
+					retval = Argument.numericMinusOne;
+				else
+					retval = new Argument(mImagemapPoint.y);
 			}
 		}
 		else
