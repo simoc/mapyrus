@@ -36,11 +36,11 @@ include hr.doc
 Mapyrus requires:
 <ol>
 <li>
-Java Runtime Environment 1.4.1
+Java Runtime Environment (JRE) 1.4.1.
 </li>
 <li>
 The Ghostscript PostScript interpreter from 
-<a href="http://www.aladdin.com">www.ghostscript.com</a>,
+<a href="http://www.ghostscript.com">www.ghostscript.com</a>,
 if creation of PDF files is required.
 </li>
 </ol>
@@ -82,7 +82,7 @@ include hr.doc
 <h3>Language and Commands</h3>
 
 Mapyrus interprets commands read from one or more plain text files.
-Each command is given on a separate line.
+Each command begins on a separate line.
 <p>
 Any part of a line following a hash (<tt>#</tt>) character that is not
 part of a literal string is interpreted as a comment and is ignored.
@@ -267,17 +267,17 @@ found in other languages are available:
 
 <tt>if</tt> <i>condition</i> <tt>then</tt>
 <br>
-&nbsp;&nbsp;<i>then commands</i> ...
+&nbsp;&nbsp;<i>then-commands</i> ...
 <br>
 <tt>else</tt>
 <br>
-&nbsp;&nbsp;<i>else commands</i> ...
+&nbsp;&nbsp;<i>else-commands</i> ...
 <br>
 <tt>endif</tt>
 
 <p>
-Executes <i>then commands</i> if <i>condition</i> evaluates to
-a non-zero value, otherwise <i>else commands</i> are executed.
+Executes <i>then-commands</i> if <i>condition</i> evaluates to
+a non-zero value, otherwise <i>else-commands</i> are executed.
 The <tt>else</tt> part is optional.
 Compound tests are built using the <tt>elif</tt> keyword:
 <p>
@@ -529,9 +529,9 @@ The version of the software.
 <tt>Mapyrus.worlds.max.x</tt>
 <br>
 <tt>Mapyrus.worlds.max.y</tt>
-<td>
+<br>
 <tt>Mapyrus.worlds.width</tt>
-<td>
+<br>
 <tt>Mapyrus.worlds.height</tt>
 <td>
 The bounding rectangle of world coordinates set with the 
