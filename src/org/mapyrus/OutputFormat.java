@@ -43,9 +43,10 @@ public class OutputFormat
 	private static final double MM_PER_INCH = 25.4;
 
 	/*
-	 * Format for coordinates in PostScript files.
+	 * Format for coordinates and colors in PostScript files.
 	 */	
-	DecimalFormat mDecimalFormat;
+	DecimalFormat mLinearFormat;
+	DecimalFormat mColorFormat;
 		
 	/*
 	 * File or image that drawing commands are
@@ -62,6 +63,11 @@ public class OutputFormat
 	private boolean mPipedOutput;	
 	private Process mOutputProcess;
 
+	/*
+	 * Indentation for PostScript commands.
+	 */
+	private int mPostScriptIndent;
+		
 	/*
 	 * Write PostScript file header.
 	 */
@@ -205,7 +211,8 @@ public class OutputFormat
 		 */
 		if (mOutputType == POSTSCRIPT)
 		{
-			mDecimalFormat = new DecimalFormat("#.##");
+			mLinearFormat = new DecimalFormat("#.##");
+			mColorFormat = new DecimalFormat("#.###");
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 			writePostScriptHeader(width, height);
 		}
@@ -224,6 +231,7 @@ public class OutputFormat
 			setupBufferedImage(resolution);
 		}
 		mFilename = filename;
+		mPostScriptIndent = 0;
 	}
 
 	/**
@@ -238,8 +246,60 @@ public class OutputFormat
 		mGraphics2D = (Graphics2D)(mImage.getGraphics());
 		setupBufferedImage(getResolution());
 		mPipedOutput = false;
+		mPostScriptIndent = 0;
 	}
-	 
+
+	/*
+	 * Write a line to PostScript file.  Line is indented to show
+	 * saving and restoring of state more clearly.
+	 */
+	private void writePostScriptLine(String line)
+	{
+		for (int i = 0; i < mPostScriptIndent; i++)
+		{
+			mWriter.print(" ");
+		}
+		mWriter.println(line);
+	}
+	
+	/**
+	 * Save state, protecting color, linestyle, transform of output.
+	 * This state can be restored later with restoreState().
+	 */
+	public void saveState()
+	{
+		if (mOutputType == POSTSCRIPT)
+		{
+			writePostScriptLine("gsave");
+			mPostScriptIndent++;
+		}
+	}
+
+	/**
+	 * Restore state saved with saveState().
+	 * @return true if saved state was successfully restored.
+	 */
+	public boolean restoreState()
+	{
+		boolean retval;
+
+		if (mOutputType == POSTSCRIPT)
+		{
+			mPostScriptIndent--;
+			writePostScriptLine("grestore");
+			retval = true;
+		}
+		else
+		{
+			/*
+			 * Can't restore state when drawing to an image.  Caller
+			 * must set everything to correct values again.
+			 */
+			retval = false;
+		}
+		return(retval);
+	}
+ 
 	/**
 	 * Writes trailing information and closes output file.
 	 */
@@ -307,20 +367,24 @@ public class OutputFormat
 	 * Set graphics attributes.
 	 * @param color is color to draw in.
 	 * @param lineWidth is width of line to use for drawing.
+	 * @param is clip path.
 	 */
-	public void setAttributes(Color color, double lineWidth)
+	public void setAttributes(Color color, double lineWidth, Shape clipPath)
 	{
 
 		if (mOutputType == POSTSCRIPT)
 		{
-			mWriter.println(lineWidth + " setlinewidth");
+			writePostScriptLine(mLinearFormat.format(lineWidth) + " setlinewidth");
 			float c[] = color.getRGBColorComponents(null);
-			mWriter.println(c[0] + " " + c[1] + " " + c[2] + " setrgbcolor");
+			writePostScriptLine(mColorFormat.format(c[0]) + " " +
+				mColorFormat.format(c[1]) + " " +
+				mColorFormat.format(c[2]) + " setrgbcolor");
 		}
 		else
 		{
 			mGraphics2D.setColor(color);
 			mGraphics2D.setStroke(new BasicStroke((float)lineWidth));
+			mGraphics2D.setClip(clipPath);
 		}
 	}
 
@@ -341,17 +405,17 @@ public class OutputFormat
 			switch (segmentType)
 			{
 				case PathIterator.SEG_MOVETO:
-					mWriter.println(mDecimalFormat.format(coords[0]) + " " +
-						mDecimalFormat.format(coords[1]) + " m");
+					writePostScriptLine(mLinearFormat.format(coords[0]) + " " +
+						mLinearFormat.format(coords[1]) + " m");
 					break;
 					
 				case PathIterator.SEG_LINETO:
-					mWriter.println(mDecimalFormat.format(coords[0]) + " " +
-						mDecimalFormat.format(coords[1]) + " l");
+					writePostScriptLine(mLinearFormat.format(coords[0]) + " " +
+						mLinearFormat.format(coords[1]) + " l");
 					break;
 				
 				case PathIterator.SEG_CLOSE:
-					mWriter.println("closepath");
+					writePostScriptLine("closepath");
 					break;
 			}
 			pi.next();			
@@ -366,7 +430,7 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			writePostScriptShape(shape);
-			mWriter.println("stroke");
+			writePostScriptLine("stroke");
 		}
 		else
 		{
@@ -385,7 +449,7 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			writePostScriptShape(shape);
-			mWriter.println("fill");
+			writePostScriptLine("fill");
 		}
 		else
 		{
@@ -393,6 +457,22 @@ public class OutputFormat
 			 * Fill path in image.
 			 */
 			mGraphics2D.fill(shape);
+		}
+	}
+	
+	/**
+	 * Set clip region to inside of currently defined path on output page.
+	 */
+	public void clip(Shape shape)
+	{
+		if (mOutputType == POSTSCRIPT)
+		{
+			/*
+			 * Set clip path now, then it stays in effect until previous
+			 * state is restored.
+			 */
+			writePostScriptShape(shape);
+			writePostScriptLine("clip newpath");
 		}
 	}
 }
