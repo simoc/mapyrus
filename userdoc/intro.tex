@@ -1,0 +1,105 @@
+% @(#) $Id$
+
+\section{Introduction}
+
+Mapyrus is software for creating plots of points, lines, polygons and labels 
+to PostScript (high resolution, up to A0 paper size),
+Portable Document Format (PDF) and web image output formats.
+
+The software combines the following three components.
+
+\begin{enumerate}
+\item
+
+A Logo or turtle graphics program.  An imaginary pen is moved around a page,
+creating shapes that are drawn into an image file.
+Reusable routines are built up using a BASIC-like language.
+Branching and looping constructs enable complex shapes, symbols and patterns
+to be be defined.  See Figure \ref{turtle}.
+
+\begin{figure}[h]
+\includegraphics{turtle1.eps}
+\includegraphics{turtle2.eps}
+\includegraphics{turtle3.eps}
+\includegraphics{turtle4.eps}
+\includegraphics{turtle5.eps}
+\includegraphics{turtle6.eps}
+\caption{Shapes, Symbols And Patterns}
+\label{turtle}
+\end{figure}
+
+\item
+
+Reading and displaying of geographic information
+systems (GIS) datasets, text files, or tables held in a relational database
+(including spatial databases such as PostGIS and Oracle Spatial).
+Drawing routines are applied to geographic data to produce annotated and
+symbolized maps and graphs.  Attributes of the geographic data control
+the color, size, annotation and other characteristics of the
+appearance of the geographic data.
+Scalebars, legends, coordinate grids and north arrows are also available.
+See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
+\ref{mapview4}.
+
+\begin{figure}
+\includegraphics{mapview1.eps}
+\caption[Average Monthly Temperatures]{Average Monthly Temperatures of Australian Cities (degrees Celsius)}
+\label{mapview1}
+\end{figure}
+
+\begin{figure}
+\includegraphics{mapview3.eps}
+\caption{Railways Lines in East Kent}
+\label{mapview3}
+\end{figure}
+
+\begin{figure}
+\includegraphics{mapview2.eps}
+\includegraphics{mapview2legend.eps}
+\caption{Vegetation Classes}
+\label{mapview2}
+\end{figure}
+
+\begin{figure}
+\includegraphics{mapview4.eps}
+\caption{Inventory Levels at Warehouses}
+\label{mapview4}
+\end{figure}
+
+\item
+Mapyrus runs as either
+a stand-alone program for integration into
+scripts and batch tasks  (this is suitable for generating a one-off
+map or a series of similar maps from a template,
+showing different areas, or using different criteria for each map)
+or as a self-contained web server providing HTML pages, map and
+graph images and text reports to a web-based application.
+
+\end{enumerate}
+
+Please note that:
+
+\begin{itemize}
+\item
+Mapyrus is written in Java so as to be operating system independent
+and take advantage of Java multi-threading, security,
+Java2D and JDBC capabilities.
+
+\item
+Mapyrus has no graphical user interface.
+Commands are typed into the terminal window in which the software is running,
+or read from a text file prepared by the user.
+
+\item
+Mapyrus cannot display three dimensional data and has nothing to do
+with 3D.
+
+\item
+Mapyrus does not include a library of ready-to-use symbols and patterns.
+Users must define their own, using examples in this manual as a basis.
+However, a large number of free TrueType format fonts found on the internet
+defining shapes for animals, arrows and pointers, road signs, etc. are
+available for use in Mapyrus.
+
+\end{itemize}
+
