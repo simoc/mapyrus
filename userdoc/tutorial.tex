@@ -23,7 +23,7 @@ a 30mm square Encapsulated PostScript format file named
 \texttt{tutorialfirst1.eps} with the \texttt{newpage} command, then a
 line is drawn with the given color and linestyle.
 
-Open a terminal window (known as an "MSDOS Window" in MicroSoft Windows)
+Open a terminal window (known as an "MS-DOS Prompt" in MicroSoft Windows)
 and run Mapyrus using following command to execute the
 commands in the file \texttt{first.mapyrus}.
 
@@ -577,10 +577,59 @@ street network data.
 
 \subsection{Displaying Data Stored In A Database}
 
-Data is read from a relational database using
-the Java JDBC interface and a JDBC driver provided
+A simplistic method of reading from a relational database is to use a database
+front-end program to print selected records to a file and then to read this in
+Mapyrus.
+
+Given the file \texttt{simplistic.mapyrus} containing the following
+commands,
+
+\begin{verbatim}
+newpage "png", "simplistic.png", 100, 100, "background=white"
+worlds 1000, 1000, 2000, 2000
+dataset "textfile", "-", "delimiters=|"
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  color $3
+  star $1, $2, 3, 5
+  fill
+done
+\end{verbatim}
+
+Then data read from an sqlite database is displayed as stars in a
+PNG image using commands like:
+
+\begin{verbatim}
+sqlite db77 "select X, Y, Color from SITES" > sites.txt
+java -classpath mapyrus.jar org.mapyrus.Mapyrus simplistic.mapyrus < sites.txt
+\end{verbatim}
+
+On UNIX operating systems, pipe the output directly from the database
+front-end program to Mapyrus.  This is demonstrated in the following
+example, displaying roads fetched as OGC WKT strings from a PostGIS database.
+
+\begin{verbatim}
+psql -A -t -c 'select AsText(Geom) from ROADS' pogo | \
+  java -classpath mapyrus.jar org.mapyrus.Mapyrus -e '
+newpage "png", "simplistic.png", 100, 100, "background=white"
+worlds 170000, 470000, 220000, 540000
+dataset "textfile", "-", "delimiters=|"
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath $1
+  stroke
+done'
+\end{verbatim}
+
+Another solution is to read from a relational database within Mapyrus
+using the Java JDBC interface and a JDBC driver provided
 as part of the database.  The JAR file containing the
-JDBC driver must be included in the \texttt{-classpath} option.
+JDBC driver must be included in the \texttt{-classpath} option
+when Mapyrus is run.
 
 For example, when accessing a PostgreSQL database from a Linux
 machine, ensure that the \texttt{postgresql-jdbc} package is
