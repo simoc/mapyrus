@@ -1,0 +1,27 @@
+Mapyrus Major Change History
+Copyright (C) 2003 Simon Chenery.
+
+0.41, February 2004
+
+* Added legends.
+* Converted documentation to LaTeX and generate manual in PDF format.
+* Added transparent colors.
+* Use ISOLatin1Encoding for PostScript fonts to display extended characters.
+* Add box command.
+* Change package name in JAR file to org.mapyrus.
+* change arguments to newpage command so that resolution is optional.
+
+0.32, December 2003
+
+* Improved HTML documentation.
+* Improved PostScript and TrueType font handling.
+* Added arrays, for ... in array looping and split function.
+* Added mathematical functions ceil, cos floor, log10, max, min, pow,
+  sin, sqrt, tan.
+* Added access to datasets in an RDBMS through JDBC.
+* Added shiftpath command.
+
+0.31, October 2003
+
+* First released version.
+
