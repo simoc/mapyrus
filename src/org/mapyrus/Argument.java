@@ -22,6 +22,7 @@
 
 package au.id.chenery.mapyrus;
 
+import java.awt.geom.PathIterator;
 import java.text.DecimalFormat;
 
 /**
@@ -36,6 +37,13 @@ public class Argument
 	public static final int STRING = 1;
 	public static final int VARIABLE = 2;
 	public static final int GEOMETRY = 3;
+
+	public static final int GEOMETRY_POINT = 1000;
+	public static final int GEOMETRY_LINESTRING = 1001;
+	public static final int GEOMETRY_POLYGON = 1002;
+	public static final int GEOMETRY_MULTIPOINT = 1003;
+	public static final int GEOMETRY_MULTILINESTRING = 1004;
+	public static final int GEOMETRY_MULTIPOLYGON = 1005;
 
 	/**
 	 * Constant for numeric value zero.
@@ -79,6 +87,7 @@ public class Argument
 	public Argument(int type, String s)
 	{
 		mType = type;
+		mNumericValue = Double.NaN;
 		if (type == STRING)
 			mStringValue = s;
 		else
@@ -86,12 +95,27 @@ public class Argument
 	}
 
 	/**
-	 * Create a new numeric argument.
-	 * @param d is value for this argument.
+	 * Create a new geometry argument for all types of geometry.
+	 * @param geometryType is OGC geometry type of point(s), line(s),
+	 * or polygon(s).
+	 * @param coords is array containing (X, Y) coordinates of point(s),
+	 * line(s), polygon(s).
+	 * 
+	 * Array is of the form:
+	 * <pre>
+	 * +--------+-------+---+---+-------+---+---+
+	 * | length | move/ | x | y | move/ | x | y | ...
+	 * |        | line  |   |   | line  |   |   |
+	 * +--------+-------+---+---+-------+---+---+
+	 * </pre>
+	 * 
+	 * where length is the number of slots used in the array,
+	 * a moveto point is flagged as PathIterator.SEG_MOVETO,
+	 * a lineto point is PathIterator.SEG_LINETO.
 	 */
-	public Argument(double []coords)
+	public Argument(int geometryType, double []coords)
 	{
-		mType = GEOMETRY;
+		mType = geometryType;
 		mGeometryValue = coords;
 	}
 
@@ -101,25 +125,44 @@ public class Argument
 	 */	
 	public int getType()
 	{
-		return(mType);
+		if (mType == NUMERIC || mType == STRING || mType == VARIABLE)
+			return(mType);
+		else
+			return(GEOMETRY);
 	}
-	
+
 	/**
-	 * Returns value of numeric argument.
-	 * @return numeric argument value.
+	 * Returns numeric value of argument.
+	 * @return numeric argument value,
+	 * or zero if it cannot be converted to a number.
 	 */
-	public double getNumericValue()
+	public double getNumericValue() throws MapyrusException
 	{
+		if (mType == STRING && Double.isNaN(mNumericValue))
+		{
+			try
+			{
+				mNumericValue = Double.parseDouble(mStringValue);
+			}
+			catch (NumberFormatException e)
+			{
+				mNumericValue = 0;
+			}
+		}
+		else if (mType != NUMERIC)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_VALUE));
+		}
 		return(mNumericValue);
 	}
-	
+
 	/**
-	 * Returns value of string argument.
-	 * @return string argument value.
+	 * Returns value of argument as a string.
+	 * @return argument value as a string.
 	 */
 	public String getStringValue()
 	{
-		return(mStringValue);
+		return(toString());
 	}
 
 	/**
@@ -147,6 +190,8 @@ public class Argument
 	public String toString()
 	{
 		String retval = null;
+		DecimalFormat format;
+		StringBuffer s;
 
 		if (mType == STRING)
 			retval = mStringValue;
@@ -155,7 +200,6 @@ public class Argument
 		else if (mType == NUMERIC)
 		{
 			double absValue = (mNumericValue >= 0) ? mNumericValue : -mNumericValue;
-			DecimalFormat format;
 
 			/*
 			 * Print large or small numbers in scientific notation
@@ -168,11 +212,86 @@ public class Argument
 
 			retval = format.format(mNumericValue);
 		}
-		else if (mType == GEOMETRY)
+		else if (mType == GEOMETRY_POINT)
 		{
-			// TODO return GEOMTERY in OGC well known text format.
-			retval = "POINT ( 10 10 )";
+			/*
+			 * Convert point to OGC Well Known Text representation.
+			 */
+			retval = "POINT (" + mGeometryValue[2] + " " + mGeometryValue[3] + ")";
 		}
+		else if (mType == GEOMETRY_LINESTRING || mType == GEOMETRY_POLYGON ||
+			mType == GEOMETRY_MULTIPOINT)
+		{
+			/*
+			 * Convert line, polygon or series of points to
+			 * OGC Well Known Text representation.
+			 */
+			s = new StringBuffer();
+			if (mType == GEOMETRY_LINESTRING)
+				s.append("LINESTRING (");
+			else if (mType == GEOMETRY_POLYGON)
+				s.append("POLYGON ((");
+			else
+				s.append("MULTIPOINT (");
+
+			for (int i = 1; i < mGeometryValue[0]; i += 3)
+			{
+				if (i > 1)
+					s.append(", ");
+				s.append(mGeometryValue[i + 1]);
+				s.append(" ");
+				s.append(mGeometryValue[i + 2]);
+			}
+
+			if (mType == GEOMETRY_LINESTRING || mType == GEOMETRY_MULTIPOINT)
+				s.append(")");
+			else
+				s.append("))");
+
+			retval = s.toString();
+		}
+		else
+		{
+			/*
+			 * Convert multiple lines or polygons to
+			 * OGC Well Known Text representation.
+			 */
+			if (mType == GEOMETRY_MULTILINESTRING)
+				s = new StringBuffer("MULTILINESTRING (");
+			else
+				s = new StringBuffer("MULTIPOLYGON ((");
+
+			for (int i = 1; i < mGeometryValue[0]; i += 3)
+			{
+				if (mGeometryValue[i] == PathIterator.SEG_MOVETO)
+				{
+					if (i > 1)
+					{
+						if (mType == GEOMETRY_MULTILINESTRING)
+							s.append("), (");
+						else
+							s.append(")), ((");
+					}
+				}
+				else
+				{
+					s.append(", ");
+				}
+
+				s.append(mGeometryValue[i + 1]);
+				s.append(" ");
+				s.append(mGeometryValue[i + 2]);
+			}
+			
+
+			if (mType == GEOMETRY_MULTILINESTRING)
+				s.append(")");
+			else
+				s.append("))");
+			
+			retval = s.toString();
+		}
+
 		return(retval);
 	}
 }
