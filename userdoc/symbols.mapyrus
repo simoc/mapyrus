@@ -1314,18 +1314,6 @@ begin Linaccurateline
 	Linaccurateline_dot
 end
 
-#u-bahn
-#camping
-#vehicle
-#buildings
-
-#roads
-begin railway1
-end
-
-begin railway2
-end
-
 # FILLPATTERNS
 
 begin hatch1
@@ -1378,6 +1366,8 @@ begin crosshatch_lines angle
 end
 
 begin crosshatch
+	# Fill polygon with crosshatching.
+	#
 	key "box", "Crosshatch"
 	color "orange"
 	linestyle 0.1
@@ -1389,6 +1379,8 @@ begin crosshatch
 end
 
 begin mesh
+	# Fill polygon with horizontal and vertical mesh pattern.
+	#
 	key "box", "Mesh"
 	color "darkgray"
 	linestyle 0.1
@@ -1400,6 +1392,8 @@ begin mesh
 end
 
 begin doublestripefill
+	# Fill polygon with stripes of two different colours.
+	#
 	key "box", "Double Stripes"
 	color "blue"
 	fill
@@ -1411,8 +1405,10 @@ begin doublestripefill
 end
 
 begin triplestripefill
+	# Fill polygon with stripes in three different colours.
+	#
 	key "box", "Triple Stripes"
-	color "white"
+	color "grey90"
 	fill
 	clip "inside"
 	stripepath 5, 45
@@ -1448,6 +1444,8 @@ begin halffill_box c1, c2, c3, c4
 end
 
 begin halffill
+	# Fill polygon with squares of alternating colours.
+	#
 	key "box", "Half Fill"
 	clip "inside"
 	stripepath 2, 0
@@ -1456,6 +1454,8 @@ begin halffill
 end
 
 begin quiltfill
+	# Fill polygon with quilt-type pattern using four different colours.
+	#
 	key "box", "Quilt Fill"
 	clip "inside"
 	stripepath 2, 0
@@ -1469,6 +1469,8 @@ begin circlefill_circle
 end
 
 begin circlefill
+	# Fill polygon with regularly space circles.
+	#
 	key "box", "Circle Fill"
 	color "white"
 	fill
@@ -1552,6 +1554,10 @@ begin brickfill
 end
 
 begin weavefill_box
+	# Display lines that weave under and over each other.
+	# Segments must be drawn in correct order to achieve
+	# correct over-and-under effect.
+	#
 	move -2, 0
 	draw 0, 2
 	color "black"
@@ -1920,33 +1926,44 @@ then
 	citylimits
 	restrictedarea
 
-	newpage "eps", "symbols.eps", 210, 297
-
-	let x = 10, y = Mapyrus.page.height - 10
-	color "black"
-	font "Helvetica", 3
-
-	# Draw north arrows specially.  They have no legend entry
-	# as we never want them appearing in a real legend!
-	#
-	clearpath
-	move x + 5, y
-	northarrow
-	label "        northarrow"
-
-	clearpath
-	move x + 5, y - 15
-	nsew
-	label "        nsew"
-
-	let y = y - 30
-
+	let count = 0, x = 9999, y = 9999
+	let pageNumber = 0
 	while Mapyrus.key.count > 0
 	do
+		# Start a new page when we run off edge of page.
+		#
+		if x > 150
+		then
+			let pageNumber = pageNumber + 1
+			newpage "eps", "symbols" . pageNumber . ".eps", 170, 200
+			let x = 10, y = Mapyrus.page.height - 10
+			font "Helvetica", 3
+		endif
+
 		clearpath
 		move x, y
-		if match(Mapyrus.key.next, "^L")
+
+		# Draw north arrows specially.  They have no legend entry
+		# as we never want them appearing in a real legend!
+		#
+		if counter == 0
 		then
+			clearpath
+			move x + 5, y
+			northarrow
+			label "        northarrow"
+		elif counter == 1
+		then
+			clearpath
+			move x + 5, y - 15
+			nsew
+			label "        nsew"
+			let y = y - 30
+		elif match(Mapyrus.key.next, "^L")
+		then
+			# Display lines with bigger entries so that
+			# any pattern along the line is visible.
+			#
 			legend 20
 		else
 			legend 8
@@ -1958,6 +1975,8 @@ then
 			let x = x + 50
 			let y = Mapyrus.page.height - 10
 		endif
+
+		let counter = counter + 1
 	done
 endif
 
