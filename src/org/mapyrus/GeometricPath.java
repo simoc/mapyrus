@@ -22,7 +22,6 @@
  */
 package org.mapyrus;
 
-import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
@@ -238,7 +237,7 @@ public class GeometricPath
 	 * Returns Shape object of geometry for display.
 	 * @return shape object which can be used directly in 2D display methods.
 	 */
-	public Shape getShape()
+	public GeneralPath getShape()
 	{
 		return(mPath);
 	}
