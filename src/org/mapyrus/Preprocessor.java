@@ -1,6 +1,6 @@
 /**
- * Wrapper around a Reader to read from a file, whilst expanding
- * any included files.
+ * Wrapper around a Reader to read from a file or URL, whilst expanding
+ * any included files and URLs.
  * Also allows for read characters to be pushed back onto input stream.
  */
 
@@ -21,64 +21,177 @@ class Preprocessor
 	private static final String INCLUDE_KEYWORD = "include";
 
 	/*
+	 * Holds file handle, filename and URL information together
+	 * for a file or URL that we are reading from.
+	 */
+	class FileInfo
+	{
+		private LineNumberReader mLineNumberReader;
+		private String mFilename;
+		private boolean mIsURL;
+		private URL mUrl;
+
+		/*
+		 * New reader from a plain file.
+		 */
+		public FileInfo(LineNumberReader in, String filename)
+		{
+			mLineNumberReader = in;
+			mFilename = filename;
+			mIsURL = false;
+		}
+
+		/*
+		 * New reader from a URL.
+		 */
+		public FileInfo(LineNumberReader in, String filename, URL url)
+		{
+			mLineNumberReader = in;
+			mFilename = filename;
+			mUrl = url;
+			mIsURL = true;
+		}
+
+		/*
+		 * Returns file 
+		 */
+		public LineNumberReader getReader()
+		{
+			return(mLineNumberReader);
+		}
+
+		/*
+		 * Returns name of file being read.
+		 */
+		public String getFilename()
+		{
+			return(mFilename);
+		}
+
+		/*
+		 * Returns true if file being read was accessed through a URL.
+		 */
+		public boolean isURL()
+		{
+			return(mIsURL);
+		}
+
+		/*
+		 * Returns URL that data is being read from.
+		 */
+		public URL getURL()
+		{
+			return(mUrl);
+		}
+	}
+
+	/*
 	 * Files we are reading from and their names.
 	 * Built up as a stack as we include nested files.
 	 */
 	private LinkedList mFileStack;
-	private LinkedList mFilenameStack;
 
 	/*
 	 * Line we are currently reading from.
 	 */
-	private StringBuffer mCurrentLine;
-	private int mCurrentLineIndex;
+	private StringBuffer mCurrentLine = null;
+	private int mCurrentLineIndex = 0;
 
 	/**
-	 * Create new user input producer.
-	 * @param in is a source to read input from.
-	 * @param filename is the name of the file being read.
+	 * Create stack of files being read.
+	 * @param f is the first file to push onto the stack.
 	 */
-	public Preprocessor(Reader in, String filename)
+	private void initFileStack(FileInfo f)
 	{
 		mFileStack = new LinkedList();
-		mFilenameStack = new LinkedList();
+		mFileStack.add(f);
+	}
 
-		mFileStack.add(new LineNumberReader(in));
-		mFilenameStack.add(filename);
+	/**
+	 * Create new user input producer from an already open Reader.
+	 * @param in is a source to read input from.
+	 */
+	public Preprocessor(Reader in)
+	{
+		LineNumberReader l = new LineNumberReader(in);
+		FileInfo f = new FileInfo(l, "input");
+		initFileStack(f);
+	}
 
-		mCurrentLine = null;
-		mCurrentLineIndex = 0;
+	/**
+	 * Create new user input producer from a file.
+	 * @param filename is a file to open and read from.
+	 */
+	public Preprocessor(String filename) throws FileNotFoundException
+	{
+		LineNumberReader in;
+
+		in = new LineNumberReader(new FileReader(filename));
+		FileInfo f = new FileInfo(in, filename);
+		initFileStack(f);
+	}
+
+	/**
+	 * Create new user input producer from a URL.
+	 * @param url is a URL to open and read from.
+	 */
+	public Preprocessor(URL url) throws IOException
+	{
+		LineNumberReader in;
+		InputStream urlStream = url.openStream();
+
+		in = new LineNumberReader(new InputStreamReader(urlStream));
+		FileInfo f = new FileInfo(in, url.toString(), url);
+		initFileStack(f);
 	}
 
 	/*
 	 * Open new file to read from and push it on stack of files being read.
 	 */
-	private void openIncludedFile(String filename) throws IOException
+	private void openIncludedFile(String filename) throws FileNotFoundException, MalformedURLException, IOException
 	{
-		BufferedReader in;
+		LineNumberReader in;
+		InputStream urlStream;
+		FileInfo f;
 
-		/*
-		 * Open file being included and start read from it instead.
-		 */
+		FileInfo includingFile = (FileInfo)mFileStack.getLast();
+
 		try
 		{
 			/*
-			 * Try filename as an absolute URL.
+			 * Try filename first as an absolute URL.
 			 */
 			URL url = new URL(filename);
-			InputStream urlStream = url.openStream();
-			in = new BufferedReader(new
+			urlStream = url.openStream();
+			in = new LineNumberReader(new
 				InputStreamReader(urlStream));
+			f = new FileInfo(in, filename, url);
 		}
 		catch (MalformedURLException e)
 		{
-			/*
-			 * Well, maybe it is just a regular file.
-			 */
-			in = new BufferedReader(new FileReader(filename));
+			if (includingFile.isURL())
+			{
+				/*
+				 * Perhaps it a relative URL from the URL that
+				 * is including it.
+				 */
+				URL lastURL = includingFile.getURL();
+				URL url = new URL(lastURL, filename);
+				urlStream = url.openStream();
+				in = new LineNumberReader(new
+					InputStreamReader(urlStream));
+				f = new FileInfo(in, filename, url);
+			}
+			else
+			{
+				/*
+				 * Well, maybe it is just a regular file.
+				 */
+				in = new LineNumberReader(new FileReader(filename));
+				f = new FileInfo(in, filename);
+			}
 		}
-		mFileStack.add(new LineNumberReader(in));
-		mFilenameStack.add(filename);
+		mFileStack.add(f);
 	}
 
 	/**
@@ -121,7 +234,8 @@ class Preprocessor
 		 * Need to read a new line.
 		 */
 		mCurrentLineIndex = 0;
-		in = (LineNumberReader)(mFileStack.getLast());
+		FileInfo f = (FileInfo)mFileStack.getLast();
+		in = f.getReader();
 		String s = in.readLine();
 		if (s == null)
 		{
@@ -131,7 +245,6 @@ class Preprocessor
 			 */
 			in.close();
 			mFileStack.removeLast();
-			mFilenameStack.removeLast();
 			if (mFileStack.size() > 0)
 			{
 				mCurrentLine = null;
@@ -157,11 +270,20 @@ class Preprocessor
 			{
 				if (st.hasMoreTokens())
 				{
+					String filename = st.nextToken();
 					/*
-					 * Open included file and start reading from
-					 * it.
+					 * Open included file and start
+					 * reading from it.
 					 */
-					openIncludedFile(st.nextToken());
+					try
+					{
+						openIncludedFile(filename);
+					}
+					catch (Exception e)
+					{
+						throw new GfException("Cannot include " + filename + " from " + getCurrentFilenameAndLine() + ": " + e.getMessage());
+					}
+
 					mCurrentLine = null;
 					return(read());
 				}
@@ -222,22 +344,33 @@ class Preprocessor
 	 */
 	public String getCurrentFilenameAndLine()
 	{
-		String s = (String)mFilenameStack.getLast();
-		if (s == null)
-			return("");
-		else
+		String s;
+
+		try
 		{
-			LineNumberReader in;
-			try
-			{
-				in = (LineNumberReader)mFileStack.getLast();
-				s = s.concat(":" + in.getLineNumber());
-			}
-			catch(NoSuchElementException e)
-			{
-			}
+			FileInfo f = (FileInfo)mFileStack.getLast();
+			LineNumberReader in = f.getReader();
+			s = f.getFilename() + " line " + in.getLineNumber();
+		}
+		catch(NoSuchElementException e)
+		{
+			s = "";
 		}
 		return(s);
+	}
+
+	public static void main(String []args) throws IOException, GfException
+	{
+		BufferedReader in;
+		int c;
+		Preprocessor p;
+
+		p = new Preprocessor(args[0]);
+		while ((c = p.read()) != -1)
+		{
+			Character ch = new Character((char)c);
+			System.out.print(ch.toString());
+		}
 	}
 }
 
