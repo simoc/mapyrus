@@ -49,7 +49,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,13 +82,6 @@ public class OutputFormat
 	public static final int JUSTIFY_MIDDLE = 16;
 	public static final int JUSTIFY_BOTTOM = 32;
 	
-	/*
-	 * Format for coordinates, colors and rotation in PostScript files.
-	 */	
-	private DecimalFormat mLinearFormat;
-	private DecimalFormat mColorFormat;
-	private DecimalFormat mRotationFormat;
-		
 	/*
 	 * File or image that drawing commands are
 	 * writing to.
@@ -538,9 +530,6 @@ public class OutputFormat
 		 */
 		if (mOutputType == POSTSCRIPT)
 		{
-			mLinearFormat = new DecimalFormat("#.##", Constants.US_DECIMAL_FORMAT_SYMBOLS);
-			mColorFormat = new DecimalFormat("#.###", Constants.US_DECIMAL_FORMAT_SYMBOLS);
-			mRotationFormat = new DecimalFormat("#.####", Constants.US_DECIMAL_FORMAT_SYMBOLS);
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 			
 			mSuppliedFontResources = new HashSet();
@@ -835,8 +824,8 @@ public class OutputFormat
 			 * Set font and size for labelling.
 			 */
 			writePostScriptLine("/" + fontName + " " +
-				mLinearFormat.format(fontSize) + " " +
-				mRotationFormat.format(fontRotation) + " font");
+				fontSize + " " +
+				fontRotation + " font");
 			mNeededFontResources.add(fontName);
 		}
 		else
@@ -966,9 +955,7 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			float c[] = color.getRGBColorComponents(null);
-			writePostScriptLine(mColorFormat.format(c[0]) + " " +
-				mColorFormat.format(c[1]) + " " +
-				mColorFormat.format(c[2]) + " rgb");
+			writePostScriptLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
 		}
 		else
 		{
@@ -1003,9 +990,9 @@ public class OutputFormat
 			else /* BEVEL */
 				join = 2;
 
-			writePostScriptLine(mLinearFormat.format(linestyle.getLineWidth()) + " " +
+			writePostScriptLine(linestyle.getLineWidth() + " " +
 				cap + " " + join + " " +
-				mLinearFormat.format(linestyle.getMiterLimit()) + " sl");
+				linestyle.getMiterLimit() + " sl");
 
 			/*
 			 * If there a dash pattern then set that too.
@@ -1018,10 +1005,10 @@ public class OutputFormat
 				{
 					if (i > 0)
 						s.append(" ");
-					s.append(mLinearFormat.format(dashes[i]));
+					s.append(dashes[i]);
 				}
 				s.append("] ");
-				s.append(mLinearFormat.format(linestyle.getDashPhase()));
+				s.append(linestyle.getDashPhase());
 				s.append(" setdash");
 				writePostScriptLine(s.toString());
 			}
@@ -1074,13 +1061,12 @@ public class OutputFormat
 			switch (segmentType)
 			{
 				case PathIterator.SEG_MOVETO:
-					writePostScriptLine(mLinearFormat.format(coords[0]) + " " +
-						mLinearFormat.format(coords[1]) + " m");
+					writePostScriptLine(coords[0] + " " + coords[1] + " m");
 					break;
 					
 				case PathIterator.SEG_LINETO:
-					writePostScriptLine(mLinearFormat.format(coords[0]) + " " +
-						mLinearFormat.format(coords[1]) + " l");
+					writePostScriptLine(coords[0] + " " +
+						coords[1] + " l");
 					break;
 				
 				case PathIterator.SEG_CLOSE:
@@ -1088,12 +1074,12 @@ public class OutputFormat
 					break;
 					
 				case PathIterator.SEG_CUBICTO:
-					writePostScriptLine(mLinearFormat.format(coords[0]) + " " +
-						mLinearFormat.format(coords[1]) + " " +
-						mLinearFormat.format(coords[2]) + " " +
-						mLinearFormat.format(coords[3]) + " " +
-						mLinearFormat.format(coords[4]) + " " +
-						mLinearFormat.format(coords[5]) + " " +
+					writePostScriptLine(coords[0] + " " +
+						coords[1] + " " +
+						coords[2] + " " +
+						coords[3] + " " +
+						coords[4] + " " +
+						coords[5] + " " +
 						"curveto");
 					break;
 			}
@@ -1208,11 +1194,11 @@ public class OutputFormat
 					writePostScriptLine("/DeviceRGB setcolorspace");
 					
 
-					writePostScriptLine(mLinearFormat.format(x) + " " +
-						mLinearFormat.format(y) + " translate");
-					writePostScriptLine(mRotationFormat.format(rotation) + " radtodeg rotate");
-					writePostScriptLine(mLinearFormat.format(mmWidth) + " " +
-						mLinearFormat.format(mmHeight) + " scale");
+					writePostScriptLine(x + " " +
+						y + " translate");
+					writePostScriptLine(rotation + " radtodeg rotate");
+					writePostScriptLine(mmWidth + " " +
+						mmHeight + " scale");
 
 					/*
 					 * Image is centred at each point.
@@ -1439,8 +1425,7 @@ public class OutputFormat
 
 				if (mOutputType == POSTSCRIPT)
 				{
-					writePostScriptLine(mLinearFormat.format(x) + " " +
-						mLinearFormat.format(y) + " m");
+					writePostScriptLine(x + " " + y + " m");
 
 					/*
 					 * Pass counter and line to PostScript procedure for
