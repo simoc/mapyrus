@@ -90,8 +90,10 @@ public class FileOrURL
 		 */
 		try
 		{
-			boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
-			boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
+			String lowerName = name.toLowerCase();
+			boolean isGzipped = lowerName.endsWith(".gz") ||
+				lowerName.endsWith(".svgz");
+			boolean isZipped = lowerName.endsWith(".zip");
 			
 			if (isGzipped)
 				mInputStream = new BufferedInputStream(new GZIPInputStream(in));
