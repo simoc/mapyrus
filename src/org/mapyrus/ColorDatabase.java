@@ -228,6 +228,7 @@ public class ColorDatabase
 		mColors.put("pastelgreen", new Color(161, 227, 186));
 		mColors.put("pastelbrown", new Color(227, 213, 161));
 		mColors.put("seablue", new Color(51, 204, 255));
+		mColors.put("lightorange", new Color(255, 204, 0));
 
 		/*
 		 * If user gave name of color file as property then use that.
