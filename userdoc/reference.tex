@@ -70,9 +70,11 @@ name lookup in the
 Defines file controlling logging for the
 HTTP Server option.
 See the Java Logging Overview
-\footnote{Found at \texttt{http://java.sun.com/j2se/1.4/docs/guide/util/logging/overview.html}}
+\footnote{Available from 
+\texttt{http://java.sun.com/j2se/1.4/docs/guide/util/logging/overview.html}}
 and Java java.util.LogManager API documentation
-\footnote{Found at \texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/LogManager.html}}
+\footnote{Available from
+\texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/LogManager.html}}
 for format of the file defining logging properties.
 Default logging writes only errors to error output. \\
 
@@ -83,7 +85,8 @@ Defines class containing JDBC 1.0 (or higher) driver to load at startup.
 A JDBC driver is required for connecting to a relational database and
 is provided as part of a relational database.
 See the Java JDBC DriverManager API documentation
-\footnote{Found at \texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/sql/DriverManager.html}}
+\footnote{Available from
+\texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/sql/DriverManager.html}}
 for details.
 The JAR file containing the class must be included in the \texttt{-classpath}
 option when starting Mapyrus. \\
@@ -127,6 +130,9 @@ Operator & Description \\
 \hline
 
 \texttt{(}, \texttt{)} & parentheses \\
+
+\hline
+
 \texttt{*}, \texttt{/}, \texttt{*}, \texttt{x} &
 numeric multiplication, numeric division, modulo (works
 with non-integer values too), string repetition \\
@@ -197,7 +203,8 @@ Returns the index in the string \textit{str}, where the regular expression
 \textit{regex} is first matched.  The index of the first character is 1.
 If the regular expression does not match \textit{str}, then 0 is returned.
 The \textit{Java API documentation}
-\footnote{Found at \texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html}}
+\footnote{Available from
+\texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html}}
 describes the syntax of regular expressions. \\
 
 \hline
@@ -369,6 +376,7 @@ The graphics state contains:
 The path defined with
 \texttt{move},
 \texttt{draw},
+\texttt{box},
 \texttt{arc} and
 \texttt{addpath}
 commands.
@@ -395,7 +403,7 @@ Any new page created in a procedure with a
 command is completed when the procedure finishes and output
 returns to the page being created before the procedure was called.
 
-Any dataset being imported is global.  It is not saved and not restored.
+Any dataset being read is global.  It is not saved and not restored.
 
 Any world coordinate system set with the \texttt{worlds} command is cleared
 before the commands in the procedure are executed.  This enables the calling
@@ -435,7 +443,7 @@ Variable Name & Description \\
 \endhead
 
 \texttt{Mapyrus.dataset.fieldnames} &
-An array containing the names of fields being imported from
+An array containing the names of fields being read from
 the current dataset.  The first fieldname has array index 1. \\
 
 \hline
@@ -457,6 +465,18 @@ The bounding rectangle of all data in the current dataset. \\
 
 \hline
 
+\texttt{Mapyrus.fetch.count} &
+The number of records already fetched from the current dataset. \\
+
+\hline
+
+\texttt{Mapyrus.fetch.more} &
+Flag value set to 1 if another record is available
+for \texttt{fetch}
+command, or 0 if no more records available. \\
+
+\hline
+
 \texttt{Mapyrus.filename} &
 The name of the file or URL being interpreted. \\
 
@@ -472,18 +492,6 @@ The amount of free memory that Java has available, in bytes. \\
 The pixel position of the point clicked in an HTML imagemap and
 passed to Mapyrus, for use when running as an HTTP server.
 Both values are set to -1 if no imagemap point passed in current URL. \\
-
-\hline
-
-\texttt{Mapyrus.import.count} &
-The number of records already fetched from the current dataset. \\
-
-\hline
-
-\texttt{Mapyrus.import.more} &
-Flag value set to 1 if another record is available
-for \texttt{fetch}
-command, or 0 if no more records available. \\
 
 \hline
 
@@ -719,7 +727,7 @@ Dataset Type & Description and Extras \\
 \endhead
 
 \texttt{jdbc} &
-for accessing data held in a relational database with
+Accesses data held in a relational database with
 an SQL \texttt{select} statement via JDBC.
 \textit{name} contains the SQL query to execute.
 For each fetched record, field values are assigned to variables
@@ -738,7 +746,8 @@ Extras:
 The name of the Java class containing a JDBC 1.0 (or higher)
 driver for connecting to the database.
 This class name is required if not given in the startup variable
-\texttt{jdbc.drivers} (see \ref{startupvariables}).
+\texttt{jdbc.drivers} (see Table \ref{startupvariables}
+on page \pageref{startupvariables}).
 The JAR file containing the class must be included in the \texttt{-classpath}
 option when starting Mapyrus.
 
@@ -780,7 +789,7 @@ Other values are set as properties for the JDBC driver. \\
 \hline
 
 \texttt{shapefile} &
-for accessing data in ESRI Shape file format.
+Reads data from an ESRI Shape format file.
 The geometry for each fetched record is assigned to a variable named
 \texttt{GEOMETRY}, attribute field values are assigned to
 variables with attribute field names.
@@ -798,7 +807,7 @@ fields improves performance. \\
 \hline
 
 \texttt{textfile} &
-for accessing data from a delimited text file, with one
+Reads data from a delimited text file, with one
 record per line.  Fields in fetched record
 are assigned to variables
 \texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots
@@ -845,7 +854,7 @@ Fetches next record from current dataset.
 For each field in the record, a variable is defined with the name
 of the field and the value of the field for the next record.
 Before fetching a record, check the variable
-\texttt{Mapyrus.import.more}
+\texttt{Mapyrus.fetch.more}
 to ensure that another record is available from the dataset.
 
 \subsubsection{fill}
@@ -891,19 +900,6 @@ font name.
 
 Tutorial Sections \ref{psfonts} and \ref{ttffonts}
 describe different font formats.
-
-\subsubsection{import}
-
-\begin{alltt}
-import [\textit{xMin}, \textit{yMin}, \textit{xMax}, \textit{yMax}]
-\end{alltt}
-
-Begin importing records from the dataset set with the \texttt{dataset} command.
-After beginning an import, each record is fetched in turn with a \texttt{fetch}
-command.  If a bounding rectangle is given and the current dataset contains
-geographic fields then only records where the geographic field is inside or
-crossing the bounding rectangle are imported.  If no bounding rectangle is
-given then all records in the dataset are imported.
 
 \subsubsection{justify}
 

@@ -338,13 +338,13 @@ with output shown in Figure \ref{tutoriallabels2}.
 
 The simplest source of data is a text file, with one record per line.  The
 filename and type of dataset to read is given in a \texttt{dataset} command.
-An \texttt{import} command is used to begin reading from the dataset.  Then
-each record is retrieved with a \texttt{fetch} command in a loop and a variable
-is assigned for each field in the record.  Fields are assigned to variables
+Then a \texttt{fetch} command is used in a loop to read each record
+and assign a variable with a value of each field.
+Fields are assigned to variables
 \texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots and the whole record is
 assigned to variable \texttt{\$0}.
 
-The following example demonstrates reading a text file shown in Figure
+The following example demonstrates reading the text file shown in Figure
 \ref{tutorialdatasets1txt} and displaying the
 geographic data that it contains.  The output of this example is shown in
 Figure \ref{tutorialdatasets1}.
@@ -359,11 +359,12 @@ Figure \ref{tutorialdatasets1}.
 
 \begin{figure}[htb]
 \includegraphics{tutorialdatasets1.eps}
-\caption{Displaying Contents Of Text File}
+\caption{Displaying Contents Of A Text File}
 \label{tutorialdatasets1}
 \end{figure}
 
-Coordinates in GIS datasets are given in a world coordinate system such as
+Coordinates in GIS datasets are often stored
+in a world coordinate system such as
 Universal Transverse Mercator.  To transform these coordinates to millimetre
 coordinates on the page use the \texttt{worlds} command.  This sets a
 transformation to map a range of world coordinates onto the whole page.  All
@@ -376,7 +377,7 @@ Export files of GIS datasets are also read as text files.  A loop and counter
 are used to read all coordinates making up lines and polygons.
 
 The following example demonstrates setting a world coordinate system and then
-reading and displaying the GenaMap ZF19 format export file shown in Figure
+reading and displaying the GenaMap GIS ZF19 format export file shown in Figure
 \ref{streetsEE} containing line
 features.  The tag of each line is used as a street name label.
 The output is shown in Figure \ref{tutorialdatasets2}.
@@ -472,7 +473,7 @@ select X, Y, Freq from SCATTER where MOD(rowid, 2) = 0
 \end{verbatim}
 
 Set an upper limit on the number of rows fetched or the time for display by
-checking the internal variables \texttt{Mapyrus.import.count} and
+checking the internal variables \texttt{Mapyrus.fetch.count} and
 \texttt{Mapyrus.timer} in a loop and ending when the limit is exceeded.
 
 \subsection{Displaying A Legend}
@@ -583,6 +584,7 @@ To display values of several attributes at point locations, draw a
 piechart or histogram at each point.
 
 \subsection{Displaying A Scalebar}
+\label{tutorialscalebar}
 
 Another cartographic rule is that a map display must include a scalebar.  The
 following example creates two PostScript files using the
@@ -694,7 +696,7 @@ newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
 PostScript printers and the Ghostscript program
 understand a limited number of fonts,
 normally only \texttt{Courier},
-\texttt{Helvetica}, \texttt{Times-Roman} and the bold
+\texttt{Helvetica}, \texttt{Times-Roman}, \texttt{Symbol} and the bold
 and oblique (italic) variations of these fonts.
 
 When a PostScript printer prints a file containing an unknown font,
@@ -743,6 +745,7 @@ to the \texttt{newpage} command.  Include filenames of TrueType font definition
 files to be used in the page.
 
 \subsection{Setting Up Mapyrus As An HTTP Server}
+\label{tutorialhttpserver}
 
 Enter the following lines into a text file named
 \texttt{tutorialhttpserver1.mpy}.
@@ -793,31 +796,28 @@ unique filenames using the
 \texttt{tempname}
 function and return references to the images in the HTML.
 
-The following example demonstrates this, displaying ESRI Shape file
+The example file \texttt{tutorialhtmlpage1.mpy} demonstrates
+this, displaying ESRI Shape file
 \texttt{coastline.shp}
 and text file
 \texttt{aust\_temperatures.dat}
 and using an HTML form to allow
 the user to change the map display.
-Enter the following lines into a text file named
-\texttt{tutorialhtmlpage1.mpy}.
-
-\verbatiminput{tutorialhtmlpage1.mpy}
-
-Copy the files
-\texttt{coastline.shp}
-and 
-\texttt{aust\_temperatures.dat}
-into the same directory as \texttt{tutorialhtmlpage1.mpy}.
-Then start Mapyrus with the HTTP Server
-option in the same directory as these two files
-and enter the URL
+These three files are stored in the \texttt{doc} subdirectory
+in a Mapyrus installation.
+In a terminal window change to this directory and
+start Mapyrus with the HTTP Server option, as described in section
+\ref{tutorialhttpserver}.
+Then enter the URL
 \texttt{http://localhost:8410/tutorialhtmlpage1.mpy}
 in a web browser.
 
 To simplify editing of HTML pages for an application, setup
 template HTML pages with placeholders for the information that
-Mapyrus provides.  Return the HTML pages with the placeholders
+Mapyrus provides.  This enables the HTML interface to be designed
+independently from Mapyrus.
+
+In Mapyrus, return the HTML pages with the placeholders
 replaced by real values using the
 \texttt{replace}
 function.  The Mapyrus commands in the file \texttt{tutorialhtmlpage2.mpy}
@@ -829,16 +829,21 @@ demonstrate this.  Both files are found in the
 
 Further ideas for building a complete HTML application are:
 
+\begin{itemize}
+\item
 For datasets covering a wide area generate two images for
-each HTML page: a detailed map display and an overview map display
+each HTML page.  Create a detailed map display and an overview map display
 with a box showing the position of the detailed map in the dataset.
 
+\item
 Generate an image containing a scalebar
-and include this in the HTML page.
+and include this in the HTML page.  See section \ref{tutorialscalebar}.
 
-Restrict layers to a limited scale range by checking the
+\item
+Restrict datasets to a limited scale range by checking the
 internal variable
-\texttt{Mapyrus.worlds.scale}.
+\texttt{Mapyrus.worlds.scale} before displaying a dataset.
+\end{itemize}
 
 \subsection{Using Imagemaps With Mapyrus HTTP Server}
 
