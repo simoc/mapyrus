@@ -272,6 +272,28 @@ public class Interpreter extends Thread
 					 */
 				}
 				break;
+			case Statement.LINEWIDTH:
+				if (nExpressions == 1 && args[0].getType() == Argument.NUMERIC)
+				{
+					/*
+					 * Set new line width.
+					 */
+					context.setLineWidth(args[0].getNumericValue());
+				}
+				else
+				{
+				}
+				break;
+			case Statement.MOVE:
+				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC)
+				{
+					/*
+					 * Add point to path.
+					 */
+					context.moveTo((float)args[0].getNumericValue(),
+						(float)args[1].getNumericValue());
+				}
 			case Statement.PRINT:
 				/*
 				 * Print to stdout each of the expressions passed.
