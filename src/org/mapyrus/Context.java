@@ -543,6 +543,15 @@ public class Context
 	}
 
 	/**
+	 * Gets current color.
+	 * @return current color.
+	 */
+	public Color getColor()
+	{
+		return(mColor);
+	}
+
+	/**
 	 * Sets color.
 	 * @param c is new color for drawing.
 	 */
