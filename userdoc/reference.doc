@@ -722,7 +722,7 @@ and the bounding rectangle of the current path.
 <td>
 The pixel position of the point clicked in an HTML imagemap and
 passed to Mapyrus, for use when running as an HTTP server.
-Both values are set to -1 if no imagemap used.
+Both values are set to -1 if no imagemap point passed in current URL.
 
 <tr>
 <td>
@@ -1568,6 +1568,8 @@ Procedures defined in these files
 are available when interpreting HTTP requests.  This enables
 common procedures to be loaded only once at startup and not with every
 HTTP request.
+<p>
+Files are not cached and are read for each HTTP request.
 <p>
 For security, the HTTP server only replies to requests
 from the directory in which Mapyrus was started.
