@@ -8,36 +8,36 @@ let imageSizeInPixels = Mapyrus.page.width / Mapyrus.page.resolution.mm
 # So set it to cover the whole dataset.
 #
 dataset "shapefile", "coastline.shp", "dbffields="
-if x1 eq ""
+if X1 eq ""
 then
-  let x1 = Mapyrus.dataset.min.x
-  let y1 = Mapyrus.dataset.min.y
-  let x2 = Mapyrus.dataset.max.x
-  let y2 = Mapyrus.dataset.max.y
+  let X1 = Mapyrus.dataset.min.x
+  let Y1 = Mapyrus.dataset.min.y
+  let X2 = Mapyrus.dataset.max.x
+  let Y2 = Mapyrus.dataset.max.y
 else
-  let xDiff = x2 - x1
-  let yDiff = y2 - y1
+  let xDiff = X2 - X1
+  let yDiff = Y2 - Y1
   # Location clicked in imagemap is new center point of map.
   # Calculate this location in world coordinates.
   #
-  let xCenter = x1 + (Mapyrus.imagemap.x / imageSizeInPixels) * xDiff
-  let yCenter = y2 - (Mapyrus.imagemap.y / imageSizeInPixels) * yDiff
+  let xCenter = X1 + (Mapyrus.imagemap.x / imageSizeInPixels) * xDiff
+  let yCenter = Y2 - (Mapyrus.imagemap.y / imageSizeInPixels) * yDiff
   # Set new coordinates centered on clicked point.
   #
-  let x1 = xCenter - xDiff / 2
-  let y1 = yCenter - yDiff / 2
-  let x2 = xCenter + xDiff / 2
-  let y2 = yCenter + yDiff / 2
+  let X1 = xCenter - xDiff / 2
+  let Y1 = yCenter - yDiff / 2
+  let X2 = xCenter + xDiff / 2
+  let Y2 = yCenter + yDiff / 2
 endif
 
 # Find the world coordinates again, as they have been expanded
 # to fill the square image we are drawing to.
 #
-worlds x1, y1, x2, y2
-let x1 = Mapyrus.worlds.min.x
-let y1 = Mapyrus.worlds.min.y
-let x2 = Mapyrus.worlds.max.x
-let y2 = Mapyrus.worlds.max.y
+worlds X1, Y1, X2, Y2
+let X1 = Mapyrus.worlds.min.x
+let Y1 = Mapyrus.worlds.min.y
+let X2 = Mapyrus.worlds.max.x
+let Y2 = Mapyrus.worlds.max.y
 
 # Read shape file and draw it into image file.
 #
@@ -53,8 +53,8 @@ done
 # we've created with URL giving current world coordinates so
 # further zooming can be calculated.
 #
-let url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . \
-  '&x2=' . x2 . '&y2=' . y2
+let url = Mapyrus.filename . '?X1=' . X1 . '&Y1=' . Y1 . \
+  '&X2=' . X2 . '&Y2=' . Y2
 mimetype "text/html"
 print '<html>'
 print '<h1>Click In Image To Re-center</h1><p>'
