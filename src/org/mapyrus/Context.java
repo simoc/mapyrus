@@ -1114,6 +1114,56 @@ public class Context
 	}
 
 	/**
+	 * Add Bezier curve to path from last point to a new point.
+	 * @param xControl1 X coordinate of first Bezier control point.
+	 * @param yControl1 Y coordinate of first Bezier control point.
+	 * @param xControl2 X coordinate of second Bezier control point.
+	 * @param yControl2 Y coordinate of second Bezier control point.
+	 * @param xEnd X coordinate of end point of curve.
+	 * @param yEnd Y coordinate of end point of curve.
+	 */
+	public void curveTo(double xControl1, double yControl1,
+		double xControl2, double yControl2,
+		double xEnd, double yEnd) throws MapyrusException
+	{
+		double pts[] = new double[6];
+		float dstPts[] = new float[6];
+
+		pts[0] = xControl1;
+		pts[1] = yControl1;
+		pts[2] = xControl2;
+		pts[3] = yControl2;
+		pts[4] = xEnd;
+		pts[5] = yEnd;
+
+		/*
+		 * Make sure that a start point for curve was defined.
+		 */
+		if (mPath == null || mPath.getMoveToCount() == 0)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_BEZIER_START));
+				
+		/*
+		 * Transform to correct world coordinate system.
+		 */
+		if (mProjectionTransform != null)
+		{
+			mProjectionTransform.forwardTransform(pts);
+		}
+		
+		/*
+		 * Transform points from world coordinates
+		 * to millimetre position on page.
+		 */
+		if (mWorldCtm != null)
+		{
+			mWorldCtm.transform(pts, 0, pts, 0, pts.length / 2);
+		}
+		mCtm.transform(pts, 0, dstPts, 0, pts.length / 2);
+
+		mPath.curveTo(dstPts[0], dstPts[1], dstPts[2], dstPts[3], dstPts[4], dstPts[5]);
+	}
+
+	/**
 	 * Add ellipse to path.
 	 * @param xMin minimum X coordinate of rectangle containing ellipse.
 	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
