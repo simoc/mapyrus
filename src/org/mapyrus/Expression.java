@@ -137,7 +137,8 @@ public class Expression
 			}
 			catch (PatternSyntaxException e)
 			{
-				throw new MapyrusException(e.getMessage());
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_REGEX) +
+					": " + e.getMessage());
 			}
 
 			/*
