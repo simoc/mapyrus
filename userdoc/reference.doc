@@ -5,23 +5,183 @@ include header.doc
 Reference
 </h2>
 
-Java 1.4.1
-PROJ.4
-www.remotesensing.org
+include hr.doc
 
-language reference
-assignments
-quoting
-comments
-control structures
-procedures
-
-+, -, *, /, .
+<table>
+<tr>
+<td>
+<a href="#softreq"/>Software Requirements</a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="#usage"/>Usage</a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="#concepts"/>Concepts</a>
+page, worlds, projections
+</td>
+</tr>
+<tr>
+<td>
+<a href="#language"/>Language and Commands</a>
+</td>
+</tr>
+</table>
 <p>
-Following built-in functions
+
+include hr.doc
+
+<a name="softreq"></a>
+<h3>Software Requirements</h3>
+
+Mapyrus requires:
+<ol>
+<li>
+Java Runtime Environment 1.4.1
+</li>
+<li>
+The PROJ.4 library from
+<a href="www.remotesensing.org">www.remotesensing.org</a>
+if reprojection between coordinate systems is required.
+JNI
+<tt>libmapyrus.so</tt>, <tt>mapyrus.dll</tt>
+for your operating system
+</li>
+</ol>
+
+include hr.doc
+
+<a name="usage"></a>
+<h3>Usage</h3>
+
+text files or URLs of text filename
+
+<pre>
+$ java -jar mapyrus.jar myfile.txt
+</pre>
+
+include hr.doc
+
+<a name="concepts"></a>
+<h3>Concepts</h3>
+
+The purpose of Mapyrus is to display
+A page is 
+
+path
+
+dataset
+fetch each record
+<a href="#fetch">fetch</a>
+tests control display
+
+worlds
+Coordinate values in a dataset are given in a coordinate system.
+such as Universal Transverse Mercator (UTM)
+projected onto the page
+
+include hr.doc
+
+<a name="language"></a>
+<h3>Language and Commands</h3>
+
+Mapyrus interprets commands read from one or more plain text files.
+Each command is given on a separate line.
+<p>
+Any part of a line following a hash (<tt>#</tt>) character that is not
+part of a literal string is interpreted as a comment and is ignored.
+<p>
+Each command is passed zero or more arguments separated by commas.
+An argument is a number, a string literal in single quotes (<tt>'</tt>)
+or double quotes (<tt>"</tt>), a variable name, or an expression.
+<p>
+An expression contains arguments and operators and functions
+on those arguments, just like in other languages such as BASIC, C, or Python.
+The following operators and functions are available:
+<p>
+
+<table border=1 width=300>
+<tr>
+
+<td>
+<b>Operator</b>
+</td>
+<td>
+<b>Description</b>
+</td>
+
+</tr>
+<tr>
+
+<td>
+<tt>(</tt>, <tt>)</tt>
+</td>
+<td>
+parentheses
+</td>
+
+
+</tr>
+<tr>
+
+<td>
+<tt>*</tt>, <tt>/</tt>, <tt>x</tt>
+</td>
+<td>
+numeric multiplication, numeric division, string repetition
+</td>
+
+</tr>
+<tr>
+
+<td>
+<tt>+</tt>, <tt>-</tt>, <tt>.</tt>
+</td>
+<td>
+numeric addition, numeric subtraction, string concatenation
+</td>
+
+</tr>
+<tr>
+
+<td>
+<tt>&lt;=</tt>, <tt>&lt;</tt>, <tt>==</tt>,
+<tt>!=</tt>, <tt>&gt</tt>, <tt>&gt;=</tt>,
+<tt>lt</tt>, <tt>le</tt>, <tt>eq</tt>,
+<tt>ne</tt>, <tt>gt</tt>, <tt>ge</tt>
+</td>
+<td>
+numeric comparisons and string comparisons
+</td>
+
+</tr>
+<tr>
+
+<td>
+<tt>and</tt>
+</td>
+<td>
+Logical and
+</td>
+
+</tr>
+<tr>
+
+<td>
+<tt>or</tt>
+</td>
+<td>
+Logical or
+</td>
+
+</tr>
+</table>
 
 <p>
-<table cellpadding=4 border=1>
+<table border=1 width=500>
 <tr>
 <td>
 <b>Function Name</b>
@@ -70,7 +230,84 @@ The first character in <i>str</i> has an index of 1.
 </table>
 
 <p>
-<table cellpadding=4 border=1>
+An arguments or expression is  assigned to a named variable using the equals
+sign (<tt>=</tt>).  A variable name begins with a
+letter or dollar sign (<tt>$</tt>) and contains only letters, numbers,
+dots (<tt>.</tt>) and underbars (<tt>_</tt>).
+Variable names are case-sensitive.
+Variables that are referenced without having been defined have a
+value of zero, or an empty string.
+<p>
+
+The <tt>if</tt> and <tt>while</tt> flow control structures
+found in other languages are available:
+<p>
+
+<tt>if</tt> <i>condition</i> <tt>then</tt>
+<br>
+&nbsp;&nbsp;<i>then commands</i> ...
+<br>
+<tt>else</tt>
+<br>
+&nbsp;&nbsp;<i>else commands</i> ...
+<br>
+<tt>endif</tt>
+
+<p>
+Executes <i>then commands</i> if <i>condition</i> evaluates to
+a non-zero value, otherwise <i>else commands</i> are executed.
+The <tt>else</tt> part is optional.
+Compound tests are built using the <tt>elsif</tt> keyword:
+<p>
+
+<tt>if</tt> <i>condition</i> <tt>then</tt>
+<br>
+&nbsp;&nbsp;<i>commands</i> ...
+<br>
+<tt>elsif</tt> <i>condition</i> <tt>then</tt>
+<br>
+&nbsp;&nbsp;<i>commands</i> ...
+<br>
+<tt>endif</tt>
+
+<p>
+
+The <tt>while</tt> keyword defines a loop in which
+<i>commands</i> will be executed for as long
+as <i>condition</i> continues to evaluate to a non-zero value:
+<p>
+
+<tt>while</tt> <i>condition</i> <tt>do</tt>
+<br>
+&nbsp;&nbsp;<i>commands</i> ...
+<br>
+<tt>done</tt>
+
+<p>
+
+procedures
+<p>
+<tt>begin</tt> <i>name</i> [<i>arg1</i>, ...]
+<br>
+&nbsp;&nbsp;<i>commands</i> ...
+<br>
+<tt>end</tt>
+<p>
+Save context
+variables
+graphics state, path, clip path
+restored at <tt>end</tt>
+special moveto behaviour
+must be called with correct number of arguments.
+
+datasets
+world coordinates
+
+Precedence from highest to lowest
+
+
+<p>
+<table border=1>
 
 <tr>
 <td>
@@ -206,7 +443,7 @@ The bounding rectangle of world coordinates set with the
 </table>
 <p>
 
-<hr>
+include hr.doc
 
 <p>
 <a name="color"></a>
@@ -223,7 +460,7 @@ in the Java system property <tt>Mapyrus.rgbfile</tt>.
 Values for RGB and HSB colors are given as intensities
 in the range 0-1.
 
-<hr>
+include hr.doc
 
 <p>
 <a name="linestyle"></a>
@@ -246,18 +483,19 @@ of one dash in a dashed linestyle.
 <i>phase</i> is the offset in millimetres into the dash pattern 
 at which to begin.
 
-<hr>
+include hr.doc
 
 <p>
 <a name="font"></a>
 <tt>font</tt> <i>name</i>, <i>style</i>, <i>size</i>
 <p>
 Sets font for labelling with the <a href="#label">label</a> command.
-Font <i>name</i>, <i>style</i> is either <tt>plain</tt>, <tt>bold</tt>,
+Font <i>name</i> is the name of the font family,
+<i>style</i> is either <tt>plain</tt>, <tt>bold</tt>,
 <tt>italic</tt> or <tt>bolditalic</tt>.
 Font <i>size</i> is given in millimetres.
 
-<hr>
+include hr.doc
 
 <p>
 <a name="justify"></a>
@@ -270,49 +508,107 @@ horizontally and/or
 <tt>top</tt>, <tt>middle</tt>, <tt>bottom</tt> for justifying labels
 vertically.
 
-<hr>
+include hr.doc
 
 <p>
 <a name="move"></a>
-MOVE
-Moves the pen
+<tt>move</tt> <i>x</i>, <i>y</i>
+<p>
+Adds the point (<i>x</i>, <i>y</i>) to the current path.  The
+point is first transformed through any world coordinate
+transformation set with a <a href="#worlds">worlds</a> command
+and then scaled
+
+include hr.doc
 
 <p>
 <a name="draw"></a>
-DRAW
+<tt>draw</tt> <i>x</i>, <i>y</i>, ...
+<p>
+Adds one or more points (<i>x</i>, <i>y</i>) to the current path.
+Points are first transformed through any world coordinate
+transformation set with a <a href="#worlds">worlds</a> command.
+
+include hr.doc
 
 <p>
 <a name="arc"></a>
-ARC
+<tt>arc</tt> <i>direction</i>, <i>xCenter</i>, <i>yCenter</i>,
+<i>xEnd</i>, <i>yEnd</i>
+<p>
+Adds a circular arc to the current path.  The arc begins at
+the last point currently in the path, extend
 Circular arc
+Extended
+If <i>direction</i> is a positive number, the arc travels clockwise,
+otherwise the arc travels in an anti-clockwise direction.
+
+include hr.doc
 
 <p>
 <a name="clearpath"></a>
-CLEARPATH
+<tt>clearpath</tt>
+
+include hr.doc
 
 <p>
 <a name="samplepath"></a>
-SAMPLEPATH
-Replaces current path with equally spaced points along that path
+<tt>samplepath</tt> <i>spacing</i>, <i>offset</i>
+<p>
+Replaces current path with equally spaced points along the path.
+<i>offset</i> is the distance along the path at which to place first point,
+given in millimetres.
+<i>spacing</i> is the distance between points, given in millimetres.
+The sign of <i>spacing</i>
+controls the direction in which the path is travelled.
+If <i>spacing</i> is a positive value, the path is travelled from the
+beginning towards the end.
+If <i>spacing</i> is a negative value, then the absolute value of
+<i>spacing</i> is used and the path is travelled from the end towards
+the beginning.
+Using a very large postive or negative value for <i>spacing</i> results
+in current path being replaced by a single point at the beginning or
+end of the path.
+
+include hr.doc
 
 <p>
 <a name="stripepath"></a>
-STRIPEPATH
-Replaces current path with equally spaced line stripes
+<tt>stripepath</tt> <i>spacing</i>, <i>angle</i>
+<p>
+Replaces current path with equally spaced parallel lines that completely
+cover the path.
+<i>spacing</i> is the distance between lines, measured in millimetres.
+<i>angle</i> is angle of each line, measured in counter-clockwise in
+degrees, with zero being horizontal.
+Follow this command with a <a href="#clip">clip</a> command to
+produce a hatched fill pattern.
 
 <p>
 <a name="stroke"></a>
-STROKE
+<tt>stroke</tt>
 
 <p>
 <a name="fill"></a>
-FILL
+<tt>fill</tt>
 Flood fills the current path with the current color.
+The winding rule is used for determining the inside and outside
+regions of polygons containing islands.
 The path is not modified.
+
+include hr.doc
+
+<p>
+<a name="protect"></a>
+protect
+Protects
+
+include hr.doc
 
 <p>
 <a name="clip"></a>
 CLIP
+opposite of protect
 Protects
 
 <p>
@@ -350,7 +646,12 @@ Fetches next row from dataset.
 
 <p>
 <a name="newpage"></a>
-NEWPAGE
+<tt>newpage</tt> <i>format</i>, <i>filename</i>, <i>width</i>,
+<i>height</i>, <i>resolution</i>
+<p>
+Begins
+Adds one or more points (<i>x</i>, <i>y</i>) to the current path.
+<i>resolution</i> is given as a dots-per-inch value.
 
 <p>
 <a name="print"></a>
