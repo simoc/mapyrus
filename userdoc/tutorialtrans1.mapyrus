@@ -1,0 +1,21 @@
+newpage "eps", "tutorialtrans1.eps", 60, 50, "background=white image=true"
+
+color "lightgray"
+clearpath
+box 0, 25, 60, 50
+fill
+
+clearpath
+color "red", 0.5   # half transparent
+box 5, 15, 45, 40
+fill
+
+clearpath
+color "green", 0.8   # nearly opaque (solid)
+box 15, 5, 35, 35
+fill
+
+clearpath
+color "blue", 0.2   # nearly transparent
+box 25, 7, 50, 45
+fill
