@@ -27,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -112,13 +111,13 @@ public class TextfileDataset implements GeographicDataset
 		{
 			String command = filename.substring(0, filename.length() - 1).trim();
 			mProcess = Runtime.getRuntime().exec(command);
-			bufferedReader = new BufferedReader(new InputStreamReader(mProcess.getInputStream()));
+			mReader = new LineNumberReader(new InputStreamReader(mProcess.getInputStream()));
 		}
 		else
 		{
-			bufferedReader = new BufferedReader(new FileReader(filename));
+			FileOrURL f = new FileOrURL(filename);
+			mReader = f.getReader();
 		}
-		mReader = new LineNumberReader(bufferedReader);
 		mFilename = filename;
 
 		/*
@@ -250,11 +249,27 @@ public class TextfileDataset implements GeographicDataset
 		 * Try to read next row.
 		 */
 		if (readNextRow(row))
-		{
 			return(row);
-		}
 		else
+			return(null);
+	}
+
+	/**
+	 * Closes dataset.
+	 */
+	public void close() throws MapyrusException
+	{
+		try
 		{
+			/*
+			 * Read any remaining output from external program.
+			 */
+			if (mProcess != null)
+			{
+				while (mReader.read() > 0)
+					;
+			}
+
 			/*
 			 * We've read all of external program's output, now wait for
 			 * it to terminate.
@@ -263,14 +278,23 @@ public class TextfileDataset implements GeographicDataset
 			{
 				try
 				{
-					mProcess.waitFor();
+					int status = mProcess.waitFor();
+					if (status != 0)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
+							": " + mFilename);
+					}
 				}
 				catch (InterruptedException e)
 				{
 					throw new MapyrusException(e.getMessage());
 				}
 			}
-			return(null);
+			mReader.close();
+		}
+		catch (IOException e)
+		{
+			throw new MapyrusException(e.getMessage());
 		}
 	}
 }
