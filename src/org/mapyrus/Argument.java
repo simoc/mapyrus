@@ -256,6 +256,15 @@ public class Argument
 	}
 
 	/**
+	 * Get number of elements in hash map.
+	 * @return size of hashmap.
+	 */
+	public int getHashMapSize()
+	{
+		return(mHashMap.size());
+	}
+	
+	/**
 	 * Return string representation of this argument.
 	 * @return string representation of argument value.
 	 */
