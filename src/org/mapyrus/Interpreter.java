@@ -723,6 +723,29 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.CIRCLE:
+				if (nExpressions == 3)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					double radius = mExecuteArgs[2].getNumericValue();
+					if (radius > 0)
+					{
+							/*
+							 * Add 360 degree arc making a full circle.
+							 */
+							context.moveTo(x1 - radius, y1);
+							context.arcTo(1, x1, y1, x1 - radius, y1);
+							context.closePath();
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CIRCLE));
+				}
+				break;
+
+
 			case Statement.BOX:
 			case Statement.GUILLOTINE:
 			case Statement.PROTECT:
