@@ -328,7 +328,8 @@ public class JDBCDataset implements GeographicDataset
 					}
 					else if (mFieldTypes[i] == Types.CHAR ||
 						mFieldTypes[i] == Types.VARCHAR ||
-						mFieldTypes[i] == Types.LONGVARCHAR)
+						mFieldTypes[i] == Types.LONGVARCHAR ||
+						mFieldTypes[i] == Types.CLOB)
 					{
 						String fieldValue = mResultSet.getString(i + 1);
 						if (fieldValue == null)
@@ -340,11 +341,16 @@ public class JDBCDataset implements GeographicDataset
 						mFieldTypes[i] == Types.VARBINARY ||
 						mFieldTypes[i] == Types.LONGVARBINARY)
 					{
-						String fieldValue = mResultSet.getString(i + 1);
-						if (fieldValue == null)
-							arg = Argument.emptyString;
-						else
-							arg = new Argument(Argument.STRING, fieldValue);
+						byte []b = mResultSet.getBytes(i + 1);
+						double []geometry = WKBGeometryParser.parse(b);
+						arg = new Argument((int)geometry[0], geometry);
+					}
+					else if (mFieldTypes[i] == Types.BLOB)
+					{
+						Blob blob = mResultSet.getBlob(i + 1);
+						byte []b = blob.getBytes(0, (int)blob.length());
+						double []geometry = WKBGeometryParser.parse(b);
+						arg = new Argument((int)geometry[0], geometry);
 					}
 					else if (mFieldTypes[i] == Types.DATE ||
 						mFieldTypes[i] == Types.TIME ||
