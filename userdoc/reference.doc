@@ -428,14 +428,15 @@ The area of the current path on the page, measured in square millimetres.
 <td>
 <tt>Mapyrus.import.count</tt>
 <td>
-The number of rows already fetched from the current dataset.
+The number of records already fetched from the current dataset.
 
 <tr>
 <td>
-<tt>Mapyrus.import.moreRows</tt>
+<tt>Mapyrus.import.moreRecords</tt>
 <td>
-Flag value set to 1 if another row is available for <a href="#fetch">fetch</a>
-command, or 0 if no more rows available.
+Flag value set to 1 if another record is available
+for <a href="#fetch">fetch</a>
+command, or 0 if no more records available.
 
 <tr>
 <td>
@@ -742,13 +743,14 @@ with each line justified independently.
 <a name="worlds"></a>
 <tt>worlds</tt> <i>x1</i>, <i>y1</i>, <i>x2</i>, <i>y2</i> [, <i>units</i>]
 <p>
-Defines a world coordinate system.
-Either the X or Y axis is expanded to be make the world
-uniform scaling
-<i>units</i> define the world
-scale factor
-assumed metres.
-<tt>Mapyrus.worlds.scale</tt>
+Defines a world coordinate system, replacing any existing
+world coordinate system.
+The world coordinate range is expanded in the X or Y axis,
+if necessary, to maintain uniform scaling.
+
+<i>units</i> define the units of the world coordinates,
+either <tt>metres</tt>, <tt>meters</tt> or <tt>feet</tt>.
+If not given, units are assumed to be metres.
 
 <!--
 <p>
@@ -762,21 +764,91 @@ Coordinate system transformation.
 <tt>dataset</tt> <i>type</i>, <i>name</i>, <i>extras</i>,
 [<i>geometryfield</i>, ... ]
 <p>
+Defines a dataset to read geographic data from.
+<i>dataset</i> is the filename of the dataset to read, or
+an SQL query statement when accessing an RDBMS.
+<i>type</i> is the type of dataset and
+<i>extras</i> defines further options for accessing the dataset, given
+as <i>variable=value</i> values, separated by whitespace.
+The following dataset types and options are available:
+
+<table border=1 width=400>
+<tr>
+<td>
+<b>Dataset Type</b>
+<td>
+<b>Description and Extras</b>
+
+<tr>
+<td>
+<tt>textfile</tt>
+<td>
+for accessing data from a delimited text file, with one
+record per line.
+<p>
+Extras:
+<p>
+<tt>comment=<i>string</i></tt>
+<br>
+Character string at start of a line marking a comment line that
+is to be ignored.  Default value is a hash character (<tt>#</tt>).
+<p>
+<tt>delimeters=<i>string</i></tt>
+<br>
+Characters delimiting fields in the text file.  Default value
+is all whitespace characters.
+
+<tr>
+<td>
+<tt>shapefile</tt>
+<td>
+for accessing data in ESRI Shape file format.
+<p>
+Extras:
+<p>
+<tt>dbffields=<i>field1</i>,...</tt>
+<br>
+Comma-separated list of
+attribute fields to read from the DBF database file accompanying the
+Shape file.  By default, all fields are read.  Reading fewer attribute
+fields improves performance.
+
+<tr>
+<td>
+<tt>sql</tt>
+<td>
+for accessing data from an RDBMS.
+<p>
+Extras:
+<p>
+<tt>jdbc=<i>connection-string</i></tt> 
+<br>
+The JDBC connection string for connecting to the RDBMS.
+
+</table>
+
+
+
+<i>geometryfield</i>
+defines which columns are to be interpreted as geometry
 
 <p>
 <a name="import"></a>
 <tt>import</tt>
+Begins new query of dataset defined with
+<a href="#dataset">dataset</a>
+command.
 
 <p>
 <a name="fetch"></a>
 <tt>fetch</tt>
 <p>
-Fetches next row from current dataset.
+Fetches next record from current dataset.
 A variable with the name of
 each column value
-Before fetching a row, check the variable
-<tt>Mapyrus.import.moreRows</tt>
-to ensure that another row is available.
+Before fetching a record, check the variable
+<tt>Mapyrus.import.moreRecords</tt>
+to ensure that another record is available.
 
 <p>
 <a name="newpage"></a>
