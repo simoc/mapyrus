@@ -1388,6 +1388,59 @@ Only the outline of each letter is drawn, no part of the letter is filled. \\
 \hline
 \end{longtable}
 
+\subsubsection{geoimage}
+
+\begin{alltt}
+geoimage \textit{filename} [, \textit{extras} ]
+\end{alltt}
+
+Displays a geo-referenced image.
+
+\textit{filename} is the name of a GIF, JPEG or PNG format image file.
+An associated "worlds" file with suffix \texttt{.tfw} must exist,
+defining the world coordinate range covered by the image.
+
+\textit{extras} defines further options for the image, given as
+\textit{variable=value} values, separated by whitespace.
+See Table \ref{geoimageextras}
+for available options.
+
+
+\begin{longtable}{|l|p{7cm}|}
+\hline
+\label{geoimageextras}
+Extra & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Geo-referenced Image Extras} \\
+\endfoot
+
+\hline
+Extra & Description \\
+\hline
+\hline
+\endhead
+
+\texttt{clipfile=\textit{filename}} &
+
+Gives name of a text file containing a clip polygon for the image.
+Each line of the text file defines one (X, Y) world coordinate
+of the clip polygon.
+Only image data inside the clip polygon is displayed.
+Using a clip polygon prevents display of a non-rectangular image
+from overwriting a neighbouring image. \\
+
+\texttt{brightness=\textit{factor}} &
+
+Defines a brightness factor for the image.
+A value between 0 and 1 makes the image dimmer.
+A value greater than 1 makes the image brighter. \\
+
+\hline
+\end{longtable}
+
 \subsubsection{gradientfill}
 
 \begin{alltt}
