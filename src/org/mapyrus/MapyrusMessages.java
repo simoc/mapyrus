@@ -76,6 +76,7 @@ public class MapyrusMessages
 	public static final String JOINED_THREAD = "joinedthread";
 	public static final String MISSING_FIELD = "missingfield";
 	public static final String MISSING_FILENAME = "missingfilename";
+	public static final String MISSING_HTTP_POST = "missinghttppost";
 	public static final String NESTED_PROC = "nestedproc";
 	public static final String NO_OUTPUT = "nooutput";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
