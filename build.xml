@@ -6,16 +6,22 @@
 <property name="preprocessor" value="au.id.chenery.mapyrus.Preprocessor"/>
 
 
+<!-- Name of properties file containing error and status messages -->
+<property name="messagefile" value="MapyrusMessages.properties"/>
+
+
 <target name="compile" description="Compile java source code">
 <javac srcdir="src" destdir="build/classes"/>
 </target>
 
 
 <target name="jar" depends="compile" description="Build jar file from classes">
-<jar jarfile="lib/${ant.project.name}.jar" basedir="build/classes"/>
+<copy file="src/${messagefile}" tofile="build/classes/${messagefile}"/>
+<jar jarfile="lib/${ant.project.name}.jar" basedir="build/classes" manifest="manifest"/>
 </target>
 
 <target name="jni" depends="compile" description="Build JNI shared libraries">
+<javah file="bla"/>
 </target>
 
 <target name="doc" depends="jar" description="Build documentation and examples">
