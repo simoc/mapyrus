@@ -6,7 +6,9 @@ clearpath
 move 5, 5
 draw 45, 5
 arc -1, 45, 15, 45, 25
-draw 35, 25, 35, 10, 5, 10
+draw 15, 25
+arc -1, 15, 20, 15, 15
+draw 35, 15
 linestyle 2.5, 'butt', 'round'
 color 'black'
 stroke
