@@ -3,15 +3,11 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.util.Hashtable;
 import java.awt.Color;
 import java.io.IOException;
-import java.awt.Shape;
 import java.util.LinkedList;
 import java.util.Date;
 import java.util.Vector;
-import java.awt.geom.PathIterator;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 /**
