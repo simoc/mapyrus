@@ -1,0 +1,25 @@
+begin border2
+	clip
+	color "yellow"
+	linestyle 3
+	stroke
+end
+
+begin border
+	# Draw border as thick line on inside of polygon and dashed border.
+	#
+	border2
+	linestyle 0.1, 'butt', 'bevel', 0, 4, 1, 1, 1
+	color "orange"
+	stroke
+end
+
+newpage "png", "tutorialpolygons4.png", 60, 30, 96
+
+clearpath
+move 5, 5
+draw 45, 5
+arc 0, 45, 15, 45, 25
+draw 35, 25, 35, 10, 5, 10, 5, 5
+
+border

@@ -1,0 +1,6 @@
+newpage "png", "tutorialfirst1.png", 30, 30, 96
+color "black"
+linestyle 4, 'round', 'round'
+move 5, 20
+draw 20, 20, 5, 5, 20, 5
+stroke
