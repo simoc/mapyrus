@@ -16,8 +16,7 @@ print 'timer=', Mapyrus.timer
 begin circle1
 	key "point", "circle1"
 	linestyle 0.1
-	move -2, 0
-	arc 1, 0, 0, -2, 0
+	circle 0, 0, 2
 	closepath
 	stroke
 end
@@ -182,8 +181,7 @@ end
 
 begin newmoon
 	key "point", "New Moon"
-	move -2, 0
-	arc 1, 0, 0, -2, 0
+	circle 0, 0, 2
 	closepath
 	color "cyan"
 	fill
@@ -196,10 +194,48 @@ begin newmoon
 	fill
 end
 
+begin trafficlights c
+	key "point", "Traffic Lights", "green"
+	local y
+	color "black"
+	box -2, -4, 2, 4
+	fill
+
+	clearpath
+	circle 0, 0, 1
+	circle 0, 2.5, 1
+	circle 0, -2.5, 1
+	color "grey"
+	fill
+
+	# Calculate position for light to show.
+	#
+	if c eq "red"
+	then
+		let y = 2.5
+	elif c eq "amber"
+	then
+		let y = 0
+	elif c eq "green"
+	then
+		let y = -2.5
+	else
+		# Don't draw any light, just
+		# show a grey circle again.
+		#
+		let y = 0
+		let c = "grey"
+	endif
+	color c
+
+	clearpath
+	circle 0, y, 1
+	fill
+end
+
 begin oldmoon
 	key "point", "Old Moon"
-	move -2, 0
-	arc 1, 0, 0, -2, 0
+	circle 0, 0, 2
 	closepath
 	color "navyblue"
 	fill
@@ -324,8 +360,7 @@ begin bordercrossing
 	key "point", "Border Crossing"
 	color "white"
 	linestyle 0.4
-	move -1.5, 0
-	arc 1, 0, 0, -1.5, 0
+	circle 0, 0, 1.5
 	closepath
 	fill
 	color "pink"
@@ -367,8 +402,7 @@ end
 begin information
 	key "point", "Information"
 	color "darkgreen"
-	move -2, 0
-	arc 1, 0, 0, -2, 0
+	circle 0, 0, 2
 	fill
 	clearpath
 	move -0.1, 0.6
@@ -381,8 +415,7 @@ end
 begin sbahn
 	key "point", "S-Bahn Station"
 	color "green"
-	move -2, 0
-	arc 1, 0, 0, -2, 0
+	circle 0, 0, 2
 	fill
 	clearpath
 	move -0.1, 0.6
@@ -493,8 +526,7 @@ end
 begin radiotower
 	key "point", "Radio Tower"
 	linestyle 0.1
-	move -1, 0
-	arc 1, 0, 0, -1, 0
+	circle 0, 0, 1
 	fill
 	clearpath
 	move 0.707, 0.707
@@ -506,8 +538,7 @@ begin church
 	key "point", "Church"
 	color "black"
 	linestyle 0.1
-	move -1, 0
-	arc 1, 0, 0, -1, 0
+	circle 0, 0, 1
 	fill
 	clearpath
 	move 0, 1
@@ -927,8 +958,7 @@ begin quiltfill
 end
 
 begin circlefill_circle
-	move -2, 0
-	arc 1, 0, 0, -2, 0
+	circle 0, 0, 2
 	fill
 end
 
@@ -1042,6 +1072,7 @@ then
 	trigstation
 	newmoon
 	oldmoon
+	trafficlights ""
 	speechbubble ""
 	northarrow
 	nsew
