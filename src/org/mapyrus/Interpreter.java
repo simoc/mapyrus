@@ -789,6 +789,24 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.BEZIER:
+				if (nExpressions == 6)
+				{
+					double xControl1 = mExecuteArgs[0].getNumericValue();
+					double yControl1 = mExecuteArgs[1].getNumericValue();
+					double xControl2 = mExecuteArgs[2].getNumericValue();
+					double yControl2 = mExecuteArgs[3].getNumericValue();
+					double xEnd = mExecuteArgs[4].getNumericValue();
+					double yEnd = mExecuteArgs[5].getNumericValue();
+
+					context.curveTo(xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_BEZIER));
+				}
+				break;
+
 			case Statement.WEDGE:
 				if (nExpressions == 5)
 				{
