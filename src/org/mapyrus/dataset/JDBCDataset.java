@@ -376,6 +376,39 @@ public class JDBCDataset implements GeographicDataset
 						else
 							arg = new Argument(Argument.STRING, fieldValue);
 					}
+					else if (mFieldTypes[i] == Types.OTHER)
+					{
+						byte b[] = mResultSet.getBytes(i + 1);
+						if (b == null || b.length == 0)
+						{
+							arg = Argument.emptyString;
+						}
+						else
+						{
+							try
+							{
+								/*
+								 * PostGIS returns geometry types as a hex digit string.
+								 * If we can parse this then attempt to set it as a geometry
+								 * string, falling back to a plain text string if we fail.
+								 */
+								byte []rawBytes = parseHexDigits(b);
+								if (rawBytes != null)
+								{
+									double []geometry = WKBGeometryParser.parse(rawBytes);
+									arg = new Argument((int)geometry[0], geometry);
+								}
+								else
+								{
+									arg = new Argument(Argument.STRING, new String(b));
+								}
+							}
+							catch (MapyrusException e)
+							{
+								arg = new Argument(Argument.STRING, new String(b));
+							}
+						}
+					}
 					else
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNKNOWN_FIELD_TYPE) +
@@ -393,6 +426,45 @@ public class JDBCDataset implements GeographicDataset
 		{
 			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
 				e.getSQLState() + ": " + mSql);
+		}
+		return(retval);
+	}
+
+	/**
+	 * Parse ASCII hex digits into byte array.
+	 * @param b array containing hex digits, with one character per byte.
+	 * @return array of parsed hex digits, or null if array does not contain hex digits.
+	 */
+	private byte []parseHexDigits(byte []b)
+	{
+		byte retval[] = new byte[b.length / 2];
+		int lastByte = 0;
+		for (int i = 0; i < b.length; i++)
+		{
+			int n = b[i];
+			if (n >= '0' && n <= '9')
+				n = n - '0';
+			else if (n >= 'A' && n <= 'F')
+				n = n - 'A' + 10;
+			else if (n >= 'a' && n <= 'f')
+				n = n - 'a' + 10;
+			else
+			{
+				/*
+				 * Encountered something that is not a hex digit.
+				 * Return failure.
+				 */
+				return(null);
+			}
+
+			/*
+			 * Pack each two parse hex digits into a single byte.
+			 */
+			if (i % 2 != 0)
+			{
+				retval[i / 2] = (byte)((lastByte << 4) | n);
+			}
+			lastByte = n;
 		}
 		return(retval);
 	}
