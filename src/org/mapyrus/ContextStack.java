@@ -55,7 +55,7 @@ public class ContextStack
 	/*
 	 * Internal variable names.
 	 */
-	private static final String GEOMETRY_VARIABLE = "geometry";
+	private static final String PATH_VARIABLE = "path";
 	private static final String WORLDS_VARIABLE = "worlds";
 	private static final String UNPROJECTED_VARIABLE = "project";
 	private static final String DATASET_VARIABLE = "dataset";
@@ -585,9 +585,9 @@ public class ContextStack
 				else
 					retval = null;
 			}
-			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + GEOMETRY_VARIABLE + "."))
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + PATH_VARIABLE + "."))
 			{
-				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + GEOMETRY_VARIABLE.length() + 1);
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + PATH_VARIABLE.length() + 1);
 				if (sub.equals("length"))
 					retval = new Argument(getCurrentContext().getPathLength());
 				else if (sub.equals("area"))
