@@ -74,7 +74,14 @@ public class OutputFormat
 	 */
 	private static final int INTERNAL_IMAGE = 1;
 	private static final int IMAGE_FILE = 2;
-	private static final int POSTSCRIPT = 3;
+
+	/*
+	 * PostScript output can be created as either moveto-lineto-stroke
+	 * commands to draw shapes on page or as an single image covering
+	 * the whole page containing all drawn shapes.
+	 */
+	private static final int POSTSCRIPT_GEOMETRY = 3;
+	private static final int POSTSCRIPT_IMAGE = 4;
 
 	/*
 	 * Type of justification for labels on page, as used
@@ -182,7 +189,7 @@ public class OutputFormat
 			Constants.POINTS_PER_INCH);
 
 		mWriter.print("%!PS-Adobe-3.0");
-		if (mFormatName.equals("eps"))
+		if (mFormatName.equals("eps") || mFormatName.equals("epsimage"))
 			mWriter.print(" EPSF-3.0");
 		mWriter.println("");
 
@@ -436,7 +443,7 @@ public class OutputFormat
 		boolean labelAntiAliasing = true;
 		boolean lineAntiAliasing = false;
 
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
 		else
 			resolution = Constants.getScreenResolution();
@@ -582,7 +589,7 @@ public class OutputFormat
 		/*
 		 * Setup file we are writing to.
 		 */
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE)
 		{
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 				
@@ -593,10 +600,13 @@ public class OutputFormat
 			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
 		}
-		else
-		{
 
-			if (mOutputType == IMAGE_FILE)
+		if (mOutputType != POSTSCRIPT_GEOMETRY)
+		{
+			/*
+			 * Create image to draw into.
+			 */
+			if (mOutputType == IMAGE_FILE || mOutputType == POSTSCRIPT_IMAGE)
 			{
 				/*
 				 * Create a BufferedImage to draw into.  We'll save it to a file
@@ -675,11 +685,15 @@ public class OutputFormat
 			mFormatName.equals("application/postscript"))
 		{
 			mFormatName = "ps";
-			mOutputType = POSTSCRIPT;
+			mOutputType = POSTSCRIPT_GEOMETRY;
 		}
 		else if (mFormatName.equals("eps"))
 		{
-			mOutputType = POSTSCRIPT;
+			mOutputType = POSTSCRIPT_GEOMETRY;
+		}
+		else if (mFormatName.equals("epsimage"))
+		{
+			mOutputType = POSTSCRIPT_IMAGE;
 		}
 		else
 		{
@@ -794,7 +808,7 @@ public class OutputFormat
 		 */
 		while ((token = stringReader.readLine()) != null)
 		{
-			if (mOutputType == POSTSCRIPT)
+			if (mOutputType == POSTSCRIPT_GEOMETRY)
 			{
 				/*
 				 * Load Font Metrics information only when it is needed.
@@ -1015,7 +1029,7 @@ public class OutputFormat
 	 */
 	public void saveState()
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			writePostScriptLine("gs");
 			mPostScriptIndent++;
@@ -1032,7 +1046,7 @@ public class OutputFormat
 	{
 		boolean retval;
 
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			mPostScriptIndent--;
 			writePostScriptLine("gr");
@@ -1054,8 +1068,17 @@ public class OutputFormat
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE)
 		{
+			if (mOutputType == POSTSCRIPT_IMAGE)
+			{
+				/*
+				 * Write image file containing page.
+				 */
+				writePostScriptImage(mImage, mPageWidth / 2, mPageHeight / 2,
+					mPageWidth, mPageHeight, 0);
+			}
+
 			/*
 			 * Finish off PostScript file.
 			 */
@@ -1105,11 +1128,12 @@ public class OutputFormat
 				mOutputStream.flush();
 			else
 				mOutputStream.close();
-			mImage = null;
-			mGraphics2D = null;
 		}
 
-		if (mOutputType == POSTSCRIPT || mOutputType == IMAGE_FILE)
+		mImage = null;
+		mGraphics2D = null;
+
+		if (mOutputType != INTERNAL_IMAGE)
 		{
 			/*
 			 * If we are piping output to another program then wait for
@@ -1147,7 +1171,7 @@ public class OutputFormat
 	public void setFontAttribute(String fontName, double fontSize, double fontRotation)
 		throws IOException, MapyrusException
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			if (mEncodeAsISOLatin1.contains(fontName))
 			{
@@ -1275,7 +1299,7 @@ public class OutputFormat
 		else
 			mJustificationShiftY = -1.0;
 
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			/*
 			 * Define dictionary entries for justification settings for PostScript
@@ -1291,7 +1315,7 @@ public class OutputFormat
 	 */
 	public void setColorAttribute(Color color)
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			float c[] = color.getRGBColorComponents(null);
 			writePostScriptLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
@@ -1308,7 +1332,7 @@ public class OutputFormat
 	 */
 	public void setLinestyleAttribute(BasicStroke linestyle)
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			/*
 			 * Convert BasicStroke end cap and line join values to PostScript.
@@ -1371,7 +1395,7 @@ public class OutputFormat
 	 */
 	public void setClipAttribute(ArrayList clipPaths)
 	{
-		if (mOutputType != POSTSCRIPT)
+		if (mOutputType != POSTSCRIPT_GEOMETRY)
 		{
 			mGraphics2D.setClip(null);
 			if (clipPaths != null)
@@ -1526,7 +1550,7 @@ public class OutputFormat
 			mmWidth = size * ((double)pixelWidth / pixelHeight);
 		}
 
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			/*
 			 * Draw icon at each position in list.
@@ -1602,7 +1626,7 @@ public class OutputFormat
 	 */
 	public void stroke(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
@@ -1624,7 +1648,7 @@ public class OutputFormat
 	 */
 	public void fill(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
@@ -1646,7 +1670,7 @@ public class OutputFormat
 	 */
 	public void clip(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			/*
 			 * Set clip path now, then it stays in effect until previous
@@ -1734,7 +1758,7 @@ public class OutputFormat
 		AffineTransform affine;
 		FontRenderContext frc = null;
 		
-		if (mOutputType != POSTSCRIPT)
+		if (mOutputType != POSTSCRIPT_GEOMETRY)
 			frc = mGraphics2D.getFontRenderContext();
 
 		/*
@@ -1755,7 +1779,7 @@ public class OutputFormat
 			{
 				nextLine = st.nextToken();
 
-				if (mOutputType == POSTSCRIPT)
+				if (mOutputType == POSTSCRIPT_GEOMETRY)
 				{
 					writePostScriptLine(x + " " + y + " m");
 
