@@ -25,7 +25,6 @@ package org.mapyrus.function;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
-import org.mapyrus.MapyrusMessages;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
@@ -33,7 +32,7 @@ import com.vividsolutions.jts.io.WKTReader;
 
 /**
  * Function returning intersection of two geometries.
- * For example, the union of two overlapping polygons is a single large polygon. 
+ * For example, the intsection of two overlapping polygons is a small polygon. 
  */
 public class Intersection extends Function
 {
@@ -45,14 +44,6 @@ public class Intersection extends Function
 		throws MapyrusException
 	{
 		Argument retval;
-
-		if (arg1.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg1.toString());
-
-		if (arg2.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg2.toString());
 
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
