@@ -58,10 +58,8 @@ public class Context
 	private static final int PROJECTED_GRID_STEPS = 5;
 
 	/*
-	 * Page size and resolution to use when no output page defined.
+	 * Page resolution to use when no output page defined.
 	 */
-	private static final int DEFAULT_PAGE_WIDTH = 210;
-	private static final int DEFAULT_PAGE_HEIGHT = 297;
 	private static final int DEFAULT_RESOLUTION = 96;
 
 	/*
