@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
 /**
@@ -49,6 +48,7 @@ public class Interpreter
 	private static final char PARAM_SEPARATOR = ',';
 	private static final String BEGIN_KEYWORD = "begin";
 	private static final String END_KEYWORD = "end";
+// TODO allow inline, anonymous code blocks for purpose of saving/restoring state.
 
 	/*
 	 * Keywords for if ... then ... else ... endif block.
@@ -144,7 +144,7 @@ public class Interpreter
 		else
 			nExpressions = 0;
 
-		if (nExpressions == 1 && args[0].getType() == Argument.STRING)
+		if (nExpressions == 1)
 		{
 			/*
 			 * Find named color in color name database.
@@ -157,11 +157,7 @@ public class Interpreter
 			}
 			context.setColor(c);
 		}
-		else if (nExpressions == 4 &&
-			args[0].getType() == Argument.STRING &&
-			args[1].getType() == Argument.NUMERIC &&
-			args[2].getType() == Argument.NUMERIC &&
-			args[3].getType() == Argument.NUMERIC)
+		else if (nExpressions == 4)
 		{
 			String colorType = args[0].getStringValue();
 			float c1 = (float)args[1].getNumericValue();
@@ -215,9 +211,6 @@ public class Interpreter
 		else
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINESTYLE));
 
-		if (args[0].getType() != Argument.NUMERIC)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH));
-
 		width = args[0].getNumericValue();
 		if (width < 0)
 		{
@@ -227,9 +220,6 @@ public class Interpreter
 
 		if (nExpressions >= 2)
 		{
-			if (args[1].getType() != Argument.STRING)
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_END_CAP));
-
 			String s = args[1].getStringValue().toLowerCase();
 			if (s.equals(CAP_BUTT_STRING))
 				cap = BasicStroke.CAP_BUTT;
@@ -243,9 +233,6 @@ public class Interpreter
 
 		if (nExpressions >= 3)
 		{
-			if (args[2].getType() != Argument.STRING)
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_JOIN));
-
 			String s = args[2].getStringValue().toLowerCase();
 			if (s.equals(JOIN_BEVEL_STRING))
 				join = BasicStroke.JOIN_BEVEL;
@@ -260,9 +247,6 @@ public class Interpreter
 
 		if (nExpressions >= 4)
 		{
-			if (args[3].getType() != Argument.NUMERIC)
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DASH_PHASE));
-
 			dashPhase = args[3].getNumericValue();
 			if (dashPhase < 0)
 			{
@@ -279,9 +263,6 @@ public class Interpreter
 			dashes = new float[args.length - 4];
 			for (int i = 4; i < args.length; i++)
 			{
-				if (args[i].getType() != Argument.NUMERIC)
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DASH_PATTERN));
-
 				dashes[i - 4] = (float)(args[i].getNumericValue());
 				if (dashes[i - 4] <= 0.0)
 				{
@@ -350,9 +331,7 @@ public class Interpreter
 		else		
 			nExpressions = args.length;
 
-		if (nExpressions == 3 && args[0].getType() == Argument.STRING &&
-			args[1].getType() == Argument.STRING &&
-			args[2].getType() == Argument.NUMERIC)
+		if (nExpressions == 3)
 		{
 			style = args[1].getStringValue().toLowerCase();
 			if (style.equals("plain"))
@@ -430,7 +409,7 @@ public class Interpreter
 				break;
 
 			case Statement.JUSTIFY:
-				if (nExpressions == 1 && args[0].getType() == Argument.STRING)
+				if (nExpressions == 1)
 					setJustify(context, args[0].getStringValue());
 				else
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_JUSTIFY));
@@ -440,18 +419,6 @@ public class Interpreter
 			case Statement.DRAW:
 				if (nExpressions > 0 && nExpressions % 2 == 0)
 				{
-					/*
-					 * Check that all coordindate values are numbers.
-					 */
-					for (int i = 0; i < nExpressions; i++)
-					{
-						if (args[i].getType() != Argument.NUMERIC)
-						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE) +
-								": " + args[i].toString());
-						}
-					}
-					
 					for (int i = 0; i < nExpressions; i += 2)
 					{
 						/*
@@ -476,11 +443,7 @@ public class Interpreter
 				break;
 
 			case Statement.ARC:
-				if (nExpressions == 5 && args[0].getType() == Argument.NUMERIC &&
-					args[1].getType() == Argument.NUMERIC &&
-					args[2].getType() == Argument.NUMERIC &&
-					args[3].getType() == Argument.NUMERIC &&
-					args[4].getType() == Argument.NUMERIC)
+				if (nExpressions == 5)
 				{
 					int direction = (args[0].getNumericValue() > 0 ? 1 : -1);
 
@@ -505,8 +468,7 @@ public class Interpreter
 				break;
 
 			case Statement.SAMPLEPATH:
-				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
-					args[1].getType() == Argument.NUMERIC)
+				if (nExpressions == 2)
 				{
 					context.samplePath(args[0].getNumericValue(), args[1].getNumericValue());
 				}
@@ -517,8 +479,7 @@ public class Interpreter
 				break;
 				
 			case Statement.STRIPEPATH:
-				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
-					args[1].getType() == Argument.NUMERIC)
+				if (nExpressions == 2)
 				{
 					degrees = args[1].getNumericValue();
 					context.stripePath(args[0].getNumericValue(), Math.toRadians(degrees));
@@ -578,9 +539,7 @@ public class Interpreter
 				break;
 						
 			case Statement.SCALE:
-				if (nExpressions == 2 &&
-					args[0].getType() == Argument.NUMERIC &&
-					args[1].getType() == Argument.NUMERIC)
+				if (nExpressions == 2)
 				{
 					context.setScaling(args[0].getNumericValue(),
 						args[1].getNumericValue());
@@ -592,7 +551,7 @@ public class Interpreter
 				break;
 
 			case Statement.ROTATE:
-				if (nExpressions == 1 && args[0].getType() == Argument.NUMERIC)
+				if (nExpressions == 1)
 				{
 					degrees = args[0].getNumericValue();
 					context.setRotation(Math.toRadians(degrees));
@@ -604,11 +563,7 @@ public class Interpreter
 				break;
 
 			case Statement.WORLDS:
-				if ((nExpressions == 4 || nExpressions == 5) &&
-					args[0].getType() == Argument.NUMERIC &&
-					args[1].getType() == Argument.NUMERIC &&
-					args[2].getType() == Argument.NUMERIC &&
-					args[3].getType() == Argument.NUMERIC)
+				if (nExpressions == 4 || nExpressions == 5)
 				{
 					x1 = args[0].getNumericValue();
 					y1 = args[1].getNumericValue();
@@ -617,20 +572,14 @@ public class Interpreter
 					if (nExpressions == 5)
 					{
 						Integer u;
-						if (args[4].getType() == Argument.STRING)
+						
+						u = (Integer)mWorldUnitsLookup.get(args[4].getStringValue());
+						if (u == null)
 						{
-							u = (Integer)mWorldUnitsLookup.get(args[4].getStringValue());
-							if (u == null)
-							{
-								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
-									": " + args[4].getStringValue());
-							}
-							units = u.intValue();
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
+								": " + args[4].getStringValue());
 						}
-						else
-						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS));
-						}
+						units = u.intValue();
 					}
 					else
 					{
@@ -650,8 +599,7 @@ public class Interpreter
 				break;
 
 			case Statement.PROJECT:
-				if (nExpressions == 2 && args[0].getType() == Argument.STRING &&
-					args[1].getType() == Argument.STRING)
+				if (nExpressions == 2)
 				{
 						context.setTransform(args[0].getStringValue(),
 							args[1].getStringValue());
@@ -665,15 +613,6 @@ public class Interpreter
 			case Statement.DATASET:
 				if (nExpressions >= 3)
 				{
-					/*
-					 * All arguments are strings.
-					 */
-					for (int i = 0; i < nExpressions; i++)
-					{
-						if (args[i].getType() != Argument.STRING)
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET));
-					}
-
 					/*
 					 * Build array of geometry field names.
 					 */					
@@ -700,65 +639,67 @@ public class Interpreter
 				 * Add next row from dataset to path.
 				 */
 				Row row = context.fetchRow();
-				int index = 0;
-				int []geometryFieldIndexes = context.getDatasetGeometryFieldIndexes();
+//				int index = 0;
+//				int []geometryFieldIndexes = context.getDatasetGeometryFieldIndexes();
+// TODO need an addpath command to add geometry to path.
 				String []fieldNames = context.getDatasetFieldNames();
-				double x = 0.0;
+				String fieldName;
+//				double x = 0.0;
 				for (int i = 0; i < row.size(); i++)
 				{
 					Argument field = (Argument)row.get(i);
-					if (index < geometryFieldIndexes.length &&
-						i == geometryFieldIndexes[index])
-					{
-						if (field.getType() == Argument.GEOMETRY)
-						{
-							/*
-							 * Define path from fetched geometry.
-							 */
-							double []coords = field.getGeometryValue();
-							int j = 1;
-							while (j < coords[0])
-							{
-								if (coords[j] == PathIterator.SEG_MOVETO)
-									context.moveTo(coords[j + 1], coords[j + 2]);
-								else
-									context.lineTo(coords[j + 1], coords[j + 2]);
-								j += 3;
-							}
-						}
-						else
-						{
-							/*
-							 * First pair of geometry fields contain moveTo coordinates.
-							 * Successive pairs define lineTo coordinates.
-							 */
-							if (index == 1)
-								context.moveTo(x, field.getNumericValue());
-							else if (index % 2 == 0)
-								x = field.getNumericValue();
-							else
-								context.lineTo(x, field.getNumericValue());
-						}
-						index++;
-					}
-
-					if (field.getType() != Argument.GEOMETRY)
-					{
+//					if (geometryFieldIndexes != null &&
+//						index < geometryFieldIndexes.length &&
+//						i == geometryFieldIndexes[index])
+//					{
+//						if (field.getType() == Argument.GEOMETRY)
+//						{
+//							/*
+//							 * Define path from fetched geometry.
+//							 */
+//							double []coords = field.getGeometryValue();
+//							int j = 1;
+//							while (j < coords[0])
+//							{
+//								if (coords[j] == PathIterator.SEG_MOVETO)
+//									context.moveTo(coords[j + 1], coords[j + 2]);
+//								else
+//									context.lineTo(coords[j + 1], coords[j + 2]);
+//								j += 3;
+//							}
+//						}
+//						else
+//						{
+//							/*
+//							 * First pair of geometry fields contain moveTo coordinates.
+//							 * Successive pairs define lineTo coordinates.
+//							 */
+//							if (index == 1)
+//								context.moveTo(x, field.getNumericValue());
+//							else if (index % 2 == 0)
+//								x = field.getNumericValue();
+//							else
+//								context.lineTo(x, field.getNumericValue());
+//						}
+//						index++;
+//					}
+//
+//					if (field.getType() != Argument.GEOMETRY)
+//					{
 						/*
-						 * Define attributes in non-geometry fields as variables.
+						 * Define all fields as variables.
 						 */
-						context.defineVariable(fieldNames[i], field);
-					}
+						if (fieldNames != null)
+							fieldName = fieldNames[i];
+						else
+							fieldName = DefaultFieldNames.get(i);
+						context.defineVariable(fieldName, field);
+//					}
 				}
 				break;
 
 			case Statement.NEWPAGE:
-				if (nExpressions == 5 &&
-					args[0].getType() == Argument.STRING &&
-					args[1].getType() == Argument.STRING &&
-					args[2].getType() == Argument.NUMERIC &&
-					args[3].getType() == Argument.NUMERIC &&
-					args[4].getType() == Argument.NUMERIC)
+				if (nExpressions == 5)
 				{
 					context.setOutputFormat(args[0].getStringValue(),
 						args[1].getStringValue(),
@@ -774,7 +715,7 @@ public class Interpreter
 							
 			case Statement.PRINT:
 				/*
-				 * Print to stdout each of the expressions passed.
+				 * Print each of the expressions passed to standard output.
 				 */
 				for (int i = 0; i <nExpressions; i++)
 				{
@@ -1147,6 +1088,8 @@ public class Interpreter
 		Expression test;
 		ArrayList loopStatements = new ArrayList();
 		Statement statement;
+		String currentFilename = preprocessor.getCurrentFilename();
+		int currentLineNumber = preprocessor.getCurrentLineNumber();
 		
 		test = new Expression(preprocessor);
 		
@@ -1207,6 +1150,7 @@ public class Interpreter
 		}
 
 		statement = new Statement(test, loopStatements);
+		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
 		return(new ParsedStatement(statement));		 
 	}
 	
@@ -1223,6 +1167,8 @@ public class Interpreter
 		throws IOException, MapyrusException
 	{
 		ParsedStatement st;
+		String currentFilename = preprocessor.getCurrentFilename();
+		int currentLineNumber = preprocessor.getCurrentLineNumber();
 		Expression test;
 		ArrayList thenStatements = new ArrayList();
 		ArrayList elseStatements = new ArrayList();
@@ -1336,6 +1282,7 @@ public class Interpreter
 		}
 
 		statement = new Statement(test, thenStatements, elseStatements);
+		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
 		return(new ParsedStatement(statement));
 	}
 
@@ -1541,8 +1488,18 @@ public class Interpreter
 			 * Execute correct part of if statement depending on value of expression.
 			 */
 			Expression []expr = statement.getExpressions();
-			Argument test = expr[0].evaluate(mContext);
 			ArrayList v;
+			Argument test;
+			
+			try
+			{
+				test = expr[0].evaluate(mContext);
+			}
+			catch (MapyrusException e)
+			{
+				throw new MapyrusException(statement.getFilenameAndLineNumber() +
+					": " + e.getMessage());
+			}
 			
 			if (test.getType() != Argument.NUMERIC)
 			{
@@ -1575,7 +1532,17 @@ public class Interpreter
 			Expression []expr = statement.getExpressions();
 			
 			ArrayList v = statement.getLoopStatements();
-			Argument test = expr[0].evaluate(mContext);
+			Argument test;
+	
+			try
+			{
+				test = expr[0].evaluate(mContext);
+			}
+			catch (MapyrusException e)
+			{
+				throw new MapyrusException(statement.getFilenameAndLineNumber() +
+					": " + e.getMessage());
+			}
 			
 			if (test.getType() != Argument.NUMERIC)
 			{
