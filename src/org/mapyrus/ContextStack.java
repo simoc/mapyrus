@@ -223,6 +223,34 @@ public class ContextStack
 	}
 
 	/**
+	 * Sets color to contrast of current color.
+	 * @param alpha alpha value for new color.
+	 */
+	public void contrastColor(int alpha)
+	{
+		Color contrast;
+		Color currentColor = getCurrentContext().getColor();
+
+		/*
+		 * Calculate darkness of current color.
+		 */
+		int darkness = currentColor.getRed() * 3 +
+			currentColor.getGreen() * 4 +
+			currentColor.getBlue() * 3;
+
+		/*
+		 * If color is currently close to black, then contrasting
+		 * color is white, otherwise contrasting color is black.
+		 */
+		if (darkness > (3 + 4 + 3) * 255 / 2)
+			contrast = new Color(0, 0, 0, alpha);
+		else
+			contrast = new Color(255, 255, 255, alpha);
+
+		getCurrentContext().setColor(contrast);
+	}
+
+	/**
 	 * Sets font for labelling with.
 	 * @param name is name of font.
 	 * @param size is size for labelling in millimetres.
