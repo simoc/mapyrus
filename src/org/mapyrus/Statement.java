@@ -51,17 +51,18 @@ public class Statement
 	public static final int STRIPEPATH = 19;
 	public static final int STROKE = 20;
 	public static final int FILL = 21;
-	public static final int CLIP = 22;
-	public static final int LABEL = 23;
-	public static final int SCALE = 24;
-	public static final int ROTATE = 25;
-	public static final int WORLDS = 26;
-	public static final int PROJECT = 27;
-	public static final int DATASET = 28;
-	public static final int IMPORT = 29;
-	public static final int FETCH = 30;
-	public static final int NEWPAGE = 31;
-	public static final int PRINT = 32;
+	public static final int PROTECT = 22;
+	public static final int CLIP = 23;
+	public static final int LABEL = 24;
+	public static final int SCALE = 25;
+	public static final int ROTATE = 26;
+	public static final int WORLDS = 27;
+	public static final int PROJECT = 28;
+	public static final int DATASET = 29;
+	public static final int IMPORT = 30;
+	public static final int FETCH = 31;
+	public static final int NEWPAGE = 32;
+	public static final int PRINT = 33;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -125,6 +126,7 @@ public class Statement
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
+		mStatementTypeLookup.put("protect", new Integer(PROTECT));
 		mStatementTypeLookup.put("clip", new Integer(CLIP));
 		mStatementTypeLookup.put("label", new Integer(LABEL));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
