@@ -22,6 +22,7 @@
  */
 package org.mapyrus;
 
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -110,12 +111,15 @@ public class Constants
 	public static final int POINTS_PER_INCH = 72;
 	public static final double MM_PER_INCH = 25.4;
 
-	/*
-	 * Screen resolution, in dots per inch.
-	 * Most displays will be a bit different but it is not easy
-	 * to obtain this information.
+	/**
+	 * Get screen resolution, in dots per inch.
+	 * @return DPI value. 
 	 */
-	public static final int SCREEN_RESOLUTION = 96;
+	public static final int getScreenResolution()
+	{
+		int resolution = Toolkit.getDefaultToolkit().getScreenResolution();
+		return(resolution);
+	}
 
 	/*
 	 * Line separator in text files.
