@@ -1149,17 +1149,8 @@ public class Interpreter
 				{
 					String entryType = mExecuteArgs[0].getStringValue();
 					String description = mExecuteArgs[1].getStringValue();
-					int eType;
-
-					if (entryType.equalsIgnoreCase("point"))
-						eType = LegendEntry.POINT_ENTRY;
-					else if (entryType.equalsIgnoreCase("line"))
-						eType = LegendEntry.LINE_ENTRY;
-					else if (entryType.equalsIgnoreCase("zigzag"))
-						eType = LegendEntry.ZIGZAG_ENTRY;
-					else if (entryType.equalsIgnoreCase("box"))
-						eType = LegendEntry.BOX_ENTRY;
-					else
+					int eType = LegendEntry.parseTypeString(entryType);
+					if (eType < 0)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LEGEND_TYPE) +
 							": " + entryType);
