@@ -629,8 +629,11 @@ public class Interpreter
 		int type;
 		double degrees, radius = 0.0;
 		double x1, y1, x2, y2;
+		double px1, py1, px2, py2;
+		boolean allowDistortion;
 		int units;
 		double legendSize;
+		String extras;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -1199,39 +1202,71 @@ public class Interpreter
 				break;
 
 			case Statement.WORLDS:
+
 				if (nExpressions == 4 || nExpressions == 5)
 				{
-					x1 = mExecuteArgs[0].getNumericValue();
-					y1 = mExecuteArgs[1].getNumericValue();
-					x2 = mExecuteArgs[2].getNumericValue();
-					y2 = mExecuteArgs[3].getNumericValue();
-					if (nExpressions == 5)
-					{
-						Integer u;
-						
-						u = (Integer)mWorldUnitsLookup.get(mExecuteArgs[4].getStringValue());
-						if (u == null)
-						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
-								": " + mExecuteArgs[4].getStringValue());
-						}
-						units = u.intValue();
-					}
-					else
-					{
-						units = Context.WORLD_UNITS_METRES;
-					}
-					
-					if (x2 - x1 == 0.0 || y2 - y1 == 0.0)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.ZERO_WORLD_RANGE));
-					}	
-					context.setWorlds(x1, y1, x2, y2, units);
+					/*
+					 * Add world coordinate over whole page.
+					 */
+					px1 = py1 = px2 = py2 = 0;
+				}
+				else if (nExpressions == 8 || nExpressions == 9)
+				{
+					/*
+					 * Set world coordinates over part of the page.
+					 */
+					px1 = mExecuteArgs[4].getNumericValue();
+					py1 = mExecuteArgs[5].getNumericValue();
+					px2 = mExecuteArgs[6].getNumericValue();
+					py2 = mExecuteArgs[7].getNumericValue();
 				}
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLDS));
 				}
+
+				x1 = mExecuteArgs[0].getNumericValue();
+				y1 = mExecuteArgs[1].getNumericValue();
+				x2 = mExecuteArgs[2].getNumericValue();
+				y2 = mExecuteArgs[3].getNumericValue();
+
+				units = Context.WORLD_UNITS_METRES;
+				allowDistortion = false;
+
+				if (nExpressions == 5)
+					extras = mExecuteArgs[4].getStringValue();
+				else if (nExpressions == 9)
+					extras = mExecuteArgs[8].getStringValue();
+				else
+					extras = "";
+
+				/*
+				 * Parse additional options.
+				 */
+				StringTokenizer st2 = new StringTokenizer(extras);
+				while (st2.hasMoreTokens())
+				{
+					String token = st2.nextToken();
+					if (token.startsWith("units="))
+					{
+						String s = token.substring(6);
+						Integer u = (Integer)mWorldUnitsLookup.get(s);
+						if (u == null)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
+								": " + s);
+						}
+						units = u.intValue();
+					}
+					else if (token.startsWith("distort="))
+					{
+						String flag = token.substring(8);
+						allowDistortion = flag.equalsIgnoreCase("true");
+					}
+				}
+
+				context.setWorlds(x1, y1, x2, y2, px1, py1, px2, py2,
+					units, allowDistortion);
 				break;
 
 			case Statement.PROJECT:
@@ -1291,7 +1326,6 @@ public class Interpreter
 					double width = mExecuteArgs[2].getNumericValue();
 					double height = mExecuteArgs[3].getNumericValue();
 
-					String extras;
 					if (nExpressions == 5)
 						extras = mExecuteArgs[4].getStringValue();
 					else
