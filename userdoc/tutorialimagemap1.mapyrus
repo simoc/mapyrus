@@ -1,4 +1,4 @@
-# Setup for generating a temporary 300x300 pixel image
+# Setup for generating a temporary PNG image file
 #
 let tmpPNGFile = tempname("png")
 newpage "png", tmpPNGFile, 100, 100
@@ -10,33 +10,30 @@ let imageSizeInPixels = Mapyrus.page.width / Mapyrus.page.resolution.mm
 dataset "shapefile", "coastline.shp", "dbffields="
 if x1 eq ""
 then
-	let x1 = Mapyrus.dataset.min.x
-	let y1 = Mapyrus.dataset.min.y
-	let x2 = Mapyrus.dataset.max.x
-	let y2 = Mapyrus.dataset.max.y
+  let x1 = Mapyrus.dataset.min.x
+  let y1 = Mapyrus.dataset.min.y
+  let x2 = Mapyrus.dataset.max.x
+  let y2 = Mapyrus.dataset.max.y
 else
-	let xDiff = x2 - x1
-	let yDiff = y2 - y1
-
-	# Location clicked in imagemap is new centre point of map.
-	# Calculate this location in world coordinates.
-	#
-	let xCentre = x1 + (Mapyrus.imagemap.x / imageSizeInPixels) * xDiff
-	let yCentre = y2 - (Mapyrus.imagemap.y / imageSizeInPixels) * yDiff
-
-	# Set new coordinates zoomed 2X to new centre point.
-	#
-	let x1 = xCentre - xDiff / 4
-	let y1 = yCentre - yDiff / 4
-	let x2 = xCentre + xDiff / 4
-	let y2 = yCentre + yDiff / 4
+  let xDiff = x2 - x1
+  let yDiff = y2 - y1
+  # Location clicked in imagemap is new center point of map.
+  # Calculate this location in world coordinates.
+  #
+  let xCenter = x1 + (Mapyrus.imagemap.x / imageSizeInPixels) * xDiff
+  let yCenter = y2 - (Mapyrus.imagemap.y / imageSizeInPixels) * yDiff
+  # Set new coordinates centered on clicked point.
+  #
+  let x1 = xCenter - xDiff / 2
+  let y1 = yCenter - yDiff / 2
+  let x2 = xCenter + xDiff / 2
+  let y2 = yCenter + yDiff / 2
 endif
-
-worlds x1, y1, x2, y2
 
 # Find the world coordinates again, as they have been expanded
 # to fill the square image we are drawing to.
 #
+worlds x1, y1, x2, y2
 let x1 = Mapyrus.worlds.min.x
 let y1 = Mapyrus.worlds.min.y
 let x2 = Mapyrus.worlds.max.x
@@ -44,22 +41,22 @@ let y2 = Mapyrus.worlds.max.y
 
 # Read shape file and draw it into image file.
 #
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
-	clearpath
-	fetch
-	addpath GEOMETRY
-	stroke
+  clearpath
+  fetch
+  addpath GEOMETRY
+  stroke
 done
 
-# Send HTML page back to client containing reference to the image we've
-# created with URL giving current world coordinates so further zooming can
-# be calculated.
+# Send HTML page back to client containing reference to the image
+# we've created with URL giving current world coordinates so
+# further zooming can be calculated.
 #
-let url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . '&x2=' . x2 . '&y2=' . y2
-print '&lt;html>'
-print '&lt;h1>Header&lt;/h1>&lt;p>'
-print '&lt;a href="' . url . '">'
-print '&lt;img src="' . tmpPNGFile . '" ismap>'
-print '&lt;/a>'
+let url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . \
+  '&x2=' . x2 . '&y2=' . y2
+print '<html>'
+print '<h1>Click In Image To Re-center</h1><p>'
+print '<a href="' . url . '">'
+print '<img src="' . tmpPNGFile . '" ismap>'
+print '</a>'
