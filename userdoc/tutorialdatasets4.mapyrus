@@ -1,53 +1,17 @@
-begin asset
-  # Draw filled square
-  #
-  box -1, -1, 1, 1
-  fill
-end
-
-# Display the geographic data held in RDBMS table in a PNG file.
+# Display MapInfo Interchange Format file streets.mif in PostScript file.
 #
-newpage "png", "tutorialdatasets4.png", 60, 60
+newpage "eps", "tutorialdatasets4.eps", 40, 40
+dataset "mif", "streets.mif", ""
 
-let x1 = 151.03, y1 = -31.25, x2 = 151.04, y2 = -31.24
-
-# Build SQL statement to fetch point data in area of interest.
-#
-let sql = "select Assetcode, Longitude, Latitude from SURVEY \
-where Logdate > '1 Dec 2001' and LogDate < '15 Dec 2001' \
-and Longitude >= " . x1 . " and Latitude >= " . y1 . " \
-and Longitude <= " . x2 . " and Latitude <= " . y2
-
-dataset "jdbc", sql, "driver=org.postgresql.Driver \
-  url=jdbc:postgresql:nemo user=postgres password=postgres"
-
-# Print names of fields being fetched from database for debugging,
-# as some databases convert all field names to uppercase or lowercase.
-#
-let i = 1
-while i <= length(Mapyrus.dataset.fieldnames)
-do
-  print "DEBUG: ", Mapyrus.dataset.fieldnames[i]
-  let i = i + 1
-done
-
-# Fetch and draw each point, varying color depending on asset code.
-#
-worlds x1, y1, x2, y2
+worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
+  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y
 while Mapyrus.fetch.more
 do
-  clearpath
   fetch
-  move longitude, latitude
-  if assetcode eq "BN" or assetcode eq "BZ"
-  then
-    color "red"
-  elif assetcode eq "CN"
-  then
-    color "blue"
-  else
-    color "green"
-  endif
-
-  asset
+  clearpath
+  addpath GEOMETRY
+  # PENWIDTH and PENCOLOR attributes read from MIF file for each line.
+  linestyle PENWIDTH
+  color PENCOLOR
+  stroke
 done
