@@ -3,7 +3,7 @@
  */
 package au.id.chenery.mapyrus;
  
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.awt.Color;
 import java.lang.SecurityException;
 import java.io.LineNumberReader;
@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 public class ColorDatabase
 {
-	static private Hashtable mColors;
+	static private HashMap mColors;
 	
 	/**
 	 * Load global color name database from a file.
@@ -31,7 +31,7 @@ public class ColorDatabase
 		StringTokenizer st;
 		LineNumberReader reader = null;
 		
-		mColors = new Hashtable();
+		mColors = new HashMap();
 		
 		/*
 		 * If user gave name of file as property then use that.
