@@ -213,15 +213,14 @@ public class ContextStack
 
 	/**
 	 * Sets scaling for subsequent coordinates.
-	 * @param x is new scaling in X axis.
-	 * @param y is new scaling in Y axis.
+	 * @param factor is new scaling in X and Y axes.
 	 */
-	public void setScaling(double x, double y) throws MapyrusException
+	public void setScaling(double factor) throws MapyrusException
 	{
-		if (x == 0.0 || y == 0.0)
+		if (factor == 0.0)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SCALING));
-		else if (x != 1.0 || y != 1.0)
-			getCurrentContext().setScaling(x, y);
+		else if (factor != 1.0)
+			getCurrentContext().setScaling(factor);
 	}
 
 	/**
@@ -564,13 +563,9 @@ public class ContextStack
 			{
 				retval = new Argument(Math.toDegrees(getCurrentContext().getRotation()));
 			}
-			else if (c == 's' && varName.equals(INTERNAL_VARIABLE_PREFIX + "scale.x"))
+			else if (c == 's' && varName.equals(INTERNAL_VARIABLE_PREFIX + "scale"))
 			{
-				retval = new Argument(getCurrentContext().getScalingX());
-			}
-			else if (c == 's' && varName.equals(INTERNAL_VARIABLE_PREFIX + "scale.y"))
-			{
-				retval = new Argument(getCurrentContext().getScalingY());
+				retval = new Argument(getCurrentContext().getScaling());
 			}
 			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + PAGE_VARIABLE + "."))
 			{
