@@ -23,11 +23,12 @@
 package org.mapyrus.io;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.mapyrus.MapyrusMessages;
@@ -39,132 +40,231 @@ import org.mapyrus.MapyrusMessages;
 public class WildcardFile
 {
 	/*
-	 * Directory contains files being matched.
+	 * Base directory of all matching files.
 	 */
-	private File mParentDirectory;
+	private File mBaseDirectory;
 	
 	/*
-	 * Filename being matched, split into parts delimited by asterisks.
-	 * For example "h*.afm" is split into "h" and ".afm".
+	 * File and directory names being matched, split into parts delimited
+	 * by file separators and asterisks.
+	 * For example "/etc/rc*.d/S*" is split into "rc", "*", ".d", "/", "S", "*".
 	 */
-	private ArrayList mFilenameParts;
+	private ArrayList mPatternParts;
 
 	public WildcardFile(String wildcard) throws IOException
 	{
 		/*
 		 * Separate wildcard pattern into directory and filename.
 		 */
-		File f = new File(wildcard);
-		mParentDirectory = f.getParentFile();
-		if (mParentDirectory == null)
-			mParentDirectory = new File(System.getProperty("user.dir"));
-		else if (!mParentDirectory.isDirectory())
+		String base, pattern;
+		int wildcardIndex = wildcard.indexOf('*');
+		if (wildcardIndex < 0)
+			wildcardIndex = wildcard.length();
+
+		int fileSeparatorIndex = wildcard.lastIndexOf(File.separatorChar,
+			wildcardIndex);
+
+		if (fileSeparatorIndex < 0)
+		{
+			base = "";
+			pattern = wildcard;
+		}
+		else
+		{
+			base = wildcard.substring(0, fileSeparatorIndex + 1);
+			pattern = wildcard.substring(fileSeparatorIndex + 1);
+		}
+
+		if (base.length() == 0)
+			mBaseDirectory = new File(System.getProperty("user.dir"));
+		else
+			mBaseDirectory = new File(base);
+
+		if (!mBaseDirectory.isDirectory())
 		{
 			throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
-				": " + mParentDirectory.toString());
+				": " + mBaseDirectory.toString());
 		}
-		String filename = f.getName();
 
 		/*
-		 * Split filename into pieces, separated by asterisk characters.
+		 * Split filename into pieces, separated by asterisk characters and "/".
 		 */
-		mFilenameParts = new ArrayList();
-		StringTokenizer st = new StringTokenizer(filename, "*", true);
+		mPatternParts = new ArrayList();
+		StringTokenizer st = new StringTokenizer(pattern, "*" + File.separator, true);
 
 		String lastToken = "";
 		boolean tokenIsAsterisk = false;
+		boolean tokenIsFileSeparator = false;
 		while (st.hasMoreTokens())
 		{
 			/*
-			 * Skip repeated asterisk, for example "foo**bar".
+			 * Skip repeated asterisks or slashes, for example "foo**bar".
 			 */
 			String token = st.nextToken();
 			tokenIsAsterisk = token.equals("*");
-			if (!(tokenIsAsterisk && lastToken.equals("*")))
-				mFilenameParts.add(token);
-			lastToken = token;
-		}
-
-		/*
-		 * If no wildcards in filename then check that exact match of file exists.
-		 */
-		if (mFilenameParts.size() <= 1)
-		{
-			if (tokenIsAsterisk == false && f.exists() == false)
+			tokenIsFileSeparator = token.equals(File.separator);
+			if ((!(tokenIsAsterisk && lastToken.equals("*"))) &&
+				(!(tokenIsFileSeparator && lastToken.equals(File.separator))))
 			{
-				throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
-					": " + wildcard);
+				mPatternParts.add(token);
 			}
+			lastToken = token;
 		}
 	}
 
 	/**
-	 * Returns files matching wildcard pattern in enclosing class.
+	 * Match files, recursively searching subdirectories if necessary.
+	 * @param directory directory in which to search.
+	 * @param index index in mPatternParts to start matching.
+	 * @return list of matching files.
 	 */
-	private class WildcardFilter implements FilenameFilter
+	private List recursivelyMatchFiles(File directory, int index)
 	{
-		public boolean accept(File dir, String name)
-		{
-			boolean retval = true;
+		LinkedList retval = new LinkedList();
 
-			/*
-			 * Check that each part of the pattern matches in
-			 * the filename, in sequence.
-			 */
-			int i = 0;
-			while (retval && i < mFilenameParts.size())
+		int nFilenameParts = mPatternParts.size();
+		String []filenames = directory.list();
+
+		if (filenames == null)
+			return(retval);
+
+		Arrays.sort(filenames);
+		for (int i = 0; i < filenames.length; i++)
+		{
+			boolean matched = true;
+			String filename = filenames[i];
+
+			for (int j = index; j < nFilenameParts && matched; j++)
 			{
-				String part = (String)mFilenameParts.get(i);
-				if (!part.equals("*"))
+				String part = (String)mPatternParts.get(j);
+				if (part.equals("*"))
+				{
+				}
+				else if (part.equals(File.separator))
 				{
 					/*
-					 * Find where next part of pattern matches in the string.
-					 * First part of pattern must match exactly at start of
-					 * filename.
+					 * Search down through subdirectories for files that
+					 * match the rest of the pattern.
 					 */
-					int index = name.indexOf(part);
-					if ((i == 0 && index == 0) || (i > 0 && index >= 0))
+					File subDirectory = new File(directory, filenames[i]);
+					if (subDirectory.isDirectory())
 					{
-						name = name.substring(index + part.length());
-						
+						List list = recursivelyMatchFiles(subDirectory, j + 1);
+						retval.addAll(list);
+					}
+
+					matched = false;
+				}
+				else
+				{
+					if (j == nFilenameParts - 1)
+					{
 						/*
-						 * Last part of filename must match last pattern exactly.
+						 * Check that end of filename matches final string in pattern.
+						 * For example, for pattern "*.afm" filename must end with ".afm".
 						 */
-						if (i == mFilenameParts.size() - 1 && name.length() != 0)
-							retval = false;
+						if (!filename.endsWith(part))
+							matched = false; 
 					}
 					else
-						retval = false;
+					{
+						/*
+						 * If next part of pattern is a "/" then end of filename must
+						 * match current string in pattern.
+						 */
+						String nextPart = (String)mPatternParts.get(j + 1);
+						if (nextPart.equals(File.separator) &&
+							(!filename.endsWith(part)))
+						{
+							matched = false;
+						}
+
+						/*
+						 * Find matching string in filename.  The first part
+						 * of the pattern must match at the start of the string.
+						 */
+						int k = filename.indexOf(part);
+						if (k < 0 || (j == index && k != 0))
+						{
+							matched = false;
+						}
+						else
+						{
+							/*
+							 * Use remainder of filename after match to
+							 * match against the rest of the pattern.
+							 */
+							filename = filename.substring(k + part.length());
+						}
+					}
 				}
-				i++;
 			}
-			return(retval);
+
+			if (matched)
+			{
+				if (new File(directory, filenames[i]).isFile())
+					retval.add(directory.toString() + File.separator + filenames[i]);
+			}
 		}
+		return(retval);
 	}
 
 	/**
 	 * Returns filenames matching a wildcard pattern.
 	 * @param wildcard wildcard pattern to match.
-	 * @return iterator providing each matching file.
+	 * @return list of matching files in sorted order.
 	 */
-	public Iterator getMatchingFiles()
+	public List getMatchingFiles()
 	{
-		LinkedList list = new LinkedList();
+		List retval;
+		if (mPatternParts.size() == 0)
+		{
+			/*
+			 * An empty filename cannot match anything.
+			 */
+			retval = new LinkedList();
+		}
+		else
+		{
+			boolean isSingleFile = false;
 
-		String []matches = mParentDirectory.list(new WildcardFilter());
-		for (int i = 0; i < matches.length; i++)
-			list.add(mParentDirectory + File.separator + matches[i]);
-		return(list.iterator());
-	}
+			if (mPatternParts.size() == 1)
+			{
+				String first = (String)mPatternParts.get(0);
+				if (!first.equals("*"))
+					isSingleFile = true;
+			}
+
+			if (isSingleFile)
+			{
+				/*
+				 * For a pattern with no '*' we can simply check for existence of
+				 * the single file.
+				 */
+				retval = new LinkedList();
 	
+				File f = new File(mBaseDirectory + File.separator + (String)mPatternParts.get(0));
+				if (f.exists() && f.isFile())
+					retval.add(f.toString());
+			}
+			else
+			{
+				retval = recursivelyMatchFiles(mBaseDirectory, 0);
+			}
+		}
+		return(retval);
+	}
+
 	public static void main(String []args)
 	{
 		try
 		{
-			WildcardFile w = new WildcardFile("");
-			Iterator it = w.getMatchingFiles();
+			WildcardFile w = new WildcardFile("/opt/data/shape/bakersfield*/*d/*a*.shp");
+			List list = w.getMatchingFiles();
+			Iterator it = list.iterator();
+			int i = 0;
 			while (it.hasNext())
-				System.out.println("> " + (String)it.next());
+				System.out.println(++i + ": " + (String)it.next());
 		}
 		catch (IOException e)
 		{
