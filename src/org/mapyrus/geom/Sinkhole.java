@@ -30,13 +30,9 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 /**
- * Calculates a "sinkhols" for a java.awt.Shape object
+ * Calculates a "sinkhole" for a java.awt.Shape object
  * containing a polygon.  A sinkhole is a point inside
  * the polygon, furthest from the polygon perimeter.  A sinkhole
  * point can be thought of as the middle of the polygon.
@@ -51,9 +47,10 @@ public class Sinkhole
 
 	/*
 	 * Nth last pixel to choose.  Last pixel can be at the end of a long
-	 * line of pixels
+	 * line of pixels so choosing one before the last should be further
+	 * inside polygon.
 	 */
-	static final int NTH_LAST_PIXEL = 12;
+	static final int NTH_LAST_PIXEL = 10;
 
 	/**
 	 * Calculate a sinkhole point inside a polygon.
@@ -67,10 +64,10 @@ public class Sinkhole
 		int x, y;
 		int xMin, yMin, xMax, yMax;
 		int lastXMin, lastYMin, lastXMax, lastYMax;
-		int lastXMid, lastYMid;
-		int lastClearedX = -1;
-		int lastClearedY = -1;
-		int nPixelsSet;
+		int []lastClearedX = new int[NTH_LAST_PIXEL];
+		int []lastClearedY = new int[NTH_LAST_PIXEL];
+		int lastClearedIndex = 0;
+		int nPixelsSet, nPixelsCleared;
 		Point2D.Double retval;
 		Rectangle2D bounds = s.getBounds2D();
 		AffineTransform affine =
@@ -86,24 +83,6 @@ public class Sinkhole
 		g2.setColor(Color.WHITE);
 		g2.setTransform(affine);
 		g2.fill(s);
-		
-		try
-		{
-		FileOutputStream f = new FileOutputStream("/tmp/a.png");
-		ImageIO.write(bufferedImage, "png", f);
-		f.close();
-		}
-		catch (IOException e)
-		{
-		}
-
-//		Point2D.Double dp = new Point2D.Double(194 + 16, 201 + 21);
-//		affine.transform(dp, dp);
-//		dp = new Point2D.Double(194, 201);
-//		affine.transform(dp, dp);
-		int iter = 0;
-
-
 
 		/*
 		 * Create a 0/1 bitmap from the image.
@@ -139,9 +118,8 @@ public class Sinkhole
 			 */
 			xMin = yMin = BITMAP_SIZE;
 			xMax = yMax = -1;
-			nPixelsSet = 0;
-			lastXMid = (lastYMin + lastYMax) / 2;
-			lastYMid = (lastXMin + lastXMax) / 2;
+			nPixelsSet = nPixelsCleared = 0;
+			lastClearedIndex = 0;
 			for (y = lastYMin; y <= lastYMax; y++)
 			{
 				for (x = lastXMin; x <= lastXMax; x++)
@@ -187,9 +165,19 @@ public class Sinkhole
 						}
 						else
 						{
-							lastClearedX = x;
-							lastClearedY = y;
 							pixelBuffer2[index] = 0;
+							nPixelsCleared++;
+
+							/*
+							 * Save pixel position we've just cleared to circular
+							 * queue of N last points.
+							 */
+							lastClearedIndex++;
+							if (lastClearedIndex == NTH_LAST_PIXEL)
+								lastClearedIndex = 0;
+
+							lastClearedX[lastClearedIndex] = x;
+							lastClearedY[lastClearedIndex] = y;
 						}
 					}
 					else
@@ -198,19 +186,12 @@ public class Sinkhole
 					}
 				}
 			}
-			
+
 			/*
 			 * Move second buffer to first buffer and repeat process if some
 			 * pixels are still set.
 			 */
 			System.arraycopy(pixelBuffer2, 0, pixelBuffer1, 0, pixelBuffer2.length);
-			System.out.println("iter=" + (++iter) + " nPixelsSet=" + nPixelsSet + " lastCleared=(" + lastClearedX + "," + lastClearedY + ")");
-			for (y = lastYMin; y <= lastYMax; y++)
-			{
-				for (x = lastXMin; x <= lastXMax; x++)
-					System.out.print((pixelBuffer2[y * BITMAP_SIZE + x] != 0) ? "X" : ".");
-				System.out.println("");
-			}
 
 			/*
 			 * Shrink area of bitmap to loop through for next iteration.
@@ -221,8 +202,8 @@ public class Sinkhole
 			lastYMax = yMax;
 		}
 		while (nPixelsSet > 0);
-	
-		if (lastClearedX < 0)
+
+		if (nPixelsCleared == 0)
 		{
 			/*
 			 * Could not find a pixel position.  Must be a very odd shape.
@@ -235,9 +216,21 @@ public class Sinkhole
 		{
 			/*
 			 * Last cleared point in bitmap is closest to the middle of the polygon.
-			 * Return it.
+			 * Return it.  Choose Nth last point to reduce chances of getting point
+			 * that is at end of a thin line of pixels. 
 			 */
-			retval = new Point2D.Double(lastClearedX, lastClearedY);
+			if (nPixelsCleared > NTH_LAST_PIXEL)
+			{
+				/*
+				 * Take Nth last value from circular queue.
+				 */
+				lastClearedIndex++;
+				if (lastClearedIndex == NTH_LAST_PIXEL)
+					lastClearedIndex = 0;
+			}
+
+			retval = new Point2D.Double(lastClearedX[lastClearedIndex],
+				lastClearedY[lastClearedIndex]);
 			try
 			{
 				affine.inverseTransform(retval, retval);
@@ -245,11 +238,10 @@ public class Sinkhole
 			catch (NoninvertibleTransformException e)
 			{
 				/*
-				 * Transformation will always be invertible.
+				 * Scale-and-translate transformation will always be invertible.
 				 */
 			}
 		}
-		System.out.println("retval=" + retval);
 		return(retval);
 	}
 }
