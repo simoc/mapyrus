@@ -247,6 +247,15 @@ public class Argument
 	}
 
 	/**
+	 * Get array of keys in hash map.
+	 * @return keys in this hash map, each object being a string.
+	 */
+	public Object[] getHashMapKeys()
+	{
+		return(mHashMap.keySet().toArray());
+	}
+
+	/**
 	 * Return string representation of this argument.
 	 * @return string representation of argument value.
 	 */
@@ -273,7 +282,6 @@ public class Argument
 			else
 				format = new DecimalFormat("#.################");
 
-// TODO hold value in mStringValue after conversion to string.
 			retval = format.format(mNumericValue);
 		}
 		else if (mType == HASHMAP)
