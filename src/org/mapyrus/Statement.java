@@ -68,20 +68,21 @@ public class Statement
 	public static final int UNPROTECT = 35;
 	public static final int CLIP = 36;
 	public static final int LABEL = 37;
-	public static final int ICON = 38;
-	public static final int SCALE = 39;
-	public static final int ROTATE = 40;
-	public static final int WORLDS = 41;
-	public static final int PROJECT = 42;
-	public static final int DATASET = 43;
-	public static final int FETCH = 44;
-	public static final int NEWPAGE = 45;
-	public static final int PRINT = 46;
-	public static final int LOCAL = 47;
-	public static final int LET = 48;
-	public static final int KEY = 49;
-	public static final int LEGEND = 50;
-	public static final int MIMETYPE = 51;
+	public static final int FLOWLABEL = 38;
+	public static final int ICON = 39;
+	public static final int SCALE = 40;
+	public static final int ROTATE = 41;
+	public static final int WORLDS = 42;
+	public static final int PROJECT = 43;
+	public static final int DATASET = 44;
+	public static final int FETCH = 45;
+	public static final int NEWPAGE = 46;
+	public static final int PRINT = 47;
+	public static final int LOCAL = 48;
+	public static final int LET = 49;
+	public static final int KEY = 50;
+	public static final int LEGEND = 51;
+	public static final int MIMETYPE = 52;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -162,6 +163,7 @@ public class Statement
 		mStatementTypeLookup.put("unprotect", new Integer(UNPROTECT));
 		mStatementTypeLookup.put("clip", new Integer(CLIP));
 		mStatementTypeLookup.put("label", new Integer(LABEL));
+		mStatementTypeLookup.put("flowlabel", new Integer(FLOWLABEL));
 		mStatementTypeLookup.put("icon", new Integer(ICON));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
