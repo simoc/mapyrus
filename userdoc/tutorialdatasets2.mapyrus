@@ -24,27 +24,27 @@ do
 	# Header line for each feature contains coordinate count.
 	#
 	fetch
-	nCoords = substr($0, 51, 5)
-	tag = substr($0, 16, 32)
+	let nCoords = substr($0, 51, 5)
+	let tag = substr($0, 16, 32)
 
 	# Strip trailing spaces and abbreviate street names.
 	#
-	tag = replace(tag, '  *$', '')
-	tag = replace(tag, 'AVENUE$', 'AVE')
-	tag = replace(tag, 'STREET$', 'ST')
-	tag = replace(tag, 'ROAD$', 'RD')
+	let tag = replace(tag, '  *$', '')
+	let tag = replace(tag, 'AVENUE$', 'AVE')
+	let tag = replace(tag, 'STREET$', 'ST')
+	let tag = replace(tag, 'ROAD$', 'RD')
 
 	fetch
 	clearpath
 	move $1, $2
-	i = 1
+	let i = 1
 	while i < nCoords
 	do
 		# Add all coordinates for this feature to the path.
 		#
 		fetch
 		draw $1, $2
-		i = i + 1
+		let i = i + 1
 	done
 
 	color 'red'

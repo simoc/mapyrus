@@ -2,13 +2,13 @@ begin tree
 	# Draw a clump of 15 randomly sized and randomly colored
 	# circles representing a tree viewed from above.
 	#
-	i = 0
+	let i = 0
 	while i < 15
 	do
 		clearpath
 		color "hsb", 0.3, 1.0, 0.3 + random(0.4)
-		radius = random(1) + 2
-		x = 0
+		let radius = random(1) + 2
+		let x = 0
 		move x, 0
 		arc 1, x + radius, 0, x, 0
 		fill
@@ -16,7 +16,7 @@ begin tree
 		linestyle 0.1
 		stroke
 		rotate 360 / 5
-		i = i + 1
+		let i = i + 1
 	done
 end
 

@@ -1,7 +1,7 @@
 newpage "png", "tutorialvar1.png", 70, 20, 96
 
-x = 5
-counter = 1
+let x = 5
+let counter = 1
 while x < Mapyrus.page.width
 do
 	if counter % 2 == 0
@@ -18,7 +18,7 @@ do
 	draw x, 15
 	stroke
 
-	x = x + counter * 2
-	counter = counter + 1
+	let x = x + counter * 2
+	let counter = counter + 1
 done
 

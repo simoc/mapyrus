@@ -10,7 +10,7 @@ begin capitalCity name
 	# If point is close to the right side of the
 	# page then draw name to the left of the dot.
 	#
-	margin = Mapyrus.page.width * 0.8
+	let margin = Mapyrus.page.width * 0.8
 	if Mapyrus.path.min.x > margin
 	then
 		justify "right"
@@ -47,6 +47,6 @@ do
 	print "DEBUG:", $0
 	clearpath
 	move $1, $2
-	cityAndCountry = $3 . '\n(' . $4 . ')'
+	let cityAndCountry = $3 . '\n(' . $4 . ')'
 	capitalCity cityAndCountry
 done

@@ -48,17 +48,17 @@ begin warehouse name, inventory
 
 	# Draw stacks of boxes showing inventory level at warehouse.
 	#
-	x = 0
-	y = 0
+	let x = 0
+	let y = 0
 	while inventory > 0
 	do
 		move x * 2, y
-		inventory = inventory - 1
-		x = x + 1
+		let inventory = inventory - 1
+		let x = x + 1
 		if x == 5
 		then
-			x = 0
-			y = y + 2
+			let x = 0
+			let y = y + 2
 		endif
 	done
 	box
@@ -88,19 +88,19 @@ import
 while Mapyrus.import.more
 do
 	fetch
-	nCoords = $1
+	let nCoords = $1
 
 	# Add all coordinates for this line to path.
 	#
 	fetch
 	move $1, $2
 
-	i = 1
+	let i = 1
 	while i < nCoords
 	do
 		fetch
 		draw $1, $2
-		i = i + 1
+		let i = i + 1
 	done
 done
 

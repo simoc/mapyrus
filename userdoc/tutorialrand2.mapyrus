@@ -2,7 +2,7 @@ begin cobblestone
 	# Draw a square area of cobblestones, rotated
 	# a random multiple of 90 degrees
 	#
-	r = round(random(4))
+	let r = round(random(4))
 	rotate r * 90
 	color "black"
 	linestyle 0.2

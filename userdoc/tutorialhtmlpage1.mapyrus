@@ -1,32 +1,32 @@
 # Parse variables passed from HTML form, using reasonable defaults if
 # they are out of range.
 #
-maxZoomlevel=5
+let maxZoomlevel=5
 if zoomlevel eq '' or zoomlevel < 0
 then
-	zoomlevel=0
+	let zoomlevel=0
 elif zoomlevel > maxZoomlevel
 then
-	zoomlevel=maxZoomlevel
+	let zoomlevel=maxZoomlevel
 endif
 
 if labels ne 'on' and labels ne 'off'
 then
-	labels='off'
+	let labels='off'
 endif
 
 # Create temporary PNG file containing map display for this HTTP request.
 #
-imageFile = tempname("PNG")
+let imageFile = tempname("PNG")
 newpage "png", imageFile, 100, 100, 96
 
 # Display part of dataset, zooming in on centre based on zoom level.
 #
 dataset "shapefile", "/tmp/rds_l", "dbffields="
-x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
-y1 = Mapyrus.dataset.min.y + Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
-x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
-y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
+let x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
+let y1 = Mapyrus.dataset.min.y + Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
+let x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
+let y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
 
 worlds x1, y1, x2, y2
 import
@@ -38,7 +38,7 @@ do
 	addpath GEOMETRY
 	stroke
 done
-recordCount = Mapyrus.import.count
+let recordCount = Mapyrus.import.count
 
 if labels eq 'on'
 then
@@ -55,7 +55,7 @@ then
 		addpath GEOMETRY
 		label COMMENT
 	done
-	recordCount = recordCount + Mapyrus.import.count
+	let recordCount = recordCount + Mapyrus.import.count
 endif
 
 print '&lt;html>'
@@ -67,7 +67,7 @@ print '&lt;img src="' . imageFile . '">'
 print '&lt;form method=get action="' . Mapyrus.filename . '">'
 print 'Zoom level'
 print '&lt;select name=zoomlevel size=1>'
-i = 0
+let i = 0
 while i <= maxZoomlevel
 do
 	print '&lt;option value=' . i
@@ -79,7 +79,7 @@ do
 	endif
 
 	print '>' . i
-	i=i+1
+	let i=i+1
 done
 print '&lt;/select>'
 

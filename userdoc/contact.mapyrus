@@ -9,6 +9,6 @@ color '#AF2F5F'
 justify 'left'
 clearpath
 move 1, 1
-user = 'mapyrus'
-domain = 'chenery.id.au'
+let user = 'mapyrus'
+let domain = 'chenery.id.au'
 label user . '@' . domain

@@ -3,8 +3,8 @@
 # Show 'v' symbol at random position.
 #
 begin v
-	x = 1 - random(2)
-	y = 1 - random(2)
+	let x = 1 - random(2)
+	let y = 1 - random(2)
 	clearpath
 	move x - 0.6, y + 1
 	draw x, y
@@ -78,7 +78,7 @@ end
 #
 begin marshgrass
 	rotate -Mapyrus.rotation
-	x = 2 - random(4)
+	let x = 2 - random(4)
 	clearpath
 	move x - 1, 0
 	draw x + 1, 0
@@ -117,20 +117,20 @@ import
 while Mapyrus.import.more
 do
 	fetch
-	nCoords = $1
-	vegCode = $2
+	let nCoords = $1
+	let vegCode = $2
 
 	# Add all coordinate for this polygon to path.
 	#
 	fetch
 	clearpath
 	move $1, $2
-	i = 1
+	let i = 1
 	while i < nCoords
 	do
 		fetch
 		draw $1, $2
-		i = i + 1
+		let i = i + 1
 	done
 
 	# Display polygon differently, depending on its vegetation class.

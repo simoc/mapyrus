@@ -39,10 +39,10 @@ begin branchline side
 	then
 		if side eq 'LEFT'
 		then
-			startLength=28
+			let startLength=28
 			rotate 45
 		else
-			startLength=10
+			let startLength=10
 			rotate -45
 		endif
 
@@ -56,10 +56,10 @@ begin branchline side
 		move 0, 0
 		draw startLength, 0
 		stroke
-		x = startLength
+		let x = startLength
 	endif
 
-	finished = 0
+	let finished = 0
 	while Mapyrus.import.more and finished == 0
 	do
 		fetch
@@ -68,7 +68,7 @@ begin branchline side
 			# Finished this branch, return to
 			# continue drawing previous one.
 			#
-			finished = 1
+			let finished = 1
 		else
 			clearpath
 			color "#332299"
@@ -96,7 +96,7 @@ begin branchline side
 				move x + 3, 2
 				stationlabel $1
 			endif
-			x = x + 6
+			let x = x + 6
 		endif
 	done
 end

@@ -146,7 +146,7 @@ import
 while Mapyrus.import.more
 do
 	fetch
-	city = $0
+	let city = $0
 
 	clearpath
 	fetch
@@ -154,18 +154,18 @@ do
 
 	fetch
 
-	jan = $1
-	feb = $2
-	mar = $3
-	apr = $4
-	may = $5
-	jun = $6
-	jul = $7
-	aug = $8
-	sep = $9
-	oct = $10
-	nov = $11
-	dec = $12
+	let jan = $1
+	let feb = $2
+	let mar = $3
+	let apr = $4
+	let may = $5
+	let jun = $6
+	let jul = $7
+	let aug = $8
+	let sep = $9
+	let oct = $10
+	let nov = $11
+	let dec = $12
 
 	fetch
 	temperatureHistogram city, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12

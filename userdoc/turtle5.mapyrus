@@ -21,12 +21,12 @@ begin colorRange h1, s1, b1, h2, s2, b2, nColors
 	# Step through range of colors, drawing a rectangle in
 	# each intermediate color between the start and end colors.
 	#
-	hStep = (h2 - h1) / nColors
-	sStep = (s2 - s1) / nColors
-	bStep = (b2 - b1) / nColors
+	let hStep = (h2 - h1) / nColors
+	let sStep = (s2 - s1) / nColors
+	let bStep = (b2 - b1) / nColors
 
-	xStep = 36 / nColors
-	x = -18
+	let xStep = 36 / nColors
+	let x = -18
 	while x < 18
 	do
 		clearpath
@@ -35,10 +35,10 @@ begin colorRange h1, s1, b1, h2, s2, b2, nColors
 		draw x, 5, x + xStep, 5, x + xStep, 0
 		fill
 
-		x = x + xStep
-		h1 = h1 + hStep
-		s1 = s1 + sStep
-		b1 = b1 + bStep
+		let x = x + xStep
+		let h1 = h1 + hStep
+		let s1 = s1 + sStep
+		let b1 = b1 + bStep
 	done
 end
 

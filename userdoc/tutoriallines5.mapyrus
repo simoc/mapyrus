@@ -17,14 +17,14 @@ begin quarterLabel
 		font "Helvetica", 3
 		label percent . "%"
 	endif
-	percent = percent + 25
+	let percent = percent + 25
 end
 begin labelQuarters pathLen
 	# Divide path into quarters and drawing ticks and percentage
 	# label at points 1/4, 2/4, 3/4 positions along line.
 	#
 	samplepath pathLen / 4, 0
-	percent = 0
+	let percent = 0
 	quarterLabel
 end
 

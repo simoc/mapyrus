@@ -3,41 +3,41 @@ begin scalebar scale, units
 	# 10mm long bars in a scale look good.  What distance does this
 	# represent in world coordinates?
 	#
-	worldBarLength = (10 / 1000) * scale
+	let worldBarLength = (10 / 1000) * scale
 
 	# Find the largest power of ten that is smaller than this distance.
 	#
-	power10=1
-	lastPower10=1
+	let power10=1
+	let lastPower10=1
 	while power10 < worldBarLength
 	do
-		lastPower10 = power10
-		power10 = power10 * 10
+		let lastPower10 = power10
+		let power10 = power10 * 10
 	done
 
 	# Adjust this world coordinate bar length so it is a nice round
 	# multiple of some number.  For example, bars of length 233142 
 	# are changed to 200000, 81123 is changed to 100000.
 	#
-	digit=substr(worldBarLength, 1, 1)
+	let digit=substr(worldBarLength, 1, 1)
 	if digit eq '1'
 	then
-		worldBarLength = lastPower10
+		let worldBarLength = lastPower10
 	elif digit eq '2'
 	then
-		worldBarLength = lastPower10 * 2
+		let worldBarLength = lastPower10 * 2
 	elif digit lt '8'
 	then
-		worldBarLength = lastPower10 * 5
+		let worldBarLength = lastPower10 * 5
 	else
-		worldBarLength = lastPower10 * 10
+		let worldBarLength = lastPower10 * 10
 	endif
 
-	mmBarLength = (worldBarLength * 1000) / scale
+	let mmBarLength = (worldBarLength * 1000) / scale
 
 	# Overall length of scale bar on page in mm.
 	#
-	mmScaleSize = 45
+	let mmScaleSize = 45
 
 	# Blank out background behind scale bar.
 	#
@@ -60,37 +60,37 @@ begin scalebar scale, units
 	then
 		if worldBarLength >= 1000000
 		then
-			unitDivider = 1000000
+			let unitDivider = 1000000
 			if units eq 'meters' or units eq 'metres' or units eq 'm'
 			then
-				unitLabel = "thousands of kilometers"
+				let unitLabel = "thousands of kilometers"
 			else
-				unitLabel = "millions of " . units
+				let unitLabel = "millions of " . units
 			endif
 		else
-			unitDivider = 1000
+			let unitDivider = 1000
 			if units eq 'meters' or units eq 'metres' or units eq 'm'
 			then
-				unitLabel = "kilometers"
+				let unitLabel = "kilometers"
 			else
-				unitLabel = "thousands of " . units
+				let unitLabel = "thousands of " . units
 			endif
 		endif
 	else
-		unitDivider = 1
-		unitLabel = units
+		let unitDivider = 1
+		let unitLabel = units
 	endif
 
-	toggle = "off"
-	counter = 0
-	x = 2
+	let toggle = "off"
+	let counter = 0
+	let x = 2
 	while x + mmBarLength < mmScaleSize - 5
 	do
 		clearpath
 		move x, 4
 
 		label (worldBarLength / unitDivider) * counter
-		counter = counter + 1
+		let counter = counter + 1
 
 		# Display bars alternately as black and empty rectangles.
 		#
@@ -100,13 +100,13 @@ begin scalebar scale, units
 		if toggle eq "off"
 		then
 			stroke
-			toggle = "on"
+			let toggle = "on"
 		else
 			fill
 			stroke
-			toggle = "off"
+			let toggle = "off"
 		endif
-		x = x + mmBarLength
+		let x = x + mmBarLength
 
 		if x + mmBarLength >= mmScaleSize - 5
 		then

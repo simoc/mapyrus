@@ -1,7 +1,7 @@
 begin spinning_top
 	# Draw 6 sided spinning top symbol at origin.
 	#
-	r = 1
+	let r = 1
 	while r < 7
 	do
 		clearpath
@@ -35,7 +35,7 @@ begin spinning_top
 		# Rotate axes for next sector.
 		#
 		rotate 60
-		r = r + 1
+		let r = r + 1
 	done
 end
 

@@ -1,15 +1,15 @@
 # Display requested area of file roads.shp in a PNG file.
 #
-imageFile = tempname("PNG")
+let imageFile = tempname("PNG")
 newpage "png", imageFile, 100, 100, 96
 
 dataset "shapefile", "/tmp/roads.shp", "dbffields=FEATURE"
 if x1 eq ""
 then
-	x1 = Mapyrus.dataset.min.x
-	y1 = Mapyrus.dataset.min.y
-	x2 = Mapyrus.dataset.max.x
-	y2 = Mapyrus.dataset.max.y
+	let x1 = Mapyrus.dataset.min.x
+	let y1 = Mapyrus.dataset.min.y
+	let x2 = Mapyrus.dataset.max.x
+	let y2 = Mapyrus.dataset.max.y
 endif
 
 worlds x1, y1, x2, y2
@@ -31,31 +31,31 @@ do
 	stroke
 done
 
-x1 = Mapyrus.worlds.min.x
-y1 = Mapyrus.worlds.min.y
-x2 = Mapyrus.worlds.max.x
-y2 = Mapyrus.worlds.max.y
-xMid = (x1 + y2) / 2
-yMid = (y1 + y2) / 2
+let x1 = Mapyrus.worlds.min.x
+let y1 = Mapyrus.worlds.min.y
+let x2 = Mapyrus.worlds.max.x
+let y2 = Mapyrus.worlds.max.y
+let xMid = (x1 + y2) / 2
+let yMid = (y1 + y2) / 2
 
 # Ratio of area being displayed to zoom or pan each time.
 #
-panFactor = 0.2
-zoomFactor = 0.2
+let panFactor = 0.2
+let zoomFactor = 0.2
 
-xPan = panFactor * Mapyrus.worlds.width
-yPan = panFactor * Mapyrus.worlds.height
-xZoom = zoomFactor * Mapyrus.worlds.width
-yZoom = zoomFactor * Mapyrus.worlds.height
+let xPan = panFactor * Mapyrus.worlds.width
+let yPan = panFactor * Mapyrus.worlds.height
+let xZoom = zoomFactor * Mapyrus.worlds.width
+let yZoom = zoomFactor * Mapyrus.worlds.height
 
 # Set URLs for navigating around current display.
 #
-upURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 + yPan) . '&x2=' . x2 . '&y2=' . (y2 + yPan)
-downURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 - yPan) . '&x2=' . x2 . '&y2=' . (y2 - yPan)
-leftURL = Mapyrus.filename . '?x1=' . (x1 - xPan) . '&y1=' . y1 . '&x2=' . (x2 - xPan) . '&y2=' . y2
-rightURL = Mapyrus.filename . '?x1=' . (x1 + xPan) . '&y1=' . y1 . '&x2=' . (x2 + xPan) . '&y2=' . y2
-zoomInURL = Mapyrus.filename . '?x1=' . (x1 + xZoom) . '&y1=' . (y1 + yZoom) . '&x2=' . (x2 - xZoom) . '&y2=' . (y2 - yZoom)
-zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom) . '&x2=' . (x2 + xZoom) . '&y2=' . (y2 + yZoom)
+let upURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 + yPan) . '&x2=' . x2 . '&y2=' . (y2 + yPan)
+let downURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 - yPan) . '&x2=' . x2 . '&y2=' . (y2 - yPan)
+let leftURL = Mapyrus.filename . '?x1=' . (x1 - xPan) . '&y1=' . y1 . '&x2=' . (x2 - xPan) . '&y2=' . y2
+let rightURL = Mapyrus.filename . '?x1=' . (x1 + xPan) . '&y1=' . y1 . '&x2=' . (x2 + xPan) . '&y2=' . y2
+let zoomInURL = Mapyrus.filename . '?x1=' . (x1 + xZoom) . '&y1=' . (y1 + yZoom) . '&x2=' . (x2 - xZoom) . '&y2=' . (y2 - yZoom)
+let zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom) . '&x2=' . (x2 + xZoom) . '&y2=' . (y2 + yZoom)
 
 # Spool HTML file to standard output, replacing placeholder tokens
 # with actual values for this request.
@@ -65,15 +65,15 @@ import
 while Mapyrus.import.more
 do
 	fetch
-	r = replace($0, '@placeholder_title@', 'Real Title')
-	r = replace(r, '@placeholder_coordinates@', xMid . ', ' . yMid)
-	r = replace(r, '@placeholder_image@', imageFile)
-	r = replace(r, '@placeholder_up_url@', upURL)
-	r = replace(r, '@placeholder_down_url@', downURL)
-	r = replace(r, '@placeholder_left_url@', leftURL)
-	r = replace(r, '@placeholder_right_url@', rightURL)
-	r = replace(r, '@placeholder_zoom_in_url@', zoomInURL)
-	r = replace(r, '@placeholder_zoom_out_url@', zoomOutURL)
+	let r = replace($0, '@placeholder_title@', 'Real Title')
+	let r = replace(r, '@placeholder_coordinates@', xMid . ', ' . yMid)
+	let r = replace(r, '@placeholder_image@', imageFile)
+	let r = replace(r, '@placeholder_up_url@', upURL)
+	let r = replace(r, '@placeholder_down_url@', downURL)
+	let r = replace(r, '@placeholder_left_url@', leftURL)
+	let r = replace(r, '@placeholder_right_url@', rightURL)
+	let r = replace(r, '@placeholder_zoom_in_url@', zoomInURL)
+	let r = replace(r, '@placeholder_zoom_out_url@', zoomOutURL)
 	print r
 done
 
