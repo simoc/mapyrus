@@ -625,7 +625,7 @@ when a procedure is called
 then the procedure is called repeatedly, one time for
 each move point, with the origin (0, 0) translated to the
 <a href="#move">move</a>
-point each time.
+point each time and the path reset to empty.
 Therefore, coordinates in the called procedure are relative to
 the move point.
 This enables drawing commands in the called procedure to be
