@@ -32,6 +32,9 @@ to be be defined.  For example,
 &nbsp;
 &nbsp;
 <img src="turtle5.png">
+&nbsp;
+&nbsp;
+<img src="turtle6.png">
 <p>
 
 </li>
@@ -84,9 +87,10 @@ Inventory Levels at Warehouses
 
 </li>
 <li>
-Mapyrus runs as a stand-alone program suitable for use in a script and for
-batch tasks, or as an HTTP server providing map and graph images and
-text reports to a web-based application.
+Mapyrus runs as a stand-alone program suitable for integration into
+scripts and batch tasks,
+or as a self-contained HTTP server providing map and
+graph images and text reports to a web-based application.
 </li>
 </ol>
 
@@ -99,7 +103,7 @@ Please note that:
 Mapyrus is written in Java so as to be operating system independent
 and take advantage of Java multi-threading,
 Java2D and JDBC capabilities.  The disadvantages of using Java are
-slow startup time and high memory usage.
+slower startup time and higher memory usage than other languages.
 </li>
 
 <li>
