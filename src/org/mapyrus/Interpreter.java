@@ -8,6 +8,8 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Reader;
@@ -298,14 +300,16 @@ public class Interpreter
 				break;
 					
 			case Statement.NEWPAGE:
-				if (nExpressions == 3 &&
+				if (nExpressions == 4 &&
 					args[0].getType() == Argument.STRING &&
-					args[1].getType() == Argument.NUMERIC &&
-					args[2].getType() == Argument.NUMERIC)
+					args[1].getType() == Argument.STRING &&
+					args[2].getType() == Argument.NUMERIC &&
+					args[3].getType() == Argument.NUMERIC)
 				{
 					context.setOutputFormat(args[0].getStringValue(),
-						(int)args[1].getNumericValue(),
-						(int)args[2].getNumericValue(), "extras");
+						args[1].getStringValue(),
+						(int)args[2].getNumericValue(),
+						(int)args[3].getNumericValue(), "extras");
 				}
 				else
 				{
