@@ -722,9 +722,31 @@ include hr.doc
 <a name="ttffonts"></a>
 <h3>Using TrueType Fonts In Output to Image Formats</h3>
 <p>
+For output to image formats, TrueType format fonts are used.
+<p>
+MicroSoft Windows and Macintosh operating systems support TrueType
+fonts directly and all installed TrueType fonts are available
+for use in the
+<a href="reference.html#font">
+font
+</a>
+command.
+Additional TrueType fonts are installed using operating system commands.
+<p>
+A TrueType font is defined in a binary file with suffix
+<tt>.ttf</tt>.
+The name of a TrueType font normally does not match the filename exactly.
+<p>
+Other operating systems do not support TrueType fonts.  To use
+TrueType fonts on other operating systems using the
+<i>extras</i> <tt>ttffiles</tt>
+option to the
+<a href="reference.html#newpage">newpage</a>
+command.  Include filenames of TrueType font definition files
+to be used in the page.
 
-// TODO explain newpage command.
-how to know name of font from file?
+<p>
+// TODO how to know name of font from file?
 
 include hr.doc
 
