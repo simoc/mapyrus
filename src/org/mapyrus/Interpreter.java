@@ -1950,12 +1950,22 @@ public class Interpreter
 		mContext = context;
 		mContentType = MimeTypes.get("html");
 
-		/*
-		 * Keep parsing until we get EOF.
-		 */
-		while ((st = parseStatement(preprocessor)) != null)
+		try
 		{
-			executeStatement(st);
+			/*
+			 * Keep parsing until we get EOF.
+			 */
+			while ((st = parseStatement(preprocessor)) != null)
+			{
+				executeStatement(st);
+			}
+		}
+		finally
+		{
+			/*
+			 * Ensure that all files the preprocessor opened are always closed.
+			 */
+			preprocessor.close();
 		}
 	}
 
