@@ -17,7 +17,37 @@ Tutorial
 
 <tr>
 <td>
-<a href="#variables"/>Using Variables</a>
+<a href="#var"/>Using Variables</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#procedures"/>Building Procedures</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#lines"/>Displaying Lines</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#polygons"/>Displaying Polygons</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#labels"/>Displaying Labels</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#rand"/>Random Effects</a>
 </td>
 </tr>
 
@@ -29,7 +59,31 @@ Tutorial
 
 <tr>
 <td>
-<a href="#servlet"/>Setting up Mapyrus as a Servlet</a>
+<a href="#httpserver"/>Setting up Mapyrus as an HTTP Server</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#url"/>Passing Variables to Mapyrus HTTP Server Through URLs</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#htmlpage"/>Returning HTML Pages from Mapyrus HTTP Server</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#htmladd"/>Returning Additional Information from Mapyrus HTTP Server</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#imagemap"/>Using Imagemaps with Mapyrus HTTP Server</a>
 </td>
 </tr>
 
@@ -42,14 +96,14 @@ include hr.doc
 
 Enter the following lines into a text file named <tt>first.txt</tt>.
 
-<pre>
-include tutorial11.mpy
-</pre>
+include beginex.doc
+include tutorialfirst1.mpy
+include endex.doc
 
 Each line in the file is a command for Mapyrus.  The
 first line sets output to a
 PNG format image named
-<tt>tutorial11.png</tt>
+<tt>tutorialfirst1.png</tt>
 with the
 <a href="reference.html#newpage">newpage</a> command.
 The second and third lines set the color for drawing to black,
@@ -62,7 +116,6 @@ path just defined onto the page using the current color and
 line style.
 
 <p>
-Mapyrus runs as a command line program in a terminal window.
 Open a terminal window and enter the following command:
 
 <pre>
@@ -70,68 +123,107 @@ java -jar mapyrus.jar first.txt
 </pre>
 
 When Mapyrus reaches the end of the file <tt>first.txt</tt>,
-the output file <tt>tutorial11.png</tt> is completed and the Mapyrus exits.
+the output file <tt>tutorialfirst1.png</tt> is completed and Mapyrus exits.
 When the output file is then viewed in a web browser, the following
 image is shown.
 
 <p>
-<img src="tutorial11.png">
+<img src="tutorialfirst1.png">
 <p>
 
 Change the file <tt>first.txt</tt> to contain the following lines.
 
-<pre>
-include tutorial12.mpy
-</pre>
+include beginex.doc
+include tutorialfirst2.mpy
+include endex.doc
 
 In this example, color is set as a hex value instead of a name and
 the <a href="reference.html#fill">fill</a> command is used to
 flood fill the path that has been defined.  The output file
-<tt>tutorial12.png</tt> contains the following image.
+<tt>tutorialfirst2.png</tt> contains the following image.
 
 <p>
-<img src="tutorial12.png">
+<img src="tutorialfirst2.png">
 <p>
 
 Change the file <tt>first.txt</tt> to contain the following lines.
 
-<pre>
-include tutorial13.mpy
-</pre>
+include beginex.doc
+include tutorialfirst3.mpy
+include endex.doc
 
 This example shows yet another way of defining color.
 
 <p>
-<img src="tutorial13.png">
-<p>
+<img src="tutorialfirst3.png">
 
-<pre>
-include tutorial14.mpy
-</pre>
+include beginex.doc
+include tutorialfirst4.mpy
+include endex.doc
 
 
 define page
 basic shapes in different colours
 
-<a name="variables"></a>
+<a name="var"></a>
 <h3>Using Variables</h3>
 
-Variables, loops and conditional tests
-similar
-repeatedly
-vary appearance each time
+Use variables and conditional tests to vary the appearance
+of the display.
+Use loops to display similar symbols repeatedly.
 Variables named <tt>x</tt> and <tt>counter</tt> are used in the
 following example.
 
-<pre>
-include tutorial21.mpy
-</pre>
+include beginex.doc
+include tutorialvar1.mpy
+include endex.doc
 
-The output of this
+The output of this example is.
 
 <p>
-<img src="tutorial21.png">
+<img src="tutorialvar1.png">
 <p>
+
+<a name="procedures"/></a>
+<h3>Building Procedures</h3>
+<p>
+
+
+<a name="rand"/></a>
+<h3>Random Effects</h3>
+<p>
+Random effects are created using the
+<a href="reference.html#random">random</a>
+function.
+The following example demonstrates setting
+size and color randomly.
+
+include beginex.doc
+include tutorialrand1.mpy
+include endex.doc
+
+<img src="tutorialrand1.png">
+<p>
+
+The next example demonstrates setting rotation randomly.
+
+include beginex.doc
+include tutorialrand2.mpy
+include endex.doc
+
+<img src="tutorialrand2.png">
+<p>
+
+This example demonstrates setting position randomly for
+polygon fill.
+
+include beginex.doc
+include tutorialrand3.mpy
+include endex.doc
+
+<img src="tutorialrand3.png">
+<p>
+
 
 <a name="pdf"></a>
 <h3>Generating Portable Document Format (PDF) output</h3>
@@ -139,24 +231,49 @@ The output of this
 
 Portable Document Format (PDF) files are created by converting
 PostScript output from Mapyrus to PDF using the <tt>ps2pdf</tt>
-utility program, part of the GhostScript.
+utility program, part of GhostScript.
 <p>
 The pipe option of the
 <a href="reference.html#newpage">newpage</a> command
 is used to pipe PostScript output from Mapyrus through <tt>ps2pdf</tt>
 and into a PDF file.  For example,
 
-<pre>
+include beginex.doc
 newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
+include endex.doc
+
+<p>
+<a name="httpserver"></a>
+<h3>Setting up Mapyrus as an HTTP Server</h3>
+<p>
+
+Enter the following lines into a text file named
+<tt>tutorialhttpserver.mpy</tt>, replacing the filename
+<tt>/tmp/roads.shp</tt>
+with the filename of an available ESRI Shape file.
+
+include beginex.doc
+include tutorialhttpserver.mpy
+include endex.doc
+
+In a terminal window, change to the directory containing the
+file
+<tt>tutorialhttpserver.mpy</tt>, and start
+Mapyrus as an HTTP server on port 8410 with
+the following command.
+
+<pre>
+java -jar mapyrus.jar -httpserver 8410
 </pre>
 
-<p>
-<a name="servlet"></a>
-<h3>Setting up Mapyrus as a Servlet</h3>
+Then enter the following URL in a web browser.  Mapyrus
+receives the request, executes the commands in the file
+<tt>tutorialhttpserver.mpy</tt> and returns the output
+to the web browser.
 
-<p>
-Tomcat
-Hello World
+<pre>
+http://localhost:8410/tutorialhttpserver.mpy
+</pre>
 
 include footer.doc
 
