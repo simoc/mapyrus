@@ -23,6 +23,7 @@ public class Argument
 	private double mNumericValue;
 	private String mStringValue;
 	private String mVarname;
+	private double []mGeometryValue;
 	
 	/**
 	 * Create a new numeric argument.
@@ -49,8 +50,18 @@ public class Argument
 	}
 
 	/**
+	 * Create a new numeric argument.
+	 * @param d is value for this argument.
+	 */
+	public Argument(double []coords)
+	{
+		mType = GEOMETRY;
+		mGeometryValue = coords;
+	}
+
+	/**
 	 * Returns type of argument.
-	 * @return either NUMERIC, STRING, or VARIABLE.
+	 * @return either NUMERIC, STRING, VARIABLE, or GEOMETRY.
 	 */	
 	public int getType()
 	{
@@ -85,6 +96,15 @@ public class Argument
 	}
 
 	/**
+	 * Returns value of geometry argument.
+	 * @return geometry argument value.
+	 */	
+	public double []getGeometryValue()
+	{
+		return(mGeometryValue);
+	}
+	
+	/**
 	 * Set argument to a numeric value.
 	 * @param d value to set.
 	 */	
@@ -102,5 +122,15 @@ public class Argument
 	{
 		mType = STRING;
 		mStringValue = s;
+	}
+	
+	/**
+	 * Set argument to geometry.
+	 * @param coords is geometry to set.
+	 */
+	public void setGeometryValue(double []coords)
+	{
+		mType = GEOMETRY;
+		mGeometryValue = coords;
 	}
 }
