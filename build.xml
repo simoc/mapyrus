@@ -66,7 +66,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Delete documentation generated previously -->
 <delete>
 <fileset dir="." includes="${ant.project.name}.pdf"/>
-<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps" excludes="flag.eps"/>
 </delete>
 <replace file="userdoc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
 <replace file="userdoc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
@@ -92,7 +92,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <arg line="tutorialvar1.mapyrus tutorialvar2.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
-<arg line="tutoriallines1.mapyrus tutoriallines2.mapyrus tutoriallines3.mapyrus tutoriallines4.mapyrus tutoriallines5.mapyrus tutoriallines6.mapyrus tutorialpolygons1.mapyrus tutorialpolygons2.mapyrus tutorialpolygons3.mapyrus tutorialpolygons4.mapyrus tutorialgradient.mapyrus tutorialprocedures1.mapyrus tutorialprocedures2.mapyrus tutoriallabels1.mapyrus tutoriallabels2.mapyrus tutoriallabels3.mapyrus tutorialflowlabel1.mapyrus tutorialsinkhole.mapyrus tutorialdatasets1.mapyrus tutorialdatasets2.mapyrus tutorialdatasets3.mapyrus tutoriallegend1.mapyrus tutoriallegend2.mapyrus tutoriallegend3.mapyrus tutorialattribute1.mapyrus tutorialattribute2.mapyrus tutorialscalebar1.mapyrus tutorialtrans1.mapyrus tutorialtrans2.mapyrus tutorialshadow1.mapyrus tutorialwordwrap1.mapyrus tutorialicon1.mapyrus tutorialicon2.mapyrus tutorialicon3.mapyrus"/>
+<arg line="tutoriallines1.mapyrus tutoriallines2.mapyrus tutoriallines3.mapyrus tutoriallines4.mapyrus tutoriallines5.mapyrus tutoriallines6.mapyrus tutorialpolygons1.mapyrus tutorialpolygons2.mapyrus tutorialpolygons3.mapyrus tutorialpolygons4.mapyrus tutorialgradient.mapyrus tutorialprocedures1.mapyrus tutorialprocedures2.mapyrus tutoriallabels1.mapyrus tutoriallabels2.mapyrus tutoriallabels3.mapyrus tutorialflowlabel1.mapyrus tutorialsinkhole.mapyrus tutorialdatasets1.mapyrus tutorialdatasets2.mapyrus tutorialdatasets3.mapyrus tutoriallegend1.mapyrus tutoriallegend2.mapyrus tutoriallegend3.mapyrus tutorialattribute1.mapyrus tutorialattribute2.mapyrus tutorialscalebar1.mapyrus tutorialtrans1.mapyrus tutorialtrans2.mapyrus tutorialshadow1.mapyrus tutorialwordwrap1.mapyrus tutorialicon1.mapyrus tutorialicon2.mapyrus tutorialicon3.mapyrus tutorialeps1.mapyrus"/>
 </java>
 <!-- Copy file used to demonstrate file updating so we don't modify original -->
 <copy file="userdoc/tutorialdatasets1.eps" tofile="userdoc/tutorialexisting1.eps"/>
@@ -165,6 +165,7 @@ See file named userdoc/COPYING for details.
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
 <fileset dir="." includes="build/**, build.xml, userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, src/**, NEWS.txt, README.txt" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc"/>
+<fileset dir="userdoc" includes="flag.eps"/>
 </zip>
 </target>
 
@@ -174,7 +175,7 @@ See file named userdoc/COPYING for details.
 <delete>
 <fileset dir="." includes="${ant.project.name}.jar, manifest, README.txt"/>
 <fileset dir="." includes="${ant.project.name}*.zip, ${ant.project.name}.pdf"/>
-<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out" excludes="flag.eps"/>
 </delete>
 </target>
 
