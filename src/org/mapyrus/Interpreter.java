@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 /**
@@ -777,6 +778,50 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.TRIANGLE:
+				if (nExpressions == 4)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					double radius = mExecuteArgs[2].getNumericValue();
+					double rotation = mExecuteArgs[3].getNumericValue();
+					rotation = Math.toRadians(rotation);
+					
+					/*
+					 * Precalculate triangle corner points.
+					 */
+					double sin30radius = 0.5 * radius;
+					double cos30radius = 0.8660254 * radius;
+
+					AffineTransform affine = AffineTransform.getTranslateInstance(x1, y1);
+					affine.rotate(rotation);
+
+					/*
+					 * Add coordinates for equilateral triangle to path,
+					 * rotated to desired angle.
+					 */
+					Point2D.Double pt = new Point2D.Double(0, radius);
+					affine.transform(pt, pt);
+					context.moveTo(pt.x, pt.y);
+
+					pt.x = cos30radius;
+					pt.y = -sin30radius;
+					affine.transform(pt, pt);
+					context.lineTo(pt.x, pt.y);
+
+					pt.x = -cos30radius;
+					pt.y = -sin30radius;
+					affine.transform(pt, pt);
+					context.lineTo(pt.x, pt.y);
+
+					context.closePath();
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TRIANGLE));
+				}
+				break;
+
 			case Statement.BOX:
 			case Statement.GUILLOTINE:
 			case Statement.PROTECT:
@@ -902,6 +947,17 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
 				}
 				context.createSinkhole();
+				break;
+
+			case Statement.ROUNDPATH:
+				if (nExpressions == 1)
+				{
+					context.roundPath(mExecuteArgs[0].getNumericValue());
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_RADIUS));
+				}
 				break;
 
 			case Statement.STROKE:
