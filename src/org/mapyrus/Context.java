@@ -45,14 +45,15 @@ public class Context
 	private double mRotation;
 
 	/*
-	 * Transformation from one world coordinate system to another.
+	 * Projection transformation from one world coordinate system to another.
 	 */
-	private WorldCoordinateTransform mWorldTransform;
+	private WorldCoordinateTransform mProjectionTransform;
 
 	/*
 	 * Transformation matrix from world coordinates to page coordinates.
 	 */
-	private AffineTransform mWorldToPageCtm;
+	private AffineTransform mWorldCtm;
+	private Rectangle2D.Double mWorldExtents;
 	
 	/*
 	 * Coordinates making up path.
@@ -96,8 +97,8 @@ public class Context
 		mLineWidth = 0.1;
 	
 		mCtm = new AffineTransform();
-		mWorldTransform = null;
-		mWorldToPageCtm = null;
+		mProjectionTransform = null;
+		mWorldCtm = null;
 		mXScaling = mYScaling = 1.0;
 		mRotation = 0.0;
 		mVars = null;
@@ -118,8 +119,8 @@ public class Context
 		mColor = existing.mColor;
 		mLineWidth = existing.mLineWidth;
 		mCtm = new AffineTransform(existing.mCtm);
-		mWorldTransform = null;
-		mWorldToPageCtm = null;
+		mProjectionTransform = null;
+		mWorldCtm = null;
 		mXScaling = existing.mXScaling;
 		mYScaling = existing.mYScaling;
 		mRotation = existing.mRotation;
@@ -323,13 +324,53 @@ public class Context
 	 */
 	public void setWorlds(double x1, double y1, double x2, double y2)
 	{
+		double xDiff = x2 - x1;
+		double yDiff = y2 - y1;
+		double xMid, yMid;
+		double worldAspectRatio = yDiff / xDiff;
+		double pageAspectRatio =
+			mOutputFormat.getPageHeight() / mOutputFormat.getPageWidth();
+
+		/*
+		 * Expand world coordinate range in either X or Y axis so
+		 * it has same aspect ratio as page.
+		 */
+		if (worldAspectRatio > pageAspectRatio)
+		{
+			/*
+			 * World coordinate range is taller than page coordinate
+			 * system.  Expand X axis range to compensate:
+			 * 
+			 *  PAGE    WORLDS    EXPANDED WORLDS
+			 *  +---+   +---+     +-+---+-+
+			 *  |   |   |   |     |<|   |>|
+			 * 	|___|   |   |  => |<|   |>|
+			 *          |   |     |<|   |>|
+			 *          +---+     +-+---+-+
+			 */
+			xMid = (x1 + x2) / 2.0;
+			x1 = xMid - (xDiff / 2.0) * (worldAspectRatio / pageAspectRatio);
+			x2 = xMid + (xDiff / 2.0) * (worldAspectRatio / pageAspectRatio);
+		}
+		else if (worldAspectRatio < pageAspectRatio)
+		{
+			/*
+			 * World coordinate range is wider than page coordinate system.
+			 * Expand Y axis range.
+			 */
+			yMid = (y1 + y2) / 2.0;
+			y1 = yMid - (yDiff / 2.0) * (pageAspectRatio / worldAspectRatio);
+			y2 = yMid + (yDiff / 2.0) * (pageAspectRatio / worldAspectRatio);
+		}
+		
 		/*
 		 * Setup CTM from world coordinates to page coordinates.
 		 */
-		mWorldToPageCtm = new AffineTransform();
-		mWorldToPageCtm.scale(mOutputFormat.getPageWidth() / (x2 - x1),
+		mWorldCtm = new AffineTransform();
+		mWorldCtm.scale(mOutputFormat.getPageWidth() / (x2 - x1),
 			mOutputFormat.getPageHeight() / (y2 - y1));
-		mWorldToPageCtm.translate(-x1, -y1);
+		mWorldCtm.translate(-x1, -y1);
+		mWorldExtents = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
 	}
 
 	/**
@@ -341,7 +382,7 @@ public class Context
 	public void setTransform(String sourceSystem, String destinationSystem)
 		throws MapyrusException
 	{
-		mWorldTransform = new WorldCoordinateTransform(sourceSystem,
+		mProjectionTransform = new WorldCoordinateTransform(sourceSystem,
 			destinationSystem);
 	}
 		
@@ -371,7 +412,16 @@ public class Context
 	{
 		return(mRotation);
 	}
-					
+
+	/**
+	 * Returns world coordinate extents being shown on page.
+	 * @return rectangular area covered by extents.
+	 */
+	public Rectangle2D.Double getWorldExtents()
+	{
+		return(mWorldExtents);
+	}
+						
 	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
@@ -388,17 +438,17 @@ public class Context
 		/*
 		 * Transform to correct world coordinate system.
 		 */
-		if (mWorldTransform != null)
+		if (mProjectionTransform != null)
 		{
-			mWorldTransform.forwardTransform(srcPts);
+			mProjectionTransform.forwardTransform(srcPts);
 		}
 		
 		/*
 		 * Transform point from world coordinates
 		 * to millimetre position on page.
 		 */		
-		if (mWorldToPageCtm != null)
-			mWorldToPageCtm.transform(srcPts, 0, srcPts, 0, 1);
+		if (mWorldCtm != null)
+			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
@@ -427,17 +477,17 @@ public class Context
 		/*
 		 * Transform to correct world coordinate system.
 		 */
-		if (mWorldTransform != null)
+		if (mProjectionTransform != null)
 		{
-			mWorldTransform.forwardTransform(srcPts);
+			mProjectionTransform.forwardTransform(srcPts);
 		}
 
 		/*
 		 * Transform point from world coordinates
 		 * to millimetre position on page.
-		 */		
-		if (mWorldToPageCtm != null)
-			mWorldToPageCtm.transform(srcPts, 0, srcPts, 0, 1);
+		 */
+		if (mWorldCtm != null)
+			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
