@@ -22,9 +22,16 @@ Reference
 
 <tr>
 <td>
-<a href="#language"/>Language and Commands</a>
+<a href="#language"/>Language And Commands</a>
 </td>
 </tr>
+
+<tr>
+<td>
+<a href="#httpserver"/>Mapyrus HTTP Server</a>
+</td>
+</tr>
+
 </table>
 <p>
 
@@ -36,7 +43,7 @@ include hr.doc
 Mapyrus requires:
 <ol>
 <li>
-Java Runtime Environment (JRE) 1.4.1.
+Java Runtime Environment (JRE) 1.4, or higher.
 </li>
 <li>
 The Ghostscript PostScript interpreter from 
@@ -50,18 +57,78 @@ include hr.doc
 <a name="usage"></a>
 <h3>Usage</h3>
 
-text files or URLs of text filename
+The Mapyrus software is contained in a single Java JAR file.
+Start Mapyrus in a Java interpreter with the following command.
 
-<pre>
-java -jar mapyrus.jar myfile.txt ...
-</pre>
+include beginex.doc
+java -jar <i>install-path</i>/mapyrus.jar <i>filename</i>
+include endex.doc
 
-The purpose of Mapyrus is to display
-A page is 
+<i>install-path</i> is the directory in which
+Mapyrus is installed.  <i>filename</i> is the name of a file
+or a URL for Mapyrus to read from.  If <i>filename</i> is <tt>-</tt>
+then standard input is read.  If several filenames and URLs are
+given then they are read in turn.
 
-command line options
--DMapyrus.rgbfile
--Djava.util.logging.configfile
+<p>
+
+Pass variables to Mapyrus using the Java <tt>-D</tt> option.
+
+include beginex.doc
+java -D<i>variable</i>=<i>value</i> ... -jar <i>install-path</i>/mapyrus.jar <i>filename</i>
+include endex.doc
+
+Mapyrus runs as an 
+<a href="#httpserver">HTTP Server</a> when started with the
+<tt>-s</tt> option.
+
+include beginex.doc
+java -jar <i>install-path</i>/mapyrus.jar -s <i>port</i>
+include endex.doc
+
+<a name="startupvariables"></a>
+The following variables configure Mapyrus at startup.
+<p>
+
+<table border=1 width=700>
+<tr>
+
+<td>
+<b>Variable</b>
+</td>
+<td>
+<b>Description</b>
+</td>
+
+</tr>
+<tr>
+
+<td>
+<tt>Mapyrus.rgb.file=<i>filename</i></tt>
+<td>
+Defines an X Windows color names file to use for color
+name lookup in the
+<a href="#color">color</a> command.  Default value is
+<tt>/usr/lib/X11/rgb.txt</tt>.
+</tr>
+<tr>
+
+<td>
+<tt>java.util.logging.config.file=<i>filename</i></tt>
+<td>
+Defines file controlling logging for the
+<a href="#httpserver">HTTP Server</a> option.
+See the
+<a href="http://java.sun.com/j2se/1.4/docs/guide/util/logging/overview.html">
+Java Logging Overview
+</a>
+and
+<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/LogManager.html">
+Java LogManager API documentation
+</a>
+for format of the file defining logging properties.
+</tr>
+</table>
 
 path
 origin (0, 0) is bottom left corner of page.
@@ -79,7 +146,7 @@ projected onto the page
 include hr.doc
 
 <a name="language"></a>
-<h3>Language and Commands</h3>
+<h3>Language And Commands</h3>
 
 Mapyrus interprets commands read from one or more plain text files.
 Each command begins on a separate line.
@@ -201,6 +268,11 @@ Returns the length of the string <i>str</i>.
 Returns the index in the string <i>str</i>, where the regular expression
 <i>regex</i> is first matched.  The index of the first character is 1.
 If the regular expression does not match <i>str</i>, then 0 is returned.
+The 
+<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">
+Java API documentation
+</a>
+describes the syntax of regular expressions.
 
 <tr>
 <td>
@@ -573,8 +645,8 @@ include hr.doc
 <p>
 Sets color for drawing.
 Named colors refer to colors in the file
-<tt>/usr/lib/X11/rgb.txt</tt>, or the file given 
-in the Java system property <tt>Mapyrus.rgbfile</tt>.
+<tt>/usr/lib/X11/rgb.txt</tt>, or the file given as a
+<a href="#startupvariables"/>variable</a> at startup.
 <i>hexdigits</i> is a 6 digit hexadecimal value defining RGB values,
 as used in HTML pages.
 Values for RGB and HSB colors are given as intensities
@@ -806,7 +878,7 @@ include hr.doc
 
 <p>
 <a name="scale"></a>
-<tt>scale</tt> <i>x</i> <i>y</i>
+<tt>scale</tt> <i>x</i>, <i>y</i>
 <p>
 Scales the coordinate system, adding to any existing scaling.
 <i>x</i> and <i>y</i> are scale factors in X and Y axes.
@@ -895,7 +967,7 @@ is to be ignored.  Default value is a hash character (<tt>#</tt>).
 <p>
 <tt>delimeters=<i>string</i></tt>
 <br>
-Characters delimiting fields in the text file.  Default value
+Characters separating fields in the text file.  Default value
 is all whitespace characters.
 
 <tr>
@@ -1003,4 +1075,74 @@ separated by spaces.
 A newline is added after the final <i>string</i>.
 <p>
 
+include hr.doc
+
+<a name="httpserver"></a>
+<h3>Mapyrus HTTP Server</h3>
+<p>
+
+Mapyrus runs as an HTTP server when started with the
+<tt>-s</tt>
+command line option.
+<p>
+The HTTP server accepts and replies to requests from HTTP clients
+on the given port number.
+If port number is 0 then any free port number is used.  The port
+number used is written to the log file or to standard output.
+<p>
+The HTTP server is multi-threaded to enable several requests to
+be handled at the same time.  If an HTTP request is for a file with a suffix
+matching a well-known MIME type (<tt>html</tt>, <tt>txt</tt>, <tt>ps</tt>,
+<tt>pdf</tt>, <tt>zip</tt> or a web image format),
+then the file is returned.
+Requests for files with no suffix, or with unknown file suffix are
+interpreted by Mapyrus using the following steps.
+
+<ol>
+<li>
+Set any parameters passed in the URL (following the <tt>?</tt> character in
+the URL or passed in an HTML form) as variables in Mapyrus.
+<li>
+Read and execute the commands from the filename given in the URL.
+<li>
+Capture the standard output of these commands and return it to the
+to HTTP client.  An HTML page is returned if
+<a href="#print">print</a> commands are used.  An image file is
+returned if the
+<a href="#newpage">newpage</a> command is used with output file set
+to standard output.
+An HTTP error state is returned if the request fails.
+</ol>
+
+<p>
+For 
+The HTTP server 
+Recommend <tt>.mpy</tt> suffix, or use no suffix.
+
+<p>
+Requests using either GET or POST methods are accepted by Mapyrus.
+<p>
+The HTTP server runs forever and
+is stateless.  Each HTTP request is independent and
+variables and graphics state are not shared between
+requests.  Cookies are not used.
+Any files or URLs given on the command line are interpreted
+before accepting HTTP requests.  Procedures defined in these files
+are available when interpreting HTTP requests.  This enables
+common procedures to be loaded only once at startup and not with every
+HTTP request.
+<p>
+The HTTP server only replies to requests
+from the directory in which Mapyrus was started.
+Requests for files from other directories return an error to the HTTP client.
+If communication between HTTP client and Mapyrus is blocked for longer than
+5 minutes then the HTTP request is cancelled.
+When all threads in the HTTP server are busy handling requests,
+further requests are queued.
+<p>
+Logging of HTTP requests is controlled by setting a
+<a href="#startupvariables"/>variable</a> at startup defining
+a logging configuration file.
+
 include footer.doc
+
