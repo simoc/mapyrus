@@ -92,6 +92,7 @@ public class MapyrusMessages
 	public static final String INVALID_OPTION = "invalidoption";
 	public static final String INVALID_OUTPUT = "invalidoutput";
 	public static final String INVALID_PAGE = "invalidpage";
+	public static final String INVALID_PAGE_RANGE = "invalidpagerange";
 	public static final String INVALID_PAGE_SIZE = "invalidpagesize";
 	public static final String INVALID_PAGE_RESOLUTION = "invalidpageresolution";
 	public static final String INVALID_PATH_OFFSET = "invalidpathoffset";
