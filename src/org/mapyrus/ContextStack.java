@@ -7,6 +7,8 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
+
 import java.util.Hashtable;
 import java.awt.Color;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Vector;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import net.sourceforge.mapyrus.*;
 
 public class ContextStack
 {
@@ -59,7 +62,8 @@ public class ContextStack
 	 * Pops current context from stack.
 	 * @return number of elements left in stack after pop.
 	 */
-	private int popContext() throws IOException, MapyrusException
+	private int popContext()
+		throws IOException, MapyrusException
 	{
 		int i = mStack.size();
 
@@ -99,15 +103,17 @@ public class ContextStack
 	/**
 	 * Sets output file for drawing to.
 	 * @param filename name of image file output will be saved to
+	 * @param format is image format for saved output
 	 * @param width is the page width (in points).
 	 * @param height is the page height (in points).
 	 * @param extras contains extra settings for this output.
 	 */
-	public void setOutputFormat(String filename,
+	public void setOutputFormat(String filename, String format,
 		int width, int height, String extras)
 		throws IOException, MapyrusException
 	{
-		getCurrentContext().setOutputFormat(filename, width, height, extras);
+		getCurrentContext().setOutputFormat(filename, format,
+			width, height, extras);
 	}
 
 	/**
@@ -300,6 +306,10 @@ public class ContextStack
 			else if (sub.equals("geometry.length"))
 			{
 				retval = new Argument(getCurrentContext().getPathLength());
+			}
+			else if (sub.equals("geometry.area"))
+			{
+				retval = new Argument(getCurrentContext().getPathArea());
 			}
 			else if (sub.startsWith(BOUNDING_BOX_VARIABLE + "."))
 			{
