@@ -1,0 +1,13 @@
+include header.doc
+<!-- @(#) $Id$ -->
+
+<h2>
+Versions
+</h2>
+
+<h3>0.31, October 2003</h3>
+<p>
+First released version.
+<p>
+
+include footer.doc
