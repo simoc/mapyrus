@@ -8,16 +8,16 @@ color "red"
 while Mapyrus.fetch.more
 do
   fetch
-  clearpath
-  addpath GEOMETRY
-  stroke
-done
 
-dataset "ogrinfo", "ogrinfo /tmp/streets2.tab |", ""
-color "orange"
-while Mapyrus.fetch.more
-do
-  fetch
+  # Display different categories of streets in different colors,
+  # based on the R_CLASS attribute field value.
+  #
+  if R_CLASS == 4
+  then
+    color "red"
+  else
+    color "orange"
+  endif
   clearpath
   addpath GEOMETRY
   stroke
