@@ -30,9 +30,11 @@ public class ContextStack
 	private static final int MAX_STACK_LENGTH = 30;
 	
 	/*
-	 * Variable name for bounding box of currently defined path.
+	 * Variable name for bounding box of currently defined path
+	 * and for geometrical attributes of current path.
 	 */
 	private static final String BOUNDING_BOX_VARIABLE = "boundingbox";
+	private static final String GEOMETRY_VARIABLE = "geometry";
 	
 	/*
 	 * Stack of contexts, with current context in last slot.
@@ -311,36 +313,46 @@ public class ContextStack
 			{
 				retval = new Argument(getCurrentContext().getScalingY());
 			}
-			else if (sub.equals("geometry.length"))
+			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
 			{
-				retval = new Argument(getCurrentContext().getPathLength());
-			}
-			else if (sub.equals("geometry.area"))
-			{
-				retval = new Argument(getCurrentContext().getPathArea());
+				sub = sub.substring(GEOMETRY_VARIABLE.length() + 1);
+				if (sub.equals("length"))
+					retval = new Argument(getCurrentContext().getPathLength());
+				else if (sub.equals("area"))
+					retval = new Argument(getCurrentContext().getPathArea());
+				else if (sub.equals("centroid.x"))
+					retval = new Argument(getCurrentContext().getPathCentroid().getX());
+				else if (sub.equals("centroid.y"))
+					retval = new Argument(getCurrentContext().getPathCentroid().getY());
+				else
+					retval = new Argument(Argument.STRING, "undef");
 			}
 			else if (sub.startsWith(BOUNDING_BOX_VARIABLE + "."))
 			{
 				Rectangle2D bounds = getCurrentContext().getBounds2D();
 				
-				d = 0.0;
 				if (bounds != null)
 				{
 					sub = sub.substring(BOUNDING_BOX_VARIABLE.length() + 1);
 					if (sub.equals("min.x"))
-						d = bounds.getMinX();
+						retval = new Argument(bounds.getMinX());
 					else if (sub.equals("min.y"))
-						d = bounds.getMinY();
+						retval = new Argument(bounds.getMinY());
 					else if (sub.equals("max.x"))
-						d = bounds.getMaxX();
+						retval = new Argument(bounds.getMaxX());
 					else if (sub.equals("max.y"))
-						d = bounds.getMaxY();
+						retval = new Argument(bounds.getMaxY());
 					else if (sub.equals("width"))
-						d = bounds.getWidth();
+						retval = new Argument(bounds.getWidth());
 					else if (sub.equals("height"))
-						d = bounds.getHeight();
+						retval = new Argument(bounds.getHeight());
+					else
+						retval = new Argument(Argument.STRING, "undef");
 				}
-				retval = new Argument(d);
+				else
+				{
+					retval = new Argument(Argument.STRING, "undef");
+				}
 			}
 			else
 			{
