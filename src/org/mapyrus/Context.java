@@ -267,7 +267,7 @@ public class Context
 		else
 			path = mExistingPath;
 		
-		if (path != null)
+		if (path != null && mOutputFormat != null)
 		{
 			setGraphicsAttributes();
 			mOutputFormat.stroke(path.getShape());
@@ -290,7 +290,7 @@ public class Context
 		else
 			path = mExistingPath;
 		
-		if (path != null)
+		if (path != null && mOutputFormat != null)
 		{	
 			setGraphicsAttributes();
 			mOutputFormat.fill(path.getShape());
