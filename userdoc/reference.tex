@@ -1122,9 +1122,11 @@ the database to connect to.
 The format of this string is database dependent.
 The database remains connected after use and the connection is reused in later
 \texttt{dataset} commands with the same \texttt{url} value.
-When Mapyrus is run using the HTTP Server option,
-requests using with the same \texttt{url} value share a
-single database connection.
+When Mapyrus is run using the HTTP server option, a pool of
+database connections are used for each \texttt{url} value to avoid
+continually reconnecting to the database.
+Mapyrus automatically closes bad and idle connections
+and Mapyrus will reconnect if the database is restarted.
 
 \vspace{10pt}
 \texttt{user=\textit{string}}
