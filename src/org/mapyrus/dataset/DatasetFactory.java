@@ -65,8 +65,8 @@ public class DatasetFactory
 				retval = new JDBCDataset(name, extras);
 			else if (type.equalsIgnoreCase("grass"))
 				retval = new GrassDataset(name, extras);
-			else if (type.equalsIgnoreCase("mif"))
-				retval = new MIFDataset(name, extras);
+			else if (type.equalsIgnoreCase("ogrinfo"))
+				retval = new OGRDataset(name, extras, stdin);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET_TYPE) +
