@@ -157,6 +157,24 @@ public class GeometricPath
 	}
 
 	/**
+	 * Appends another path to current path.
+	 * @param path is path to append
+	 * @param connect when true initial moveTo in path is turned into a lineTo.
+	 */
+	public void append(GeometricPath path, boolean connect)
+	{
+		mPath.append(path.getShape(), connect);
+		ArrayList moveTos = path.getMoveTos();
+		ArrayList rotations = path.getMoveToRotations();
+
+		for (int i = 0; i < moveTos.size(); i++)
+		{		
+			mMoveTos.add(moveTos.get(i));
+			mRotations.add(rotations.get(i));
+		}
+	}
+
+	/**
 	 * Returns the number of moveTo's in this path.
 	 * @return count of moveTo calls made for this path.
 	 */
@@ -266,6 +284,21 @@ public class GeometricPath
 	}
 
 	/**
+	 * Returns direction of full closed path.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
+	 * @return true when path is closed and follows a clockwise direction.
+	 */
+	public boolean isClockwise(double resolution)
+	{
+		/*
+		 * Path is clockwise if area of outer ring is negative.
+		 */
+		double areas[] = walkPath(CALCULATE_AREAS, resolution);
+		return(areas[0] < 0.0);
+	}
+
+	/**
 	 * Walks path, calculating length, area or centroid.  Length or area
 	 * for each moveTo, lineTo, ... part is calculated separately.
 	 * If the path is not closed then the calculated area is meaningless.
@@ -286,12 +319,17 @@ public class GeometricPath
 		double len;
 		int moveToCount = 0;
 		double ai, aSum, xSum, ySum;
+		int nEls;
 
 		/*
 		 * Create array to hold length and area of each part of path.
 		 */
 		aSum = xSum = ySum = 0.0;
-		int nEls = (attributeToCalculate == CALCULATE_CENTROID) ? 2 : getMoveToCount();
+		if (attributeToCalculate == CALCULATE_CENTROID)
+			nEls = 2;
+		else
+			nEls = getMoveToCount(); 
+
 		centroid = partAreas = partLengths = new double[nEls];
 		for (int i = 0; i < partLengths.length; i++)
 			partLengths[i] = 0.0;
@@ -357,19 +395,6 @@ public class GeometricPath
 		return(partLengths);
 	}
 
-	/**
-	 * Calculate a modulo b for real numbers.  For example,
-	 * 6.7 modulo 2.2 is 0.1.
-	 * @return a modulo b
-	 */
-	private double fmod(double a, double b)
-	{
-		double retval = Math.IEEEremainder(a, b);
-		if (retval < 0)
-			retval += b;
-		return(retval);
-	}
-	
 	/**
 	 * Create new path with regularly spaced points along it.
 	 * @param spacing is distance between points.
@@ -438,7 +463,7 @@ public class GeometricPath
 					 * offset at end of path.
 					 */
 					double len = partLengths[moveToCount] - offset;
-					nextOffset = fmod(len, spacing);
+					nextOffset = NumericalAnalysis.fmod(len, spacing);
 				}
 				xStart = xMoveTo = coords[0];
 				yStart = yMoveTo = coords[1];
