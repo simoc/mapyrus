@@ -124,7 +124,7 @@ public class Context
 	private AffineTransform mWorldCtm;
 	private Rectangle2D.Double mWorldExtents;
 	private int mWorldUnits;
-	
+
 	/*
 	 * Coordinates making up path.
 	 */
@@ -946,6 +946,53 @@ public class Context
 	}
 
 	/**
+	 * Add point to path with straight line segment relative to last point.
+	 * @param x X coordinate distance to move, relative to last point.
+	 * @param y Y coordinate distance to move, relative to last point.
+	 */
+	public void rlineTo(double x, double y) throws MapyrusException
+	{
+		/*
+		 * Make sure that a previous point in path is defined.
+		 */
+		if (mPath == null || mPath.getMoveToCount() == 0)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MOVETO));
+
+		try
+		{
+			/*
+			 * Calculate position of last point in path in current
+			 * coordinate system.
+			 */
+			Point2D currentPoint = mPath.getShape().getCurrentPoint();
+
+			/*
+			 * Transform back to current world coordinate system.
+			 */
+// TODO should transform through mProjection too if it is not null.
+			if (mWorldCtm != null)
+				mWorldCtm.inverseTransform(currentPoint, currentPoint);
+			mCtm.inverseTransform(currentPoint, currentPoint);
+
+			/*
+			 * Work out absolute position, based on last point.  Then draw
+			 * a line segment to that point.
+			 */
+			x += currentPoint.getX();
+			y += currentPoint.getY();
+			lineTo(x, y);
+		}
+		catch (NoninvertibleTransformException e)
+		{
+			/*
+			 * The matrix should always be invertible because we prevent
+			 * scaling by 0 -- the only way an AffineTransform can become singular.
+			 */
+			throw new MapyrusException(e.getMessage());
+		}
+	}
+
+	/**
 	 * Add circular arc to path from last point to a new point, given centre and direction.
 	 * @param direction positive for clockwise, negative for anti-clockwise.
 	 * @param xCentre X coordinate of centre point of arc.
@@ -1172,6 +1219,54 @@ public class Context
 					mPath.closePath();
 				pi.next();
 			}
+		}
+	}
+
+	/**
+	 * Set rectangular area in page mask toa value.
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 * @param maskValue value to set in mask for rectangular area.
+	 */
+	public void setPageMask(double x1, double y1, double x2, double y2, int maskValue)
+		throws MapyrusException
+	{
+		double srcPts[] = new double[4];
+		float dstPts[] = new float[6];
+
+		srcPts[0] = x1;
+		srcPts[1] = y1;
+
+		srcPts[2] = x2;
+		srcPts[3] = y2;
+
+		/*
+		 * Transform rectangle to correct world coordinate system.
+		 */
+		if (mProjectionTransform != null)
+		{
+			mProjectionTransform.forwardTransform(srcPts);
+		}
+
+		/*
+		 * Transform rectangle from world coordinates
+		 * to millimetre position on page.
+		 */
+		if (mWorldCtm != null)
+			mWorldCtm.transform(srcPts, 0, srcPts, 0, 2);
+		mCtm.transform(srcPts, 0, dstPts, 0, 2);
+
+		if (mOutputFormat != null)
+		{
+			/*
+			 * Get mask for this page and mark area as protected/unprotected.
+			 */
+			PageMask pageMask = mOutputFormat.getPageMask();
+
+			pageMask.setValue(Math.round(dstPts[0]), Math.round(dstPts[1]),
+				Math.round(dstPts[2]), Math.round(dstPts[3]), maskValue);
 		}
 	}
 
