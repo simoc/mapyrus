@@ -40,6 +40,8 @@ public class MapyrusMessages
 	public static final String EXPECTED = "expected";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
+	public static final String GEOMETRY_NOT_NUMERIC = "geometrynotnumeric";
+	public static final String HASHMAP_NOT_NUMERIC = "hashmapnotnumeric";
 	public static final String HTTP_HEADER = "httpheader";
 	public static final String HTTP_NOT_FOUND = "httpnotfound";
 	public static final String HTTP_RETURNED = "httpreturned";
@@ -59,6 +61,7 @@ public class MapyrusMessages
 	public static final String INVALID_FONT = "invalidfont";
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
+	public static final String INVALID_HASHMAP_KEY = "invalidhashmapkey";
 	public static final String INVALID_HTTP_REQUEST = "invalidhttp";
 	public static final String INVALID_IMPORT = "invalidimport";
 	public static final String INVALID_KEYWORD = "invalidkeyword";
@@ -88,7 +91,6 @@ public class MapyrusMessages
 	public static final String NOT_A_PFA_FILE = "notapfafile";
 	public static final String NOT_A_TTF_FILE = "notattffile";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
-	public static final String NOT_NUMERIC_VALUE = "notnumericvalue";
 	public static final String NOT_SHAPE_FILE = "notshapefile";
 	public static final String NOT_STRING_OPERATION = "notstringoperation";
 	public static final String NOT_TEXT_FILE = "nottextfile";
