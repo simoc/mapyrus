@@ -303,6 +303,13 @@ Returns the base 10 logarithm of <i>n</i>.
 
 <tr>
 <td>
+<a name="pow"></a>
+<tt>pow(<i>a</i>, <i>b</i>)<tt>
+<td>
+Returns <i>a</i> to the power <i>b</i>.
+
+<tr>
+<td>
 <a name="match"></a>
 <tt>match(<i>str</i>, <i>regex</i>)<tt>
 <td>
