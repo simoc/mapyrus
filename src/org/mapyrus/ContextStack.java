@@ -61,15 +61,14 @@ public class ContextStack
 			 */
 			boolean attributesSet = getCurrentContext().closeContext();
 			mStack.removeLast();
+			i--;
 			
 			/*
 			 * If graphics attributes were set in context then set them changed
 			 * in the context that is now current.
 			 */
-			if (attributesSet)
+			if (i > 0 && attributesSet)
 				getCurrentContext().setAttributesChanged();
-
-			i--;
 		}
 		return(i);
 	}
