@@ -563,6 +563,14 @@ public class ContextStack
 			{
 				retval = new Argument(Argument.STRING, Constants.getVersion());
 			}
+			else if (c == 'f' && varName.equals(INTERNAL_VARIABLE_PREFIX + "freeMemory"))
+			{
+				retval = new Argument(Runtime.getRuntime().freeMemory());
+			}
+			else if (c == 't' && varName.equals(INTERNAL_VARIABLE_PREFIX + "totalMemory"))
+			{
+				retval = new Argument(Runtime.getRuntime().totalMemory());
+			}
 			else if (c == 'f' && varName.equals(INTERNAL_VARIABLE_PREFIX + "filename"))
 			{
 				retval = new Argument(Argument.STRING, interpreterFilename);
