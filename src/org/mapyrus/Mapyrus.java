@@ -119,31 +119,53 @@ public class Mapyrus
 			f = new BufferedReader(new InputStreamReader(System.in));
 			context = new Context();
 			processFile(f, context);
-		}
-		else if (args[0].equals("server"))
-		{
-			int port;
 			
-			/*
-			 * Run as a server.
-			 */
-			if (args.length == 1)
+			try
 			{
-				port = DEFAULT_PORT;
+				context.closeOutputFormat();
 			}
-			else
+			catch (IOException e)
 			{
-				port = Integer.parseInt(args[1]);
+				System.err.println(e.getMessage());
+				System.exit(1);
+			}
+			catch (MapyrusException e)
+			{
+				System.err.println(e.getMessage());
+				System.exit(1);
 			}
 		}
 		else
 		{
+			boolean isServer = false;
+			int startIndex = 0;
+			
+			if (args[0].equals("server"))
+			{
+				int port;
+				isServer = true;
+					
+				/*
+				 * Run as a server.
+				 */
+				if (args.length == 1)
+				{
+					port = DEFAULT_PORT;
+					startIndex = 1;
+				}
+				else
+				{
+					port = Integer.parseInt(args[1]);
+					startIndex = 2;
+				}
+			}
+
 			context = new Context();
 			
 			/*
 			 * Process each file and URL given as command line argument.
 			 */
-			for (int i = 0; i < args.length; i++)
+			for (int i = startIndex; i < args.length; i++)
 			{
 				/*
 				 * Try it as a URL.  If that does not work then open it as a file
@@ -179,7 +201,21 @@ public class Mapyrus
 					System.exit(1);
 				}
 			}
-					
+			
+			try
+			{
+				context.closeOutputFormat();
+			}
+			catch (IOException e)
+			{
+				System.err.println(e.getMessage());
+				System.exit(1);
+			}
+			catch (MapyrusException e)
+			{
+				System.err.println(e.getMessage());
+				System.exit(1);
+			}
 		}
 		System.exit(0);
 	}
