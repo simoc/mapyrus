@@ -1,26 +1,53 @@
-# Display the geographic data held in a PostGIS database
-# in a PostScript file.
-#
-newpage "eps", "tutorialdatasets5.eps", 85, 85
+begin asset
+  # Draw filled square
+  #
+  box -1, -1, 1, 1
+  fill
+end
 
-let x1 = 191232, y1 = 243117, x2 = 191234, y2 = 243119
-
-# Build spatially extended SQL statement to fetch
-# road network data inside an area of interest.
+# Display the geographic data held in RDBMS table in a PNG file.
 #
-let sql = "SELECT AsText(GEOM) AS GEOM FROM ROADS_GEOM \
-WHERE GEOM && GeometryFromText( BOX3D(" . x1 . " " . y1 . \
-"," . x2 . " " . y2 . ") ::box3d,-1)"
+newpage "png", "tutorialdatasets5.png", 60, 60
 
-# Fetch each road as an OGC WKT geometry string and draw it.
+let x1 = 151.03, y1 = -31.25, x2 = 151.04, y2 = -31.24
+
+# Build SQL statement to fetch point data in area of interest.
 #
+let sql = "select Assetcode, Longitude, Latitude from SURVEY \
+where Logdate > '1 Dec 2001' and LogDate < '15 Dec 2001' \
+and Longitude >= " . x1 . " and Latitude >= " . y1 . " \
+and Longitude <= " . x2 . " and Latitude <= " . y2
+
 dataset "jdbc", sql, "driver=org.postgresql.Driver \
-url=jdbc:postgresql:pogo user=postgres password=postgres"
+  url=jdbc:postgresql:nemo user=postgres password=postgres"
+
+# Print names of fields being fetched from database for debugging,
+# as some databases convert all field names to uppercase or lowercase.
+#
+let i = 1
+while i <= length(Mapyrus.dataset.fieldnames)
+do
+  print "DEBUG: ", Mapyrus.dataset.fieldnames[i]
+  let i = i + 1
+done
+
+# Fetch and draw each point, varying color depending on asset code.
+#
 worlds x1, y1, x2, y2
 while Mapyrus.fetch.more
 do
   clearpath
   fetch
-  addpath geom
-  stroke
+  move longitude, latitude
+  if assetcode eq "BN" or assetcode eq "BZ"
+  then
+    color "red"
+  elif assetcode eq "CN"
+  then
+    color "blue"
+  else
+    color "green"
+  endif
+
+  asset
 done
