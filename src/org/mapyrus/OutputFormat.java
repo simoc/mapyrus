@@ -37,6 +37,7 @@ import javax.swing.ImageIcon;
 
 import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
+import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85OutputStream;
 import org.mapyrus.io.WildcardFile;
@@ -667,39 +668,57 @@ public class OutputFormat
 	}
 
 	/**
-	 * Returns width of a string, drawn to current page.
+	 * Returns height and width of a string, drawn to current page.
 	 * @param s string to calculate width for.
-	 * @param fontName name of font to calculate width for.
+	 * @param fontName name of font to calculate dimensions for.
 	 * @param fontSize size of characters in millimetres.
-	 * @return width of string in millimetres.
+	 * @return height and width of string in millimetres.
 	 */
-	public double getStringWidth(String s, String fontName, double fontSize)
+	public StringDimension getStringDimension(String s, String fontName, double fontSize)
 		throws IOException, MapyrusException
 	{
-		double retval;
+		StringDimension retval = new StringDimension();
+		StringTokenizer st = new StringTokenizer(s, "\n");
+		double width = 0, height = 0;
+		double tokenWidth;
 
-		if (mOutputType == POSTSCRIPT)
+		/*
+		 * Break multi-line strings into separate lines so we can find the width of the longest line.
+		 */
+		while (st.hasMoreTokens())
 		{
-			/*
-			 * Load Font Metrics information only when it is needed.
-			 */
-			if (mAdobeFontMetrics == null)
-				mAdobeFontMetrics = new AdobeFontMetricsManager(mAfmFiles, mEncodeAsISOLatin1);
+			String token = st.nextToken();
+			if (mOutputType == POSTSCRIPT)
+			{
+				/*
+				 * Load Font Metrics information only when it is needed.
+				 */
+				if (mAdobeFontMetrics == null)
+					mAdobeFontMetrics = new AdobeFontMetricsManager(mAfmFiles, mEncodeAsISOLatin1);
+	
+				double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
+				tokenWidth = mAdobeFontMetrics.getStringWidth(fontName, pointSize, token);
+				tokenWidth = tokenWidth / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
+				if (tokenWidth > width)
+					width = tokenWidth;
+				height += fontSize;
+			}
+			else
+			{
+				/*
+				 * Use Java2D calculation for bounding box of string displayed with
+				 * horizontal font.
+				 */
+				FontRenderContext frc = mGraphics2D.getFontRenderContext();
+				Rectangle2D bounds = mBaseFont.getStringBounds(token, frc);
+				tokenWidth = bounds.getWidth();
+				if (tokenWidth > width)
+					width = tokenWidth;
+				height += bounds.getHeight();
+			}
+		}
 
-			double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
-			retval = mAdobeFontMetrics.getStringWidth(fontName, pointSize, s);
-			retval = retval / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
-		}
-		else
-		{
-			/*
-			 * Use Java2D calculation for bounding box of string displayed with
-			 * horizontal font.
-			 */
-			FontRenderContext frc = mGraphics2D.getFontRenderContext();
-			Rectangle2D bounds = mBaseFont.getStringBounds(s, frc);
-			retval = bounds.getWidth();
-		}
+		retval.setSize(width, height);
 		return(retval);
 	}
 
