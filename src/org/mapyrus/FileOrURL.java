@@ -24,7 +24,6 @@ package au.id.chenery.mapyrus;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,6 +31,8 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
 
 /**
  * Wrapper around java.io.FileInputStream and java.net.URL classes to present
@@ -50,9 +51,10 @@ public class FileOrURL
 	 * @param name name of file or URL to open.
 	 * @throws IOException
 	 */
-	public FileOrURL(String name) throws FileNotFoundException, MapyrusException
+	public FileOrURL(String name) throws IOException, MapyrusException
 	{
 		InputStream in;
+
 		try
 		{
 			/*
@@ -68,11 +70,9 @@ public class FileOrURL
 				/*
 				 * The IOException error message is not very helpful.  Throw our own exception.
 				 */
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) + ": " +
-					mURL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) +
+					": " +	mURL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
 			}
-			mInputStream = new BufferedInputStream(in);
-			mReader = new LineNumberReader(new InputStreamReader(in));
 			mIsURL = true;
 		}
 		catch (MalformedURLException e)
@@ -80,11 +80,25 @@ public class FileOrURL
 			/*
 			 * It is not a valid URL, try opening it as a plain file instead.
 			 */
-			FileInputStream f = new FileInputStream(name);
-			mInputStream = new BufferedInputStream(f);
-			mReader = new LineNumberReader(new InputStreamReader(f));
+			in = new FileInputStream(name);
 			mIsURL = false;
 		}
+		
+		/*
+		 * Is the file or URL compressed?  If so, we need to add a filter to
+		 * uncompress it.
+		 */
+		boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
+		boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
+		
+		if (isGzipped)
+			mInputStream = new BufferedInputStream(new GZIPInputStream(in));
+		else if (isZipped)
+			mInputStream = new BufferedInputStream(new ZipInputStream(in));
+		else
+			mInputStream = new BufferedInputStream(in);
+
+		mReader = new LineNumberReader(new InputStreamReader(mInputStream));
 		mName = name;
 	}
 
@@ -95,10 +109,10 @@ public class FileOrURL
 	 * if we are not loading from within the context of another URL.
 	 */
 	public FileOrURL(String name, FileOrURL contextURL)
-		throws FileNotFoundException, MapyrusException
+		throws IOException, MapyrusException
 	{
-		InputStream in;
-
+		InputStream in = null;
+		
 		try
 		{
 			if (contextURL != null)
@@ -112,14 +126,13 @@ public class FileOrURL
 			}
 			catch (IOException e)
 			{
+				
 				/*
 				 * The IOException error message is not very helpful.  Throw our own exception.
 				 */
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) + ": " +
 					mURL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
 			}
-			mInputStream = new BufferedInputStream(in);
-			mReader = new LineNumberReader(new InputStreamReader(in));
 			mIsURL = true;
 			mName = mURL.toString();
 		}
@@ -133,12 +146,29 @@ public class FileOrURL
 			/*
 			 * It is not a valid URL, try opening it as a plain file instead.
 			 */
-			FileInputStream f = new FileInputStream(name);
-			mInputStream = new BufferedInputStream(f);
-			mReader = new LineNumberReader(new InputStreamReader(f));
+			in = new FileInputStream(name);
 			mIsURL = false;
 			mName = name;
 		}
+		
+		/*
+		 * Is the file or URL compressed?  If so, we need to add a filter to
+		 * uncompress it.
+		 */
+		boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
+		boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
+
+		/*
+		 * Create buffered stream and reader from this input stream.
+		 */
+		if (isGzipped)
+			mInputStream = new BufferedInputStream(new GZIPInputStream(in));
+		else if (isZipped)
+			mInputStream = new BufferedInputStream(new ZipInputStream(in));
+		else
+			mInputStream = new BufferedInputStream(in);
+
+		mReader = new LineNumberReader(new InputStreamReader(mInputStream));
 	}
 
 	/**
