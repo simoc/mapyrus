@@ -25,6 +25,7 @@ package org.mapyrus;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
@@ -1357,16 +1358,24 @@ public class OutputFormat
 			/*
 			 * Grab pixels of icon.
 			 */
-			int []pixels = new int[pixelWidth * pixelHeight];
-			PixelGrabber grabber = new PixelGrabber(icon.getImage(), 0, 0,
-				pixelWidth, pixelHeight, pixels, 0, pixelWidth);
+			int []pixels = null;
+
 			try
 			{
+				Image image = icon.getImage();
+				pixels = new int[pixelWidth * pixelHeight];
+				PixelGrabber grabber = new PixelGrabber(image, 0, 0,
+					pixelWidth, pixelHeight, pixels, 0, pixelWidth);
+
 				grabber.grabPixels();
 			}
 			catch (InterruptedException e)
 			{
 				throw new MapyrusException(e.getMessage());
+			}
+			catch (NullPointerException e)
+			{
+				throw new OutOfMemoryError("Failed loading icon.");
 			}
 
 			/*
@@ -1539,7 +1548,19 @@ public class OutputFormat
 				 */
 				affine.translate(-pixelWidth / 2.0, -pixelHeight / 2.0);
 
-				mGraphics2D.drawImage(icon.getImage(), affine, null);
+				try
+				{
+					/*
+					 * Sun JVM throws NullPointerException if image is
+					 * too big to 
+					 */
+					Image image = icon.getImage();
+					mGraphics2D.drawImage(image, affine, null);
+				}
+				catch (NullPointerException e)
+				{
+					throw new OutOfMemoryError("Failed loading icon.");
+				}
 			}
 		}
 	}
