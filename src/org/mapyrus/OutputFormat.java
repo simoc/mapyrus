@@ -1653,7 +1653,6 @@ public class OutputFormat
 		Color singleColor = Color.BLACK;
 		boolean foundDifferentColors = false;
 		boolean foundFirstColor = false;
-		int i = 0;
 		int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
 
@@ -1707,7 +1706,7 @@ public class OutputFormat
 		int pixelWidth = image.getWidth();
 		int pixelHeight = image.getHeight();
 		Point2D pt;
-		int i, j;
+		int i;
 		double x, y, mmWidth, mmHeight;
 
 		/*
