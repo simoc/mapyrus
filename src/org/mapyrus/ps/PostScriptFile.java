@@ -36,7 +36,6 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PostScriptFile
 {
-	private BufferedReader mReader;
 	private boolean mIsEPSFile;
 	private int mNPages;
 	Rectangle mBoundingBox;
