@@ -13,6 +13,7 @@ import java.lang.Math;
 import java.awt.Color;
 import java.io.IOException;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 
 public class Context
 {
@@ -26,7 +27,7 @@ public class Context
 	/*
 	 * Transformation matrix.
 	 */
-	private double []ctm;
+	private AffineTransform mCtm;
 	
 	/*
 	 * Coordinates making up path.
@@ -49,8 +50,9 @@ public class Context
 	public Context()
 	{
 		mColor = Color.GRAY;
+		mLineWidth = 0.1;
 	
-		ctm = new double[9];
+		mCtm = new AffineTransform();
 		mVars = new Hashtable();
 		mPath = new GeometricPath();
 		mOutputFormat = null;
@@ -119,13 +121,31 @@ public class Context
 	}
 	
 	/**
+	 * Sets scaling for subsequent coordinates.
+	 * @param x is new scaling in X axis.
+	 * @param y is new scaling in Y axis.
+	 */
+	public void setScaling(double x, double y)
+	{
+		mCtm.scale(x, y);
+		mAttributesChanged = true;
+	}
+
+	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void moveTo(float x, float y)
+	public void moveTo(double x, double y)
 	{
-		mPath.moveTo(x, y);
+		double srcPts[] = {x, y};
+		float dstPts[] = new float[2];
+		
+		/*
+		 * Transform point to millimetre position on page.
+		 */
+		mCtm.transform(srcPts, 0, dstPts, 0, 1);
+		mPath.moveTo(dstPts[0], dstPts[1]);
 	}
 
 	/**
@@ -133,9 +153,16 @@ public class Context
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void lineTo(float x, float y)
+	public void lineTo(double x, double y)
 	{
-		mPath.lineTo(x, y);
+		double srcPts[] = {x, y};
+		float dstPts[] = new float[2];
+
+		/*
+		 * Transform point to millimetre position on page.
+		 */		
+		mCtm.transform(srcPts, 0, dstPts, 0, 1);
+		mPath.lineTo(dstPts[0], dstPts[1]);
 	}
 
 	/**
@@ -146,7 +173,16 @@ public class Context
 		setGraphicsAttributes();
 		mOutputFormat.stroke(mPath.getShape());
 	}
-	
+
+	/**
+	 * Fill currently defined path.
+	 */
+	public void fill()
+	{
+		setGraphicsAttributes();
+		mOutputFormat.fill(mPath.getShape());
+	}
+		
 	/**
 	 * Returns value of a variable.
 	 * @param variable name to lookup.
