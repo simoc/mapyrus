@@ -84,7 +84,6 @@ public class MapyrusMessages
 	public static final String INVALID_LINE_JOIN = "invalidlinejoin";
 	public static final String INVALID_LINE_WIDTH = "invalidlinewidth";
 	public static final String INVALID_LINESTYLE = "invalidlinestyle";
-	public static final String INVALID_MIME_TYPE = "invalidmimetype";
 	public static final String INVALID_NUMBER = "invalidnumber";
 	public static final String INVALID_OGC_WKB = "invalidogcwkb";
 	public static final String INVALID_OGC_WKT = "invalidogcwkt";
@@ -120,6 +119,7 @@ public class MapyrusMessages
 	public static final String NO_EXPRESSION = "noexpression";
 	public static final String NO_JDBC_CLASS = "nojdbcclass";
 	public static final String NO_LEGEND_SIZE = "nolegendsize";
+	public static final String NO_MIME_TYPE = "nomimetype";
 	public static final String NO_MOVETO = "nomoveto";
 	public static final String NO_OUTPUT = "nooutput";
 	public static final String NO_ROWS = "norows";
