@@ -116,11 +116,6 @@ public class ShapefileDataset implements GeographicDataset
 	private int []mDBFFieldLengths;
 
 	/*
-	 * Index of field containing geometry.
-	 */
-	private int []mGeometryField;
-
-	/*
 	 * Extents of shape file.
 	 */
 	private Rectangle2D.Double mExtents;
@@ -137,9 +132,8 @@ public class ShapefileDataset implements GeographicDataset
 	 * Open ESRI shape file containing geographic data for querying.
 	 * @param filename name of shape file to open, with or without shp suffix.
 	 * @param extras options specific to text file datasets, given as var=value pairs.
-	 * @param geometryFieldNames comma separated list of names of fields containing geometry.
 	 */	
-	public ShapefileDataset(String filename, String extras, String []geometryFieldNames)
+	public ShapefileDataset(String filename, String extras)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
 		String shapeFilename, dbfFilename, prjFilename;
@@ -232,7 +226,7 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * Read header from database file to get names and types of other fields.
 		 */
-		readDBFHeader(geometryFieldNames, extrasDBFFields);
+		readDBFHeader(extrasDBFFields);
 	}
 
 	/**
@@ -397,7 +391,7 @@ public class ShapefileDataset implements GeographicDataset
 	/*
 	 * Read header from DBF database file
 	 */
-	private void readDBFHeader(String []geometryFieldNames, HashSet dbfFieldnameList)
+	private void readDBFHeader(HashSet dbfFieldnameList)
 		throws IOException
 	{
 		int headerLength, nTotalFields;
@@ -460,13 +454,7 @@ public class ShapefileDataset implements GeographicDataset
 		mDBFFieldTypes = new int[nTotalFields];
 		mDBFFieldLengths = new int[nTotalFields];
 
-		mGeometryField = new int[1];
-		mGeometryField[0] = mNDBFFieldsToFetch;
-		if (geometryFieldNames.length > 0)
-			mFieldNames[mNDBFFieldsToFetch] = geometryFieldNames[0];
-		else
-			mFieldNames[mNDBFFieldsToFetch] = "GEOMETRY";
-
+		mFieldNames[mNDBFFieldsToFetch] = "GEOMETRY";
 		mFieldTypes[mNDBFFieldsToFetch] = Argument.GEOMETRY;
 
 		/*

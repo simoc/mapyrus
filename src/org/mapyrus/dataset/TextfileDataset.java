@@ -93,9 +93,8 @@ public class TextfileDataset implements GeographicDataset
 	 * Open text file, possibly containing geographic data for querying.
 	 * @param filename name of text file to open.
 	 * @param extras options specific to text file datasets, given as var=value pairs.
-	 * @param geometryFieldNames ignored, text datasets do not contain geometry.
 	 */	
-	public TextfileDataset(String filename, String extras, String []geometryFieldNames)
+	public TextfileDataset(String filename, String extras)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
 		StringTokenizer st;
