@@ -12,10 +12,9 @@ begin shadowed2
     let i = i + 1
   done
 end
-
-# Display a polygon with shadow to the bottom-left.
-#
 begin shadowed
+  # Display a polygon with shadow to the bottom-left.
+  #
   shadowed2
   linestyle 0.1
   color 'black'
