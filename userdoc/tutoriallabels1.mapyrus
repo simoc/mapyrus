@@ -2,14 +2,14 @@ newpage "eps", "tutoriallabels1.eps", 125, 30, \
   "isolatinfonts=Times-Roman"
 
 # Draw a label containing o with umlaut and degree symbol.
-# These characters entered in ISO encoding so font is
-# marked for ISO encoding in newpage command above.
+# These octal character codes entered in ISO encoding so
+# font is marked for ISO encoding in newpage command above.
 #
 color "black"
 font 'Times-Roman', 12
 clearpath
 move 2, 15
-label 'Köln 17°'
+label 'K\366ln 17\260'
 
 # Draw a three line centered label.
 #
