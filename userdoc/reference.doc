@@ -94,8 +94,8 @@ include hr.doc
 Mapyrus requires:
 <ol>
 <li>
-Java 2 Runtime Environment (JRE) 1.4 or higher,
-or Java 2 Software Developers Kit (SDK) 1.4 or higher.
+Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4 or higher,
+or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4 or higher.
 </li>
 <li>
 The Ghostscript PostScript interpreter from 
@@ -267,23 +267,16 @@ numeric comparisons and string comparisons
 <tr>
 
 <td>
-<tt>and</tt>
+<tt>and</tt>,
+<tt>or</tt>,
+<tt>not</tt>
 </td>
 <td>
-Logical and
+Logical and, not, not
 </td>
 
 </tr>
-<tr>
 
-<td>
-<tt>or</tt>
-</td>
-<td>
-Logical or
-</td>
-
-</tr>
 </table>
 
 <p>
@@ -300,6 +293,13 @@ Logical or
 <tt>length(<i>str</i>)<tt>
 <td>
 Returns the length of the string <i>str</i>.
+
+<tr>
+<td>
+<a name="log10"></a>
+<tt>log10(<i>n</i>)<tt>
+<td>
+Returns the base 10 logarithm of <i>n</i>.
 
 <tr>
 <td>
@@ -482,6 +482,11 @@ and
 
 </ul>
 
+Any new page created in a procedure with a
+<a href="#newpage">newpage</a>
+command is completed when the procedure finishes and output
+returns to the page being created before the procedure was called.
+<p>
 Any dataset being imported is global.  It is not saved and not restored.
 <p>
 Any world coordinate system set with the
@@ -511,6 +516,9 @@ include hr.doc
 <a name="internalvars"></a>
 <h3>Internal Variables</h3>
 
+All Java standard system properties (<tt>os.arch</tt>, <tt>user.dir</tt>, etc.)
+are defined as variables in Mapyrus.
+<p>
 Mapyrus maintains the following internal variables.
 
 <p>
@@ -644,9 +652,7 @@ The current rotation angle in degrees set by
 
 <tr>
 <td>
-<tt>Mapyrus.scale.x</tt>
-<br>
-<tt>Mapyrus.scale.y</tt>
+<tt>Mapyrus.scale</tt>
 <td>
 The current scale factor set by 
 <a href="#scale">scale</a> command.
@@ -1015,7 +1021,7 @@ include hr.doc
 <p>
 <a name="newpage"></a>
 <tt>newpage</tt> <i>format</i>, <i>filename</i>, <i>width</i>,
-<i>height</i>, <i>resolution</i>
+<i>height</i>, <i>resolution</i>, <i>extras</i>
 <p>
 Begins output of a new page to a file.  Any previous output is closed.
 The path, clipping path and world coordinates are cleared.
@@ -1053,12 +1059,62 @@ command.  The operating system command is executed and Mapyrus
 writes the page to the standard input of the executing
 operating system command.
 Mapyrus executes the operating command directly.  Set <i>filename</i> to
-<tt>| sh <i>myscript.sh</i></tt>
+<tt>"| sh <i>myscript.sh</i>"</tt>
 or
-<tt>| cmd <i>myscript.bat</i></tt>
+<tt>"| cmd <i>myscript.bat</i>"</tt>
 to execute the command in a sub-shell if 
 environment variables, file redirection or other shell features are
 required.
+<p>
+<i>extras</i> defines further options for the new page, given as
+<i>variable=value</i> values, separated by whitespace.
+<p>
+
+<table border=1 width="100%">
+<tr>
+<td>
+<b>File Format</b>
+<td>
+<b>Extras</b>
+
+<tr>
+<td>
+<tt>ps</tt>, <tt>eps</tt>
+<td>
+<tt>pfafiles=<i>filename</i>,<i>filename2</i>,...</tt>
+<br>
+Comma-separated list of PostScript Type 1 font filenames
+to include in this PostScript file.
+A PostScript Type 1 font is defined in a file
+with suffix <tt>.pfa</tt>.  Include
+files for all PostScript fonts to be used in this
+page that are not known by the printer.
+<p>
+See the <a href="tutorial.html#psfonts">Tutorial</a> section for
+information on converting TrueType fonts to PostScript Type 1 format.
+</td>
+</tr>
+<tr>
+<td>
+<tt>png</tt>, <tt>jepg</tt>
+<td>
+<tt>ttffiles=<i>filename</i>,<i>filename2</i>,...</tt>
+<br>
+Comma-separated list of TrueType font filenames
+to load for this page.
+A TrueType font is defined in a file
+with suffix <tt>.ttf</tt>.
+<p>
+Do not use this option on operating systems that support
+TrueType fonts (Windows, Mac).  All TrueType
+fonts are already available from the operating system.
+<p>
+On operating systems that do not support TrueType fonts
+(Linux, UNIX) include filenames of all TrueType
+fonts to be used on this page.  These fonts are loaded
+by Mapyrus.
+</tr>
+</table>
 
 include hr.doc
 
@@ -1136,16 +1192,16 @@ include hr.doc
 
 <p>
 <a name="scale"></a>
-<tt>scale</tt> <i>x</i>, <i>y</i>
+<tt>scale</tt> <i>factor</i>
 <p>
 Scales the coordinate system, adding to any existing scaling.
-<i>x</i> and <i>y</i> are scale factors in X and Y axes.
+<i>factor</i> is scale factor for X and Y axes.
 All later coordinates given in
 <a href="#move">move</a>,
 <a href="#draw">draw</a>,
 <a href="#arc">arc</a> and
 <a href="#arc">addpath</a>
-commands are scaled by these factors.
+commands are scaled by this factor.
 
 include hr.doc
 
