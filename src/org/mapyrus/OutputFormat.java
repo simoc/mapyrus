@@ -42,6 +42,7 @@ import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85OutputStream;
 import org.mapyrus.io.WildcardFile;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -50,6 +51,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -678,16 +680,17 @@ public class OutputFormat
 		throws IOException, MapyrusException
 	{
 		StringDimension retval = new StringDimension();
-		StringTokenizer st = new StringTokenizer(s, "\n");
+		BufferedReader stringReader = new BufferedReader(new StringReader(s));
 		double width = 0, height = 0;
+		String token;
 		double tokenWidth;
 
 		/*
-		 * Break multi-line strings into separate lines so we can find the width of the longest line.
+		 * Break multi-line strings into separate lines so we
+		 * can find the width of the longest line.
 		 */
-		while (st.hasMoreTokens())
+		while ((token = stringReader.readLine()) != null)
 		{
-			String token = st.nextToken();
 			if (mOutputType == POSTSCRIPT)
 			{
 				/*
