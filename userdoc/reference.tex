@@ -1927,8 +1927,8 @@ and Y axes of the page, regardless of any rotation angle.
 \subsubsection{worlds}
 
 \begin{alltt}
-worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2} [, \texttt{"units=\textit{u}"}]
-worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2}, \textit{px1}, \textit{py1}, \textit{px2}, \textit{py2} [, \texttt{"units=\textit{u}"}]
+worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2} [, \textit{extras} ]
+worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2}, \textit{px1}, \textit{py1}, \textit{px2}, \textit{py2} [, \textit{extras} ]
 \end{alltt}
 
 Defines a world coordinate system for the page.
@@ -1951,12 +1951,44 @@ coordinates are mapped to the whole page.
 The new world coordinates replace any world coordinates
 set with a previous \texttt{worlds} command.
 
-The world coordinate range is expanded in the X or Y axis,
-if necessary, to maintain uniform scaling.
+\textit{extras} defines further options, given as
+\textit{variable=value} values, separated by whitespace.
+See Table \ref{worldsextras}
+for available options.
 
-\textit{u} defines the units of the world coordinates,
+\begin{longtable}{|l|p{7cm}|}
+\hline
+\label{worldsextras}
+Extra & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Font Extras} \\
+\endfoot
+
+\hline
+Extra & Description \\
+\hline
+\hline
+\endhead
+
+\texttt{units=\textit{units}} &
+
+Defines the units of the world coordinates,
 either \texttt{metres}, \texttt{meters} or \texttt{feet}.
-If not given, units are assumed to be meters.
+If not given, units are assumed to be meters. \\
+
+\texttt{distortion=\textit{flag}} &
+
+If \texttt{true} then non-uniform scaling in X and Y axes
+is allowed.  If \texttt{false} then
+the world coordinate range is expanded,
+if necessary, to maintain uniform scaling.
+If not given, then scaling is uniform. \\
+
+\hline
+\end{longtable}
 
 \subsection{Error Handling}
 
