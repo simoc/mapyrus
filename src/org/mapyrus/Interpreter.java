@@ -577,6 +577,7 @@ public class Interpreter
 
 			case Statement.LABEL:
 				String label;
+				int nChars = 0;
 
 				/*
 				 * Label with a single line of text, or multiple lines.
@@ -584,20 +585,25 @@ public class Interpreter
 				if (nExpressions == 1)
 				{
 					label = args[0].toString();
+					nChars += label.length();
 				}
 				else
 				{
-					StringBuffer s = new StringBuffer();
+					StringBuffer sb = new StringBuffer();
 					for (int i = 0; i < nExpressions; i++)
 					{
 						if (i > 0)
-							s.append(Constants.LINE_SEPARATOR);
-						s.append(args[i].toString());
+							sb.append(Constants.LINE_SEPARATOR);
+							
+						String nextLine = args[i].toString();
+						sb.append(nextLine);
+						nChars += nextLine.length();
 					}
-					label = s.toString();
+					label = sb.toString();
 				}
-// TODO skip labelling if string is empty.
-				context.label(label);
+
+				if (nChars > 0)
+					context.label(label);
 				break;
 						
 			case Statement.SCALE:
