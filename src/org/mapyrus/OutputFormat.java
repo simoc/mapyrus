@@ -36,6 +36,7 @@ import javax.imageio.*;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -90,7 +91,8 @@ public class OutputFormat
 	private PrintWriter mWriter;
 	private OutputStream mOutputStream;
 	private Graphics2D mGraphics2D;
-	private boolean mPipedOutput;	
+	private boolean mIsPipedOutput;	
+	private boolean mIsStandardOutput;
 	private Process mOutputProcess;
 	
 	/*
@@ -238,9 +240,11 @@ public class OutputFormat
 	 * @param height is the page height (in mm).
 	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
+	 * @param stdoutStream standard output stream for program.
 	 */
 	public OutputFormat(String filename, String format,
-		double width, double height, double resolution, String extras)
+		double width, double height, double resolution, String extras,
+		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
 		mFormatName = format.toUpperCase();
@@ -277,8 +281,14 @@ public class OutputFormat
 		 * Should we pipe the output to another program
 		 * instead of writing a file?
 		 */
-		mPipedOutput = filename.startsWith("|");
-		if (mPipedOutput)
+		mIsPipedOutput = filename.startsWith("|");
+
+		/*
+		 * Are we writing to standard output instead of to a file?
+		 */
+		mIsStandardOutput = filename.equals("-");
+
+		if (mIsPipedOutput)
 		{
 			String pipeCommand = filename.substring(1).trim();
 			mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
@@ -286,7 +296,10 @@ public class OutputFormat
 		}
 		else
 		{
-			mOutputStream = new FileOutputStream(filename);
+			if (mIsStandardOutput)
+				mOutputStream = stdoutStream;
+			else
+				mOutputStream = new FileOutputStream(filename);
 		}
 
 		/*
@@ -364,7 +377,7 @@ public class OutputFormat
 	{
 		for (int i = 0; i < mPostScriptIndent; i++)
 		{
-			mWriter.print(" ");
+			mWriter.print(' ');
 		}
 		mWriter.println(line);
 	}
@@ -410,7 +423,7 @@ public class OutputFormat
 	}
  
 	/**
-	 * Writes trailing information and closes output file.
+	 * Writes trailing and buffered information, then closes output file.
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
@@ -433,8 +446,12 @@ public class OutputFormat
 			while (it.hasNext())
 				mWriter.println("%%+ font " + (String)(it.next()));
 			mWriter.println("%%EOF");
-			mWriter.close();
 			
+			if (mIsStandardOutput)
+				mWriter.flush();
+			else
+				mWriter.close();
+
 			if (mWriter.checkError())
 			{
 				throw new MapyrusException(mFilename +
@@ -447,7 +464,11 @@ public class OutputFormat
 			 * Write image buffer to file.
 			 */
 			ImageIO.write(mImage, mFormatName, mOutputStream);
-			mOutputStream.close();
+
+			if (mIsStandardOutput)
+				mOutputStream.flush();
+			else
+				mOutputStream.close();
 			mImage = null;
 			mGraphics2D = null;
 		}
@@ -456,7 +477,7 @@ public class OutputFormat
 		 * If we are piping output to another program then wait for
 		 * that program to finish.  Then check that it succeeded.
 		 */
-		if (mPipedOutput)
+		if (mIsPipedOutput)
 		{
 			int retval = 0;
 			
