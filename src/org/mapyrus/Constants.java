@@ -60,6 +60,19 @@ public class Constants
 	public static final int HTTP_TEMPFILE_LIFESPAN = 300 * 1000;
 
 	/*
+	 * Timeout in milliseconds for socket communication between Mapyrus
+	 * and HTTP client.  A read/write takes longer than this time fails. 
+	 */
+	public static final int HTTP_SOCKET_TIMEOUT = 30 * 1000;
+
+	/*
+	 * Types of content returned when running as HTTP server.
+	 */
+	public static final String HTML_CONTENT_KEYWORD = "text/html";
+	public static final String TEXT_CONTENT_KEYWORD = "text/plain";
+	public static final String IMAGE_CONTENT_KEYWORD = "image/";
+
+	/*
 	 * Number of points and millimetres per inch.
 	 */
 	public static final int POINTS_PER_INCH = 72;
