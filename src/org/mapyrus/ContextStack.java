@@ -363,7 +363,17 @@ public class ContextStack
 	{
 		getCurrentContext().stripePath(spacing, angle);
 	}
-	
+
+	/**
+	 * Shift all coordinates in path shifted by a fixed amount.
+	 * @param xShift distance in millimetres to shift X coordinate values.
+	 * @param yShift distance in millimetres to shift Y coordinate values.
+	 */
+	public void translatePath(double xShift, double yShift)
+	{
+		getCurrentContext().translatePath(xShift, yShift);
+	}
+
 	/**
 	 * Draw currently defined path.
 	 */
