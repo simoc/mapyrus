@@ -98,10 +98,6 @@ it is not necessary to show path being cleared in each example -->
 <java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="versions.doc versions.html"/>
 </java>
-
-<java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="license.doc license.html"/>
-</java>
 <delete file="doc/VERSION"/>
 
 </target>
