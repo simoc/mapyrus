@@ -135,7 +135,7 @@ Mapyrus Version ${version} README
 Copyright (C) 2003, 2004 Simon Chenery.
 
 User manual is userdoc/mapyrus.pdf.
-Examples from user manual in userdoc directory.
+Examples from user manual are in userdoc directory.
 
 Changes in this version of Mapyrus are described in file NEWS.
 
