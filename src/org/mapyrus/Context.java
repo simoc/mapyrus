@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 import org.mapyrus.dataset.GeographicDataset;
+import org.mapyrus.geom.Sinkhole;
 
 /**
  * Maintains state information during interpretation inside a single procedure block. 
@@ -1010,6 +1011,21 @@ public class Context
 
 		if (path != null)
 			mPath = path.stripePath(spacing * mScaling, angle);
+	}
+
+	/**
+	 * Replace path defining polygon with a sinkhole point.
+	 */
+	public void createSinkhole()
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null)
+		{
+			Point2D pt = Sinkhole.calculate(path.getShape());
+			mPath = new GeometricPath();
+			mPath.moveTo((float)pt.getX(), (float)pt.getY(), 0);
+		}
 	}
 
 	/**
