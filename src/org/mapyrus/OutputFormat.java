@@ -175,12 +175,13 @@ public class OutputFormat
 		mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%LanguageLevel: 2");
-		mWriter.println("%%Creator: " + Constants.PROGRAM_NAME);
+		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
+			" " + Constants.getVersion() + ")");
 		Date now = new Date();
-		mWriter.println("%%CreationDate: " + now.toString());
+		mWriter.println("%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
 		if (username != null)
-			mWriter.println("%%For: " + username);
+			mWriter.println("%%For: (" + username + ")");
 
 		/*
 		 * List fonts included in this PostScript file.
