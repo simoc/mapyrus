@@ -40,14 +40,14 @@ public class Mapyrus
 		{
 			
 			"Usage:",
-			"java -jar " + PROGRAM_NAME + ".jar [filename|URL] ...",
+			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar [filename|URL] ...",
 			"",
 			PROGRAM_NAME + " reads each file and URL in turn.",
 			"If filename is '-' then reads from standard input.",
 			"If no filenames or URLs  are given then a GUI is started",
 			"for commands to be entered interactively.",
 			"",
-			"java -jar " + PROGRAM_NAME + ".jar server [port]",
+			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar server [port]",
 			"",
 			PROGRAM_NAME + " runs as a server, accepting connections",
 			"on the given TCP/IP port.",
