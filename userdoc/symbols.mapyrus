@@ -695,7 +695,7 @@ begin northarrow
 	label "N"
 end
 
-begin nsew_arrow dir
+begin nsew_arrow direction
 	# One direction of north arrow.
 	#
 	color "black"
@@ -718,7 +718,7 @@ begin nsew_arrow dir
 	rotate -Mapyrus.rotation
 	font "Times-Roman", 3
 	justify "center, middle"
-	label dir
+	label direction
 end
 
 begin nsew
