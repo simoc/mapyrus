@@ -2,8 +2,7 @@ begin waypoint
   # Draw waypoint symbol.
   #
   color "red"
-  move -2, -2
-  draw -2, 2, 2, 2, 2, -2, -2, -2
+  box -2, -2, 2, 2
   stroke
   clearpath
   move -2, -2
