@@ -222,7 +222,20 @@ public class Interpreter
 				}
 				context.clearPath();
 				break;
-								
+
+			case Statement.SLICEPATH:
+				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC)
+				{
+					context.slicePath(args[0].getNumericValue(), args[1].getNumericValue());
+				}
+				else
+				{
+					throw new MapyrusException("Invalid path slice values at " +
+						st.getFilenameAndLineNumber());
+				}
+				break;
+						
 			case Statement.STROKE:
 				if (nExpressions > 0)
 				{
@@ -279,10 +292,6 @@ public class Interpreter
 				 */
 				for (int i = 0; i <nExpressions; i++)
 				{
-					if (i > 0)
-					{
-						System.out.print(" ");
-					}
 					if (args[i].getType() == Argument.STRING)
 					{
 						System.out.print(args[i].getStringValue());
