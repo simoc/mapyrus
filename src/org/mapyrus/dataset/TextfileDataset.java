@@ -1,9 +1,3 @@
-/**
- * Implements reading of geographic datasets from a delimited text file
- * with one geometry plus its attributes per line.
- * Suitable for reading comma separated file or other simplistic file formats.
- */
-
 /*
  * $Id$
  */
@@ -19,6 +13,11 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+/**
+ * Implements reading of geographic datasets from a delimited text file
+ * with one geometry plus its attributes per line.
+ * Suitable for reading comma separated file or other simplistic file formats.
+ */
 public class TextfileDataset implements GeographicDataset
 {
 	/*
@@ -40,7 +39,8 @@ public class TextfileDataset implements GeographicDataset
 	private int mGeometryFieldIndexes[];
 
 	/*
-	 * Field separators.  Normally a comma or tab.
+	 * Field separators.  Normally a comma or keyword 'whitespace' (meaning anything
+	 * blank).
 	 */
 	private String mDelimeters;
 
@@ -78,8 +78,13 @@ public class TextfileDataset implements GeographicDataset
 	static
 	{
 		mFieldTypeLookup = new Hashtable();
-		mFieldTypeLookup.put("number", new Integer(Row.NUMBER));
-		mFieldTypeLookup.put("numeric", new Integer(Row.NUMBER));
+		mFieldTypeLookup.put("number", new Integer(Argument.NUMERIC));
+		mFieldTypeLookup.put("numeric", new Integer(Argument.NUMERIC));
+		mFieldTypeLookup.put("int", new Integer(Argument.NUMERIC));
+		mFieldTypeLookup.put("integer", new Integer(Argument.NUMERIC));
+		mFieldTypeLookup.put("real", new Integer(Argument.NUMERIC));
+		mFieldTypeLookup.put("double", new Integer(Argument.NUMERIC));
+		mFieldTypeLookup.put("float", new Integer(Argument.NUMERIC));
 	}
 
 	/*
@@ -98,6 +103,21 @@ public class TextfileDataset implements GeographicDataset
 		return(s);
 	}
 
+	/**
+	 * Create string tokenizer to split line using delimiters set for this file.
+	 * @param str is string to be split into tokens.
+	 */
+	private StringTokenizer createStringTokenizer(String str)
+	{
+		StringTokenizer retval;
+		
+		if (mDelimeters == null)
+			retval = new StringTokenizer(str);
+		else
+			retval = new StringTokenizer(str, mDelimeters);
+		return(retval);
+	}
+	
 	public TextfileDataset(String filename, String extras, String []geometryFieldNames)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
@@ -125,10 +145,9 @@ public class TextfileDataset implements GeographicDataset
 		/*
 		 * Set default options.  Then see if user wants to override any of them.
 		 */
-		mDelimeters = new String(",");
+		mDelimeters = null;
 		mComment = "#";
 		startLine = null;
-		mRow = new Row();
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -179,7 +198,7 @@ public class TextfileDataset implements GeographicDataset
 			while (nextLine != null && (!nextLine.startsWith(startLine)));
 		}
 
-		st = new StringTokenizer(fieldNames, mDelimeters);
+		st = createStringTokenizer(fieldNames);
 		v = new Vector();
 		while (st.hasMoreTokens())
 		{
@@ -188,7 +207,7 @@ public class TextfileDataset implements GeographicDataset
 		mFieldNames = (String [])(v.toArray());
 		
 		mFieldTypes = new int[mFieldNames.length];
-		st = new StringTokenizer(fieldNames, mDelimeters);
+		st = createStringTokenizer(fieldTypes);
 		i = 0;
 		while (st.hasMoreTokens() && i < mFieldTypes.length)
 		{
@@ -196,7 +215,7 @@ public class TextfileDataset implements GeographicDataset
 			fieldType = fieldType.toLowerCase();
 			fType = (Integer)mFieldTypeLookup.get(fieldType);
 			if (fType == null)
-				mFieldTypes[i] = Row.STRING;
+				mFieldTypes[i] = Argument.STRING;
 			else
 				mFieldTypes[i] = fType.intValue();
 
@@ -223,7 +242,7 @@ public class TextfileDataset implements GeographicDataset
 			{
 				if (geometryFieldNames[i].equalsIgnoreCase(mFieldNames[j]))
 				{
-					if (mFieldTypes[j] == Row.STRING)
+					if (mFieldTypes[j] == Argument.STRING)
 					{
 						throw new MapyrusException("Field '" + mFieldNames[j] +
 							"' is wrong type for geometry in file '" +
@@ -298,7 +317,7 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see net.sourceforge.mapyrus.GeographicDataset#query(String[], Double, String)
+	 *
 	 */
 	public void query(Rectangle2D.Double extents, String whereClause)
 		throws MapyrusException
@@ -314,6 +333,13 @@ public class TextfileDataset implements GeographicDataset
 			for (int i = 0; i < mSkipLines; i++)
 				readLine();
 			mRowAvailable = false;
+
+			/*
+			 * Create row for returning results of this query.
+			 */
+			mRow = new Row();
+			for (int i = 0; i < mFieldNames.length; i++)
+				mRow.add(new Argument(0.0));
 		}
 		catch (IOException e)
 		{
@@ -331,6 +357,7 @@ public class TextfileDataset implements GeographicDataset
 		StringTokenizer st;
 		String message = null;
 		String fieldValue, nextLine;
+		Argument field;
 
 		/*
 		 * Need next line from file.
@@ -356,16 +383,17 @@ public class TextfileDataset implements GeographicDataset
 		 */
 		i = geometryFieldIndex = 0;
 		mRow.clear();
-		st = new StringTokenizer(nextLine, mDelimeters);
+		st = createStringTokenizer(nextLine);
 		while (st.hasMoreTokens() && i < mFieldNames.length)
 		{
 			fieldValue = st.nextToken();
 
-			if (mFieldTypes[i] == Row.NUMBER)
+			field = (Argument)(mRow.elementAt(i));
+			if (mFieldTypes[i] == Argument.NUMERIC)
 			{
 				try
 				{
-					mRow.add(new Argument(Double.parseDouble(fieldValue)));
+					field.setNumericValue(Double.parseDouble(fieldValue));
 				}
 				catch (NumberFormatException e)
 				{
@@ -377,7 +405,7 @@ public class TextfileDataset implements GeographicDataset
 			}
 			else
 			{
-				mRow.add(new Argument(Argument.STRING, fieldValue));
+				field.setStringValue(fieldValue);
 			}
 			i++;
 		}
@@ -395,44 +423,55 @@ public class TextfileDataset implements GeographicDataset
 		boolean rowOutside;
 		int i;
 		Argument x, y;
-		boolean insideExtents;
-		int outcode, allOutcodes;
+		boolean left, right, bottom, top, inX, inY;
+		boolean insideExtents = false;
+		int outcode;
+		boolean nextRowAvailable;
 
 		do
 		{
-			if (mRowAvailable == false)
-				mRowAvailable = readMatchingRow();
-			if (mRowAvailable)
+			nextRowAvailable = readNextRow();
+			if (nextRowAvailable)
 			{
 				/*
-				 * Does geometry crosses query extents?
+				 * Walk through points in geometry and see whether
+				 * they cross the area we are querying.
 				 */
-				insideExtents = false;
-				allOutcodes = 0;
-				for (i = 0; i < mGeometryFieldIndexes.length && (!insideExtents); i += 2)
+				left = right = bottom = top = inX = inY = false;
+				for (i = 0; i < mGeometryFieldIndexes.length; i += 2)
 				{
 					x = (Argument)(mRow.elementAt(i));
 					y = (Argument)(mRow.elementAt(i + 1));
 					outcode = mQueryExtents.outcode(x.getNumericValue(),
 						y.getNumericValue());
-					if (outcode == 0)
-						insideExtents = true;
+						
+					if ((outcode & Rectangle2D.OUT_LEFT) != 0)
+						left = true;
+					else if ((outcode & Rectangle2D.OUT_RIGHT) != 0)
+						right = true;
 					else
-						allOutcodes |=  outcode;
+						inX = true;
+						
+					if ((outcode | Rectangle2D.OUT_BOTTOM) != 0)
+						bottom = true;
+					else if ((outcode | Rectangle2D.OUT_TOP) != 0)
+						top = true;
+					else
+						inY = true;					
 				}
 				
 				/*
-				 * If points in geometry lie both above and below
+				 * Geometry inside query extents if there is a point inside extents
+				 * (or a point both sides of the extents) in both X and Y axes.
 				 */
-				if (allOutcodes & (Rectangle2D.OUT_BOTTOM & Rectangle2D.OUT_TOP)
-					insideExtents = true; XXX
+				insideExtents = (inX || (left && right)) && (inY || (bottom && top));
 			}
 		}
-		while (mRowAvailable && (!insideExtents));
-		
+		while (nextRowAvailable && (!insideExtents));
+
 		return(insideExtents);
 	}
-	
+
 	/**
 	 * @see net.sourceforge.mapyrus.GeographicDataset#hasMoreRows(Object)
 	 */
@@ -449,7 +488,10 @@ public class TextfileDataset implements GeographicDataset
 	public Row fetch() throws MapyrusException
 	{
 		boolean status;
-		
+
+		/*
+		 * Fetch next row if it has not been read already.
+		 */		
 		if (mRowAvailable == false)
 			mRowAvailable = readMatchingRow();
 
