@@ -106,7 +106,14 @@ public class OutputFormat
 	 */
 	private HashSet mSuppliedFontResources;
 	private HashSet mNeededFontResources;
-	
+
+	/*
+	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
+	 * This is normally done so that extended symbols (such as degree symbol)
+	 * can be used. 
+	 */
+	private HashSet mEncodeAsISOLatin1;
+
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
 	 */
@@ -293,6 +300,26 @@ public class OutputFormat
 	}
 
 	/**
+	 * Return PostScript commands to re-encode a font in ISOLatin1 encoding.
+	 * @param fontName name of font to re-encode.
+	 * @return string containing PostScript commands to re-encode font.
+	 */
+	private String isoLatinEncode(String fontName)
+	{
+		/*
+		 * Re-encoding commands taken from section 5.6.1 of Adobe PostScript
+		 * Language Reference Manual (2nd Edition).
+		 */
+		return("/" + fontName + " findfont" + Constants.LINE_SEPARATOR +
+			"dup length dict begin" + Constants.LINE_SEPARATOR +
+			"{1 index /FID ne {def} {pop pop} ifelse} forall" + Constants.LINE_SEPARATOR +
+			"/Encoding ISOLatin1Encoding def" + Constants.LINE_SEPARATOR +
+			"currentdict" + Constants.LINE_SEPARATOR +
+			"end" + Constants.LINE_SEPARATOR +
+			"/" + fontName + " exch definefont pop");
+	}
+
+	/**
 	 * Creates new graphics file, ready for drawing to.
 	 * @param filename name of image file output will be saved to.
 	 * If filename begins with '|' character then output is piped as
@@ -367,6 +394,7 @@ public class OutputFormat
 			mSuppliedFontResources = new HashSet();
 			ArrayList fontList = new ArrayList();
 			StringTokenizer st = new StringTokenizer(extras);
+			mEncodeAsISOLatin1 = new HashSet();
 			while (st.hasMoreTokens())
 			{
 				String token = st.nextToken();
@@ -382,6 +410,19 @@ public class OutputFormat
 						String pfaFilename = st2.nextToken();
 						if (pfaFilename.length() > 0)
 							fontList.add(new PostScriptFont(pfaFilename));
+					}
+				}
+				else if (token.startsWith("isolatinfonts="))
+				{
+					/*
+					 * Build list of fonts to encode in ISOLatin1.
+					 */
+					StringTokenizer st2 = new StringTokenizer(token.substring(14), ",");
+					while (st2.hasMoreTokens())
+					{
+						String fontName = st2.nextToken();
+						if (fontName.length() > 0)
+							mEncodeAsISOLatin1.add(fontName);
 					}
 				}
 			}
@@ -627,6 +668,16 @@ public class OutputFormat
 	{
 		if (mOutputType == POSTSCRIPT)
 		{
+			if (mEncodeAsISOLatin1.contains(fontName))
+			{
+				/*
+				 * Re-encode font from StandardEncoding to ISOLatin1Encoding
+				 * before it is used.
+				 */
+				writePostScriptLine(isoLatinEncode(fontName));
+				mEncodeAsISOLatin1.remove(fontName);
+			}
+
 			/*
 			 * Set font and size for labelling.
 			 */
