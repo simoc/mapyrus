@@ -1309,6 +1309,10 @@ called with arguments \textit{arg1}, \textit{arg2} ... to display a sample of
 the symbol when a legend is generated with a \texttt{legend} command.  This
 command is ignored if used outside of a procedure.
 
+If \textit{description} contains the string \texttt{(\#)} then it will
+be replaced in a legend by the number of times that the legend entry
+is defined.
+
 \textit{type} is either
 \texttt{point} to display the legend entry as a single point,
 \texttt{line} to display the legend entry as a horizontal line,
