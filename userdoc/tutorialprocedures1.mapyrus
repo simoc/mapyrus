@@ -1,26 +1,26 @@
 begin trail grade
-	# Draw a line marking a park trail.  Line color and
-	# style depends on grade of trail.
-	#
-	if grade eq 'vehicle'
-	then
-		color "black"
-		linestyle 0.5
-	elif grade eq 'maintained'
-	then
-		color "gray"
-		linestyle 0.1, 'butt', 'bevel', 0, 2, 2
-	else
-		# Unmaintained track is dotted line,
-		# one pixel on, one pixel off.
-		#
-		color "#A52A2A"
-		linestyle 0.1, 'butt', 'bevel', 0, Mapyrus.page.resolution.mm, Mapyrus.page.resolution.mm
-	endif
-	stroke
+  # Draw a line marking a park trail.  Line color and
+  # style depends on grade of trail.
+  #
+  if grade eq 'vehicle'
+  then
+    color "black"
+    linestyle 0.5
+  elif grade eq 'maintained'
+  then
+    color "gray"
+    linestyle 0.5, 'butt', 'bevel', 0, 2, 2
+  else
+    # Unmaintained track is dotted line,
+    # one pixel on, one pixel off.
+    #
+    color "#A52A2A"
+    linestyle 0.5, 'butt', 'bevel', 0, 1, 1
+  endif
+  stroke
 end
 
-newpage "png", "tutorialprocedures1.png", 60, 30, 96
+newpage "eps", "tutorialprocedures1.eps", 60, 30, 96
 
 # Draw trails of differing grades.  In a real application this
 # data would be read from a Geographic Information System (GIS).
@@ -29,17 +29,14 @@ clearpath
 move 10, 10
 draw 15, 16, 26, 24, 38, 29
 trail 'vehicle'
-
 clearpath
 move 17, 16
 draw 24, 15, 29, 12, 34, 5
 trail 'maintained'
-
 clearpath
 move 24, 23
 draw 12, 26, 6, 28
 trail 'maintained'
-
 clearpath
 move 30, 11
 draw 36, 9, 40, 10, 46, 9, 54, 8
