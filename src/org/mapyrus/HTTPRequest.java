@@ -376,6 +376,32 @@ public class HTTPRequest extends Thread
 		}
 	}
 
+	/**
+	 * Convert exception to a string.
+	 * @param e exception to convert.
+	 * @return exception as a string with exception message, type
+	 * and stack trace.
+	 */
+	private String exceptionToString(Exception e)
+	{
+		StringBuffer sb = new StringBuffer();
+
+		String msg = e.getMessage();
+		if (msg != null)
+			sb.append(e.getMessage()).append(Constants.LINE_SEPARATOR);
+
+		sb.append(e.getClass().getName());
+		sb.append(Constants.LINE_SEPARATOR);
+		StackTraceElement []stack = e.getStackTrace();
+		for (int i = 0; i < stack.length; i++)
+		{
+			msg = stack[i].toString();
+			if (msg != null)
+				sb.append(msg).append(Constants.LINE_SEPARATOR);
+		}
+		return(sb.toString());
+	}
+
 	public void run()
 	{
 		ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
@@ -453,6 +479,16 @@ public class HTTPRequest extends Thread
 		{
 			mReturnStatus = false;
 			mErrorMessage = e.getMessage();
+		}
+		catch (Exception e)
+		{
+			/*
+			 * Any other type of exception (such as a NullPointerException)
+			 * indicates a bug.  Return all information to client so
+			 * problem can be pinpointed.
+			 */
+			mReturnStatus = false;
+			mErrorMessage = exceptionToString(e);
 		}
 
 		try
