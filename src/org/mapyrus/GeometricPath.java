@@ -1,13 +1,7 @@
-/**
- * A geometric path.  A series of coordinates, either separate or joined together
- * as part of a line or polygon.  Coordinate pairs are joined with either
- * straight lines, arcs or bezier curves.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
  
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -15,6 +9,11 @@ import java.awt.geom.*;
 import java.lang.*;
 import java.util.Vector;
 
+/**
+ * A geometric path.  A series of coordinates, either separate or joined together
+ * as part of a line or polygon.  Coordinate pairs are joined with either
+ * straight lines, arcs or bezier curves.
+ */
 public class GeometricPath
 {
 	/*

@@ -1,19 +1,18 @@
+/*
+ * $Id$
+ */
+package au.id.chenery.mapyrus;
+
+import java.lang.String;
+import java.util.Hashtable;
+import java.io.*;
+
 /**
  * An expression tree.  Parser for numeric or string expression that builds
  * a binary tree holding the expression.  The expression can be later 
  * be evaluated and the tree is evaluated to a single value.
  *
  */
-
-/*
- * $Id$
- */
-package net.sourceforge.mapyrus;
-
-import java.lang.String;
-import java.util.Hashtable;
-import java.io.*;
-
 public class Expression
 {
 	/*

@@ -1,13 +1,7 @@
-/**
- * Wrapper around a Reader to read from a file or URL, whilst expanding
- * any included files and URLs.
- * Also allows for read characters to be pushed back onto input stream.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.io.*;
 import java.net.URL;
@@ -17,6 +11,11 @@ import java.lang.String;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 
+/**
+ * Wrapper around a Reader to read from a file or URL, whilst expanding
+ * any included files and URLs.
+ * Also allows for read characters to be pushed back onto input stream.
+ */
 class Preprocessor
 {
 	private static final String INCLUDE_KEYWORD = "include";

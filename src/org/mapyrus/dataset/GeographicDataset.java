@@ -1,16 +1,15 @@
-/**
- * Interface to a vector geographic format.  Provides methods to open and query
- * data from a vector geographic format.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
 
+/**
+ * Interface to a vector geographic format.  Provides methods to open and query
+ * data from a vector geographic format.
+ */
 public interface GeographicDataset
 {
 	/**

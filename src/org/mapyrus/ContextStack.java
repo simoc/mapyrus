@@ -1,13 +1,7 @@
-/**
- * Contexts for interpretation that are pushed and popped as procedure 
- * blocks are called and return so that changes in a procedure block
- * are local to that block.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.util.Hashtable;
 import java.awt.Color;
@@ -21,6 +15,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import net.sourceforge.mapyrus.*;
 
+/**
+ * Contexts for interpretation that are pushed and popped as procedure 
+ * blocks are called and return so that changes in a procedure block
+ * are local to that block.
+ */
 public class ContextStack
 {
 	/*

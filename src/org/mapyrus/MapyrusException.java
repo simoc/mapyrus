@@ -1,14 +1,13 @@
-/**
- * This class indicates exceptions in the Mapyrus software that can be caught.
- */
- 
 /*
  * @(#) $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.lang.String;
 
+/**
+ * This class indicates exceptions in the Mapyrus software that can be caught.
+ */
 public class MapyrusException extends Exception
 {
 	public MapyrusException()

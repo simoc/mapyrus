@@ -1,14 +1,7 @@
-/**
- * Language interpreter.  Parse and executes commands read from file, or
- * typed by user.
- * 
- * May be called repeatedly to interpret several files in the same context.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -19,6 +12,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import net.sourceforge.mapyrus.Context;
 
+/**
+ * Language interpreter.  Parse and executes commands read from file, or
+ * typed by user.
+ * 
+ * May be called repeatedly to interpret several files in the same context.
+ */
 public class Interpreter
 {
 	/*

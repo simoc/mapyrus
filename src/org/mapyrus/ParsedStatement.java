@@ -1,3 +1,10 @@
+/*
+ * $Id$
+ */
+package au.id.chenery.mapyrus;
+
+import java.io.*;
+
 /**
  * A statement or other keyword, read from a file and parsed.
  * A statement can be a simple statement, a procedure block or
@@ -6,14 +13,6 @@
  * A parsed statement may also be a control-flow keyword that goes between
  * other statements.
  */
-
-/*
- * $Id$
- */
-package net.sourceforge.mapyrus;
-
-import java.io.*;
-
 public class ParsedStatement
 {
 	/*

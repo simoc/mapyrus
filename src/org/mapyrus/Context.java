@@ -1,13 +1,7 @@
-/**
- * Maintains state information during interpretation inside a single procedure block. 
- * Holds the graphics attributes (color, line styles, transformations, etc.), the 
- * variables set by the user and connections to external data sources.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -20,6 +14,11 @@ import java.util.Hashtable;
 import java.io.IOException;
 import java.util.Vector;
 
+/**
+ * Maintains state information during interpretation inside a single procedure block. 
+ * Holds the graphics attributes (color, line styles, transformations, etc.), the 
+ * variables set by the user and connections to external data sources.
+ */
 public class Context
 {
 	/*

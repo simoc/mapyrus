@@ -1,12 +1,7 @@
-/**
- * Color names and their RGB color components.
- * A name to RGB value lookup table using colors read from a UNIX-style rgb.txt file.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
  
 import java.util.Hashtable;
 import java.awt.Color;
@@ -18,6 +13,11 @@ import java.lang.NumberFormatException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * Color names and their RGB color components.
+ * A name to RGB value lookup table using colors read from a UNIX-style rgb.txt file.
+ * Some basic colors are defined if no file can be found to read.
+ */
 public class ColorDatabase
 {
 	static private Hashtable mColors;

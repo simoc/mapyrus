@@ -1,18 +1,17 @@
-/**
- * Main class for Mapyrus, a program for generating plots of points, lines and polygons
- * to various output formats.  Runs as either a GUI, a server or interpreter for files
- * given on the command line.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.io.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+/**
+ * Main class for Mapyrus, a program for generating plots of points, lines and polygons
+ * to various output formats.  Runs as either a GUI, a server or interpreter for files
+ * given on the command line.
+ */
 public class Mapyrus
 {
 	public static final String PROGRAM_NAME = "Mapyrus";

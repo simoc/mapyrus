@@ -1,3 +1,12 @@
+/*
+ * $Id$
+ */
+package au.id.chenery.mapyrus;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.io.*;
+
 /**
  * Interfaces to an external shared library to which we pipe coordinate values
  * and then read back transformed values.  Most useful in combination with
@@ -6,16 +15,6 @@
  * Uses JNI interface to call native methods to define transformation and then
  * to transform points between coordinate systems.
  */
-
-/*
- * $Id$
- */
-package net.sourceforge.mapyrus;
-
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.io.*;
-
 public class WorldCoordinateTransform
 {
 	/*

@@ -2,7 +2,7 @@
  * $Id$
  */
 
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.lang.String;
 

@@ -1,13 +1,7 @@
-/**
- * Abstraction of a graphics format.  Provides methods to create new
- * output files and then draw to them, independent of the graphics
- * format.
- */
-
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
  
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
@@ -27,6 +21,11 @@ import java.text.DecimalFormat;
 import java.awt.image.*;
 import java.awt.Color;
 
+/**
+ * Abstraction of a graphics format.  Provides methods to create new
+ * output files and then draw to them, independent of the graphics
+ * format.
+ */
 public class OutputFormat
 {
 	/*

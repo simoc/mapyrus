@@ -7,7 +7,7 @@
  * its attributes.
  * Or as the OGIS people would say, a "simple feature".
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus;
 
 import java.util.Vector;
 

@@ -1,17 +1,16 @@
+/*
+ * $Id$
+ */
+package au.id.chenery.mapyrus;
+
+import java.util.Vector;
+import java.util.Hashtable;
+
 /**
  * A parsed statement.
  * Can be one of several types.  An assignment statement, a conditional
  * statement, a block of statements making a procedure or just a plain command.
  */
-
-/*
- * $Id$
- */
-package net.sourceforge.mapyrus;
-
-import java.util.Vector;
-import java.util.Hashtable;
-
 public class Statement
 {
 	/*

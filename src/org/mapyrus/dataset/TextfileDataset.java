@@ -1,7 +1,7 @@
 /*
  * $Id$
  */
-package net.sourceforge.mapyrus;
+package au.id.chenery.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
