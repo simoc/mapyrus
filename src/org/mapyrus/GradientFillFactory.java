@@ -91,10 +91,10 @@ public class GradientFillFactory
 				 * Calculate distance to each point in the image at which
 				 * a color is defined.
 				 */
-				int c1Distance = x * x + y * y;
-				int c2Distance = (IMAGE_SIZE - x) * (IMAGE_SIZE - x) + y * y;
-				int c3Distance = x * x + (IMAGE_SIZE - y) * (IMAGE_SIZE - y);
-				int c4Distance = (IMAGE_SIZE - x) * (IMAGE_SIZE - x) +
+				int c3Distance = x * x + y * y;
+				int c4Distance = (IMAGE_SIZE - x) * (IMAGE_SIZE - x) + y * y;
+				int c1Distance = x * x + (IMAGE_SIZE - y) * (IMAGE_SIZE - y);
+				int c2Distance = (IMAGE_SIZE - x) * (IMAGE_SIZE - x) +
 					(IMAGE_SIZE - y) * (IMAGE_SIZE - y);
 				int c5Distance = (IMAGE_SIZE / 2 - x) * (IMAGE_SIZE / 2 - x) +
 					(IMAGE_SIZE / 2 - y) * (IMAGE_SIZE / 2 - y);
@@ -107,37 +107,23 @@ public class GradientFillFactory
 				 * Set weighting so that color at each pixel is most influenced
 				 * by the closest fixed colors.
 				 */
-				c1Weightings[index] = (short)Math.round(Short.MAX_VALUE * power6(1 - (double)c1Distance / maxDistance));
-				c2Weightings[index] = (short)Math.round(Short.MAX_VALUE * power6(1 - (double)c2Distance / maxDistance));
-				c3Weightings[index] = (short)Math.round(Short.MAX_VALUE * power6(1 - (double)c3Distance / maxDistance));
-				c4Weightings[index] = (short)Math.round(Short.MAX_VALUE * power6(1 - (double)c4Distance / maxDistance));
-				c5Weightings[index] = (short)Math.round(Short.MAX_VALUE * power6(1 - (double)c5Distance / maxDistance));
+				c1Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c1Distance / maxDistance));
+				c2Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c2Distance / maxDistance));
+				c3Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c3Distance / maxDistance));
+				c4Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c4Distance / maxDistance));
+				c5Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c5Distance / maxDistance));
 			}
 		}
 	}
 
 	/**
-	 * Calculate sixth power of number.
+	 * Calculate 8th power of number.
 	 * @param d value to calculate.
-	 * @return d to the power six.
+	 * @return d to the power 8.
 	 */
-	private static double power6(double d)
+	private static double power8(double d)
 	{
-		return(d * d * d * d * d * d);
-	}
-
-	/**
-	 * Calculate image containing smooth pattern calculated from five colors, in each corner of image.
-	 * @param c1 color for lower-left corner of image.
-	 * @param c2 color for lower-right corner of image.
-	 * @param c3 color for top-left corner of image.
-	 * @param c4 color for top-right corner of image.
-	 * @return image containing pattern.
-	 */
-	public static synchronized BufferedImage getImage(Color c1,
-		Color c2, Color c3, Color c4)
-	{
-		return(getImage(c1, c2, c3, c4, null));
+		return(d * d * d * d * d * d * d * d);
 	}
 
 	/**
@@ -147,7 +133,7 @@ public class GradientFillFactory
 	 * @param c2 color for lower-right corner of image.
 	 * @param c3 color for top-left corner of image.
 	 * @param c4 color for top-right corner of image.
-	 * @param c5 color for center of image.
+	 * @param c5 color for center of image, if null then not used.
 	 * @return image containing pattern.
 	 */
 	public static synchronized BufferedImage getImage(Color c1,
@@ -240,7 +226,8 @@ public class GradientFillFactory
 	{
 		try
 		{
-			BufferedImage image = getImage(Color.BLUE, Color.YELLOW, Color.YELLOW, Color.RED, null);
+			
+			BufferedImage image = getImage(Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.RED);
 			ImageIO.write(image, "png", new File("/tmp/a.png"));
 		}
 		catch (IOException e)
