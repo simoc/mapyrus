@@ -22,7 +22,7 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.util.HashMap;
+import java.net.URLConnection;
 
 /**
  * MIME types for filename extensions.
@@ -30,31 +30,6 @@ import java.util.HashMap;
  */
 public class MimeTypes
 {
-	private static HashMap mMimeTypes;
-
-	static
-	{
-		mMimeTypes = new HashMap();
-
-		/*
-		 * Define only commonly used MIME types.
-		 */
-		mMimeTypes.put("gif", "image/gif");
-		mMimeTypes.put("jpeg", "image/jpeg");
-		mMimeTypes.put("jpg", "image/jpeg");
-		mMimeTypes.put("png", "image/png");
-		mMimeTypes.put("htm", "text/html");
-		mMimeTypes.put("html", "text/html");
-		mMimeTypes.put("txt", "text/plain");
-		mMimeTypes.put("xml", "text/xml");
-		mMimeTypes.put("ps", "application/ps");
-		mMimeTypes.put("eps", "application/ps");
-		mMimeTypes.put("pdf", "application/pdf");
-		mMimeTypes.put("gz", "application/x-gzip");
-		mMimeTypes.put("bz2", "application/x-bzip2");
-		mMimeTypes.put("zip", "application/zip");
-	}
-
 	/**
 	 * Returns the MIME type for a given file extension.
 	 * @param extension is filename suffix to lookup MIME type for.
@@ -62,7 +37,7 @@ public class MimeTypes
 	 */
 	public static String get(String extension)
 	{
-		String retval = (String)mMimeTypes.get(extension.toLowerCase());
+		String retval = URLConnection.guessContentTypeFromName("x." + extension);
 		return(retval);
 	}
 }
