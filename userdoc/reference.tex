@@ -822,6 +822,7 @@ back to the last point added with a \texttt{move} command.
 
 \begin{alltt}
 color \textit{name} [, \textit{alpha}]
+color "contrast" [, \textit{alpha}]
 color "\#\textit{hexdigits}" [, \textit{alpha}]
 color "0x\textit{hexdigits}" [, \textit{alpha}]
 color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
@@ -831,6 +832,9 @@ color "hsb", \textit{hue}, \textit{saturation}, \textit{brightness} [, \textit{a
 Sets color for drawing.  Around 150 commonly used color names are defined,
 additional color names are defined in a file given as a startup variable (see
 Table \ref{startupvariables} on page \pageref{startupvariables}).
+
+If color name is \texttt{contrast} then color is set to either black or white,
+whichever constrasts more with the current color.
 
 \textit{hexdigits} is a 6 digit hexadecimal
 value defining RGB values, as used in HTML pages.
