@@ -1008,23 +1008,40 @@ public class Interpreter
 
 			case Statement.LABEL:
 			case Statement.PRINT:
+			case Statement.FLOWLABEL:
 				String label;
 				int nChars = 0;
+				int labelIndex;
+				double offset = 0.0;
+
+				if (type == Statement.FLOWLABEL)
+				{
+					if (nExpressions < 1)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_OFFSET));
+					}
+					offset = mExecuteArgs[0].getNumericValue();
+					labelIndex = 1;
+				}
+				else
+				{
+					labelIndex = 0;
+				}
 
 				/*
 				 * Label/print a single argument, or several separated by spaces.
 				 */
-				if (nExpressions == 1)
+				if (nExpressions == labelIndex + 1)
 				{
-					label = mExecuteArgs[0].toString();
+					label = mExecuteArgs[labelIndex].toString();
 					nChars += label.length();
 				}
 				else
 				{
 					StringBuffer sb = new StringBuffer();
-					for (int i = 0; i < nExpressions; i++)
+					for (int i = labelIndex; i < nExpressions; i++)
 					{
-						if (i > 0)
+						if (i > labelIndex)
 							sb.append(' ');
 
 						String nextLine = mExecuteArgs[i].toString();
@@ -1040,7 +1057,10 @@ public class Interpreter
 				}
 				else if (nChars > 0)
 				{
-					context.label(label);
+					if (type == Statement.FLOWLABEL)
+						context.flowLabel(offset, label);
+					else
+						context.label(label);
 				}
 				break;
 
