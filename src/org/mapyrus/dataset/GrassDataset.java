@@ -274,7 +274,7 @@ public class GrassDataset implements GeographicDataset
 	{
 		Row row = new Row();
 
-		double d, x, y, z;
+		double x, y, z;
 		int lineLength = line.length();
 		int pipe1Index, pipe2Index = 0, pipe3Index = 0;
 		int nextIndex;
