@@ -24,7 +24,6 @@ package org.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
@@ -1473,7 +1472,7 @@ public class Context
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.
 	 */
-	public void drawIcon(Image icon, double size)
+	public void drawIcon(BufferedImage icon, double size)
 		throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
