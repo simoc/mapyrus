@@ -112,6 +112,18 @@ public class FunctionTable
 			 */
 			f = new Buffer();
 			mFunctions.put(f.getName(), f);
+
+			f = new Contains();
+			mFunctions.put(f.getName(), f);
+
+			f = new Intersection();
+			mFunctions.put(f.getName(), f);
+
+			f = new Overlaps();
+			mFunctions.put(f.getName(), f);
+
+			f = new Union();
+			mFunctions.put(f.getName(), f);
 		}
 		catch (NoClassDefFoundError e)
 		{
@@ -120,6 +132,10 @@ public class FunctionTable
 			 * They'll fail if they are ever called though.
 			 */
 			mFunctions.put("buffer", new DummyFunction("buffer"));
+			mFunctions.put("contains", new DummyFunction("contains"));
+			mFunctions.put("intersection", new DummyFunction("intersection"));
+			mFunctions.put("overlaps", new DummyFunction("overlaps"));
+			mFunctions.put("union", new DummyFunction("union"));
 		}
 	};
 
