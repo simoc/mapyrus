@@ -149,6 +149,9 @@ public class FunctionTable
 			f = new ConvexHull();
 			mFunctions.put(f.getName(), f);
 
+			f = new Difference();
+			mFunctions.put(f.getName(), f);
+			
 			f = new Intersection();
 			mFunctions.put(f.getName(), f);
 
@@ -167,6 +170,7 @@ public class FunctionTable
 			mFunctions.put("buffer", new DummyFunction("buffer"));
 			mFunctions.put("contains", new DummyFunction("contains"));
 			mFunctions.put("convexhull", new DummyFunction("convexhull"));
+			mFunctions.put("difference", new DummyFunction("difference"));
 			mFunctions.put("intersection", new DummyFunction("intersection"));
 			mFunctions.put("overlaps", new DummyFunction("overlaps"));
 			mFunctions.put("union", new DummyFunction("union"));
