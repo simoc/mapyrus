@@ -412,9 +412,10 @@ public class Interpreter
 			if (nExpressions > 0)
 			{
 				args = new Argument[nExpressions];
+				String interpreterFilename = st.getFilename();
 				for (int i = 0; i < nExpressions; i++)
 				{
-					args[i] = expr[i].evaluate(context);
+					args[i] = expr[i].evaluate(context, interpreterFilename);
 				}
 			}
 		}
@@ -1522,7 +1523,7 @@ public class Interpreter
 			
 			try
 			{
-				test = expr[0].evaluate(mContext);
+				test = expr[0].evaluate(mContext, statement.getFilename());
 			}
 			catch (MapyrusException e)
 			{
@@ -1565,7 +1566,7 @@ public class Interpreter
 	
 			try
 			{
-				test = expr[0].evaluate(mContext);
+				test = expr[0].evaluate(mContext, statement.getFilename());
 			}
 			catch (MapyrusException e)
 			{
@@ -1589,11 +1590,11 @@ public class Interpreter
 				 */	
 				for (int i = 0; i < v.size(); i++)
 				{
-					statement = (Statement)v.get(i);
-					executeStatement(statement);
+					Statement st = (Statement)v.get(i);
+					executeStatement(st);
 				}
-				
-				test = expr[0].evaluate(mContext);
+
+				test = expr[0].evaluate(mContext, statement.getFilename());
 				if (test.getType() != Argument.NUMERIC)
 				{
 					throw new MapyrusException(statement.getFilenameAndLineNumber() +
@@ -1634,7 +1635,7 @@ public class Interpreter
 				args = new Argument[actualParameters.length];
 				for (int i = 0; i < args.length; i++)
 				{
-					args[i] = actualParameters[i].evaluate(mContext);
+					args[i] = actualParameters[i].evaluate(mContext, statement.getFilename());
 				}
 			}
 			catch (MapyrusException e)
