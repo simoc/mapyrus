@@ -56,6 +56,9 @@ public class FunctionTable
 		f = new Length();
 		mFunctions.put(f.getName(), f);
 
+		f = new Lower();
+		mFunctions.put(f.getName(), f);
+
 		f = new Log10();
 		mFunctions.put(f.getName(), f);
 
@@ -108,6 +111,9 @@ public class FunctionTable
 		mFunctions.put(f.getName(), f);
 		
 		f = new Tempname();
+		mFunctions.put(f.getName(), f);
+
+		f = new Upper();
 		mFunctions.put(f.getName(), f);
 
 		try
