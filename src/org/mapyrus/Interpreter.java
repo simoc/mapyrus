@@ -443,7 +443,8 @@ public class Interpreter
 							 * Define path from fetched geometry.
 							 */
 							double []coords = field.getGeometryValue();
-							for (int j = 1; j < coords[0]; j++)
+							int j = 1;
+							while (j < coords[0])
 							{
 								if (coords[j] == PathIterator.SEG_MOVETO)
 									context.moveTo(coords[j + 1], coords[j + 2]);
