@@ -38,9 +38,14 @@ import org.mapyrus.MapyrusMessages;
  */
 public class AdobeFontMetrics
 {
+	/*
+	 * Full width of a character defined in an AFM file.
+	 * Widths of each character are defined relative to this width.
+	 */
+	private static final int FULL_CHAR_WIDTH = 1000;
+
 	private String mFontName;
 
-	private int mCharWidth;
 	private short []mCharWidths;
 	private boolean mIsFixedPitch;
 
@@ -199,21 +204,6 @@ public class AdobeFontMetrics
 					mFontName = st.nextToken();
 					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(mFontName);
 				}
-				else if (line.startsWith("FontBBox"))
-				{
-					st = new StringTokenizer(line);
-					if (st.countTokens() < 5)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-							": " + filename);
-					}
-
-					st.nextToken();
-					st.nextToken(); /* xMin */
-					st.nextToken();	/* yMin */
-					int xMax = Integer.parseInt(st.nextToken());
-					mCharWidth = xMax;
-				}
 				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
 				{
 					mIsFixedPitch = true;
@@ -306,8 +296,7 @@ public class AdobeFontMetrics
 			 * depends only on length of string.
 			 */
 			int spaceIndex = 32;
-			// TODO read AFM standard to check that dividing by 1000 is correct.
-			pointLen = s.length() * (mCharWidths[spaceIndex] / 1000.0) * pointSize;
+			pointLen = s.length() * ((double)mCharWidths[spaceIndex] / FULL_CHAR_WIDTH) * pointSize;
 		}
 		else
 		{
@@ -320,9 +309,9 @@ public class AdobeFontMetrics
 				if (c >= 0 && c < mCharWidths.length)
 					total += mCharWidths[c];
 				else
-					total += mCharWidth;
+					total += FULL_CHAR_WIDTH;
 			}
-			pointLen = (double)total / mCharWidth * pointSize;
+			pointLen = (double)total / FULL_CHAR_WIDTH * pointSize;
 		}
 		return((int)pointLen);
 	}
