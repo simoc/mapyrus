@@ -60,42 +60,51 @@ public class PostScriptFont
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 				": " + filename);
 
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
-
-		/*
-		 * First line of file contains PostScript keyword, then font name.  For example,
-		 * %!PS-AdobeFont-1.0: LuxiSerif 1.1000
-		 */
-		String firstLine = bufferedReader.readLine();
-		if (firstLine == null)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-				": " + filename);
-
-		String magicToken = null;
-		StringTokenizer st = new StringTokenizer(firstLine);
-		if (st.countTokens() > 1)
-		{
-			magicToken = st.nextToken();
-			mFontName = st.nextToken();
-		}
-		if (magicToken == null || (!magicToken.startsWith("%!PS-AdobeFont")))
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-				": " + filename);
-
-		/*
-		 * Read entire .pfa file into memory, most files are about 100kb in size.
-		 */
-		mFileContents = new StringBuffer(128 * 1024);
-		mFileContents.append(firstLine);
-		mFileContents.append(Constants.LINE_SEPARATOR);
+		BufferedReader bufferedReader = null;
 		
-		String line;
-		while ((line = bufferedReader.readLine()) != null)
+		try
 		{
-			mFileContents.append(line);
+			bufferedReader = new BufferedReader(new FileReader(filename));
+	
+			/*
+			 * First line of file contains PostScript keyword, then font name.  For example,
+			 * %!PS-AdobeFont-1.0: LuxiSerif 1.1000
+			 */
+			String firstLine = bufferedReader.readLine();
+			if (firstLine == null)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+					": " + filename);
+	
+			String magicToken = null;
+			StringTokenizer st = new StringTokenizer(firstLine);
+			if (st.countTokens() > 1)
+			{
+				magicToken = st.nextToken();
+				mFontName = st.nextToken();
+			}
+			if (magicToken == null || (!magicToken.startsWith("%!PS-AdobeFont")))
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+					": " + filename);
+	
+			/*
+			 * Read entire .pfa file into memory, most files are about 100kb in size.
+			 */
+			mFileContents = new StringBuffer(128 * 1024);
+			mFileContents.append(firstLine);
 			mFileContents.append(Constants.LINE_SEPARATOR);
+			
+			String line;
+			while ((line = bufferedReader.readLine()) != null)
+			{
+				mFileContents.append(line);
+				mFileContents.append(Constants.LINE_SEPARATOR);
+			}
 		}
-		bufferedReader.close();		
+		finally
+		{
+			if (bufferedReader != null)
+				bufferedReader.close();
+		}		
 	}
 
 	/**
