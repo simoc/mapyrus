@@ -1,7 +1,7 @@
 begin hotel name, stars
 	# Draw hotel name inside a box about as wide as the name.
 	#
-	color '#0000A0'
+	color '#A00000'
 	clearpath
 	move 2, 0
 	draw 2, 4, length(name) * 2, 4, length(name) * 2, 0, 2, 0
@@ -18,7 +18,7 @@ begin hotel name, stars
 	# Draw box below hotel name, then show number of stars inside it.
 	#
 	clearpath
-	color '#0000A0'
+	color '#A00000'
 	move 2, -2
 	draw 2, 0, stars * 3, 0, stars * 3, -2
 	fill
