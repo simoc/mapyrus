@@ -663,8 +663,8 @@ public class Context
 		if (mOutputFormat == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));		
 
-		double wxDiff = wx2 - wx1;
-		double wyDiff = wy2 - wy1;
+		double wxDiff = Math.abs(wx2 - wx1);
+		double wyDiff = Math.abs(wy2 - wy1);
 		double wxMid, wyMid;
 
 		if (px2 == 0 && py2 == 0)
@@ -703,7 +703,7 @@ public class Context
 				 *  PAGE    WORLDS    EXPANDED WORLDS
 				 *  +---+   +---+     +-+---+-+
 				 *  |   |   |   |     |<|   |>|
-				 * 	|___|   |   |  => |<|   |>|
+				 *  |___|   |   |  => |<|   |>|
 				 *          |   |     |<|   |>|
 				 *          +---+     +-+---+-+
 				 */
@@ -726,10 +726,12 @@ public class Context
 		/*
 		 * Expand world coordinate range so that it fills whole page.
 		 */
-		wx1 -= (wx2 - wx1) / pxDiff * px1;
-		wx2 += (wx2 - wx1) / pxDiff * (mOutputFormat.getPageWidth() - px2);
-		wy1 -= (wy2 - wy1) / pyDiff * py1;
-		wy2 += (wy2 - wy1) / pyDiff * (mOutputFormat.getPageHeight() - py2);
+		wxDiff = Math.abs(wx2 - wx1);
+		wyDiff = Math.abs(wy2 - wy1);
+		wx1 -= wxDiff / pxDiff * px1;
+		wx2 += wxDiff / pxDiff * (mOutputFormat.getPageWidth() - px2);
+		wy1 -= wyDiff / pyDiff * py1;
+		wy2 += wyDiff / pyDiff * (mOutputFormat.getPageHeight() - py2);
 
 		/*
 		 * Setup CTM from world coordinates to page coordinates.
@@ -738,7 +740,9 @@ public class Context
 		mWorldCtm.scale(mOutputFormat.getPageWidth() / (wx2 - wx1),
 			mOutputFormat.getPageHeight() / (wy2 - wy1));
 		mWorldCtm.translate(-wx1, -wy1);
-		mWorldExtents = new Rectangle2D.Double(wx1, wy1, wx2 - wx1, wy2 - wy1);
+		mWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
+			Math.min(wy1, wy2),
+			Math.abs(wx2 - wx1), Math.abs(wy2 - wy1));
 		mWorldUnits = units;
 	}
 
