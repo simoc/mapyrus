@@ -1828,6 +1828,36 @@ public class OutputFormat
 	}
 
 	/**
+	 * Draw geo-referenced image on page.
+	 * @param image image to display.
+	 * @param x X coordinate of bottom left corner of image.
+	 * @param y Y coordinate of bottom left corner of image.
+	 * @param width width of image in millimetres.
+	 * @param height height of image in millimetres.
+	 */
+	public void drawGeoImage(BufferedImage image,
+		double x, double y, double width, double height)
+		throws MapyrusException, IOException
+	{
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		{
+			writePostScriptImage(image, x + width / 2,
+				y + height / 2, width, height, 0);
+		}
+		else
+		{
+			/*
+			 * Position image on page, inverting it to appear right way up
+			 * and scaling it to requested size.
+			 */
+			AffineTransform affine = AffineTransform.getTranslateInstance(x, y + height);
+			affine.scale(1, -1);
+			affine.scale(width / image.getWidth(), height / image.getHeight());
+			mGraphics2D.drawImage(image, affine, null);
+		}
+	}
+
+	/**
 	 * Draw EPS file at points on page.
 	 * @param pointList is list of Point2D objects at which to draw EPS file.
 	 * @param EPS filename.
