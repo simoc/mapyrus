@@ -4,45 +4,45 @@
 #
 begin colorRange h1, s1, b1, h2, s2, b2, nColors
 
-	# Label bar with starting and ending HSB color values.
-	#
-	font 'Helvetica', 2.5
-	color "black"
-	justify 'left'
-	clearpath
-	move -18, 6
-	label "H " . h1 . " S " . s1 . " B " . b1
+  # Label bar with starting and ending HSB color values.
+  #
+  font 'Helvetica', 2.5
+  color "black"
+  justify 'left'
+  clearpath
+  move -18, 6
+  label "H " . h1 . " S " . s1 . " B " . b1
 
-	justify 'right'
-	clearpath
-	move 18, -3
-	label "H " . h2 . " S " . s2 . " B " . b2
+  justify 'right'
+  clearpath
+  move 18, -3
+  label "H " . h2 . " S " . s2 . " B " . b2
 
-	# Step through range of colors, drawing a rectangle in
-	# each intermediate color between the start and end colors.
-	#
-	let hStep = (h2 - h1) / nColors
-	let sStep = (s2 - s1) / nColors
-	let bStep = (b2 - b1) / nColors
+  # Step through range of colors, drawing a rectangle in
+  # each intermediate color between the start and end colors.
+  #
+  let hStep = (h2 - h1) / nColors
+  let sStep = (s2 - s1) / nColors
+  let bStep = (b2 - b1) / nColors
 
-	let xStep = 36 / nColors
-	let x = -18
-	while x < 18
-	do
-		clearpath
-		color 'hsb', h1, s1, b1
-		move x, 0
-		draw x, 5, x + xStep, 5, x + xStep, 0
-		fill
+  let xStep = 36 / nColors
+  let x = -18
+  while x < 18
+  do
+    clearpath
+    color 'hsb', h1, s1, b1
+    move x, 0
+    draw x, 5, x + xStep, 5, x + xStep, 0
+    fill
 
-		let x = x + xStep
-		let h1 = h1 + hStep
-		let s1 = s1 + sStep
-		let b1 = b1 + bStep
-	done
+    let x = x + xStep
+    let h1 = h1 + hStep
+    let s1 = s1 + sStep
+    let b1 = b1 + bStep
+  done
 end
 
-newpage "png", "turtle5.png", 40, 30, 96
+newpage "eps", "turtle5.eps", 40, 30, 300
 clearpath
 move 20, 20
 colorRange 0, 0.95, 0.95, 0.25, 0.95, 0.95, 100

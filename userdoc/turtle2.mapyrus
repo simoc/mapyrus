@@ -1,39 +1,39 @@
 # @(#) $Id$
 begin fernbranch branchLength
-	if branchLength > 1
-	then
-		# Draw right branch (and its shorter sub-branches),
-		# then left branch
-		rotate 20
-		move 0, 0
-		draw 0, branchLength
-		stroke
-		clearpath
-		move 0, branchLength
-		fernbranch branchLength * 0.75
+  if branchLength > 1
+  then
+    # Draw right branch (and its shorter sub-branches),
+    # then left branch
+    rotate 20
+    move 0, 0
+    draw 0, branchLength
+    stroke
+    clearpath
+    move 0, branchLength
+    fernbranch branchLength * 0.75
 
-		rotate -40
-		move 0, 0
-		draw 0, branchLength
-		stroke
-		clearpath
-		move 0, branchLength
-		fernbranch branchLength * 0.75
-	endif
+    rotate -40
+    move 0, 0
+    draw 0, branchLength
+    stroke
+    clearpath
+    move 0, branchLength
+    fernbranch branchLength * 0.75
+  endif
 end
 begin fern
-	color "rgb", 0, 0.7, 0
-	linestyle 0.1
-	# Draw stem, then call recursive procedure to draw all branches
-	move 0, 0
-	draw 0, 4
-	stroke
-	clearpath
-	move 0, 4
-	fernbranch 6
+  color "rgb", 0, 0.7, 0
+  linestyle 0.1
+  # Draw stem, then call recursive procedure to draw all branches
+  move 0, 0
+  draw 0, 4
+  stroke
+  clearpath
+  move 0, 4
+  fernbranch 6
 end
 #
-newpage "png", "turtle2.png", 30, 30, 96
+newpage "eps", "turtle2.eps", 30, 30, 300
 clearpath
 move 15, 4
 fern

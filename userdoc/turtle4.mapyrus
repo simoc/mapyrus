@@ -1,32 +1,32 @@
 # @(#) $Id$
 begin scissors
-	# Draw a pair of scissors cutting towards the right
-	#
-	color "black"
-	linestyle 0.3
-	move -1, 0
-	arc 1, -1, 1, -1, 0
-	arc 1, -1, -1, -1, 0
-	stroke
-	clearpath
-	move 0, 1
-	draw 3, -1
-	move 0, -1
-	draw 3, 1
-	stroke
+  # Draw a pair of scissors cutting towards the right
+  #
+  color "black"
+  linestyle 0.3
+  move -1, 0
+  arc 1, -1, 1, -1, 0
+  arc 1, -1, -1, -1, 0
+  stroke
+  clearpath
+  move 0, 1
+  draw 3, -1
+  move 0, -1
+  draw 3, 1
+  stroke
 end
 begin cutHere
-	# Draw current path as dashed line with scissors symbols
-	# cutting along it
-	#
-	color "rgb", 0.8, 0.8, 0.8
-	linestyle 1, "butt", "bevel", 3, 1, 1
-	stroke
-	samplepath 11, 5
-	scissors
+  # Draw current path as dashed line with scissors symbols
+  # cutting along it
+  #
+  color "rgb", 0.8, 0.8, 0.8
+  linestyle 1, "butt", "bevel", 3, 1, 1
+  stroke
+  samplepath 11, 5
+  scissors
 end
 
-newpage "png", "turtle4.png", 30, 30, 96
+newpage "eps", "turtle4.eps", 30, 30, 300
 move 5, 5
 draw 20, 5
 arc -1, 20, 13, 12, 13

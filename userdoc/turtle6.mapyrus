@@ -4,53 +4,53 @@
 #
 begin teamStrip teamName, shirtColor, sleeveColor, shortsColor
 
-	# Draw shorts, then shirt, sleeves and then team name label underneath.
-	#
-	linestyle 0.1
-	color shortsColor
-	move -3, -1
-	draw 3, -1, 4, -5, 0.5, -5, 0, -3.5
-	draw -0.5, -5, -4, -5
-	draw -3, -1
-	fill
-	color 'black'
-	stroke
+  # Draw shorts, then shirt, sleeves and then team name label underneath.
+  #
+  linestyle 0.1
+  color shortsColor
+  move -3, -1
+  draw 3, -1, 4, -5, 0.5, -5, 0, -3.5
+  draw -0.5, -5, -4, -5
+  draw -3, -1
+  fill
+  color 'black'
+  stroke
 
-	color shirtColor
-	clearpath
-	move -3, 0
-	draw -3, 4, -5, 2, -6.5, 3.5, -4, 7, -1, 7, 0, 6
-	draw 1, 7, 4, 7, 6.5, 3.5, 5, 2, 3, 4, 3, 0
-	draw -3, 0
-	fill
-	color 'black'
-	stroke
+  color shirtColor
+  clearpath
+  move -3, 0
+  draw -3, 4, -5, 2, -6.5, 3.5, -4, 7, -1, 7, 0, 6
+  draw 1, 7, 4, 7, 6.5, 3.5, 5, 2, 3, 4, 3, 0
+  draw -3, 0
+  fill
+  color 'black'
+  stroke
 
-	color sleeveColor
-	clearpath
-	move -3, 4
-	draw -5, 2, -6.5, 3.5, -4.5, 6.6
-	fill
-	color 'black'
-	stroke
+  color sleeveColor
+  clearpath
+  move -3, 4
+  draw -5, 2, -6.5, 3.5, -4.5, 6.6
+  fill
+  color 'black'
+  stroke
 
-	color sleeveColor
-	clearpath
-	move 3, 4
-	draw 5, 2, 6.5, 3.5, 4.5, 6.6
-	fill
-	color 'black'
-	stroke
+  color sleeveColor
+  clearpath
+  move 3, 4
+  draw 5, 2, 6.5, 3.5, 4.5, 6.6
+  fill
+  color 'black'
+  stroke
 
-	color 'black'
-	clearpath
-	move 0, -9
-	font 'Helvetica-Bold', 3
-	justify 'center'
-	label teamName
+  color 'black'
+  clearpath
+  move 0, -9
+  font 'Helvetica-Bold', 3
+  justify 'center'
+  label teamName
 end
 
-newpage "png", "turtle6.png", 50, 30, 96
+newpage "eps", "turtle6.eps", 50, 30, 300
 
 clearpath
 move 10, 15

@@ -1,29 +1,29 @@
 # @(#) $Id$
 begin sunray
-	color "yellow"
-	move 0, 3
-	draw 3, 0, 0, -3, 0, 3
-	fill
+  color "yellow"
+  move 0, 3
+  draw 3, 0, 0, -3, 0, 3
+  fill
 end
 begin sun
-	# Draw orange circle for sun
-	move -8, 0
-	arc 1, 0, 0, -8, 0
-	color "rgb", 1, 0.6, 0
-	fill
-	# Draw 8 rays pointing out from perimeter of circle
-	let i = 0
-	while i < 8
-	do
-		clearpath
-		rotate 360 / 8
-		move 9, 0
-		sunray
-		let i = i + 1
-	done
+  # Draw orange circle for sun
+  move -8, 0
+  arc 1, 0, 0, -8, 0
+  color "rgb", 1, 0.6, 0
+  fill
+  # Draw 8 rays pointing out from perimeter of circle
+  let i = 0
+  while i < 8
+  do
+    clearpath
+    rotate 360 / 8
+    move 9, 0
+    sunray
+    let i = i + 1
+  done
 end
 #
-newpage "png", "turtle1.png", 30, 30, 96
+newpage "eps", "turtle1.eps", 30, 30, 300
 clearpath
 move 15, 15
 sun
