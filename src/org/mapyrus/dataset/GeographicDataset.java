@@ -62,14 +62,8 @@ public interface GeographicDataset
 		throws MapyrusException;
 		
 	/**
-	 * Finds if current query has more data available. 
-	 * @return true if query has more rows available to be fetched.
-	 */
-	public boolean hasMoreRows() throws MapyrusException;
-	
-	/**
 	 * Fetch next row that is a result of current query.
-	 * @return row returns next row result.
+	 * @return row returns next row result, or null if there is no row available.
 	 */
 	public Row fetch() throws MapyrusException;
 }
