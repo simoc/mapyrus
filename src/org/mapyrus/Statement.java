@@ -68,14 +68,16 @@ public class Statement
 	public static final int PRINT = 35;
 	public static final int LOCAL = 36;
 	public static final int LET = 37;
+	public static final int KEY = 38;
+	public static final int LEGEND = 39;
 
 	/*
 	 * Statement type for call to user defined procedure block.
 	 */
 	public static final int CALL = 1000;
-	
+
 	private int mType;
-	
+
 	/*
 	 * Statements in an if-then-else statement.
 	 */
@@ -147,6 +149,8 @@ public class Statement
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 		mStatementTypeLookup.put("local", new Integer(LOCAL));
 		mStatementTypeLookup.put("let", new Integer(LET));
+		mStatementTypeLookup.put("key", new Integer(KEY));
+		mStatementTypeLookup.put("legend", new Integer(LEGEND));
 	}
 	
 	/**
