@@ -68,7 +68,9 @@ public class Mapyrus
 			"about these matters, see the file named COPYING."
 		};
 
-		System.out.println(Constants.PROGRAM_NAME + " version " + Constants.getVersion() +
+		System.out.println(Constants.PROGRAM_NAME + " version " +
+			Constants.getVersion() + " " +
+			Constants.getReleaseDate() +
 			" Copyright (C) 2003 Simon Chenery");
 		System.out.println("");
 
@@ -187,7 +189,9 @@ public class Mapyrus
 		/*
 		 * Log startup configuration information or write it to the terminal.
 		 */
-		String versionMessage = Constants.PROGRAM_NAME + " " + Constants.getVersion();
+		String versionMessage = Constants.PROGRAM_NAME + " " +
+			Constants.getVersion() + " " +
+			Constants.getReleaseDate();
 		String acceptingMessage = MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port;
 		logger.config(versionMessage);
 		logger.config(acceptingMessage);
@@ -323,7 +327,9 @@ public class Mapyrus
 			/*
 			 * Show version number and quit.
 			 */
-			System.out.println(Constants.PROGRAM_NAME + " " + Constants.getVersion());
+			System.out.println(Constants.PROGRAM_NAME + " " +
+				Constants.getVersion() + " " +
+				Constants.getReleaseDate());
 			System.exit(1);
 		}
 		else if (args[0].equals("-s"))
