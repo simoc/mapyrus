@@ -376,18 +376,18 @@ public class Interpreter
 		nExpressions = expr.length;
 
 		/*
-		 * Do not evaluate variables for global statement -- we want the
+		 * Do not evaluate variables for local statement -- we want the
 		 * original list of variable names instead.
 		 */
 		type = st.getType();
-		if (type == Statement.GLOBAL)
+		if (type == Statement.LOCAL)
 		{
 			for (int i = 0; i < nExpressions; i++)
 			{
 				String varName = expr[i].getVariableName();
 				if (varName == null)
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
-				context.setGlobalScope(varName);
+				context.setLocalScope(varName);
 			}
 		}
 		else
@@ -743,7 +743,7 @@ public class Interpreter
 				System.out.println("");
 				break;
 				
-			case Statement.GLOBAL:
+			case Statement.LOCAL:
 				break;
 
 			case Statement.ASSIGN:
@@ -1469,10 +1469,13 @@ public class Interpreter
 		throws IOException, MapyrusException
 	{
 		Statement statement;
+		String parameterName;
 
 		for (int i = 0; i < args.length; i++)
 		{
-			mContext.defineVariable((String)parameters.get(i), args[i]);
+			parameterName = (String)parameters.get(i);
+			mContext.setLocalScope(parameterName);
+			mContext.defineVariable(parameterName, args[i]);
 		}
 
 		/*
