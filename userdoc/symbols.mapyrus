@@ -540,6 +540,102 @@ begin waypoint
 	fill
 end
 
+begin capitalcity name
+	local u, w
+	key "point", "Capital City", "Ely"
+	font "Helvetica-Bold", 4
+	justify "center"
+	let u = upper(name)
+	let w = stringwidth(u)
+	if not protected(-w / 2, 0, w / 2, 4)
+	then
+		protect -w / 2, 0, w / 2, 4
+
+		# Draw yellow box with black border behind name.
+		#
+		color "yellow"
+		box -w / 2, 0, w / 2, 4
+		fill
+		color "black"
+		linestyle 0.1
+		stroke
+		clearpath
+		move 0, 0.5
+		label u
+	endif
+end
+
+begin city name
+	local w
+	key "point", "City", "Ely"
+	font "Helvetica-Bold", 4
+	justify "center"
+	let w = stringwidth(name)
+	if not protected(-w / 2, 0, w / 2, 4)
+	then
+		protect -w / 2, 0, w / 2, 4
+
+		# Draw yellow box behind name.
+		#
+		color "yellow"
+		box -w / 2, 0, w / 2, 4
+		fill
+		color "black"
+		clearpath
+		move 0, 0.5
+		label name
+	endif
+end
+
+begin town name
+	local w
+	key "point", "Town", "Ely"
+	font "Helvetica-Bold", 3
+	justify "center"
+	let w = stringwidth(name)
+	if not protected(-w / 2, 0, w / 2, 3)
+	then
+		protect -w / 2, 0, w / 2, 3
+
+		# Draw yellow highlight around name.
+		#
+		color "yellow"
+		move -0.3, 0.5
+		move 0.3, 0.5
+		move 0, 0.8
+		move 0, 0.3
+		label name
+		clearpath
+		color "black"
+		move 0, 0.5
+		label name
+	endif
+end
+
+begin emphasisedname name
+	local w
+	key "point", "Emphasised Name", "HOT"
+	font "Helvetica-Bold", 3
+	let w = stringwidth(name)
+	if not protected(0, 0, w, 3)
+	then
+		protect 0, 0, w, 3
+
+		# Draw thick red underline under name.
+		#
+		color "red"
+		linestyle 0.6
+		move 0, 0
+		draw w, 0
+		stroke
+
+		clearpath
+		color "black"
+		move 0, 0.5
+		label name
+	endif
+end
+
 #u-bahn
 #camping
 #vehicle
@@ -594,6 +690,10 @@ then
 	flag
 	pennant
 	factory
+	capitalcity "Ely"
+	city "Ely"
+	town "Ely"
+	emphasisedname "Ely"
 
 	newpage "eps", "allsymbols.eps", 210, 297
 	#newpage "png", "allsymbols.png", 210, 297
