@@ -23,59 +23,50 @@
 package au.id.chenery.mapyrus;
 
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.logging.Logger;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points, lines and polygons
  * to various output formats.  Runs as either an interpreter for files
- * given on the command line or as a Servlet.
+ * given on the command line or as an HTTP server.
  */
 public class Mapyrus
 {
-	public static final String PROGRAM_NAME = "Mapyrus";
-	
 	/**
-	 * Get software version information.
-	 * @return version string.
+	 * Show software version number and usage message, then exit.
 	 */
-	public static String getVersion()
-	{
-		/*
-		 * Current software version number set by ant Replace task during build.
-		 */
-		return("@software_version_token@");
-	}
-
-	/*
-	 * Show software version number and usage message.
-	 */
-	private static void printUsage()
+	private static void printUsageAndExit()
 	{		
 		String []usage =
 		{
 			
 			"Usage:",
-			"java [-Dvar=val] ... -jar " + PROGRAM_NAME.toLowerCase() + ".jar filename ...",
+			"java [-Dvar=val] ... -jar " + Constants.PROGRAM_NAME.toLowerCase() + ".jar [-httpserver port] filename ...",
 			"",
-			PROGRAM_NAME + " reads each file or URL in turn.",
+			Constants.PROGRAM_NAME + " reads each file or URL in turn.",
 			"If filename is '-' then standard input is read.",
 			"",
-			"Variables are passed into " + PROGRAM_NAME + " using the Java -D",
-			"option.",
+			"Variables and configuration are passed to " + Constants.PROGRAM_NAME + " using the",
+			"Java -D option.",
 			"",
-			PROGRAM_NAME + " can also run as a Java Servlet.  Refer to manual for",
-			"instructions on incorporating " + PROGRAM_NAME + " into a web application."
+			"-httpserver option starts " + Constants.PROGRAM_NAME + " as a stand-alone HTTP server",
+			"on the given port.  Refer to manual for detailed instructions."
 		};
 
 		String []license =
 		{
-			PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for",
+			Constants.PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for",
 			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
-			"You may redistribute copies of " + PROGRAM_NAME + " under the terms",
+			"You may redistribute copies of " + Constants.PROGRAM_NAME + " under the terms",
 			"of the GNU General Public License.  For more information",
 			"about these matters, see the file named COPYING."
 		};
 
-		System.out.println(PROGRAM_NAME + " version " + getVersion() +
+		System.out.println(Constants.PROGRAM_NAME + " version " + Constants.getVersion() +
 			" Copyright (C) 2003 Simon Chenery");
 		System.out.println("");
 
@@ -89,22 +80,23 @@ public class Mapyrus
 		{
 			System.out.println(license[i]);
 		}
-
+		System.exit(1);
 	}
 	
 	/**
 	 * Parse and interpret commands from a file.  Trap any exceptions.
+	 * @param context is context to use during interpretation.
 	 * @param f open file or URL to read.
 	 * @param interpreter interpreter in which to run commands.
 	 * @param closeFile if set to true file is closed after we finish reading it.
 	 * @return flag indicating whether interpretation succeeeded.
 	 */
-	private static boolean processFile(FileOrURL f, Interpreter interpreter,
-		boolean closeFile)
+	private static boolean processFile(ContextStack context, FileOrURL f,
+		Interpreter interpreter, boolean closeFile)
 	{
 		try
 		{
-			interpreter.interpret(f, System.out);
+			interpreter.interpret(context, f, System.out);
 			if (closeFile)
 				f.getReader().close();
 		}
@@ -123,7 +115,7 @@ public class Mapyrus
 	}
 	
 	/*
-	 * Initialise global settings, color name lookup table.
+	 * Initialise global settings, color name lookup tables.
 	 */
 	private static void initialise()
 	{
@@ -142,9 +134,119 @@ public class Mapyrus
 			System.exit(1);
 		}
 	}
-			
+
+	/**
+	 * Listen on a server socket, accepting and processing HTTP requests.
+	 * @param interpreter interpreter to use for
+	 * @param port port on which to create socket and listen on.
+	 */
+	private static void serveHttp(Interpreter interpreter, int port)
+	{
+		ServerSocket serverSocket = null;
+		Pool interpreterPool;
+		HashSet activeThreads;
+		
+		/*
+		 * Make pool of interpreters available to threads that
+		 * handle HTTP requests.
+		 */
+		interpreterPool = new Pool();
+		interpreterPool.put(interpreter);
+		for (int i = 1; i < Constants.MAX_HTTP_THREADS; i++)
+			interpreterPool.put(interpreter.clone());
+
+		/*
+		 * Initialise set of threads that have been started.
+		 */
+		activeThreads = new HashSet();
+
+		String packageName = Mapyrus.class.getPackage().getName();
+		Logger logger = Logger.getLogger(packageName);
+
+		try
+		{
+			/*
+			 * Create socket on given port.  Check port so that
+			 */
+			serverSocket = new ServerSocket(port);
+			port = serverSocket.getLocalPort();
+		}
+		catch (IOException e)
+		{
+			System.err.println(MapyrusMessages.get(MapyrusMessages.INIT_HTTP_FAILED) +
+				": " + e.getMessage());
+			System.exit(1);
+		}
+
+		logger.config(Constants.PROGRAM_NAME + " " + Constants.getVersion());
+		logger.config(MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port);
+
+		while (true)
+		{
+			try
+			{
+				/*
+				 * Listen on socket for next client connection.
+				 */
+				Socket socket = serverSocket.accept();
+				socket.setSoTimeout(Constants.HTTP_SOCKET_TIMEOUT);
+
+				/*
+				 * Take a intepreter to handle this request (waiting
+				 * until one becomes available, if necessary).
+				 * Then start new thread to handle this request.
+				 */
+				interpreter = (Interpreter)(interpreterPool.get(Constants.HTTP_TIMEOUT));
+				if (interpreter == null)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.HTTP_TIMEOUT));
+				}
+
+				HTTPRequest request = new HTTPRequest(socket,
+					interpreter, interpreterPool);
+				activeThreads.add(request);
+				logger.fine(MapyrusMessages.get(MapyrusMessages.STARTED_THREAD) +
+					": " + request.getName());
+				request.start();
+
+				/*
+				 * Join any threads we started that have now finished. 
+				 */
+				Iterator iterator = activeThreads.iterator();
+				while (iterator.hasNext())
+				{
+					HTTPRequest active = (HTTPRequest)(iterator.next());
+					if (!active.isAlive())
+					{
+						/*
+						 * Wait for thread to complete, then check if it succeeded.
+						 */
+						active.join();
+						logger.fine(MapyrusMessages.get(MapyrusMessages.JOINED_THREAD) +
+							": " + active.getName());
+						if (!active.getStatus())
+							logger.severe(active.getName() + ": " + active.getErrorMessage());
+						iterator.remove();
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				logger.severe(e.getMessage());
+			}
+			catch (InterruptedException e)
+			{
+				logger.severe(e.getMessage());
+			}
+			catch (MapyrusException e)
+			{
+				logger.severe(e.getMessage());
+			}
+		}
+	}
+
 	/*
-	 * Parse command line arguments and the start processing.
+	 * Parse command line arguments and start processing.
 	 */
 	public static void main(String []args)
 	{
@@ -152,7 +254,10 @@ public class Mapyrus
 		ContextStack context;
 		int i;
 		boolean readingStdin;
-		
+		boolean isHttpServer = false;
+		int argStartIndex = 0;
+		int port = 0;
+
 		/*
 		 * Parse command line arguments -- these are the files and URLs
 		 * to read commands from.
@@ -164,15 +269,32 @@ public class Mapyrus
 			/*
 			 * Show usage message and quit.
 			 */
-			printUsage();
-			System.exit(1);
+			printUsageAndExit();
+		}
+		else if (args[0].equals("-httpserver"))
+		{
+			if (args.length < 2)
+			{
+				printUsageAndExit();
+			}
+			try
+			{
+				port = Integer.parseInt(args[1]);
+			}
+			catch (NumberFormatException e)
+			{
+				printUsageAndExit();
+			}
+			argStartIndex = 2;
+			isHttpServer = true;
 		}
 
 		initialise();
-		context = new ContextStack();
-		Interpreter interpreter = new Interpreter(context);
 
-		i = 0;
+		context = new ContextStack();
+		Interpreter interpreter = new Interpreter();
+
+		i = argStartIndex;
 		while (i < args.length)
 		{
 			readingStdin = args[i].equals("-");
@@ -204,7 +326,8 @@ public class Mapyrus
 				}
 			}
 
-			if (!processFile(f, interpreter, !readingStdin))
+	
+			if (!processFile(context, f, interpreter, !readingStdin))
 				System.exit(1);
 
 			i++;
@@ -226,6 +349,15 @@ public class Mapyrus
 		{
 			System.err.println(e.getMessage());
 			System.exit(1);
+		}
+
+		/*
+		 * If we're running as an HTTP server we are now ready to
+		 * accept connections and respond to requests from HTTP clients.
+		 */
+		if (isHttpServer)
+		{
+			serveHttp(interpreter, port);
 		}
 		System.exit(0);
 	}
