@@ -276,6 +276,15 @@ Returns \textit{str} converted to lower case. \\
 
 \hline
 
+\texttt{lpad(\textit{str}, \textit{len}, \textit{pad})}
+\texttt{lpad(\textit{str}, \textit{len})} &
+Returns string \textit{str} left padded to length \textit{len}
+using characters from string \textit{pad}.
+Spaces are used for padding if \textit{pad} is not given.
+String is truncated on the left if longer than length \textit{len}. \\
+
+\hline
+
 \texttt{match(\textit{str}, \textit{regex})} &
 Returns the index in the string \textit{str}, where the regular expression
 \textit{regex} is first matched.  The index of the first character is 1.
@@ -351,7 +360,7 @@ Returns \textit{n} rounded to nearest whole number. \\
 
 \texttt{rpad(\textit{str}, \textit{len}, \textit{pad})}
 \texttt{rpad(\textit{str}, \textit{len})} &
-Returns string \textit{str} padded to length \textit{len}
+Returns string \textit{str} right padded to length \textit{len}
 using characters from string \textit{pad}.
 Spaces are used for padding if \textit{pad} is not given.
 String is truncated if longer than length \textit{len}. \\
