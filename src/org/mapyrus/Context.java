@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -48,6 +49,8 @@ import org.mapyrus.font.StringDimension;
 import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
 import org.mapyrus.image.GradientFillFactory;
+import org.mapyrus.image.ImageFilter;
+import org.mapyrus.io.ImageClippingFile;
 import org.mapyrus.io.TFWFile;
 
 /**
@@ -1580,8 +1583,9 @@ public class Context
 	/**
 	 * Draws geo-referenced image on page.
 	 * @param filename geo-referenced image filename.
+	 * @param extras extra parameters to control display of image.
 	 */
-	public void drawGeoImage(String filename)
+	public void drawGeoImage(String filename, String extras)
 		throws IOException, MapyrusException
 	{
 		BufferedImage image;
@@ -1623,6 +1627,36 @@ public class Context
 			tfw = new TFWFile(filename, image);
 			mTFWCache.put(filename, tfw);
 		}
+		
+		/*
+		 * Check for a file containing a clip polygon for this image.
+		 */
+		GeometricPath clipPolygon = null;
+		float brightness = 1;
+		StringTokenizer st = new StringTokenizer(extras);
+		while (st.hasMoreTokens())
+		{
+			String token = st.nextToken();
+			if (token.startsWith("clipfile="))
+			{
+				String clipFilename = token.substring(9);
+				ImageClippingFile clipFile = new ImageClippingFile(clipFilename, mWorldCtm);
+				clipPolygon = clipFile.getClippingPolygon();
+			}
+			else if (token.startsWith("brightness="))
+			{
+				String s = token.substring(11);
+				try
+				{
+					brightness = Float.parseFloat(s);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+						": " + s);
+				}
+			}
+		}
 
 		/*
 		 * Convert world coordinate bounding box of image to millimetre
@@ -1631,6 +1665,26 @@ public class Context
 		Rectangle2D bounds = tfw.getBounds();
 		double []cornerPts = new double[4];
 
+		/*
+		 * Save original path and clipping path.
+		 */
+		GeometricPath pathCopy = mPath;
+		ArrayList clippingPathCopy;
+		if (mClippingPaths != null)
+			clippingPathCopy = (ArrayList)mClippingPaths.clone();
+		else
+			clippingPathCopy = null;
+
+		if (clipPolygon != null)
+		{
+			/*
+			 * Temporarily set path to clip polygon read from file
+			 * and clip to it.
+			 */
+			mOutputFormat.saveState();
+			mPath = clipPolygon;
+			clipInside();
+		}
 
 		setGraphicsAttributes(ATTRIBUTE_CLIP);
 
@@ -1643,6 +1697,11 @@ public class Context
 
 			if (mWorldCtm != null)
 				mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+
+			if (brightness != 1)
+			{
+				ImageFilter.filter(image, brightness);
+			}
 
 			/*
 			 * Entire image is on page.  Draw it all.
@@ -1708,8 +1767,28 @@ public class Context
 			double iy = image.getHeight() - iy2;
 			image = image.getSubimage((int)Math.round(ix1), (int)Math.round(iy),
 				Math.max(iWidth, 1), Math.max(1, iHeight));
+			
+			if (brightness != 1)
+			{
+				ImageFilter.filter(image, brightness);
+			}
+
 			mOutputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
 				cornerPts[2] - cornerPts[0], cornerPts[3] - cornerPts[1]);
+		}
+
+		/*
+		 * Remove any clipping polygon we set for the image.
+		 */
+		if (clipPolygon != null)
+		{
+			mPath = pathCopy;
+			mClippingPaths = clippingPathCopy;
+			if (!mOutputFormat.restoreState())
+			{
+				mAttributesChanged |= ATTRIBUTE_CLIP;
+				mAttributesPending |= ATTRIBUTE_CLIP;
+			}
 		}
 	}
 
