@@ -53,16 +53,12 @@ symbolized maps and graphs.  For example,
 
 </li>
 <li>
-Mapyrus runs as a stand-alone program, or as a Java Servlet.
-This makes development of simple web applications easy, showing
-maps or graphs of datasets.
-
-<pre>
-http://localhost:8071/mapyrusdemo?layer1=on&layer2=off&x1=11.03&x2=11.07&y1=52.44&y2=52.48
-</pre>
-
+Mapyrus runs as a stand-alone program suitable for use in a script and for
+batch tasks, or as a Java Servlet serving map and graph images and text
+reports in a web-based application.
 </li>
 </ol>
+
 <p>
 &nbsp;
 <p>
