@@ -615,12 +615,19 @@ public class GeometricPath
 		 */
 		rotateTransform.translate(bounds.getMinX(), bounds.getMinY());
 		rotateTransform.rotate(angle);
-		y = yMin;
-		while (y <= yMax)
+		
+		/*
+		 * Start stripes just below polyon, continue to above the polygon
+		 * and extend each stripe by half of spacing so that symbols
+		 * drawn along stripes do not stop before the boundary.
+		 */
+		double halfSpacing = spacing / 2;
+		y = yMin - halfSpacing;
+		while (y <= yMax + halfSpacing)
 		{
-			pts[0] = xMin;
+			pts[0] = xMin - halfSpacing;
 			pts[1] = pts[3] = y;
-			pts[2] = xMax;
+			pts[2] = xMax + halfSpacing;
 			
 			/*
 			 * Transform each stripe back to coordinate system of
