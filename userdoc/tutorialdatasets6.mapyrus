@@ -1,4 +1,4 @@
-let allFiles = listfiles("E:\\DATA\\BS*\\*.SHP")
+let allFiles = listfiles(user.home . "\\data\\shape\\*\\*.shp")
 let nFiles = length(allFiles)
 let i = 1
 
