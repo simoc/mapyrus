@@ -376,6 +376,17 @@ Returns the sine of angle <i>n</i>, given in degrees.
 
 <tr>
 <td>
+<a name="split"></a>
+<tt>split(<i>regex</i>, <i>str</i>)<tt>
+<td>
+Splits the string <i>str</i> into an array of strings, delimited by the
+regular expression <i>regex</i>.
+The array of split strings is returned,
+with the first string having array index 1, the
+second string having index 2, and so on.
+
+<tr>
+<td>
 <a name="sqrt"></a>
 <tt>sqrt(<i>n</i>)<tt>
 <td>
@@ -429,6 +440,9 @@ All other variables are global.
 Array elements are accessed by giving the index between
 square brackets (<tt>[</tt> and <tt>]</tt>).
 The index is any string or number value.
+Multi-dimension arrays are available by using
+indexes named <i>index1</i><tt>."</tt><i>c</i><tt>".</tt><i>index2</i>,
+where <i>c</i> is any character that never appears in an index.
 <p>
 
 The <tt>if</tt>, <tt>while</tt> and <tt>for</tt>
