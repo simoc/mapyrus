@@ -55,6 +55,7 @@ done
 #
 let url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . \
   '&x2=' . x2 . '&y2=' . y2
+mimetype "text/html"
 print '<html>'
 print '<h1>Click In Image To Re-center</h1><p>'
 print '<a href="' . url . '">'
