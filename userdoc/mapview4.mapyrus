@@ -6,10 +6,10 @@ begin highlightlabel name
 	font "Helvetica", "bold", 3
 	color "white"
 	clearpath
-	move -25.4 / Mapyrus.page.resolution, 0
-	move 25.4 / Mapyrus.page.resolution, 0
-	move 0, -25.4 / Mapyrus.page.resolution
-	move 0, 25.4 / Mapyrus.page.resolution
+	move -Mapyrus.page.resolution.mm, 0
+	move Mapyrus.page.resolution.mm, 0
+	move 0, -Mapyrus.page.resolution.mm
+	move 0, Mapyrus.page.resolution.mm
 	label name
 
 	clearpath
