@@ -146,7 +146,7 @@ public class TextfileDataset implements GeographicDataset
 
 	/**
 	 * Returns projection of dataset, which is not defined for a text file.
-	 * @return string "undef".
+	 * @return empty string.
 	 */
 	public String getProjection()
 	{
