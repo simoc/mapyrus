@@ -57,7 +57,7 @@ public class ColorDatabase
 		 */
 		try
 		{
-			filename = System.getProperty(Mapyrus.PROGRAM_NAME + ".rgbfile");
+			filename = System.getProperty(Constants.PROGRAM_NAME + ".rgbfile");
 		}
 		catch (SecurityException e)
 		{

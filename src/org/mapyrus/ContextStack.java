@@ -486,9 +486,9 @@ public class ContextStack
 		int i;
 		Rectangle2D bounds;
 
-		if (varName.startsWith(Mapyrus.PROGRAM_NAME + "."))
+		if (varName.startsWith(Constants.PROGRAM_NAME + "."))
 		{
-			sub = varName.substring(Mapyrus.PROGRAM_NAME.length() + 1);
+			sub = varName.substring(Constants.PROGRAM_NAME.length() + 1);
 		
 			/*
 			 * Return internal/system variable.
@@ -524,7 +524,7 @@ public class ContextStack
 			}
 			else if (sub.equals("version"))
 			{
-				retval = new Argument(Argument.STRING, Mapyrus.getVersion());
+				retval = new Argument(Argument.STRING, Constants.VERSION);
 			}
 			else if (sub.equals("rotation"))
 			{
