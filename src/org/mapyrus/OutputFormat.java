@@ -40,6 +40,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -109,6 +111,7 @@ public class OutputFormat
 	private Graphics2D mGraphics2D;
 	private boolean mIsPipedOutput;	
 	private boolean mIsStandardOutput;
+	private boolean mIsUpdatingFile;
 	private Process mOutputProcess;
 	
 	/*
@@ -440,7 +443,8 @@ public class OutputFormat
 			"/" + fontName + " exch definefont pop");
 	}
 
-	private void setOutput(String filename, double width, double height, String extras)
+	private void setOutput(String filename, double width, double height,
+		String extras, PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
 		/*
@@ -450,6 +454,7 @@ public class OutputFormat
 		mEncodeAsISOLatin1 = new HashSet();
 		mTTFFonts = new HashMap();
 		mAfmFiles = new ArrayList();
+		mIsUpdatingFile = false;
 		int resolution;
 		boolean turnPage = false;
 		Color backgroundColor = null;
@@ -587,6 +592,11 @@ public class OutputFormat
 				String flag = token.substring(17);
 				lineAntiAliasing = flag.equalsIgnoreCase("true");
 			}
+			else if (token.startsWith("update="))
+			{
+				String flag = token.substring(7);
+				mIsUpdatingFile = flag.equalsIgnoreCase("true");
+			}
 			else if (token.startsWith("background="))
 			{
 				String colorName = token.substring(11);
@@ -596,6 +606,35 @@ public class OutputFormat
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
 						": " + colorName);
 				}
+			}
+		}
+
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE ||
+			(mOutputType == IMAGE_FILE && (!mIsUpdatingFile)))
+		{
+			/*
+			 * Should we pipe the output to another program
+			 * instead of writing a file?
+			 */
+			mIsPipedOutput = filename.startsWith("|");
+
+			/*
+			 * Are we writing to standard output instead of to a file?
+			 */
+			mIsStandardOutput = filename.equals("-");
+
+			if (mIsPipedOutput)
+			{
+				String pipeCommand = filename.substring(1).trim();
+				mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
+				mOutputStream = mOutputProcess.getOutputStream();
+			}
+			else
+			{
+				if (mIsStandardOutput)
+					mOutputStream = stdoutStream;
+				else
+					mOutputStream = new FileOutputStream(filename);
 			}
 		}
 
@@ -621,25 +660,47 @@ public class OutputFormat
 			 */
 			if (mOutputType == IMAGE_FILE || mOutputType == POSTSCRIPT_IMAGE)
 			{
-				/*
-				 * Create a BufferedImage to draw into.  We'll save it to a file
-				 * when user has finished drawing to it.
-				 */
-				int widthInPixels = (int)Math.round(width / Constants.MM_PER_INCH * resolution);
-				int heightInPixels = (int)Math.round(height / Constants.MM_PER_INCH * resolution);
-				int imageType;
-
-				/*
-				 * Create images with transparency for all formats except
-				 * JPEG (which does not support it).
-				 */
-				if (mFormatName.equals("jpg") || mFormatName.equals("jpeg"))
-					imageType = BufferedImage.TYPE_3BYTE_BGR;
+				if (mIsUpdatingFile)
+				{
+					/*
+					 * Read existing image for editing.
+					 * Set page width and height to size of existing image.
+					 */
+					File f = new File(filename);
+					mImage = ImageIO.read(f);
+					if (mImage == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) + ": " + filename);
+					}
+					if (!f.canWrite())
+					{
+						throw new IOException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + filename);
+					}
+					width = mImage.getWidth() / (resolution / Constants.MM_PER_INCH);
+					height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
+				}
 				else
-					imageType = BufferedImage.TYPE_INT_ARGB;
+				{
+					/*
+					 * Create a BufferedImage to draw into.  We'll save it to a file
+					 * when user has finished drawing to it.
+					 */
+					int widthInPixels = (int)Math.round(width / Constants.MM_PER_INCH * resolution);
+					int heightInPixels = (int)Math.round(height / Constants.MM_PER_INCH * resolution);
+					int imageType;
 
-				mImage = new BufferedImage(widthInPixels, heightInPixels,
-					imageType);
+					/*
+					 * Create images with transparency for all formats except
+					 * JPEG (which does not support it).
+					 */
+					if (mFormatName.equals("jpg") || mFormatName.equals("jpeg"))
+						imageType = BufferedImage.TYPE_3BYTE_BGR;
+					else
+						imageType = BufferedImage.TYPE_INT_ARGB;
+
+					mImage = new BufferedImage(widthInPixels, heightInPixels,
+						imageType);
+				}
 			}
 			else if (mOutputType == INTERNAL_IMAGE)
 			{
@@ -716,38 +777,13 @@ public class OutputFormat
 
 			if (!isSupportedImageFormat(mFormatName))
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OUTPUT) +
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
 					": " + format);
 			}
 		
 			mOutputType = IMAGE_FILE;
 		}
-
-		/*
-		 * Should we pipe the output to another program
-		 * instead of writing a file?
-		 */
-		mIsPipedOutput = filename.startsWith("|");
-
-		/*
-		 * Are we writing to standard output instead of to a file?
-		 */
-		mIsStandardOutput = filename.equals("-");
-
-		if (mIsPipedOutput)
-		{
-			String pipeCommand = filename.substring(1).trim();
-			mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
-			mOutputStream = mOutputProcess.getOutputStream();
-		}
-		else
-		{
-			if (mIsStandardOutput)
-				mOutputStream = stdoutStream;
-			else
-				mOutputStream = new FileOutputStream(filename);
-		}
-		setOutput(filename, width, height, extras);
+		setOutput(filename, width, height, extras, stdoutStream);
 	}
 
 	/**
@@ -761,7 +797,8 @@ public class OutputFormat
 		mOutputType = INTERNAL_IMAGE;
 		mImage = image;
 		mFormatName = "png";
-		setOutput("", 0, 0, extras);
+		PrintStream dummyStdout = new PrintStream(new ByteArrayOutputStream());
+		setOutput("", 0, 0, extras, dummyStdout);
 	}
 
 	/**
@@ -1133,6 +1170,12 @@ public class OutputFormat
 		}
 		else if (mOutputType == IMAGE_FILE)
 		{
+			/*
+			 * If updating file then overwrite it now with new image.
+			 */
+			if (mIsUpdatingFile)
+				mOutputStream = new FileOutputStream(mFilename);
+
 			/*
 			 * Write image buffer to file.
 			 */
