@@ -70,26 +70,31 @@ public class WildcardFile
 		 */
 		mFilenameParts = new ArrayList();
 		StringTokenizer st = new StringTokenizer(filename, "*", true);
-		
-		/*
-		 * If no wildcards in filename then check that exact match of file exists.
-		 */
-		if (st.countTokens() <= 1 && (!f.exists()))
-		{
-			throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
-				": " + wildcard);
-		}
 
 		String lastToken = "";
+		boolean tokenIsAsterisk = false;
 		while (st.hasMoreTokens())
 		{
 			/*
 			 * Skip repeated asterisk, for example "foo**bar".
 			 */
 			String token = st.nextToken();
-			if (!(lastToken.equals("*") && token.equals("*")))
+			tokenIsAsterisk = token.equals("*");
+			if (!(tokenIsAsterisk && lastToken.equals("*")))
 				mFilenameParts.add(token);
 			lastToken = token;
+		}
+
+		/*
+		 * If no wildcards in filename then check that exact match of file exists.
+		 */
+		if (mFilenameParts.size() <= 1)
+		{
+			if (tokenIsAsterisk == false && f.exists() == false)
+			{
+				throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
+					": " + wildcard);
+			}
 		}
 	}
 
@@ -156,7 +161,7 @@ public class WildcardFile
 	{
 		try
 		{
-			WildcardFile w = new WildcardFile("/tmp/wqqq");
+			WildcardFile w = new WildcardFile("");
 			Iterator it = w.getMatchingFiles();
 			while (it.hasNext())
 				System.out.println("> " + (String)it.next());
