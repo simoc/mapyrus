@@ -25,7 +25,7 @@ begin capitalCity name
 	label name
 end
 
-# Display the text file tutorialdatasets1.txt in a PNG file.
+# Display the geographic data in text file tutorialdatasets1.txt in a PNG file.
 #
 newpage "png", "tutorialdatasets1.png", 85, 85, 96
 
