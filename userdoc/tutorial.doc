@@ -89,7 +89,7 @@ Tutorial
 
 <tr>
 <td>
-<a href="#external"/>Accessing Mapyrus HTTP Server From Other Software</a>
+<a href="#external"/>Accessing Mapyrus From Other Software</a>
 </td>
 </tr>
 
@@ -165,20 +165,16 @@ yet another way of defining color.
 <p>
 <img src="tutorialfirst3.png">
 
-include beginex.doc
-include tutorialfirst4.mpy
-include endex.doc
-
-
-define page
-basic shapes in different colours
-
 <a name="var"></a>
 <h3>Using Variables</h3>
 
 Use variables and conditional tests to vary the appearance
 of the display.
 Use loops to display similar symbols repeatedly.
+Variables named <tt>x</tt> and <tt>counter</tt> are used in the
+following example.  The variable
+<tt>Mapyrus.page.width</tt>
+is set by Mapyrus automatically.
 
 include beginex.doc
 include tutorialvar1.mpy
@@ -189,10 +185,6 @@ The output of this example is.
 <p>
 <img src="tutorialvar1.png">
 <p>
-
-include beginex.doc
-include tutorialvar2.mpy
-include endex.doc
 
 <a name="procedures"/></a>
 <h3>Building Procedures</h3>
@@ -205,7 +197,7 @@ Solid and dashed line styles are set with the
 <a href="reference.html#linestyle">linestyle</a>
 command.  To draw a line with repeated symbols, use the
 <a href="reference.html#samplepath">samplepath</a>
-command to replaces the path with evenly spaced sample points and
+command to replace the path with evenly spaced sample points and
 then call a procedure to draw a symbol at each sample point.
 The following example demonstrates this.
 
@@ -263,11 +255,84 @@ include endex.doc
 <a name="polygons"/></a>
 <h3>Displaying Polygons</h3>
 <p>
+Polygon outlines are drawn with the
+<a href="reference.html#stroke">stroke</a>
+command and filled with the
+<a href="reference.html#fill">fill</a>
+command.
+To draw repeated stripes (also known as hatching) through
+the polygon, use the
+<a href="reference.html#clip">clip</a>
+command to limit the area displayed to inside the polygon,
+then the
+<a href="reference.html#stripepath">stripepath</a>
+command to replace the path with evenly spaced stripes and
+then draw each line.  The following example demonstrates this.
+
+include beginex.doc
+include tutorialpolygons1.mpy
+include endex.doc
+
+<p>
+<img src="tutorialpolygons1.png">
+<p>
+
+To fill a polygon with cross-hatching use two procedures to
+draw each set of hatch lines at different angles.  This is
+demonstrated in the following example.
+
+include beginex.doc
+include tutorialpolygons2.mpy
+include endex.doc
+
+<p>
+<img src="tutorialpolygons2.png">
+<p>
+
+Use the
+<a href="reference.html#stripepath">stripepath</a>
+and
+<a href="reference.html#samplepath">samplepath</a>
+commands in combination to generate a grid of points through the
+polygon, then call a procedure to draw a symbol at each point.
+This is demonstrated in the following example.
+
+include beginex.doc
+include tutorialpolygons3.mpy
+include endex.doc
+
+<p>
+<img src="tutorialpolygons3.png">
+<p>
+
+To display a border around the inside of the polygon
+use the
+<a href="reference.html#clip">clip</a>
+command to limit the area displayed to inside the polygon
+and then draw the outline with a thick linestyle.
+The following example demonstrates this.
+Use the
+<a href="reference.html#protect">protect</a>
+command instead of
+<a href="reference.html#clip">clip</a>
+to display a border around the outside of the polygon.
+
+include beginex.doc
+include tutorialpolygons4.mpy
+include endex.doc
+
+<p>
+<img src="tutorialpolygons4.png">
+<p>
+
+<a name="labels"/></a>
+<h3>Displaying Labels</h3>
+<p>
 
 <a name="rand"/></a>
 <h3>Random Effects</h3>
 <p>
-Random effects are created using the
+Random effects are generated using the
 <a href="reference.html#random">random</a>
 function.
 The following example demonstrates setting
@@ -458,8 +523,11 @@ include endex.doc
 
 <p>
 <a name="external"></a>
-<h3>Accessing Mapyrus HTTP Server From Other Software</h3>
+<h3>Accessing Mapyrus From Other Software</h3>
 <p>
+
+Talk about startup time for stand-alone
+remote access via URL.
 
 Starting as server makes immediately available
 of the display.

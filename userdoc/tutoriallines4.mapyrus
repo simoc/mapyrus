@@ -1,5 +1,5 @@
 begin arrowhead r
-	# Draw arrowhead rotated to point to end of line.
+	# Draw arrowhead rotated to point at end of line.
 	#
 	rotate r
 	move 1.2, 1.2
@@ -27,7 +27,6 @@ move 5, 5
 draw 45, 5
 arc 0, 45, 15, 55, 15
 draw 55, 25
-#draw 5, 25
 linestyle 0.1
 color '#a020f0'
 stroke

@@ -16,6 +16,7 @@ begin cobblestone
 end
 
 newpage "png", "tutorialrand2.png", 40, 40, 96
+clearpath
 move 4, 8
 draw 36, 8, 36, 32, 12, 32, 12, 24, 4, 24
 samplepath 4, 0

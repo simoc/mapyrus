@@ -1,0 +1,26 @@
+begin hatch45
+	clip
+	stripepath 2, 45
+	stroke
+end
+begin hatchMinus45
+	clip
+	stripepath 2, -45
+	stroke
+end
+
+begin crosshatch
+	color "red"
+	stroke
+	hatch45
+	hatchMinus45
+end
+
+newpage "png", "tutorialpolygons2.png", 60, 30, 96
+
+clearpath
+move 5, 5
+draw 45, 5
+arc 0, 45, 15, 45, 25
+draw 35, 25, 35, 10, 5, 10, 5, 5
+crosshatch
