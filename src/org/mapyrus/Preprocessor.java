@@ -135,11 +135,16 @@ class Preprocessor
 	 * Create new user input producer from a URL.
 	 * @param url is a URL to open and read from.
 	 */
-	public Preprocessor(URL url) throws IOException
+	public Preprocessor(URL url) throws IOException, GfException
 	{
 		LineNumberReader in;
-		InputStream urlStream = url.openStream();
 
+		if (!url.openConnection().getContentType().startsWith("text/plain"))
+		{
+			throw new GfException("URL " + url.toString() + " is not a text file");
+		}
+
+		InputStream urlStream = url.openStream();
 		in = new LineNumberReader(new InputStreamReader(urlStream));
 		FileInfo f = new FileInfo(in, url.toString(), url);
 		initFileStack(f);
@@ -148,7 +153,7 @@ class Preprocessor
 	/*
 	 * Open new file to read from and push it on stack of files being read.
 	 */
-	private void openIncludedFile(String filename) throws FileNotFoundException, MalformedURLException, IOException
+	private void openIncludedFile(String filename) throws FileNotFoundException, MalformedURLException, IOException, GfException
 	{
 		LineNumberReader in;
 		InputStream urlStream;
@@ -162,6 +167,11 @@ class Preprocessor
 			 * Try filename first as an absolute URL.
 			 */
 			URL url = new URL(filename);
+			if (!url.openConnection().getContentType().startsWith("text/plain"))
+			{
+				throw new GfException("Not a plain text file");
+			}
+
 			urlStream = url.openStream();
 			in = new LineNumberReader(new
 				InputStreamReader(urlStream));
@@ -177,6 +187,11 @@ class Preprocessor
 				 */
 				URL lastURL = includingFile.getURL();
 				URL url = new URL(lastURL, filename);
+				if (!url.openConnection().getContentType().startsWith("text/plain"))
+				{
+					throw new GfException("Not a plain text file");
+				}
+
 				urlStream = url.openStream();
 				in = new LineNumberReader(new
 					InputStreamReader(urlStream));
