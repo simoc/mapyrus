@@ -9,10 +9,15 @@ scale Mapyrus.screen.resolution.mm
 clearpath
 color "Forest Green"
 linestyle 2
-circle 25, 25, 20
+circle 25, 25, 22
 stroke
 
 clearpath
 color "Firebrick"
-hexagon 25, 25, 12
+hexagon 25, 25, 15
+fill
+
+clearpath
+color "orange"
+triangle 25, 25, 8, 0
 fill
