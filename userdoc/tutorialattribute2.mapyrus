@@ -1,0 +1,88 @@
+begin cylinder name, pop
+  # Define legend entries for various populations.
+  #
+  key "point", " 200000 people", "", 200000
+  key "point", "1000000 people", "", 1000000
+  key "point", "2000000 people", "", 2000000
+  key "point", "5000000 people", "", 5000000
+
+  # Population is a value in range 200000-5million. Convert
+  # it to a height for the cylinder in the range 2mm-8mm.
+  #
+  let height = interpolate("200000 2 5000000 8", pop)
+  ellipse 0, 0, 4, 2
+  color "lightorange"
+  fill
+  color "black"
+  stroke
+
+  # Draw cylinder bottom, sides and top, with city name underneath.
+  #
+  clearpath
+  box -4, 0, 4, height
+  color "lightorange"
+  fill
+
+  clearpath
+  move -4, 0
+  draw -4, height
+  color "black"
+  stroke
+
+  clearpath
+  move 4, 0
+  draw 4, height
+  stroke
+
+  clearpath
+  ellipse 0, height, 4, 2
+  color "lightorange"
+  fill
+  color "black"
+  stroke
+
+  clearpath
+  color "maroon"
+  move 0, -6
+  font "Helvetica", 3
+  justify "center"
+  label name
+end
+
+# Display map of Australia.   Then display populations of
+# Australian cities, with different size cylinders representing
+# different population levels.
+#
+newpage "eps", "tutorialattribute2.eps", 80, 70
+dataset "shapefile", "coastline.shp", "dbffields="
+worlds -2800000, 4800000, 2300000, 9190000
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  color "lightgray"
+  stroke
+done
+
+dataset "textfile", "aust_cities.dat", ""
+while Mapyrus.fetch.more
+do
+  fetch
+  let city = $1, population = $2
+  fetch
+  let x = $1, y = $2
+  clearpath
+  move x, y
+  fetch      # skip lines containing temperature data.
+  fetch
+  cylinder city, population
+done
+
+# Draw legend in separate PostScript file.
+#
+newpage "eps", "tutorialattribute2legend.eps", 40, 50
+font "Helvetica", 3
+color "black"
+move 5, 5, 5, 15, 5, 25, 5, 35
+legend 4
