@@ -737,11 +737,19 @@ public class Interpreter
 			case Statement.NEWPAGE:
 				if (nExpressions == 5)
 				{
-					context.setOutputFormat(args[0].getStringValue(),
-						args[1].getStringValue(),
+					String filename = args[1].getStringValue();
+					String format = args[0].getStringValue();
+					context.setOutputFormat(format, filename,
 						(int)args[2].getNumericValue(),
 						(int)args[3].getNumericValue(),
 						(int)args[4].getNumericValue(), "extras", mStdoutStream);
+						
+					/*
+					 * If writing to stdout then content type for an HTTP
+					 * request is an image.
+					 */
+					if (filename.equals("-"))
+						mContentType = "image/" + format.toLowerCase();
 				}
 				else
 				{
@@ -1452,16 +1460,19 @@ public class Interpreter
 
 	/**
 	 * Reads and parses commands from file and executes them.
+	 * @param context is the context to use during interpretation.
 	 * @param f is open file or URL to read from.
 	 * @param stdout is stream to use for standard output by this intepreter.
 	 */
-	public void interpret(FileOrURL f, PrintStream stdout)
+	public void interpret(ContextStack context, FileOrURL f, PrintStream stdout)
 		throws IOException, MapyrusException
 	{
 		Statement st;
 		Preprocessor preprocessor = new Preprocessor(f);
 		mInComment = false;
 		mStdoutStream = stdout;
+		mContext = context;
+		mContentType = "text/html";
 
 		/*
 		 * Keep parsing until we get EOF.
@@ -1719,11 +1730,24 @@ public class Interpreter
 
 	/**
 	 * Create new language interpreter.
-	 * @param context is the context to use during interpretation.
 	 */
-	public Interpreter(ContextStack context)
+	public Interpreter()
 	{
-		mContext = context;
 		mStatementBlocks = new HashMap();
+	}
+	
+	/**
+	 * Return a clone of this interpreter.
+	 * @return cloned interpreter.
+	 */
+	public Object clone()
+	{
+		Interpreter retval = new Interpreter();
+		retval.mContentType = null;
+		retval.mContext = null;
+		retval.mInComment = false;
+		retval.mStatementBlocks = (HashMap)(mStatementBlocks.clone());
+		retval.mStdoutStream = null;
+		return((Object)retval);
 	}
 }
