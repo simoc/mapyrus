@@ -575,7 +575,9 @@ public class ContextStack
 					retval = new Argument(getCurrentContext().getPageHeight());
 				else if (sub.equals("format"))
 					retval = new Argument(Argument.STRING, getCurrentContext().getPageFormat());
-				else if (sub.equals("resolution"))
+				else if (sub.equals("resolution.mm"))
+					retval = new Argument(getCurrentContext().getResolution());
+				else if (sub.equals("resolution.dpi"))
 				{
 					retval = new Argument(Constants.MM_PER_INCH /
 						getCurrentContext().getResolution());
