@@ -1,17 +1,20 @@
-newpage "eps", "tutoriallines2.eps", 60, 30
+begin spike
+  move -1, 0
+  let spikeCounter = spikeCounter + 1
+  if spikeCounter % 2 == 0
+  then
+    draw 0, -3, 1, 0
+  else
+    draw 0, -6, 1, 0
+  endif
+  fill
+end
 
-# Demonstrate combination of solid and dashed linestyles.
-#
+newpage "eps", "tutoriallines2.eps", 60, 30
 clearpath
 move 5, 5
-draw 45, 5
-arc -1, 45, 15, 45, 25
-draw 15, 25
-arc -1, 15, 20, 15, 15
-draw 35, 15
-linestyle 2.5, 'butt', 'round'
-color 'black'
+bezier 5, 30, 55, 5, 55, 25
 stroke
-linestyle 1.8, 'butt', 'round', 1, 2, 2
-color 'yellow'
-stroke
+samplepath 5, 2.5
+let spikeCounter = 0
+spike
