@@ -1,0 +1,35 @@
+newpage "epsimage", "tutorialtrans2.eps", 80, 40, "background=white"
+
+color "lightgoldenrodyellow"
+box 0, 0, 20, 20
+box 20, 20, 40, 40
+box 40, 0, 60, 20
+box 60, 20, 80, 40
+fill
+
+begin fadingDot startingColor
+  color startingColor, pow(fadingCounter / fadingLength, 2)
+  let fadingCounter = fadingCounter - 1
+  circle 0, 0, 1
+  fill
+end
+
+# Draw closely packed circles along path that fade
+# from starting color to transparent at end of line.
+#
+begin fadingLine startingColor
+  let fadingLength = Mapyrus.path.length
+  let fadingCounter = fadingLength
+  samplepath 1, 0
+  fadingDot startingColor
+end
+
+clearpath
+move 5, 30
+draw 75, 35
+fadingLine "blue"
+
+clearpath
+move 10, 18
+draw 70, 8
+fadingLine "red"
