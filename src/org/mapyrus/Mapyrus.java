@@ -260,13 +260,15 @@ public class Mapyrus
 	 * Listen on a server socket, accepting and processing HTTP requests.
 	 * @param interpreter interpreter to use for
 	 * @param port port on which to create socket and listen on.
+	 * This function normally runs forever and will only return if server
+	 * cannot be started.
 	 */
 	private static void serveHttp(Interpreter interpreter, int port)
 	{
 		ServerSocket serverSocket = null;
 		Pool interpreterPool;
 		HashSet activeThreads;
-		
+
 		/*
 		 * Make pool of interpreters available to threads that
 		 * handle HTTP requests.
@@ -305,7 +307,7 @@ public class Mapyrus
 		{
 			System.err.println(MapyrusMessages.get(MapyrusMessages.INIT_HTTP_FAILED) +
 				": " + e.getMessage());
-			System.exit(1);
+			return;
 		}
 
 		/*
@@ -533,6 +535,7 @@ public class Mapyrus
 		if (isHttpServer)
 		{
 			serveHttp(interpreter, port);
+			System.exit(1);
 		}
 		System.exit(0);
 	}
