@@ -929,6 +929,14 @@ a PDF file with A4 page size using the following command:
 newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
 \end{verbatim}
 
+To create multi-page PDF files, create each page as a separate
+PostScript file in Mapyrus.  Then use the following GhostScript command to
+merge the pages into a single PDF file:
+
+\begin{verbatim}
+gs -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=p.pdf p1.ps p2.ps -c quit
+\end{verbatim}
+
 \subsection{Using PostScript Fonts In PostScript Output}
 \label{psfonts}
 
