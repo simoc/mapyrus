@@ -2049,7 +2049,6 @@ public class Interpreter
 					Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
 					mContext.setTranslation(pt.x, pt.y);
 					mContext.clearPath();
-					mContext.moveTo(0.0, 0.0);
 
 					double rotation = ((Double)rotations.get(i)).doubleValue();
 					mContext.setRotation(rotation);
