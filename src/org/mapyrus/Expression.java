@@ -92,6 +92,7 @@ public class Expression
 		boolean mIsFunction;
 		Function mFunction;
 		ExpressionTreeNode mThirdFunctionExpression;
+		ExpressionTreeNode mFourthFunctionExpression;
 
 		/**
 		 * Create a leaf value containing either a number,
@@ -132,7 +133,7 @@ public class Expression
 		 * with less than 3 arguments)
 		 */
 		public ExpressionTreeNode(Function func, ExpressionTreeNode arg1,
-			ExpressionTreeNode arg2, ExpressionTreeNode arg3)
+			ExpressionTreeNode arg2, ExpressionTreeNode arg3, ExpressionTreeNode arg4)
 		{
 			mIsLeaf = false;
 			mIsFunction = true;
@@ -140,6 +141,7 @@ public class Expression
 			mLeftBranch = arg1;
 			mRightBranch = arg2;
 			mThirdFunctionExpression = arg3;
+			mFourthFunctionExpression = arg4;
 		}
 
 		/**
@@ -167,6 +169,7 @@ public class Expression
 			Argument leftValue = null;
 			Argument rightValue = null;
 			Argument thirdValue = null;
+			Argument fourthValue = null;
 			Argument retval;
 			int nArgs = 0;
 
@@ -188,6 +191,11 @@ public class Expression
 				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
 				nArgs = 3;
 			}
+			if (mFourthFunctionExpression != null)
+			{
+				fourthValue = traverse(mFourthFunctionExpression, context, interpreterFilename);
+				nArgs = 4;
+			}
 
 			/*
 			 * Evaluate function.
@@ -200,6 +208,8 @@ public class Expression
 				retval = mFunction.evaluate(context, leftValue, rightValue);
 			else if (nArgs == 3)
 				retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue);
+			else if (nArgs == 4)
+				retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue, fourthValue);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
@@ -1275,7 +1285,7 @@ public class Expression
 				/*
 				 * Parse expression for each function argument.
 				 */
-				ExpressionTreeNode functionExpressions[] = new ExpressionTreeNode[3];
+				ExpressionTreeNode functionExpressions[] = new ExpressionTreeNode[4];
 				for (int i = 0; i < functionExpressions.length; i++)
 					functionExpressions[i] = null;
 
@@ -1317,7 +1327,7 @@ public class Expression
 				}
 
 				expr = new ExpressionTreeNode(f, functionExpressions[0],
-					functionExpressions[1], functionExpressions[2]);
+					functionExpressions[1], functionExpressions[2], functionExpressions[3]);
 			}
 			else
 			{
