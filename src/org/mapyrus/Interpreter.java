@@ -1258,9 +1258,9 @@ public class Interpreter
 						}
 						units = u.intValue();
 					}
-					else if (token.startsWith("distort="))
+					else if (token.startsWith("distortion="))
 					{
-						String flag = token.substring(8);
+						String flag = token.substring(11);
 						allowDistortion = flag.equalsIgnoreCase("true");
 					}
 				}
