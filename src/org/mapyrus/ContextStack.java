@@ -289,13 +289,19 @@ public class ContextStack
 
 	/**
 	 * Begin query on current dataset.  All geometry inside or crossing
+	 * @param x1 minimum X world coordinate of data to import.
+	 * @param y1 minimum Y world coordinate of data to import.
+	 * @param x2 maximum X world coordinate of data to import.
+	 * @param y2 maximum Y world coordinate of data to import.
 	 */
-	public void queryDataset() throws MapyrusException
+	public void queryDataset(double x1, double y1, double x2, double y2)
+		throws MapyrusException
 	{
 		Dataset dataset = getCurrentContext().getDataset();
 		if (dataset == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
-		dataset.query(getCurrentContext().getUnprojectedExtents(), 1.0);
+		Rectangle2D.Double extents = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
+		dataset.query(extents, 1.0);
 	}
 
 	/**
@@ -517,7 +523,7 @@ public class ContextStack
 			/*
 			 * Return internal/system variable.
 			 */
-			if (c == 'i' && varName.equals(INTERNAL_VARIABLE_PREFIX + "import.moreRecords"))
+			if (c == 'i' && varName.equals(INTERNAL_VARIABLE_PREFIX + "import.more"))
 			{
 				Dataset dataset = getCurrentContext().getDataset();
 				if (dataset != null && dataset.hasMoreRows())
