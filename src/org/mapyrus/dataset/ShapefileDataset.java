@@ -6,9 +6,11 @@ package au.id.chenery.mapyrus.dataset;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -70,6 +72,7 @@ public class ShapefileDataset implements GeographicDataset
 	private String mFilename;
 	private int mShapeFileLength, mShapeFileType;
 	private int mDBFRecordLength;
+	private String mProjection;
 	
 	/*
 	 * Flags indicating which fields in DBF file that user wants to fetch
@@ -113,7 +116,7 @@ public class ShapefileDataset implements GeographicDataset
 	public ShapefileDataset(String filename, String extras, String []geometryFieldNames)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
-		String shapeFilename, dbfFilename;
+		String shapeFilename, dbfFilename, prjFilename;
 		StringTokenizer st, st2;
 		String dbfFieldnames, token;
 		boolean foundField;
@@ -153,22 +156,38 @@ public class ShapefileDataset implements GeographicDataset
 			shapeFilename = filename;
 			mFilename = filename.substring(0, filename.length() - 4);
 			dbfFilename = mFilename + ".dbf";
+			prjFilename = mFilename + ".prj";
 		}
 		else if (filename.endsWith(".SHP"))
 		{
 			shapeFilename = filename;
 			mFilename = filename.substring(0, filename.length() - 4);
 			dbfFilename = mFilename + ".DBF";
+			prjFilename = mFilename + ".PRJ";
 		}
 		else
 		{
 			mFilename = filename;
 			shapeFilename = filename + ".shp";
 			dbfFilename = filename + ".dbf";
+			prjFilename = filename + ".prj";
 		}
 			
 		mShapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
 		mDBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
+		
+		/*
+		 * If there is an accompanying .prj file with the projection then read it.
+		 */
+		try
+		{
+			BufferedReader prjReader = new BufferedReader(new FileReader(prjFilename));
+			mProjection = prjReader.readLine();
+		}
+		catch(FileNotFoundException e)
+		{
+			mProjection = "undef";
+		}
 
 		/*
 		 * Read shape header, checking magic number and reading everything with
@@ -439,7 +458,7 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	public String getProjection()
 	{
-		return null;
+		return mProjection;
 	}
 
 	/**
