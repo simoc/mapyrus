@@ -24,7 +24,6 @@ package au.id.chenery.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -330,35 +329,18 @@ public class Interpreter
 	private void setFont(ContextStack context, Argument []args, int nArgs)
 		throws MapyrusException
 	{
-		int styleCode;
-		String style;
 		double size;
 
-		if (nArgs == 3)
+		if (nArgs == 2)
 		{
-			style = args[1].getStringValue().toLowerCase();
-			if (style.equals("plain"))
-				styleCode = Font.PLAIN;
-			else if (style.equals("bold"))
-				styleCode = Font.BOLD;
-			else if (style.equals("italic"))
-				styleCode = Font.ITALIC;
-			else if (style.equals("bolditalic"))
-				styleCode = Font.BOLD | Font.ITALIC;
-			else
-			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT_STYLE) +
-					": " + style);
-			}
-	
-			size = args[2].getNumericValue();
+			size = args[1].getNumericValue();
 			if (size <= 0.0)
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT_SIZE) +
 					": " + size);
 			}
 	
-			context.setFont(args[0].getStringValue(), styleCode, size);
+			context.setFont(args[0].getStringValue(), size);
 		}
 		else
 		{
