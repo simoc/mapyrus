@@ -68,6 +68,9 @@ public class FunctionTable
 		f = new Min();
 		mFunctions.put(f.getName(), f);
 
+		f = new Parsewkt();
+		mFunctions.put(f.getName(), f);
+
 		f = new Pow();
 		mFunctions.put(f.getName(), f);
 
@@ -100,6 +103,24 @@ public class FunctionTable
 		
 		f = new Tempname();
 		mFunctions.put(f.getName(), f);
+
+		try
+		{
+			/*
+			 * Java Topology Suite functions are only available if the
+			 * JTS JAR file is available in the classpath.
+			 */
+			f = new Buffer();
+			mFunctions.put(f.getName(), f);
+		}
+		catch (NoClassDefFoundError e)
+		{
+			/*
+			 * Add dummy placeholder functions instead.
+			 * They'll fail if they are ever called though.
+			 */
+			mFunctions.put("buffer", new DummyFunction("buffer"));
+		}
 	};
 
 	/**
