@@ -46,7 +46,7 @@ public abstract class Function
 
 	/**
 	 * Get maximum number of arguments accepted by this function.
-	 * Functions are limited to accept at most three arguments.
+	 * Functions are limited to accept at most four arguments.
 	 * @return maximum argument count.
 	 */
 	public abstract int getMaxArgumentCount();
@@ -102,6 +102,24 @@ public abstract class Function
 	 */	
 	public Argument evaluate(ContextStack context,
 		Argument arg1, Argument arg2, Argument arg3)
+		throws MapyrusException
+	{
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
+			": " + getName());
+	}
+	
+	/**
+	 * Evaluate function with three arguments.
+	 * @param context context containing variables and other state information.
+	 * @param arg1 first argument to function.
+	 * @param arg2 second argument to function.
+	 * @param arg3 third argument to function.
+	 * @param arg4 third argument to function.
+	 * @return evaluated function value.
+	 * @throws MapyrusException
+	 */	
+	public Argument evaluate(ContextStack context,
+		Argument arg1, Argument arg2, Argument arg3, Argument arg4)
 		throws MapyrusException
 	{
 		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
