@@ -390,12 +390,12 @@ begin trafficlights c
 	fill
 end
 
-begin quadrants q1, q2, q3, q4, qLabels
+begin quadrants title, q1, q2, q3, q4, qLabels
 	# Draws 4 quadrants, showing 4 levels of some attribute.
 	# Relative levels are shown.
 	#
-	key "point", "Quadrant Chart", 3, 4, 6, 3.3, 1
-	local maxValue
+	key "point", "Quadrant Chart", "Location", 3, 4, 6, 3.3, 1
+	local maxValue, w
 	let maxValue = max(q1, q2)
 	let maxValue = max(maxValue, q3)
 	let maxValue = max(maxValue, q4)
@@ -451,6 +451,17 @@ begin quadrants q1, q2, q3, q4, qLabels
 	move 0, -5.5
 	draw 0, 5.5
 	stroke
+
+	clearpath
+	justify "center"
+	color "grey90"
+	let w = stringwidth(title) + 1
+	box -w / 2, -8.5, w / 2, -5.5
+	fill
+	clearpath
+	color "black"
+	move 0, -8
+	label title
 end
 
 begin speechbubble message
@@ -1851,7 +1862,7 @@ then
 	oldmoon
 	newmoon
 	trafficlights ""
-	quadrants 1, 1, 1, 1, 0
+	quadrants "", 1, 1, 1, 1, 0
 	speechbubble ""
 	bordercrossing
 	crosshair
@@ -1936,8 +1947,15 @@ then
 		then
 			let pageNumber = pageNumber + 1
 			newpage "eps", "symbols" . pageNumber . ".eps", 170, 200
-			let x = 10, y = Mapyrus.page.height - 10
+
+			# Ensure page has a white background.
+			#
+			box 0, 0, Mapyrus.page.width, Mapyrus.page.height
+			color "white"
+			fill
+			color "black"
 			font "Helvetica", 3
+			let x = 10, y = Mapyrus.page.height - 10
 		endif
 
 		clearpath
