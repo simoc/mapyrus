@@ -1010,6 +1010,18 @@ public class Expression
 		return(mExprTree.evaluate(context));
 	}
 
+	/**
+	 * Returns name of variable in an expression that is only a variable name.
+	 * @return variable name, or null if expression is not simply a variable name. 
+	 */
+	public String getVariableName()
+	{
+		if (mExprTree.mIsLeaf && mExprTree.mLeafArg.getType() == Argument.VARIABLE)
+			return(mExprTree.mLeafArg.getVariableName());
+		else
+			return(null);
+	}
+
 	public static void main(String []args)
 	{
 		try
