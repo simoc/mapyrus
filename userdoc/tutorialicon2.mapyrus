@@ -1,0 +1,23 @@
+begin singleIcon
+  move 0, 0
+  icon "pattern.png", 6
+end
+
+# Fill polygon with tiled icon image pattern.
+#
+begin iconPattern
+  clip
+  stripepath 6, 0
+  samplepath 6, 0
+  singleIcon
+end
+
+# Draw polygon filled with icons.
+#
+newpage "eps", "tutorialicon2.eps", 50, 50
+clearpath
+move 5, 5
+draw 12, 29, 24, 43, 44, 37, 46, 29, 36, 26, 46, 25, 49, 7, 5, 5
+iconPattern
+#linestyle 1
+stroke
