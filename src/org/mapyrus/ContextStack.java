@@ -106,16 +106,17 @@ public class ContextStack
 	 * Sets output file for drawing to.
 	 * @param filename name of image file output will be saved to
 	 * @param format is image format for saved output
-	 * @param width is the page width (in points).
-	 * @param height is the page height (in points).
+	 * @param width is the page width (in mm).
+	 * @param height is the page height (in mm).
+	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
 	 */
 	public void setOutputFormat(String format, String filename,
-		int width, int height, String extras)
+		int width, int height, int resolution, String extras)
 		throws IOException, MapyrusException
 	{
 		getCurrentContext().setOutputFormat(format, filename,
-			width, height, extras);
+			width, height, resolution, extras);
 	}
 
 	/**
@@ -240,6 +241,20 @@ public class ContextStack
 	}
 
 	/**
+	 * Add circular arc to path from last point to a new point, given centre and direction.
+	 * @param direction positive for clockwise, negative for anti-clockwise. 
+	 * @param xCentre X coordinate of centre point of arc.
+	 * @param yCentre Y coordinate of centre point of arc.
+	 * @param xEnd X coordinate of end point of arc.
+	 * @param yEnd Y coordinate of end point of arc.
+	 */
+	public void arcTo(int direction, double xCentre, double yCentre,
+		double xEnd, double yEnd) throws MapyrusException
+	{
+		getCurrentContext().arcTo(direction, xCentre, yCentre, xEnd, yEnd);
+	}
+
+	/**
 	 * Resets path to empty.
 	 */
 	public void clearPath()
@@ -252,7 +267,7 @@ public class ContextStack
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
 	 */
-	public void slicePath(double spacing, double offset)
+	public void slicePath(double spacing, double offset) throws MapyrusException
 	{
 		getCurrentContext().slicePath(spacing, offset);
 	}
@@ -429,6 +444,19 @@ public class ContextStack
 			else if (sub.equals("scale.y"))
 			{
 				retval = new Argument(getCurrentContext().getScalingY());
+			}
+			else if (sub.equals("page.width"))
+			{
+				retval = new Argument(getCurrentContext().getPageWidth());
+			}
+			else if (sub.equals("page.height"))
+			{
+				retval = new Argument(getCurrentContext().getPageHeight());
+			}
+			else if (sub.equals("page.resolution"))
+			{
+				retval = new Argument(OutputFormat.MM_PER_INCH /
+					getCurrentContext().getResolution());
 			}
 			else if (sub.equals("import.moreRows"))
 			{
