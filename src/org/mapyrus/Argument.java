@@ -670,7 +670,6 @@ public class Argument
 		int i = index[0];
 		int geometryType = (int)geometry[i];
 		int count = (int)geometry[i + 1];
-		int retval;
 		double x, y;
 
 		/*
