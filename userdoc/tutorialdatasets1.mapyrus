@@ -1,0 +1,51 @@
+begin capitalCity name
+	# Draw a labelled dot marking a capital city.
+	#
+	color "red"
+	font "Helvetica", "plain", 2.5
+	move -1, -1
+	draw -1, 1, 1, 1, 1, -1
+	fill
+
+	# If point is close to the right side of the
+	# page then draw name to the left of the dot.
+	#
+	margin = Mapyrus.page.width * 0.8
+	if Mapyrus.path.min.x > margin
+	then
+		justify "right"
+		clearpath
+		move -2, 0
+	else
+		justify "left"
+		clearpath
+		move 2, 0
+	endif
+	color "black"
+	label name
+end
+
+# Display the text file tutorialdatasets1.txt in a PNG file.
+#
+newpage "png", "tutorialdatasets1.png", 85, 85, 96
+
+# Draw black outline around edge of image.
+#
+color "black"
+move 0.1, 0.1
+draw 0.1, Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1, Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1, 0.1, 0.1, 0.1
+stroke
+
+# Draw label at each position read from text file.
+#
+dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiters=,"
+worlds 150, -45, 170, -5
+import
+while Mapyrus.import.moreRecords
+do
+	fetch
+	print "DEBUG:", $0
+	clearpath
+	move $1, $2
+	capitalCity $3 . '\n(' . $4 . ')'
+done
