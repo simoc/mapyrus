@@ -471,13 +471,15 @@ public class HTTPRequest extends Thread
 					/*
 					 * Spool requested file back to HTTP client.
 					 */
-					int c = inStream.read();
 					int counter = 0;
-					while (c >= 0)
+					byte []buf = new byte[512];
+					int nBytes = inStream.read(buf);
+
+					while (nBytes > 0)
 					{
-						outStream.write(c);
-						counter++;
-						c = inStream.read();
+						outStream.write(buf, 0, nBytes);
+						counter += nBytes;
+						nBytes = inStream.read(buf);
 					}
 
 					if (mLogger.isLoggable(Level.FINE))
