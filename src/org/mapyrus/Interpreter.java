@@ -140,14 +140,34 @@ public class Interpreter
 
 		if (nExpressions == 1)
 		{
-			/*
-			 * Find named color in color name database.
-			 */
-			Color c = ColorDatabase.getColor(args[0].getStringValue());
-			if (c == null)
+			String color = args[0].getStringValue();
+			Color c;
+			if (color.startsWith("#"))
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
-					": " + args[0].getStringValue());
+				/*
+				 * Parse color from a 6 digit hex value like '#ff0000',
+				 * as used in HTML pages.
+				 */
+				try
+				{
+					c = new Color(Integer.parseInt(color.substring(1), 16));
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + color);
+				}
+			}
+			else
+			{
+				/*
+				 * Find named color in color name database.
+				 */
+				c = ColorDatabase.getColor(args[0].getStringValue());
+				if (c == null)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+						": " + args[0].getStringValue());
+				}
 			}
 			context.setColor(c);
 		}
