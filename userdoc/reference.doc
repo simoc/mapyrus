@@ -52,6 +52,7 @@ Reference
 <a href="#import">import</a>,
 <a href="#justify">justify</a>,
 <a href="#label">label</a>,
+<a href="#let">let</a>,
 <br>
 &nbsp;
 &nbsp;
@@ -201,7 +202,8 @@ or URL includes commands from another file.
 <p>
 Each command is passed zero or more arguments separated by commas.
 An argument is a number, a string literal in single quotes (<tt>'</tt>)
-or double quotes (<tt>"</tt>), a variable name, or an expression.
+or double quotes (<tt>"</tt>), a variable name, an array, an
+array element or an expression.
 <p>
 An expression contains arguments and operators and functions
 on those arguments, like in BASIC, C, or Python.
@@ -272,7 +274,7 @@ numeric comparisons and string comparisons
 <tt>not</tt>
 </td>
 <td>
-Logical and, not, not
+Logical and, or, not
 </td>
 
 </tr>
@@ -286,6 +288,27 @@ Logical and, not, not
 <b>Function Name</b>
 <td>
 <b>Description</b>
+
+<tr>
+<td>
+<a name="ceil"></a>
+<tt>ceil(<i>n</i>)<tt>
+<td>
+Returns the smallest integer value that is not less than <i>n</i>.
+
+<tr>
+<td>
+<a name="cos"></a>
+<tt>cos(<i>n</i>)<tt>
+<td>
+Returns the cosine of angle <i>n</i>, given in degrees.
+
+<tr>
+<td>
+<a name="floor"></a>
+<tt>floor(<i>n</i>)<tt>
+<td>
+Returns the largest integer value that is not larger than <i>n</i>.
 
 <tr>
 <td>
@@ -303,20 +326,6 @@ Returns the base 10 logarithm of <i>n</i>.
 
 <tr>
 <td>
-<a name="pow"></a>
-<tt>pow(<i>a</i>, <i>b</i>)<tt>
-<td>
-Returns <i>a</i> to the power <i>b</i>.
-
-<tr>
-<td>
-<a name="sqrt"></a>
-<tt>sqrt(<i>n</i>)<tt>
-<td>
-Returns square root of <i>n</i>.
-
-<tr>
-<td>
 <a name="match"></a>
 <tt>match(<i>str</i>, <i>regex</i>)<tt>
 <td>
@@ -328,6 +337,13 @@ The
 Java API documentation
 </a>
 describes the syntax of regular expressions.
+
+<tr>
+<td>
+<a name="pow"></a>
+<tt>pow(<i>a</i>, <i>b</i>)<tt>
+<td>
+Returns <i>a</i> to the power <i>b</i>.
 
 <tr>
 <td>
@@ -353,12 +369,33 @@ Returns <i>n</i> rounded to nearest whole number.
 
 <tr>
 <td>
+<a name="sin"></a>
+<tt>sin(<i>n</i>)<tt>
+<td>
+Returns the sine of angle <i>n</i>, given in degrees.
+
+<tr>
+<td>
+<a name="sqrt"></a>
+<tt>sqrt(<i>n</i>)<tt>
+<td>
+Returns square root of <i>n</i>.
+
+<tr>
+<td>
 <a name="substr"></a>
 <tt>substr(<i>str</i>, <i>offset</i>, <i>n</i>)<tt>
 <td>
 Returns a substring of the string <i>str</i>, beginning at the
 character with index <i>offset</i> that is <i>n</i> characters long.
 The first character in <i>str</i> has an index of 1.
+
+<tr>
+<td>
+<a name="tan"></a>
+<tt>tan(<i>n</i>)<tt>
+<td>
+Returns the trigonometric tangent of angle <i>n</i>, given in degrees.
 
 <tr>
 <td>
@@ -374,18 +411,24 @@ are automatically deleted after 5 minutes.
 </table>
 
 <p>
-An argument or expression is assigned to a named variable using the equals
-sign (<tt>=</tt>).  A variable name begins with a
+An argument or expression is assigned to a named variable using the
+the <a href="#let">let</a> command and an equals sign (<tt>=</tt>).
+A variable name begins with a
 letter or dollar sign (<tt>$</tt>) and contains only letters, numbers,
 dots (<tt>.</tt>) and underbars (<tt>_</tt>).
 Variable names are case-sensitive.
-Variables that are accessed without having been defined have a
+Variables and array elements that are accessed without having
+been defined have a
 value of zero, or an empty string.
 <p>
 Variables accepted as parameters to a procedure, or
 declared in the procedure with the <a href="#local">local</a> command
 are local to that procedure and not visible outside the procedure.
 All other variables are global.
+<p>
+Array elements are accessed by giving the index between
+square brackets (<tt>[</tt> and <tt>]</tt>).
+The index is any string or number value.
 <p>
 
 The <tt>if</tt> and <tt>while</tt> flow control structures
@@ -663,6 +706,8 @@ system given as the source projection to the
 <td>
 The current rotation angle in degrees set by
 <a href="#rotate">rotate</a> command.
+Returned value is normalised to fall in the
+range -180 to +180 degrees.
 
 <tr>
 <td>
@@ -981,6 +1026,21 @@ commands.
 If <i>string</i> contains newline characters (<tt>\n</tt>) then
 labels are displayed as multiple lines, one below the other,
 with each line justified independently.
+
+include hr.doc
+
+<p>
+<a name="let"></a>
+<tt>let</tt> <i>var</i> = <i>expression</i>
+<p>
+Assigns result of evaluating <i>expression</i>
+to a variable with name <i>var</i>.
+The variable is globally accessible, unless defined as local to the
+current procedure with a
+<a href="#local">local</a> command.
+<p>
+Variable <i>var</i> is either a simple variable name, an
+array, or an array element of the form <i>var</i>[<i>index</i>].
 
 include hr.doc
 
