@@ -1199,12 +1199,17 @@ public class Expression
 						 * '\\' compressed to single backslash,
 						 * '\n' converted to a newline, '\r' is stripped -- it
 						 * is not useful since we use Java's line separator internally.
+						 * '\t" is converted to a tab.
 						 * '\367' is converted to character code (3 * 64) + (6 * 8) + 7.
 						 * Escaping of other characters is ignored.
 						 */
 						if (c == 'n')
 						{
 							buf.append(Constants.LINE_SEPARATOR);
+						}
+						else if (c == 't')
+						{
+							buf.append("\t");
 						}
 						else if (Character.isDigit((char)c))
 						{
