@@ -134,9 +134,9 @@ public class ContextStack
 			/*
 			 * Finish off current context, remove it from stack.
 			 */
-			int attributesSet = getCurrentContext().closeContext();
-			mStack.removeLast();
+			Context context = (Context)mStack.removeLast();
 			i--;
+			int attributesSet = context.closeContext();
 
 			/*
 			 * If graphics attributes were set in context then set them changed
@@ -1267,7 +1267,59 @@ public class ContextStack
 	 */
 	public void closeContextStack() throws IOException, MapyrusException
 	{
-		while (popContext() > 0)
-			;
+		int nContexts = 0;
+
+		try
+		{
+			do
+			{
+				nContexts = popContext();
+			}
+			while (nContexts > 0);
+		}
+		catch (IOException e)
+		{
+			/*
+			 * Force all remaining contexts to be closed too.
+			 */
+			do
+			{
+				try
+				{
+					nContexts = popContext();
+				}
+				catch (IOException e1)
+				{
+				}
+				catch (MapyrusException e2)
+				{
+				}
+			}
+			while (nContexts > 0);
+			
+			throw e;
+		}
+		catch (MapyrusException e)
+		{
+			/*
+			 * Force all remaining contexts to be closed too.
+			 */
+			do
+			{
+				try
+				{
+					nContexts = popContext();
+				}
+				catch (IOException e1)
+				{
+				}
+				catch (MapyrusException e2)
+				{
+				}
+			}
+			while (nContexts > 0);
+			
+			throw e;
+		}
 	}
 }
