@@ -80,6 +80,7 @@ public class MapyrusMessages
 	public static final String INVALID_ROTATION = "invalidrotation";
 	public static final String INVALID_SCALING = "invalidscaling";
 	public static final String INVALID_TRANSFORM = "invalidtransform";
+	public static final String INVALID_VARIABLE = "invalidvariable";
 	public static final String INVALID_WORLDS = "invalidworlds";
 	public static final String INVALID_WORLD_UNITS = "invalidworldunits";
 	public static final String JOINED_THREAD = "joinedthread";
