@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
  */
 public class MapyrusMessages
 {
+	public static final String ACCEPTING_HTTP = "acceptinghttp";
 	public static final String CANNOT_OPEN_URL = "cannotopenurl";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
 	public static final String DEFINE_TRANSFORM = "definetransform";
@@ -39,6 +40,8 @@ public class MapyrusMessages
 	public static final String EXPECTED = "expected";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
+	public static final String HTTP_TIMEOUT = "httptimeout";
+	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INVALID_ARC = "invalidarc";
 	public static final String INVALID_COLOR = "invalidcolor";
 	public static final String INVALID_COLOR_TYPE = "invalidcolortype";
@@ -53,6 +56,7 @@ public class MapyrusMessages
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_FONT_STYLE = "invalidfontstyle";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
+	public static final String INVALID_HTTP_REQUEST = "invalidhttp";
 	public static final String INVALID_KEYWORD = "invalidkeyword";
 	public static final String INVALID_JUSTIFY = "invalidjustify";
 	public static final String INVALID_LINE_JOIN = "invalidlinejoin";
@@ -69,6 +73,7 @@ public class MapyrusMessages
 	public static final String INVALID_TRANSFORM = "invalidtransform";
 	public static final String INVALID_WORLDS = "invalidworlds";
 	public static final String INVALID_WORLD_UNITS = "invalidworldunits";
+	public static final String JOINED_THREAD = "joinedthread";
 	public static final String MISSING_FIELD = "missingfield";
 	public static final String MISSING_FILENAME = "missingfilename";
 	public static final String NESTED_PROC = "nestedproc";
@@ -90,6 +95,7 @@ public class MapyrusMessages
 	public static final String PARSE_ERROR = "parseerror";
 	public static final String PROCESS_ERROR = "processerror";
 	public static final String RECURSION = "recursion";
+	public static final String STARTED_THREAD = "startedthread";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
 	public static final String TRANSFORM_ERROR = "transformerror";
 	public static final String UNDEFINED_PROC = "undefinedproc";
