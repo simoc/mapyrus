@@ -1,96 +1,85 @@
 begin monument
-	# Display monument symbol at current point.
-	#
-	key "point", "Monument"
-	color "black"
-	move 0, 0
-	draw -1, -2, 1, -2, 0, 0
-	draw 0.5, 0.5, 0, 1, -0.5, 0.5, 0, 0
-	fill
+  # Display monument symbol at current point.
+  #
+  key "point", "Monument"
+  color "black"
+  move 0, 0
+  draw -1, -2, 1, -2, 0, 0
+  draw 0.5, 0.5, 0, 1, -0.5, 0.5, 0, 0
+  fill
 end
-
 begin ruins
-	# Display archaelogical ruins symbol at current point.
-	#
-	key "point", "Archaelogical Ruins"
-	color "black"
-	move 0, 2
-	arc 1, 0, 1.5, 0, 2
-	move -1.5, 0
-	arc 1, -1, 0, -1.5, 0
-	move 1.5, 0
-	arc 1, 1, 0, 1.5, 0
-	fill
+  # Display archaelogical ruins symbol at current point.
+  #
+  key "point", "Archaelogical Ruins"
+  color "black"
+  move 0, 2
+  arc 1, 0, 1.5, 0, 2
+  move -1.5, 0
+  arc 1, -1, 0, -1.5, 0
+  move 1.5, 0
+  arc 1, 1, 0, 1.5, 0
+  fill
 end
-
 begin church name, ruined
-	# Display a church or church ruins symbol at current point on path.
-	#
-
-	# Provide legend entry for each type of church.
-	#
-	key "point", "Church", "", 0
-	key "point", "Church Ruins", "", 1
-
-	# Draw name of church.
-	#
-	clearpath
-	font "Helvetica", 2.5
-	justify "middle"
-	move 2, 0
-	label name
-
-	if ruined == 1
-	then
-		# Turn church on its side if it is flagged as ruined.
-		#
-		rotate -30
-	endif
-
-	color "black"
-	linestyle 0.1
-	move -1, 0
-	draw 1, 0, 1, -2, -1, -2
-	fill
-	clearpath
-	move 0, 0
-	draw 0, 2
-	move -1, 1
-	draw 1, 1
-	stroke
+  # Display a church or church ruins symbol at current point on path.
+  # Provide legend entry for each type of church.
+  #
+  key "point", "Church", "", 0
+  key "point", "Church Ruins", "", 1
+  # Draw name of church.
+  #
+  clearpath
+  font "Helvetica", 2.5
+  justify "middle"
+  move 2, 0
+  label name
+  # Turn church symbol on its side if flagged as ruined.
+  #
+  if ruined == 1
+  then
+    rotate -30
+  endif
+  color "black"
+  linestyle 0.1
+  move -1, 0
+  draw 1, 0, 1, -2, -1, -2
+  fill
+  clearpath
+  move 0, 0
+  draw 0, 2
+  move -1, 1
+  draw 1, 1
+  stroke
 end
 
-newpage "png", "tutoriallegend2.png", 50, 30, 96
-
+newpage "eps", "tutoriallegend2.eps", 50, 30, 96
 clearpath
 move 5, 5
 monument
-
 clearpath
 move 7, 22
 monument
-
 clearpath
 move 24, 19
 ruins
-
 clearpath
 move 32, 16
 church "Ospringe", 1
 
-# Draw each legend entry in a separate image file, giving
-# a single move point in each image file to draw next legend entry.
+# Draw each legend entry in a separate PostScript file, giving
+# a single move point in each file to draw the next legend entry.
 #
 let counter = 0
 while Mapyrus.key.count > 0
 do
-	let counter = counter + 1
-	let f = "tutoriallegend2legend" . counter . ".png"
-	newpage "png", f, 50, 8, 96
-	clearpath
-	move 1, 1
-	color "black"
-	justify "middle"
-	font "Helvetica", 2.5
-	legend 6
+  let counter = counter + 1
+  let f = "tutoriallegend2legend" . counter . ".eps"
+  newpage "eps", f, 50, 8, 96
+  clearpath
+  move 1, 1
+  color "black"
+  justify "middle"
+  font "Helvetica", 2.5
+  legend 6
 done
