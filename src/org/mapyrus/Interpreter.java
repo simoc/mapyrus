@@ -752,7 +752,7 @@ public class Interpreter
 					 * request is an image.
 					 */
 					if (filename.equals("-"))
-						mContentType = Constants.IMAGE_CONTENT_KEYWORD + format.toLowerCase();
+						mContentType = MimeTypes.get(format);
 				}
 				else
 				{
@@ -1475,7 +1475,7 @@ public class Interpreter
 		mInComment = false;
 		mStdoutStream = stdout;
 		mContext = context;
-		mContentType = Constants.HTML_CONTENT_KEYWORD;
+		mContentType = MimeTypes.get("html");
 
 		/*
 		 * Keep parsing until we get EOF.
