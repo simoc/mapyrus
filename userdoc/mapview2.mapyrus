@@ -1,5 +1,7 @@
 # @(#) $Id$
 
+include scalebar.mapyrus
+
 # Show 'v' symbol at random position.
 #
 begin v
@@ -112,8 +114,10 @@ begin water
 	fill
 end
 
-newpage "eps", "mapview2.eps", 70, 60
+newpage "eps", "mapview2.eps", 70, 40
 worlds 40000, 40000, 50000, 45000
+
+let scale=Mapyrus.worlds.scale
 
 # Import polygons of imaginary vegetation.
 #
@@ -178,3 +182,9 @@ done
 font "Helvetica", 3
 color "black"
 legend 7
+
+# Create a scalebar for the map.
+#
+newpage "eps", "mapview2scalebar.eps", 50, 15
+clearpath
+scalebar scale, "m"
