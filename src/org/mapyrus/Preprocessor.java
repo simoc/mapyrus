@@ -243,7 +243,7 @@ class Preprocessor
 		if (s == null)
 		{
 			/*
-			 * Got end-of-file.  Continue reading any file that included
+			 * Got end-of-file.  Close file and continue reading any file that included
 			 * this one.
 			 */
 			in.close();
@@ -284,7 +284,8 @@ class Preprocessor
 					}
 					catch (Exception e)
 					{
-						throw new MapyrusException("Cannot include " + filename + " from " + getCurrentFilenameAndLine() + ": " + e.getMessage());
+						throw new MapyrusException("Cannot include " + filename + " from " +
+							getCurrentFilenameAndLineNumber() + ": " + e.getMessage());
 					}
 
 					mCurrentLine = null;
@@ -292,7 +293,8 @@ class Preprocessor
 				}
 				else
 				{
-					throw new MapyrusException("Missing include filename at " + getCurrentFilenameAndLine());
+					throw new MapyrusException("Missing include filename at " +
+						getCurrentFilenameAndLineNumber());
 				}
 			}
 		}
@@ -342,31 +344,56 @@ class Preprocessor
 	}
 
 	/**
-	 * Returns line number and name of file being read.
-	 * @retval the name of the file currently being read.
+	 * Returns information about file currently being read.
+	 * @retval file information.
 	 */
-	public String getCurrentFilenameAndLine()
+	private FileInfo getCurrentFileInfo()
 	{
-		String s;
-		FileInfo f;
+		FileInfo retval;
 
 		if (mFileStack.size() > 0)
 		{
-			f = (FileInfo)mFileStack.getLast();
+			retval = (FileInfo)mFileStack.getLast();
 		}
 		else
 		{
 			/*
 			 * Already read to EOF and stack of files is empty.
 			 */
-			f = mInitialFile;
+			retval = mInitialFile;
 		}
-		
-		LineNumberReader in = f.getReader();
-		s = f.getFilename() + " line " + in.getLineNumber();
-		return(s);
+		return(retval);
+	}
+	
+	/**
+	 * Returns name of file being read.
+	 * @retval the name of the file currently being read.
+	 */		
+	public String getCurrentFilename()
+	{
+		FileInfo f = getCurrentFileInfo();
+		return(f.getFilename());
 	}
 
+	/**
+	 * Returns name of file being read.
+	 * @retval the name of the file currently being read.
+	 */		
+	public int getCurrentLineNumber()
+	{
+		FileInfo f = getCurrentFileInfo();
+		return(f.mLineNumberReader.getLineNumber());
+	}
+		
+	/**
+	 * Returns line number and name of file being read.
+	 * @retval the name and line number of the file currently being read.
+	 */
+	public String getCurrentFilenameAndLineNumber()
+	{
+		return(getCurrentFilename() + " line " + getCurrentLineNumber());
+	}
+	
 	public static void main(String []args) throws IOException, MapyrusException
 	{
 		BufferedReader in;
