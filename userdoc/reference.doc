@@ -13,17 +13,13 @@ include hr.doc
 <a href="#softreq"/>Software Requirements</a>
 </td>
 </tr>
+
 <tr>
 <td>
 <a href="#usage"/>Usage</a>
 </td>
 </tr>
-<tr>
-<td>
-<a href="#concepts"/>Concepts</a>
-page, worlds, projections
-</td>
-</tr>
+
 <tr>
 <td>
 <a href="#language"/>Language and Commands</a>
@@ -43,12 +39,16 @@ Mapyrus requires:
 Java Runtime Environment 1.4.1
 </li>
 <li>
+The Ghostscript PostScript interpreter from 
+<a href="http://www.aladdin.com">www.aladdin.com</a>,
+if creation of PDF files is required.
+</li>
+<li>
 The PROJ.4 library from
-<a href="www.remotesensing.org">www.remotesensing.org</a>
+<a href="http://www.remotesensing.org">www.remotesensing.org</a>
+and a Java Native Interface shared library to the PROJ.4
+library for your operating system,
 if reprojection between coordinate systems is required.
-JNI
-<tt>libmapyrus.so</tt>, <tt>mapyrus.dll</tt>
-for your operating system
 </li>
 </ol>
 
@@ -62,11 +62,6 @@ text files or URLs of text filename
 <pre>
 $ java -jar mapyrus.jar myfile.txt
 </pre>
-
-include hr.doc
-
-<a name="concepts"></a>
-<h3>Concepts</h3>
 
 The purpose of Mapyrus is to display
 A page is 
@@ -440,6 +435,16 @@ The version of the software.
 <td>
 The bounding rectangle of world coordinates set with the 
 <a href="#worlds">worlds</a> command.
+
+<tr>
+<td>
+<tt>Mapyrus.worlds.scale</tt>
+<br>
+<td>
+The real-world scale factor, determined by
+dividing of the X axis coordinate range of world coordinates
+by the page width.
+
 </table>
 <p>
 
@@ -463,6 +468,7 @@ in the Java system property <tt>Mapyrus.rgbfile</tt>.
 as used in HTML pages.
 Values for RGB and HSB colors are given as intensities
 in the range 0-1.
+The spelling <tt>colour</tt> is also accepted for this command.
 
 include hr.doc
 
@@ -530,7 +536,9 @@ include hr.doc
 <a name="draw"></a>
 <tt>draw</tt> <i>x</i>, <i>y</i>, ...
 <p>
-Adds one or more points (<i>x</i>, <i>y</i>) to the current path.
+Adds one or more straight line segments to the current path.
+A straight line segment is added from the previously defined point
+to (<i>x</i>, <i>y</i>) and proceeding on through
 Points are first transformed through any world coordinate
 transformation set with a <a href="#worlds">worlds</a> command.
 
@@ -553,6 +561,8 @@ include hr.doc
 <p>
 <a name="clearpath"></a>
 <tt>clearpath</tt>
+<p>
+Removes all points from the current path.
 
 include hr.doc
 
@@ -656,7 +666,9 @@ PROJECT
 
 <p>
 <a name="dataset"></a>
-DATASET
+<tt>dataset</tt> <i>type</i>, <i>name</i>, <i>extras</i>,
+[<i>geometryfield</i>, ... ]
+<p>
 
 <p>
 <a name="import"></a>
@@ -683,8 +695,9 @@ any previous output file is closed.
 <a name="print"></a>
 <tt>print</tt> <i>string</i> [, <i>string</i> ...]
 <p>
-Prints each <i>string</i> to standard output.  No space
-prints a newline.
+Prints each <i>string</i> to standard output,
+separated by spaces.
+A newline is added after the final <i>string</i>.
 <p>
 
 include footer.doc
