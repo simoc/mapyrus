@@ -1250,7 +1250,7 @@ public class Context
 	 * Clip to show only area outside currently defined path,
 	 * protecting what is inside path.
 	 */
-	public void protect() throws MapyrusException
+	public void clipOutside() throws MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		GeometricPath protectedPath;
@@ -1305,7 +1305,7 @@ public class Context
 	/**
 	 * Clip to show only inside of currently defined path.
 	 */
-	public void clip()
+	public void clipInside()
 	{
 		GeometricPath path = getDefinedPath();
 		GeometricPath clipPath;

@@ -481,17 +481,17 @@ public class ContextStack
 	 * Clip to show only area outside currently defined path,
 	 * protecting what is inside path.
 	 */
-	public void protect() throws MapyrusException
+	public void clipOutside() throws MapyrusException
 	{
-		getCurrentContext().protect();
+		getCurrentContext().clipOutside();
 	}
 
 	/**
 	 * Clip to show only area inside currently defined path.
 	 */
-	public void clip()
+	public void clipInside()
 	{
-		getCurrentContext().clip();
+		getCurrentContext().clipInside();
 	}
 
 	/**
