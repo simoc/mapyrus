@@ -62,8 +62,7 @@ public class ColorDatabase
 		try
 		{
 			/*
-			 * Otherwise try to read operating system
-			 * /usr/lib/X11/rgb.txt file.
+			 * Otherwise try to read X Windows file /usr/lib/X11/rgb.txt.
 			 */
 			if (filename == null)
 			{
@@ -74,8 +73,22 @@ public class ColorDatabase
 		catch (FileNotFoundException e)
 		{
 			/*
-			 * No color name database available.
+			 * No color name database available.  Just define 
+			 * named colors available in Java.
 			 */
+			mColors.put("black", Color.BLACK);
+			mColors.put("blue", Color.BLUE);
+			mColors.put("cyan", Color.CYAN);
+			mColors.put("darkgray", Color.DARK_GRAY);
+			mColors.put("gray", Color.GRAY);
+			mColors.put("green", Color.GREEN);
+			mColors.put("lightgray", Color.LIGHT_GRAY);
+			mColors.put("magenta", Color.MAGENTA);
+			mColors.put("orange", Color.ORANGE);
+			mColors.put("pink", Color.PINK);
+			mColors.put("red", Color.RED);
+			mColors.put("white", Color.WHITE);
+			mColors.put("yellow", Color.YELLOW);
 			return;
 		}
 
