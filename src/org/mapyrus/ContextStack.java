@@ -27,6 +27,7 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
@@ -352,14 +353,15 @@ public class ContextStack
 	 * Sets dataset to read from.
 	 * @param type is format of dataset, for example, "text".
 	 * @param name is name of dataset to open.
-	 * @param extras are special options for this dataset type such as database connection
-	 * information, or instructions for interpreting data.
+	 * @param extras are special options for this dataset type such as database
+	 * connection information, or instructions for interpreting data.
+	 * @param stdin standard ihput stream of interpreter.
 	 */
 	public void setDataset(String type, String name,
-		String extras) throws MapyrusException
+		String extras, InputStream stdin) throws MapyrusException
 	{
 		GeographicDataset dataset;
-		dataset = DatasetFactory.open(type, name, extras);
+		dataset = DatasetFactory.open(type, name, extras, stdin);
 		getCurrentContext().setDataset(dataset);
 	}
 
