@@ -28,10 +28,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <loadfile property="version" srcFile="VERSION">
 <filterchain><striplinebreaks/></filterchain>
 </loadfile>
+<tstamp>
+<format property="today" pattern="d-MMMM-yyyy" locale="en"/>
+</tstamp>
 </target>
 
 <target name="compile" depends="init" description="Compile java source code">
 <replace dir="src" token="@software_version_token@" value="${version}" summary="yes"/>
+<replace dir="src" token="@release_date_token@" value="${today}" summary="yes"/>
 <javac srcdir="src" destdir="build/classes" excludes="**/CVS"/>
 <copy file="src/${messagefile}" tofile="build/classes/${messagefile}"/>
 </target>
