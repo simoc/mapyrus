@@ -1,67 +1,62 @@
 begin pollution reading
-	# Define legend entries for various reading values.
-	#
-	key "point", "pollution 10 ppm", 10
-	key "point", "pollution 20 ppm", 20
-	key "point", "pollution 30 ppm", 30
-	key "point", "pollution 40 ppm", 40
-	key "point", "pollution 50 ppm", 50
-	key "point", "pollution 60 ppm", 60
-	key "point", "pollution 70 ppm", 70
-	key "point", "pollution 80 ppm", 80
-	key "point", "pollution 90 ppm", 90
+  # Define legend entries for various reading values.
+  #
+  key "point", "pollution 10 ppm", 10
+  key "point", "pollution 20 ppm", 20
+  key "point", "pollution 30 ppm", 30
+  key "point", "pollution 40 ppm", 40
+  key "point", "pollution 50 ppm", 50
+  key "point", "pollution 60 ppm", 60
+  key "point", "pollution 70 ppm", 70
+  key "point", "pollution 80 ppm", 80
+  key "point", "pollution 90 ppm", 90
 
-	# Set HSB colors for minimum and maximum readings.
-	#
-	let hueMin = 0.53, satMin = 0.75, brightMin = 0.90
-	let hueMax = 0.03, satMax = 1.00, brightMax = 0.90
+  # Set HSB colors for minimum and maximum readings.
+  #
+  let hueMin = 0.53, satMin = 0.75, brightMin = 0.90
+  let hueMax = 0.03, satMax = 1.00, brightMax = 0.90
 
-	# Reading is a percentage, in the range 0 to 100.
-	# Convert it to a color between minimum and maximum values.
-	#
-	let hue = hueMin + (reading / 100) * (hueMax - hueMin)
-	let sat = satMin + (reading / 100) * (satMax - satMin)
-	let bright = brightMin + (reading / 100) * (brightMax - brightMin)
+  # Reading is a percentage, in the range 0 to 100.
+  # Convert it to a color between minimum and maximum values.
+  #
+  let hue = hueMin + (reading / 100) * (hueMax - hueMin)
+  let sat = satMin + (reading / 100) * (satMax - satMin)
+  let bright = brightMin + (reading / 100) * (brightMax - brightMin)
 
-	# Draw small filled square.
-	#
-	color "hsb", hue, sat, bright
-	move -1, -1
-	draw -1, 1, 1, 1, 1, -1
-	fill
+  # Draw small filled square.
+  #
+  color "hsb", hue, sat, bright
+  move -1, -1
+  draw -1, 1, 1, 1, 1, -1
+  fill
 end
 
 # Display points showing pollution levels in different colors.
 #
-newpage "png", "tutorialattribute1.png", 60, 30, 96
+newpage "eps", "tutorialattribute1.eps", 60, 30, 300
 
 clearpath
 move 10, 10
 pollution 7
-
 clearpath
 move 22, 12
 pollution 27
-
 clearpath
 move 30, 16
 pollution 47
-
 clearpath
 move 37, 11
 pollution 64
-
 clearpath
 move 44, 15
 pollution 87
-
 clearpath
 move 53, 14
 pollution 95
 
-# Draw legend for pollution readings in a separate image file.
+# Draw legend for pollution readings in a separate PostScript file.
 #
-newpage "png", "tutorialattribute1legend.png", 40, 50, 96
+newpage "eps", "tutorialattribute1legend.eps", 40, 50, 300
 clearpath
 color "black"
 move 5, 5, 5, 10, 5, 15, 5, 20, 5,25, 5, 30, 5, 35, 5, 40, 5, 45
