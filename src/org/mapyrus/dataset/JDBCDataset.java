@@ -80,6 +80,12 @@ public class JDBCDataset implements GeographicDataset
 		{
 			DriverManager.setLoginTimeout(Constants.DB_CONNECTION_TIMEOUT);
 			retval = DriverManager.getConnection(url, properties);
+
+			/*
+			 * Some operations can be optimised if database
+			 * knows that this connection is read-only.
+			 */
+			retval.setReadOnly(true);
 			mDbs.put(url, retval);
 		}
 		return(retval);
