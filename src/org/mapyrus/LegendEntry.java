@@ -58,6 +58,26 @@ public class LegendEntry implements Comparable
 	}
 
 	/**
+	 * Parse legend entry type.
+	 * @param typeString legend entry string.
+	 * @return legend type, or -1 if legend entry type not valid.
+	 */
+	public static int parseTypeString(String typeString)
+	{
+		int retval = -1;
+
+		if (typeString.equalsIgnoreCase("point"))
+			retval = LegendEntry.POINT_ENTRY;
+		else if (typeString.equalsIgnoreCase("line"))
+			retval = LegendEntry.LINE_ENTRY;
+		else if (typeString.equalsIgnoreCase("zigzag"))
+			retval = LegendEntry.ZIGZAG_ENTRY;
+		else if (typeString.equalsIgnoreCase("box"))
+			retval = LegendEntry.BOX_ENTRY;
+		return(retval);
+	}
+
+	/**
 	 * Compare legend entry with another.
 	 * @param o legend entry to compare with.
 	 * @return -1, 0, 1, depending whether this object is less, equal, or greater than o.
@@ -100,6 +120,25 @@ public class LegendEntry implements Comparable
 	public int getType()
 	{
 		return(mType);
+	}
+	
+	/**
+	 * Return type of legend entry as a string.
+	 * @return legend type.
+	 */
+	public String getTypeString()
+	{
+		String retval;
+		if (mType == POINT_ENTRY)
+			retval = "point";
+		else if (mType == LINE_ENTRY)
+			retval = "line";
+		else if (mType == ZIGZAG_ENTRY)
+			retval = "zigzag";
+		else
+			retval = "box";
+
+		return(retval);
 	}
 
 	/**
