@@ -37,7 +37,20 @@ public class MimeTypes
 	 */
 	public static String get(String extension)
 	{
-		String retval = URLConnection.guessContentTypeFromName("x." + extension);
+		/*
+		 * Convert SVG MIME type ourselves as it does not
+		 * yet appear in my MIME type database.
+		 */
+		String retval;
+		if (extension.equalsIgnoreCase("svg") ||
+			extension.equalsIgnoreCase("svgz"))
+		{
+			retval = "image/svg+xml";
+		}
+		else
+		{
+			retval = URLConnection.guessContentTypeFromName("x." + extension);
+		}
 		return(retval);
 	}
 }
