@@ -1,6 +1,8 @@
 begin spike
   move -1, 0
   let spikeCounter = spikeCounter + 1
+  # Alternate between long and short spikes.
+  #
   if spikeCounter % 2 == 0
   then
     draw 0, -3, 1, 0
