@@ -43,6 +43,7 @@ public class JDBCDataset implements GeographicDataset
 	/*
 	 * SQL query being executed and it's result.
 	 */
+	private Connection mConnection = null;
 	private Statement mStatement = null;
 	private ResultSet mResultSet = null;
 	private String mSql;
@@ -68,7 +69,6 @@ public class JDBCDataset implements GeographicDataset
 		String token, key, value;
 		String driver = null;
 		Properties properties = new Properties();
-		Connection connection;
 
 		mSql = filename;
 
@@ -109,7 +109,7 @@ public class JDBCDataset implements GeographicDataset
 			/*
 			 * Connect to database.
 			 */
-			connection = ConnectionPool.get(mUrl, properties);
+			mConnection = ConnectionPool.get(mUrl, properties);
 		}
 		catch (SQLException e)
 		{
@@ -128,7 +128,7 @@ public class JDBCDataset implements GeographicDataset
 			 * Send SQL query to database so we can immediately find the
 			 * field names and types it returns.
 			 */
-			mStatement = connection.createStatement();
+			mStatement = mConnection.createStatement();
 
 			try
 			{
@@ -446,14 +446,10 @@ public class JDBCDataset implements GeographicDataset
 
 	private void close(boolean succeeded) throws MapyrusException
 	{
-		Connection connection = null;
 		try
 		{
 			if (mStatement != null)
-			{
-				connection = mStatement.getConnection();
 				mStatement.close();
-			}
 		}
 		catch (SQLException e)
 		{
@@ -467,8 +463,10 @@ public class JDBCDataset implements GeographicDataset
 		}
 		finally
 		{
-			if (connection != null)
-				ConnectionPool.put(mUrl, connection, succeeded);
+			if (mConnection != null)
+				ConnectionPool.put(mUrl, mConnection, succeeded);
+			mConnection = null;
+			mStatement = null;
 		}
 	}
 
