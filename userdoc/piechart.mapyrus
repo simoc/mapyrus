@@ -6,7 +6,7 @@ begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
 
 	local radius
 	local counter, total
-	local angle, just
+	local sweep, just
 
 	let radius = 8
 	linestyle 0.01
@@ -31,21 +31,18 @@ begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
 		#
 		if sliceSizes[counter] > 0
 		then
-			let angle = -sliceSizes[counter] / total * 360
+			let sweep = sliceSizes[counter] / total * 360
 			clearpath
-			move 0, 0
-			draw radius, 0
-			arc 1, 0, 0, radius * cos(angle), radius * sin(angle)
-			draw 0, 0
+			wedge 0, 0, radius, 0, -sweep
 			color sliceColors[counter]
 			fill
 			color "black"
 			stroke
 
-			# Draw label adjacent to pie slice with
-			# a line back into pie.
+			# Draw label halfway around pie slice with
+			# a line back into the pie.
 			#
-			rotate angle / 2
+			rotate -sweep / 2
 			if sliceLabels[counter] ne ""
 			then
 				# Calculate alignment for label, based on its
@@ -77,7 +74,7 @@ begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
 
 			# Rotate axes ready to draw next slice.
 			#
-			rotate angle / 2
+			rotate -sweep / 2
 		endif
 		let counter = counter + 1
 	done
