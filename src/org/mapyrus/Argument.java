@@ -143,20 +143,23 @@ public class Argument
 	 */
 	public double getNumericValue() throws MapyrusException
 	{
-		if (mType == STRING && Double.isNaN(mNumericValue))
+		if (mType == STRING)
 		{
-			/*
-			 * Argument is a string that we've not tried
-			 * converting to a number before.  Find it's numeric
-			 * value now.
-			 */
-			try
+			if (Double.isNaN(mNumericValue))
 			{
-				mNumericValue = Double.parseDouble(mStringValue);
-			}
-			catch (NumberFormatException e)
-			{
-				mNumericValue = 0;
+				/*
+				 * Argument is a string that we've not tried
+				 * converting to a number before.  Find it's numeric
+				 * value now.
+				 */
+				try
+				{
+					mNumericValue = Double.parseDouble(mStringValue);
+				}
+				catch (NumberFormatException e)
+				{
+					mNumericValue = 0;
+				}
 			}
 		}
 		else if (mType != NUMERIC)
