@@ -162,19 +162,22 @@ public class OutputFormat
 		 */
 		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
 			" div dup scale");
-		
+
 		/*
 		 * Define shorter names for most commonly used operations.
+		 * Bind all operators names to improve performance (see 3.11 of
+		 * PostScript Language Reference Manual).
 		 */
-		mWriter.println("/m { moveto } def /l { lineto } def");
-		mWriter.println("/s { stroke } def /f { fill } def");
+		mWriter.println("/m { moveto } bind def /l { lineto } bind def");
+		mWriter.println("/s { stroke } bind def /f { fill } bind def");
 		
 		/*
 		 * Define font and dictionary entries for font size and justification.
+		 * Don't bind these as font loading operators may be overridden in interpreter.
 		 */
 		mWriter.println("/font { /fjy exch def /fjx exch def /frot exch radtodeg def");
 		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
-		mWriter.println("/radtodeg { 180 mul 3.1415629 div } def");
+		mWriter.println("/radtodeg { 180 mul 3.1415629 div } bind def");
 
 		/*
 		 * Draw text string, after setting correct position, rotation,
@@ -187,17 +190,18 @@ public class OutputFormat
 		mWriter.println("/t { gsave currentpoint translate frot rotate");
 		mWriter.println("dup stringwidth pop fjx mul");
 		mWriter.println("2 index neg fjy add fsize mul");
-		mWriter.println("rmoveto show grestore newpath } def");
+		mWriter.println("rmoveto show grestore newpath } bind def");
 
-		mWriter.println("/rgb { setrgbcolor } def");
-		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap setlinewidth } def");
+		mWriter.println("/rgb { setrgbcolor } bind def");
+		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap");
+		mWriter.println("setlinewidth } bind def");
 
 		/*
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
 		 */
-		mWriter.println("/gs { gsave 4 dict begin } def");
-		mWriter.println("/gr { end grestore } def");
+		mWriter.println("/gs { gsave 4 dict begin } bind def");
+		mWriter.println("/gr { end grestore } bind def");
 
 		mWriter.println("");
 	}
@@ -552,6 +556,13 @@ public class OutputFormat
 				s.append(mLinearFormat.format(linestyle.getDashPhase()));
 				s.append(" setdash");
 				writePostScriptLine(s.toString());
+			}
+			else
+			{
+				/*
+				 * Remove any dashed line previously defined.
+				 */
+				writePostScriptLine("[] 0 setdash");
 			}
 
 			/*
