@@ -5,9 +5,9 @@ package au.id.chenery.mapyrus;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Date;
-import java.util.ArrayList;
 import java.awt.geom.Rectangle2D;
 
 import au.id.chenery.mapyrus.dataset.DatasetFactory;
@@ -141,9 +141,12 @@ public class ContextStack
 	 * @param x is new scaling in X axis.
 	 * @param y is new scaling in Y axis.
 	 */
-	public void setScaling(double x, double y)
+	public void setScaling(double x, double y) throws MapyrusException
 	{
-		getCurrentContext().setScaling(x, y);
+		if (x == 0.0 || y == 0.0)
+			throw new MapyrusException("Invalid scaling values");
+		else if (x != 1.0 || y != 1.0)
+			getCurrentContext().setScaling(x, y);
 	}
 
 	/**
@@ -310,11 +313,19 @@ public class ContextStack
 	}
 	
 	/**
-	 * Returns coordinates and rotation angle for each each moveTo point in current path
-	 * @returns list of three element float arrays containing x, y coordinates and
-	 * rotation angles. 
+	 * Returns rotation angle for each moveTo point in current path.
+	 * @return list of rotation angles. 
 	 */	
-	public ArrayList getMoveTos()
+	public ArrayList getMoveToRotations()
+	{
+		return(getCurrentContext().getMoveToRotations());
+	}
+
+	/**
+	 * Returns coordinates for each each moveTo point in current path
+	 * @return list of Point2D.Float objects.
+	 */	
+	public ArrayList getMoveTos() throws MapyrusException
 	{
 		return(getCurrentContext().getMoveTos());
 	}
