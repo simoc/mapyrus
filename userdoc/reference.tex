@@ -392,9 +392,12 @@ line is returned.  \\
 
 \hline
 
-\texttt{substr(\textit{str}, \textit{offset}, \textit{n})} &
+\texttt{substr(\textit{str}, \textit{offset}, \textit{n})}
+\texttt{substr(\textit{str}, \textit{offset})} &
 Returns a substring of the string \textit{str}, beginning at the
-character with index \textit{offset} that is \textit{n} characters long.
+character with index \textit{offset} that is \textit{n} characters long,
+or all characters from index \textit{offset} if
+\textit{n} is not given.
 The first character in \textit{str} has an index of 1. \\
 
 \hline
