@@ -602,6 +602,15 @@ public class ContextStack
 	}
 
 	/**
+	 * Replace path with new paths at parallel distances to original path.
+	 * @param distances list of parallel distances for new paths.
+	 */
+	public void parallelPath(double []distances)
+	{
+		getCurrentContext().parallelPath(distances);
+	}
+
+	/**
 	 * Replace path defining polygon with a sinkhole point.
 	 */
 	public void createSinkhole()
