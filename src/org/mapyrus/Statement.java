@@ -17,8 +17,8 @@ public class Statement
 
 	public static final int COLOR = 3;
 	public static final int LINEWIDTH = 4;
-	public static final int POINT = 5;
-	public static final int LINE = 6;
+	public static final int MOVE = 5;
+	public static final int DRAW = 6;
 	public static final int STROKE = 7;
 
 	private int mType;
@@ -26,7 +26,7 @@ public class Statement
 	Statement mElseStatement;
 	String mAssignedVariable;
 
-	ArithmeticExpression []mExpressions;
+	Expression []mExpressions;
 
 	/**
 	 * Looks up identifier for a statement name.
@@ -49,11 +49,11 @@ public class Statement
 		}
 		else if (sLower.equals("point"))
 		{
-			retval = POINT;
+			retval = MOVE;
 		}
 		else if (sLower.equals("line"))
 		{
-			retval = LINE;
+			retval = DRAW;
 		}
 		else if (sLower.equals("stroke"))
 		{
@@ -67,7 +67,7 @@ public class Statement
 	 * @param type is the type of statement.
 	 * @param expressions are the arguments for this statement.
 	 */
-	public Statement(int type, ArithmeticExpression []expressions)
+	public Statement(int type, Expression []expressions)
 	{
 		mType = type;
 		mExpressions = expressions;
@@ -78,11 +78,11 @@ public class Statement
 	 * @param variableName is the name of the variable being assigned.
 	 * @param value is the value being assigned to this variable.
 	 */
-	public Statement(String variableName, ArithmeticExpression value)
+	public Statement(String variableName, Expression value)
 	{
 		mType = ASSIGN;
 		mAssignedVariable = variableName;
-		mExpressions = new ArithmeticExpression[1];
+		mExpressions = new Expression[1];
 		mExpressions[0] = value;
 	}
 
@@ -91,11 +91,11 @@ public class Statement
 	 * @param type is the type of statement.
 	 * @param expressions are the arguments for this statement.
 	 */
-	public Statement(ArithmeticExpression condition,
+	public Statement(Expression condition,
 		Statement thenStatement, Statement elseStatement)
 	{
 		mType = CONDITION;
-		mExpressions = new ArithmeticExpression[1];
+		mExpressions = new Expression[1];
 		//mExpressions[0] = value;
 	}
 
