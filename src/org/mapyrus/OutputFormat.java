@@ -274,7 +274,7 @@ public class OutputFormat
 		 */
 		mWriter.println("/t { gsave currentpoint translate frot rotate");
 		mWriter.println("dup stringwidth pop fjx mul");
-		mWriter.println("2 index neg fjy add fsize mul");
+		mWriter.println("3 -1 roll neg fjy add fsize mul");
 		mWriter.println("rmoveto show grestore newpath } bind def");
 
 		mWriter.println("/rgb { setrgbcolor } bind def");
