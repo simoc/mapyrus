@@ -107,48 +107,24 @@ public class GeometricPath
 	public void arcTo(int direction, float xCentre, float yCentre,
 		float xEnd, float yEnd) throws MapyrusException
 	{
-		double radius, startAngle, endAngle, angleExtent;
+		double radius;
 		Point2D lastPt = mPath.getCurrentPoint();
 		if (lastPt == null)
-			throw new MapyrusException("No start point defined for arc");
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ARC_START));
 		
 		radius = Point2D.distance(xCentre, yCentre, xEnd, yEnd);
 
-		startAngle = Math.atan2(lastPt.getY() - yCentre, lastPt.getX() - xCentre);
-		startAngle = Math.toDegrees(startAngle);
-
-		endAngle = Math.atan2(yEnd - yCentre, xEnd - xCentre);
-		endAngle = Math.toDegrees(endAngle);
-
-		angleExtent = endAngle - startAngle;
-		
-		/*
-		 * Two angles very close together mean a full circle. 
-		 */
-		if (angleExtent > -0.0001 && angleExtent < 0.0001)
-		{
-			angleExtent = 360.0;
-		}
-		else
+		Arc2D.Float arc = new Arc2D.Float();
+		arc.setArcByCenter(xCentre, yCentre, radius, 0.0, 1.0, Arc2D.OPEN);
+		arc.setAngles(lastPt.getX(), lastPt.getY(), xEnd, yEnd);
+		if (direction < 0.0)
 		{
 			/*
-			 * Force arc to go in the direction the user wants it.
+			 * Force arc to go anti-clockwise.
 			 */
-			if (angleExtent < 0 && direction < 0)
-				angleExtent += 360.0;
-			else if (angleExtent > 0 && direction > 0)
-				angleExtent -= 360.0;
+			arc.setAngleExtent(arc.getAngleExtent() - 360.0);
 		}
-
-		/*
-		 * Y axis is flipped when writing some output formats,
-		 * so arc is really sweeping in opposite direction.
-		 */
-		angleExtent = -angleExtent;
-
-		Arc2D.Float arc = new Arc2D.Float();
-		arc.setArcByCenter(xCentre, yCentre, radius, startAngle, angleExtent, Arc2D.OPEN);
-
+	
 		mPath.append(arc, true);
 		mNLineTos++;
 	}
