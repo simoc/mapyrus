@@ -272,8 +272,8 @@ include endex.doc
 
 Then enter the following URL in a web browser.  Mapyrus
 receives the request, executes the commands in the file
-<tt>tutorialhttpserver.mpy</tt> and returns the PNG file
-that is created to the web browser.
+<tt>tutorialhttpserver.mpy</tt> and returns the
+PNG image that is written to standard output to the web browser.
 
 <pre>
 http://localhost:8410/tutorialhttpserver.mpy
@@ -296,8 +296,10 @@ and <tt>labels</tt> are automatically set before interpreting
 the commands in the file <tt>tutorialurl.mpy</tt>.
 <p>
 
-This method is suitable for applications that manage state
-in the HTTP client, such as clients written in Java or Visual Basic.
+For applications that manage state
+and provide a graphical user interface (such as clients written in
+Java or Visual Basic), use this method for returning data to the
+application.
 
 <p>
 <a name="htmlpage"></a>
@@ -314,7 +316,8 @@ Generate images to include in the HTML page with unique filenames using the
 <a href="reference.html#tempname"/>
 <tt>tempname</tt>
 </a>
-function.  The following simplistic example demonstrates this.
+function.
+The following simplistic example demonstrates this.
 
 include beginex.doc
 include tutorialhtmlpage1.mpy
