@@ -24,7 +24,6 @@ package au.id.chenery.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -84,7 +83,6 @@ public class Context
 	private BasicStroke mLinestyle;
 	private int mJustify;
 	private String mFontName;
-	private int mFontStyle;
 	private double mFontSize;
 	private double mFontRotation;
 
@@ -172,7 +170,6 @@ public class Context
 		mLinestyle = new BasicStroke(0.1f);
 		mJustify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
 		mFontName = "SansSerif";
-		mFontStyle = Font.PLAIN;
 		mFontSize = 5;
 		mFontRotation = 0;
 
@@ -202,7 +199,6 @@ public class Context
 		mLinestyle = existing.mLinestyle;
 		mJustify = existing.mJustify;
 		mFontName = existing.mFontName;
-		mFontStyle = existing.mFontStyle;
 		mFontSize = existing.mFontSize;
 		mFontRotation = existing.mFontRotation;
 
@@ -344,11 +340,12 @@ public class Context
 	 * @param attributeMask bit mask of attributes to set: ATTRIBUTE_*.
 	 */
 	private void setGraphicsAttributes(int attributeMask)
+		throws IOException, MapyrusException
 	{
 		int maskComplement = (~attributeMask);
 
 		if ((mAttributesPending & ATTRIBUTE_FONT & attributeMask) != 0)
-			mOutputFormat.setFontAttribute(mFontName, mFontStyle, mFontSize, mFontRotation);
+			mOutputFormat.setFontAttribute(mFontName, mFontSize, mFontRotation);
 		if ((mAttributesPending & ATTRIBUTE_JUSTIFY & attributeMask) != 0)
 			mOutputFormat.setJustifyAttribute(mJustify);
 		if ((mAttributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
@@ -495,13 +492,11 @@ public class Context
 	/**
 	 * Sets font for labelling with.
 	 * @param fontName is name of font as defined in java.awt.Font class.
-	 * @param fontStyle is a style as defined in java.awt.Font class.
 	 * @param fontSize is size for labelling in millimetres.
 	 */
-	public void setFont(String fontName, int fontStyle, double fontSize)
+	public void setFont(String fontName, double fontSize)
 	{
 		mFontName = fontName;
-		mFontStyle = fontStyle;
 		mFontSize = fontSize * mScaling;
 		mFontRotation = mRotation;
 		mAttributesChanged |= ATTRIBUTE_FONT;
@@ -972,7 +967,7 @@ public class Context
 	/**
 	 * Draw currently defined path.
 	 */
-	public void stroke()
+	public void stroke() throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 
@@ -986,7 +981,7 @@ public class Context
 	/**
 	 * Fill currently defined path.
 	 */
-	public void fill()
+	public void fill() throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		
@@ -1080,7 +1075,7 @@ public class Context
 	 * Draw label positioned at (or along) currently defined path.
 	 * @param label is string to draw on page.
 	 */
-	public void label(String label)
+	public void label(String label) throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		
