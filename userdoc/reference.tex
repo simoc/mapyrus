@@ -1666,7 +1666,19 @@ default value of 300.
 
 If \textit{flag} is \texttt{true} then
 turns a landscape orientation page 90 degrees so that it appears
-as a portrait page. \\
+as a portrait page.
+
+\vspace{10pt}
+\texttt{update=\textit{flag}}
+
+If \textit{flag} is \texttt{true} then the file with name
+\textit{filename} is an existing PostScript 
+file that is opened for editing.  The existing file must be an
+Encapsulated PostScript file or a PostScript file containing only
+a single page.
+Drawing commands will draw over the top of the existing page.
+Page size is set to the size of the existing page,
+\textit{width} and \textit{height} are ignored.  \\
 
 \hline
 
@@ -1711,7 +1723,17 @@ fonts are already available from the operating system.
 On operating systems that do not support TrueType fonts
 (Linux, UNIX) include filenames of all TrueType
 fonts to be used on this page.  These fonts are loaded
-by Mapyrus. \\
+by Mapyrus.
+
+\vspace{10pt}
+\texttt{update=\textit{flag}}
+
+If \textit{flag} is \texttt{true} then the file with name
+\textit{filename} is an existing file that is opened for editing.
+Drawing commands will draw over the top of the existing image
+in the file.
+Page size is set to the size of the existing image,
+\textit{width} and \textit{height} are ignored.  \\
 
 \hline
 
