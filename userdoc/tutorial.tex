@@ -747,7 +747,7 @@ with different types of lines.
 To display data with a known range of attribute values in different
 colors based on the attribute value, define colors for minimum and
 maximum values and use interpolation to determine the color for
-each point or polygon.  This is demonstrated in the following
+each point, line or polygon.  This is demonstrated in the following
 example by passing a \texttt{reading} attribute value for each point
 that is displayed.  The output is shown in Figure \ref{tutorialattribute1}.
 A legend is also created to show how the coloring works.
@@ -761,13 +761,33 @@ A legend is also created to show how the coloring works.
 \label{tutorialattribute1}
 \end{figure}
 
-Further examples are varying the size of a symbol depending on a
-population or measurement value, varying line width depending on
-traffic between two points, or varying the symbols plotted inside
+Another possibility is varying the size of a symbol depending
+on an attribute value.  The next example demonstrates this, using the
+population value for each city to control the height of a
+cylinder drawn at each point.
+The output is shown in Figure \ref{tutorialattribute2}.
+
+\verbatiminput{tutorialattribute2.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialattribute2.eps}
+\includegraphics{tutorialattribute2legend.eps}
+\caption{Using More Attributes}
+\label{tutorialattribute2}
+\end{figure}
+
+Further examples are varying line width depending on traffic between
+two points, varying labelling depending on the importance of data,
+or varying the symbols plotted inside
 polygons depending on soil or rock type.
 
+Extend this technique to display two attribute values together to show
+relationships between the attributes (such as the correlation between fox
+populations and rabbit populations).  Alternatively, display the same attribute
+measured at different times to show trends in the attribute data.
+
 To display values of several attributes at point locations, draw a
-piechart or histogram at each point.
+piechart or histogram (see Page \pageref{piechart}) at each point.
 
 \subsection{Displaying A Scalebar}
 \label{tutorialscalebar}
@@ -798,6 +818,7 @@ display the scalebar in a separate file from the map.
 \end{figure}
 
 \subsection{Displaying Piecharts And Histograms}
+\label{piechart}
 
 Piecharts and histograms
 are used to represent relative values of several attributes at
