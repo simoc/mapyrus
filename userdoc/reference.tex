@@ -371,9 +371,19 @@ Returns square root of \textit{n}. \\
 
 \hline
 
+\texttt{stringheight(\textit{str})} &
+Returns the height in millimeters of the string \textit{str}
+if it were displayed using the \texttt{label} command.
+For strings containing several lines, the total height of all
+lines is returned.  \\
+
+\hline
+
 \texttt{stringwidth(\textit{str})} &
 Returns the width in millimeters of the string \textit{str}
-if it were displayed using the \texttt{label} command.  \\
+if it were displayed using the \texttt{label} command.
+For strings containing several lines, the width of the longest
+line is returned.  \\
 
 \hline
 
@@ -413,7 +423,7 @@ Returns \textit{str} converted to upper case. \\
 Returns \textit{str} broken into several lines for
 use in a \texttt{label} command.
 Each line will not be
-longer than \textit{width} millimetres wide. \\
+longer than \textit{width} millimeters wide. \\
 
 \hline
 \end{longtable}
@@ -545,14 +555,14 @@ They are not saved and not restored.
 Any world coordinate system set with the \texttt{worlds} command is cleared
 before the commands in the procedure are executed.  This enables the calling
 procedure to work in a world coordinate system and the called procedure to draw
-at these world coordinate positions using measurements in millimetres.
+at these world coordinate positions using measurements in millimeters.
 
 If the current path contains only \texttt{move} points and no straight line or
 arc segments when a procedure is called then the procedure is called
 repeatedly, one time for each move point, with the origin (0, 0) translated to
 the \texttt{move} point each time and the path reset to empty.  Therefore,
 coordinates in the called procedure are relative to the move point.  This
-enables drawing commands in the called procedure to be given in millimetres,
+enables drawing commands in the called procedure to be given in millimeters,
 relative to each \texttt{move} point.
 
 \subsection{Internal Variables}
@@ -654,8 +664,8 @@ The name of the of the next procedure to be displayed by the
 The file format, page height, page width
 and resolution that were passed to the
 \texttt{newpage} command.  File format is in lowercase.
-Height and width are in millimetres.  Resolution is available
-as either a dots-per-inch value, or a distance in millimetres between
+Height and width are in millimeters.  Resolution is available
+as either a dots-per-inch value, or a distance in millimeters between
 dots. \\
 
 \hline
@@ -668,8 +678,8 @@ dots. \\
 \texttt{Mapyrus.path.max.y},
 \texttt{Mapyrus.path.width},
 \texttt{Mapyrus.path.height} &
-The length of the current path on the page measured in millimetres,
-the area of the current path measured in square millimetres
+The length of the current path on the page measured in millimeters,
+the area of the current path measured in square millimeters
 and the bounding rectangle of the current path. \\
 
 \hline
@@ -693,8 +703,8 @@ The current scale factor set by \texttt{scale} command. \\
 \texttt{Mapyrus.screen.resolution.mm} &
 The height, width and resolution of the screen in which Mapyrus
 is running.
-Height and width are in millimetres.  Resolution is available
-as either a dots-per-inch value, or a distance in millimetres between
+Height and width are in millimeters.  Resolution is available
+as either a dots-per-inch value, or a distance in millimeters between
 dots. \\
 
 \hline
@@ -1091,7 +1101,7 @@ font \textit{name}, \textit{size}
 
 Sets font for labelling with the \texttt{label} command.
 Font \textit{name} and \textit{size} are the name and size in
-millimetres of the font to use.
+millimeters of the font to use.
 
 If a scale factor was set with the
 \texttt{scale} command
@@ -1173,7 +1183,7 @@ image format.
 a square single color bitmap image of size 4x4, 8x8 or 16x16 pixels.
 Any non-hexadecimal digit characters in the string are ignored.
 
-\textit{size} is the optional size for the icon in millimetres.  If no size
+\textit{size} is the optional size for the icon in millimeters.  If no size
 is given or size is zero then the icon is displayed at its natural size,
 as it would appear in an image viewer with one image pixel per display
 pixel.
@@ -1265,7 +1275,7 @@ Legend entries in procedures that were never called are
 not included in the legend.  Therefore, the legend only shows
 entries that were actually displayed.
 
-\textit{size} defines the size of each legend entry, in millimetres.
+\textit{size} defines the size of each legend entry, in millimeters.
 
 The description label is displayed to the right of each legend entry, using the
 current \texttt{color}, \texttt{font} and \texttt{justify} settings.
@@ -1296,15 +1306,15 @@ linestyle \textit{width}, \textit{cap}, \textit{join}, \textit{phase}, \textit{d
 
 Sets style line drawing by the \texttt{stroke}
 command.
-Line \textit{width} given in millimetres.
+Line \textit{width} given in millimeters.
 \textit{cap} is the style to use at the ends of lines, either
 \texttt{butt}, \texttt{round} or \texttt{square}.
 \textit{join} is the style to use where lines join, either
 \texttt{bevel}, \texttt{miter} or \texttt{round}.
 One or more \textit{dash length} values are given, alternating
 between the length of one dash and the length of space between
-dashes in a dash pattern.  Each \textit{dash length} is given in millimetres.
-\textit{phase} is the offset in millimetres into the dash pattern 
+dashes in a dash pattern.  Each \textit{dash length} is given in millimeters.
+\textit{phase} is the offset in millimeters into the dash pattern 
 at which to begin.
 
 \subsubsection{local}
@@ -1355,7 +1365,7 @@ See section \ref{pdf} for
 information on converting PostScript output to PDF format.
 
 \textit{width} and \textit{height} are the dimensions of the page
-in millimetres.  To set dimensions in pixels for an image file,
+in millimeters.  To set dimensions in pixels for an image file,
 use the calculation
 \texttt{\textit{pixelSize} * Mapyrus.screen.dpi.mm} for
 width and height.
@@ -1518,8 +1528,8 @@ samplepath \textit{spacing}, \textit{offset}
 
 Replaces current path with equally spaced points along the path.
 \textit{offset} is the distance along the path at which to place first point,
-given in millimetres.  \textit{spacing} is the distance between points, given
-in millimetres.  The sign of \textit{spacing} controls the direction in which
+given in millimeters.  \textit{spacing} is the distance between points, given
+in millimeters.  The sign of \textit{spacing} controls the direction in which
 the path is travelled.  If \textit{spacing} is a positive value, the path is
 travelled from the beginning towards the end.  If \textit{spacing} is a
 negative value, then the absolute value of \textit{spacing} is used and the
@@ -1544,8 +1554,8 @@ scaled by this factor.
 shiftpath \textit{x}, \textit{y}
 \end{alltt}
 
-Shifts all points in the current path \textit{x} millimetres along the X axis
-and \textit{y} millimetres along the Y axis.  Shift values are scaled and
+Shifts all points in the current path \textit{x} millimeters along the X axis
+and \textit{y} millimeters along the Y axis.  Shift values are scaled and
 rotated by \texttt{scale} and \texttt{rotate} values but are independent
 of any world coordinate transformation.
 
@@ -1571,7 +1581,7 @@ stripepath \textit{spacing}, \textit{angle}
 
 Replaces current path with equally spaced parallel lines that completely cover
 the path.  \textit{spacing} is the distance between lines, measured in
-millimetres.  \textit{angle} is angle of each line, measured in
+millimeters.  \textit{angle} is angle of each line, measured in
 counter-clockwise in degrees, with zero being horizontal.  Follow this command
 with a \texttt{clip} command to produce a hatched fill pattern.
 
@@ -1621,7 +1631,7 @@ if necessary, to maintain uniform scaling.
 
 \textit{units} define the units of the world coordinates,
 either \texttt{metres}, \texttt{meters} or \texttt{feet}.
-If not given, units are assumed to be metres.
+If not given, units are assumed to be meters.
 
 \subsection{Error Handling}
 
