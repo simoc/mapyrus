@@ -81,9 +81,10 @@ public class Statement
 	public static final int PRINT = 48;
 	public static final int LOCAL = 49;
 	public static final int LET = 50;
-	public static final int KEY = 51;
-	public static final int LEGEND = 52;
-	public static final int MIMETYPE = 53;
+	public static final int EVAL = 51;
+	public static final int KEY = 52;
+	public static final int LEGEND = 53;
+	public static final int MIMETYPE = 54;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -177,6 +178,7 @@ public class Statement
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 		mStatementTypeLookup.put("local", new Integer(LOCAL));
 		mStatementTypeLookup.put("let", new Integer(LET));
+		mStatementTypeLookup.put("eval", new Integer(EVAL));
 		mStatementTypeLookup.put("key", new Integer(KEY));
 		mStatementTypeLookup.put("legend", new Integer(LEGEND));
 		mStatementTypeLookup.put("mimetype", new Integer(MIMETYPE));
