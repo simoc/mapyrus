@@ -396,6 +396,15 @@ public class ColorDatabase
 					mColors.put(colorName, retval);
 				}
 			}
+			if (alpha != 255)
+			{
+				/*
+				 * Add transparency value to color.
+				 */
+				int rgb = retval.getRGB();
+				rgb = (rgb & 0xffffff);
+				retval = new Color(rgb | (alpha << 24), true);
+			}
 		}
 		return(retval);
 	}
