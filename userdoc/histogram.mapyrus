@@ -1,0 +1,35 @@
+# @(#) $Id$
+
+# Draw a histogram showing each value as a bar in a different color.
+#
+begin histogram colors, labels, values, maxValue, size
+
+  local x, y, numValues
+
+  font "Helvetica", 3
+  let y = 1, numValues = length(values)
+  scale size / numValues
+  while y <= numValues
+  do
+    clearpath
+    color colors[y]
+    let x = values[y] / maxValue * numValues
+    box 0, y - 1, x, y
+    fill
+    clearpath
+    color "black"
+
+    # Position label to the right of the bar.
+    #
+    move x + 0.3, y - 0.8
+    label labels[y]
+    let y = y + 1
+  done
+
+  clearpath
+  linestyle 0.01
+  color "grey"
+  move numValues, 0
+  draw 0, 0, 0, numValues
+  stroke
+end
