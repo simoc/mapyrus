@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import org.mapyrus.Constants;
+
 /**
  * Converts bytes to ASCII85 representation and writes them to a file.
  * representation of data, using only 85 printable ASCII characters.
@@ -50,9 +52,10 @@ public class ASCII85OutputStream
 	private char []mEncodedChars;
 
 	/*
-	 * File to write bytes to.
+	 * File to write bytes to and number of bytes written to current line of file. 
 	 */
 	private Writer mWriter;
+	private int mNCharsOnLine;
 
 	/**
 	 * Create new ASCII85 filtered output stream.
@@ -64,6 +67,7 @@ public class ASCII85OutputStream
 		mNUnencodedBytes = 0;
 		mEncodedChars = new char[5];
 		mWriter = writer;
+		mNCharsOnLine = 0;
 	}
 
 	/**
@@ -104,11 +108,21 @@ public class ASCII85OutputStream
 			 */
 			if (isFinalSet)
 			{
-					mWriter.write(mEncodedChars, 0, mNUnencodedBytes + 1);
+				mWriter.write(mEncodedChars, 0, mNUnencodedBytes + 1);
 			}
 			else
 			{
-					mWriter.write(mEncodedChars);
+				mWriter.write(mEncodedChars);
+				mNCharsOnLine += mEncodedChars.length;
+
+				/*
+				 * Break lines so that they don't become too long.
+				 */
+				if (mNCharsOnLine > 72)
+				{
+					mWriter.write(Constants.LINE_SEPARATOR);
+					mNCharsOnLine = 0;
+				}
 			}
 		}
 	}
