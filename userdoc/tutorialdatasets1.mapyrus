@@ -12,12 +12,12 @@ begin capitalCity name
   label name
 end
 
-# Display the geographic data in text file tutorialdatasets1.txt
+# Plot the geographic data in text file tutorialdatasets1.txt
 # in an Encapsulated PostScript file.
 #
 newpage "eps", "tutorialdatasets1.eps", 85, 85
 
-dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiters=,"
+dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiters=|"
 worlds 150, -45, 180, -5
 while Mapyrus.fetch.more
 do
