@@ -53,7 +53,6 @@ public class HTTPRequest extends Thread
 	private static final String HTTP_BAD_KEYWORD = "HTTP/1.0 400 Bad Request";
 	private static final String CONTENT_TYPE_KEYWORD = "Content-Type";
 	private static final String CONTENT_LENGTH_KEYWORD = "Content-Length";
-	private static final String SERVER_KEYWORD = "Server";
 	private static final String GET_REQUEST_KEYWORD = "GET";
 	private static final int GET_REQUEST = 1;
 	private static final String POST_REQUEST_KEYWORD = "POST";
@@ -449,8 +448,6 @@ public class HTTPRequest extends Thread
 				reply = HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
 					CONTENT_TYPE_KEYWORD + ": " + contentType +
 					Constants.LINE_SEPARATOR +
-					SERVER_KEYWORD + ": " + Constants.PROGRAM_NAME + "/" +
-					Constants.getVersion() + Constants.LINE_SEPARATOR +
 					Constants.LINE_SEPARATOR;
 
 				outStream.write(reply.getBytes());
@@ -508,8 +505,6 @@ public class HTTPRequest extends Thread
 
 				reply = HTTP_BAD_KEYWORD + Constants.LINE_SEPARATOR +
 					CONTENT_TYPE_KEYWORD + ": " + contentType + Constants.LINE_SEPARATOR +
-					SERVER_KEYWORD + ": " + Constants.PROGRAM_NAME + "/" +
-					Constants.getVersion() + Constants.LINE_SEPARATOR +
 					Constants.LINE_SEPARATOR +
 					mErrorMessage + Constants.LINE_SEPARATOR;
 				outStream.write(reply.getBytes());
