@@ -418,6 +418,19 @@ public class ContextStack
 	}
 
 	/**
+	 * Adds ellipse to path.
+	 * @param xMin minimum X coordinate of rectangle containing ellipse.
+	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
+	 * @param xMax maximum X coordinate of rectangle containing ellipse.
+	 * @param yMax maximum Y coordinate of rectangle containing ellipse.
+	 */
+	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
+		throws MapyrusException
+	{
+		getCurrentContext().ellipseTo(xMin, yMin, xMax, yMax);
+	}
+
+	/**
 	 * Resets path to empty.
 	 */
 	public void clearPath()

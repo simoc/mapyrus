@@ -1113,7 +1113,48 @@ public class Context
 
 		mPath.arcTo(direction, dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
 	}
-	
+
+	/**
+	 * Add ellipse to path.
+	 * @param xMin minimum X coordinate of rectangle containing ellipse.
+	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
+	 * @param xMax maximum X coordinate of rectangle containing ellipse.
+	 * @param yMax maximum Y coordinate of rectangle containing ellipse.
+	 */
+	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
+		throws MapyrusException
+	{
+		double cornerPts[] = new double[4];
+		float dstPts[] = new float[4];
+
+		cornerPts[0] = xMin;
+		cornerPts[1] = yMin;
+		cornerPts[2] = xMax;
+		cornerPts[3] = yMax;
+
+		/*
+		 * Transform to correct world coordinate system.
+		 */
+		if (mProjectionTransform != null)
+		{
+			mProjectionTransform.forwardTransform(cornerPts);
+		}
+
+		/*
+		 * Transform points from world coordinates
+		 * to millimetre position on page.
+		 */
+		if (mWorldCtm != null)
+		{
+			mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+		}
+		mCtm.transform(cornerPts, 0, dstPts, 0, 2);
+
+		if (mPath == null)
+			mPath = new GeometricPath();
+		mPath.ellipseTo(dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
+	}
+
 	/**
 	 * Clears currently defined path.
 	 */
