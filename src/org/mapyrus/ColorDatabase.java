@@ -22,13 +22,11 @@
  */
 package org.mapyrus;
  
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.awt.Color;
-import java.lang.SecurityException;
 import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
-import java.lang.NumberFormatException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -39,18 +37,25 @@ import java.io.IOException;
  */
 public class ColorDatabase
 {
-	static private HashMap mColors;
+	static private Hashtable mColors = null;
 	
 	/**
 	 * Load global color name database from a file.
 	 */
-	public static void load() throws MapyrusException, IOException
+	public static synchronized void load() throws MapyrusException, IOException
 	{
 		String filename, line;
 		StringTokenizer st;
 		LineNumberReader reader = null;
-		
-		mColors = new HashMap();
+		Hashtable colors;
+
+		/*
+		 * Only load colors once.
+		 */
+		if (mColors != null)
+			return;
+
+		colors = new Hashtable();
 
 		/*
 		 * If user gave name of file as property then use that.
@@ -94,24 +99,25 @@ public class ColorDatabase
 		{
 			/*
 			 * No color name database available.  Just define 
-			 * named colors available in Java.
+			 * minimal set of colors available in Java.
 			 */
-			mColors.put("black", Color.BLACK);
-			mColors.put("blue", Color.BLUE);
-			mColors.put("cyan", Color.CYAN);
-			mColors.put("darkgray", Color.DARK_GRAY);
-			mColors.put("darkgrey", Color.DARK_GRAY);
-			mColors.put("gray", Color.GRAY);
-			mColors.put("grey", Color.GRAY);
-			mColors.put("green", Color.GREEN);
-			mColors.put("lightgray", Color.LIGHT_GRAY);
-			mColors.put("lightgrey", Color.LIGHT_GRAY);
-			mColors.put("magenta", Color.MAGENTA);
-			mColors.put("orange", Color.ORANGE);
-			mColors.put("pink", Color.PINK);
-			mColors.put("red", Color.RED);
-			mColors.put("white", Color.WHITE);
-			mColors.put("yellow", Color.YELLOW);
+			colors.put("black", Color.BLACK);
+			colors.put("blue", Color.BLUE);
+			colors.put("cyan", Color.CYAN);
+			colors.put("darkgray", Color.DARK_GRAY);
+			colors.put("darkgrey", Color.DARK_GRAY);
+			colors.put("gray", Color.GRAY);
+			colors.put("grey", Color.GRAY);
+			colors.put("green", Color.GREEN);
+			colors.put("lightgray", Color.LIGHT_GRAY);
+			colors.put("lightgrey", Color.LIGHT_GRAY);
+			colors.put("magenta", Color.MAGENTA);
+			colors.put("orange", Color.ORANGE);
+			colors.put("pink", Color.PINK);
+			colors.put("red", Color.RED);
+			colors.put("white", Color.WHITE);
+			colors.put("yellow", Color.YELLOW);
+			mColors = colors;
 			return;
 		}
 
@@ -147,7 +153,7 @@ public class ColorDatabase
 						int r = Integer.parseInt(red);
 						int g = Integer.parseInt(green);
 						int b = Integer.parseInt(blue);
-						mColors.put(name.toLowerCase(), new Color(r, g, b));
+						colors.put(name.toLowerCase(), new Color(r, g, b));
 					}
 					catch (NumberFormatException e)
 					{
@@ -158,17 +164,7 @@ public class ColorDatabase
 				}
 			}
 		}
-	}
-
-	/**
-	 * Add new color to color database.  Synchronized to protect against two
-	 * threads modifying database at the same time.
-	 * @param colorName name of color to add.
-	 * @param color color to add to database.
-	 */
-	private static synchronized void putColor(String colorName, Color color)
-	{
-		mColors.put(colorName, color);
+		mColors = colors;
 	}
 
 	/**
@@ -206,7 +202,7 @@ public class ColorDatabase
 				 * Add this variation of color name to database so it can
 				 * be looked up directly next time.
 				 */
-				putColor(colorName, retval);
+				mColors.put(colorName, retval);
 			}
 		}
 		return(retval);
