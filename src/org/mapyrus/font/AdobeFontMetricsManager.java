@@ -101,8 +101,6 @@ public class AdobeFontMetricsManager
 	public AdobeFontMetricsManager(List afmFilenames, HashSet ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
-		BufferedReader r;
-
 		mFontMetrics = new HashMap();
 
 		/*
@@ -114,13 +112,21 @@ public class AdobeFontMetricsManager
 			String res = "org/mapyrus/font/" + mStdFontMetricResources[i];
 			InputStream inStream =
 				this.getClass().getClassLoader().getResourceAsStream(res);
-			r = new BufferedReader(new InputStreamReader(inStream));
 
-			AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts);
-			mFontMetrics.put(afm.getFontName(), afm);
-			r.close();
+			BufferedReader r = null;
+			try
+			{
+				r = new BufferedReader(new InputStreamReader(inStream));
+				AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts);
+				mFontMetrics.put(afm.getFontName(), afm);
+			}
+			finally
+			{
+				if (r != null)
+					r.close();
+			}
 		}
-		
+
 		/*
 		 * Load font metrics information from .afm files provided by caller.
 		 */
@@ -128,11 +134,19 @@ public class AdobeFontMetricsManager
 		while (it.hasNext())
 		{
 			String filename = (String)it.next();
-			r = new BufferedReader(new FileReader(filename));
-			
-			AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts);
-			mFontMetrics.put(afm.getFontName(), afm);
-			r.close();
+			BufferedReader r = null;
+
+			try
+			{
+				r = new BufferedReader(new FileReader(filename));
+				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts);
+				mFontMetrics.put(afm.getFontName(), afm);
+			}
+			finally
+			{
+				if (r != null)
+					r.close();
+			}
 		}
 	}
 
