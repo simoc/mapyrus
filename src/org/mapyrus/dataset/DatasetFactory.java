@@ -39,6 +39,8 @@ public class DatasetFactory
 			// XXX dynamically load class for datasets for easier extensionsibility.
 			if (type.equalsIgnoreCase("textfile"))
 				retval = new TextfileDataset(name, extras, geometryFieldNames);
+			else if (type.equalsIgnoreCase("shapefile"))
+				retval = new ShapefileDataset(name, extras, geometryFieldNames);
 		}
 		catch (IOException e)
 		{
