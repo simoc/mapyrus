@@ -24,10 +24,9 @@ package org.mapyrus;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Image;
+import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -72,49 +71,42 @@ public class MapyrusFrame
 	public MapyrusFrame(String title, BufferedImage image)
 	{
 		mImage = image;
+		mFrame = new JFrame(title);
+
+		ImageIcon icon = new ImageIcon(image);
+		final JLabel label = new JLabel(icon);
+
+		Container contentPane = mFrame.getContentPane();
+		contentPane.setLayout(new BorderLayout());
 
 		/*
-		 * Put image on an icon, reducing it to a reasonable size if it is bigger
+		 * Put image on an icon, putting it in a scrollable area if it is bigger
 		 * than the screen.
 		 */
 		double screenWidth = Constants.getScreenWidth() / Constants.MM_PER_INCH *
 			Constants.getScreenResolution();
 		double screenHeight = Constants.getScreenHeight() / Constants.MM_PER_INCH *
 			Constants.getScreenResolution();
-		double widthReduction = image.getWidth() / screenWidth;
-		double heightReduction = image.getHeight() / screenHeight;
-		Image reducedImage;
-		if (widthReduction > 1 || heightReduction > 1)
+		if (image.getWidth() > screenWidth || image.getHeight() > screenHeight)
 		{
-			int reduction = (int)Math.max(Math.ceil(widthReduction), Math.ceil(heightReduction));
-			long reducedWidth = Math.round((double)image.getWidth() / reduction);
-			long reducedHeight = Math.round((double)image.getHeight() / reduction);
-			reducedImage = image.getScaledInstance((int)reducedWidth,
-				(int)reducedHeight, Image.SCALE_SMOOTH);
-				
-			title = title + " (" + Math.round(100.0 / reduction) + "% of actual size)";
+			ScrollPane pane = new ScrollPane();
+			pane.add(label);
+			contentPane.add(pane, BorderLayout.CENTER);
 		}
 		else
 		{
-			reducedImage = image;
+			contentPane.add(label, BorderLayout.CENTER);
 		}
-
-		ImageIcon icon = new ImageIcon(reducedImage);
-		final JLabel label = new JLabel(icon);
-
-		mFrame = new JFrame(title);
 
 		mMutex = new Mutex();
 		mMutex.lock();
 
-		Container contentPane = mFrame.getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		
 		JMenuBar menubar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 
 		JMenuItem pngExportItem = new JMenuItem("Export as PNG");
+		pngExportItem.setMnemonic(KeyEvent.VK_E);
 		fileMenu.add(pngExportItem);
 		pngExportItem.addActionListener(new ActionListener()
 		{
@@ -124,17 +116,8 @@ public class MapyrusFrame
 			}
 		});
 
-		JMenuItem jpegExportItem = new JMenuItem("Export as JPEG");
-		fileMenu.add(jpegExportItem);
-		jpegExportItem.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				export("jpeg");
-			}
-		});
-
 		JMenuItem printItem = new JMenuItem("Print");
+		printItem.setMnemonic(KeyEvent.VK_P);
 		fileMenu.addSeparator();
 		fileMenu.add(printItem);
 		printItem.addActionListener(new ActionListener()
@@ -146,6 +129,7 @@ public class MapyrusFrame
 		});
 
 		JMenuItem exitItem = new JMenuItem("Exit");
+		exitItem.setMnemonic(KeyEvent.VK_X);
 		fileMenu.addSeparator();
 		fileMenu.add(exitItem);
 		exitItem.addActionListener(new ActionListener()
@@ -159,24 +143,14 @@ public class MapyrusFrame
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(KeyEvent.VK_E);
 		JMenuItem copyItem = new JMenuItem("Copy");
+		copyItem.setMnemonic(KeyEvent.VK_C);
 		copyItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				ImageSelection imageSelection = new ImageSelection(mImage);
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				Transferable t = clipboard.getContents(this);
-				//TODO find out how to do this from the internet.
-				//clipboard.setContents(new Transferable(), this);
-				//TransferHandler handler = label.getTransferHandler();
-				//handler.exportToClipboard(label, clipboard, TransferHandler.COPY);
-
-				//Transferable contents = 
-				//clipboard.setContents(contents, owner);
-				//DropTargetContext c = new DropTargetContext();
-				//.TransferableProxy();
-				//clipboard.
-				//ClipboardTransferable.
-				System.err.println("Copying to clipboard");
+				clipboard.setContents(imageSelection, null);
 			}
 		});
 		editMenu.add(copyItem);
@@ -184,9 +158,6 @@ public class MapyrusFrame
 		menubar.add(fileMenu);
 		menubar.add(editMenu);
 		contentPane.add(menubar, BorderLayout.NORTH);
-
-
-		contentPane.add(label, BorderLayout.CENTER);
 
 		mFrame.addWindowListener(new WindowAdapter()
 		{
@@ -209,7 +180,8 @@ public class MapyrusFrame
 
 		if (defaultPrintService == null)
 		{
-			JOptionPane.showMessageDialog(mFrame, "No default printer found",
+			JOptionPane.showMessageDialog(mFrame,
+				MapyrusMessages.get(MapyrusMessages.NO_DEFAULT_PRINTER),
 				"Print Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
