@@ -59,6 +59,12 @@ Tutorial
 
 <tr>
 <td>
+<a href="#scalebar"/>Displaying A Scalebar</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#pdf"/>Generating Portable Document Format (PDF) Output</a>
 </td>
 </tr>
@@ -114,7 +120,7 @@ include endex.doc
 
 Each line in the file is a command for Mapyrus.  The
 first line sets output to a
-PNG format image named
+30mm square PNG format image named
 <tt>tutorialfirst1.png</tt>
 with the
 <a href="reference.html#newpage">newpage</a> command.
@@ -131,9 +137,10 @@ line style.
 Open a terminal window and enter the following command:
 
 <pre>
-java -jar mapyrus.jar first.txt
+java -jar <i>install-path</i>/mapyrus.jar first.txt
 </pre>
 
+where <i>install-path</i> is the directory in which Mapyrus is installed.
 When Mapyrus reaches the end of the file <tt>first.txt</tt>,
 the output file <tt>tutorialfirst1.png</tt> is completed and Mapyrus exits.
 When the output file is then viewed in a web browser, the following
@@ -151,7 +158,10 @@ include endex.doc
 
 In this example, color is set as a hex value instead of a name and
 the <a href="reference.html#fill">fill</a> command is used to
-flood fill the path that has been defined.  The output file
+flood fill the path that has been defined.
+The characters on lines following a hash (<tt>#</tt>) character that
+is not inside a quoted string are ignored by Mapyrus.
+The output file
 <tt>tutorialfirst2.png</tt> contains the following image.
 
 <p>
@@ -167,9 +177,19 @@ include endex.doc
 This example shows how to draw circular arcs,
 giving the center point and end point and
 yet another way of defining color.
+After being filled, the path remains and is used again to draw the outline
+of the same shape.
+To clear the path before drawing another shape the
+<a href="reference.html#clearpath">clearpath</a>
+command is used.
+The second shape contains an island (or hole).  When a shape is
+self-intersecting or contains islands, the winding rule is
+used for determining which areas get filled.
 
 <p>
 <img src="tutorialfirst3.png">
+
+include hr.doc
 
 <a name="var"></a>
 <h3>Using Variables</h3>
@@ -191,6 +211,8 @@ The output of this example is.
 <p>
 <img src="tutorialvar1.png">
 <p>
+
+include hr.doc
 
 <a name="procedures"/></a>
 <h3>Building Procedures</h3>
@@ -248,6 +270,8 @@ include beginex.doc
 include tutorialprocedures4.mpy
 include endex.doc
 
+include hr.doc
+
 <a name="lines"/></a>
 <h3>Displaying Lines</h3>
 <p>
@@ -267,8 +291,10 @@ include endex.doc
 <img src="tutoriallines1.png">
 <p>
 
-The following example demonstrates
+The next example demonstrates
 combining solid and dashed linestyles.
+For best results display all lines with a solid linestyle,
+then display all lines again with a dashed linestyle.
 
 include beginex.doc
 include tutoriallines2.mpy
@@ -279,8 +305,8 @@ include endex.doc
 <p>
 
 The following example demonstrates combining thick and
-thin linestyles and symbols at sampled points.  For best
-results display all lines with a thick linestyle,
+thin linestyles and symbols at sampled points.
+For best results display all lines with a thick linestyle,
 then display all lines again with a thin linestyle.
 
 include beginex.doc
@@ -309,6 +335,8 @@ include endex.doc
 <p>
 <img src="tutoriallines5.png">
 <p>
+
+include hr.doc
 
 <a name="polygons"/></a>
 <h3>Displaying Polygons</h3>
@@ -387,6 +415,8 @@ include endex.doc
 <img src="tutorialpolygons4.png">
 <p>
 
+include hr.doc
+
 <a name="labels"/></a>
 <h3>Displaying Labels</h3>
 <p>
@@ -429,6 +459,8 @@ include endex.doc
 <img src="tutoriallabels2.png">
 <p>
 
+include hr.doc
+
 <a name="rand"/></a>
 <h3>Random Effects</h3>
 <p>
@@ -464,9 +496,12 @@ include endex.doc
 <img src="tutorialrand3.png">
 <p>
 
+include hr.doc
+
 <a name="datasets"></a>
 <h3>Displaying Geographic Information System Datasets</h3>
 <p>
+// TODO explain worlds command Mercator, transformation, etc.
 Mapyrus reads geographic data and associated relational attributes
 from geographic information system (GIS) datasets.  The simplest
 source of data is a text file, with one record per line.
@@ -545,6 +580,45 @@ include endex.doc
 <img src="tutorialdatasets3.png">
 <p>
 
+Check the
+<a href="reference.html#internalvars"/>
+internal variable
+</a>
+<tt>Mapyrus.worlds.scale</tt>
+before displaying a large, detailed dataset.  If the scale is too high
+then the details will not be legible so skip display of the detailed
+part of the dataset.
+For example, display all streets when zoomed in,
+but only highways when zoomed out.
+
+include hr.doc
+
+<a name="scalebar"></a>
+<h3>Displaying A Scalebar</h3>
+<p>
+A cartographic rule is that a map display must include a scalebar.
+The following example demonstrates generates two images using the
+<a href="reference.html#internalvars"/>
+internal variable
+</a>
+<tt>Mapyrus.worlds.scale</tt>
+to add a scale bar to the lower-left corner of a map display.
+An alternative approach is to save the scale value in a variable, use the
+<a href="reference.html#newpage">newpage</a> command to
+create a new image file
+and display the scalebar in a separate image file from the map.
+
+include beginex.doc
+include tutorialscalebar1.mpy
+include endex.doc
+
+<img src="tutorialscalebar1.png">
+&nbsp;
+<img src="tutorialscalebar2.png">
+<p>
+
+include hr.doc
+
 <a name="pdf"></a>
 <h3>Generating Portable Document Format (PDF) Output</h3>
 <p>
@@ -562,7 +636,8 @@ include beginex.doc
 newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
 include endex.doc
 
-<p>
+include hr.doc
+
 <a name="httpserver"></a>
 <h3>Setting Up Mapyrus As An HTTP Server</h3>
 <p>
@@ -570,7 +645,8 @@ include endex.doc
 Enter the following lines into a text file named
 <tt>tutorialhttpserver1.mpy</tt>, replacing the filename
 <tt>/tmp/roads.shp</tt>
-with the filename of an available ESRI Shape file.
+with the filename of an available ESRI Shape file containing
+lines or polygons.
 
 include beginex.doc
 include tutorialhttpserver1.mpy
@@ -583,9 +659,10 @@ Mapyrus as an HTTP server on port 8410 with
 the following command.
 
 include beginex.doc
-java -jar mapyrus.jar -s 8410
+java -jar <i>install-path</i>/mapyrus.jar -s 8410
 include endex.doc
 
+where <i>install-path</i> is the directory in which Mapyrus is installed.
 Then enter the following URL in a web browser.  Mapyrus
 receives the request, executes the commands in the file
 <tt>tutorialhttpserver1.mpy</tt> and returns the
@@ -595,7 +672,8 @@ PNG image that is written to standard output to the web browser.
 http://localhost:8410/tutorialhttpserver1.mpy
 </pre>
 
-<p>
+include hr.doc
+
 <a name="url"></a>
 <h3>Passing Variables To Mapyrus HTTP Server Through URLs</h3>
 <p>
@@ -608,7 +686,7 @@ http://localhost:8410/tutorialurl.mpy?x1=11&y1=48&x2=12&y2=49&labels=off
 </pre>
 
 The variables <tt>x1</tt>, <tt>y1</tt>, <tt>x2</tt>, <tt>y2</tt>
-and <tt>labels</tt> are automatically set with the values
+and <tt>labels</tt> are automatically set in Mapyrus with the values
 passed in the URL before interpreting
 the commands in the file <tt>tutorialurl.mpy</tt>.
 <p>
@@ -618,7 +696,8 @@ and provide a graphical user interface (such as clients written in
 Java or Visual Basic), use this method for returning data to the
 application.
 
-<p>
+include hr.doc
+
 <a name="htmlpage"></a>
 <h3>Returning HTML Pages From Mapyrus HTTP Server</h3>
 <p>
@@ -638,9 +717,9 @@ function and return references to the images in the HTML.
 <p>
 
 The following example demonstrates this, displaying ESRI Shape files
-<tt>/tmp/rds_l</tt>
+<tt>/tmp/rds_l.shp</tt>
 and
-<tt>/tmp/txt_p</tt>
+<tt>/tmp/txt_p.shp</tt>
 and using an HTML form to allow
 the user to change the map display.
 Enter the following lines into a text file named
@@ -677,7 +756,8 @@ include beginex.doc
 include tutorialhtmlpage2.mpy
 include endex.doc
 
-<p>
+include hr.doc
+
 <a name="imagemap"></a>
 <h3>Using Imagemaps With Mapyrus HTTP Server</h3>
 <p>
@@ -690,7 +770,7 @@ internal variables
 <tt>Mapyrus.imagemap.x</tt> and
 <tt>Mapyrus.imagemap.y</tt> are automatically set with the pixel position
 clicked in the image (with origin in top-left corner of the image).
-Use these variables to recenter, or zoom the display to the
+Use these variables to re-center, or zoom the display to the
 point clicked in the imagemap.
 <p>
 The following example demonstrates
@@ -701,7 +781,8 @@ include beginex.doc
 include tutorialimagemap1.mpy
 include endex.doc
 
-<p>
+include hr.doc
+
 <a name="combining"></a>
 <h3>Combining Mapyrus With Other Software</h3>
 <p>
@@ -720,8 +801,10 @@ Use Mapyrus in combination with the freely available software
 <a href="http://netpbm.sourceforge.net">Netpbm</a>
 and
 <a href="http://www.ghostscript.com">Ghostscript</a>
-to post-process image output and convert images to other formats.
-The following examples demonstrate this.
+to post-process image output and convert images and PostScript
+output to other formats.
+<p>
+The following examples demonstrate these methods.
 
 include beginex.doc
 java -DDATADIR=$DATADIR -DNameidx=Q7B80L -jar mapyrus.jar mycommands.txt | pngtopnm | ppmtopgm | pgmtopbm | pbmtoascii -2x4
@@ -738,11 +821,14 @@ start Mapyrus as an HTTP server and make HTTP requests instead so that
 startup time is eliminated.
 Most languages include method of making HTTP requests.
 From Perl use the
-<a href="www.cpan.org">libwww-perl</a> modules.
+<a href="http://www.cpan.org">libwww-perl</a> modules.
 From Java use the
 <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/net/HttpURLConnection.html">java.net.HttpURLConnection</a>
 class.
-Use <a href="http://www.lynx.org">lynx</a> from
+Use <a href="http://www.lynx.browser.org">lynx</a>
+or
+<a href="http://w3m.sourceforge.net/">w3m</a>
+from
 languages without the ability to make HTTP requests.
 For example,
 
