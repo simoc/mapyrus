@@ -220,19 +220,21 @@ public class Expression
 		/**
 		 * Evaluate binary tree expression..
 		 * @param context variable definitions and other context information.
+		 * @param interpreterFilename name of file being interpreted.
 		 * @return numeric or string value of the expression.
 		 */
-		public Argument evaluate(ContextStack context) throws MapyrusException
+		public Argument evaluate(ContextStack context, String interpreterFilename)
+			throws MapyrusException
 		{
-			return(traverse(this, context));
+			return(traverse(this, context, interpreterFilename));
 		}
 
 		/*
 		 * Recursively traverse binary expression tree to
 		 * determine its value.
 		 */
-		private Argument traverse(ExpressionTreeNode t, ContextStack context)
-			throws MapyrusException
+		private Argument traverse(ExpressionTreeNode t, ContextStack context,
+			String interpreterFilename) throws MapyrusException
 		{
 			Argument retval;
 			Argument leftValue, rightValue, thirdValue;
@@ -249,7 +251,7 @@ public class Expression
 				 */
 				if (t.mLeafArg.getType() == Argument.VARIABLE)
 				{
-					retval = context.getVariableValue(t.mLeafArg.getVariableName());
+					retval = context.getVariableValue(t.mLeafArg.getVariableName(), interpreterFilename);
 					if (retval == null)
 						retval = Argument.emptyString;
 				}
@@ -265,7 +267,7 @@ public class Expression
 				 */
 				if (t.mFunction == ROUND_FUNCTION || t.mFunction == RANDOM_FUNCTION)
 				{
-					leftValue = traverse(t.mLeftBranch, context);
+					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
 					
 					if (t.mFunction == ROUND_FUNCTION)
 						d = Math.round(leftValue.getNumericValue());
@@ -275,13 +277,13 @@ public class Expression
 				}
 				else if (t.mFunction == LENGTH_FUNCTION)
 				{
-					leftValue = traverse(t.mLeftBranch, context);
+					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
 					retval = new Argument(leftValue.toString().length());
 				}
 				else if (t.mFunction == MATCH_FUNCTION)
 				{
-					leftValue = traverse(t.mLeftBranch, context);
-					rightValue = traverse(t.mRightBranch, context);
+					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+					rightValue = traverse(t.mRightBranch, context, interpreterFilename);
 
 					/*
 					 * Find index of start of regular expression in string.
@@ -295,9 +297,9 @@ public class Expression
 				}
 				else if (t.mFunction == REPLACE_FUNCTION)
 				{
-					leftValue = traverse(t.mLeftBranch, context);
-					rightValue = traverse(t.mRightBranch, context);
-					thirdValue = traverse(t.mThirdFunctionExpression, context);
+					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+					rightValue = traverse(t.mRightBranch, context, interpreterFilename);
+					thirdValue = traverse(t.mThirdFunctionExpression, context, interpreterFilename);
 
 					/*
 					 * Replace all occurrences of pattern given in second string
@@ -325,7 +327,7 @@ public class Expression
 					/*
 					 * Generate temporary file with given suffix.
 					 */
-					leftValue = traverse(t.mLeftBranch, context);
+					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
 					retval = new Argument(Argument.STRING,
 						TransientFileFactory.generate(leftValue.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
 				}
@@ -333,10 +335,10 @@ public class Expression
 				{
 					int startIndex, extractLen, len;
 
-					leftValue = traverse(t.mLeftBranch, context);
+					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
 					s = leftValue.toString();
-					rightValue = traverse(t.mRightBranch, context);
-					thirdValue = traverse(t.mThirdFunctionExpression, context);
+					rightValue = traverse(t.mRightBranch, context, interpreterFilename);
+					thirdValue = traverse(t.mThirdFunctionExpression, context, interpreterFilename);
 
 					/*
 					 * Convert to zero-based indexing used by java.
@@ -371,8 +373,8 @@ public class Expression
 				/*
 				 * Either expression can be a number or a string.
 				 */
-				leftValue = traverse(t.mLeftBranch, context);
-				rightValue = traverse(t.mRightBranch, context);
+				leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+				rightValue = traverse(t.mRightBranch, context, interpreterFilename);
 
 				switch (t.mOperation)
 				{
@@ -1058,9 +1060,9 @@ public class Expression
 	 * @param vars are all currently defined variables and their values.
 	 * @return the evaluated expression, either a string or a number.
 	 */
-	public Argument evaluate(ContextStack context) throws MapyrusException
+	public Argument evaluate(ContextStack context, String interpreterFilename) throws MapyrusException
 	{
-		return(mExprTree.evaluate(context));
+		return(mExprTree.evaluate(context, interpreterFilename));
 	}
 
 	/**
@@ -1093,8 +1095,8 @@ public class Expression
 			e1 = new Expression(p);
 			p.read();
 			e2 = new Expression(p);
-			a1 = e1.evaluate(context);
-			a2 = e2.evaluate(context);
+			a1 = e1.evaluate(context, "test");
+			a2 = e2.evaluate(context, "test");
 			if (a1.getType() == Argument.NUMERIC)
 			{
 				System.out.println("a1=" + a1.getNumericValue());
