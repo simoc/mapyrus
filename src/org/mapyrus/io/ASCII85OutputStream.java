@@ -61,13 +61,20 @@ public class ASCII85OutputStream
 	 * Create new ASCII85 filtered output stream.
 	 * @param outStream stream to build filter on top of.
 	 */
-	public ASCII85OutputStream(Writer writer)
+	public ASCII85OutputStream(Writer writer) throws IOException
 	{
 		mUnencodedBytes = new int[4];
 		mNUnencodedBytes = 0;
 		mEncodedChars = new char[5];
 		mWriter = writer;
-		mNCharsOnLine = 0;
+
+		/*
+		 * Begin each line with a space so that PostScript filters which
+		 * commonly strip all lines beginning with a '%' comment character
+		 * do not strip any ASCII85 characters. 
+		 */
+		mWriter.write(' ');
+		mNCharsOnLine = 1;
 	}
 
 	/**
@@ -120,7 +127,7 @@ public class ASCII85OutputStream
 				 */
 				if (mNCharsOnLine > 72)
 				{
-					mWriter.write(Constants.LINE_SEPARATOR);
+					mWriter.write(Constants.LINE_SEPARATOR + " ");
 					mNCharsOnLine = 0;
 				}
 			}
