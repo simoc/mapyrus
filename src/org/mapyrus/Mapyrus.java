@@ -1,6 +1,6 @@
 /**
  * Main class for Mapyrus, a program for generating plots of points, lines and polygons
- * to various output formats.  Runs as either a GUI, a server or interpeter for files
+ * to various output formats.  Runs as either a GUI, a server or interpreter for files
  * given on the command line.
  */
 
@@ -79,9 +79,30 @@ public class Mapyrus
 		}		
 		return(true);
 	}
+	
+	/*
+	 * Initialise global settings, color name lookup table.
+	 */
+	private static void initialise()
+	{
+		try
+		{
+			ColorDatabase.initialise();
+		}
+		catch (IOException e)
+		{
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
+		catch (MapyrusException e)
+		{
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
+	}
 			
 	/*
-	 *
+	 * Parse command line arguments and the start processing.
 	 */
 	public static void main(String []args)
 	{
@@ -90,7 +111,7 @@ public class Mapyrus
 		
 		args = new String[1];
 		args[0] = "/home/simonc/expr.txt";
-		
+
 		/*
 		 * Parse command line arguments -- these are the files and URLs to read commands from.
 		 */
@@ -99,6 +120,7 @@ public class Mapyrus
 			/*
 			 * Start GUI for user to enter commands into.
 			 */
+			initialise();
 			MapyrusInputFrame m = new MapyrusInputFrame();
 			
 		}
@@ -116,6 +138,7 @@ public class Mapyrus
 			/*
 			 * Read from standard input.
 			 */
+			initialise();
 			f = new BufferedReader(new InputStreamReader(System.in));
 			context = new Context();
 			processFile(f, context);
@@ -160,6 +183,7 @@ public class Mapyrus
 				}
 			}
 
+			initialise();
 			context = new Context();
 			
 			/*
