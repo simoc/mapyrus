@@ -57,18 +57,9 @@ public class GeometricPath
 	 */
 	public GeometricPath(GeometricPath path)
 	{
-		try
-		{
-			mPath = (GeneralPath)path.clone();	
-			mNLineTos = path.mNLineTos;
-			mMoveTos = (Vector)path.mMoveTos.clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-			/*
-			 * Clone _is_ supported for GeneralPath and Vector classes.
-			 */
-		}
+		mPath = (GeneralPath)(path.mPath.clone());	
+		mNLineTos = path.mNLineTos;
+		mMoveTos = (Vector)path.mMoveTos.clone();
 	}
 
 	/**
