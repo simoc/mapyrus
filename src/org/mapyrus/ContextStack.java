@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
 
@@ -141,7 +141,27 @@ public class ContextStack
 	{
 		getCurrentContext().setColor(c);
 	}
-	
+
+	/**
+	 * Sets font for labelling with.
+	 * @param name is name of font.
+	 * @param style is a style as defined in java.awt.Font class.
+	 * @param size is size for labelling in millimetres.
+	 */
+	public void setFont(String name, int style, double size)
+	{
+		getCurrentContext().setFont(name, style, size);
+	}
+
+	/**
+	 * Sets horizontal and vertical justification for labelling.
+	 * @param code is bit flags of Context.JUSTIFY_* values for justification.
+	 */
+	public void setJustify(int code)
+	{
+		getCurrentContext().setJustify(code);
+	}
+
 	/**
 	 * Sets scaling for subsequent coordinates.
 	 * @param x is new scaling in X axis.
@@ -313,6 +333,14 @@ public class ContextStack
 	}
 
 	/**
+	 * Draw label positioned at (or along) currently defined path.
+	 */
+	public void label(String label)
+	{
+		getCurrentContext().label(label);
+	}
+
+	/**
 	 * Returns the number of moveTo's in path defined in current context.
 	 * @return count of moveTo calls made.
 	 */
@@ -460,7 +488,7 @@ public class ContextStack
 			}
 			else if (sub.equals("page.resolution"))
 			{
-				retval = new Argument(OutputFormat.MM_PER_INCH /
+				retval = new Argument(Constants.MM_PER_INCH /
 					getCurrentContext().getResolution());
 			}
 			else if (sub.equals("import.moreRows"))
