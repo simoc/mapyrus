@@ -170,17 +170,6 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * Begins a query on a text file dataset.
-	 * @param extents the area of interest for the query.
-	 * @param resolution is hint for minimum distance between coordinate values.
-	 * Text file contains no geometry, so a fetch returns every line in turn.
-	 */
-	public void query(Rectangle2D.Double extents, double resolution)
-		throws MapyrusException
-	{
-	}
-
-	/**
 	 * Read next row from file and split it into fields.
 	 * Build fields into Row structure.
 	 */
