@@ -123,6 +123,7 @@ public class MapyrusMessages
 	public static final String NOT_A_TTF_FILE = "notattffile";
 	public static final String NOT_MIF_FILE = "notmiffile";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
+	public static final String NOT_PS_FILE = "notpsfile";
 	public static final String NOT_SHAPE_FILE = "notshapefile";
 	public static final String NOT_STRING_OPERATION = "notstringoperation";
 	public static final String NOT_TEXT_FILE = "nottextfile";
