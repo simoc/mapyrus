@@ -63,6 +63,7 @@ public class MapyrusMessages
 	public static final String INVALID_PAGE = "invalidpage";
 	public static final String INVALID_PATH_SAMPLE = "invalidpathsample";
 	public static final String INVALID_PATH_STRIPE = "invalidpathstripe";
+	public static final String INVALID_REGEX = "invalidregex";
 	public static final String INVALID_ROTATION = "invalidrotation";
 	public static final String INVALID_SCALING = "invalidscaling";
 	public static final String INVALID_TRANSFORM = "invalidtransform";
