@@ -996,4 +996,236 @@ public class GeometricPath
 		}
 		return(retval);
 	}
+
+	/**
+	 * Sort list of offset, length pairs into increasing order based on offset.
+	 * @param offsets array of offsets.
+	 * @param lengths array of lengths at each each offset.
+	 */
+	private void sortParts(double []offsets, double []lengths)
+	{
+		/*
+		 * Bubblesort elements into correct order.
+		 */
+		int nParts = offsets.length;
+		for (int i = 1; i < nParts; i++)
+		{
+			for (int j = i; j < nParts; j++)
+			{
+				if (offsets[j] < offsets[j - 1])
+				{
+					double swap = offsets[j];
+					offsets[j] = offsets[j - 1];
+					offsets[j - 1] = swap;
+					swap = lengths[j];
+					lengths[j] = lengths[j - 1];
+					lengths[j - 1] = swap;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Merge overlapping parts of path to be selected.
+	 * @param offsets offsets along existing path to select.
+	 * @param lengths length of existing path to select at each offset.
+	 * @retval number of parts after merging.
+	 */
+	private int mergeSelectedParts(double []offsets, double []lengths)
+	{
+		double []mergedOffsets = new double[offsets.length];
+		double []mergedLengths = new double[lengths.length];
+		int nMergedParts = 1;
+		double start;
+		double end, lastEnd;
+		int i;
+
+		/*
+		 * Chop lines that begin before start of line.
+		 */
+		for (i = 0; i < offsets.length; i++)
+		{
+			if (offsets[i] < 0)
+			{
+				lengths[i] += offsets[i];
+				offsets[i] = 0;
+			}
+		}
+		
+		/*
+		 * Sort parts of path to select into increasing offset order.
+		 */
+		sortParts(offsets, lengths);
+
+		mergedOffsets[0] = offsets[0];
+		mergedLengths[0] = lengths[0];
+
+		i = 1;
+		while (i < offsets.length)
+		{
+			start = offsets[i];
+			end = offsets[i] + lengths[i];
+			lastEnd = mergedOffsets[nMergedParts - 1] + mergedLengths[nMergedParts - 1];
+			if (start < lastEnd)
+			{
+				if (end > lastEnd)
+					mergedLengths[nMergedParts - 1] = end - mergedOffsets[nMergedParts - 1];
+			}
+			else
+			{
+				mergedOffsets[nMergedParts] = offsets[i];
+				mergedLengths[nMergedParts] = lengths[i];
+				nMergedParts++;
+			}
+			i++;
+		}
+		System.arraycopy(mergedOffsets, 0, offsets, 0, nMergedParts);
+		System.arraycopy(mergedLengths, 0, lengths, 0, nMergedParts);
+		return(nMergedParts);
+	}
+
+	/**
+	 * Create new path with selected parts of existing path.
+	 * @param offsets offsets along existing path to select.
+	 * @param lengths length of existing path to select at each offset.
+	 * @return new path containing selected parts of existing path.
+	 */
+	public GeometricPath selectPath(double []offsets, double []lengths,
+		double resolution)
+	{
+		PathIterator pi;
+		GeometricPath retval = new GeometricPath();
+
+		float coords[] = new float[6];
+		int segmentType;
+		double segmentLength = 0.0, segmentAngle;
+		float xStart = 0.0f, yStart = 0.0f;
+		float xEnd = 0.0f, yEnd = 0.0f;
+		float xMoveTo = 0.0f, yMoveTo = 0.0f;
+		float x = 0.0f, y = 0.0f;
+		double sinAngle, cosAngle;
+		double pathLength = 0;
+		int partIndex = 0;
+		boolean selectingPath = false;
+		int segmentCounter = 0;
+
+		/*
+		 * Merge any overlapping parts of path to be selected.
+		 */
+		int nParts = mergeSelectedParts(offsets, lengths);
+
+		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		while (!pi.isDone() && partIndex < nParts)
+		{
+			segmentType = pi.currentSegment(coords);
+			if (segmentType == PathIterator.SEG_MOVETO)
+			{
+				xStart = xMoveTo = coords[0];
+				yStart = yMoveTo = coords[1];
+				if (selectingPath)
+					retval.moveTo(xStart, yStart, 0);
+			}
+			else
+			{
+				if (segmentCounter > 0)
+				{
+					/*
+				 	 * End point of last segment becomes start point of this segment.
+				 	 */
+					xStart = xEnd;
+					yStart = yEnd;
+				}
+
+				if (segmentType == PathIterator.SEG_CLOSE)
+				{
+					xEnd = xMoveTo;
+					yEnd = yMoveTo;
+				}
+				else
+				{
+					xEnd = coords[0];
+					yEnd = coords[1];
+				}
+
+				segmentLength = Math.sqrt((xEnd - xStart) * (xEnd - xStart) +
+					(yEnd - yStart) * (yEnd - yStart));
+
+				/*
+				 * Does current line segment overlap part of path currently being selected?
+				 */
+				while (partIndex < nParts && pathLength + segmentLength > offsets[partIndex])
+				{
+					if (selectingPath)
+					{
+						if (pathLength + segmentLength <= offsets[partIndex] + lengths[partIndex])
+						{
+							/*
+							 * Add whole line segment to path.
+							 */
+							retval.lineTo(xEnd, yEnd);
+							break;
+						}
+						else
+						{
+							/*
+							 * Selection ends in this line segment.
+							 * Cut out piece required and then stop selecting path. 
+							 */
+							segmentAngle = Math.atan2(yEnd - yStart, xEnd - xStart);
+							cosAngle = Math.cos(segmentAngle);
+							sinAngle = Math.sin(segmentAngle);
+
+							double d = offsets[partIndex] + lengths[partIndex] - pathLength;
+							x = (float)(xStart + cosAngle * d);
+							y = (float)(yStart + sinAngle * d);
+							retval.lineTo(x, y);
+
+							selectingPath = false;
+							partIndex++;
+						}
+					}
+					else
+					{
+						segmentAngle = Math.atan2(yEnd - yStart, xEnd - xStart);
+						cosAngle = Math.cos(segmentAngle);
+						sinAngle = Math.sin(segmentAngle);
+
+						/*
+						 * Start selecting new part of existing path.
+						 */
+						x = (float)(xStart + cosAngle * (offsets[partIndex] - pathLength));
+						y = (float)(yStart + sinAngle * (offsets[partIndex] - pathLength));
+						retval.moveTo(x, y, 0);
+						selectingPath = true;
+					}
+				}
+
+				pathLength += segmentLength;
+				segmentCounter++;
+			}
+			pi.next();
+		}
+
+		if (selectingPath)
+		{
+			if (offsets[partIndex] + lengths[partIndex] >= pathLength)
+			{
+				retval.lineTo(xEnd, yEnd);
+			}
+			else
+			{
+				segmentAngle = Math.atan2(yEnd - yStart, xEnd - xStart);
+				cosAngle = Math.cos(segmentAngle);
+				sinAngle = Math.sin(segmentAngle);
+
+				double d = offsets[partIndex] + lengths[partIndex] -
+					(pathLength - segmentLength);
+				x = (float)(xStart + cosAngle * d);
+				y = (float)(yStart + sinAngle * d);
+
+				retval.lineTo(x, y);
+			}
+		}
+		return(retval);
+	}
 }
