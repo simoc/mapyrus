@@ -29,7 +29,7 @@ package au.id.chenery.mapyrus;
 public class NumericalAnalysis
 {
 	/**
-	 * Compares two floating numbers for equality with some tolerance.
+	 * Compares two double precision numbers for equality with some tolerance.
 	 * @param a first number
 	 * @param b second number
 	 * @return true if numbers are equal or very, very close to being equal.
@@ -43,11 +43,38 @@ public class NumericalAnalysis
 		double diff = Math.abs(a - b);
 
 		/*
-		 * Values are equal if first twelve significant digits
-		 * are the same.
+		 * Double precision numbers are accurate to 15-16
+		 * significant digits.
+		 *
+		 * Values are considered equal if first twelve significant
+		 * digits are the same.
 		 */
 		retval = (diff <= magnitude * 1e-12);
 // TODO read my numerical analysis book to find better method
+		return(retval);
+	}
+	
+	/**
+	 * Compares two floating point numbers for equality with some tolerance.
+	 * @param a first number
+	 * @param b second number
+	 * @return true if numbers are equal or very, very close to being equal.
+	 */
+	public static boolean equals(float a, float b)
+	{
+		boolean retval;
+		float absA = Math.abs(a);
+		float absB = Math.abs(b);
+		float magnitude = Math.max(absA, absB);
+		float diff = Math.abs(a - b);
+
+		/*
+		 * Floating point numbers are accurate to 7 significant digits.
+		 * 
+		 * Values are considered equal if first five significant
+		 * digits are the same.
+		 */
+		retval = (diff <= magnitude * 1e-5);
 		return(retval);
 	}
 
