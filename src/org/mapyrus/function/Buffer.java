@@ -78,6 +78,10 @@ public class Buffer extends Function
 		{
 			throw new MapyrusException(e.getMessage());
 		}
+		catch (IllegalArgumentException e)
+		{
+			throw new MapyrusException(getName() + ": " + e.getMessage());
+		}
 
 		return(retval);
 	}
