@@ -6,7 +6,8 @@ Introduction
 </h2>
 
 Mapyrus is software for creating plots of points, lines, polygons and labels 
-to PostScript, Portable Document Format (PDF) and web image output formats.
+to PostScript (high resolution, up to A0 paper size),
+Portable Document Format (PDF) and web image output formats.
 <p>
 
 The software combines the following three components.
@@ -40,11 +41,13 @@ to be be defined.  For example,
 </li>
 <li>
 Reading and displaying of geographic information
-systems (GIS) datasets or text files.
+systems (GIS) datasets, text files, or tables held in a relational database.
 Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
-appearance of the geographic data.  For example,
+appearance of the geographic data.
+Scalebars, legends, coordinate grids and north arrows are also available.
+For example,
 <p>
 
 <table>
@@ -101,8 +104,8 @@ Please note that:
 <ol>
 <li>
 Mapyrus is written in Java so as to be operating system independent
-and take advantage of Java multi-threading, security and
-Java2D.  The disadvantages of using Java are
+and take advantage of Java multi-threading, security,
+Java2D and JDBC capabilities.  The disadvantages of using Java are
 slower startup time and higher memory usage than other languages.
 </li>
 
