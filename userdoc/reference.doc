@@ -372,7 +372,8 @@ world coordinates
 
 Precedence from highest to lowest
 
-Mapyrus maintains the following built-in variables:
+<a name="internalvars"></a>
+Mapyrus maintains the following internal variables:
 
 <p>
 <table border=1>
@@ -435,6 +436,15 @@ The length of the current path on the page, measured in millimetres.
 <tt>Mapyrus.geometry.area</tt>
 <td>
 The area of the current path on the page, measured in square millimetres.
+
+<tr>
+<td>
+<tt>Mapyrus.imagemap.x</tt>,
+<tt>Mapyrus.imagemap.y</tt>,
+<td>
+The pixel position of the point clicked in an HTML imagemap and
+passed to Mapyrus, for use when running as an HTTP server.
+Both values are set to -1 if no imagemap used.
 
 <tr>
 <td>
