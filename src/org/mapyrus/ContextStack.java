@@ -23,7 +23,6 @@
 package org.mapyrus;
 
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -479,12 +478,12 @@ public class ContextStack
 	public void drawIcon(String filename, double size)
 		throws IOException, MapyrusException
 	{
-		Image icon;
+		BufferedImage icon;
 
 		/*
 		 * Have we opened icon before and cached it?
 		 */
-		icon = (Image)mIconCache.get(filename);
+		icon = (BufferedImage)mIconCache.get(filename);
 		if (icon == null)
 		{
 			URL url;
