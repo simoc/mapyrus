@@ -80,8 +80,6 @@ public class GeometricPath
 	 */
 	public GeometricPath(GeometricPath path)
 	{
-		int i;
-
 		mPath = (GeneralPath)(path.mPath.clone());	
 		mNLineTos = path.mNLineTos;
 
@@ -333,7 +331,6 @@ public class GeometricPath
 		float xEnd, yEnd;
 		float xMoveTo = 0.0f, yMoveTo =0.0f;
 		double partLengths[], partAreas[], centroid[];
-		double len;
 		int moveToCount = 0;
 		double ai, aSum, xSum, ySum;
 		int nEls;
