@@ -12,6 +12,7 @@
 import java.io.*;
 import java.lang.String;
 import java.util.Vector;
+import java.awt.Color;
 
 public class Interpreter extends Thread
 {
@@ -234,7 +235,8 @@ public class Interpreter extends Thread
 	 * Exceute a single statement, changing the path, context or generating
 	 * some output.
 	 */
-	private void execute(Statement st, Context context) throws MapyrusException
+	private void execute(Statement st, Context context)
+		throws MapyrusException, IOException
 	{
 		Expression []expr;
 		int nExpressions;
@@ -264,12 +266,31 @@ public class Interpreter extends Thread
 					 * Find named color in color name database.
 					 */
 				}
-				else if (nExpressions == 4 && args[0].getType() == Argument.STRING &&
-					args[0].getStringValue().equalsIgnoreCase("rgb"))
+				else if (nExpressions == 4 &&
+					args[0].getType() == Argument.STRING &&
+					args[1].getType() == Argument.NUMERIC &&
+					args[2].getType() == Argument.NUMERIC &&
+					args[3].getType() == Argument.NUMERIC)
 				{
-					/*
-					 * Set RGB color.
-					 */
+					float c1 = (float)args[1].getNumericValue();
+					float c2 = (float)args[2].getNumericValue();
+					float c3 = (float)args[3].getNumericValue();
+					
+					if (args[0].getStringValue().equalsIgnoreCase("hsb"))
+					{
+						/*
+						 * Set HSB color.
+						 */
+						int rgb = Color.HSBtoRGB(c1, c2, c3);
+						context.setColor(new Color(rgb));
+					}
+					else if (args[0].getStringValue().equalsIgnoreCase("rgb"))
+					{		
+						/*
+						 * Set RGB color.
+						 */
+						context.setColor(new Color(c1, c2, c3));
+					}
 				}
 				break;
 			case Statement.LINEWIDTH:
@@ -294,6 +315,36 @@ public class Interpreter extends Thread
 					context.moveTo((float)args[0].getNumericValue(),
 						(float)args[1].getNumericValue());
 				}
+				break;
+				
+			case Statement.DRAW:
+				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC)
+				{
+					/*
+					 * Add point to path.
+					 */
+					context.lineTo((float)args[0].getNumericValue(),
+						(float)args[1].getNumericValue());
+				}
+				break;
+				
+			case Statement.STROKE:
+				context.stroke();
+				break;
+				
+			case Statement.NEWPAGE:
+				if (nExpressions == 3 &&
+					args[0].getType() == Argument.STRING &&
+					args[1].getType() == Argument.NUMERIC &&
+					args[2].getType() == Argument.NUMERIC)
+				{
+					context.setOutputFormat(args[0].getStringValue(),
+						(int)args[1].getNumericValue(),
+						(int)args[2].getNumericValue(), "extras");
+				}
+				break;	
+							
 			case Statement.PRINT:
 				/*
 				 * Print to stdout each of the expressions passed.
