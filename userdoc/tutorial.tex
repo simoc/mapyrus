@@ -1050,69 +1050,6 @@ use the Character map program in the Program-Accessories
 menu.  On UNIX operating systems use the font editor
 pfaedit\footnote{Available from http://pfaedit.sourceforge.net}.
 
-\subsection{Using Mapyrus In A Java Application}
-\label{javaapi}
-
-To use Mapyrus in a Java application, create objects of the class
-\texttt{org.mapyrus.Mapyrus}.  Each Mapyrus object is an interpreter
-and parses and executes
-lists of commands passed to its \texttt{interpret()} method.
-
-A \texttt{setPage()} method is provided for an application to set
-an \texttt{java.awt.image.BufferedImage} as the initial output page.
-This enables Mapyrus to draw into a buffer that the application
-later displays in a window.  Use several transparent buffered images, one for
-each layer of data so that an application can turn layers on and
-off or re-order layers without calling Mapyrus.
-
-Both methods are demonstrated in the following sample Java code.
-
-\begin{verbatim}
-String []commands1 =
-{
-  "newpage 'ps', 'test.ps', 210, 297",
-  "move 0, 0",
-  "draw 20, 20, 40, 20",
-  "stroke"
-};
-Mapyrus m1 = new Mapyrus();
-try
-{
-  m1.interpret(commands1, System.out);
-}
-finally
-{
-  m1.close();
-}
-
-String []commands2 =
-{
-  "dataset 'shapefile', 'coastline.shp', ''",
-  "worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \",
-  "  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y",
-  "while Mapyrus.fetch.more",
-  "do",
-  "  fetch",
-  "  clearpath",
-  "  addpath GEOMETRY",
-  "  stroke",
-  "done"
-};
-BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-Mapyrus m2 = new Mapyrus();
-try
-{
-  m2.setPage(bi, "");
-  m2.interpret(commands2, System.out);
-}
-finally
-{
-  m2.close();
-}
-// Copy buffered image to screen.
-g.drawImage(bi, 0, 0, null);
-\end{verbatim}
-
 \subsection{Setting Up Mapyrus As An HTTP Server}
 \label{tutorialhttpserver}
 
