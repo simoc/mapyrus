@@ -506,6 +506,14 @@ public class Interpreter
 				context.fill();
 				break;
 				
+			case Statement.PROTECT:
+				if (nExpressions > 0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+				}
+				context.protect();
+				break;
+
 			case Statement.CLIP:
 				if (nExpressions > 0)
 				{
