@@ -235,6 +235,27 @@ public class Interpreter
 					throw new MapyrusException("Wrong number of coordinate values");
 				}
 				break;
+
+			case Statement.ARC:
+				if (nExpressions == 5 && args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC &&
+					args[2].getType() == Argument.NUMERIC &&
+					args[3].getType() == Argument.NUMERIC &&
+					args[4].getType() == Argument.NUMERIC)
+				{
+					int direction = (args[0].getNumericValue() > 0 ? 1 : -1);
+
+					context.arcTo(direction,
+						args[1].getNumericValue(),
+						args[2].getNumericValue(),
+						args[3].getNumericValue(),
+						args[4].getNumericValue());
+				}
+				else
+				{
+					throw new MapyrusException("Invalid arc values");
+				}
+				break;
 				
 			case Statement.CLEARPATH:
 				if (nExpressions > 0)
@@ -469,16 +490,18 @@ public class Interpreter
 				break;
 
 			case Statement.NEWPAGE:
-				if (nExpressions == 4 &&
+				if (nExpressions == 5 &&
 					args[0].getType() == Argument.STRING &&
 					args[1].getType() == Argument.STRING &&
 					args[2].getType() == Argument.NUMERIC &&
-					args[3].getType() == Argument.NUMERIC)
+					args[3].getType() == Argument.NUMERIC &&
+					args[4].getType() == Argument.NUMERIC)
 				{
 					context.setOutputFormat(args[0].getStringValue(),
 						args[1].getStringValue(),
 						(int)args[2].getNumericValue(),
-						(int)args[3].getNumericValue(), "extras");
+						(int)args[3].getNumericValue(),
+						(int)args[4].getNumericValue(), "extras");
 				}
 				else
 				{
