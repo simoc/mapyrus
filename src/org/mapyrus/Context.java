@@ -11,7 +11,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.util.ArrayList;
-import au.id.chenery.mapyrus.dataset.DatasetFactory;
 import au.id.chenery.mapyrus.dataset.GeographicDataset;;
 
 /**
@@ -417,26 +416,19 @@ public class Context
 	}
 
 	/**
-	 * Open dataset to read geometry from and begin a query to read geometry
-	 * that is in current world extents.
-	 * @param type is format of dataset, for example, "text".
-	 * @param name is name of dataset to open.
-	 * @param extras are special options for this dataset type such as database connection
-	 * information, or instructions for interpreting data.
-	 * @param geometryFieldNames is list of names of fields containing geometry.
+	 * Set current dataset that can be queried and fetched from.
+	 * @param dataset opened dataset for subsequent queries.
 	 */
-	public void setDataset(String type, String name,
-		String extras, String []geometryFieldNames) throws MapyrusException
+	public void setDataset(GeographicDataset dataset) throws MapyrusException
 	{
-		mDataset = DatasetFactory.open(type, name, extras, geometryFieldNames);
-		mDataset.query(getUnprojectedExtents(), 1.0);
-		mDatasetRow = mDataset.fetch();
+		mDataset = dataset;
+		mDatasetRow = null;
 		mDatasetRowCount = 0;
 	}
 
 	/**
 	 * Returns X scaling value in current transformation.
-	 * @return m00 element from transformation matrix.
+	 * @return X scale value.
 	 */
 	public double getScalingX()
 	{
@@ -444,8 +436,8 @@ public class Context
 	}
 
 	/**
-	 * Returns X scaling value in current transformation.
-	 * @return m00 element from transformation matrix.
+	 * Returns Y scaling value in current transformation.
+	 * @return Y scale value
 	 */
 	public double getScalingY()
 	{
@@ -454,7 +446,7 @@ public class Context
 
 	/**
 	 * Returns X scaling value in current transformation.
-	 * @return m00 element from transformation matrix.
+	 * @return rotation.
 	 */
 	public double getRotation()
 	{
@@ -588,7 +580,16 @@ public class Context
 			retval = new Rectangle2D.Double(0, 0, 1, 1);
 		}
 		return(retval);
-	}						
+	}
+						
+	/**
+	 * Get current dataset being used for queries.
+	 * @return current dataset, or null if none is set.
+	 */
+	public GeographicDataset getDataset() throws MapyrusException
+	{
+		return(mDataset);
+	}
 
 	/**
 	 * Add point to path.
@@ -887,34 +888,28 @@ public class Context
 		mDatasetRowCount++;
 		return(retval);
 	}
-
+	
 	/**
-	 * Return indexes of fields in a row in a dataset that contain geometry.
-	 * @return indexes of geometry fields.
+	 * Begin query on current dataset.  Geometry inside the current world extents
+	 * is fetched. 
 	 */
-	public int []getDatasetGeometryFieldIndexes() throws MapyrusException
+	public void queryDataset() throws MapyrusException
 	{
 		if (mDataset == null)
-			throw new MapyrusException("No current dataset to fetch from");
-		return(mDataset.getGeometryFieldIndexes());
+			throw new MapyrusException("No dataset defined");
+		mDataset.query(getUnprojectedExtents(), 1.0);
+		
+		/*
+		 * Fetch first row so we know if there are any more records available.
+		 */
+		mDatasetRow = mDataset.fetch();
 	}
 
 	/**
-	 * Return names of fields in current dataset.
-	 * @return names of fields.
-	 */
-	public String []getDatasetFieldNames() throws MapyrusException
-	{
-		if (mDataset == null)
-			throw new MapyrusException("No current dataset to fetch from");
-		return(mDataset.getFieldNames());
-	}
-
-	/**
-	 * Return the number of rows already fetched from current dataset.
+	 * Return the number of rows already fetched from dataset for current query.
 	 * @return count of rows fetched.
 	 */
-	public int getDatasetFetchedCount()
+	public int getDatasetQueryCount()
 	{
 		return(mDatasetRowCount);
 	}
