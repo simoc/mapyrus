@@ -38,6 +38,60 @@ import java.util.logging.Logger;
  */
 public class Mapyrus
 {
+	private Interpreter mInterpreter;
+	private ContextStack mContext;
+
+	/**
+	 * Create new interpreter.
+	 */
+	public Mapyrus()
+	{
+		mInterpreter = new Interpreter();
+		mContext = new ContextStack();
+	}
+
+	/**
+	 * Read, parse and execute commands.
+	 * Can be called repeatedly to interpret many files.
+	 * Graphics state and variables are retained between calls.
+	 * An interpreter cannot be used again if it throws an exception.
+	 * @param commands lines of commands to interpret.
+	 * @param stdout stream to write stdout of interpreter into.
+	 * @throws IOException if reading or writing files fails.
+	 * @throws MapyrusException if there is an error interpreting commands.
+	 */
+	public void interpret(String []commands, PrintStream stdout)
+		throws IOException, MapyrusException
+	{
+		/*
+		 * Convert commands into a reader that can be parsed one
+		 * character at a time.
+		 */
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < commands.length; i++)
+		{
+			sb.append(commands[i]);
+			sb.append(Constants.LINE_SEPARATOR);
+		}
+		StringReader sr = new StringReader(sb.toString());
+
+		FileOrURL f = new FileOrURL(sr, "commands");
+		ColorDatabase.load();
+		mInterpreter.interpret(mContext, f, stdout);
+	}
+
+	/**
+	 * Flush pending output from interpreter and close it. 
+	 * @throws IOException
+	 * @throws MapyrusException
+	 */
+	public void close() throws IOException, MapyrusException
+	{
+		mContext.closeContextStack();
+		mContext = null;
+		mInterpreter = null;
+	}
+
 	/**
 	 * Show software version number and usage message, then exit.
 	 */
@@ -93,7 +147,7 @@ public class Mapyrus
 			"@chenery.id.au>.");
 		System.exit(1);
 	}
-	
+
 	/**
 	 * Parse and interpret commands from a file.  Trap any exceptions.
 	 * @param context is context to use during interpretation.
