@@ -497,11 +497,7 @@ public class OutputFormat
 			else if (token.startsWith("turnpage="))
 			{
 				String flag = token.substring(9);
-				if (flag.equalsIgnoreCase("true") || flag.equalsIgnoreCase("yes") ||
-					flag.equalsIgnoreCase("1"))
-				{
-					turnPage = true;
-				}
+				turnPage = flag.equalsIgnoreCase("true");
 			}
 		}
 	
