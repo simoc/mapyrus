@@ -113,6 +113,7 @@ public class MapyrusMessages
 	public static final String UNDEFINED_PROC = "undefinedproc";
 	public static final String UNEXPECTED_EOF = "unexpectedeof";
 	public static final String UNEXPECTED_VALUES = "unexpectedvalues";
+	public static final String UNKNOWN_FIELD_TYPE = "unknownfieldtype";
 	public static final String UNMATCHED_BRACKET = "unmatchedbracket";
 	public static final String VARIABLE_EXPECTED = "variableexpected";
 	public static final String VARIABLE_UNDEFINED = "variableundefined";
