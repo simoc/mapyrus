@@ -58,7 +58,11 @@ public class Rpad extends Function
 		if (arg3 == null)
 			padding = " ";
 		else
+		{
 			padding = arg3.toString();
+			if (padding.length() == 0)
+				padding = " ";
+		}
 
 		if (paddedLength <= 0)
 		{
