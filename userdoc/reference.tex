@@ -510,7 +510,7 @@ Multi-dimension arrays are available by using
 indexes named \textit{index1}\texttt{."}\textit{c}\texttt{".}\textit{index2},
 where \textit{c} is any character that never appears in an index.
 
-The \texttt{if}, \texttt{while} and \texttt{for}
+The \texttt{if}, \texttt{repeat}, \texttt{while} and \texttt{for}
 flow control structures
 found in other languages are available:
 
@@ -533,6 +533,16 @@ if \textit{condition} then
 elif \textit{condition} then
   \textit{commands} \dots
 endif
+\end{alltt}
+
+The \texttt{repeat} keyword defines a loop in which
+\textit{commands} will be executed \textit{count}
+times:
+
+\begin{alltt}
+repeat \textit{count} do
+  \textit{commands} \dots
+done
 \end{alltt}
 
 The \texttt{while} keyword defines a loop in which
