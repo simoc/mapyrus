@@ -116,11 +116,10 @@ Change the file \texttt{first.mapyrus} to contain the following lines.
 This example demonstrates setting the page size in
 screen pixels and setting a scale so that coordinates
 are also given as pixels.
-A circle, hexagon, triangle, star, pie slice and ellipses
+A circle, hexagon, triangle, star, pie slice, ellipses and a Bezier curve
 are drawn using \texttt{circle},
 \texttt{hexagon}, \texttt{triangle}, \texttt{star},
-\texttt{wedge} and \texttt{ellipse} commands,
-giving a center point and radius.
+\texttt{wedge}, \texttt{ellipse} and \texttt{bezier} commands.
 The output of these commands is shown in Figure \ref{tutorialfirst4}.
 
 \begin{figure}[htb]
@@ -236,17 +235,31 @@ The following example demonstrates this.
 \label{tutoriallines1}
 \end{figure}
 
-The next example demonstrates
-combining solid and dashed linestyles.
-For best results display all lines with a solid linestyle,
-then display all lines again with a dashed linestyle.
+To vary the symbols that are drawn along the line, use a variable
+to count the number of symbols along the line and a conditional
+test to draw different symbols at different positions along the line.
+The following example demonstrates this,
+with the output shown in Figure \ref{tutoriallines2}.
 
 \verbatiminput{tutoriallines2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines2.eps}
-\caption{Combining Solid And Dashed Linestyles}
+\caption{Varying Repeated Symbols Along A Line}
 \label{tutoriallines2}
+\end{figure}
+
+The next example demonstrates
+combining solid and dashed linestyles.
+For best results display all lines with a solid linestyle,
+then display all lines again with a dashed linestyle.
+
+\verbatiminput{tutoriallines3.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutoriallines3.eps}
+\caption{Combining Solid And Dashed Linestyles}
+\label{tutoriallines3}
 \end{figure}
 
 The following example demonstrates combining thick and
@@ -254,45 +267,43 @@ thin linestyles and symbols at sampled points.
 For best results display all lines with a thick linestyle,
 then display all lines again with a thin linestyle.
 
-\verbatiminput{tutoriallines3.mapyrus}
+\verbatiminput{tutoriallines4.mapyrus}
 
 \begin{figure}[htb]
-\includegraphics{tutoriallines3.eps}
+\includegraphics{tutoriallines4.eps}
 \caption{Combining Several Linestyles}
-\label{tutoriallines3}
+\label{tutoriallines4}
 \end{figure}
 
 The following two examples demonstrate creating sample points
 from the path to generate further line styles.
 
-\verbatiminput{tutoriallines4.mapyrus}
-
-\begin{figure}[htb]
-\includegraphics{tutoriallines4.eps}
-\caption{Linestyle Using Begin And End Points}
-\label{tutoriallines4}
-\end{figure}
-
 \verbatiminput{tutoriallines5.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines5.eps}
-\caption{Linestyle Using Sample Points}
+\caption{Linestyle Using Begin And End Points}
 \label{tutoriallines5}
 \end{figure}
-
-The next example demonstrates using the \texttt{parallelpath}
-command to display parallel lines, following the original path.
 
 \verbatiminput{tutoriallines6.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines6.eps}
-\caption{Parallel Linestyle}
+\caption{Linestyle Using Sample Points}
 \label{tutoriallines6}
 \end{figure}
 
-Another method is
+The next example demonstrates using the \texttt{parallelpath}
+command to display parallel lines, following the original path.
+
+\verbatiminput{tutoriallines7.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutoriallines7.eps}
+\caption{Parallel Linestyle}
+\label{tutoriallines7}
+\end{figure}
 
 \subsection{Displaying Polygons}
 
