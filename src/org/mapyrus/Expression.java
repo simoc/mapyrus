@@ -651,7 +651,7 @@ public class Expression
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HASHMAP_KEY));
 				}
 				
-				if (hashMapVar.getType() != Argument.HASHMAP)
+				if (hashMapVar == null || hashMapVar.getType() != Argument.HASHMAP)
 				{
 					/*
 					 * No hash map exists with this name so return empty string.
