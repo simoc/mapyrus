@@ -1,0 +1,36 @@
+begin positivebar
+  # Display black bar at start of line to show positive end of connection.
+  selectpath 3, 5
+  color "black"
+  stroke
+end
+
+begin negativebar
+  # Display red bar at end of line to show negative end of connection.
+  selectpath Mapyrus.path.length - 8, 5
+  color "red"
+  stroke
+end
+
+begin bar
+  linestyle 2, "square", "bevel"
+  color "gray"
+  stroke
+  positivebar
+  negativebar
+end
+
+newpage "eps", "tutoriallines8.eps", 60, 30
+move 5, 25
+draw 35, 5
+bar
+
+clearpath
+move 35, 5
+draw 55, 10, 56, 16
+bar
+
+clearpath
+move 35, 5
+bezier 35, 15, 40, 20, 45, 27
+bar
