@@ -1,0 +1,57 @@
+begin pollution reading
+	# Set HSB colors for minimum and maximum readings.
+	#
+	let hueMin = 0.53, satMin = 0.75, brightMin = 0.90
+	let hueMax = 0.03, satMax = 1.00, brightMax = 0.90
+
+	# Reading is a percentage, in the range 0 to 100.
+	# Convert it to a color between minimum and maximum values.
+	#
+	let hue = hueMin + (reading / 100) * (hueMax - hueMin)
+	let sat = satMin + (reading / 100) * (satMax - satMin)
+	let bright = brightMin + (reading / 100) * (brightMax - brightMin)
+
+	# Draw small filled square.
+	#
+	color "hsb", hue, sat, bright
+	move -1, -1
+	draw -1, 1, 1, 1, 1, -1
+	fill
+
+	# Add label with reading to help demonstrate coloring.
+	#
+	font "Helvetica", 2.5
+	justify "top,center"
+	color "black"
+	clearpath
+	move 0, -1
+	label "(" . reading . ")"
+end
+
+# Display points showing pollution levels in different colors.
+#
+newpage "png", "tutorialattribute1.png", 60, 30, 96
+
+clearpath
+move 10, 10
+pollution 7
+
+clearpath
+move 22, 12
+pollution 27
+
+clearpath
+move 30, 16
+pollution 47
+
+clearpath
+move 37, 11
+pollution 64
+
+clearpath
+move 44, 15
+pollution 87
+
+clearpath
+move 53, 14
+pollution 95
