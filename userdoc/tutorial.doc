@@ -47,18 +47,6 @@ Tutorial
 
 <tr>
 <td>
-<a href="#rand">Random Effects</a>
-</td>
-</tr>
-
-<tr>
-<td>
-<a href="#piechart">Displaying Piecharts</a>
-</td>
-</tr>
-
-<tr>
-<td>
 <a href="#textfile">Displaying Data Stored In Text Files</a>
 </td>
 </tr>
@@ -83,7 +71,25 @@ Tutorial
 
 <tr>
 <td>
+<a href="#attribute">Using Attributes To Control Display</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#scalebar">Displaying A Scalebar</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#piechart">Displaying Piecharts</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#rand">Random Effects</a>
 </td>
 </tr>
 
@@ -525,60 +531,6 @@ include endex.doc
 
 include hr.doc
 
-<a name="rand"></a>
-<h3>Random Effects</h3>
-<p>
-Random effects are generated using the
-<a href="reference.html#random">random</a>
-function and help give a less mechanical appearance.
-The following example demonstrates setting
-size and color randomly.
-
-include beginex.doc
-include tutorialrand1.mpy
-include endex.doc
-
-<img src="tutorialrand1.png">
-<p>
-
-The next example demonstrates setting rotation randomly.
-
-include beginex.doc
-include tutorialrand2.mpy
-include endex.doc
-
-<img src="tutorialrand2.png">
-<p>
-
-This example demonstrates setting position randomly for
-polygon fill.
-
-include beginex.doc
-include tutorialrand3.mpy
-include endex.doc
-
-<img src="tutorialrand3.png">
-<p>
-
-include hr.doc
-
-<a name="piechart"></a>
-<h3>Displaying Piecharts</h3>
-<p>
-Piecharts are used to represent relative values of several attributes at
-different locations.  For example, production levels or voting patterns.  The
-following example demonstrates a procedure for displaying piecharts.  Fixed
-data value are used.  In a real application this information is read from a
-database or GIS dataset.
-
-include beginex.doc
-include tutorialpiechart1.mpy
-include endex.doc
-
-<img src="tutorialpiechart1.png">
-
-include hr.doc
-
 <a name="textfile"></a>
 <h3>Displaying Data Stored In Text Files</h3>
 <p>
@@ -636,7 +588,8 @@ lines and polygons.
 The following example demonstrates setting a world coordinate
 system and then reading and displaying a
 <a href="http://www.genaware.com">GenaMap</a> ZF19 format export file
-containing line features.
+containing line features.  The tag of each line is used as a street
+name label.
 
 include beginex.doc
 include streets.EE
@@ -677,7 +630,8 @@ command.
 The following example demonstrates reading an ESRI Shape file
 containing points and attribute fields named <tt>HOTELNAME</tt>
 and
-<tt>STARRATING</tt>.
+<tt>STARRATING</tt>.  The attribute fields are used as labels
+and to controlling the appearance of the symbols.
 
 include beginex.doc
 include tutorialdatasets3.mpy
@@ -692,7 +646,7 @@ include hr.doc
 <h3>Displaying Data Stored In A Database</h3>
 <p>
 Data is read from a relational database using
-the Java JDBC interface using a JDBC driver provided
+the Java JDBC interface and a JDBC driver provided
 as part of the database.
 Each field in a database table has a name.
 Fields fetched with the
@@ -712,9 +666,10 @@ include endex.doc
 For databases supporting the
 <a href="http://www.opengis.org">
 OpenGIS Simple Features Specification For SQL
-</a>, define geometry fields being fetched with the
+</a>, list the geometry fields being fetched with the
 <tt>wktfields</tt> option.  Fetched
-geometry fields are added to the current path
+geometry fields containing point, line or polygon data
+are added to the current path
 directly with an
 <a href="reference.html#addpath">addpath</a>
 command.
@@ -778,6 +733,44 @@ in a loop and ending when the limit is exceeded.
 
 include hr.doc
 
+<a name="attribute"></a>
+<h3>Using Attributes To Control Display</h3>
+<p>
+
+Use attributes of geographic data to control
+color, size, shape, labelling, highlighting and alignment of symbols, lines
+and polyons.
+Use <tt>if</tt>-<tt>then</tt>-<tt>endif</tt>
+statements to display different classes of data
+differently.  For example, display private, local, and major roads
+with different types of lines.
+<p>
+To display data with a known range of attribute values in different
+colors based on the attribute value, define colors for minimum and
+maximum values and calculate the color for each point or polygon
+using linear interpolation.  This is demonstrated in the following
+example by passing a <tt>reading</tt> attribute value for each point
+that is displayed.
+Each point is labelled to show how the coloring works.
+
+include beginex.doc
+include tutorialattribute1.mpy
+include endex.doc
+
+<img src="tutorialattribute1.png">
+<p>
+Further examples are varying the size of a symbol depending on a
+population or measurement value, varying line width depending on
+traffic between two points, or varying the symbols plotted inside
+polygons depending on soil or rock type.
+<p>
+To display values of several attributes at point locations, draw a
+<a href="#piechart">
+piechart
+</a> or histogram at each point.
+
+include hr.doc
+
 <a name="scalebar"></a>
 <h3>Displaying A Scalebar</h3>
 <p>
@@ -800,6 +793,60 @@ include endex.doc
 <img src="tutorialscalebar1.png">
 &nbsp;
 <img src="tutorialscalebar2.png">
+<p>
+
+include hr.doc
+
+<a name="piechart"></a>
+<h3>Displaying Piecharts</h3>
+<p>
+Piecharts are used to represent relative values of several attributes at
+different locations.  For example, production levels or voting patterns.  The
+following example demonstrates a procedure for displaying piecharts.  Fixed
+data value are used.  In a real application this information is read from a
+database or GIS dataset.
+
+include beginex.doc
+include tutorialpiechart1.mpy
+include endex.doc
+
+<img src="tutorialpiechart1.png">
+
+include hr.doc
+
+<a name="rand"></a>
+<h3>Random Effects</h3>
+<p>
+Random effects are generated using the
+<a href="reference.html#random">random</a>
+function and help give a less mechanical appearance.
+The following example demonstrates setting
+size and color randomly.
+
+include beginex.doc
+include tutorialrand1.mpy
+include endex.doc
+
+<img src="tutorialrand1.png">
+<p>
+
+The next example demonstrates setting rotation randomly.
+
+include beginex.doc
+include tutorialrand2.mpy
+include endex.doc
+
+<img src="tutorialrand2.png">
+<p>
+
+This example demonstrates setting position randomly for
+polygon fill.
+
+include beginex.doc
+include tutorialrand3.mpy
+include endex.doc
+
+<img src="tutorialrand3.png">
 <p>
 
 include hr.doc
