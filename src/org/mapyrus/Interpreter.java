@@ -765,6 +765,39 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.WEDGE:
+				if (nExpressions == 5)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
+					double startAngle = mExecuteArgs[3].getNumericValue();
+					double sweep = mExecuteArgs[4].getNumericValue();
+					double endAngle = startAngle + sweep;
+					int sign = sweep > 0 ? -1 : 1;
+					startAngle = Math.toRadians(startAngle);
+					endAngle = Math.toRadians(endAngle);
+					if (radius > 0 && sweep != 0)
+					{
+							/*
+							 * Add straight line segments and arc defining
+							 * wedge (piece slice) shape.
+							 */
+							context.moveTo(x1, y1);
+							context.lineTo(x1 + Math.cos(startAngle) * radius,
+								y1 + Math.sin(startAngle) * radius);
+							context.arcTo(sign, x1, y1,
+								x1 + Math.cos(endAngle) * radius,
+								y1 + Math.sin(endAngle) * radius);
+							context.closePath();
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WEDGE));
+				}
+				break;
+
 			case Statement.HEXAGON:
 				if (nExpressions == 3)
 				{
