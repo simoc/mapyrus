@@ -686,7 +686,7 @@ public class Context
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.ZERO_WORLD_RANGE));
 
 		double worldAspectRatio = Math.abs(wyDiff / wxDiff);
-		double pageAspectRatio = pxDiff / pyDiff;
+		double pageAspectRatio = pyDiff / pxDiff;
 
 		if (!allowDistortion)
 		{
