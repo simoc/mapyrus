@@ -1372,10 +1372,22 @@ If Mapyrus encounters an error when interpreting commands,
 an error message is printed including the filename and line number
 at which the error occurred and Mapyrus exits immediately.
 The Java interpreter exits with a non-zero status.
+
+If an error occurs when using the Mapyrus Java API an exception
+is thrown to the calling application.
+
 If an error occurs when using the HTTP Server
 option, an HTTP failure status and the error message
 are returned to the HTTP client.  The HTTP server continues,
 handling the next request.
+
+\subsection{Using Mapyrus In A Java Application}
+
+Javadoc API documentation for Mapyrus is included in the
+\texttt{javadoc} subdirectory in a Mapyrus installation.
+
+Section \ref{javaapi} on page \pageref{javaapi} includes
+An example showing Mapyrus embedded in a Java application
 
 \subsection{Mapyrus HTTP Server}
 
