@@ -200,17 +200,25 @@ If the regular expression does not match <i>str</i>, then 0 is returned.
 
 <tr>
 <td>
-<a name="round"></a>
-<tt>round(<i>n</i>)<tt>
-<td>
-Returns <i>n</i> rounded to nearest whole number.
-
-<tr>
-<td>
 <a name="random"></a>
 <tt>random(<i>n</i>)<tt>
 <td>
 Generates a random floating point number between 0 and <i>n</i>.
+
+<tr>
+<td>
+<a name="replace"></a>
+<tt>replace(<i>str</i>, <i>regex</i>, <i>replacement</i>)<tt>
+<td>
+Returns the string <i>str</i>, with all occurrences of the regular
+expression <i>regex</i> replaced by <i>replacement</i>.
+
+<tr>
+<td>
+<a name="round"></a>
+<tt>round(<i>n</i>)<tt>
+<td>
+Returns <i>n</i> rounded to nearest whole number.
 
 <tr>
 <td>
