@@ -42,8 +42,7 @@ begin scalebar scale, units
   # Blank out background behind scale bar.
   #
   color "#eeee99"
-  move 0, 0
-  draw 0, 10, mmScaleSize, 10, mmScaleSize, 0, 0, 0
+  box 0, 0, mmScaleSize, 10
   fill
   clearpath
 
@@ -95,8 +94,7 @@ begin scalebar scale, units
     # Display bars alternately as black and empty rectangles.
     #
     clearpath
-    move x, 7
-    draw  x, 9, x + mmBarLength, 9, x + mmBarLength, 7, x, 7
+    box x, 7, x + mmBarLength, 9
     if toggle eq "off"
     then
       stroke
@@ -123,7 +121,7 @@ begin scalebar scale, units
   label unitLabel
 end
 
-newpage "eps", "tutorialscalebar1.eps", 60, 60, 300
+newpage "eps", "tutorialscalebar1.eps", 60, 60, 96
 
 # Display entire Australian continent.
 #
@@ -149,7 +147,7 @@ scalebar Mapyrus.worlds.scale, "m"
 
 # Begin a new page.
 #
-newpage "eps", "tutorialscalebar2.eps", 60, 60, 300
+newpage "eps", "tutorialscalebar2.eps", 60, 60, 96
 
 # Display only northern part of Northern Territory.
 #
