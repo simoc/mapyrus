@@ -11,11 +11,17 @@ box 5, 15, 45, 40
 fill
 
 clearpath
-color "green", 0.8   # nearly opaque (solid)
+color "green", 0.8   # mostly opaque (solid)
 box 15, 5, 35, 35
 fill
 
 clearpath
-color "blue", 0.2   # nearly transparent
+color "blue", 0.2   # mostly transparent
 box 25, 7, 50, 45
 fill
+
+clearpath
+font 'Times-Roman-Bold', 9
+color "black", 0.1  # nearly transparent
+move 0, 22
+label "Transparent"
