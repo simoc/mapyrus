@@ -46,24 +46,25 @@ public class Statement
 	public static final int MOVE = 14;
 	public static final int DRAW = 15;
 	public static final int ARC = 16;
-	public static final int CLEARPATH = 17;
-	public static final int SAMPLEPATH = 18;
-	public static final int STRIPEPATH = 19;
-	public static final int STROKE = 20;
-	public static final int FILL = 21;
-	public static final int PROTECT = 22;
-	public static final int CLIP = 23;
-	public static final int LABEL = 24;
-	public static final int SCALE = 25;
-	public static final int ROTATE = 26;
-	public static final int WORLDS = 27;
-	public static final int PROJECT = 28;
-	public static final int DATASET = 29;
-	public static final int IMPORT = 30;
-	public static final int FETCH = 31;
-	public static final int NEWPAGE = 32;
-	public static final int PRINT = 33;
-	public static final int LOCAL = 34;
+	public static final int ADDPATH = 17;
+	public static final int CLEARPATH = 18;
+	public static final int SAMPLEPATH = 19;
+	public static final int STRIPEPATH = 20;
+	public static final int STROKE = 21;
+	public static final int FILL = 22;
+	public static final int PROTECT = 23;
+	public static final int CLIP = 24;
+	public static final int LABEL = 25;
+	public static final int SCALE = 26;
+	public static final int ROTATE = 27;
+	public static final int WORLDS = 28;
+	public static final int PROJECT = 29;
+	public static final int DATASET = 30;
+	public static final int IMPORT = 31;
+	public static final int FETCH = 32;
+	public static final int NEWPAGE = 33;
+	public static final int PRINT = 34;
+	public static final int LOCAL = 35;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -122,6 +123,7 @@ public class Statement
 		mStatementTypeLookup.put("move", new Integer(MOVE));
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
 		mStatementTypeLookup.put("arc", new Integer(ARC));
+		mStatementTypeLookup.put("addpath", new Integer(ADDPATH));
 		mStatementTypeLookup.put("clearpath", new Integer(CLEARPATH));
 		mStatementTypeLookup.put("samplepath", new Integer(SAMPLEPATH));
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
