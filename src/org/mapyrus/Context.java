@@ -171,6 +171,7 @@ public class Context
 		mVars = null;
 		mPath = null;
 		mClippingPaths = null;
+
 		mOutputFormat = null;
 		mOutputDefined = false;
 		mAttributesChanged = true;
@@ -354,15 +355,16 @@ public class Context
 			 * Finish any previous page before beginning a new one.
 			 */
 			mOutputFormat.closeOutputFormat();
-			mOutputFormat = null;
-			mOutputDefined = false;
 
 			/*
-			 * Clear world extents from previous page.
+			 * Clear world extents, projection and clip path from previous page.
+			 * Other page settings are independent of a particular page so leave
+			 * them alone.  
 			 */
 			mWorldExtents = null;
 			mWorldCtm = null;
-// TODO should clip path and other graphics attributes be cleared too?
+			mProjectionTransform = null;
+			mClippingPaths = null;
 		}
 
 		mOutputFormat = new OutputFormat(filename, format,
