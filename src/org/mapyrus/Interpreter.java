@@ -615,7 +615,7 @@ public class Interpreter
 		Expression []expr;
 		int nExpressions;
 		int type;
-		double degrees;
+		double degrees, radius = 0.0;
 		double x1, y1, x2, y2;
 		int units;
 		double legendSize;
@@ -733,7 +733,7 @@ public class Interpreter
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
-					double radius = mExecuteArgs[2].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
 					if (radius > 0)
 					{
 							/*
@@ -755,7 +755,7 @@ public class Interpreter
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
-					double radius = mExecuteArgs[2].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
 					double sin60radius = 0.8660254 * radius;
 					double cos60radius = 0.5 * radius;
 					if (radius > 0)
@@ -783,7 +783,7 @@ public class Interpreter
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
-					double radius = mExecuteArgs[2].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
 					double rotation = mExecuteArgs[3].getNumericValue();
 					rotation = Math.toRadians(rotation);
 					
@@ -823,15 +823,17 @@ public class Interpreter
 				break;
 
 			case Statement.BOX:
+			case Statement.ROUNDEDBOX:
 			case Statement.GUILLOTINE:
 			case Statement.PROTECT:
 			case Statement.UNPROTECT:
-				if (nExpressions == 4)
+				if (nExpressions == 4 || (type == Statement.ROUNDEDBOX && nExpressions == 5))
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
 					x2 = mExecuteArgs[2].getNumericValue();
 					y2 = mExecuteArgs[3].getNumericValue();
+					
 					double xMin, xMax, yMin, yMax;
 
 					if (x1 < x2)
@@ -855,12 +857,50 @@ public class Interpreter
 						yMax = y1;
 					}
 
+					if (type == Statement.ROUNDEDBOX)
+					{
+						double yRange = yMax - yMin;
+						double xRange = xMax - xMin;
+
+						if (nExpressions == 5)
+						{
+							radius = mExecuteArgs[4].getNumericValue();
+							if (radius > xRange / 2)
+								radius = xRange / 2;
+							if (radius > yRange / 2)
+								radius = yRange / 2;
+						}
+						else
+						{
+							radius = Math.min(xRange / 10, yRange / 10);
+						}
+
+						/*
+						 * If there is no radius then draw a plain box without
+						 * rounded corners instead.
+						 */
+						if (radius <= 0)
+							type = Statement.BOX;
+					}
+
 					if (type == Statement.BOX)
 					{
 						context.moveTo(xMin, yMin);
 						context.lineTo(xMin, yMax);
 						context.lineTo(xMax, yMax);
 						context.lineTo(xMax, yMin);
+						context.closePath();
+					}
+					else if (type == Statement.ROUNDEDBOX)
+					{
+						context.moveTo(xMin, yMax - radius);
+						context.arcTo(1, xMin + radius, yMax - radius, xMin + radius, yMax);
+						context.lineTo(xMax - radius, yMax);
+						context.arcTo(1, xMax - radius, yMax - radius, xMax, yMax - radius);
+						context.lineTo(xMax, yMin + radius);
+						context.arcTo(1, xMax - radius, yMin + radius, xMax - radius, yMin);
+						context.lineTo(xMin + radius, yMin);
+						context.arcTo(1, xMin + radius, yMin + radius, xMin, yMin + radius);
 						context.closePath();
 					}
 					else if (type == Statement.GUILLOTINE)
@@ -947,17 +987,6 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
 				}
 				context.createSinkhole();
-				break;
-
-			case Statement.ROUNDPATH:
-				if (nExpressions == 1)
-				{
-					context.roundPath(mExecuteArgs[0].getNumericValue());
-				}
-				else
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_RADIUS));
-				}
 				break;
 
 			case Statement.STROKE:
