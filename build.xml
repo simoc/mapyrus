@@ -34,8 +34,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </target>
 
 <target name="compile" depends="init" description="Compile java source code">
-<replace dir="src" token="@software_version_token@" value="${version}" summary="yes"/>
-<replace dir="src" token="@release_date_token@" value="${today}" summary="yes"/>
+<replace dir="src" token="@software_version_token@" value="${version}"/>
+<replace dir="src" token="@release_date_token@" value="${today}"/>
 <javac srcdir="src" listfiles="yes" destdir="build/classes" excludes="**/CVS/**"/>
 <copy file="src/${messagefile}" tofile="build/classes/${messagefile}"/>
 </target>
@@ -48,13 +48,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="doc" depends="jar" description="Build documentation and examples">
 <!-- Delete documentation generated previously -->
 <delete>
-<fileset dir="doc" includes="*.html"/>
-<fileset dir="doc" includes="*.png" excludes="mapyrus.png,sampleurl.png"/>
+<fileset dir="doc" includes="*.dvi,*.pdf,*.aux,*.log,*.eps"/>
 </delete>
-<copy file="VERSION" todir="doc"/>
+<replace file="doc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
 
-<!-- Generate all examples, doing tutorial examples separately so
-it is not necessary to show path being cleared in each example -->
+<!-- Generate all examples, doing tutorial examples separately so -->
+<!-- it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="contact.mpy turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy turtle6.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
 </java>
@@ -77,24 +76,20 @@ it is not necessary to show path being cleared in each example -->
 <arg line="tutorialrand1.mpy tutorialrand2.mpy tutorialrand3.mpy tutorialpiechart1.mpy"/>
 </java>
 
-<!-- Use preprocessor inside Mapyrus which expands macros in -->
-<!-- documentation to generate final HTML files -->
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="-i index.doc index.html"/>
-</java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="-i intro.doc intro.html"/>
-</java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="-i tutorial.doc tutorial.html"/>
-</java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="-i reference.doc reference.html"/>
-</java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="-i versions.doc versions.html"/>
-</java>
-<delete file="doc/VERSION"/>
+<!-- Build LaTex documentation into PDF file -->
+<!-- Run LaTeX twice so that all cross references are resolved. -->
+
+<exec dir="doc" executable="latex" failonerror="true">
+<arg line="${ant.project.name}.tex"/>
+</exec>
+
+<exec dir="doc" executable="latex" failonerror="true">
+<arg line="${ant.project.name}.tex"/>
+</exec>
+
+<exec dir="doc" executable="dvipdf" failonerror="true">
+<arg line="${ant.project.name}.dvi ../${ant.project.name}.pdf"/>
+</exec>
 
 </target>
 
@@ -103,7 +98,7 @@ it is not necessary to show path being cleared in each example -->
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, doc/**, manifest, ${ant.project.name}.jar, src/**, VERSION" excludes="**/CVS, build/classes/**"/>
+<fileset dir="." includes="build/**, build.xml, ${ant.project.name}.pdf, doc/*.mpy, manifest, ${ant.project.name}.jar, src/**, COPYING, NEWS, VERSION" excludes="**/CVS, build/classes/**"/>
 </zip>
 </target>
 
@@ -112,10 +107,11 @@ it is not necessary to show path being cleared in each example -->
 <delete>
 <fileset dir="build/classes"/>
 </delete>
-<delete file="${ant.project.name}.jar"/>
 <delete>
+<fileset dir="." includes="${ant.project.name}.jar"/>
+<fileset dir="." includes="${ant.project.name}.pdf"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
-<fileset dir="doc" includes="*.html, *.png" excludes="mapyrus.png"/>
+<fileset dir="doc" excludes="*.mpy,*.tex"/>
 </delete>
 </target>
 
