@@ -59,6 +59,10 @@ java -jar mapyrus.jar myfile.txt ...
 The purpose of Mapyrus is to display
 A page is 
 
+command line options
+-DMapyrus.rgbfile
+-Djava.util.logging.configfile
+
 path
 origin (0, 0) is bottom left corner of page.
 
@@ -323,8 +327,9 @@ The graphics state (
 <li>
 path defined with,
 <a href="#move">move</a>,
-<a href="#draw">draw</a> and
-<a href="#arc">arc</a>.
+<a href="#draw">draw</a>,
+<a href="#arc">arc</a> and
+<a href="#addpath">addpath</a>.
 </li>
 
 <li>
@@ -644,6 +649,14 @@ to the distance from the center to the end point.
 include hr.doc
 
 <p>
+<a name="addpath"></a>
+<tt>addpath</tt> <i>geometry-string</i> [, <i>geometry-string</i> ...]
+<p>
+Adds geometry in each string <i>geometry-string</i> to current path.
+
+include hr.doc
+
+<p>
 <a name="clearpath"></a>
 <tt>clearpath</tt>
 <p>
@@ -687,32 +700,57 @@ produce a hatched fill pattern.
 <p>
 <a name="stroke"></a>
 <tt>stroke</tt>
+<p>
 Draws the current path using the current color and linestyle.
-The path is not modified.
+The current path is not modified by this command.
 
 <p>
 <a name="fill"></a>
 <tt>fill</tt>
+<p>
 Flood fills the current path with the current color.
 The winding rule is used for determining the inside and outside
 regions of polygons containing islands.
-The path is not modified.
+The current path is not modified by this command.
 
 include hr.doc
 
 <p>
 <a name="protect"></a>
 <tt>protect</tt>
-Protects
+<p>
+Defines a clip path to
+protect the area of the page covered by the current path and
+prevent it from being overwritten by later drawing commands.
+Opposite of the
+<a href="#clip"/>clip</a>
+command.
+If the path is protected in a procedure, then the area remains
+protected until the procedure is complete.  Otherwise, the area
+remains permanently protected for the page.
+When more than one area is protected, the union of all areas
+is protected.
+The current path is not modified by this command.
 
 include hr.doc
 
 <p>
 <a name="clip"></a>
 <tt>clip</tt>
-Opposite of protect
-Protects
+<p>
+Sets a clip path containing the area covered by the current path.
+Opposite of the
 <a href="#protect"/>protect</a>
+command.
+Later drawing commands are limited to draw only inside this area.
+If the path is clipped in a procedure, then the area remains
+clipped until the procedure is complete.  Otherwise, the area
+remains permanently clipped for the page.
+When more than one path is clipped, drawing is limited to
+areas inside all clip paths.
+The current path is not modified by this command.
+
+include hr.doc
 
 <p>
 <a name="label"></a>
@@ -730,14 +768,38 @@ If <i>string</i> contains newline characters (<tt>\n</tt>) then
 labels are displayed as multiple lines, one below the other,
 with each line justified independently.
 
+include hr.doc
+
 <p>
 <a name="scale"></a>
-<tt>rotate</tt> <i>x</i> <i>y</i>
+<tt>scale</tt> <i>x</i> <i>y</i>
+<p>
+Scales the coordinate system, adding to any existing scaling.
+<i>x</i> and <i>y</i> are scale factors in X and Y axes.
+All later coordinates given in
+<a href="#move">move</a>,
+<a href="#draw">draw</a>,
+<a href="#arc">arc</a> and
+<a href="#arc">addpath</a>
+commands are scaled by these factors.
+
+include hr.doc
 
 <p>
 <a name="rotate"></a>
 <tt>rotate</tt> <i>angle</i>
 <p>
+Rotates the coordinate system, adding to any existing rotation.
+<i>angle</i> is given in degrees, measured counter-clockwise.
+All later coordinates given in
+<a href="#move">move</a>,
+<a href="#draw">draw</a>,
+<a href="#arc">arc</a> and
+<a href="#arc">addpath</a>
+commands are rotated by this angle.
+
+
+include hr.doc
 
 <p>
 <a name="worlds"></a>
@@ -838,17 +900,22 @@ defines which columns are to be interpreted as geometry
 Begins new query of dataset defined with
 <a href="#dataset">dataset</a>
 command.
+Only data contained
+
+include hr.doc
 
 <p>
 <a name="fetch"></a>
 <tt>fetch</tt>
 <p>
 Fetches next record from current dataset.
-A variable with the name of
-each column value
+For each field in the record, a variable is defined with the name
+of the field and the value of the field for the next record.
 Before fetching a record, check the variable
 <tt>Mapyrus.import.moreRecords</tt>
-to ensure that another record is available.
+to ensure that another record is available from the dataset.
+
+include hr.doc
 
 <p>
 <a name="newpage"></a>
