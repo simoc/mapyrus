@@ -65,3 +65,12 @@ do
 	temperatureHistogram city, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
 done
 
+# Clear awat any legend entries so that they do not appear in any other
+# file that is being executed immediately after this one.
+#
+worlds 0, 0, Mapyrus.page.width, Mapyrus.page.height
+clearpath
+move -99, -99
+move -99, -99
+move -99, -99
+legend 1
