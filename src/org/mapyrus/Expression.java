@@ -205,6 +205,12 @@ public class Expression
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_OPERATION));
 					}
 
+					/*
+					 * Fail on numeric overflow and divide by zero.
+					 */
+					if (d == Double.NEGATIVE_INFINITY || d == Double.POSITIVE_INFINITY || d == Double.NaN)
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
+
 					if (d == 0.0)
 						retval = Argument.numericZero;
 					else if (d == 1.0)
