@@ -90,7 +90,12 @@ class Preprocessor
 	 * Built up as a stack as we include nested files.
 	 */
 	private LinkedList mFileStack;
-
+	
+	/*
+	 * First file we are reading from.
+	 */
+	private FileInfo mInitialFile;
+	
 	/*
 	 * Line we are currently reading from.
 	 */
@@ -105,16 +110,18 @@ class Preprocessor
 	{
 		mFileStack = new LinkedList();
 		mFileStack.add(f);
+		mInitialFile = f;
 	}
 
 	/**
 	 * Create new user input producer from an already open Reader.
 	 * @param in is a source to read input from.
+	 * @param filename is filename or URL of in for use in error messages.
 	 */
-	public Preprocessor(Reader in)
+	public Preprocessor(Reader in, String filename)
 	{
 		LineNumberReader l = new LineNumberReader(in);
-		FileInfo f = new FileInfo(l, "input");
+		FileInfo f = new FileInfo(l, filename);
 		initFileStack(f);
 	}
 
@@ -341,17 +348,22 @@ class Preprocessor
 	public String getCurrentFilenameAndLine()
 	{
 		String s;
+		FileInfo f;
 
-		try
+		if (mFileStack.size() > 0)
 		{
-			FileInfo f = (FileInfo)mFileStack.getLast();
-			LineNumberReader in = f.getReader();
-			s = f.getFilename() + " line " + in.getLineNumber();
+			f = (FileInfo)mFileStack.getLast();
 		}
-		catch(NoSuchElementException e)
+		else
 		{
-			s = "";
+			/*
+			 * Already read to EOF and stack of files is empty.
+			 */
+			f = mInitialFile;
 		}
+		
+		LineNumberReader in = f.getReader();
+		s = f.getFilename() + " line " + in.getLineNumber();
 		return(s);
 	}
 
