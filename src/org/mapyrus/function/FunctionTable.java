@@ -92,6 +92,9 @@ public class FunctionTable
 		f = new Split();
 		mFunctions.put(f.getName(), f);
 		
+		f = new Spool();
+		mFunctions.put(f.getName(), f);
+
 		f = new Sqrt();
 		mFunctions.put(f.getName(), f);
 		
