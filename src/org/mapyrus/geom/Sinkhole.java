@@ -70,8 +70,9 @@ public class Sinkhole
 		int nPixelsSet, nPixelsCleared;
 		Point2D.Double retval;
 		Rectangle2D bounds = s.getBounds2D();
+		double maxBounds = Math.max(bounds.getWidth(), bounds.getHeight());
 		AffineTransform affine =
-			AffineTransform.getScaleInstance(BITMAP_SIZE / bounds.getWidth(), BITMAP_SIZE / bounds.getHeight());		
+			AffineTransform.getScaleInstance(BITMAP_SIZE / maxBounds, BITMAP_SIZE / maxBounds);		
 		affine.translate(-bounds.getMinX(), -bounds.getMinY());
 
 		/*
