@@ -1609,6 +1609,17 @@ transformation set with a \texttt{worlds} command
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
+\subsubsection{roundpath}
+
+\begin{alltt}
+roundpath \textit{radius}
+\end{alltt}
+
+Rounds corners of current path.
+\textit{radius} is the radius for the rounded corners, given in millimetres.
+Circular arcs and straight segments that are too short to round are not
+changed.
+
 \subsubsection{samplepath}
 
 \begin{alltt}
