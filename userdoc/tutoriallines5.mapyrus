@@ -1,39 +1,39 @@
 begin quarterLabel
-	# Drawing tick and label at intermediate position along line.
-	#
-	if percent > 0 and percent < 100
-	then
-		# Tick
-		#
-		move -2, -2
-		draw 0, 0, 2, -2
-		fill
+  # Drawing tick and label at intermediate position along line.
+  #
+  if percent > 0 and percent < 100
+  then
+    # Tick
+    #
+    move -2, -2
+    draw 0, 0, 2, -2
+    fill
 
-		# Label
-		#
-		clearpath
-		move 0, 2
-		justify "center"
-		font "Helvetica", 3
-		label percent . "%"
-	endif
-	let percent = percent + 25
+    # Label
+    #
+    clearpath
+    move 0, 2
+    justify "center"
+    font "Helvetica", 3
+    label percent . "%"
+  endif
+  let percent = percent + 25
 end
+
 begin labelQuarters pathLen
-	# Divide path into quarters and drawing ticks and percentage
-	# label at points 1/4, 2/4, 3/4 positions along line.
-	#
-	samplepath pathLen / 4, 0
-	let percent = 0
-	quarterLabel
+  # Divide path into quarters and drawing ticks and percentage
+  # label at points 1/4, 2/4, 3/4 positions along line.
+  #
+  samplepath pathLen / 4, 0
+  let percent = 0
+  quarterLabel
 end
 
-newpage "png", "tutoriallines5.png", 60, 30, 96
-
+newpage "eps", "tutoriallines5.eps", 60, 30, 300
 clearpath
 move 5, 5
 draw 45, 5
-arc 0, 45, 15, 55, 15
+arc -1, 45, 15, 55, 15
 draw 55, 25
 linestyle 0.1
 color '#006400'
