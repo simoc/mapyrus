@@ -58,7 +58,6 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
@@ -1670,12 +1669,12 @@ public class OutputFormat
 	 * @param rotation rotation angle for icon.
 	 * @param scaling scale factor for icon.
 	 */
-	public void drawIcon(ArrayList pointList, ImageIcon icon, double size,
+	public void drawIcon(ArrayList pointList, Image image, double size,
 		double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
-		int pixelWidth = icon.getIconWidth();
-		int pixelHeight = icon.getIconHeight();
+		int pixelWidth = image.getWidth(null);
+		int pixelHeight = image.getHeight(null);
 		Point2D pt;
 		int i, j;
 		double x, y, mmWidth, mmHeight;
@@ -1711,7 +1710,6 @@ public class OutputFormat
 			/*
 			 * Draw icon at each position in list.
 			 */
-			Image image = icon.getImage();
 			for (i = 0; i < pointList.size(); i++)
 			{
 				pt = (Point2D)(pointList.get(i));
@@ -1766,7 +1764,6 @@ public class OutputFormat
 					 * Sun JVM throws NullPointerException if image is
 					 * too big to fit in memory.
 					 */
-					Image image = icon.getImage();
 					mGraphics2D.drawImage(image, affine, null);
 				}
 				catch (NullPointerException e)
