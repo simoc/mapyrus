@@ -62,7 +62,7 @@ public class OutputFormat
 		/*
 		 * Set plotting units to millimetres.
 		 */
-		mWriter.println((MM_PER_INCH / POINTS_PER_INCH) + " dup scale");
+		mWriter.println(POINTS_PER_INCH + " " + MM_PER_INCH + " div dup scale");
 		
 		/*
 		 * Define shorter names for most commonly used operations.
