@@ -419,6 +419,23 @@ public class ContextStack
 	}
 
 	/**
+	 * Add Bezier curve to path from last point to a new point.
+	 * @param xControl1 X coordinate of first Bezier control point.
+	 * @param yControl1 Y coordinate of first Bezier control point.
+	 * @param xControl2 X coordinate of second Bezier control point.
+	 * @param yControl2 Y coordinate of second Bezier control point.
+	 * @param xEnd X coordinate of end point of curve.
+	 * @param yEnd Y coordinate of end point of curve.
+	 */
+	public void curveTo(double xControl1, double yControl1,
+		double xControl2, double yControl2,
+		double xEnd, double yEnd) throws MapyrusException
+	{
+		getCurrentContext().curveTo(xControl1, yControl1,
+			xControl2, yControl2, xEnd, yEnd);
+	}
+
+	/**
 	 * Adds ellipse to path.
 	 * @param xMin minimum X coordinate of rectangle containing ellipse.
 	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
