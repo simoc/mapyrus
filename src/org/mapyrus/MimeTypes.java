@@ -50,6 +50,9 @@ public class MimeTypes
 		mMimeTypes.put("ps", "application/ps");
 		mMimeTypes.put("eps", "application/ps");
 		mMimeTypes.put("pdf", "application/pdf");
+		mMimeTypes.put("gz", "application/x-gzip");
+		mMimeTypes.put("bz2", "application/x-bzip2");
+		mMimeTypes.put("zip", "application/zip");
 	}
 
 	/**
