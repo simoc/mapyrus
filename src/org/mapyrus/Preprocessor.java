@@ -198,6 +198,45 @@ class Preprocessor
 	}
 
 	/**
+	 * Reads next line.
+	 * @return line read, or null if end of stream is already reached.
+	 */
+	public String readLine() throws IOException, MapyrusException
+	{
+		StringBuffer retval = new StringBuffer();
+		int c;
+
+		do
+		{
+			/*
+			 * If nothing can be read then return null.
+			 */
+			c = read();
+			if (c == -1 && retval.length() == 0)
+				return(null);
+
+			/*
+			 * Consider '\r', \n', '\r\n' as line terminators.
+			 */
+			if (c == '\r')
+			{
+				c = read();
+				if (c != '\n')
+				{
+					unread(c);
+					c = '\n';
+				}
+			}
+			else if (c != '\n')
+			{
+				retval.append((char)c);
+			}
+		}
+		while (c != -1 && c != '\n');
+		return(retval.toString());
+	}
+
+	/**
 	 * Reads next character that is not a space.
 	 * @return next non-space character.
 	 */
@@ -209,7 +248,7 @@ class Preprocessor
 		{
 			c = read();
 		}
-		while (Character.isWhitespace((char)c) && c != '\n');
+		while (c != -1 && Character.isWhitespace((char)c) && c != '\n');
 		return(c);
 	}
 
@@ -393,19 +432,57 @@ class Preprocessor
 	{
 		return(getCurrentFilename() + " line " + getCurrentLineNumber());
 	}
-	
-	public static void main(String []args) throws IOException, MapyrusException
+
+	private static void processLine(String s) throws IOException, InterruptedException
+	{
+		/*
+		 * Execute lines with commands, echo all other lines.
+		 */
+		if (s.length() > 5 && s.startsWith("exec") && Character.isWhitespace(s.charAt(4)))
+		{
+			String command = s.substring(5).trim();
+			Process p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+		}
+		else
+		{
+			System.out.println(s);
+		}
+	}
+
+	/*
+	 * Preprocess files given on command line.
+	 */
+	public static void main(String []args) throws IOException, MapyrusException,
+		InterruptedException
 	{
 		BufferedReader in;
 		int c;
+		int i = 0;
+		String s;
 		Preprocessor p;
 
-		p = new Preprocessor(args[0]);
-		while ((c = p.read()) != -1)
+		/*
+		 * Read from first file given on command line, or standard input
+		 * if no files are given.
+		 */
+		if (args.length == 0 || (args.length == 1 && args[0].equals("-")))
+			p = new Preprocessor(new InputStreamReader(System.in), "stdin");
+		else
+			p = new Preprocessor(args[0]);
+
+		do
 		{
-			Character ch = new Character((char)c);
-			System.out.print(ch.toString());
+			/*
+			 * Read each line from each file given on command line.
+			 */
+			while ((s = p.readLine()) != null)
+				processLine(s);
+			i++;
+			if (i < args.length)
+				p = new Preprocessor(args[i]);
 		}
+		while (i < args.length);
 	}
 }
 
