@@ -2,7 +2,7 @@
 # so we can work with pixel coordinate values too.
 #
 newpage "eps", "tutorialfirst4.eps", \
-  250 * Mapyrus.screen.resolution.mm, \
+  300 * Mapyrus.screen.resolution.mm, \
   50 * Mapyrus.screen.resolution.mm
 scale Mapyrus.screen.resolution.mm
 
@@ -31,4 +31,11 @@ clearpath
 color "black"
 ellipse 200, 25, 10, 20
 ellipse 200, 25, 20, 10
+stroke
+
+clearpath
+color "blue"
+linestyle 2
+move 240, 10
+bezier 280, 50, 280, 30, 260, 10
 stroke
