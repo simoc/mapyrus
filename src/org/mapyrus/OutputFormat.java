@@ -26,7 +26,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -37,7 +36,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.PixelGrabber;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -1010,35 +1008,15 @@ public class OutputFormat
 	 * @param height height of image in millimetres.
 	 * @param rotation rotation angle for image.
 	 */
-	private void writePostScriptImage(Image image, double x, double y,
+	private void writePostScriptImage(BufferedImage image, double x, double y,
 		double width, double height, double rotation)
 		throws IOException, MapyrusException
 	{
-		/*
-		 * Grab pixels of icon.
-		 */
 		int j;
 		int pixelWidth, pixelHeight;
-		int []pixels = null;
 
-		try
-		{
-			pixelWidth = image.getWidth(null);
-			pixelHeight = image.getHeight(null);
-			pixels = new int[pixelWidth * pixelHeight];
-			PixelGrabber grabber = new PixelGrabber(image, 0, 0,
-				pixelWidth, pixelHeight, pixels, 0, pixelWidth);
-
-			grabber.grabPixels();
-		}
-		catch (InterruptedException e)
-		{
-			throw new MapyrusException(e.getMessage());
-		}
-		catch (NullPointerException e)
-		{
-			throw new OutOfMemoryError("Failed loading image.");
-		}
+		pixelWidth = image.getWidth(null);
+		pixelHeight = image.getHeight(null);
 
 		/*
 		 * Check if image is a single color.
@@ -1046,7 +1024,7 @@ public class OutputFormat
 		 * using PostScript 'imagemask' operator.
 		 * Draw other images as RGB images using 'image' operator.
 		 */
-		Color singleColor = getSingleImageColor(pixels);
+		Color singleColor = getSingleImageColor(image);
 
 		/*
 		 * Write PostScript image directionary entry to draw image.
@@ -1105,9 +1083,9 @@ public class OutputFormat
 		ASCII85Writer ascii85 = new ASCII85Writer(mWriter);
 		int byteValue = 0;
 		int bitCounter = 0;
-		for (j = 0; j < pixels.length; j++)
+		for (j = 0; j < pixelWidth * pixelHeight; j++)
 		{
-			int pixel = pixels[j];
+			int pixel = image.getRGB(j % pixelWidth, j / pixelHeight);
 
 			if (singleColor != null)
 			{
@@ -1622,38 +1600,47 @@ public class OutputFormat
 
 	/**
 	 * Determines single color used in an image.
-	 * @param pixels RGB pixel values for image.
+	 * @param image image to check.
 	 * @return single non-transparent color used in an image, or null if
 	 * image has many colors.
 	 */
-	private Color getSingleImageColor(int []pixels)
+	private Color getSingleImageColor(BufferedImage image)
 	{
 		Color singleColor = Color.BLACK;
 		boolean foundDifferentColors = false;
 		boolean foundFirstColor = false;
 		int i = 0;
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
 
 		/*
 		 * Check if all pixels are the same color, or transparent.
 		 */
-		while ((!foundDifferentColors) && i < pixels.length)
+		int y = 0;
+		while (y < imageHeight && (!foundDifferentColors))
 		{
-			if ((pixels[i] & 0xff000000) != 0)
+			int x = 0;
+			while (x < imageWidth && (!foundDifferentColors))
 			{
-				/*
-				 * Pixel is not transparent.
-				 */
-				if (!foundFirstColor)
+				int pixel = image.getRGB(x, y);
+				if ((pixel & 0xff000000) != 0)
 				{
-					foundFirstColor = true;
-					singleColor = new Color(pixels[i] & 0xffffff);
+					/*
+					 * Pixel is not transparent.
+					 */
+					if (!foundFirstColor)
+					{
+						foundFirstColor = true;
+						singleColor = new Color(pixel & 0xffffff);
+					}
+					else
+					{
+						foundDifferentColors = (pixel != singleColor.getRGB());
+					}
 				}
-				else
-				{
-					foundDifferentColors = (pixels[i] != singleColor.getRGB());
-				}
+				x++;
 			}
-			i++;
+			y++;
 		}
 
 		if (foundDifferentColors)
@@ -1669,12 +1656,12 @@ public class OutputFormat
 	 * @param rotation rotation angle for icon.
 	 * @param scaling scale factor for icon.
 	 */
-	public void drawIcon(ArrayList pointList, Image image, double size,
+	public void drawIcon(ArrayList pointList, BufferedImage image, double size,
 		double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
-		int pixelWidth = image.getWidth(null);
-		int pixelHeight = image.getHeight(null);
+		int pixelWidth = image.getWidth();
+		int pixelHeight = image.getHeight();
 		Point2D pt;
 		int i, j;
 		double x, y, mmWidth, mmHeight;
