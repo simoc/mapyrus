@@ -98,7 +98,8 @@ Please note that:
 <li>
 Mapyrus is written in Java so as to be operating system independent
 and take advantage of Java multi-threading,
-Java2D and JDBC capabilities.
+Java2D and JDBC capabilities.  The disadvantages of using Java are
+slow startup time and high memory usage.
 </li>
 
 <li>
