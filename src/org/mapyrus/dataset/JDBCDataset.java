@@ -24,7 +24,6 @@ package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -42,57 +41,19 @@ import org.mapyrus.Row;
 public class JDBCDataset implements GeographicDataset
 {
 	/*
-	 * Single shared connection for each database we are connected to.
-	 */
-	private static HashMap mDbs = new HashMap();
-
-	/*
 	 * SQL query being executed and it's result.
 	 */
 	private Statement mStatement = null;
 	private ResultSet mResultSet = null;
 	private String mSql;
 
+	private String mUrl;
+
 	/*
 	 * Names and types of fields returned from SQL query.
 	 */
 	private String []mFieldNames;
 	private int []mFieldTypes;
-
-	/**
-	 * Initialise and return single shared database connection.
-	 * @param url database connection string
-	 * @param username username for database connection
-	 * @param password password for database connection
-	 * @return database connection
-	 */
-	private synchronized Connection getConnection(String url, Properties properties)
-		throws SQLException
-	{
-		Connection retval = (Connection)mDbs.get(url);
-		if (retval == null)
-		{
-			DriverManager.setLoginTimeout(Constants.DB_CONNECTION_TIMEOUT);
-			retval = DriverManager.getConnection(url, properties);
-
-			/*
-			 * Some operations can be optimised if database
-			 * knows that this connection is read-only.
-			 */
-			try
-			{
-				retval.setReadOnly(true);
-			}
-			catch (UnsupportedOperationException e)
-			{
-				/*
-				 * No problem if database does not support read-only operation.
-				 */
-			}
-			mDbs.put(url, retval);
-		}
-		return(retval);
-	}
 
 	/**
 	 * Open connection to RDBMS and make SQL query, returning geographic data.
@@ -106,7 +67,6 @@ public class JDBCDataset implements GeographicDataset
 		StringTokenizer st;
 		String token, key, value;
 		String driver = null;
-		String url = null;
 		Properties properties = new Properties();
 		Connection connection;
 
@@ -125,7 +85,7 @@ public class JDBCDataset implements GeographicDataset
 				if (key.equals("driver"))
 					driver = value;
 				else if (key.equals("url"))
-					url = value;
+					mUrl = value;
 				else
 				{
 					properties.put(key, value);
@@ -149,7 +109,7 @@ public class JDBCDataset implements GeographicDataset
 			/*
 			 * Connect to database.
 			 */
-			connection = getConnection(url, properties);
+			connection = ConnectionPool.get(mUrl, properties);
 		}
 		catch (SQLException e)
 		{
@@ -159,7 +119,7 @@ public class JDBCDataset implements GeographicDataset
 			else
 				state = "";
 			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
-				 state + ": " + url);
+				 state + ": " + mUrl);
 		}
 
 		try
@@ -225,7 +185,7 @@ public class JDBCDataset implements GeographicDataset
 			 */
 			try
 			{
-				close();
+				close(false);
 			}
 			catch (MapyrusException e)
 			{
@@ -246,7 +206,7 @@ public class JDBCDataset implements GeographicDataset
 			 */
 			try
 			{
-				close();
+				close(false);
 			}
 			catch (MapyrusException e)
 			{
@@ -484,15 +444,16 @@ public class JDBCDataset implements GeographicDataset
 		return(retval);
 	}
 
-	/**
-	 * Finish query from database.
-	 */
-	public void close() throws MapyrusException
+	private void close(boolean succeeded) throws MapyrusException
 	{
+		Connection connection = null;
 		try
 		{
 			if (mStatement != null)
+			{
+				connection = mStatement.getConnection();
 				mStatement.close();
+			}
 		}
 		catch (SQLException e)
 		{
@@ -504,5 +465,18 @@ public class JDBCDataset implements GeographicDataset
 			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
 				state);
 		}
+		finally
+		{
+			if (connection != null)
+				ConnectionPool.put(mUrl, connection, succeeded);
+		}
+	}
+
+	/**
+	 * Finish query from database.
+	 */
+	public void close() throws MapyrusException
+	{
+		close(true);
 	}
 }
