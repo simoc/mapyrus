@@ -1,6 +1,7 @@
 begin singleIcon
   move 0, 0
-  icon "pattern.png", 6
+  color "firebrick"
+  icon "0xf0 90 90 f0 00 00 00 00", 6
 end
 
 # Fill polygon with tiled icon image pattern.
@@ -19,5 +20,4 @@ clearpath
 move 5, 5
 draw 12, 29, 24, 43, 44, 37, 46, 29, 36, 26, 46, 25, 49, 7, 5, 5
 iconPattern
-#linestyle 1
 stroke
