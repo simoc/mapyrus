@@ -47,23 +47,24 @@ public class Expression
 	private static final int MULTIPLY_OPERATION = 4;
 	private static final int REPEAT_OPERATION = 5;	/* 'qw' x 2 = 'qwqw' */
 	private static final int DIVIDE_OPERATION = 6;
+	private static final int MODULO_OPERATION = 7;
 
-	private static final int LEXICAL_EQUALS_OPERATION = 7;	/* 'foo' eq 'foo' */
-	private static final int LEXICAL_NOT_EQUALS_OPERATION = 8;	/* 'foo' ne 'qw' */
-	private static final int LEXICAL_GREATER_THAN_OPERATION = 9;	/* 'qw' gt 'foo' */
-	private static final int LEXICAL_LESS_THAN_OPERATION = 10;	/* 'foo' lt 'qw' */
-	private static final int LEXICAL_GREATER_EQUAL_OPERATION = 11;	/* 'qw' ge 'foo' */
-	private static final int LEXICAL_LESS_EQUAL_OPERATION = 12;	/* 'foo' le 'qw' */
+	private static final int LEXICAL_EQUALS_OPERATION = 8;	/* 'foo' eq 'foo' */
+	private static final int LEXICAL_NOT_EQUALS_OPERATION = 9;	/* 'foo' ne 'qw' */
+	private static final int LEXICAL_GREATER_THAN_OPERATION = 10;	/* 'qw' gt 'foo' */
+	private static final int LEXICAL_LESS_THAN_OPERATION = 11;	/* 'foo' lt 'qw' */
+	private static final int LEXICAL_GREATER_EQUAL_OPERATION = 12;	/* 'qw' ge 'foo' */
+	private static final int LEXICAL_LESS_EQUAL_OPERATION = 13;	/* 'foo' le 'qw' */
 
-	private static final int NUMERIC_EQUALS_OPERATION = 13;	/* 77 == 77 */
-	private static final int NUMERIC_NOT_EQUALS_OPERATION = 14;	/* 7 != 77 */
-	private static final int NUMERIC_GREATER_THAN_OPERATION = 15;	/* 77 > 7 */
-	private static final int NUMERIC_LESS_THAN_OPERATION = 16;	/* 7 < 77 */
-	private static final int NUMERIC_GREATER_EQUAL_OPERATION = 17;	/* 77 >= 7 */
-	private static final int NUMERIC_LESS_EQUAL_OPERATION = 18;	/* 7 <= 77 */
+	private static final int NUMERIC_EQUALS_OPERATION = 14;	/* 77 == 77 */
+	private static final int NUMERIC_NOT_EQUALS_OPERATION = 15;	/* 7 != 77 */
+	private static final int NUMERIC_GREATER_THAN_OPERATION = 16;	/* 77 > 7 */
+	private static final int NUMERIC_LESS_THAN_OPERATION = 17;	/* 7 < 77 */
+	private static final int NUMERIC_GREATER_EQUAL_OPERATION = 18;	/* 77 >= 7 */
+	private static final int NUMERIC_LESS_EQUAL_OPERATION = 19;	/* 7 <= 77 */
 	
-	private static final int AND_OPERATION = 19;
-	private static final int OR_OPERATION = 20;
+	private static final int AND_OPERATION = 20;
+	private static final int OR_OPERATION = 21;
 
 	/*
 	 * Names and types of functions we allow on numbers and strings.
@@ -363,6 +364,11 @@ public class Expression
 					d = leftValue.getNumericValue() / rightValue.getNumericValue();
 					returnType = Argument.NUMERIC;
 					break;
+				case MODULO_OPERATION:
+					d = NumericalAnalysis.fmod(leftValue.getNumericValue(),
+						rightValue.getNumericValue());
+					returnType = Argument.NUMERIC;
+					break;
 				case NUMERIC_EQUALS_OPERATION:
 					l = leftValue.getNumericValue();
 					r = rightValue.getNumericValue();
@@ -440,7 +446,7 @@ public class Expression
 					/*
 					 * Fail on numeric overflow and divide by zero.
 					 */
-					if (d == Double.NEGATIVE_INFINITY || d == Double.POSITIVE_INFINITY || d == Double.NaN)
+					if (Double.isInfinite(d) || Double.isNaN(d))
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
 
 					if (d == 0.0)
@@ -691,7 +697,7 @@ public class Expression
 		while (true)
 		{
 			op = p.readNonSpace();
-			if (op == '*' || op == '/' || op == 'x')
+			if (op == '*' || op == '/' || op == 'x' || op == '%')
 			{
 				int opType;
 
@@ -699,6 +705,8 @@ public class Expression
 					opType = MULTIPLY_OPERATION;
 				else if (op == '/')
 					opType = DIVIDE_OPERATION;
+				else if (op == '%')
+					opType = MODULO_OPERATION;
 				else
 					opType = REPEAT_OPERATION;
 
