@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.StringReader;
+import java.util.StringTokenizer;
 
 /**
  * Language interpreter.  Parse and executes commands read from file, or
@@ -379,9 +380,9 @@ public class Interpreter
 	private void setFont(ContextStack context, Argument []args, int nArgs)
 		throws MapyrusException
 	{
-		double size;
+		double size, outlineWidth = 0.0;
 
-		if (nArgs == 2)
+		if (nArgs == 2 || nArgs == 3)
 		{
 			size = args[1].getNumericValue();
 			if (size <= 0.0)
@@ -389,8 +390,40 @@ public class Interpreter
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT_SIZE) +
 					": " + size);
 			}
-	
-			context.setFont(args[0].getStringValue(), size);
+
+			if (nArgs == 3)
+			{
+				String extras = args[2].getStringValue();
+				StringTokenizer st = new StringTokenizer(extras);
+				while (st.hasMoreTokens())
+				{
+					String token = st.nextToken();
+					if (token.startsWith("outlinewidth="))
+					{
+						/*
+						 * Parse line width to use for drawing outline of each
+						 * letter in a label.
+						 */
+						String width = token.substring(13);
+						try
+						{
+							outlineWidth = Double.parseDouble(width);
+						}
+						catch (NumberFormatException e)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH) +
+								": " + width);
+						}
+						if (outlineWidth < 0)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH) +
+								": " + outlineWidth);
+						}
+					}
+				}
+			}
+
+			context.setFont(args[0].getStringValue(), size, outlineWidth);
 		}
 		else
 		{
