@@ -408,4 +408,31 @@ public class ColorDatabase
 		}
 		return(retval);
 	}
+
+	/**
+	 * Convert a color to a hex string.
+	 * @param c color to convert.
+	 * @return color in form like "#ff0000".
+	 */
+	public static String toHexString(Color c)
+	{
+		StringBuffer sb = new StringBuffer("#");
+		String r = Integer.toHexString(c.getRed());
+		String g = Integer.toHexString(c.getGreen());
+		String b = Integer.toHexString(c.getBlue());
+
+		if (r.length() < 2)
+			sb.append("0");
+		sb.append(r);
+
+		if (g.length() < 2)
+			sb.append("0");
+		sb.append(g);
+
+		if (b.length() < 2)
+			sb.append("0");
+		sb.append(b);
+
+		return(sb.toString());
+	}
 }
