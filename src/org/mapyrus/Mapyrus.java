@@ -31,9 +31,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main class for Mapyrus, a program for generating plots of points, lines and polygons
- * to various output formats.  Runs as either an interpreter for files
- * given on the command line or as an HTTP server.
+ * Main class for Mapyrus, a program for generating plots of points,
+ * lines and polygons to various output formats.
+ * Runs as either an interpreter for files given on the command
+ * line or as an HTTP server.
  */
 public class Mapyrus
 {
@@ -44,9 +45,9 @@ public class Mapyrus
 	{		
 		String []usage =
 		{
-			
 			"Usage:",
-			"java [-Dvariable=value] ... -jar " + Constants.PROGRAM_NAME.toLowerCase() + ".jar [-s port] filename ...",
+			"java [-Dvariable=value] ... -classpath " + Constants.PROGRAM_NAME.toLowerCase() + ".jar au.id.chenery.mapyrus.Mapyrus",
+			"        [-s port] filename ...",
 			"",
 			Constants.PROGRAM_NAME + " reads each file or URL in turn.",
 			"If filename is '-' then standard input is read.",
