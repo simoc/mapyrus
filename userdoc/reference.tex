@@ -587,6 +587,7 @@ The path defined with
 \texttt{box},
 \texttt{arc},
 \texttt{circle},
+\texttt{ellipse},
 \texttt{hexagon},
 \texttt{star},
 \texttt{triangle},
@@ -1184,6 +1185,22 @@ Points are first transformed through any world coordinate
 transformation set with a \texttt{worlds} command
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
+
+\subsubsection{ellipse}
+
+\begin{alltt}
+ellipse \textit{xCenter}, \textit{yCenter}, \textit{xRadius}, \textit{yRadius}
+\end{alltt}
+
+Adds an ellipse to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}).  The radius of the ellipse
+in the horizontal direction is \textit{xRadius} and in the vertical
+direction \textit{yRadius}.
+
+The center point and radius values are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{eval}
 
