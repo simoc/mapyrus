@@ -13,7 +13,7 @@ begin alphabetSoup
   color "black"
   linestyle 0.1
   stroke
-  clip
+  clip "in"
   stripepath 4, 0
   samplepath 4, 0
   randomLetter

@@ -3,7 +3,7 @@ begin shadowed2
   #
   color '#cccc00'
   linestyle 0.1
-  protect
+  clip "out"
   let i = 0
   while i < 7
   do
