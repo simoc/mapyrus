@@ -701,8 +701,8 @@ begin crosshatch_lines angle
 	stroke
 end
 
-begin crosshatch1
-	key "box", "Crosshatch 1"
+begin crosshatch
+	key "box", "Crosshatch"
 	color "orange"
 	linestyle 0.1
 	stroke
@@ -712,8 +712,8 @@ begin crosshatch1
 	crosshatch_lines -45
 end
 
-begin crosshatch2
-	key "box", "Crosshatch 2"
+begin mesh
+	key "box", "Mesh"
 	color "darkgray"
 	linestyle 0.1
 	stroke
@@ -723,14 +723,28 @@ begin crosshatch2
 	crosshatch_lines 90
 end
 
-begin stripes
-	key "box", "Stripes"
+begin doublestripefill
+	key "box", "Double Stripes"
 	color "blue"
 	fill
 	clip "inside"
 	color "yellow"
 	linestyle 1
 	stripepath 2, 45
+	stroke
+end
+
+begin triplestripefill
+	key "box", "Triple Stripes"
+	color "white"
+	fill
+	clip "inside"
+	stripepath 5, 45
+	color "lightpink"
+	linestyle 3
+	stroke
+	color "deeppink"
+	linestyle 1
 	stroke
 end
 
@@ -771,6 +785,39 @@ begin quiltfill
 	stripepath 2, 0
 	samplepath 2, 0
 	halffill_box "red", "yellow", "purple", "orange"
+end
+
+begin circlefill_circle
+	move -2, 0
+	arc 1, 0, 0, -2, 0
+	fill
+end
+
+begin circlefill
+	key "box", "Circle Fill"
+	color "white"
+	fill
+	clip "inside"
+	color "dodgerblue"
+	stripepath 5, 0
+	samplepath 5, 0
+	circlefill_circle
+end
+
+begin boxfill_box
+	box -1, -1, 1, 1
+	fill
+end
+
+begin boxfill
+	key "box", "Box Fill"
+	color "white"
+	fill
+	clip "inside"
+	color "lightpink"
+	stripepath 4, 0
+	samplepath 4, 0
+	boxfill_box
 end
 
 begin repeaticon hexdigits, iconsize
@@ -881,9 +928,10 @@ then
 	hatch2
 	hatch3
 	hatch4
-	crosshatch1
-	crosshatch2
-	stripes
+	crosshatch
+	mesh
+	doublestripefill
+	triplestripefill
 	chessboard
 	walltiling
 	dotpattern
@@ -891,6 +939,8 @@ then
 	stipple
 	halffill
 	quiltfill
+	circlefill
+	boxfill
 	aggregate
 
 	newpage "eps", "allsymbols.eps", 210, 297
