@@ -1351,6 +1351,21 @@ public class Context
 	}
 
 	/**
+	 * Replace path with new paths at parallel distances to original path.
+	 * @param distances list of parallel distances for new paths.
+	 */
+	public void parallelPath(double []distances)
+	{
+		GeometricPath path = getDefinedPath();
+
+		for (int i = 0; i < distances.length; i++)
+			distances[i] *= mScaling;
+
+		if (path != null)
+			mPath = path.parallelPath(distances);
+	}
+
+	/**
 	 * Draw image icon at current point on path.
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.

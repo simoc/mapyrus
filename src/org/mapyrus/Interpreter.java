@@ -943,7 +943,7 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_STRIPE));
 				}
 				break;
-				
+
 			case Statement.SHIFTPATH:
 				if (nExpressions == 2)
 				{
@@ -953,6 +953,20 @@ public class Interpreter
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_SHIFT));
+				}
+				break;
+
+			case Statement.PARALLELPATH:
+				if (nExpressions > 0)
+				{
+					double []distances = new double[nExpressions];
+					for (int i = 0; i < nExpressions; i++)
+						distances[i] = mExecuteArgs[i].getNumericValue();
+					context.parallelPath(distances);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DISTANCE));
 				}
 				break;
 
