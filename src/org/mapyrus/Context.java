@@ -43,11 +43,16 @@ public class Context
 	private double mXScaling;
 	private double mYScaling;
 	private double mRotation;
-	
+
+	/*
+	 * Transformation from one world coordinate system to another.
+	 */
+	private WorldCoordinateTransform mWorldTransform;
+
 	/*
 	 * Transformation matrix from world coordinates to page coordinates.
 	 */
-	private AffineTransform mWorldCtm;
+	private AffineTransform mWorldToPageCtm;
 	
 	/*
 	 * Coordinates making up path.
@@ -91,7 +96,8 @@ public class Context
 		mLineWidth = 0.1;
 	
 		mCtm = new AffineTransform();
-		mWorldCtm = null;
+		mWorldTransform = null;
+		mWorldToPageCtm = null;
 		mXScaling = mYScaling = 1.0;
 		mRotation = 0.0;
 		mVars = null;
@@ -112,7 +118,8 @@ public class Context
 		mColor = existing.mColor;
 		mLineWidth = existing.mLineWidth;
 		mCtm = new AffineTransform(existing.mCtm);
-		mWorldCtm = null;
+		mWorldTransform = null;
+		mWorldToPageCtm = null;
 		mXScaling = existing.mXScaling;
 		mYScaling = existing.mYScaling;
 		mRotation = existing.mRotation;
@@ -319,12 +326,25 @@ public class Context
 		/*
 		 * Setup CTM from world coordinates to page coordinates.
 		 */
-		mWorldCtm = new AffineTransform();
-		mWorldCtm.scale(mOutputFormat.getPageWidth() / (x2 - x1),
+		mWorldToPageCtm = new AffineTransform();
+		mWorldToPageCtm.scale(mOutputFormat.getPageWidth() / (x2 - x1),
 			mOutputFormat.getPageHeight() / (y2 - y1));
-		mWorldCtm.translate(-x1, -y1);
+		mWorldToPageCtm.translate(-x1, -y1);
 	}
-	
+
+	/**
+	 * Sets transformation between two world coordinate systems.
+	 * @param sourceSystem description of coordinate system coordinates transformed form.
+	 * @param destinationSystem description of coordinate system coordinates
+	 * are transformed to.
+	 */
+	public void setTransform(String sourceSystem, String destinationSystem)
+		throws MapyrusException
+	{
+		mWorldTransform = new WorldCoordinateTransform(sourceSystem,
+			destinationSystem);
+	}
+		
 	/**
 	 * Returns X scaling value in current transformation.
 	 * @return m00 element from transformation matrix.
@@ -357,20 +377,28 @@ public class Context
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void moveTo(double x, double y)
+	public void moveTo(double x, double y) throws MapyrusException
 	{
 		double srcPts[] = new double[2];
 		float dstPts[] = new float[3];
 
 		srcPts[0] = x;
 		srcPts[1] = y;
+
+		/*
+		 * Transform to correct world coordinate system.
+		 */
+		if (mWorldTransform != null)
+		{
+			mWorldTransform.forwardTransform(srcPts);
+		}
 		
 		/*
 		 * Transform point from world coordinates
 		 * to millimetre position on page.
 		 */		
-		if (mWorldCtm != null)
-			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
+		if (mWorldToPageCtm != null)
+			mWorldToPageCtm.transform(srcPts, 0, srcPts, 0, 1);
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
@@ -388,20 +416,28 @@ public class Context
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void lineTo(double x, double y)
+	public void lineTo(double x, double y) throws MapyrusException
 	{
 		double srcPts[] = new double[2];
 		float dstPts[] = new float[2];
 
 		srcPts[0] = x;
 		srcPts[1] = y;
+		
+		/*
+		 * Transform to correct world coordinate system.
+		 */
+		if (mWorldTransform != null)
+		{
+			mWorldTransform.forwardTransform(srcPts);
+		}
 
 		/*
 		 * Transform point from world coordinates
 		 * to millimetre position on page.
 		 */		
-		if (mWorldCtm != null)
-			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
+		if (mWorldToPageCtm != null)
+			mWorldToPageCtm.transform(srcPts, 0, srcPts, 0, 1);
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();

@@ -180,11 +180,23 @@ public class ContextStack
 	}
 
 	/**
+	 * Sets transformation between two world coordinate systems.
+	 * @param sourceSystem description of coordinate system coordinates transformed form.
+	 * @param destinationSystem description of coordinate system coordinates
+	 * are transformed to.
+	 */
+	public void setTransform(String sourceSystem, String destinationSystem)
+		throws MapyrusException
+	{
+		getCurrentContext().setTransform(sourceSystem, destinationSystem);
+	}
+
+	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void moveTo(double x, double y)
+	public void moveTo(double x, double y) throws MapyrusException
 	{
 		getCurrentContext().moveTo(x, y);
 	}
@@ -194,7 +206,7 @@ public class ContextStack
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void lineTo(double x, double y)
+	public void lineTo(double x, double y) throws MapyrusException
 	{
 		getCurrentContext().lineTo(x, y);
 	}
