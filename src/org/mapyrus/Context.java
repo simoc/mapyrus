@@ -7,6 +7,8 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
@@ -149,16 +151,17 @@ public class Context
 	
 	/**
 	 * Sets output file for drawing to.
-	 * @param filename name of image file output will be saved to
+	 * @param filename name of image file output will be saved to.
+	 * @param format is image format for saving output.
 	 * @param width is the page width (in points).
 	 * @param height is the page height (in points).
 	 * @param extras contains extra settings for this output.
 	 */
-	public void setOutputFormat(String filename,
+	public void setOutputFormat(String filename,String format,
 		int width, int height, String extras)
 		throws IOException, MapyrusException
 	{
-		mOutputFormat = new OutputFormat(filename, width, height, extras);
+		mOutputFormat = new OutputFormat(filename, format, width, height, extras);
 		mAttributesChanged = true;
 		mOutputDefined = true;
 	}
@@ -455,7 +458,22 @@ public class Context
 			retval = mPath.getLength();
 		return(retval);
 	}
-	
+
+	/**
+	 * Returns geometric area of current path.
+	 * @return area of current path.
+	 */
+	public double getPathArea()
+	{
+		double retval;
+		
+		if (mPath == null)
+			retval = 0.0;
+		else
+			retval = mPath.getArea();
+		return(retval);
+	}
+
 	/**
 	 * Returns coordinates and rotation angle for each each moveTo point in current path
 	 * @returns list of three element float arrays containing x, y coordinates and
