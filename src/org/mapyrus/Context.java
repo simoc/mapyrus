@@ -1169,8 +1169,7 @@ public class Context
 	public ArrayList getMoveToRotations()
 	{
 		ArrayList retval;
-		ArrayList list;
-		double rotation;
+
 		GeometricPath path = getDefinedPath();
 
 		if (path == null)
