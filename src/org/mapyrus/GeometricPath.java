@@ -67,7 +67,7 @@ public class GeometricPath
 		mNLineTos = path.mNLineTos;
 
 		/*
-		 * Clone the list of moveTo points and rotations.
+		 * Copy the list of moveTo points and rotations.
 		 */
 		mMoveTos = (ArrayList)(path.mMoveTos.clone());
 		mRotations = (ArrayList)(path.mRotations.clone());
@@ -93,6 +93,64 @@ public class GeometricPath
 	public void lineTo(float x, float y)
 	{
 		mPath.lineTo(x, y);
+		mNLineTos++;
+	}
+
+	/**
+	 * Add circular arc to path from last point to a new point, given centre and direction.
+	 * @param direction positive for clockwise, negative for anti-clockwise. 
+	 * @param xCentre X coordinate of centre point of arc.
+	 * @param yCentre Y coordinate of centre point of arc.
+	 * @param xEnd X coordinate of end point of arc.
+	 * @param yEnd Y coordinate of end point of arc.
+	 */
+	public void arcTo(int direction, float xCentre, float yCentre,
+		float xEnd, float yEnd) throws MapyrusException
+	{
+		double radius, startAngle, endAngle, angleExtent;
+		Point2D lastPt = mPath.getCurrentPoint();
+		if (lastPt == null)
+			throw new MapyrusException("No start point defined for arc");
+		
+		radius = Point2D.distance(xCentre, yCentre, xEnd, yEnd);
+
+		startAngle = Math.atan2(lastPt.getY() - yCentre, lastPt.getX() - xCentre);
+		startAngle = Math.toDegrees(startAngle);
+
+		endAngle = Math.atan2(yEnd - yCentre, xEnd - xCentre);
+		endAngle = Math.toDegrees(endAngle);
+
+		angleExtent = endAngle - startAngle;
+		
+		/*
+		 * Two angles very close together mean a full circle. 
+		 */
+		if (angleExtent > -0.0001 && angleExtent < 0.0001)
+		{
+			angleExtent = 360.0;
+		}
+		else
+		{
+			/*
+			 * Force arc to go in the direction the user wants it.
+			 */
+			if (angleExtent < 0 && direction < 0)
+				angleExtent += 360.0;
+			else if (angleExtent > 0 && direction > 0)
+				angleExtent -= 360.0;
+		}
+
+		/*
+		 * XXX
+		 * Java is interpreting positive arc sweep in clockwise direction
+		 * which is opposite direction to documented direction.
+		 */
+		angleExtent = -angleExtent;
+
+		Arc2D.Float arc = new Arc2D.Float();
+		arc.setArcByCenter(xCentre, yCentre, radius, startAngle, angleExtent, Arc2D.OPEN);
+
+		mPath.append(arc, true);
 		mNLineTos++;
 	}
 
@@ -151,22 +209,6 @@ public class GeometricPath
 	}
 
 	/**
-	 * @see java.awt.Shape#getPathIterator(AffineTransform)
-	 */
-	public PathIterator getPathIterator(AffineTransform at)
-	{
-		return(mPath.getPathIterator(at));
-	}
-
-	/**
-	 * @see java.awt.Shape#getPathIterator(AffineTransform, double)
-	 */
-	public PathIterator getPathIterator(AffineTransform at, double flatness)
-	{
-		return(mPath.getPathIterator(at, flatness));
-	}
-
-	/**
 	 * Returns Shape object of geometry for display.
 	 * @return shape object which can be used directly in 2D display methods.
 	 */
@@ -188,12 +230,14 @@ public class GeometricPath
 
 	/**
 	 * Returns geometric area of full path.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
 	 * @return path area.
 	 */
-	public double getArea()
+	public double getArea(double resolution)
 	{
 		double totalArea = 0.0;
-		double areas[] = walkPath(CALCULATE_AREAS);
+		double areas[] = walkPath(CALCULATE_AREAS, resolution);
 
 		for (int i = 0; i < areas.length; i++)
 			totalArea += areas[i];
@@ -202,12 +246,14 @@ public class GeometricPath
 
 	/**
 	 * Returns geometric length of full path.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
 	 * @return path length.
 	 */
-	public double getLength()
+	public double getLength(double resolution)
 	{
 		double totalLength = 0.0;
-		double lengths[] = walkPath(CALCULATE_LENGTHS);
+		double lengths[] = walkPath(CALCULATE_LENGTHS, resolution);
 
 		for (int i = 0; i < lengths.length; i++)
 			totalLength += lengths[i];
@@ -216,11 +262,13 @@ public class GeometricPath
 	
 	/**
 	 * Returns geometric centroid of full closed path.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
 	 * @return path centroid.
 	 */
-	public Point2D.Double getCentroid()
+	public Point2D.Double getCentroid(double resolution)
 	{
-		double pt[] = walkPath(CALCULATE_CENTROID);
+		double pt[] = walkPath(CALCULATE_CENTROID, resolution);
 		return(new Point2D.Double(pt[0], pt[1]));
 	}
 
@@ -228,12 +276,15 @@ public class GeometricPath
 	 * Walks path, calculating length, area or centroid.  Length or area
 	 * for each moveTo, lineTo, ... part is calculated separately.
 	 * If the path is not closed then the calculated area is meaningless.
+	 * @param attributeToCalculate is type of calculation to make
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
 	 * @return array with length or area of each part of the path.
 	 */
-	private double []walkPath(int attributeToCalculate)
+	private double []walkPath(int attributeToCalculate, double resolution)
 	{
 		int segmentType;
-		PathIterator pi = mPath.getPathIterator(mIdentityMatrix);
+		PathIterator pi = mPath.getPathIterator(mIdentityMatrix, resolution);
 		float coords[] = new float[6];
 		float xStart = 0.0f, yStart = 0.0f;
 		float xEnd, yEnd;
@@ -330,12 +381,14 @@ public class GeometricPath
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
 	 * If spacing is positive then points are placed beginning
 	 * at start of path.  If spacing is negative then points
 	 * are placed beginning at end of the path, moving towards
 	 * start of path.
 	 */
-	public void slicePath(double spacing, double offset)
+	public void slicePath(double spacing, double offset, double resolution)
 	{
 		PathIterator pi;
 
@@ -363,14 +416,14 @@ public class GeometricPath
 		{
 			stepDirection = -1;
 			spacing = -spacing;
-			partLengths = walkPath(CALCULATE_LENGTHS);
+			partLengths = walkPath(CALCULATE_LENGTHS, resolution);
 		}
 		else
 		{
 			stepDirection = 1;
 		}
 		
-		pi = mPath.getPathIterator(mIdentityMatrix);	
+		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);
