@@ -50,7 +50,7 @@ public class Pool
 	public synchronized void put(Object o)
 	{
 		/*
-		 * Add object to pool and notify anyone who is waiting for
+		 * Add object to pool and notify anyone who is waiting on this pool for
 		 * an object that a new one is available.
 		 */
 		mList.add(o);
