@@ -1319,6 +1319,28 @@ Only the outline of each letter is drawn, no part of the letter is filled. \\
 \hline
 \end{longtable}
 
+\subsubsection{gradientfill}
+
+\begin{alltt}
+gradientfill \textit{color1}, \textit{color2}, \textit{color3}, \textit{color4} [, \textit{color5} \ldots]
+\end{alltt}
+
+Fills the current path with a gradient fill pattern.
+Color names \textit{color1}, \textit{color2}, \textit{color3} and
+\textit{color4} define the color for the lower-left corner,
+lower-right corner, upper-left corner and upper-right corner of
+the polygon.
+
+If \textit{color5} is given then it defines an additional color at the
+the center of the polygon.
+
+Colors in the interior of the polygon fade from the color defined
+in each corner to the colors in the other corners.
+
+The winding rule is used for determining the inside and outside
+regions of polygons containing islands.
+The current path and current color are not modified by this command.
+
 \subsubsection{guillotine}
 
 \begin{alltt}
