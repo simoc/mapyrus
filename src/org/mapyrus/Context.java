@@ -419,7 +419,7 @@ public class Context
 	 * @param stdoutStream standard output stream for program.
 	 */
 	public void setOutputFormat(String format, String filename,
-		int width, int height, String extras,
+		double width, double height, String extras,
 		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{

@@ -1098,8 +1098,8 @@ public class Interpreter
 				{
 					String format = mExecuteArgs[0].getStringValue();
 					String filename = mExecuteArgs[1].getStringValue();
-					int width = (int)mExecuteArgs[2].getNumericValue();
-					int height = (int)mExecuteArgs[3].getNumericValue();
+					double width = mExecuteArgs[2].getNumericValue();
+					double height = mExecuteArgs[3].getNumericValue();
 
 					String extras;
 					if (nExpressions == 5)
