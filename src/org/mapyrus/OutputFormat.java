@@ -97,6 +97,9 @@ public class OutputFormat
 		 * Define shorter names for most commonly used operations.
 		 */
 		mWriter.println("/m { moveto } def /l { lineto } def");
+		mWriter.println("/s { stroke } def /f { fill } def");
+		mWriter.println("/gs { gsave } def /gr { grestore } def");
+		mWriter.println("/rgb { setrgbcolor } def /sl { setlinewidth } def");
 	}
 
 	/*
@@ -299,7 +302,7 @@ public class OutputFormat
 	{
 		if (mOutputType == POSTSCRIPT)
 		{
-			writePostScriptLine("gsave");
+			writePostScriptLine("gs");
 			mPostScriptIndent++;
 		}
 	}
@@ -317,7 +320,7 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			mPostScriptIndent--;
-			writePostScriptLine("grestore");
+			writePostScriptLine("gr");
 			retval = true;
 		}
 		else
@@ -405,11 +408,11 @@ public class OutputFormat
 
 		if (mOutputType == POSTSCRIPT)
 		{
-			writePostScriptLine(mLinearFormat.format(lineWidth) + " setlinewidth");
+			writePostScriptLine(mLinearFormat.format(lineWidth) + " sl");
 			float c[] = color.getRGBColorComponents(null);
 			writePostScriptLine(mColorFormat.format(c[0]) + " " +
 				mColorFormat.format(c[1]) + " " +
-				mColorFormat.format(c[2]) + " setrgbcolor");
+				mColorFormat.format(c[2]) + " rgb");
 		}
 		else
 		{
@@ -461,7 +464,7 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			writePostScriptShape(shape);
-			writePostScriptLine("stroke");
+			writePostScriptLine("s");
 		}
 		else
 		{
@@ -480,7 +483,7 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			writePostScriptShape(shape);
-			writePostScriptLine("fill");
+			writePostScriptLine("f");
 		}
 		else
 		{
