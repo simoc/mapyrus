@@ -3,6 +3,7 @@
  */
 package au.id.chenery.mapyrus;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Reader;
@@ -70,6 +71,16 @@ public class Interpreter
 	private static final int AT_DO_KEYWORD = 9;	/* at "do" keyword in while loop block */
 	private static final int AT_DONE_KEYWORD = 10;	/* at "done" keyword in while loop block */
 
+	/*
+	 * Literals for linestyles.
+	 */
+	public static final String CAP_BUTT_STRING = "butt";
+	public static final String CAP_ROUND_STRING = "round";
+	public static final String CAP_SQUARE_STRING = "square";
+	public static final String JOIN_BEVEL_STRING = "bevel";
+	public static final String JOIN_MITER_STRING = "miter";
+	public static final String JOIN_ROUND_STRING = "round";
+	
 	private ContextStack mContext;
 	
 	/*
@@ -98,6 +109,105 @@ public class Interpreter
 		mWorldUnitsLookup.put("foot", new Integer(Context.WORLD_UNITS_FEET));
 		mWorldUnitsLookup.put("ft", new Integer(Context.WORLD_UNITS_FEET));
 	}
+
+	/**
+	 * Parses all combinations of linestyle setting.  Sets values passed
+	 * by user, with defaults for the values they did not give.
+	 * @param context graphics context to set linestyle into.
+	 * @param arguments to linestyle statement.
+	 */	
+	private void setLinestyle(ContextStack context, Argument []args)
+		throws MapyrusException
+	{
+		int nExpressions;
+		double width = 0.1, dashPhase = 0.0;
+		float dashes[] = null;
+		int cap = BasicStroke.CAP_SQUARE;
+		int join = BasicStroke.JOIN_MITER;
+
+		if (args != null)
+			nExpressions = args.length;
+		else
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINESTYLE));
+
+		if (args[0].getType() != Argument.NUMERIC)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH));
+
+		width = args[0].getNumericValue();
+		if (width < 0)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH) +
+				": " + width);
+		}
+
+		if (nExpressions >= 2)
+		{
+			if (args[1].getType() != Argument.STRING)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_END_CAP));
+
+			String s = args[1].getStringValue().toLowerCase();
+			if (s.equals(CAP_BUTT_STRING))
+				cap = BasicStroke.CAP_BUTT;
+			else if (s.equals(CAP_ROUND_STRING))
+				cap = BasicStroke.CAP_ROUND;
+			else if (s.equals(CAP_ROUND_STRING))
+				cap = BasicStroke.CAP_SQUARE;
+			else
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_END_CAP) + ": " + s);
+		}
+
+		if (nExpressions >= 3)
+		{
+			if (args[2].getType() != Argument.STRING)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_JOIN));
+
+			String s = args[2].getStringValue().toLowerCase();
+			if (s.equals(JOIN_BEVEL_STRING))
+				join = BasicStroke.JOIN_BEVEL;
+			else if (s.equals(JOIN_MITER_STRING))
+				join = BasicStroke.JOIN_MITER;
+			else if (s.equals(JOIN_ROUND_STRING))
+				join = BasicStroke.JOIN_ROUND;
+			else
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_JOIN) + ": " + s);
+				
+		}
+
+		if (nExpressions >= 4)
+		{
+			if (args[3].getType() != Argument.NUMERIC)
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DASH_PHASE));
+
+			dashPhase = args[3].getNumericValue();
+			if (dashPhase < 0)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DASH_PHASE) +
+					": " + dashPhase);
+			}
+		}
+
+		if (nExpressions >= 5)
+		{
+			/*
+			 * Build list of dash pattern values.
+			 */
+			dashes = new float[args.length - 4];
+			for (int i = 4; i < args.length; i++)
+			{
+				if (args[i].getType() != Argument.NUMERIC)
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DASH_PATTERN));
+
+				dashes[i - 4] = (float)(args[i].getNumericValue());
+				if (dashes[i - 4] <= 0.0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DASH_PATTERN) +
+						": " + dashes[i - 4]);
+				}
+			}
+		}
+
+		context.setLinestyle(width, cap, join, dashPhase, dashes);	
+	}
 	
 	/*
 	 * Execute a single statement, changing the path, context or generating
@@ -113,6 +223,7 @@ public class Interpreter
 		double degrees;
 		double x1, y1, x2, y2;
 		int units;
+		int i;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -123,7 +234,7 @@ public class Interpreter
 		if (nExpressions > 0)
 		{
 			args = new Argument[nExpressions];
-			for (int i = 0; i < nExpressions; i++)
+			for (i = 0; i < nExpressions; i++)
 			{
 				args[i] = expr[i].evaluate(context);
 			}
@@ -184,18 +295,8 @@ public class Interpreter
 				}
 				break;
 
-			case Statement.LINEWIDTH:
-				if (nExpressions == 1 && args[0].getType() == Argument.NUMERIC)
-				{
-					/*
-					 * Set new line width.
-					 */
-					context.setLineWidth(args[0].getNumericValue());
-				}
-				else
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH));
-				}
+			case Statement.LINESTYLE:
+				setLinestyle(context, args);
 				break;
 			
 			case Statement.MOVE:
@@ -205,7 +306,7 @@ public class Interpreter
 					/*
 					 * Check that all coordindate values are numbers.
 					 */
-					for (int i = 0; i < nExpressions; i++)
+					for (i = 0; i < nExpressions; i++)
 					{
 						if (args[0].getType() != Argument.NUMERIC)
 						{
@@ -213,7 +314,7 @@ public class Interpreter
 						}
 					}
 					
-					for (int i = 0; i < nExpressions; i += 2)
+					for (i = 0; i < nExpressions; i += 2)
 					{
 						/*
 						 * Add point to path.
@@ -353,16 +454,16 @@ public class Interpreter
 					y2 = args[3].getNumericValue();
 					if (nExpressions == 5)
 					{
-						Integer i;
+						Integer u;
 						if (args[4].getType() == Argument.STRING)
 						{
-							i = (Integer)mWorldUnitsLookup.get(args[4].getStringValue());
-							if (i == null)
+							u = (Integer)mWorldUnitsLookup.get(args[4].getStringValue());
+							if (u == null)
 							{
 								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
 									": " + args[4].getStringValue());
 							}
-							units = i.intValue();
+							units = u.intValue();
 						}
 						else
 						{
@@ -405,7 +506,7 @@ public class Interpreter
 					/*
 					 * All arguments are strings.
 					 */
-					for (int i = 0; i < nExpressions; i++)
+					for (i = 0; i < nExpressions; i++)
 					{
 						if (args[i].getType() != Argument.STRING)
 							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET));
@@ -415,7 +516,7 @@ public class Interpreter
 					 * Build array of geometry field names.
 					 */					
 					String []geometryFieldNames = new String[nExpressions - 3];
-					for (int i = 0; i < geometryFieldNames.length; i++)
+					for (i = 0; i < geometryFieldNames.length; i++)
 						geometryFieldNames[i] = args[i + 3].getStringValue();
 
 					context.setDataset(args[0].getStringValue(),
@@ -441,7 +542,7 @@ public class Interpreter
 				int []geometryFieldIndexes = context.getDatasetGeometryFieldIndexes();
 				String []fieldNames = context.getDatasetFieldNames();
 				double x = 0.0;
-				for (int i = 0; i < row.size(); i++)
+				for (i = 0; i < row.size(); i++)
 				{
 					Argument field = (Argument)row.get(i);
 					if (index < geometryFieldIndexes.length &&
@@ -513,7 +614,7 @@ public class Interpreter
 				/*
 				 * Print to stdout each of the expressions passed.
 				 */
-				for (int i = 0; i <nExpressions; i++)
+				for (i = 0; i <nExpressions; i++)
 				{
 					if (args[i].getType() == Argument.STRING)
 					{
