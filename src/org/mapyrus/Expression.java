@@ -41,20 +41,28 @@ public class Expression
 	 */
 	private static final int NO_OPERATION = 0;
 	private static final int PLUS_OPERATION = 1;
-	private static final int MINUS_OPERATION = 2;
-	private static final int CONCAT_OPERATION = 3; /* 'qw' . 'er' . 7 = 'qwer7' */
-	private static final int MULTIPLY_OPERATION = 4;	/* 'qw' * 2 = 'qwqw' */
-	private static final int DIVIDE_OPERATION = 5;
+	private static final int CONCAT_OPERATION = 2; /* 'qw' . 'er' . 7 = 'qwer7' */
+	private static final int MINUS_OPERATION = 3;
+	private static final int MULTIPLY_OPERATION = 4;
+	private static final int REPEAT_OPERATION = 5;	/* 'qw' x 2 = 'qwqw' */
+	private static final int DIVIDE_OPERATION = 6;
 
-	private static final int EQUALS_OPERATION = 7;
-	private static final int NOT_EQUALS_OPERATION = 8;
-	private static final int GREATER_THAN_OPERATION = 9;
-	private static final int LESS_THAN_OPERATION = 10;
-	private static final int GREATER_EQUAL_OPERATION = 11;
-	private static final int LESS_EQUAL_OPERATION = 12;
+	private static final int LEXICAL_EQUALS_OPERATION = 7;	/* 'foo' eq 'foo' */
+	private static final int LEXICAL_NOT_EQUALS_OPERATION = 8;	/* 'foo' ne 'qw' */
+	private static final int LEXICAL_GREATER_THAN_OPERATION = 9;	/* 'qw' gt 'foo' */
+	private static final int LEXICAL_LESS_THAN_OPERATION = 10;	/* 'foo' lt 'qw' */
+	private static final int LEXICAL_GREATER_EQUAL_OPERATION = 11;	/* 'qw' ge 'foo' */
+	private static final int LEXICAL_LESS_EQUAL_OPERATION = 12;	/* 'foo' le 'qw' */
 
-	private static final int AND_OPERATION = 13;
-	private static final int OR_OPERATION = 14;
+	private static final int NUMERIC_EQUALS_OPERATION = 13;	/* 77 == 77 */
+	private static final int NUMERIC_NOT_EQUALS_OPERATION = 14;	/* 7 != 77 */
+	private static final int NUMERIC_GREATER_THAN_OPERATION = 15;	/* 77 > 7 */
+	private static final int NUMERIC_LESS_THAN_OPERATION = 16;	/* 7 < 77 */
+	private static final int NUMERIC_GREATER_EQUAL_OPERATION = 17;	/* 77 >= 7 */
+	private static final int NUMERIC_LESS_EQUAL_OPERATION = 18;	/* 7 <= 77 */
+	
+	private static final int AND_OPERATION = 19;
+	private static final int OR_OPERATION = 20;
 
 	/*
 	 * Names and types of functions we allow on numbers and strings.
@@ -222,8 +230,9 @@ public class Expression
 		{
 			Argument retval;
 			Argument leftValue, rightValue, thirdValue;
-			int op;
-			double d;
+			int returnType = Argument.NUMERIC;
+			double d = 0.0;
+			String s = null;
 
 			if (t.mIsLeaf)
 			{
@@ -252,14 +261,6 @@ public class Expression
 				if (t.mFunction == ROUND_FUNCTION || t.mFunction == RANDOM_FUNCTION)
 				{
 					leftValue = traverse(t.mLeftBranch, context);
-					if (leftValue.getType() != Argument.NUMERIC)
-					{
-						String message = MapyrusMessages.get(MapyrusMessages.NUMERIC_FUNCTION) + ": ";
-						if (t.mFunction == ROUND_FUNCTION)
-							throw new MapyrusException(message + ROUND_FUNCTION_NAME);
-						else
-							throw new MapyrusException(message + RANDOM_FUNCTION_NAME);
-					}
 					
 					if (t.mFunction == ROUND_FUNCTION)
 						d = Math.round(leftValue.getNumericValue());
@@ -289,20 +290,13 @@ public class Expression
 				}
 				else /* SUBSTR_FUNCTION */
 				{
-					String s;
 					int startIndex, extractLen, len;
 
 					leftValue = traverse(t.mLeftBranch, context);
 					s = leftValue.toString();
 					rightValue = traverse(t.mRightBranch, context);
 					thirdValue = traverse(t.mThirdFunctionExpression, context);
-					if (rightValue.getType() != Argument.NUMERIC ||
-						thirdValue.getType() != Argument.NUMERIC)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_FUNCTION) +
-							": " + SUBSTR_FUNCTION_NAME);
-					}
-					
+
 					/*
 					 * Convert to zero-based indexing used by java.
 					 */
@@ -334,7 +328,7 @@ public class Expression
 			else
 			{
 				/*
-				 * Either expressions can be numeric or string.
+				 * Either expression can be a number or a string.
 				 */
 				leftValue = traverse(t.mLeftBranch, context);
 				rightValue = traverse(t.mRightBranch, context);
@@ -359,151 +353,135 @@ public class Expression
 						context.getVariableValue(rightValue.getVariableName());
 					if (rightVarValue == null)
 					{
+// TODO treat undefined variables as empty string.
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
 							": " + rightValue.getVariableName());
 					}
 					rightValue = rightVarValue;
 				}
 
-				/*
-				 * Check types for operation.  Concatenating a string and numbers is OK
-				 * and so is multiplying a string.  But everything else requires matching
-				 * types.
-				 */
-				op = t.mOperation;
-				if (op == CONCAT_OPERATION)
+				switch (t.mOperation)
+				{
+				case PLUS_OPERATION:
+					d = leftValue.getNumericValue() + rightValue.getNumericValue();
+					returnType = Argument.NUMERIC;
+					break;
+				case CONCAT_OPERATION:
+					s = leftValue.toString() + rightValue.toString();
+					returnType = Argument.STRING;
+					break;
+				case MINUS_OPERATION:
+					d = leftValue.getNumericValue() - rightValue.getNumericValue();
+					returnType = Argument.NUMERIC;
+					break;
+				case MULTIPLY_OPERATION:
+					d = leftValue.getNumericValue() * rightValue.getNumericValue();
+					returnType = Argument.NUMERIC;
+					break;
+				case REPEAT_OPERATION:
+					/*
+					 * Repeat string N times.
+					 */
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < rightValue.getNumericValue(); i++)
+					{
+						sb.append(leftValue.toString());
+					}
+					s = sb.toString();
+					returnType = Argument.STRING;
+					break;
+				case DIVIDE_OPERATION:
+					d = leftValue.getNumericValue() / rightValue.getNumericValue();
+					returnType = Argument.NUMERIC;
+					break;
+				case NUMERIC_EQUALS_OPERATION:
+// TODO do soft numeric comparisons to protect against round-off.
+					d = (leftValue.getNumericValue() ==
+						rightValue.getNumericValue()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case NUMERIC_NOT_EQUALS_OPERATION:
+					d = (leftValue.getNumericValue() !=
+						rightValue.getNumericValue()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case NUMERIC_GREATER_THAN_OPERATION:
+					d = (leftValue.getNumericValue() >
+						rightValue.getNumericValue()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case NUMERIC_GREATER_EQUAL_OPERATION:
+					d = (leftValue.getNumericValue() >=
+						rightValue.getNumericValue()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case NUMERIC_LESS_THAN_OPERATION:
+					d = (leftValue.getNumericValue() <
+						rightValue.getNumericValue()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case NUMERIC_LESS_EQUAL_OPERATION:
+					d = (leftValue.getNumericValue() <=
+						rightValue.getNumericValue()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case AND_OPERATION:
+					d = (leftValue.getNumericValue() != 0 &&
+						rightValue.getNumericValue() != 0) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case OR_OPERATION:
+					d = (leftValue.getNumericValue() != 0 ||
+						rightValue.getNumericValue() != 0) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case LEXICAL_EQUALS_OPERATION:
+					d = leftValue.toString().equals(rightValue.toString()) ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case LEXICAL_NOT_EQUALS_OPERATION:
+					d = leftValue.toString().equals(rightValue.toString()) ? 0 : 1;
+					returnType = Argument.NUMERIC;
+					break;
+				case LEXICAL_GREATER_THAN_OPERATION:
+					d = leftValue.toString().compareTo(rightValue.toString()) > 0 ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case LEXICAL_GREATER_EQUAL_OPERATION:
+					d = leftValue.toString().compareTo(rightValue.toString()) >= 0 ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case LEXICAL_LESS_THAN_OPERATION:
+					d = leftValue.toString().compareTo(rightValue.toString()) < 0 ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				case LEXICAL_LESS_EQUAL_OPERATION:
+					d = leftValue.toString().compareTo(rightValue.toString()) <= 0 ? 1 : 0;
+					returnType = Argument.NUMERIC;
+					break;
+				}
+
+				if (returnType == Argument.NUMERIC)
 				{
 					/*
-					 * Different types can be concatenated.
+					 * Fail on numeric overflow and divide by zero.
 					 */
-				}
-				else if (op == MULTIPLY_OPERATION && leftValue.getType() == Argument.STRING)
-				{
-					if (rightValue.getType() != Argument.NUMERIC)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_TYPES));
-					}
-				}
-				else if (leftValue.getType() != rightValue.getType())
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_TYPES));
-				}
-				
-				/*
-				 * Do string and numeric operations separately.
-				 */
-				if (leftValue.getType() == Argument.NUMERIC)
-				{
-					if (op == CONCAT_OPERATION)
-					{
-						retval = new Argument(Argument.STRING,
-							leftValue.toString() + rightValue.toString());
-					}
-					else
-					{
-						double l = leftValue.getNumericValue();
-						double r = rightValue.getNumericValue();
+					if (d == Double.NEGATIVE_INFINITY || d == Double.POSITIVE_INFINITY || d == Double.NaN)
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
 
-						if (op == PLUS_OPERATION)
-							d = l + r;
-						else if (op == MINUS_OPERATION)
-							d = l - r;
-						else if (op == MULTIPLY_OPERATION)
-							d = l * r;
-						else if (op == DIVIDE_OPERATION)
-							d = l / r;
-						else if (op == EQUALS_OPERATION)
-							d = (l == r) ? 1 : 0;
-						else if (op == NOT_EQUALS_OPERATION)
-							d = (l != r) ? 1 : 0;
-						else if (op == GREATER_THAN_OPERATION)
-							d = (l > r) ? 1 : 0;
-						else if (op == GREATER_EQUAL_OPERATION)
-							d = (l >= r) ? 1 : 0;
-						else if (op == LESS_THAN_OPERATION)
-							d = (l < r) ? 1 : 0;
-						else if (op == LESS_EQUAL_OPERATION)
-							d = (l <= r) ? 1 : 0;
-						else if (op == AND_OPERATION)
-						{
-							d = (l != 0.0 &&
-								r != 0.0) ? 1 : 0;
-						}
-						else if (op == OR_OPERATION)
-						{
-							d = (l != 0.0 ||
-								r != 0.0) ? 1 : 0;
-						}
-						else
-						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_OPERATION));
-						}
-	
-						/*
-						 * Fail on numeric overflow and divide by zero.
-						 */
-						if (d == Double.NEGATIVE_INFINITY || d == Double.POSITIVE_INFINITY || d == Double.NaN)
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
-	
-						if (d == 0.0)
-							retval = Argument.numericZero;
-						else if (d == 1.0)
-							retval = Argument.numericOne;
-						else
-							retval = new Argument(d);
-					}
+					if (d == 0.0)
+						retval = Argument.numericZero;
+					else if (d == 1.0)
+						retval = Argument.numericOne;
+					else
+						retval = new Argument(d);
 				}
 				else
 				{
-					StringBuffer s;
-					String l = leftValue.getStringValue();
-					if (op == MULTIPLY_OPERATION)
-					{
-						/*
-						 * Repeat string N times.
-						 */
-						s = new StringBuffer();
-						for (int i = 0; i < rightValue.getNumericValue(); i++)
-						{
-							s.append(l);
-						}
-						retval = new Argument(Argument.STRING, s.toString());
-					}
-					else if (op == CONCAT_OPERATION)
-					{
-						/*
-						 * Add whatever is on right-hand side to string.
-						 */
-						String r = rightValue.toString();
-						retval = new Argument(Argument.STRING, l + r);
-					}
+					if (s.length() == 0)
+						retval = Argument.emptyString;
 					else
-					{
-						String r = rightValue.getStringValue();
-						if (op == EQUALS_OPERATION)
-							d = l.equals(r) ? 1 : 0;
-						else if (op == NOT_EQUALS_OPERATION)
-							d = l.equals(r) ? 0 : 1;
-						else if (op == GREATER_THAN_OPERATION)
-							d = (l.compareTo(r) > 0) ? 1 : 0;
-						else if (op == GREATER_EQUAL_OPERATION)
-							d = (l.compareTo(r) >= 0) ? 1 : 0;
-						else if (op == LESS_THAN_OPERATION)
-							d = (l.compareTo(r) < 0) ? 1 : 0;
-						else if (op == LESS_EQUAL_OPERATION)
-							d = (l.compareTo(r) <= 0) ? 1 : 0;
-						else
-						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_STRING_OPERATION));
-						}
-						
-						if (d == 0.0)
-							retval = Argument.numericZero;
-						else if (d == 1.0)
-							retval = Argument.numericOne;
-						else
-							retval = new Argument(d);
-					}
+						retval = new Argument(Argument.STRING, s);
 				}
 			}
 			return(retval);
@@ -623,31 +601,54 @@ public class Expression
 		 	 */
 			opType = NO_OPERATION;
 			op1 = p.readNonSpace();
-			if (op1 == '<' || op1 == '>' || op1 == '!')
+			if (op1 == '<' || op1 == '>' || op1 == '!' || op1 == '=')
 			{
+				/*
+				 * First character makes it look like a numerical comparision.  Is it?
+				 */
 				op2 = p.read();
 				if (op2 == '=')
 				{
-					if (op1 == '!')
-						opType = NOT_EQUALS_OPERATION;
+					if (op1 == '=')
+						opType = NUMERIC_EQUALS_OPERATION;
+					else if (op1 == '!')
+						opType = NUMERIC_NOT_EQUALS_OPERATION;
 					else if (op1 == '<')
-						opType = LESS_EQUAL_OPERATION;
+						opType = NUMERIC_LESS_EQUAL_OPERATION;
 					else
-						opType = GREATER_EQUAL_OPERATION;
+						opType = NUMERIC_GREATER_EQUAL_OPERATION;
 				}
 				else
 				{
 					p.unread(op2);
 
 					if (op1 == '<')
-						opType = LESS_THAN_OPERATION;
+						opType = NUMERIC_LESS_THAN_OPERATION;
 					else if (op1 == '>')
-						opType = GREATER_THAN_OPERATION;
+						opType = NUMERIC_GREATER_THAN_OPERATION;
 				}
 			}
-			else if (op1 == '=')
+			else if (op1 == 'l' || op1 == 'e' || op1 == 'g' || op1 == 'n')
 			{
-				opType = EQUALS_OPERATION;
+				/*
+				 * First character makes it look like a string comparision.
+				 */
+				op2 = p.read();
+			
+				if (op1 == 'n' && op2 == 'e')
+					opType = LEXICAL_NOT_EQUALS_OPERATION;
+				else if (op1 == 'e' && op2 == 'q')
+					opType = LEXICAL_EQUALS_OPERATION;
+				else if (op1 == 'l' && op2 == 't')
+					opType = LEXICAL_LESS_THAN_OPERATION;
+				else if (op1 == 'l' && op2 == 'e')
+					opType = LEXICAL_LESS_EQUAL_OPERATION;
+				else if (op1 == 'g' && op2 == 't')
+					opType = LEXICAL_GREATER_THAN_OPERATION;
+				else if (op1 == 'g' && op2 == 'e')
+					opType = LEXICAL_GREATER_EQUAL_OPERATION;
+				else
+					p.unread(op2);
 			}
 
 			/*
@@ -716,14 +717,16 @@ public class Expression
 		while (true)
 		{
 			op = p.readNonSpace();
-			if (op == '*' || op == '/')
+			if (op == '*' || op == '/' || op == 'x')
 			{
 				int opType;
-				
+
 				if (op == '*')
 					opType = MULTIPLY_OPERATION;
-				else
+				else if (op == '/')
 					opType = DIVIDE_OPERATION;
+				else
+					opType = REPEAT_OPERATION;
 
 				factor = parseFactor(p);
 				term = new ExpressionTreeNode(term, opType, factor);
