@@ -107,7 +107,7 @@ done
 color "#000000"
 linestyle 0.8
 stroke
-color "#7f7f7f"
+color "#aaaaaa"
 linestyle 0.8, 'butt', 'bevel', 0, 2, 2
 stroke
 
