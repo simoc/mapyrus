@@ -1,17 +1,17 @@
 begin waypoint
-	# Draw waypoint symbol.
-	#
-	color "red"
-	move -2, -2
-	draw -2, 2, 2, 2, 2, -2, -2, -2
-	stroke
-	clearpath
-	move -2, -2
-	draw -2, 2, 2, -2
-	fill
+  # Draw waypoint symbol.
+  #
+  color "red"
+  move -2, -2
+  draw -2, 2, 2, 2, 2, -2, -2, -2
+  stroke
+  clearpath
+  move -2, -2
+  draw -2, 2, 2, -2
+  fill
 end
 
-newpage "png", "tutorialprocedures2.png", 60, 30, 96
+newpage "eps", "tutorialprocedures2.eps", 60, 30, 96
 
 clearpath
 move 7, 5
