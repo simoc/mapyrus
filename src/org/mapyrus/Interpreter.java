@@ -926,7 +926,7 @@ public class Interpreter
 				{
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
 						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
-						": " + ARGUMENT_SEPARATOR);
+						": '" + ARGUMENT_SEPARATOR + "'");
 				}
 				c = readSkipComments(preprocessor);
 				state = AT_ARG;
@@ -1046,7 +1046,7 @@ public class Interpreter
 				{
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
 						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
-						": " + PARAM_SEPARATOR);
+						": '" + PARAM_SEPARATOR + "'");
 				}
 				state = AT_PARAM;
 				c = readSkipComments(preprocessor);
