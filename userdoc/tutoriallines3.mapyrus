@@ -1,37 +1,17 @@
-begin highway name
-  # Force symbol to appear upright, regardless of
-  # orientation of line at point where symbol is drawn.
-  #
-  rotate -Mapyrus.rotation
-  # Draw rectangle, then label inside it.
-  #
-  box -3, -2, 3, 2
-  color "blue"
-  fill
-  clearpath
-  color "white"
-  font "Helvetica", 3
-  justify "center"
-  move 0, -1
-  label name
-end
+newpage "eps", "tutoriallines3.eps", 60, 30
 
-newpage "eps", "tutoriallines3.eps", 90, 30
+# Demonstrate combination of solid and dashed linestyles.
+#
 clearpath
 move 5, 5
 draw 45, 5
-arc -1, 45, 15, 55, 15
-arc 1, 65, 15, 65, 25
-draw 85, 25
-# Demonstrate overplotting of lines.
-#
-color 'red'
-linestyle 1.32, 'round', 'round'
+arc -1, 45, 15, 45, 25
+draw 15, 25
+arc -1, 15, 20, 15, 15
+draw 35, 15
+linestyle 2.5, 'butt', 'round'
+color 'black'
 stroke
+linestyle 1.8, 'butt', 'round', 1, 2, 2
 color 'yellow'
-linestyle 0.1
 stroke
-# Draw path one more time as symbols showing name of highway.
-#
-samplepath 17, 9
-highway 'A99'

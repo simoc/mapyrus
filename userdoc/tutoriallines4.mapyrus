@@ -1,34 +1,37 @@
-begin arrowhead r
-  # Draw arrowhead rotated to point at end of line.
+begin highway name
+  # Force symbol to appear upright, regardless of
+  # orientation of line at point where symbol is drawn.
   #
-  rotate r
-  move 1.2, 1.2
-  draw 0, 0, 1.2, -1.2
-  stroke
-end
-begin arrowstart
-  # Split path into points with large spacing so there will be
-  # only one sample point at start of line.  Draw arrowhead there.
+  rotate -Mapyrus.rotation
+  # Draw rectangle, then label inside it.
   #
-  samplepath 99999, 0
-  arrowhead 0
+  box -3, -2, 3, 2
+  color "blue"
+  fill
+  clearpath
+  color "white"
+  font "Helvetica", 3
+  justify "center"
+  move 0, -1
+  label name
 end
-begin arrowend
-  # Draw arrowhead at end of line.
-  #
-  samplepath -99999, 0
-  arrowhead 180
-end
-newpage "eps", "tutoriallines4.eps", 60, 30
+
+newpage "eps", "tutoriallines4.eps", 90, 30
 clearpath
 move 5, 5
 draw 45, 5
 arc -1, 45, 15, 55, 15
-draw 55, 25
-linestyle 0.1
-color '#a020f0'
-stroke
-# Demonstrate drawing a line with arrows at both ends like <---->
+arc 1, 65, 15, 65, 25
+draw 85, 25
+# Demonstrate overplotting of lines.
 #
-arrowstart
-arrowend
+color 'red'
+linestyle 1.32, 'round', 'round'
+stroke
+color 'yellow'
+linestyle 0.1
+stroke
+# Draw path one more time as symbols showing name of highway.
+#
+samplepath 17, 9
+highway 'A99'

@@ -1,16 +1,42 @@
-newpage "eps", "tutoriallines6.eps", 80, 40
+begin quarterLabel
+  # Drawing tick and label at intermediate position along line.
+  #
+  if percent < 0 or percent > 100
+  then
+    return
+  endif
 
-move 10, 10
-draw 17, 33, 27, 33, 27, 30, 24, 30, 25, 16, 36, 19, 40, 25
-arc 1, 41, 19, 37, 8
-hexagon 70, 20, 8
-color "blue"
+  # Draw triangle pointing to position on line.
+  #
+  triangle 0, -1, 1, 0
+  fill
+
+  # Label
+  #
+  clearpath
+  move 0, 2
+  justify "center"
+  font "Helvetica", 3
+  label percent . "%"
+  let percent = percent + 25
+end
+
+begin labelQuarters pathLen
+  # Divide path into quarters and drawing ticks and percentage
+  # label at points 1/4, 2/4, 3/4 positions along line.
+  #
+  samplepath pathLen / 4, 0
+  let percent = 0
+  quarterLabel
+end
+
+newpage "eps", "tutoriallines6.eps", 60, 30
+clearpath
+move 5, 5
+draw 45, 5
+arc -1, 45, 15, 55, 15
+draw 55, 25
+linestyle 0.1
+color '#006400'
 stroke
-
-# Show dashed lines to the left and right of original line.
-#
-parallelpath 1, -1
-color "indigo"
-linestyle 0.1, "round", "round", 0, 2, 1
-stroke
-
+labelQuarters Mapyrus.path.length

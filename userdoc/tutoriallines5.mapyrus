@@ -1,35 +1,24 @@
-begin quarterLabel
-  # Drawing tick and label at intermediate position along line.
+begin arrowhead r
+  # Draw arrowhead rotated to point at end of line.
   #
-  if percent < 0 or percent > 100
-  then
-    return
-  endif
-
-  # Draw triangle pointing to position on line.
-  #
-  triangle 0, -1, 1, 0
-  fill
-
-  # Label
-  #
-  clearpath
-  move 0, 2
-  justify "center"
-  font "Helvetica", 3
-  label percent . "%"
-  let percent = percent + 25
+  rotate r
+  move 1.2, 1.2
+  draw 0, 0, 1.2, -1.2
+  stroke
 end
-
-begin labelQuarters pathLen
-  # Divide path into quarters and drawing ticks and percentage
-  # label at points 1/4, 2/4, 3/4 positions along line.
+begin arrowstart
+  # Split path into points with large spacing so there will be
+  # only one sample point at start of line.  Draw arrowhead there.
   #
-  samplepath pathLen / 4, 0
-  let percent = 0
-  quarterLabel
+  samplepath 99999, 0
+  arrowhead 0
 end
-
+begin arrowend
+  # Draw arrowhead at end of line.
+  #
+  samplepath -99999, 0
+  arrowhead 180
+end
 newpage "eps", "tutoriallines5.eps", 60, 30
 clearpath
 move 5, 5
@@ -37,6 +26,9 @@ draw 45, 5
 arc -1, 45, 15, 55, 15
 draw 55, 25
 linestyle 0.1
-color '#006400'
+color '#a020f0'
 stroke
-labelQuarters Mapyrus.path.length
+# Demonstrate drawing a line with arrows at both ends like <---->
+#
+arrowstart
+arrowend
