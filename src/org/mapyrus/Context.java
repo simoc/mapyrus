@@ -50,8 +50,10 @@ import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
 import org.mapyrus.image.GradientFillFactory;
 import org.mapyrus.image.ImageFilter;
+import org.mapyrus.io.GeoImageBoundingBox;
 import org.mapyrus.io.ImageClippingFile;
 import org.mapyrus.io.TFWFile;
+import org.mapyrus.io.WMSRequestBoundingBox;
 
 /**
  * Maintains state information during interpretation inside a single procedure block.
@@ -187,11 +189,11 @@ public class Context
 	private String mBlockName;
 
 	/*
-	 * Cache of image extents we have read previously from .tfw files.
-	 * Avoid re-reading images which will be outside page area and
-	 * not visible.
+	 * Cache of image extents we have read previously from .tfw files and.
+	 * OGC WMS requests.  Avoid re-reading images which will be outside
+	 * page area and not visible.
 	 */
-	private static Hashtable mTFWCache = new Hashtable();
+	private static Hashtable mImageBoundsCache = new Hashtable();
 
 	/**
 	 * Clear graphics context to empty state.
@@ -1590,44 +1592,74 @@ public class Context
 	{
 		BufferedImage image;
 		Rectangle2D.Double worldExtents = getWorldExtents();
-		TFWFile tfw;
+		GeoImageBoundingBox imageBounds;
+		boolean isWMSRequest = false;
+		URL url = null;
+
+		try
+		{
+			url = new URL(filename);
+			String urlQuery = url.getQuery();
+			if (urlQuery != null)
+				isWMSRequest = (urlQuery.toUpperCase().indexOf("REQUEST=GETMAP") >= 0);
+		}
+		catch (MalformedURLException e)
+		{
+		}
 
 		/*
 		 * Reading large images takes a lot of time.
 		 * Do not open it for display if it is not visible
 		 * on the page.
 		 */
-		tfw = (TFWFile)mTFWCache.get(filename);
-		if (tfw != null && (!tfw.getBounds().intersects(worldExtents)))
+		imageBounds = (GeoImageBoundingBox)mImageBoundsCache.get(filename);
+		if (imageBounds != null &&
+			(!imageBounds.getBounds().intersects(worldExtents)))
 		{
 			return;
 		}
 
 		/*
-		 * Load image from either a URL, or as a plain file.
+		 * Load image.
 		 */
-		try
+		if (url != null)
 		{
-			URL url = new URL(filename);
-			image = ImageIO.read(url);
+			try
+			{
+				image = ImageIO.read(url);
+			}
+			catch (IOException e)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) +
+					": " + url + Constants.LINE_SEPARATOR + e.getMessage());
+			}
 		}
-		catch (MalformedURLException e)
+		else
 		{
 			image = ImageIO.read(new File(filename));
 		}
-		
+
 		if (image == null)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
 				": " + filename);
 		}
 
-		if (tfw == null)
+		if (imageBounds == null)
 		{
-			tfw = new TFWFile(filename, image);
-			mTFWCache.put(filename, tfw);
+			if (isWMSRequest)
+				imageBounds = new WMSRequestBoundingBox(url);
+			else
+				imageBounds = new TFWFile(filename, image);
+
+			/*
+			 * Do not put WMS requests in cache because it is unlikely
+			 * that exactly the same request will be used in the future.
+			 */
+			if (!isWMSRequest)
+				mImageBoundsCache.put(filename, imageBounds);
 		}
-		
+
 		/*
 		 * Check for a file containing a clip polygon for this image.
 		 */
@@ -1662,7 +1694,7 @@ public class Context
 		 * Convert world coordinate bounding box of image to millimetre
 		 * positions on the page.
 		 */
-		Rectangle2D bounds = tfw.getBounds();
+		Rectangle2D bounds = imageBounds.getBounds();
 		double []cornerPts = new double[4];
 
 		/*
@@ -1765,9 +1797,24 @@ public class Context
 			int iWidth = (int)Math.round(ix2 - ix1);
 			int iHeight = (int)Math.round(iy2 - iy1);
 			double iy = image.getHeight() - iy2;
-			image = image.getSubimage((int)Math.round(ix1), (int)Math.round(iy),
-				Math.max(iWidth, 1), Math.max(1, iHeight));
-			
+
+			/*
+			 * Protect against round-off errors calculating pixel positions outside image.
+			 */
+			int x1 = (int)Math.round(ix1);
+			int y1 = (int)Math.round(iy);
+			int w = Math.max(iWidth, 1);
+			int h = Math.max(1, iHeight);
+			if (x1 + w > image.getWidth())
+				x1--;
+			if (x1 < 0)
+				x1 = 0;
+			if (y1 + h > image.getHeight())
+				y1--;
+			if (y1 < 0)
+				y1 = 0;
+			image = image.getSubimage(x1, y1, w, h);
+
 			if (brightness != 1)
 			{
 				ImageFilter.filter(image, brightness);
