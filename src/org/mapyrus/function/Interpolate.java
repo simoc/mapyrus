@@ -30,7 +30,6 @@ import org.mapyrus.ColorDatabase;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
-import org.mapyrus.NumericalAnalysis;
 
 /**
  * Function returning value calculated using linear interpolation.
