@@ -37,10 +37,10 @@ label h2
 color "pink"
 clearpath
 let smallOffset = 0.3
-move 40, 25 - smallOffset, 40, 25 + smallOffset
-move 40 - smallOffset, 25, 40 + smallOffset, 25
+move 40, 23 - smallOffset, 40, 23 + smallOffset
+move 40 - smallOffset, 23, 40 + smallOffset, 23
 label h1
 color "black"
 clearpath
-move 40, 25
+move 40, 23
 label h1
