@@ -35,10 +35,11 @@ import java.awt.Shape;
 import javax.imageio.*;
 import javax.swing.ImageIcon;
 
-import org.mapyrus.font.AdobeFontMetrics;
+import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85OutputStream;
+import org.mapyrus.io.WildcardFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -124,9 +125,10 @@ public class OutputFormat
 	private HashSet mEncodeAsISOLatin1;
 
 	/*
-	 * Adobe Font Metrics files containing character width information for fonts. 
+	 * Adobe Font Metrics files containing character width information for all fonts. 
 	 */
-	private HashMap mAdobeFontMetrics;
+	private AdobeFontMetricsManager mAdobeFontMetrics;
+	private ArrayList mAfmFiles;
 	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
@@ -416,8 +418,13 @@ public class OutputFormat
 		ArrayList fontList = new ArrayList();
 		mEncodeAsISOLatin1 = new HashSet();
 		mTTFFonts = new HashMap();
-		mAdobeFontMetrics = new HashMap();
-		String afmFiles = null;
+		mAfmFiles = new ArrayList();
+		
+		/*
+		 * Reading all font metrics information takes some time.
+		 * Wait until we really need it before loading it.
+		 */
+		mAdobeFontMetrics = null;
 
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -434,12 +441,37 @@ public class OutputFormat
 				{
 					String pfaFilename = st2.nextToken();
 					if (pfaFilename.length() > 0)
-						fontList.add(new PostScriptFont(pfaFilename));
+					{
+						/*
+						 * Accept wildcards in filenames.
+						 */
+						WildcardFile wildcard = new WildcardFile(pfaFilename);
+						Iterator it = wildcard.getMatchingFiles();
+						while (it.hasNext())
+							fontList.add(new PostScriptFont((String)it.next()));
+					}
 				}
 			}
 			if (token.startsWith("afmfiles="))
 			{
-				afmFiles = token.substring(9);
+				StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
+				while (st2.hasMoreTokens())
+				{
+					String afmFilename = st2.nextToken();
+					if (afmFilename.length() > 0)
+					{
+						/*
+						 * Accept wildcards in filenames.
+						 */
+						WildcardFile wildcard = new WildcardFile(afmFilename);
+						Iterator it = wildcard.getMatchingFiles();
+						while (it.hasNext())
+						{
+							mAfmFiles.add(it.next());
+						}
+									
+					}
+				}
 			}
 			else if (token.startsWith("isolatinfonts="))
 			{
@@ -482,29 +514,21 @@ public class OutputFormat
 				while (st2.hasMoreTokens())
 				{
 					String ttfFilename = st2.nextToken();
+					
+					/*
+					 * Accept wildcards in filenames.
+					 */
 					if (ttfFilename.length() > 0)
 					{
-						TrueTypeFont ttf = new TrueTypeFont(ttfFilename);
-						mTTFFonts.put(ttf.getName(), ttf);
+						WildcardFile wildcard = new WildcardFile(ttfFilename);
+						Iterator it = wildcard.getMatchingFiles();
+						while (it.hasNext())
+						{
+							String s = (String)it.next();
+							TrueTypeFont ttf = new TrueTypeFont(s);
+							mTTFFonts.put(ttf.getName(), ttf);
+						}
 					}
-				}
-			}
-		}
-
-		/*
-		 * Load font metrics from files after we know which fonts are to be encoded
-		 * with ISOLatin1 character ordering.
-		 */
-		if (afmFiles != null)
-		{		
-			StringTokenizer st2 = new StringTokenizer(afmFiles, ",");
-			while (st2.hasMoreTokens())
-			{
-				String afmFilename = st2.nextToken();
-				if (afmFilename.length() > 0)
-				{
-					AdobeFontMetrics afm = new AdobeFontMetrics(afmFilename, mEncodeAsISOLatin1);
-					mAdobeFontMetrics.put(afm.getFontName(), afm);
 				}
 			}
 		}
@@ -603,25 +627,20 @@ public class OutputFormat
 	 * @return width of string in millimetres.
 	 */
 	public double getStringWidth(String s, String fontName, double fontSize)
+		throws IOException, MapyrusException
 	{
 		double retval;
 
 		if (mOutputType == POSTSCRIPT)
 		{
+			/*
+			 * Load Font Metrics information only when it is needed.
+			 */
+			if (mAdobeFontMetrics == null)
+				mAdobeFontMetrics = new AdobeFontMetricsManager(mAfmFiles, mEncodeAsISOLatin1);
+
 			double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
-			AdobeFontMetrics afm = (AdobeFontMetrics)mAdobeFontMetrics.get(fontName);
-			if (afm != null)
-			{
-					retval = afm.getStringWidth(s, (int)Math.round(pointSize));
-			}
-			else
-			{
-				/*
-				 * No Font Metric information given for this font.  Just
-				 * calculate approximate length assuming fixed with characters.
-				 */
-				retval = s.length() * pointSize;
-			}
+			retval = mAdobeFontMetrics.getStringWidth(fontName, (int)Math.round(pointSize), s);
 			retval = retval / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
 		}
 		else
