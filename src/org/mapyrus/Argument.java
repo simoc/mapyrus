@@ -210,11 +210,19 @@ public class Argument
 							index++;
 							foundX = true;
 						}
-						else
+						else if (foundY == false)
 						{
 							mGeometryValue[index] = Double.parseDouble(token);
 							index++;
 							foundY = true;
+						}
+						else
+						{
+							/*
+							 * Not expecting an X or Y coordinate.  The OGC string must be invalid.
+							 */
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
+								": " + wktGeometry);
 						}
 					}
 					catch (NumberFormatException e)
