@@ -13,8 +13,7 @@ then
 endif
 
 worlds x1, y1, x2, y2
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
 	clearpath
 	fetch
@@ -60,20 +59,15 @@ let zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom
 # Spool HTML file to standard output, replacing placeholder tokens
 # with actual values for this request.
 #
-dataset "textfile", "tutorialhtmlpage2.html", ""
-import
-while Mapyrus.import.more
-do
-	fetch
-	let r = replace($0, '@placeholder_title@', 'Real Title')
-	let r = replace(r, '@placeholder_coordinates@', xMid . ', ' . yMid)
-	let r = replace(r, '@placeholder_image@', imageFile)
-	let r = replace(r, '@placeholder_up_url@', upURL)
-	let r = replace(r, '@placeholder_down_url@', downURL)
-	let r = replace(r, '@placeholder_left_url@', leftURL)
-	let r = replace(r, '@placeholder_right_url@', rightURL)
-	let r = replace(r, '@placeholder_zoom_in_url@', zoomInURL)
-	let r = replace(r, '@placeholder_zoom_out_url@', zoomOutURL)
-	print r
-done
-
+mimetype "text/html"
+let r = spool("tutorialhtmlpage2.txt")
+let r = replace(r, '@placeholder_title@', 'Real Title')
+let r = replace(r, '@placeholder_coordinates@', xMid . ', ' . yMid)
+let r = replace(r, '@placeholder_image@', imageFile)
+let r = replace(r, '@placeholder_up_url@', upURL)
+let r = replace(r, '@placeholder_down_url@', downURL)
+let r = replace(r, '@placeholder_left_url@', leftURL)
+let r = replace(r, '@placeholder_right_url@', rightURL)
+let r = replace(r, '@placeholder_zoom_in_url@', zoomInURL)
+let r = replace(r, '@placeholder_zoom_out_url@', zoomOutURL)
+print r
