@@ -7,17 +7,23 @@
 /*
  * $Id$
  */
+package net.sourceforge.mapyrus;
  
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
 import java.awt.geom.PathIterator;
 import java.awt.Shape;
 import javax.imageio.*;
+
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.awt.image.*;
 import java.awt.Color;
 
@@ -35,7 +41,12 @@ public class OutputFormat
 	 */
 	private static final int POINTS_PER_INCH = 72;
 	private static final double MM_PER_INCH = 25.4;
-	
+
+	/*
+	 * Format for coordinates in PostScript files.
+	 */	
+	DecimalFormat mDecimalFormat;
+		
 	/*
 	 * File or image that drawing commands are
 	 * writing to.
@@ -43,10 +54,14 @@ public class OutputFormat
 	private int mOutputType;
 	private String mFormatName;
 	private BufferedImage mImage;
-	private File mOutputFile;
+	private String mFilename;
 	private PrintWriter mWriter;
+	private OutputStream mOutputStream;
 	private Graphics2D mGraphics2D;
-	
+
+	private boolean mPipedOutput;	
+	private Process mOutputProcess;
+
 	/*
 	 * Write PostScript file header.
 	 */
@@ -130,49 +145,29 @@ public class OutputFormat
 
 	/**
 	 * Creates new graphics file, ready for drawing to.
-	 * @param filename name of image file output will be saved to
-	 * (suffix determines the graphics format used).
+	 * @param filename name of image file output will be saved to.
+	 * If filename begins with '|' character then output is piped as
+	 * input to that command.
+	 * @param format is the graphics format to use.
 	 * @param width is the page width (in mm).
 	 * @param height is the page height (in mm).
 	 * @param extras contains extra settings for this output.
 	 */
-	public OutputFormat(String filename,
+	public OutputFormat(String filename, String format,
 		double width, double height, String extras)
 		throws IOException, MapyrusException
 	{
-		int dotIndex;
-		
+		mFormatName = format.toUpperCase();
+
 		/*
-		 * Determine the type of output to create from
-		 * filename suffix.
-		 */
-		dotIndex = filename.lastIndexOf('.');
-		if (dotIndex < 0)
-		{
-			/*
-			 * Use PNG format if there's no suffix.
-			 */
-			mFormatName = "PNG";
-		}
-		else
-		{
-			mFormatName = filename.substring(dotIndex + 1).toUpperCase();
-		}
-	
-		/*
-		 * Are we writing a PostScript file or an image file?
-		 */
+		 * Check that Java can write this image format to a file.
+		 */				
 		if (mFormatName.equals("PS") || mFormatName.equals("EPS"))
 		{
 			mOutputType = POSTSCRIPT;
-			mWriter = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
-			writePostScriptHeader(width, height);
-		}
+		}	
 		else
 		{
-			/*
-			 * Check that Java can write this image format to a file.
-			 */
 			boolean found = false;
 			String knownFormats[] = ImageIO.getWriterFormatNames();
 			for (int i = 0; i < knownFormats.length && found == false; i++)
@@ -184,15 +179,42 @@ public class OutputFormat
 			}
 
 			if (found == false)
-			{
-				throw new MapyrusException("Cannot write image format: " + mFormatName);
-			}
+				throw new MapyrusException("Cannot write image format: " + format);
+				
+			mOutputType = IMAGE_FILE;
+		}
 
+		/*
+		 * Should we pipe the output to another program
+		 * instead of writing a file?
+		 */
+		mPipedOutput = filename.startsWith("|");
+		if (mPipedOutput)
+		{
+			String pipeCommand = filename.substring(1).trim();
+			mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
+			mOutputStream = mOutputProcess.getOutputStream();
+		}
+		else
+		{
+			mOutputStream = new FileOutputStream(filename);
+		}
+
+		/*
+		 * Setup file we are writing to.
+		 */
+		if (mOutputType == POSTSCRIPT)
+		{
+			mDecimalFormat = new DecimalFormat("#.##");
+			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
+			writePostScriptHeader(width, height);
+		}
+		else
+		{
 			/*
 			 * Create a BufferedImage to draw into.  We'll save it to a file
 			 * when user has finished drawing to it.
 			 */
-			mOutputType = IMAGE_FILE;
 			int resolution = getResolution();
 			int widthInPixels = (int)Math.round(width / MM_PER_INCH * resolution);
 			int heightInPixels = (int)Math.round(height / MM_PER_INCH * resolution);
@@ -201,9 +223,9 @@ public class OutputFormat
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution);
 		}
-		mOutputFile = new File(filename);
+		mFilename = filename;
 	}
-	
+
 	/**
 	 * Set a buffered image as output.
 	 * @param image is the image to draw to.
@@ -215,10 +237,11 @@ public class OutputFormat
 		mImage = image;
 		mGraphics2D = (Graphics2D)(mImage.getGraphics());
 		setupBufferedImage(getResolution());
+		mPipedOutput = false;
 	}
 	 
 	/**
-	 * Closes current output that was opened with setOutput.
+	 * Writes trailing information and closes output file.
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
@@ -240,7 +263,7 @@ public class OutputFormat
 			if (mWriter.checkError())
 			{
 				throw new MapyrusException("Error writing to PostScript file " +
-					mOutputFile.toString());
+					mFilename);
 			}
 		}
 		else if (mOutputType == IMAGE_FILE)
@@ -248,9 +271,35 @@ public class OutputFormat
 			/*
 			 * Write image buffer to file.
 			 */
-			ImageIO.write(mImage, mFormatName, mOutputFile);
+			ImageIO.write(mImage, mFormatName, mOutputStream);
+			mOutputStream.close();
 			mImage = null;
 			mGraphics2D = null;
+		}
+		
+		/*
+		 * If we are piping output to another program then wait for
+		 * that program to finish.  Then check that it succeeded.
+		 */
+		if (mPipedOutput)
+		{
+			int retval = 0;
+			
+			try
+			{
+				retval = mOutputProcess.waitFor();
+			}
+			catch (InterruptedException e)
+			{
+				throw new MapyrusException(e.getMessage() +
+					" during output to " + mFilename);
+			}
+			
+			if (retval != 0)
+			{
+				throw new MapyrusException(mFilename +
+					"returned failure status " + retval);
+			}
 		}
 	}
 	
@@ -284,6 +333,7 @@ public class OutputFormat
 		PathIterator pi = shape.getPathIterator(null);
 		float coords[] = new float[6];
 		int segmentType;
+
 		
 		while (!pi.isDone())
 		{
@@ -291,11 +341,13 @@ public class OutputFormat
 			switch (segmentType)
 			{
 				case PathIterator.SEG_MOVETO:
-					mWriter.println(coords[0] + " " + coords[1] + " m");
+					mWriter.println(mDecimalFormat.format(coords[0]) + " " +
+						mDecimalFormat.format(coords[1]) + " m");
 					break;
 					
 				case PathIterator.SEG_LINETO:
-					mWriter.println(coords[0] + " " + coords[1] + " l");
+					mWriter.println(mDecimalFormat.format(coords[0]) + " " +
+						mDecimalFormat.format(coords[1]) + " l");
 					break;
 				
 				case PathIterator.SEG_CLOSE:
