@@ -53,6 +53,9 @@ public class FunctionTable
 		f = new Floor();
 		mFunctions.put(f.getName(), f);
 
+		f = new Interpolate();
+		mFunctions.put(f.getName(), f);
+
 		f = new Length();
 		mFunctions.put(f.getName(), f);
 
