@@ -55,8 +55,8 @@ do
 	stroke
 done
 
-# Send HTML page back to client containing to image we've created
-# with URL giving current world coordinates so further zooming can
+# Send HTML page back to client containing reference to the image we've
+# created with URL giving current world coordinates so further zooming can
 # be calculated.
 #
 url = Mapyrus.filename . '?x1=' . x1 . '&y1=' . y1 . '&x2=' . x2 . '&y2=' . y2
@@ -65,4 +65,3 @@ print '&lt;h1>Header&lt;/h1>&lt;p>'
 print '&lt;a href="' . url . '">'
 print '&lt;img src="' . tmpPNGFile . '" ismap>'
 print '&lt;/a>'
-
