@@ -16,12 +16,13 @@ begin highway name
   label name
 end
 
-newpage "eps", "tutoriallines3.eps", 60, 30
+newpage "eps", "tutoriallines3.eps", 90, 30
 clearpath
 move 5, 5
 draw 45, 5
-arc -1, 45, 15, 45, 25
-draw 35, 25, 35, 10, 5, 10
+arc -1, 45, 15, 55, 15
+arc 1, 65, 15, 65, 25
+draw 85, 25
 # Demonstrate overplotting of lines.
 #
 color 'red'
