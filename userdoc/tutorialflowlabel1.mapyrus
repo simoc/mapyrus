@@ -1,0 +1,40 @@
+newpage "eps", "tutorialflowlabel1.eps", 120, 60
+
+# Draw label following J-shaped path.
+#
+font "Helvetica", 4
+move 10, 5
+draw 10, 40
+arc 1, 20, 40, 30, 40
+draw 30, 35
+stroke
+
+parallelpath -2
+flowlabel 0, 15, "This was drawn with flowlabel command"
+
+# Draw river, with label just above it.
+#
+clearpath
+move 50, 40
+draw 55, 42, 60, 41, 64, 43, 69, 43, 74, 45, 79, 46, 85, 50, 93, 51
+color "blue"
+font "Helvetica-Bold", 4
+stroke
+parallelpath -1
+flowlabel 0.5, 2, "Parramatta River"
+
+# Draw street with centered name.
+#
+clearpath
+move 50, 20
+draw 55, 22, 60, 21, 64, 23, 69, 23, 74, 25, 79, 26, 85, 30, 93, 31
+linestyle 4, "round", "round"
+color "red"
+stroke
+linestyle 3, "round", "round"
+color "yellow"
+stroke
+color "black"
+parallelpath 1.5
+justify "center"
+flowlabel 0.25, Mapyrus.path.length / 2, "Panorama Ave"
