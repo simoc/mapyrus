@@ -4,7 +4,6 @@
 package au.id.chenery.mapyrus;
 
 import java.lang.String;
-import java.util.Hashtable;
 import java.io.*;
 
 /**
@@ -36,6 +35,13 @@ public class Expression
 	private static final int AND_OPERATION = 13;
 	private static final int OR_OPERATION = 14;
 
+	/*
+	 * Constant arguments for most commonly used values to avoid
+	 * memory allocations.
+	 */
+	private static Argument mZeroArgument = new Argument(0.0);
+	private static Argument mOneArgument = new Argument(1.0);
+	
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
@@ -205,7 +211,13 @@ public class Expression
 					{
 						throw new MapyrusException("Operation not permitted between numbers");
 					}
-					retval = new Argument(d);
+
+					if (d == 0.0)
+						retval = mZeroArgument;
+					else if (d == 1.0)
+						retval = mOneArgument;
+					else
+						retval = new Argument(d);
 				}
 				else
 				{
@@ -488,7 +500,7 @@ public class Expression
 	private ExpressionTreeNode parseFactor(Preprocessor p) throws IOException, MapyrusException
 	{
 		boolean hasUnaryMinus = false;
-		boolean parsedDecimalPoint = false;
+		boolean parsedDigit;
 		StringBuffer buf = new StringBuffer();
 		ExpressionTreeNode expr;
 		int c, lastC, quote;
@@ -549,23 +561,59 @@ public class Expression
 			/*
 			 * Parse a decimal number and return it as a leaf node.
 			 */
-			while (Character.isDigit((char)c) || c == '.')
+			parsedDigit = false;
+			while (Character.isDigit((char)c))
 			{
+				parsedDigit = true;
 				buf.append((char)c);
-				if (c == '.')
-				{
-					/*
-					 * Expect only one decimal point in a number.
-					 */
-					if (parsedDecimalPoint)
-					{
-						throw new MapyrusException("Invalid number in expression at " +
-							p.getCurrentFilenameAndLineNumber());
-					}
-					parsedDecimalPoint = true;
-				}
 				c = p.read();
 			}
+			
+			if (c == '.')
+			{
+				buf.append((char)c);
+				c = p.read();
+			}
+
+			while (Character.isDigit((char)c))
+			{
+				parsedDigit = true;
+				buf.append((char)c);
+				c = p.read();
+			}
+
+			if (!parsedDigit)
+			{
+				throw new MapyrusException("Invalid number in expression at " +
+					p.getCurrentFilenameAndLineNumber());
+			}
+
+			if (c == 'e' || c == 'E')
+			{
+				buf.append((char)c);
+				c = p.read();
+				if (c == '+' || c == '-')
+				{
+					buf.append((char)c);
+					c = p.read();
+				}
+
+				/*
+				 * Expect at least one digit for the exponent value.
+				 */
+				if (!Character.isDigit((char)c))
+				{
+					throw new MapyrusException("Invalid number in expression at " +
+						p.getCurrentFilenameAndLineNumber());
+				}
+
+				while (Character.isDigit((char)c))
+				{
+					buf.append((char)c);
+					c = p.read();
+				}
+			}
+
 			p.unread(c);
 
 			double d = 0.0;
@@ -575,6 +623,10 @@ public class Expression
 			}
 			catch (NumberFormatException e)
 			{
+				/*
+				 * We parsed the number so it will
+				 * always be valid.
+				 */
 			}
 
 			if (hasUnaryMinus)
