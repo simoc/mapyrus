@@ -1,13 +1,13 @@
 begin arrow
-	# Draws a filled '>' symbol.
-	#
-	move -1, -1
-	draw -1, 1
-	draw 2, 0
-	fill
+  # Draws a filled '>' symbol.
+  #
+  move -1, -1
+  draw -1, 1
+  draw 2, 0
+  fill
 end
 
-newpage "png", "tutoriallines1.png", 60, 30, 96
+newpage "eps", "tutoriallines1.eps", 60, 30, 300
 color "orange"
 
 clearpath
