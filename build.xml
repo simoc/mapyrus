@@ -21,9 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <project name="mapyrus" default="deploy" basedir=".">
 
 
-<!-- Name of properties file containing error and status messages -->
-<property name="messagefile" value="org/mapyrus/Messages.properties"/>
-
 <target name="init" description="Setup properties">
 <loadfile property="version" srcFile="VERSION">
 <filterchain><striplinebreaks/></filterchain>
@@ -36,8 +33,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="compile" depends="init" description="Compile java source code">
 <replace dir="src" token="@software_version_token@" value="${version}"/>
 <replace dir="src" token="@release_date_token@" value="${today}"/>
+
+<mkdir dir="build/classes"/>
 <javac srcdir="src" listfiles="yes" destdir="build/classes" excludes="**/CVS/**"/>
-<copy file="src/${messagefile}" tofile="build/classes/${messagefile}"/>
+
+<!-- Copy resource files into built directory -->
+<copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
+<copy todir="build/classes/org/mapyrus/font">
+<fileset dir="src/org/mapyrus/font" includes="*.afm"/>
+</copy>
+
 </target>
 
 
@@ -71,7 +76,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <arg line="tutorialvar1.mapyrus tutorialvar2.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutoriallines1.mapyrus tutoriallines2.mapyrus tutoriallines3.mapyrus tutoriallines4.mapyrus tutoriallines5.mapyrus tutorialpolygons1.mapyrus tutorialpolygons2.mapyrus tutorialpolygons3.mapyrus tutorialpolygons4.mapyrus tutorialprocedures1.mapyrus tutorialprocedures2.mapyrus tutoriallabels1.mapyrus tutoriallabels2.mapyrus tutorialdatasets1.mapyrus tutorialdatasets2.mapyrus tutorialdatasets3.mapyrus tutoriallegend1.mapyrus tutoriallegend2.mapyrus tutorialattribute1.mapyrus tutorialscalebar1.mapyrus tutorialshadow1.mapyrus tutorialicon1.mapyrus tutorialicon2.mapyrus"/>
+<arg line="tutoriallines1.mapyrus tutoriallines2.mapyrus tutoriallines3.mapyrus tutoriallines4.mapyrus tutoriallines5.mapyrus tutorialpolygons1.mapyrus tutorialpolygons2.mapyrus tutorialpolygons3.mapyrus tutorialpolygons4.mapyrus tutorialprocedures1.mapyrus tutorialprocedures2.mapyrus tutoriallabels1.mapyrus tutoriallabels2.mapyrus tutoriallabels3.mapyrus tutorialdatasets1.mapyrus tutorialdatasets2.mapyrus tutorialdatasets3.mapyrus tutoriallegend1.mapyrus tutoriallegend2.mapyrus tutorialattribute1.mapyrus tutorialscalebar1.mapyrus tutorialshadow1.mapyrus tutorialicon1.mapyrus tutorialicon2.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="tutorialrand1.mapyrus tutorialrand2.mapyrus tutorialrand3.mapyrus tutorialpiechart1.mapyrus"/>
