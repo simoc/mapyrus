@@ -25,6 +25,7 @@ package org.mapyrus.function;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.font.StringDimension;
 
 /**
  * Function returning width of string if it were displayed on page.
@@ -39,7 +40,8 @@ public class Stringwidth extends Function
 		throws MapyrusException
 	{
 		String s = arg1.toString();
-		double d = context.getStringWidth(s);
+		StringDimension dim = context.getStringDimension(s);
+		double d = dim.getWidth();
 		Argument retval = new Argument(d);
 		return(retval);
 	}

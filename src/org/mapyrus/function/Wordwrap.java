@@ -28,6 +28,7 @@ import org.mapyrus.Argument;
 import org.mapyrus.Constants;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.font.StringDimension;
 
 /**
  * Function breaking string into several lines at word boundaries to
@@ -47,6 +48,7 @@ public class Wordwrap extends Function
 
 		StringTokenizer st = new StringTokenizer(s);
 		String token;
+		StringDimension dim;
 		double lineWidth = 0;
 		double wordWidth;
 		StringBuffer sb = new StringBuffer(s.length() + 5);
@@ -64,7 +66,8 @@ public class Wordwrap extends Function
 			 * Calculate width of next word.  If word is too long to
 			 * add to current line then start a new line, then add word.
 			 */
-			wordWidth = context.getStringWidth(token);
+			dim = context.getStringDimension(token);
+			wordWidth = dim.getWidth();
 			if (lineWidth > 0 && lineWidth + wordWidth > maxWidth)
 			{
 				sb.append(Constants.LINE_SEPARATOR);
@@ -90,7 +93,8 @@ public class Wordwrap extends Function
 					lastPartToken = partToken;
 					partToken = token.substring(0, i);
 					lastWordWidth = wordWidth;
-					wordWidth = context.getStringWidth(partToken + "-");
+					dim = context.getStringDimension(partToken + "-");
+					wordWidth = dim.getWidth();
 					i++;
 				}
 
@@ -98,7 +102,8 @@ public class Wordwrap extends Function
 				sb.append("-");
 				sb.append(Constants.LINE_SEPARATOR);
 				token = token.substring(lastPartToken.length());
-				wordWidth = context.getStringWidth(token);
+				dim = context.getStringDimension(token);
+				wordWidth = dim.getWidth();
 			}
 
 			sb.append(token);
