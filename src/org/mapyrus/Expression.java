@@ -36,6 +36,12 @@ public class Expression
 	private static final int OR_OPERATION = 14;
 
 	/*
+	 * Line separator replaces '\n', '\r', or '\r\n' sequences in expressions.
+	 */
+// XXX expand these sequences when parsing expressions.
+//	private static final String mLineSeparator = System.getProperty("line.separator");
+
+	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
 	private class ExpressionTreeNode
@@ -146,11 +152,18 @@ public class Expression
 				}
 
 				/*
-				 * Check types for operation.  Multiplying a string by a number is OK
-				 * but everything else requires matching types.
+				 * Check types for operation.  Adding a string and numbers is OK and
+				 * so is multiplying a string.  But everything else requires matching
+				 * types.
 				 */
 				op = t.mOperation;
-				if (op == MULTIPLY_OPERATION && leftValue.getType() == Argument.STRING)
+				if (op == PLUS_OPERATION)
+				{
+					/*
+					 * Different types can be added or joined together.
+					 */
+				}
+				else if (op == MULTIPLY_OPERATION && leftValue.getType() == Argument.STRING)
 				{
 					if (rightValue.getType() != Argument.NUMERIC)
 					{
@@ -168,55 +181,66 @@ public class Expression
 				if (leftValue.getType() == Argument.NUMERIC)
 				{
 					double l = leftValue.getNumericValue();
-					double r = rightValue.getNumericValue();
-					
-					if (op == PLUS_OPERATION)
-						d = l + r;
-					else if (op == MINUS_OPERATION)
-						d = l - r;
-					else if (op == MULTIPLY_OPERATION)
-						d = l * r;
-					else if (op == DIVIDE_OPERATION)
-						d = l / r;
-					else if (op == EQUALS_OPERATION)
-						d = (l == r) ? 1 : 0;
-					else if (op == NOT_EQUALS_OPERATION)
-						d = (l != r) ? 1 : 0;
-					else if (op == GREATER_THAN_OPERATION)
-						d = (l > r) ? 1 : 0;
-					else if (op == GREATER_EQUAL_OPERATION)
-						d = (l >= r) ? 1 : 0;
-					else if (op == LESS_THAN_OPERATION)
-						d = (l < r) ? 1 : 0;
-					else if (op == LESS_EQUAL_OPERATION)
-						d = (l <= r) ? 1 : 0;
-					else if (op == AND_OPERATION)
+					if (rightValue.getType() == Argument.NUMERIC)
 					{
-						d = (l != 0.0 &&
-							r != 0.0) ? 1 : 0;
-					}
-					else if (op == OR_OPERATION)
-					{
-						d = (l != 0.0 ||
-							r != 0.0) ? 1 : 0;
+						double r = rightValue.getNumericValue();
+						
+						if (op == PLUS_OPERATION)
+							d = l + r;
+						else if (op == MINUS_OPERATION)
+							d = l - r;
+						else if (op == MULTIPLY_OPERATION)
+							d = l * r;
+						else if (op == DIVIDE_OPERATION)
+							d = l / r;
+						else if (op == EQUALS_OPERATION)
+							d = (l == r) ? 1 : 0;
+						else if (op == NOT_EQUALS_OPERATION)
+							d = (l != r) ? 1 : 0;
+						else if (op == GREATER_THAN_OPERATION)
+							d = (l > r) ? 1 : 0;
+						else if (op == GREATER_EQUAL_OPERATION)
+							d = (l >= r) ? 1 : 0;
+						else if (op == LESS_THAN_OPERATION)
+							d = (l < r) ? 1 : 0;
+						else if (op == LESS_EQUAL_OPERATION)
+							d = (l <= r) ? 1 : 0;
+						else if (op == AND_OPERATION)
+						{
+							d = (l != 0.0 &&
+								r != 0.0) ? 1 : 0;
+						}
+						else if (op == OR_OPERATION)
+						{
+							d = (l != 0.0 ||
+								r != 0.0) ? 1 : 0;
+						}
+						else
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_OPERATION));
+						}
+	
+						/*
+						 * Fail on numeric overflow and divide by zero.
+						 */
+						if (d == Double.NEGATIVE_INFINITY || d == Double.POSITIVE_INFINITY || d == Double.NaN)
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
+	
+						if (d == 0.0)
+							retval = Argument.numericZero;
+						else if (d == 1.0)
+							retval = Argument.numericOne;
+						else
+							retval = new Argument(d);
 					}
 					else
 					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_OPERATION));
+						/*
+						 * Mixed types in expression, just join string representations.
+						 */
+						retval = new Argument(Argument.STRING,
+							leftValue.toString() + rightValue.toString());
 					}
-
-					/*
-					 * Fail on numeric overflow and divide by zero.
-					 */
-					if (d == Double.NEGATIVE_INFINITY || d == Double.POSITIVE_INFINITY || d == Double.NaN)
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
-
-					if (d == 0.0)
-						retval = Argument.numericZero;
-					else if (d == 1.0)
-						retval = Argument.numericOne;
-					else
-						retval = new Argument(d);
 				}
 				else
 				{
@@ -236,7 +260,10 @@ public class Expression
 					}
 					else if (op == PLUS_OPERATION)
 					{
-						String r = rightValue.getStringValue();
+						/*
+						 * Add whatever is on right-hand side to string.
+						 */
+						String r = rightValue.toString();
 						retval = new Argument(Argument.STRING, l + r);
 					}
 					else
@@ -694,7 +721,6 @@ public class Expression
 
 		return(expr);
 	}
-
 	/**
 	 * Read an arithmetic or string expression and create a tree from it
 	 * that can later be evaluated.
