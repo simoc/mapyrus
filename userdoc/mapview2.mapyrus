@@ -112,7 +112,7 @@ begin water
 	fill
 end
 
-newpage "png", "mapview2.png", 70, 60, 96
+newpage "eps", "mapview2.eps", 70, 60, 300
 worlds 40000, 40000, 50000, 45000
 
 # Import polygons of imaginary vegetation.
@@ -167,7 +167,7 @@ do
 	stroke
 done
 
-newpage "png", "mapview2legend.png", 40, 50, 96
+newpage "eps", "mapview2legend.eps", 40, 50, 300
 clearpath
 let counter=0
 while counter < Mapyrus.key.count

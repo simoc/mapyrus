@@ -70,7 +70,7 @@ begin warehouse name, inventory
 	highlightlabel name
 end
 
-newpage "png", "mapview4.png", 60, 60, 96
+newpage "eps", "mapview4.eps", 60, 60, 300
 
 # Use light background.
 #
