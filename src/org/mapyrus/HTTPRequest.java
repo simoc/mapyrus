@@ -187,10 +187,11 @@ public class HTTPRequest extends Thread
 				}
 
 				/*
-				 * Add Mapyrus command to set variable.
+				 * Add Mapyrus command to set variable,
+				 * using uppercase for all variable names.
 				 */
 				retval.append("let ");
-				retval.append(var);
+				retval.append(var.toUpperCase());
 				retval.append("='");
 						
 				int valueLength = value.length();
