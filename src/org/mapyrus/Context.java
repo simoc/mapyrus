@@ -513,13 +513,18 @@ public class Context
 	 * @param units units of world coordinates (WORLD_UNITS_METRES,WORLD_UNITS_FEET, etc.)
 	 */
 	public void setWorlds(double x1, double y1, double x2, double y2, int units)
+		throws MapyrusException
 	{
 		double xDiff = x2 - x1;
 		double yDiff = y2 - y1;
 		double xMid, yMid;
 		double worldAspectRatio = yDiff / xDiff;
-		double pageAspectRatio =
-			mOutputFormat.getPageHeight() / mOutputFormat.getPageWidth();
+		double pageAspectRatio;
+
+		if (mOutputFormat == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));		
+		
+		pageAspectRatio = mOutputFormat.getPageHeight() / mOutputFormat.getPageWidth();
 
 		/*
 		 * Expand world coordinate range in either X or Y axis so
@@ -1190,7 +1195,7 @@ public class Context
 		if (mDataset == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
 		mDataset.query(getUnprojectedExtents(), 1.0);
-		
+
 		/*
 		 * Fetch first row so we know if there are any more records available.
 		 */
