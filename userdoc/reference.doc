@@ -1215,6 +1215,7 @@ command is ignored if used outside of a procedure.
 <i>type</i> is either
 <tt>point</tt> to display the legend entry as a single point,
 <tt>line</tt> to display the legend entry as a horizontal line,
+<tt>zigzag</tt> to display the legend entry as a zig-zag line,
 or
 <tt>box</tt> to display the legend as a box.
 <i>description</i> is the label for the legend entry.
