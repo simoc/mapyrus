@@ -507,7 +507,8 @@ public class GeometricPath
 				 * Calculate equally spaced points along this line segment.
 				 */
 				int i = 0;
-				while (nextOffset + i * spacing <= segmentLength)
+				while (nextOffset + i * spacing < segmentLength ||
+					NumericalAnalysis.equals(nextOffset + i * spacing, segmentLength))
 				{
 					x = (float)(xStart + (nextOffset + i * spacing) * cosAngle);
 					y = (float)(yStart + (nextOffset + i * spacing) * sinAngle);
