@@ -229,6 +229,7 @@ public class ContextStack
 	 * @param units of world coordinates (WORLD_UNITS_METRES, WORLD_UNITS_FEET, etc)
 	 */
 	public void setWorlds(double x1, double y1, double x2, double y2, int units)
+		throws MapyrusException
 	{
 		getCurrentContext().setWorlds(x1, y1, x2, y2, units);
 	}
@@ -347,7 +348,16 @@ public class ContextStack
 	{
 		getCurrentContext().fill();
 	}
-		
+
+	/**
+	 * Clip to show only area outside currently defined path,
+	 * protecting what is inside path.
+	 */
+	public void protect() throws MapyrusException
+	{
+		getCurrentContext().protect();
+	}
+
 	/**
 	 * Clip to show only area inside currently defined path.
 	 */
