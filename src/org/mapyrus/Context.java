@@ -168,9 +168,10 @@ public class Context
 	private String mBlockName;
 
 	/**
-	 * Create a new context with reasonable default values.
-	 */		
-	public Context()
+	 * Clear graphics context to empty state.
+	 * @param c context to clear.
+	 */
+	private void initialiseContext(Context c)
 	{
 		mColor = Color.BLACK;
 		mLinestyle = new BasicStroke(0.1f);
@@ -179,26 +180,39 @@ public class Context
 		mFontSize = 5;
 		mFontRotation = 0;
 
+		mPath = mExistingPath = null;
+		mClippingPaths = null;
 		mCtm = new AffineTransform();
-		mProjectionTransform = null;
-		mWorldCtm = null;
 		mScaling =  1.0;
 		mRotation = 0.0;
+
+		mAttributesPending = (ATTRIBUTE_CLIP | ATTRIBUTE_COLOR |
+			ATTRIBUTE_FONT | ATTRIBUTE_JUSTIFY | ATTRIBUTE_LINESTYLE);
+		mAttributesChanged = 0;
+		
+		mProjectionTransform = null;
+		mWorldCtm = null;
+	}
+
+	/**
+	 * Create a new context with reasonable default values.
+	 */		
+	public Context()
+	{
 		mVars = null;
 		mLocalVars = null;
-		mPath = null;
-		mClippingPaths = null;
 
 		mOutputFormat = null;
 		mOutputDefined = false;
 		mDatasetDefined = false;
-		mAttributesPending = mAttributesChanged = 0;
 		mDataset = null;
 		
 		/*
 		 * First context is outside of any procedure block.
 		 */
 		mBlockName = null;
+
+		initialiseContext(this);
 	}
 
 	/**
@@ -407,26 +421,15 @@ public class Context
 			 * Finish any previous page before beginning a new one.
 			 */
 			mOutputFormat.closeOutputFormat();
-
-			/*
-			 * Clear world extents, transformation, projection and clip path from previous page.
-			 * Other page settings are independent of a particular page so leave
-			 * them alone.  
-			 */
-			mWorldExtents = null;
-			mWorldCtm = null;
-			mProjectionTransform = null;
-			mClippingPaths = null;
-
-			mScaling = 1.0;
-			mRotation = 0.0;
-			mCtm = new AffineTransform();
 		}
+
+		/*
+		 * Clear graphics context before beginning new page.  
+		 */
+		initialiseContext(this);
 
 		mOutputFormat = new OutputFormat(filename, format,
 			width, height, extras, stdoutStream);
-		mAttributesPending = ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_COLOR| 
-			ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP;
 		mOutputDefined = true;
 	}
 
