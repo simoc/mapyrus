@@ -897,7 +897,7 @@ public class Expression
 					": " + MapyrusMessages.get(MapyrusMessages.UNMATCHED_BRACKET));
 			}
 		}
-		else if (Character.isLetter((char)c))
+		else if (Character.isLetter((char)c) || c == '$')
 		{
 			/*
 			 * It does not look like a numeric expression or a string
@@ -911,7 +911,7 @@ public class Expression
 				buf.append((char)c);
 				c = p.read();
 			}
-			
+
 			/*
 			 * Is this a function call like "round(3.14)"?
 			 */

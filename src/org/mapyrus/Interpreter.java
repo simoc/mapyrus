@@ -802,9 +802,9 @@ public class Interpreter
 
 		/*
 		 * A statement or procedure name begins with a keyword
-		 * which must begin with a letter.
+		 * which must begin with a letter or dollar sign.
 		 */
-		if (!Character.isLetter((char)c))
+		if (!(Character.isLetter((char)c) || c == '$'))
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
 				": " + MapyrusMessages.get(MapyrusMessages.INVALID_KEYWORD));
