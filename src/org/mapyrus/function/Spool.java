@@ -46,6 +46,7 @@ public class Spool extends Function
 		String filename = arg1.getStringValue();
 		StringBuffer sb = new StringBuffer();
 		String nextLine;
+		LineNumberReader reader = null;
 
 		try
 		{
@@ -53,17 +54,27 @@ public class Spool extends Function
 			 * Read complete file into memory and return it as a single string.
 			 */
 			FileOrURL f = new FileOrURL(filename);
-			LineNumberReader reader = f.getReader();
+			reader = f.getReader();
 			while ((nextLine = reader.readLine()) != null)
 			{
 				sb.append(nextLine);
 				sb.append(Constants.LINE_SEPARATOR);
 			}
-			reader.close();
 		}
 		catch (IOException e)
 		{
 			throw new MapyrusException(e.getMessage());
+		}
+		finally
+		{
+			try
+			{
+				if (reader != null)
+					reader.close();
+			}
+			catch (IOException e)
+			{
+			}
 		}
 		Argument retval = new Argument(Argument.STRING, sb.toString());
 		return(retval);
