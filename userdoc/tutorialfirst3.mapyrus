@@ -2,8 +2,10 @@ newpage "eps", "tutorialfirst3.eps", 70, 30
 linestyle 0.1
 color "rgb", 1, 1, 0
 move 5, 15
-arc 1, 15, 15, 15, 5
-arc -1, 5, 5, 5, 15
+arc 1, 15, 15, 25, 15
+arc -1, 25, 5, 15, 5
+rdraw -10, 0
+closepath
 fill
 color "rgb", 0, 0.33, 0
 stroke
