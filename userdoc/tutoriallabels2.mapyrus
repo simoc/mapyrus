@@ -1,46 +1,45 @@
 begin spinning_top
-	# Draw 6 sided spinning top symbol at origin.
-	#
-	let r = 1
-	while r < 7
-	do
-		clearpath
-		move 0, 0
-		draw -5.77, -10, 5.77, -10, 0, 0
-		color "red"
-		fill
-		color "black"
-		linestyle 0.1
-		stroke
-
-		# Label each sector, first in white one pixel to
-		# the left, right, above and below the real position
-		# to highlight label and then again in black.
-		#
-		clearpath
-		color "white"
-		font 'Helvetica-Bold', 5
-		justify 'center'
-		move 0, -9 + Mapyrus.page.resolution.mm
-		move 0, -9 - Mapyrus.page.resolution.mm
-		move Mapyrus.page.resolution.mm, -9
-		move -Mapyrus.page.resolution.mm, -9
-		label r
-
-		clearpath
-		color "black"
-		move 0, -9
-		label r
-
-		# Rotate axes for next sector.
-		#
-		rotate 60
-		let r = r + 1
-	done
+  # Draw 6 sided spinning top symbol at origin.
+  #
+  let r = 1
+  while r < 7
+  do
+    clearpath
+    move 0, 0
+    draw -5.77, -10, 5.77, -10, 0, 0
+    color "red"
+    fill
+    color "black"
+    linestyle 0.1
+    stroke
+    # Set font each time so it follows new rotation angle.
+    #
+    font 'Helvetica-Bold', 5
+    justify 'center'
+    # Label each sector, first in white one pixel to the
+    # left, right, above and below the real position to
+    # highlight label and then again in black.
+    #
+    clearpath
+    color "white"
+    let offset = 0.3
+    move 0, -9 + offset
+    move 0, -9 - offset
+    move offset, -9
+    move -offset, -9
+    label r
+    clearpath
+    color "black"
+    move 0, -9
+    label r
+    # Rotate axes for next sector.
+    #
+    rotate 60
+    let r = r + 1
+  done
 end
 
-newpage "png", "tutoriallabels2.png", 60, 30, 96
-
+newpage "eps", "tutoriallabels2.eps", 60, 30, 300
 color "red"
 clearpath
 move 15, 15
