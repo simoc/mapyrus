@@ -1,6 +1,17 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004 Simon Chenery.
 
+0.48, September 2004
+
+* Add eval command, like the eval command found in Perl and UNIX scripting.
+* Add manual example demonstrating use of transparent colors.
+* Change syntax of worlds command to allow world coordinates
+  to be added to part of page.  Now units must be given as "units=meters".
+* Add display of character outlines of labels.
+* Add -e startup option giving commands to run, instead of reading a file.
+* Add reading of standard input as textfile dataset making it possible
+  to read output piped from another program.
+
 0.47, September 2004
 
 * Add star command for drawing star shapes.
