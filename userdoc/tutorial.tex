@@ -768,9 +768,62 @@ with output shown in Figure \ref{tutorialicon2}.
 \label{tutorialicon2}
 \end{figure}
 
+\subsection{Mapyrus and Java Topology Suite Functions}
+\label{tutorialjts}
+
+Advanced geometric functions in Mapyrus
+(see Figure \ref{functions} on page \pageref{functions})
+are provided by the
+\textit{Java Topology Suite},
+available from
+(\texttt{www.vividsolutions.com}).
+
+If any of these functions are used then the
+\textit{Java Topology Suite} JAR file must be included in the
+classpath when running Mapyrus.  The following command demonstrates this:
+
+\begin{alltt}
+java -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.4.0.jar \textbackslash
+  org.mapyrus.Mapyrus tutorialjts1.mapyrus
+\end{alltt}
+
+The following example demonstrates using the \texttt{buffer} function to
+create a hatched buffer around a line
+with the output shown in Figure \ref{tutorialjts1}.
+
+\verbatiminput{tutorialjts1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialjts1.eps}
+\caption{Buffer Function}
+\label{tutorialjts1}
+\end{figure}
+
+The \texttt{contains} function is used to determine whether one geometry
+is contained inside another.  This is useful for displaying sample points
+differently, depending on which polygon they are inside.
+A simple use of the \texttt{contains} function is
+demonstrated in the following example
+with the output shown in Figure \ref{tutorialjts1}.
+
+\verbatiminput{tutorialjts2.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialjts2.eps}
+\caption{Contains Function}
+\label{tutorialjts2}
+\end{figure}
+
+Combine the \texttt{buffer} and \texttt{contains} functions to
+display data differently depending on whether it falls within
+a certain distance of another geometry.
+
+Use the \texttt{union} function to join many geometries together
+and display the result as a single geometry.
 
 \subsection{Generating Portable Document Format (PDF) Output}
 \label{pdf}
+
 
 Portable Document Format (PDF) files are created by converting PostScript
 output from Mapyrus to PDF using the \texttt{ps2pdf} utility program, part of
@@ -1086,7 +1139,9 @@ Ant build tool.
 \item
 Java 2 SDK 1.4, or higher.
 \item
-\LaTeX
+Java Topology Suite 1.4, or higher from \texttt{www.vividsolutions.com}.
+\item
+\LaTeX.
 \end{itemize}
 
 The build process build is defined in the file \texttt{build.xml} in the
