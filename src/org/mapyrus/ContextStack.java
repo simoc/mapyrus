@@ -68,6 +68,11 @@ public class ContextStack
 	private LinkedList mStack;
 
 	/*
+	 * List of legend keys encountered whilst interpreting statements.
+	 */
+	private LegendEntryList mLegendEntries;
+
+	/*
 	 * Time at which this context was allocated.
 	 */
 	private long mStartTime;
@@ -87,6 +92,7 @@ public class ContextStack
 		mStack.add(new Context());
 		mStartTime = System.currentTimeMillis();
 		mImagemapPoint = null;
+		mLegendEntries = new LegendEntryList();
 	}
 
 	/**
@@ -130,14 +136,15 @@ public class ContextStack
 	/**
 	 * Pushes copy of context at top of stack onto stack.
 	 * This context is later removed with popContext().
+	 * @param blockName is procedure block name containing statements to be executed.
 	 */
-	private void pushContext() throws MapyrusException
+	private void pushContext(String blockName) throws MapyrusException
 	{
 		if (mStack.size() == MAX_STACK_LENGTH)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.RECURSION));
 		}
-		mStack.add(new Context(getCurrentContext()));
+		mStack.add(new Context(getCurrentContext(), blockName));
 	}
 
 	/**
@@ -583,6 +590,10 @@ public class ContextStack
 			{
 				retval = new Argument(getCurrentContext().getScaling());
 			}
+			else if (c == 'k' && varName.equals(INTERNAL_VARIABLE_PREFIX + "key.count"))
+			{
+				retval = new Argument(mLegendEntries.size());
+			}
 			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + PAGE_VARIABLE + "."))
 			{
 				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + PAGE_VARIABLE.length() + 1);
@@ -811,11 +822,36 @@ public class ContextStack
 	}
 
 	/**
-	 * Save current context so that it can be restored later with restoreState.
+	 * Add entry for a legend.
+	 * @param description description text for legend entry.
+	 * @param type legend type LegendEntryList.(POINT|LINE|BOX)_ENTRY.
+	 * @param legendArgs arguments to procedure block when creating legend.
+	 * @param legendArgIndex start index for legendArgs argument.
+	 * @param nLegendArgs is number of arguments to procedure block.
 	 */
-	public void saveState() throws MapyrusException
+	public void addLegendEntry(String description, int type,
+		Argument []legendArgs, int legendArgIndex, int nLegendArgs)
 	{
-		pushContext();
+		String blockName = getCurrentContext().getBlockName();
+		mLegendEntries.add(blockName, legendArgs, legendArgIndex, nLegendArgs, type, description);
+	}
+
+	/**
+	 * Return list of procedures for which legend entries are to be drawn.
+	 * @return legend entry list.
+	 */
+	public LegendEntryList getLegendEntries()
+	{
+		return(mLegendEntries);
+	}
+
+	/**
+	 * Save current context so that it can be restored later with restoreState.
+	 * @param name of procedure block that saved state will run.
+	 */
+	public void saveState(String blockName) throws MapyrusException
+	{
+		pushContext(blockName);
 	}
 
 	/**
