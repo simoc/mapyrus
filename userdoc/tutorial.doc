@@ -71,6 +71,12 @@ Tutorial
 
 <tr>
 <td>
+<a href="#shadow">Shadow Effects</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#pdf">Generating Portable Document Format (PDF) Output</a>
 </td>
 </tr>
@@ -694,6 +700,30 @@ include endex.doc
 &nbsp;
 <img src="tutorialscalebar2.png">
 <p>
+
+include hr.doc
+
+<a name="shadow"></a>
+<h3>Shadow Effects</h3>
+<p>
+To highlight polygons with a shadow, draw the outline of 
+the polygon, use a 
+<a href="reference.html#protect">protect</a>
+command to prevent the interior of the polygon being drawn,
+then repeatedly use the
+<a href="reference.html#shiftpath">shiftpath</a>
+command to move the polygon a small distance from its original
+position, drawing it each time.
+This is demonstrated in the following example.  Change the sign
+of the shift values in the
+<a href="reference.html#shiftpath">shiftpath</a>
+command to draw the highlight on a different side of the polygon.
+
+include beginex.doc
+include tutorialshadow1.mpy
+include endex.doc
+
+<img src="tutorialshadow1.png">
 
 include hr.doc
 
