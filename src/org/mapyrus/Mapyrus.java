@@ -1,4 +1,22 @@
 /*
+ * This file is part of Mapyrus.
+ *
+ * Mapyrus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Mapyrus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mapyrus; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
+/*
  * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
@@ -15,7 +33,7 @@ import java.net.MalformedURLException;
 public class Mapyrus
 {
 	public static final String PROGRAM_NAME = "Mapyrus";
-	private static final int DEFAULT_PORT = 23177;
+	private static final int DEFAULT_PORT = 8337;
 	private static final String RCS_STATE = "$State$";
 
 	/**
@@ -40,26 +58,44 @@ public class Mapyrus
 		{
 			
 			"Usage:",
-			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar [filename | URL] ...",
+			"java [-Dvar=val] ... -jar " + PROGRAM_NAME.toLowerCase() + ".jar filename ...",
 			"",
-			PROGRAM_NAME + " reads each file and URL in turn.",
-			"If filename is '-' then reads from standard input.",
-			"If no filenames or URLs  are given then a GUI is started",
-			"for commands to be entered interactively.",
+			PROGRAM_NAME + " reads each file or URL in turn.",
+			"If filename is '-' then standard input is read.",
 			"",
-			"java -jar " + PROGRAM_NAME.toLowerCase() + ".jar httpserver [port]",
+			"Variables are passed into " + PROGRAM_NAME + " using the Java -D",
+			"option.",
+			"",
+			"java [-Dvar=val] ... -jar " + PROGRAM_NAME.toLowerCase() + ".jar httpserver [port]",
 			"",
 			PROGRAM_NAME + " runs as an HTTP server, accepting HTTP GET",
 			"requests on the given TCP/IP port.",
 		};
-		
-		System.out.println(PROGRAM_NAME + " version " + getVersion());
+
+		String []license =
+		{
+			PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for",
+			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+			"You may redistribute copies of " + PROGRAM_NAME + " under the terms",
+			"of the GNU General Public License.  For more information",
+			"about these matters, see the file named COPYING."
+		};
+
+		System.out.println(PROGRAM_NAME + " version " + getVersion() +
+			" Copyright (C) 2003 Simon Chenery");
 		System.out.println("");
-		
+
 		for (int i = 0; i < messages.length; i++)
 		{
 			System.out.println(messages[i]);
 		}
+
+		System.out.println("");
+		for (int i = 0; i < license.length; i++)
+		{
+			System.out.println(license[i]);
+		}
+
 	}
 	
 	/**
@@ -117,19 +153,13 @@ public class Mapyrus
 		ContextStack context;
 		
 		/*
-		 * Parse command line arguments -- these are the files and URLs to read commands from.
+		 * Parse command line arguments -- these are the files and URLs
+		 * to read commands from.
 		 */
-		if (args.length == 0)
-		{
-			/*
-			 * Start GUI for user to enter commands into.
-			 */
-			initialise();
-			MapyrusInputFrame m = new MapyrusInputFrame();
-			
-		}
-		else if (args.length == 1 && (args[0].equals("-h") || args[0].equals("-help") ||
-			args[0].equals("-?") || args[0].equals("-v") || args[0].equals("-version")))
+// TODO if no args are given then start a GUI to run interactively.
+		if (args.length == 0 || (args.length == 1 && (args[0].equals("-h") ||
+			args[0].equals("-help") || args[0].equals("-?") ||
+			args[0].equals("-v") || args[0].equals("-version"))))
 		{
 			/*
 			 * Show usage message and quit.
