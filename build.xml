@@ -53,6 +53,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
 <target name="jar" depends="compile" description="Build jar file from classes">
+<manifest file="manifest">
+<attribute name="Main-Class" value="org.mapyrus.Mapyrus"/>
+<attribute name="Built-By" value="${user.name}"/>
+</manifest>
 <jar jarfile="${ant.project.name}.jar" basedir="build/classes" manifest="manifest"/>
 </target>
 
@@ -124,7 +128,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, userdoc/**, javadoc/**, manifest, ${ant.project.name}.jar, src/**, NEWS, VERSION" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log"/>
+<fileset dir="." includes="build/**, build.xml, userdoc/**, javadoc/**, ${ant.project.name}.jar, src/**, NEWS, VERSION" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log"/>
 </zip>
 </target>
 
@@ -132,7 +136,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="clean" description="Remove everything we have built">
 <delete dir="build/classes"/>
 <delete>
-<fileset dir="." includes="${ant.project.name}.jar"/>
+<fileset dir="." includes="${ant.project.name}.jar, manifest"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
 <fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
 <fileset dir="javadoc" includes="**"/>
