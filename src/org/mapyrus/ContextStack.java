@@ -275,13 +275,12 @@ public class ContextStack
 	 * @param name is name of dataset to open.
 	 * @param extras are special options for this dataset type such as database connection
 	 * information, or instructions for interpreting data.
-	 * @param geometryFieldNames is list of names of fields containing geometry.
 	 */
 	public void setDataset(String type, String name,
-		String extras, String []geometryFieldNames) throws MapyrusException
+		String extras) throws MapyrusException
 	{
 		GeographicDataset dataset;
-		dataset = DatasetFactory.open(type, name, extras, geometryFieldNames);
+		dataset = DatasetFactory.open(type, name, extras);
 		getCurrentContext().setDataset(dataset);
 	}
 
