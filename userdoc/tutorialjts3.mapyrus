@@ -1,0 +1,26 @@
+newpage "eps", "tutorialjts3.eps", 60, 60
+worlds 5000, 1000, 6000, 2000
+
+let wkt1 = 'POLYGON ((5200 1200, 5337 1664, 5798 1643, 5347 1120, 5200 1200))'
+let wkt2 = 'POLYGON ((5100 1300, 5100 1900, 5500 1800, 5700 1350, 5100 1300))'
+
+# Draw both polygons in different colors.
+#
+linestyle 3
+clearpath
+addpath wkt1
+color "purple"
+stroke
+clearpath
+addpath wkt2
+color "forestgreen"
+stroke
+
+# Draw area of first polygon not covered by second polygon.
+#
+let wkt3 = difference(wkt1, wkt2)
+clearpath
+addpath wkt3
+linestyle 1
+color "yellow"
+stroke
