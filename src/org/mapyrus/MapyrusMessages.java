@@ -157,6 +157,7 @@ public class MapyrusMessages
 	public static final String PROCESS_ERROR = "processerror";
 	public static final String READ_ONLY = "readonly";
 	public static final String RECURSION = "recursion";
+	public static final String ROMAN_CONVERSION = "romanconversion";
 	public static final String STARTED_THREAD = "startedthread";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
 	public static final String TRANSFORM_ERROR = "transformerror";

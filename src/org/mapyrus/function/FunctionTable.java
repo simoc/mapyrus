@@ -92,6 +92,9 @@ public class FunctionTable
 		f = new Replace();
 		mFunctions.put(f.getName(), f);
 
+		f = new Roman();
+		mFunctions.put(f.getName(), f);
+
 		f = new Round();
 		mFunctions.put(f.getName(), f);
 
