@@ -165,6 +165,26 @@ public class GeometricPath
 	}
 
 	/**
+	 * Add Bezier curve to path from last point to a new point.
+	 * @param xControl1 X coordinate of first Bezier control point.
+	 * @param yControl1 Y coordinate of first Bezier control point.
+	 * @param xControl2 X coordinate of second Bezier control point.
+	 * @param yControl2 Y coordinate of second Bezier control point.
+	 * @param xEnd X coordinate of end point of curve.
+	 * @param yEnd Y coordinate of end point of curve.
+	 */
+	public void curveTo(float xControl1, float yControl1,
+		float xControl2, float yControl2, float xEnd, float yEnd) throws MapyrusException
+	{
+		Point2D lastPt = mPath.getCurrentPoint();
+		if (lastPt == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_BEZIER_START));
+
+		mPath.curveTo(xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
+		mNLineTos++;
+	}
+
+	/**
 	 * Add ellipse to path.
 	 * @param xCenter X coordinate of center of ellipse.
 	 * @param yCenter Y coordinate of center of ellipse.
