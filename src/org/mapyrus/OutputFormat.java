@@ -143,7 +143,7 @@ public class OutputFormat
 			Constants.POINTS_PER_INCH);
 
 		mWriter.print("%!PS-Adobe-3.0");
-		if (mFormatName.equals("EPS"))
+		if (mFormatName.equals("eps"))
 			mWriter.print(" EPSF-3.0");
 		mWriter.println("");
 
@@ -247,12 +247,12 @@ public class OutputFormat
 		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
-		mFormatName = format.toUpperCase();
+		mFormatName = format.toLowerCase();
 
 		/*
 		 * Check that Java can write this image format to a file.
 		 */				
-		if (mFormatName.equals("PS") || mFormatName.equals("EPS"))
+		if (mFormatName.equals("ps") || mFormatName.equals("eps"))
 		{
 			mOutputType = POSTSCRIPT;
 		}	
@@ -361,6 +361,15 @@ public class OutputFormat
 	}
 
 	/**
+	 * Return file format of page.
+	 * @return file format of page in lowercase.
+	 */
+	public String getPageFormat()
+	{
+		return(mFormatName);
+	}
+	
+	/**
 	 * Return resolution of page as a distance measurement.
 	 * @return distance in millimetres between centres of adjacent pixels.
 	 */
@@ -432,7 +441,7 @@ public class OutputFormat
 			/*
 			 * Finish off PostScript file.
 			 */
-			if (mFormatName.equals("PS"))
+			if (mFormatName.equals("ps"))
 			{
 				/*
 				 * showpage is not included in Encapsulated PostScript files.

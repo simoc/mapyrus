@@ -298,6 +298,22 @@ public class Context
 		
 		return(retval);
 	}
+	
+	/**
+	 * Return file format for output we are currently writing.
+	 * @return file format.
+	 */
+	public String getPageFormat()
+	{
+		String retval;
+		
+		if (mOutputFormat == null)
+			retval = "";
+		else
+			retval = mOutputFormat.getPageFormat();
+		
+		return(retval);
+	}
 
 	/**
 	 * Return resolution of page we are writing to as a distance measurement.
