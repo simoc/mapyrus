@@ -117,7 +117,7 @@ The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
 include beginex.doc
-java -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus <i>filename</i>
+java -classpath <i>install-path</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i>
 include endex.doc
 
 <i>install-path</i> is the directory in which
@@ -134,7 +134,7 @@ to be used in combination with Mapyrus are included in the
 <tt>-classpath</tt> option.
 
 include beginex.doc
-java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-path</i>/mapyrus.jar:<i>jarfile</i> au.id.chenery.mapyrus.Mapyrus <i>filename</i>
+java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-path</i>/mapyrus.jar:<i>jarfile</i> org.mapyrus.Mapyrus <i>filename</i>
 include endex.doc
 
 Mapyrus runs as an 
@@ -142,7 +142,7 @@ Mapyrus runs as an
 <tt>-s</tt> option.
 
 include beginex.doc
-java -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
+java -classpath <i>install-path</i>/mapyrus.jar org.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
 include endex.doc
 
 <a name="startupvariables"></a>

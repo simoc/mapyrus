@@ -26,7 +26,7 @@
  * its attributes.
  * Or as the OGIS people would say, a "simple feature".
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.util.ArrayList;
 

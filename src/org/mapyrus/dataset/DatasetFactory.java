@@ -20,13 +20,13 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus.dataset;
+package org.mapyrus.dataset;
 
 import java.io.IOException;
 
-import au.id.chenery.mapyrus.Constants;
-import au.id.chenery.mapyrus.MapyrusException;
-import au.id.chenery.mapyrus.MapyrusMessages;
+import org.mapyrus.Constants;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 
 /**
  * Factory class returning new dataset objects.  Provides single interface to

@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

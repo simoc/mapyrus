@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -31,8 +31,8 @@ import java.util.LinkedList;
 import java.util.Date;
 import java.awt.geom.Rectangle2D;
 
-import au.id.chenery.mapyrus.dataset.DatasetFactory;
-import au.id.chenery.mapyrus.dataset.GeographicDataset;
+import org.mapyrus.dataset.DatasetFactory;
+import org.mapyrus.dataset.GeographicDataset;
 
 /**
  * Contexts for interpretation that are pushed and popped as procedure 

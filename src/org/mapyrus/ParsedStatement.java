@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 /**
  * A statement or other keyword, read from a file and parsed.

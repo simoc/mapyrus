@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.util.LinkedList;
 import java.util.HashSet;

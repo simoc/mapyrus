@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import au.id.chenery.mapyrus.dataset.GeographicDataset;
+import org.mapyrus.dataset.GeographicDataset;
 
 /**
  * Maintains state information during interpretation inside a single procedure block. 

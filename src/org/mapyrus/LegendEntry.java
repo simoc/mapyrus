@@ -20,11 +20,12 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 /**
- * A single entry for a legend, to be stored in a au.id.chenery.mapyrus.LegendEntryList list
- * and used after 
+ * A single entry for a legend, to be stored in a
+ * org.mapyrus.LegendEntryList list and used after map display
+ * for generating a legend.
  */
 public class LegendEntry
 {

@@ -20,11 +20,11 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus.dataset;
+package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
-import au.id.chenery.mapyrus.*;
+import org.mapyrus.*;
 
 /**
  * Interface to a vector geographic format.  Provides methods to open and query

@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus.dataset;
+package org.mapyrus.dataset;
 
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -36,10 +36,10 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import au.id.chenery.mapyrus.Argument;
-import au.id.chenery.mapyrus.MapyrusException;
-import au.id.chenery.mapyrus.MapyrusMessages;
-import au.id.chenery.mapyrus.Row;
+import org.mapyrus.Argument;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
+import org.mapyrus.Row;
 
 /**
  * Implements reading of geographic datasets from ESRI shape files.
@@ -512,7 +512,7 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getProjection()
+	 * @see org.mapyrus.dataset.GeographicDataset#getProjection()
 	 */
 	public String getProjection()
 	{
@@ -520,7 +520,7 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getMetadata()
+	 * @see org.mapyrus.dataset.GeographicDataset#getMetadata()
 	 */
 	public Hashtable getMetadata()
 	{
@@ -528,7 +528,7 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getFieldNames()
+	 * @see org.mapyrus.dataset.GeographicDataset#getFieldNames()
 	 */
 	public String[] getFieldNames()
 	{
@@ -536,7 +536,7 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getWorlds()
+	 * @see org.mapyrus.dataset.GeographicDataset#getWorlds()
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
@@ -544,7 +544,7 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#query(Double)
+	 * @see org.mapyrus.dataset.GeographicDataset#query(Double)
 	 */
 	public void query(Rectangle2D.Double extents, double resolution)
 		throws MapyrusException

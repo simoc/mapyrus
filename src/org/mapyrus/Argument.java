@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.awt.geom.PathIterator;
 import java.text.DecimalFormat;

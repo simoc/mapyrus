@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus.dataset;
+package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.io.InputStreamReader;
@@ -29,7 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import au.id.chenery.mapyrus.*;
+import org.mapyrus.*;
 
 /**
  * Implements reading of geographic datasets from a delimited text file.
@@ -144,7 +144,7 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.GeographicDataset#getMetadata()
+	 * @see org.mapyrus.GeographicDataset#getMetadata()
 	 */
 	public Hashtable getMetadata()
 	{

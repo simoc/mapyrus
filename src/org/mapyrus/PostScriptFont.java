@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
  
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 /**
  * Provides default field names for datasets that do not provide their own.

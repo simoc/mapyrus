@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -46,7 +46,7 @@ public class Mapyrus
 		String []usage =
 		{
 			"Usage:",
-			"java [-Dvariable=value] ... -classpath " + Constants.PROGRAM_NAME.toLowerCase() + ".jar au.id.chenery.mapyrus.Mapyrus",
+			"java [-Dvariable=value] ... -classpath " + Constants.PROGRAM_NAME.toLowerCase() + ".jar org.mapyrus.Mapyrus",
 			"        [-s port] filename ...",
 			"",
 			Constants.PROGRAM_NAME + " reads each file or URL in turn.",

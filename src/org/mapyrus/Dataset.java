@@ -20,11 +20,11 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 import java.awt.geom.Rectangle2D;
 
-import au.id.chenery.mapyrus.dataset.GeographicDataset;
+import org.mapyrus.dataset.GeographicDataset;
 
 /**
  * Manages a dataset being queried.  Methods are provided to simplify
@@ -48,7 +48,7 @@ public class Dataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getProjection().
+	 * @see org.mapyrus.dataset.GeographicDataset#getProjection().
 	 */	
 	public String getProjection()
 	{
@@ -56,7 +56,7 @@ public class Dataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getWorlds().
+	 * @see org.mapyrus.dataset.GeographicDataset#getWorlds().
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
@@ -64,7 +64,7 @@ public class Dataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getFieldNames().
+	 * @see org.mapyrus.dataset.GeographicDataset#getFieldNames().
 	 */
 	public String []getFieldNames()
 	{
@@ -75,7 +75,7 @@ public class Dataset
 	 * Begins new query on dataset, closing any previous query.
 	 * @param extents is area of interest for this query.
 	 * @param resolution is minimum distance between coordinate values.
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#query(Rectangle2D.Double, double). 
+	 * @see org.mapyrus.dataset.GeographicDataset#query(Rectangle2D.Double, double). 
 	 */	
 	public void query(Rectangle2D.Double extents, double resolution)
 		throws MapyrusException

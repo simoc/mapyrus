@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 
-package au.id.chenery.mapyrus;
+package org.mapyrus;
 
 /**
  * Provides ststic methods for solving numerical analysis problems

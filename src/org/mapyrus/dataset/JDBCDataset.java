@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
-package au.id.chenery.mapyrus.dataset;
+package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
@@ -31,11 +31,11 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.sql.*;
 
-import au.id.chenery.mapyrus.Argument;
-import au.id.chenery.mapyrus.Constants;
-import au.id.chenery.mapyrus.MapyrusException;
-import au.id.chenery.mapyrus.MapyrusMessages;
-import au.id.chenery.mapyrus.Row;
+import org.mapyrus.Argument;
+import org.mapyrus.Constants;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
+import org.mapyrus.Row;
 
 /**
  * Implements reading of geographic datasets from an RDBMS via JDBC interface.
