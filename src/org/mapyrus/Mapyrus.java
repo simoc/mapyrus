@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points,
@@ -47,7 +48,7 @@ public class Mapyrus
 		{
 			"Usage:",
 			"java [-Dvariable=value] ... -classpath " + Constants.PROGRAM_NAME.toLowerCase() + ".jar org.mapyrus.Mapyrus",
-			"        [-s port] filename ...",
+			"        [options] filename ...",
 			"",
 			Constants.PROGRAM_NAME + " reads each file or URL in turn.",
 			"If filename is '-' then standard input is read.",
@@ -55,8 +56,11 @@ public class Mapyrus
 			"Variables and configuration are passed to " + Constants.PROGRAM_NAME + " using the",
 			"Java -D option.",
 			"",
-			"-s option starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server",
-			"on the given port.  Refer to manual for detailed instructions."
+			"Options:",
+			"  -s <port> starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server on the",
+			"            given port.  Refer to manual for detailed instructions.",
+			"  -v        print version information and exit",
+			"  -h        print this message"
 		};
 
 		String []license =
@@ -267,6 +271,27 @@ public class Mapyrus
 	}
 
 	/*
+	 * Return java version info and it's capabilities.
+	 * @return version details.
+	 */
+	private static String getJavaConfiguration()
+	{
+		String vendor = System.getProperty("java.vendor");
+		if (vendor == null)
+			vendor = "null";
+
+		String version = System.getProperty("java.version");
+		if (version == null)
+			version = "null";
+
+		String javaHome = System.getProperty("java.home");
+		if (javaHome == null)
+			javaHome = "null";
+
+		return("Java version " + version + " (" + vendor + ") in " + javaHome);
+	}
+
+	/*
 	 * Parse command line arguments and start processing.
 	 */
 	public static void main(String []args)
@@ -299,6 +324,7 @@ public class Mapyrus
 			System.out.println(Constants.PROGRAM_NAME + " " +
 				Constants.getVersion() + " " +
 				Constants.getReleaseDate());
+			System.out.println(getJavaConfiguration());
 			System.exit(1);
 		}
 		else if (args[0].equals("-s"))
