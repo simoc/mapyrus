@@ -28,7 +28,7 @@ import org.mapyrus.MapyrusException;
 
 /**
  * Function returning geometry parsed from OGC WKT geometry string.
- * For example, "POINT ( 7 9 )" returns [4, MOVE, 7, 9].
+ * For example, "POINT ( 7 9 )" returns [4, 1, MOVE, 7, 9].
  */
 public class Parsewkt extends Function
 {
