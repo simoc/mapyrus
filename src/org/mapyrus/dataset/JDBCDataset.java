@@ -153,8 +153,13 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
-				 e.getSQLState() + ": " + url);
+			String state = e.getSQLState();
+			if (state != null)
+				state = ": " + state;
+			else
+				state = "";
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
+				 state + ": " + url);
 		}
 
 		try
@@ -226,8 +231,13 @@ public class JDBCDataset implements GeographicDataset
 			{
 			}
 
-			throw new MapyrusException(e1.getErrorCode() + ": " + e1.getMessage() + ": " +
-				e1.getSQLState() + ": " + mSql);
+			String state = e1.getSQLState();
+			if (state != null)
+				state = ": " + state;
+			else
+				state = "";
+			throw new MapyrusException(e1.getErrorCode() + ": " + e1.getMessage() +
+				state + ": " + mSql);
 		}
 		catch (MapyrusException e2)
 		{
@@ -424,8 +434,13 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
-				e.getSQLState() + ": " + mSql);
+			String state = e.getSQLState();
+			if (state != null)
+				state = ": " + state;
+			else
+				state = "";
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
+				state + ": " + mSql);
 		}
 		return(retval);
 	}
@@ -481,8 +496,13 @@ public class JDBCDataset implements GeographicDataset
 		}
 		catch (SQLException e)
 		{
-			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() + ": " +
-				e.getSQLState());
+			String state = e.getSQLState();
+			if (state != null)
+				state = ": " + state;
+			else
+				state = "";
+			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
+				state);
 		}
 	}
 }
