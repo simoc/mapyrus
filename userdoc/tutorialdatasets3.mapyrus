@@ -1,28 +1,29 @@
-begin hotel name, stars
-  # Draw hotel name inside a box about as wide as the name.
+begin hotel name, nStars
+  # Draw hotel name inside a box the same width as the name.
   #
+  font 'Helvetica-Narrow-Bold', 3
   color '#A00000'
   clearpath
   move 2, 0
-  box 2, 0, 2 + length(name) * 2, 4
+  box 2, 0, 2 + stringwidth(name), 4
   move 0, 2
   draw 2, 4, 2, 0, 0, 2
   fill
   clearpath
   move 2, 1
   color 'white'
-  font 'Helvetica', 3
   label name
   # Draw box below hotel name, then show number of stars inside it.
   #
   clearpath
   color '#A00000'
-  box 2, -2, stars * 3, 0
+  let stars = '* ' x nStars
+  box 2, -2, stringwidth(stars) + 2, 0
   fill
   clearpath
   color 'yellow'
   move 2, -2
-  label '* ' x stars
+  label stars
 end
 
 # Display the ESRI Shape file hotel.shp in a PostScript file.
