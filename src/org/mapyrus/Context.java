@@ -644,66 +644,101 @@ public class Context
 
 	/**
 	 * Sets transformation from real world coordinates to page coordinates.
-	 * @param x1 minimum X world coordinate.
-	 * @param y1 minimum Y world coordinate.
-	 * @param x2 maximum X world coordinate.
-	 * @param y2 maximum Y world coordinate.
+	 * @param wx1 minimum X world coordinate.
+	 * @param wy1 minimum Y world coordinate.
+	 * @param wx2 maximum X world coordinate.
+	 * @param wy2 maximum Y world coordinate.
+	 * @param px1 millimetre position on page of wx1.
+	 * @param py1 millimetre position on page of wy1.
+	 * @param px2 millimetre position on page of wx2, or 0 to use whole page.
+	 * @param py2 millimetre position on page of wy2, or 0 to use whole page.
 	 * @param units units of world coordinates (WORLD_UNITS_METRES,WORLD_UNITS_FEET, etc.)
+	 * @param allowDistortion if true then different scaling in X and Y axes allowed.
 	 */
-	public void setWorlds(double x1, double y1, double x2, double y2, int units)
+	public void setWorlds(double wx1, double wy1, double wx2, double wy2,
+		double px1, double py1, double px2, double py2,
+		int units, boolean allowDistortion)
 		throws MapyrusException
 	{
-		double xDiff = x2 - x1;
-		double yDiff = y2 - y1;
-		double xMid, yMid;
-		double worldAspectRatio = yDiff / xDiff;
-		double pageAspectRatio;
-
 		if (mOutputFormat == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));		
-		
-		pageAspectRatio = mOutputFormat.getPageHeight() / mOutputFormat.getPageWidth();
+
+		double wxDiff = wx2 - wx1;
+		double wyDiff = wy2 - wy1;
+		double wxMid, wyMid;
+
+		if (px2 == 0 && py2 == 0)
+		{
+			/*
+			 * Use whole page.
+			 */
+			px2 = mOutputFormat.getPageWidth();
+			py2 = mOutputFormat.getPageHeight();
+		}
+
+		double pxDiff = px2 - px1;
+		double pyDiff = py2 - py1;
+
+		if (pxDiff <= 0.0 || pyDiff <= 0.0)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_RANGE));
+
+		if (wxDiff == 0.0 || wyDiff == 0.0)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.ZERO_WORLD_RANGE));
+
+		double worldAspectRatio = wyDiff / wxDiff;
+		double pageAspectRatio = pxDiff / pyDiff;
+
+		if (!allowDistortion)
+		{
+			/*
+			 * Expand world coordinate range in either X or Y axis so
+			 * it has same aspect ratio as area on page.
+			 */
+			if (worldAspectRatio > pageAspectRatio)
+			{
+				/*
+				 * World coordinate range is taller than page coordinate
+				 * system.  Expand X axis range to compensate:
+				 *
+				 *  PAGE    WORLDS    EXPANDED WORLDS
+				 *  +---+   +---+     +-+---+-+
+				 *  |   |   |   |     |<|   |>|
+				 * 	|___|   |   |  => |<|   |>|
+				 *          |   |     |<|   |>|
+				 *          +---+     +-+---+-+
+				 */
+				wxMid = (wx1 + wx2) / 2.0;
+				wx1 = wxMid - (wxDiff / 2.0) * (worldAspectRatio / pageAspectRatio);
+				wx2 = wxMid + (wxDiff / 2.0) * (worldAspectRatio / pageAspectRatio);
+			}
+			else if (worldAspectRatio < pageAspectRatio)
+			{
+				/*
+				 * World coordinate range is wider than page coordinate system.
+				 * Expand Y axis range.
+				 */
+				wyMid = (wy1 + wy2) / 2.0;
+				wy1 = wyMid - (wyDiff / 2.0) * (pageAspectRatio / worldAspectRatio);
+				wy2 = wyMid + (wyDiff / 2.0) * (pageAspectRatio / worldAspectRatio);
+			}
+		}
 
 		/*
-		 * Expand world coordinate range in either X or Y axis so
-		 * it has same aspect ratio as page.
+		 * Expand world coordinate range so that it fills whole page.
 		 */
-		if (worldAspectRatio > pageAspectRatio)
-		{
-			/*
-			 * World coordinate range is taller than page coordinate
-			 * system.  Expand X axis range to compensate:
-			 *
-			 *  PAGE    WORLDS    EXPANDED WORLDS
-			 *  +---+   +---+     +-+---+-+
-			 *  |   |   |   |     |<|   |>|
-			 * 	|___|   |   |  => |<|   |>|
-			 *          |   |     |<|   |>|
-			 *          +---+     +-+---+-+
-			 */
-			xMid = (x1 + x2) / 2.0;
-			x1 = xMid - (xDiff / 2.0) * (worldAspectRatio / pageAspectRatio);
-			x2 = xMid + (xDiff / 2.0) * (worldAspectRatio / pageAspectRatio);
-		}
-		else if (worldAspectRatio < pageAspectRatio)
-		{
-			/*
-			 * World coordinate range is wider than page coordinate system.
-			 * Expand Y axis range.
-			 */
-			yMid = (y1 + y2) / 2.0;
-			y1 = yMid - (yDiff / 2.0) * (pageAspectRatio / worldAspectRatio);
-			y2 = yMid + (yDiff / 2.0) * (pageAspectRatio / worldAspectRatio);
-		}
-		
+		wx1 -= (wx2 - wx1) / pxDiff * px1;
+		wx2 += (wx2 - wx1) / pxDiff * (mOutputFormat.getPageWidth() - px2);
+		wy1 -= (wy2 - wy1) / pyDiff * py1;
+		wy2 += (wy2 - wy1) / pyDiff * (mOutputFormat.getPageHeight() - py2);
+
 		/*
 		 * Setup CTM from world coordinates to page coordinates.
 		 */
 		mWorldCtm = new AffineTransform();
-		mWorldCtm.scale(mOutputFormat.getPageWidth() / (x2 - x1),
-			mOutputFormat.getPageHeight() / (y2 - y1));
-		mWorldCtm.translate(-x1, -y1);
-		mWorldExtents = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
+		mWorldCtm.scale(mOutputFormat.getPageWidth() / (wx2 - wx1),
+			mOutputFormat.getPageHeight() / (wy2 - wy1));
+		mWorldCtm.translate(-wx1, -wy1);
+		mWorldExtents = new Rectangle2D.Double(wx1, wy1, wx2 - wx1, wy2 - wy1);
 		mWorldUnits = units;
 	}
 
@@ -794,7 +829,7 @@ public class Context
 			if (mWorldUnits == WORLD_UNITS_METRES)
 				worldWidthInMM *= 1000.0;
 			else if (mWorldUnits == WORLD_UNITS_FEET)
-				worldWidthInMM *= (1000.0 / 0.3048);
+				worldWidthInMM *= (1000.0 * 0.3048);
 			else
 				worldWidthInMM *= (110000 * 1000.0);
 
