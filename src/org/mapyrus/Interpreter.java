@@ -48,7 +48,6 @@ public class Interpreter
 	private static final char PARAM_SEPARATOR = ',';
 	private static final String BEGIN_KEYWORD = "begin";
 	private static final String END_KEYWORD = "end";
-// TODO allow inline, anonymous code blocks for purpose of saving/restoring state.
 
 	/*
 	 * Keywords for if ... then ... else ... endif block.
@@ -56,9 +55,9 @@ public class Interpreter
 	private static final String IF_KEYWORD = "if";
 	private static final String THEN_KEYWORD = "then";
 	private static final String ELSE_KEYWORD = "else";
-	private static final String ELSIF_KEYWORD = "elsif";
+	private static final String ELIF_KEYWORD = "elif";
 	private static final String ENDIF_KEYWORD = "endif";
-	
+
 	/*
 	 * Keywords for while ... do ... done block.
 	 */
@@ -1303,7 +1302,7 @@ public class Interpreter
 			new ParsedStatement(ParsedStatement.PARSED_THEN));
 		mKeywordLookup.put(ELSE_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ELSE));
-		mKeywordLookup.put(ELSIF_KEYWORD,
+		mKeywordLookup.put(ELIF_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ELSIF));
 		mKeywordLookup.put(ENDIF_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ENDIF));
