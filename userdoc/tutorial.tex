@@ -3,7 +3,7 @@
 \section{Tutorial}
 
 The folllowing examples demonstrate how to using Mapyrus.  Each example is also
-included as a file in the \texttt{doc} subdirectory in a Mapyrus installation.
+included as a file in the \texttt{doc} subdirectory.
 
 If the Ghostscript program or a printer is not available, then change the
 \texttt{eps} arguments in \texttt{newpage} commands in examples to \texttt{png}
@@ -110,6 +110,7 @@ The second example demonstrates the use of the
 \texttt{length} and \texttt{substr}
 functions
 and stepping through a string one element at a time.
+The output of this example is shown in Figure \ref{tutorialvar2}.
 
 \verbatiminput{tutorialvar2.mpy}
 
@@ -242,7 +243,7 @@ the polygon, use the \texttt{clip}
 command to limit the area displayed to inside the polygon,
 then the \texttt{stripepath}
 command to replace the path with evenly spaced stripes and
-then draw each line.  The following example demonstrates this,
+then draw each stripe.  The following example demonstrates this,
 with the output shown in Figure \ref{tutorialpolygons1}.
 
 \verbatiminput{tutorialpolygons1.mpy}
@@ -257,8 +258,8 @@ To fill a polygon with cross-hatching use procedures to
 draw each set of hatch lines at different angles.  Two procedures
 are used so that modifying the current path with the
 \texttt{stripepath}
-command is isolated and the original path remains unmodified in
-the calling procedure.
+command is isolated in one procedure and the original path
+remains unmodified in the calling procedure.
 This is demonstrated in the following example, with the output
 shown in Figure \ref{tutorialpolygons2}.
 
@@ -366,7 +367,8 @@ Coordinates in GIS datasets are given in a world coordinate system such as
 Universal Transverse Mercator.  To transform these coordinates to millimetre
 coordinates on the page use the \texttt{worlds} command.  This sets a
 transformation to map a range of world coordinates onto the whole page.  All
-coordinates given for later \texttt{addpath}, \texttt{move}, \texttt{arc} and
+coordinates given for later \texttt{addpath}, \texttt{move}, \texttt{arc},
+\texttt{box} and
 \texttt{draw} commands are converted from world coordinate to page coordinates
 through this transformation.
 
