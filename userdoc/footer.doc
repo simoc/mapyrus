@@ -1,0 +1,10 @@
+<!-- $Id$ -->
+<p>
+<hr>
+Version
+include VERSION
+<center>
+<a href="index.html">Mapyrus Home</a>
+</center>
+</body>
+</html>
