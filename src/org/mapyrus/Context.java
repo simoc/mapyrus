@@ -663,8 +663,8 @@ public class Context
 		if (mOutputFormat == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));		
 
-		double wxDiff = Math.abs(wx2 - wx1);
-		double wyDiff = Math.abs(wy2 - wy1);
+		double wxDiff = wx2 - wx1;
+		double wyDiff = wy2 - wy1;
 		double wxMid, wyMid;
 
 		if (px2 == 0 && py2 == 0)
@@ -685,7 +685,7 @@ public class Context
 		if (wxDiff == 0.0 || wyDiff == 0.0)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.ZERO_WORLD_RANGE));
 
-		double worldAspectRatio = wyDiff / wxDiff;
+		double worldAspectRatio = Math.abs(wyDiff / wxDiff);
 		double pageAspectRatio = pxDiff / pyDiff;
 
 		if (!allowDistortion)
@@ -726,8 +726,8 @@ public class Context
 		/*
 		 * Expand world coordinate range so that it fills whole page.
 		 */
-		wxDiff = Math.abs(wx2 - wx1);
-		wyDiff = Math.abs(wy2 - wy1);
+		wxDiff = wx2 - wx1;
+		wyDiff = wy2 - wy1;
 		wx1 -= wxDiff / pxDiff * px1;
 		wx2 += wxDiff / pxDiff * (mOutputFormat.getPageWidth() - px2);
 		wy1 -= wyDiff / pyDiff * py1;
