@@ -29,7 +29,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -1773,9 +1775,23 @@ public class OutputFormat
 		int lineNumber;
 		AffineTransform affine;
 		FontRenderContext frc = null;
-		
+		Stroke originalStroke = null;
+
 		if (mOutputType != POSTSCRIPT_GEOMETRY)
+		{
 			frc = mGraphics2D.getFontRenderContext();
+			
+			if (mFontOutlineWidth > 0)
+			{
+				/*
+				 * Save existing linestyle and create new one for drawing outlines of each letter.
+				 */
+				originalStroke = mGraphics2D.getStroke();
+				BasicStroke outlineStroke = new BasicStroke((float)mFontOutlineWidth,
+					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2.0f);
+				mGraphics2D.setStroke(outlineStroke);
+			}
+		}
 
 		/*
 		 * Draw label at each position in list.
@@ -1826,12 +1842,38 @@ public class OutputFormat
 					{
 						startPt = pt;
 					}
-					// TODO check if mFontOutlineWidth > 0.
-					mGraphics2D.drawString(nextLine, (float)(startPt.getX()),
-						(float)(startPt.getY()));
+					
+					float fx = (float)startPt.getX();
+					float fy = (float)startPt.getY();
+					
+					if (mFontOutlineWidth > 0)
+					{
+						/*
+						 * Draw only outline of letters in label as lines.
+						 */
+						GlyphVector glyphs = mGraphics2D.getFont().createGlyphVector(frc, nextLine);
+						Shape outline = glyphs.getOutline(fx, fy);						
+						mGraphics2D.draw(outline);
+						
+					}
+					else
+					{
+						/*
+						 * Draw plain label.
+						 */
+						mGraphics2D.drawString(nextLine, fx, fy);
+					}
 				}
 				lineNumber++;
 			}
+		}
+
+		if (originalStroke != null)
+		{
+			/*
+			 * Restore line style.
+			 */
+			mGraphics2D.setStroke(originalStroke);
 		}
 	}
 }
