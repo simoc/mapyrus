@@ -1532,15 +1532,25 @@ required.
 
 \textit{extras} defines further options for the new page, given as
 \textit{variable=value} values, separated by whitespace.
-See Table \ref{outputformats} on page \pageref{outputformats}
+See Table \ref{outputformats}
 for options available for each type of output.
 
-\begin{table}[htb]
-\begin{tabular}{|p{3cm}|p{9cm}|}
+\begin{longtable}{|p{3cm}|p{10cm}|}
+\hline
+\label{outputformats}
+File Format & Extras \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Output Formats} \\
+\endfoot
+
 \hline
 File Format & Extras \\
 \hline
 \hline
+\endhead
 
 PostScript, Encapsulated PostScript &
 
@@ -1578,9 +1588,10 @@ Resolution for page, given as a dots-per-inch value.  Replaces
 default value of 300.
 
 \vspace{10pt}
-\texttt{turnpage=true}
+\texttt{turnpage=\textit{flag}}
 
-Turns a landscape orientation page 90 degrees so that it appears
+If \textit{flag} is \texttt{true} then
+turns a landscape orientation page 90 degrees so that it appears
 as a portrait page. \\
 
 \hline
@@ -1590,6 +1601,20 @@ PNG, JPEG images &
 \texttt{background=\textit{color}}
 
 Background color for image, as a named color or as hex digits.
+
+\vspace{10pt}
+\texttt{labelantialiasing=\textit{flag}}
+
+If \textit{flag} is \texttt{true} then
+labels are drawn with anti-aliasing, improving readability.
+Labels are drawn with anti-aliasing by default.
+
+\vspace{10pt}
+\texttt{lineantialiasing=\textit{flag}}
+
+If \textit{flag} is \texttt{true} then
+lines are drawn with anti-aliasing.
+Lines are not drawn with anti-aliasing by default.
 
 \vspace{10pt}
 \texttt{resolution=\textit{value}}
@@ -1616,10 +1641,7 @@ by Mapyrus. \\
 
 \hline
 
-\end{tabular}
-\caption{Output Formats}
-\label{outputformats}
-\end{table}
+\end{longtable}
 
 \subsubsection{parallelpath}
 
