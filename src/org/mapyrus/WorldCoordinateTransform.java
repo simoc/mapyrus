@@ -1,7 +1,7 @@
 /**
  * Interfaces to an external shared library to which we pipe coordinate values
  * and then read back transformed values.  Most useful in combination with
- * PROJ.4 coordinate transform program for reprojecting coordinates.
+ * PROJ coordinate transform program for reprojecting coordinates.
  *
  * Uses JNI interface to call native methods to define transformation and then
  * to transform points between coordinate systems.
@@ -20,7 +20,8 @@ public class WorldCoordinateTransform
 {
 	/*
 	 * Native methods implementing defintion and transformation
-	 * between coordinate systems.
+	 * between coordinate systems and retrieving error message when something
+	 * goes wrong.
 	 */
 	private static native int define(String description);
 	private static native int transform(int t1, int t2, double []coords, int nCoords);
@@ -29,7 +30,7 @@ public class WorldCoordinateTransform
 
 	static
 	{
-		System.loadLibrary("mapyrusproj4");
+		System.loadLibrary("mapyrusproj");
 		mDefinedCoordinateSystems = new Hashtable();
 	}
 
@@ -68,7 +69,9 @@ public class WorldCoordinateTransform
 	private static synchronized void transform(int p1, int p2,
 		double []coords) throws MapyrusException
 	{
-		if (transform(p1, p2, coords, coords.length / 2) < 0)
+		int nTransformed = transform(p1, p2, coords, coords.length / 2);
+
+		if (nTransformed != coords.length)
 		{
 			Integer id;
 			String sourceName = null, destName = null;
@@ -86,8 +89,9 @@ public class WorldCoordinateTransform
 				if (id.intValue() == p2)
 					destName = s;
 			}
-			throw new MapyrusException("Failed to transform coordinates from '" +
-				sourceName + "' to '" + destName + "'");
+			throw new MapyrusException("Failed to transform coordinates " +
+				coords[nTransformed * 2] + " " + coords[nTransformed * 2 + 1] +
+				" from '" + sourceName + "' to '" + destName + "'");
 		}
 	}
 
@@ -104,17 +108,7 @@ public class WorldCoordinateTransform
 		throws MapyrusException
 	{
 		mSourceSystem = defineCoordinateSystem(system1);
-		if (mSourceSystem < 0)
-		{
-			throw new MapyrusException("Failed to define coordinate system " +
-				system1);
-		}
 		mDestinationSystem = defineCoordinateSystem(system2);
-		if (mDestinationSystem < 0)
-		{
-			throw new MapyrusException("Failed to define coordinate system " +
-				system2);
-		}
 	}
 
 	/**
