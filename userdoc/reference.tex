@@ -35,20 +35,24 @@ then standard input is read.  If several filenames and URLs are
 given then they are read in turn.
 
 Variables passed to Mapyrus using the Java \texttt{-D} option
-are available in the Mapyrus interpreter.  Other JAR files
+are available in the Mapyrus interpreter.  The
+\textit{Java Topology Suite} JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
 \texttt{-classpath} option.
 
-\vspace{10pt}
-\texttt{java -D\textit{variable}=\textit{value} \dots\ -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} org.mapyrus.Mapyrus \textit{filename}}
-\vspace{10pt}
+\begin{alltt}
+\texttt{java -D\textit{variable}=\textit{value} \dots\ \textbackslash
+  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.4.0.jar:\textit{other-jarfile} \textbackslash
+  org.mapyrus.Mapyrus \textit{filename}}
+\end{alltt}
 
 Mapyrus runs as an HTTP Server when started with the
 \texttt{-s} option.
 
-\vspace{10pt}
-\texttt{java -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} org.mapyrus.Mapyrus -s \textit{port} \textit{filename} \dots}
-\vspace{10pt}
+\begin{alltt}
+\texttt{java -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} \textbackslash
+  org.mapyrus.Mapyrus -s \textit{port} \textit{filename} \dots}
+\end{alltt}
 
 \subsubsection{Startup Configuration}
 
