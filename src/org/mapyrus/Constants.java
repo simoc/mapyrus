@@ -27,6 +27,31 @@ package au.id.chenery.mapyrus;
  */
 public class Constants
 {
+	public static final String PROGRAM_NAME = "Mapyrus";
+	
+	/*
+	 * Current software version number set by ant Replace task during build.
+	 */
+	public static final String VERSION = "@software_version_token@";
+
+	/*
+	 * Maximum number of threads to run simultaneously handling HTTP requests.
+	 */
+	public static final int MAX_HTTP_THREADS = 8;
+
+	/*
+	 * Time in milliseconds to wait to begin handling an HTTP request.  If
+	 * HTTP server is to busy to begin handling request within this time then
+	 * request is cancelled and an error is returned to HTTP client.
+	 */
+	public static final int HTTP_TIMEOUT = 30 * 1000;
+
+	/*
+	 * Length of time in milliseconds that temporary files are retained
+	 * when running as an HTTP server.
+	 */
+	public static final int HTTP_TEMPFILE_LIFESPAN = 300 * 1000;
+
 	/*
 	 * Number of points and millimetres per inch.
 	 */
