@@ -1,34 +1,26 @@
-begin x
-  # Draw 'x' symbol.
-  #
-  color "#0000A0"
-  linestyle 0.1
-  move -0.7, -0.7
-  draw 0.7, 0.7
-  move -0.7, 0.7
-  draw 0.7, -0.7
-  stroke
-end
-begin randomx
-  # Set random position, then draw 'x' symbol there.
+begin randomLetter
+  # Set random position, then draw a random letter there.
   #
   move random(3), random(3)
-  x
+  color "#0000A0"
+  font "Helvetica", 3
+  let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  label substr(alphabet, random(length(alphabet)), 1)
 end
-begin fillx
-  # Draw outline polygon, then symbols covering the polygon.
+begin alphabetSoup
+  # Draw polygon outline, then letters inside polygon.
   #
   color "black"
   linestyle 0.1
   stroke
   clip
-  stripepath 5, 0
-  samplepath 5, 0
-  randomx
+  stripepath 4, 0
+  samplepath 4, 0
+  randomLetter
 end
 
 newpage "eps", "tutorialrand3.eps", 40, 40
 clearpath
 move 5, 5
 draw 7, 32, 31, 29, 27, 8, 5, 5
-fillx
+alphabetSoup
