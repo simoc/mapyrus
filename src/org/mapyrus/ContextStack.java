@@ -524,7 +524,7 @@ public class ContextStack
 			}
 			else if (sub.equals("version"))
 			{
-				retval = new Argument(Argument.STRING, Constants.VERSION);
+				retval = new Argument(Argument.STRING, Constants.getVersion());
 			}
 			else if (sub.equals("rotation"))
 			{
