@@ -169,9 +169,10 @@ public class OutputFormat
 	 * @param resolution resolution of page in DPI.
 	 * @param turnPage flag true when page is to be rotated 90 degrees.
 	 * @param fontList list of PostScript fonts to include in header.
+	 * @param backgroundColor background color for page, or null if no background.
 	 */
 	private void writePostScriptHeader(double width, double height,
-		int resolution, boolean turnPage, ArrayList fontList)
+		int resolution, boolean turnPage, ArrayList fontList, Color backgroundColor)
 		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
@@ -260,6 +261,18 @@ public class OutputFormat
 		mWriter.println("0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
 
 		/*
+		 * Set background color for page.
+		 */
+		if (backgroundColor != null)
+		{
+			float c[] = backgroundColor.getRGBColorComponents(null);
+			mWriter.println("gsave");
+			mWriter.println(c[0] + " " + c[1] + " " + c[2] + " setrgbcolor");
+			mWriter.println("0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
+			mWriter.println("grestore");
+		}
+
+		/*
 		 * Set plotting units to millimetres.
 		 */
 		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
@@ -308,15 +321,28 @@ public class OutputFormat
 		mWriter.println("");
 	}
 
-	/*
+	/**
 	 * Sets correct rendering hints and transformation
 	 * for buffered image we will plot to.
+	 * @param resolution resolution for page in DPI.
+	 * @param backgroundColor background color for page, or null if no background.
 	 */
-	private void setupBufferedImage(double resolution)
+	private void setupBufferedImage(double resolution, Color backgroundColor)
 	{
 		double scale;
 
 		scale = resolution / Constants.MM_PER_INCH;
+
+		/*
+		 * Set background of entire image to desired color.
+		 */
+		if (backgroundColor != null)
+		{
+			Color originalColor = mGraphics2D.getColor();
+			mGraphics2D.setColor(backgroundColor);
+			mGraphics2D.fillRect(0, 0, mImage.getWidth(), mImage.getHeight());
+			mGraphics2D.setColor(originalColor);
+		}
 
 		/*
 		 * Set transform with origin in lower-left corner and
@@ -377,6 +403,7 @@ public class OutputFormat
 		mAfmFiles = new ArrayList();
 		int resolution;
 		boolean turnPage = false;
+		Color backgroundColor = null;
 
 		if (mOutputType == POSTSCRIPT)
 			resolution = 300;
@@ -499,8 +526,18 @@ public class OutputFormat
 				String flag = token.substring(9);
 				turnPage = flag.equalsIgnoreCase("true");
 			}
+			else if (token.startsWith("background="))
+			{
+				String colorName = token.substring(11);
+				backgroundColor = ColorDatabase.getColor(colorName, 0);
+				if (backgroundColor == null)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+						": " + colorName);
+				}
+			}
 		}
-	
+
 		/*
 		 * Setup file we are writing to.
 		 */
@@ -510,7 +547,7 @@ public class OutputFormat
 				
 			mSuppliedFontResources = new HashSet();
 	
-			writePostScriptHeader(width, height, resolution, turnPage, fontList);
+			writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 	
 			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
@@ -550,7 +587,7 @@ public class OutputFormat
 				height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
 			}
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
-			setupBufferedImage(resolution);
+			setupBufferedImage(resolution, backgroundColor);
 
 			/*
 			 * Fonts look so much better with anti-aliasing so always use it.
