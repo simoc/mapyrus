@@ -33,7 +33,8 @@ public class LegendEntry
 	 */
 	public static final int POINT_ENTRY = 1;
 	public static final int LINE_ENTRY = 2;
-	public static final int BOX_ENTRY = 3;
+	public static final int ZIGZAG_ENTRY = 3;
+	public static final int BOX_ENTRY = 4;
 
 	private String mBlockName;
 	private Argument[] mBlockArgs;
@@ -44,7 +45,7 @@ public class LegendEntry
 	 * Create new legend entry.
 	 * @param blockName procedure block name for legend entry.
 	 * @param blockArgs arguments to procedure block for legend entry.
-	 * @param type legend type, either POINT_ENTRY, LINE_ENTRY or BOX_ENTRY. 
+	 * @param type legend type, either POINT_ENTRY, LINE_ENTRY, ZIGZAG_ENTRY or BOX_ENTRY. 
 	 * @param description label for legend entry.
 	 */
 	public LegendEntry(String blockName, Argument []blockArgs, int type, String description)
