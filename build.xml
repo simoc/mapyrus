@@ -69,8 +69,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <replace file="userdoc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
 <replace file="userdoc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
 
-<javadoc sourcefiles="src/org/mapyrus/Mapyrus.java" notree="true" nonavbar="true" classpath="build/classes" destdir="javadoc" failonerror="true"/>
-
 <!-- Generate all examples, doing tutorial examples separately so -->
 <!-- it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
@@ -158,7 +156,7 @@ Mapyrus is released under the GNU Lesser General Public License (LGPL).
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, userdoc/**, javadoc/**, ${ant.project.name}.jar, src/**, NEWS, README, VERSION" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log"/>
+<fileset dir="." includes="build/**, build.xml, userdoc/**, ${ant.project.name}.jar, src/**, NEWS, README, VERSION" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log"/>
 </zip>
 </target>
 
@@ -169,7 +167,6 @@ Mapyrus is released under the GNU Lesser General Public License (LGPL).
 <fileset dir="." includes="${ant.project.name}.jar, manifest, README"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
 <fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
-<fileset dir="javadoc" includes="**"/>
 </delete>
 </target>
 
