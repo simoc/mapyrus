@@ -3,7 +3,8 @@
 t = tempname("png")
 imageSizeInPixels = 300
 resolutionDPI = 96
-newpage "png", t, 25.4 / resolutionDPI * imageSizeInPixels, 25.4 / resolutionDPI * imageSizeInPixels, resolutionDPI
+imageSizeInMM = 25.4 / resolutionDPI * imageSizeInPixels
+newpage "png", t, imageSizeInMM, imageSizeInMM, resolutionDPI
 
 # The first time this URL is accessed the area to view is not given.
 # So set it to cover the whole dataset.
