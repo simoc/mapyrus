@@ -36,6 +36,8 @@ import java.io.StringReader;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A request from from an HTTP client that is handled asynchronously.
@@ -75,14 +77,20 @@ public class HTTPRequest extends Thread
 	private boolean mReturnStatus;
 	private String mErrorMessage;
 
+	/*
+	 * Logger to write log messages to.
+	 */
+	private Logger mLogger;
+
 	/**
 	 * Create new HTTP request.
 	 * @param socket HTTP connection from client.
 	 * @param interpreter interpreter to use for handling request.
 	 * @param interpreterPool pool of interpreters to put interpreter back into when finished.
+	 * @param logger logger to write log messages to.
 	 */
 	public HTTPRequest(Socket socket, Interpreter interpreter,
-		Pool interpreterPool)
+		Pool interpreterPool, Logger logger)
 	{
 		super();
 		
@@ -91,6 +99,7 @@ public class HTTPRequest extends Thread
 		mPool = interpreterPool;
 		mImagemapPoint = null;
 		mReturnStatus = true;
+		mLogger = logger;
 	}
 
 	/**
@@ -218,6 +227,11 @@ public class HTTPRequest extends Thread
 		 * Read line and see whether it is a GET or POST request.
 		 */
 		String firstLine = reader.readLine();
+		if (mLogger.isLoggable(Level.FINE))
+		{
+			mLogger.fine(getName() + ": " +
+				MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + firstLine);
+		}
 		StringTokenizer st = new StringTokenizer(firstLine);
 		if (st.countTokens() < 3)
 		{
@@ -301,6 +315,12 @@ public class HTTPRequest extends Thread
 		String nextLine = reader.readLine();
 		while (nextLine.length() > 0)
 		{
+			if (mLogger.isLoggable(Level.FINER))
+			{
+				mLogger.finer(getName() + ": " +
+					MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + nextLine);
+			}
+
 			if (nextLine.startsWith(CONTENT_LENGTH_KEYWORD + ":"))
 			{
 				try
@@ -330,6 +350,11 @@ public class HTTPRequest extends Thread
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.MISSING_HTTP_POST));
 				sb.append((char)c);
 			}
+			if (mLogger.isLoggable(Level.FINE))
+			{
+				mLogger.fine(getName() + ": " +
+					MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + sb.toString());
+			}
 			commands.append(parseForm(sb.toString()));
 		}
 
@@ -352,6 +377,7 @@ public class HTTPRequest extends Thread
 		BufferedReader inReader;
 		BufferedInputStream inStream = null;
 		String reply;
+		String contentType;
 
 		/*
 		 * Read and parse and execute HTTP request from an HTTP client.
@@ -404,12 +430,19 @@ public class HTTPRequest extends Thread
 			outStream = new BufferedOutputStream(mSocket.getOutputStream());
 			if (mReturnStatus)
 			{
-				String contentType;
-				
 				if (mMimeType != null)
 					contentType = mMimeType;
 				else
 					contentType = mInterpreter.getContentType();
+
+				if (mLogger.isLoggable(Level.FINE))
+				{
+					mLogger.fine(getName() + ": " +
+						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + HTTP_OK_KEYWORD);
+					mLogger.fine(getName() + ": " +
+						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " +
+						CONTENT_TYPE_KEYWORD + ": " + contentType);
+				}
 
 				reply = HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
 					CONTENT_TYPE_KEYWORD + ": " + contentType +
@@ -424,6 +457,13 @@ public class HTTPRequest extends Thread
 					 * Write output of interpreter back to HTTP client.
 					 */
 					byteArrayStream.writeTo(outStream);
+
+					if (mLogger.isLoggable(Level.FINE))
+					{
+						mLogger.fine(getName() + ": " +
+							MapyrusMessages.get(MapyrusMessages.HTTP_RETURNED) +
+							": " + byteArrayStream.size());
+					}
 				}
 				else
 				{
@@ -431,19 +471,39 @@ public class HTTPRequest extends Thread
 					 * Spool requested file back to HTTP client.
 					 */
 					int c = inStream.read();
+					int counter = 0;
 					while (c >= 0)
 					{
 						outStream.write(c);
+						counter++;
 						c = inStream.read();
 					}
+
+					if (mLogger.isLoggable(Level.FINE))
+					{
+						mLogger.fine(getName() + ": " +
+							MapyrusMessages.get(MapyrusMessages.HTTP_RETURNED) + ": " + counter);
+					}
+
 					inStream.close();
 					inStream = null;
 				}
 			}
 			else
 			{
+				contentType = MimeTypes.get("txt");
+
+				if (mLogger.isLoggable(Level.FINE))
+				{
+					mLogger.fine(getName() + ": " +
+						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + HTTP_BAD_KEYWORD);
+					mLogger.fine(getName() + ": " +
+						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " +
+						CONTENT_TYPE_KEYWORD + ": " + contentType);
+				}
+
 				reply = HTTP_BAD_KEYWORD + Constants.LINE_SEPARATOR +
-					CONTENT_TYPE_KEYWORD + ": " + MimeTypes.get("txt") +
+					CONTENT_TYPE_KEYWORD + ": " + contentType +
 					Constants.LINE_SEPARATOR +
 					Constants.LINE_SEPARATOR +
 					mErrorMessage + Constants.LINE_SEPARATOR;
