@@ -23,7 +23,6 @@
 
 package org.mapyrus;
 
-import java.awt.geom.PathIterator;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,13 +42,19 @@ public class Argument
 	public static final int VARIABLE = 3;
 	public static final int GEOMETRY = 4;
 
-	public static final int GEOMETRY_POINT = 1000;
-	public static final int GEOMETRY_LINESTRING = 1001;
-	public static final int GEOMETRY_POLYGON = 1002;
-	public static final int GEOMETRY_MULTIPOINT = 1003;
-	public static final int GEOMETRY_MULTILINESTRING = 1004;
-	public static final int GEOMETRY_MULTIPOLYGON = 1005;
-	public static final int GEOMETRY_COLLECTION = 1006;
+	public static final int GEOMETRY_POINT = 100;
+	public static final int GEOMETRY_LINESTRING = 101;
+	public static final int GEOMETRY_POLYGON = 102;
+	public static final int GEOMETRY_MULTIPOINT = 103;
+	public static final int GEOMETRY_MULTILINESTRING = 104;
+	public static final int GEOMETRY_MULTIPOLYGON = 105;
+	public static final int GEOMETRY_COLLECTION = 106;
+
+	/*
+	 * Markers in geometry array marking each segment of a geometry.
+	 */
+	public static final int MOVETO = 0;
+	public static final int LINETO = 1;
 
 	/**
 	 * Constant for numeric value zero.
@@ -125,22 +130,39 @@ public class Argument
 
 	/**
 	 * Create a new geometry argument for all types of geometry.
-	 * @param geometryType is OGC geometry type of point(s), line(s),
-	 * or polygon(s).
+	 * @param geometryType OGC geometry type.
 	 * @param coords is array containing (X, Y) coordinates of point(s),
 	 * line(s), polygon(s).
 	 *
-	 * Array is of the form:
+	 * For simple geometry, array elements are of the form:
 	 * <pre>
-	 * +--------+-------+---+---+-------+---+---+
-	 * | length | move/ | x | y | move/ | x | y | ...
-	 * |        | line  |   |   | line  |   |   |
-	 * +--------+-------+---+---+-------+---+---+
+	 * GEOMETRY_POINT, 1, MOVE, x, y
+	 * 
+	 * GEOMETRY_LINESTRING, 2, MOVE, x0, y0, DRAW, x1, y1
+	 * 
+	 * GEOMETRY_POLYGON, 4, MOVE, x0, y0, DRAW, x1, y1, DRAW, x2, y2, DRAW, x3, y3
 	 * </pre>
-	 *
-	 * where length is the number of slots used in the array,
-	 * a moveto point is flagged as PathIterator.SEG_MOVETO,
-	 * a lineto point is PathIterator.SEG_LINETO.
+	 * 
+	 * where second element gives number of coordinates in geometry.
+	 * 
+	 * For multiple geometry types, array elements are of the form:
+	 * <pre>
+	 * GEOMETRY_MULTIPOINT, 2, GEOMETRY_POINT 1, MOVE, x, y, GEOMETRY_POINT, 1, MOVE, x, y
+	 * 
+	 * GEOMETRY_MULTILINESTRING, 2, GEOMETRY_LINESTRING, 2, MOVE, x0, y0, DRAW x1, y1,
+	 * GEOMETRY_LINESTRING, 3, MOVE, x0, y0, DRAW x1, y1, DRAW x2, y2
+	 * 
+	 * GEOMETRY_MULTIPOLYGON, 2, GEOMETRY_POLYGON, 4, MOVE, x0, y0, DRAW, x1, y1,
+	 * DRAW, x2, y2, DRAW, x3, y3, GEOMETRY_POLYGON, 4, MOVE, x0, y0, DRAW, x1, y1,
+	 * DRAW, x2, y2, DRAW, x3, y3
+	 * 
+	 * GEOMETRY_COLLECTION, 2, GEOMETRY_POINT, 1, MOVE, x, y,
+	 * GEOMETRY_LINESTRING, 2, MOVE, x0, y0, DRAW, x1, y1
+	 * </pre>
+	 * 
+	 * where the second element gives the number of geometries included in the
+	 * multi-geometry.
+	 * 
 	 */
 	public Argument(int geometryType, double []coords)
 	{
@@ -151,19 +173,20 @@ public class Argument
 	/**
 	 * Parse parenthesised coordinate list from OGC geometry string into array.
 	 * @param wktGeometry original geometry string.
-	 * @param st OGC geometry coordinates as tokens.
+	 * @param st OGC geometry string as tokens.
 	 * @param geometryIndex index into geometry array to add coordinates.
-	 * @param isPoints flag true when all coordinates to be added as MOVETO points
+	 * @param isMultiPoint flag true when all coordinates to be added as MULTIPOINT geometry.
 	 * @return index of next free position in geometry array after adding coordinates.
 	 */
 	private int parseCoordinateList(String wktGeometry, StringTokenizer st,
-		int geometryIndex, boolean isPoints)
+		int geometryIndex, boolean isMultiPoint)
 		throws MapyrusException
 	{
 		String token;
 		boolean foundOpenParen, foundCloseParen, foundEmpty;
 		boolean foundX, foundY;
-		int index = geometryIndex;
+		int index = geometryIndex + 1;
+		int counter = 0;
 
 		/*
 		 * First expect a '(' or the keyword 'EMPTY'.
@@ -196,15 +219,31 @@ public class Argument
 					{
 						if (foundX == false)
 						{
-							/*
-							 * Move to first coordinate pair, then add a
-							 * line to each subsequent pair.
-							 */
-							if (isPoints || index == geometryIndex)
-								mGeometryValue[index] = PathIterator.SEG_MOVETO;
+							if (isMultiPoint)
+							{
+								/*
+								 * Set each point in multipoint geometry as
+								 * a separate point geometry.
+								 */
+								mGeometryValue[index] = GEOMETRY_POINT;
+								mGeometryValue[index + 1] = 1;
+								mGeometryValue[index + 2] = MOVETO;
+								index += 3;
+							}
+							else if (counter == 0)
+							{
+								/*
+								 * Move to first coordinate pair, then add a
+								 * line to each subsequent pair.
+								 */
+								mGeometryValue[index] = MOVETO;
+								index++;
+							}
 							else
-								mGeometryValue[index] = PathIterator.SEG_LINETO;
-							index++;
+							{
+								mGeometryValue[index] = LINETO;
+								index++;
+							}
 
 							mGeometryValue[index] = Double.parseDouble(token);
 							index++;
@@ -215,6 +254,7 @@ public class Argument
 							mGeometryValue[index] = Double.parseDouble(token);
 							index++;
 							foundY = true;
+							counter++;
 						}
 						else
 						{
@@ -261,6 +301,11 @@ public class Argument
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
 				": " + wktGeometry);
 		}
+
+		/*
+		 * Set number of coordinate pairs in geometry.
+		 */
+		mGeometryValue[geometryIndex] = counter;
 		return(index);
 	}
 
@@ -269,13 +314,17 @@ public class Argument
 	 * @param wktGeometry original geometry string.
 	 * @param st OGC geometry coordinates as tokens.
 	 * @param geometryIndex index into geometry array to add coordinates.
+	 * @param isMultiLinestring flag true when all coordinates to be added
+	 * as MULTILINESTRING geometries
 	 * @return index of next free position in geometry array after adding coordinates.
 	 */
 	private int parsePolygon(String wktGeometry, StringTokenizer st,
-		int geometryIndex)
+		int geometryIndex, boolean isMultiLinestring)
 		throws MapyrusException
 	{
 		String token;
+		int counter = 0;
+		int index = geometryIndex + 1;
 
 		/*
 		 * Parse opening '('.  Then one or more lists of coordinates surrounded
@@ -283,52 +332,72 @@ public class Argument
 		 */
 		boolean foundCloseParen = false;
 		boolean foundCoordList = false;
+		boolean foundEmptyList = false;
 
-		foundCoordList = false;
-		while (foundCoordList == false && st.hasMoreTokens())
+		foundCoordList = foundEmptyList = false;
+		while (foundCoordList == false && foundEmptyList == false && st.hasMoreTokens())
 		{
 			token = st.nextToken();
 			foundCoordList = token.equals("(");
+			foundEmptyList = token.equals("EMPTY");
 		}
 
-		while (foundCoordList && foundCloseParen == false && st.hasMoreTokens())
+		if (foundEmptyList == false)
 		{
-			/*
-			 * Parse coordinate list like '(10 20, 30 50)'.
-			 */
-			geometryIndex = parseCoordinateList(wktGeometry, st, geometryIndex, false);
-
-			/*
-			 * Is there another coordinate list following this one?
-			 */
-			foundCoordList = false;
-			while (foundCoordList == false && foundCloseParen == false && st.hasMoreTokens())
+			while (foundCoordList && foundCloseParen == false && st.hasMoreTokens())
 			{
-				token = st.nextToken();
-				if (token.equals(","))
-					foundCoordList = true;
-				else if (token.equals(")"))
-					foundCloseParen = true;
+				if (isMultiLinestring)
+				{
+					mGeometryValue[index + 1] = GEOMETRY_MULTILINESTRING;
+					index++;
+					counter++;
+				}
+	
+				/*
+				 * Parse coordinate list like '(10 20, 30 50)'.
+				 */
+				index = parseCoordinateList(wktGeometry, st, index, false);
+	
+				/*
+				 * Is there another coordinate list following this one?
+				 */
+				foundCoordList = false;
+				while (foundCoordList == false && foundCloseParen == false && st.hasMoreTokens())
+				{
+					token = st.nextToken();
+					if (token.equals(","))
+						foundCoordList = true;
+					else if (token.equals(")"))
+						foundCloseParen = true;
+				}
+			}
+	
+			/*
+			 * If we did not parse right through to the ')' then there is
+			 * something wrong with the geometry string.
+			 */
+			if (!foundCloseParen)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
+					": " + wktGeometry);
 			}
 		}
 
 		/*
-		 * If we did not parse right through to the ')' then there is
-		 * something wrong with the geometry string.
+		 * Set number of coordinates for POLYGONS, number of sub-geometries for MULTILINESTRING. 
 		 */
-		if (!foundCloseParen)
-		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
-				": " + wktGeometry);
-		}
-		return(geometryIndex);
+		if (isMultiLinestring)
+			mGeometryValue[geometryIndex] = counter;
+		else
+			mGeometryValue[geometryIndex] = (index - (geometryIndex + 1)) / 3;  
+		return(index);
 	}
 
 	/**
 	 * Parse OGC geometry string.
 	 * @param wktGeometry original geometry string.
 	 * @param st OGC geometry coordinates as tokens.
-	 * @param geometryIndex index into geometry array to add coordinates.
+	 * @param index index into geometry array to add coordinates.
 	 * @return index of next free position in geometry array after adding coordinates.
 	 */
 	private int parseGeometry(String wktGeometry, StringTokenizer st, int index)
@@ -336,7 +405,7 @@ public class Argument
 	{
 		String token;
 		String ogcType;
-		boolean foundOpenParen, foundCloseParen, foundComma;
+		boolean foundOpenParen, foundCloseParen, foundComma, foundEmptyList;
 
 		if (st.hasMoreTokens())
 		{
@@ -352,41 +421,42 @@ public class Argument
 			 */
 			if (ogcType.equals("POINT"))
 			{
-				mType = GEOMETRY_POINT;
-				index = parseCoordinateList(wktGeometry, st, index, true);
+				mGeometryValue[index] = GEOMETRY_POINT;
+				index = parseCoordinateList(wktGeometry, st, index + 1, false);
 			}
 			else if (ogcType.equals("LINESTRING"))
 			{
-				mType = GEOMETRY_LINESTRING;	
-				index = parseCoordinateList(wktGeometry, st, index, false);
+				mGeometryValue[index] = GEOMETRY_LINESTRING;	
+				index = parseCoordinateList(wktGeometry, st, index + 1, false);
 			}
 			else if (ogcType.equals("MULTIPOINT"))
 			{
-				mType = GEOMETRY_MULTIPOINT;
-				index = parseCoordinateList(wktGeometry, st, index, true);
+				mGeometryValue[index] = GEOMETRY_MULTIPOINT;
+				index = parseCoordinateList(wktGeometry, st, index + 1, true);
 			}
 			else
 			{
 				if (ogcType.equals("POLYGON"))
-					mType = GEOMETRY_POLYGON;
+					mGeometryValue[index] = GEOMETRY_POLYGON;
 				else if (ogcType.equals("MULTILINESTRING"))
-					mType = GEOMETRY_MULTILINESTRING;
+					mGeometryValue[index] = GEOMETRY_MULTILINESTRING;
 				else if (ogcType.equals("MULTIPOLYGON"))
-					mType = GEOMETRY_MULTIPOLYGON;
+					mGeometryValue[index] = GEOMETRY_MULTIPOLYGON;
 				else if (ogcType.equals("GEOMETRYCOLLECTION"))
-					mType = GEOMETRY_COLLECTION;
+					mGeometryValue[index] = GEOMETRY_COLLECTION;
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
 						": " + wktGeometry);
 				}
 
-				if (mType == GEOMETRY_POLYGON || mType == GEOMETRY_MULTILINESTRING)
+				if (mGeometryValue[index] == GEOMETRY_POLYGON)
 				{
-					/*
-					 * Parse one or more coordinate lists surrounded by parentheses.
-					 */
-					index = parsePolygon(wktGeometry, st, index);
+					index = parsePolygon(wktGeometry, st, index + 1, false);
+				}
+				else if (mGeometryValue[index] == GEOMETRY_MULTILINESTRING)
+				{
+					index = parsePolygon(wktGeometry, st, index + 1, true);
 				}
 				else
 				{
@@ -394,18 +464,32 @@ public class Argument
 					 * Parse any number of polygons or geometries surrounded
 					 * by parentheses.
 					 */
-					foundOpenParen = foundCloseParen = false;
-					while (foundOpenParen == false && st.hasMoreTokens())
+					foundOpenParen = foundCloseParen = foundEmptyList = false;
+					while (foundOpenParen == false && foundEmptyList == false && st.hasMoreTokens())
 					{
 						token = st.nextToken();
 						foundOpenParen = token.equals("(");
+						foundEmptyList = token.equals("EMPTY");
 					}
+
+					int geometryType = (int)mGeometryValue[index];
+					int counter = 0;
+					int counterIndex = index + 1;
+					index += 2;
+
 					while (foundOpenParen && foundCloseParen == false && st.hasMoreTokens())
 					{
-						if (mType == GEOMETRY_MULTIPOLYGON)
-							index = parsePolygon(wktGeometry, st, index);
+						if (geometryType == GEOMETRY_MULTIPOLYGON)
+						{
+							mGeometryValue[index] = GEOMETRY_POLYGON;
+							index = parsePolygon(wktGeometry, st, index + 1, false);
+						}
 						else
+						{
 							index = parseGeometry(wktGeometry, st, index);
+						}
+
+						counter++;
 
 						foundComma = false;
 						while (foundComma == false &&
@@ -418,17 +502,17 @@ public class Argument
 								foundCloseParen = true;
 						}
 					}
+
+					/*
+					 * Set number of sub-geometries in MULTIPOLYGON or GEOMETRYCOLLECTION. 
+					 */
+					mGeometryValue[counterIndex] = counter;
+
 					if (foundOpenParen && foundCloseParen == false)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
 							": " + wktGeometry);
 					}
-					
-					/*
-					 * Nested geometries changed geometry type.  Set it back to a
-					 * collection here.
-					 */
-					mType = GEOMETRY_COLLECTION;
 				}
 			}
 		}
@@ -447,17 +531,9 @@ public class Argument
 	public Argument(String wktGeometry) throws MapyrusException
 	{
 		StringTokenizer st = new StringTokenizer(wktGeometry, ",() ", true);
-		int index = 1;
 		mGeometryValue = new double[st.countTokens()];
-		index = parseGeometry(wktGeometry, st, index);
-
-		/*
-		 * Set number of elements in geometry array, or 0 if geometry is empty.
-		 */
-		if (index > 1)
-			mGeometryValue[0] = index;
-		else
-			mGeometryValue[0] = 0;
+		parseGeometry(wktGeometry, st, 0);
+		mType = (int)mGeometryValue[0];
 	}
 
 	/**
@@ -577,6 +653,109 @@ public class Argument
 	{
 		return(mHashMap.size());
 	}
+
+	/**
+	 * Creates OGC WKT geometry string from geometry array.
+	 * @param coords geometry type, count and move/draw coordinates.
+	 * @param startIndex index in coords array to start converting.
+	 * @param s buffer to append geometry to.
+	 * @param addGeometryType if true then geometry type added to geometry string.
+	 * @return index of next element in coords array to be parsed.
+	 */
+	private int createOGCWKT(double []coords, int startIndex, StringBuffer s, boolean addGeometryType)
+	{
+		int geometryType = (int)coords[startIndex];
+		int nElements = (int)coords[startIndex + 1];
+		int nextIndex = startIndex + 2;
+
+		if (addGeometryType)
+		{
+			if (geometryType == GEOMETRY_POINT)
+				s.append("POINT ");
+			else if (geometryType == GEOMETRY_LINESTRING)
+				s.append("LINESTRING ");
+			else if (geometryType == GEOMETRY_POLYGON)
+				s.append("POLYGON ");
+			else if (geometryType == GEOMETRY_MULTIPOINT)
+				s.append("MULTIPOINT ");
+			else if (geometryType == GEOMETRY_MULTILINESTRING)
+				s.append("MULTILINESTRING ");
+			else if (geometryType == GEOMETRY_MULTIPOLYGON)
+				s.append("MULTIPOLYGON ");
+			else
+				s.append("GEOMETRYCOLLECTION ");
+		}
+
+		if (nElements == 0)
+		{
+			/*
+			 * Geometry is empty.
+			 */
+			s.append("EMPTY ");
+		}
+		else if (geometryType == GEOMETRY_POINT)
+		{
+			/*
+			 * Convert point to OGC Well Known Text representation.
+			 */
+			if (addGeometryType)
+				s.append("(");
+			s.append(coords[nextIndex + 1]);
+			s.append(" ");
+			s.append(coords[nextIndex + 2]);
+			if (addGeometryType)
+				s.append(")");
+			nextIndex += 3;
+		}
+		else if (geometryType == GEOMETRY_LINESTRING || geometryType == GEOMETRY_POLYGON)
+		{
+			/*
+			 * Convert line or polygon to OGC Well Known Text representation.
+			 */
+			if (geometryType == GEOMETRY_POLYGON)
+				s.append("(");
+			for (int i = 0; i < nElements; i++)
+			{
+				if (coords[nextIndex] == MOVETO)
+				{
+					/*
+					 * End last polygon ring and begin next ring.
+					 */
+					if (i > 0)
+						s.append("), ");
+					s.append("(");
+				}
+				else if (i > 0)
+				{
+					s.append(", ");
+				}
+				s.append(mGeometryValue[nextIndex + 1]);
+				s.append(" ");
+				s.append(mGeometryValue[nextIndex + 2]);
+				nextIndex += 3;
+			}
+
+			if (geometryType == GEOMETRY_LINESTRING)
+				s.append(")");
+			else
+				s.append("))");
+		}
+		else /* GEOMETRY_MULTIPOINT, GEOMETRY_MULTILINESTRING, GEOMETRY_MULTIPOLYGON, GEOMETRYCOLLECTION */
+		{
+			/*
+			 * Expand each geometry in the multiple geometry.
+			 */
+			s.append("( ");
+			for (int i = 0; i < nElements; i++)
+			{
+				if (i > 0)
+					s.append(",");
+				nextIndex = createOGCWKT(coords, nextIndex, s, false);
+			}
+			s.append(")");
+		}
+		return(nextIndex);
+	}
 	
 	/**
 	 * Return string representation of this argument.
@@ -627,153 +806,10 @@ public class Argument
 			}
 			retval = s.toString();
 		}
-		else if (mGeometryValue[0] == 0)
-		{
-			/*
-			 * Geometry is empty.
-			 */
-			if (mType == GEOMETRY_POINT)
-				retval = "POINT EMPTY";
-			else if (mType == GEOMETRY_LINESTRING)
-				retval = "LINESTRING EMPTY";
-			else if (mType == GEOMETRY_POLYGON)
-				retval = "POLYGON EMPTY";
-			else if (mType == GEOMETRY_MULTIPOINT)
-				retval = "MULTIPOINT EMPTY";
-			else if (mType == GEOMETRY_MULTILINESTRING)
-				retval = "MULTILINESTRING EMPTY";
-			else if (mType == GEOMETRY_MULTIPOLYGON)
-				retval = "MULTIPOLYGON EMPTY";
-			else
-				retval = "GEOMETRYCOLLECTION EMPTY";
-		}
-		else if (mType == GEOMETRY_POINT)
-		{
-			/*
-			 * Convert point to OGC Well Known Text representation.
-			 */
-			retval = "POINT (" + mGeometryValue[2] + " " + mGeometryValue[3] + ")";
-		}
-		else if (mType == GEOMETRY_LINESTRING || mType == GEOMETRY_POLYGON ||
-			mType == GEOMETRY_MULTIPOINT)
-		{
-			/*
-			 * Convert line, polygon or series of points to
-			 * OGC Well Known Text representation.
-			 */
-			s = new StringBuffer();
-			if (mType == GEOMETRY_LINESTRING)
-				s.append("LINESTRING (");
-			else if (mType == GEOMETRY_POLYGON)
-				s.append("POLYGON (");
-			else
-				s.append("MULTIPOINT (");
-
-			for (int i = 1; i < mGeometryValue[0]; i += 3)
-			{
-				if (mType == GEOMETRY_POLYGON && mGeometryValue[i] == PathIterator.SEG_MOVETO)
-				{
-					/*
-					 * End last polygon ring and begin next ring.
-					 */
-					if (i > 1)
-						s.append("), ");
-					s.append("(");
-				}
-				else if (i > 1)
-				{
-					s.append(", ");
-				}
-				s.append(mGeometryValue[i + 1]);
-				s.append(" ");
-				s.append(mGeometryValue[i + 2]);
-			}
-
-			if (mType == GEOMETRY_LINESTRING || mType == GEOMETRY_MULTIPOINT)
-				s.append(")");
-			else
-				s.append("))");
-
-			retval = s.toString();
-		}
-		else if (mType == GEOMETRY_MULTILINESTRING || mType == GEOMETRY_MULTIPOLYGON)
-		{
-			/*
-			 * Convert multiple lines or polygons to
-			 * OGC Well Known Text representation.
-			 */
-			if (mType == GEOMETRY_MULTILINESTRING)
-				s = new StringBuffer("MULTILINESTRING ((");
-			else
-				s = new StringBuffer("MULTIPOLYGON (((");
-
-			for (int i = 1; i < mGeometryValue[0]; i += 3)
-			{
-				if (mGeometryValue[i] == PathIterator.SEG_MOVETO)
-				{
-					if (i > 1)
-					{
-						if (mType == GEOMETRY_MULTILINESTRING)
-							s.append("), (");
-						else
-							s.append(")), ((");
-					}
-				}
-				else
-				{
-					s.append(", ");
-				}
-
-				s.append(mGeometryValue[i + 1]);
-				s.append(" ");
-				s.append(mGeometryValue[i + 2]);
-			}		
-
-			if (mType == GEOMETRY_MULTILINESTRING)
-				s.append("))");
-			else
-				s.append(")))");
-			
-			retval = s.toString();
-		}
 		else
 		{
-			s = new StringBuffer("GEOMETRYCOLLECTION (");
-			int i = 1;
-			while (i < mGeometryValue[0])
-			{
-				if (i > 1)
-					s.append(",");
-
-				if (mGeometryValue[i] == PathIterator.SEG_MOVETO &&
-					i + 3 < mGeometryValue[0] &&
-					mGeometryValue[i + 3] != PathIterator.SEG_MOVETO)
-				{
-					s.append(" LINESTRING (");
-					String separator = "";
-					do
-					{
-						s.append(separator);
-						s.append(mGeometryValue[i + 1]);
-						s.append(" ");
-						s.append(mGeometryValue[i + 2]);
-						i += 3;
-						separator = ",";
-					}
-					while (i < mGeometryValue[0] && mGeometryValue[i] != PathIterator.SEG_MOVETO);
-					s.append(")");
-				}
-				else
-				{
-					s.append(" POINT (");
-					s.append(mGeometryValue[i + 1]);
-					s.append(" ");
-					s.append(mGeometryValue[i + 2]);
-					s.append(")");
-					i += 3;
-				}
-			}
-			s.append(")");
+			s = new StringBuffer();
+			createOGCWKT(mGeometryValue, 0, s, true);
 			retval = s.toString();
 		}
 		return(retval);
