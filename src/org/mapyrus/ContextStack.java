@@ -68,6 +68,7 @@ public class ContextStack
 	private static final String UNPROJECTED_VARIABLE = "project";
 	private static final String DATASET_VARIABLE = "dataset";
 	private static final String PAGE_VARIABLE = "page";
+	private static final String SCREEN_VARIABLE = "screen";
 	private static final String IMAGEMAP_VARIABLE = "imagemap";
 	
 	/*
@@ -981,6 +982,23 @@ public class ContextStack
 				{
 					retval = new Argument(Constants.MM_PER_INCH /
 						getCurrentContext().getResolution());
+				}
+				else
+					retval = null;
+			}
+			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + SCREEN_VARIABLE + "."))
+			{
+				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + SCREEN_VARIABLE.length() + 1);
+				if (sub.equals("width"))
+					retval = new Argument(Constants.getScreenWidth());
+				else if (sub.equals("height"))
+					retval = new Argument(Constants.getScreenHeight());
+				else if (sub.equals("resolution.dpi"))
+					retval = new Argument(Constants.getScreenResolution());
+				else if (sub.equals("resolution.mm"))
+				{
+					retval = new Argument(Constants.MM_PER_INCH /
+						Constants.getScreenResolution());
 				}
 				else
 					retval = null;
