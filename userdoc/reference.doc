@@ -1,0 +1,294 @@
+include header.doc
+<!-- @(#) $Id$ -->
+
+<h2>
+Reference
+</h2>
+
+Java 1.4
+
+language reference
+assignments
+quoting
+comments
+control structures
+procedures
+
++, -, *, /, .
+<p>
+Number of built-in functions
+
+<p>
+<table cellpadding=4 border=1>
+<tr>
+<td>
+<b>Function Name</b>
+<td>
+<b>Description</b>
+
+<tr>
+<td>
+<a name="length"></a>
+<tt>length(S)<tt>
+<td>
+Returns the length of the string S.
+
+<tr>
+<td>
+<a name="match"></a>
+<tt>match(S, R)<tt>
+<td>
+Returns the index in the string S, where the regular expression R
+is first matched.  The index of the first character is 1.
+If the regular expression does not match S, then 0 is returned.
+
+<tr>
+<td>
+<a name="round"></a>
+<tt>round(N)<tt>
+<td>
+Returns N rounded to nearest whole number.
+
+<tr>
+<td>
+<a name="random"></a>
+<tt>random(N)<tt>
+<td>
+Generates a random floating point number between 0 and N.
+
+<tr>
+<td>
+<a name="substr"></a>
+<tt>substr(S, N, L)<tt>
+<td>
+Returns a substring of the string S, beginning at the
+character with index N that is L characters long.  The first character
+in S has an index of 1.
+
+</table>
+
+<p>
+<table cellpadding=4 border=1>
+
+<tr>
+<td>
+<b>Variable Name</b>
+<td>
+<b>Description</b>
+
+<tr>
+<td>
+<tt>Mapyrus.dataset.fieldnames</tt>
+<td>
+The names of fields being imported from the current dataset,
+separated by spaces.
+<tr>
+<td>
+<tt>Mapyrus.dataset.projection</tt>
+<td>
+A description of the projection (coordinate system) in which coordinates
+of the current dataset are stored.
+Projection descriptions are not standardised between dataset formats.
+Different dataset formats will return different descriptions for the same
+projection.
+
+<tr>
+<td>
+<tt>Mapyrus.dataset.min.x</tt>
+<br>
+<tt>Mapyrus.dataset.min.y</tt>
+<br>
+<tt>Mapyrus.dataset.max.x</tt>
+<br>
+<tt>Mapyrus.dataset.max.y</tt>
+<td>
+The bounding rectangle of all data in the current dataset.
+
+<tr>
+<td>
+<tt>Mapyrus.elapsedtime</tt>
+<td>
+The elapsed processing time, measured in seconds.
+
+<tr>
+<td>
+<tt>Mapyrus.geometry.length</tt>
+<td>
+The length of the current path on the page, measured in millimetres.
+
+<tr>
+<td>
+<tt>Mapyrus.geometry.area</tt>
+<td>
+The area of the current path on the page, measured in square millimetres.
+
+<tr>
+<td>
+<tt>Mapyrus.import.count</tt>
+<td>
+The number of rows already fetched from the current dataset.
+
+<tr>
+<td>
+<tt>Mapyrus.import.moreRows</tt>
+<td>
+Flag value set to 1 if another row is available for <a href="#fetch">fetch</a>
+command, or 0 if no more rows available.
+
+<tr>
+<td>
+<tt>Mapyrus.page.height</tt>
+<br>
+<tt>Mapyrus.page.width</tt>
+<br>
+<tt>Mapyrus.page.resolution</tt>
+<td>
+The height, width and resolution of page that were given to
+<a href="#newpage">newpage</a> command.  Height and width are
+in millimetres, resolution is in dots-per-inch.
+
+<tr>
+<td>
+<tt>Mapyrus.project.min.x</tt>
+<br>
+<tt>Mapyrus.project.min.y</tt>
+<br>
+<tt>Mapyrus.project.max.x</tt>
+<br>
+<tt>Mapyrus.project.max.y</tt>
+<td>
+The bounding rectangle of the current dataset.
+
+<tr>
+<td>
+<tt>Mapyrus.rotation</tt>
+<tr>
+<tt>Mapyrus.scale.x</tt>
+<tt>Mapyrus.scale.y</tt>
+<tr>
+<tt>Mapyrus.timestamp</tt>
+<tr>
+<td>
+A string rep
+
+<tr>
+<td>
+<tt>Mapyrus.version</tt>
+<tr>
+<td>
+The version of the software.
+
+<tr>
+<td>
+<tt>Mapyrus.worlds.min.x</tt>
+<tt>Mapyrus.worlds.min.y</tt>
+<tt>Mapyrus.worlds.max.x</tt>
+<tt>Mapyrus.worlds.max.y</tt>
+The bounding box of world coordinates set with the 
+<a href="#worlds">WORLDS</a> command.
+</table>
+
+<p>
+COLOR NamedColor
+Sets color for subsequest drawing.
+
+
+<p>
+<a name="linestyle"></a>
+LINESTYLE
+
+<p>
+<a name="font"></a>
+FONT
+Sets font for drawing.
+
+<p>
+<a name="justify"></a>
+JUSTIFY
+
+<p>
+<a name="move"></a>
+MOVE
+Moves the pen
+
+<p>
+<a name="draw"></a>
+DRAW
+
+<p>
+<a name="arc"></a>
+ARC
+Circular arc
+
+<p>
+<a name="clearpath"></a>
+CLEARPATH
+
+<p>
+<a name="samplepath"></a>
+SAMPLEPATH
+Replaces current path with equally spaced points along that path
+
+<p>
+<a name="stripepath"></a>
+STRIPEPATH
+Replaces current path with equally spaced line stripes
+
+<p>
+<a name="stroke"></a>
+STROKE
+
+<p>
+<a name="fill"></a>
+FILL
+Flood fills the current path with the current color.
+The path is not modified.
+
+<p>
+<a name="clip"></a>
+CLIP
+Protects
+
+<p>
+<a name="label"></a>
+LABEL
+
+<p>
+<a name="scale"></a>
+SCALE
+
+<p>
+<a name="rotate"></a>
+ROTATE
+
+<p>
+<a name="worlds"></a>
+WORLDS
+
+<p>
+<a name="project"></a>
+PROJECT
+
+<p>
+<a name="dataset"></a>
+DATASET
+
+<p>
+<a name="import"></a>
+IMPORT
+
+<p>
+<a name="fetch"></a>
+FETCH
+Fetches next row from dataset.
+
+<p>
+<a name="newpage"></a>
+NEWPAGE
+
+<p>
+<a name="print"></a>
+PRINT expression, [expression]
+Writes 
+
+include footer.doc
