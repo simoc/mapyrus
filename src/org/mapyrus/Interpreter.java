@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
 /**
@@ -545,6 +544,54 @@ public class Interpreter
 		legendList.acceptAdditions();
 	}
 
+	/**
+	 * Walk through a geometry, adding it to current path.
+	 * @param context context containing path to add geometry to.
+	 * @param coords geometry array to add to path.
+	 * @param index index in geometry array at which to start walking.
+	 * @return index one greater than the last element in the geometry array. 
+	 */
+	private int addGeometryToPath(ContextStack context, double []coords, int index)
+		throws MapyrusException
+	{
+		int i;
+		int geometryType = (int)(coords[index]);
+		int nCoords = (int)(coords[index + 1]);
+		index += 2;
+
+		/*
+		 * Add geometry to path.  Complex, nested geometries must be
+		 * added recursively.
+		 */
+		switch (geometryType)
+		{
+			case Argument.GEOMETRY_POINT:
+			case Argument.GEOMETRY_LINESTRING:
+			case Argument.GEOMETRY_POLYGON:
+				for (i = 0; i < nCoords; i++)
+				{
+					double x = coords[index + 1];
+					double y = coords[index + 2];
+					if (coords[index] == Argument.MOVETO)
+						context.moveTo(x, y);
+					else
+						context.lineTo(x, y);
+					index += 3;
+				}
+				break;
+			case Argument.GEOMETRY_MULTIPOINT:
+			case Argument.GEOMETRY_MULTILINESTRING:
+			case Argument.GEOMETRY_MULTIPOLYGON:
+			case Argument.GEOMETRY_COLLECTION:
+				for (i = 0; i < nCoords; i++)
+				{
+					index = addGeometryToPath(context, coords, index);
+				}
+				break;
+		}
+		return(index);
+	}
+
 	/*
 	 * Execute a single statement, changing the path, context or generating
 	 * some output.
@@ -721,15 +768,7 @@ public class Interpreter
 				for (int i = 0; i < nExpressions; i++)
 				{
 					double coords[] = mExecuteArgs[i].getGeometryValue();
-					int len = (int)(coords[0]);
-					
-					for (int j = 1; j < len; j += 3)
-					{
-						if (coords[j] == PathIterator.SEG_MOVETO)
-							context.moveTo(coords[j + 1], coords[j + 2]);
-						else
-							context.lineTo(coords[j + 1], coords[j + 2]);
-					}
+					addGeometryToPath(context, coords, 0);
 				}
 				break;
 				
