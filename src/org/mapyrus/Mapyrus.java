@@ -28,8 +28,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.mapyrus.logging.SingleLineFormatter;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points,
@@ -278,8 +281,16 @@ public class Mapyrus
 		 */
 		activeThreads = new HashSet();
 
-		String packageName = Mapyrus.class.getPackage().getName();
-		Logger logger = Logger.getLogger(packageName);
+		/*
+		 * Create a logger for writing errors and information whilst
+		 * running as an HTTP server.
+		 */
+		String className = Mapyrus.class.getName();
+		Logger logger = Logger.getLogger(className);
+		ConsoleHandler consoleHandler = new ConsoleHandler();
+		consoleHandler.setFormatter(new SingleLineFormatter());
+		logger.addHandler(consoleHandler);
+		logger.setUseParentHandlers(false);
 
 		try
 		{
