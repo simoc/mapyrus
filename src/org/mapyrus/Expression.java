@@ -79,7 +79,9 @@ public class Expression
 	private static final String MATCH_FUNCTION_NAME = "match";
 	private static final int REPLACE_FUNCTION = 5;	/* replace('foobar', 'o*', '_') =  'f_bar' */
 	private static final String REPLACE_FUNCTION_NAME = "replace";
-	private static final int SUBSTR_FUNCTION = 6;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final int TEMPNAME_FUNCTION = 6;	/* tempname('.jpg') =  'tmpABC123.jpg' */
+	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
+	private static final int SUBSTR_FUNCTION = 7;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
 	/*
@@ -97,6 +99,7 @@ public class Expression
 		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
 		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
 		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
+		mFunctionTypeLookup.put(TEMPNAME_FUNCTION_NAME, new Integer(TEMPNAME_FUNCTION));
 		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
 		
 		mFunctionArgumentCount = new byte[SUBSTR_FUNCTION + 1];
@@ -105,6 +108,7 @@ public class Expression
 		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
 		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
 		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
+		mFunctionArgumentCount[TEMPNAME_FUNCTION] = 1;
 		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
 	}
 
@@ -315,6 +319,15 @@ public class Expression
 						 */
 						retval = leftValue;
 					}
+				}
+				else if (t.mFunction == TEMPNAME_FUNCTION)
+				{
+					/*
+					 * Generate temporary file with given suffix.
+					 */
+					leftValue = traverse(t.mLeftBranch, context);
+					retval = new Argument(Argument.STRING,
+						TransientFileFactory.generate(leftValue.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
 				}
 				else /* SUBSTR_FUNCTION */
 				{
