@@ -77,8 +77,8 @@ Variable & Description \\
 \endhead
 
 \texttt{Mapyrus.rgb.file=\textit{filename}} &
-Defines an X Windows color names file to use for color
-name lookup in the
+Defines an X Windows color names file containing additional color names
+for the
 \texttt{color} command.  Default value is
 \texttt{/usr/lib/X11/rgb.txt} \\
 
@@ -804,8 +804,8 @@ color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
 color "hsb", \textit{hue}, \textit{saturation}, \textit{brightness} [, \textit{alpha}]
 \end{alltt}
 
-Sets color for drawing.  Named colors refer to colors in the file
-\texttt{/usr/lib/X11/rgb.txt}, or the file given as a startup variable (see
+Sets color for drawing.  Around 150 commonly used color names are defined,
+additional color names are defined in a file given as a startup variable (see
 Table \ref{startupvariables} on page \pageref{startupvariables}).
 
 \textit{hexdigits} is a 6 digit hexadecimal
