@@ -739,13 +739,19 @@ public class Interpreter
 				break;
 
 			case Statement.NEWPAGE:
-				if (nExpressions == 5)
+				if (nExpressions == 5 || nExpressions == 6)
 				{
 					String filename = mExecuteArgs[1].getStringValue();
 					String format = mExecuteArgs[0].getStringValue();
 					int width = (int)mExecuteArgs[2].getNumericValue();
 					int height = (int)mExecuteArgs[3].getNumericValue();
 					int resolution = (int)mExecuteArgs[4].getNumericValue();
+					
+					String extras;
+					if (nExpressions == 6)
+						extras = mExecuteArgs[5].getStringValue();
+					else
+						extras = "";
 
 					if (width <= 0)
 					{
@@ -764,7 +770,7 @@ public class Interpreter
 					}
 
 					context.setOutputFormat(format, filename, width, height, resolution,
-						"extras", mStdoutStream);
+						extras, mStdoutStream);
 
 					/*
 					 * If writing to stdout then content type for an HTTP
