@@ -13,12 +13,9 @@ begin ruins
   #
   key "point", "Archaelogical Ruins"
   color "black"
-  move 0, 2
-  arc 1, 0, 1.5, 0, 2
-  move -1.5, 0
-  arc 1, -1, 0, -1.5, 0
-  move 1.5, 0
-  arc 1, 1, 0, 1.5, 0
+  circle 0, 1.5, 0.5
+  circle -1, 0, 0.5
+  circle 1, 0, 0.5
   fill
 end
 begin church name, ruined
