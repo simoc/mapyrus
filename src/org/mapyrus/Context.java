@@ -23,6 +23,19 @@ import java.util.Vector;
 public class Context
 {
 	/*
+	 * Units of world coordinate system.
+	 */
+	public static final int WORLD_UNITS_METRES = 1;
+	public static final int WORLD_UNITS_FEET = 2;
+
+	/*
+	 * Projection transformation may results in some strange warping.
+	 * To get a better estimate of extents when projecting to world coordinate
+	 * system we project many points in a grid to find minimum and maximum values.
+	 */
+	private static final int PROJECTED_GRID_STEPS = 5;
+		
+	/*
 	 * Graphical attributes
 	 */	
 	private Color mColor;
@@ -50,10 +63,12 @@ public class Context
 	private WorldCoordinateTransform mProjectionTransform;
 
 	/*
-	 * Transformation matrix from world coordinates to page coordinates.
+	 * Transformation matrix from world coordinates to page coordinates
+	 * and the units of world coordinates.
 	 */
 	private AffineTransform mWorldCtm;
 	private Rectangle2D.Double mWorldExtents;
+	private int mWorldUnits;
 	
 	/*
 	 * Coordinates making up path.
@@ -214,7 +229,7 @@ public class Context
 	 * @param height is the page height (in points).
 	 * @param extras contains extra settings for this output.
 	 */
-	public void setOutputFormat(String filename,String format,
+	public void setOutputFormat(String format, String filename,
 		int width, int height, String extras)
 		throws IOException, MapyrusException
 	{
@@ -321,8 +336,9 @@ public class Context
 	 * @param y1 minimum Y world coordinate.
 	 * @param x2 maximum X world coordinate.
 	 * @param y2 maximum Y world coordinate.
+	 * @param units units of world coordinates (WORLD_UNITS_METRES,WORLD_UNITS_FEET, etc.)
 	 */
-	public void setWorlds(double x1, double y1, double x2, double y2)
+	public void setWorlds(double x1, double y1, double x2, double y2, int units)
 	{
 		double xDiff = x2 - x1;
 		double yDiff = y2 - y1;
@@ -371,15 +387,16 @@ public class Context
 			mOutputFormat.getPageHeight() / (y2 - y1));
 		mWorldCtm.translate(-x1, -y1);
 		mWorldExtents = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
+		mWorldUnits = units;
 	}
 
 	/**
-	 * Sets transformation between two world coordinate systems.
+	 * Sets reprojection between two world coordinate systems.
 	 * @param sourceSystem description of coordinate system coordinates transformed form.
 	 * @param destinationSystem description of coordinate system coordinates
 	 * are transformed to.
 	 */
-	public void setTransform(String sourceSystem, String destinationSystem)
+	public void setReprojection(String sourceSystem, String destinationSystem)
 		throws MapyrusException
 	{
 		mProjectionTransform = new WorldCoordinateTransform(sourceSystem,
@@ -419,9 +436,129 @@ public class Context
 	 */
 	public Rectangle2D.Double getWorldExtents()
 	{
+		Rectangle2D.Double retval;
+		
+		if (mWorldExtents != null)
+		{
+			retval = mWorldExtents;
+		}
+		else if (mOutputFormat != null)
+		{
+			retval = new Rectangle2D.Double(0, 0,
+				mOutputFormat.getPageWidth(), mOutputFormat.getPageHeight());
+				
+		}
+		else
+		{
+			retval = new Rectangle2D.Double(0, 0, 1, 1);
+		}
 		return(mWorldExtents);
 	}
+
+	/**
+	 * Return scale of world coordinates.  The world coordinate range divided
+	 * by the page size.
+	 * @return scale, (1:2000) is returned as value 2000. 
+	 */
+	public double getWorldScale()
+	{
+		double scale;
+		double worldWidthInMM;
+
+		if (mOutputFormat != null && mWorldCtm != null)
+		{
+			worldWidthInMM = mWorldExtents.width;
+			if (mWorldUnits == WORLD_UNITS_METRES)
+				worldWidthInMM *= 1000.0;
+			else
+				worldWidthInMM *= 1000.0 / 0.3048;
+
+			scale = worldWidthInMM / mOutputFormat.getPageWidth();
+		}
+		else
+		{
+			scale = 1.0;
+		}
+		return(scale);
+	}
+
+	/**
+	 * Returns bounding that when transformed through projection results
+	 * in same bounding box as current world coordinate system.
+	 * @return bounding box.
+	 */
+	public Rectangle2D.Double getProjectedExtents() throws MapyrusException
+	{
+		Rectangle2D.Double retval;
+		double xMin, yMin, xMax, yMax;
+		int i, j;
+		double coords[] = new double[2];
+		
+		xMin = yMin = Float.MAX_VALUE;
+		xMax = yMax = Float.MIN_VALUE;
+
+		if (mWorldExtents != null)
+		{
+			if (mProjectionTransform != null)
+			{
+				/*
+				 * Transform points around boundary of world coordinate extents
+				 * backwards through projection transformation.
+				 * Find minimum and maximum values.
+				 */
+				for (i = 0; i <= PROJECTED_GRID_STEPS; i++)
+				{
+					for (j = 0; j <= PROJECTED_GRID_STEPS; j++)
+					{
+						/*
+						 * Only transform points around boundary.
+						 */
+						if ((i == 0 || i == PROJECTED_GRID_STEPS) &&
+							(j == 0 || j == PROJECTED_GRID_STEPS))
+						{
+							coords[0] = mWorldExtents.x +
+								((double)i / PROJECTED_GRID_STEPS) * mWorldExtents.width;
+							coords[1] = mWorldExtents.y +
+								((double)j / PROJECTED_GRID_STEPS) * mWorldExtents.height;	
 						
+							mProjectionTransform.backwardTransform(coords);
+							if (coords[0] < xMin)
+								xMin = coords[0];
+							if (coords[1] < yMin)
+								yMin = coords[1];
+							if (coords[0] > xMax)
+								xMax = coords[0];
+							if (coords[1] > yMax)
+								yMax = coords[1];
+						}
+					}
+				}
+				retval = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
+			}
+			else
+			{
+				/*
+				 * No projection transformation set so just return plain world
+				 * coordinate extents.
+				 */
+				retval = mWorldExtents;
+			}
+		}
+		else if (mOutputFormat != null)
+		{
+			/*
+			 * No world coordinate system set, just return page coordinate.
+			 */
+			retval = new Rectangle2D.Double(0, 0,
+				mOutputFormat.getPageWidth(), mOutputFormat.getPageHeight());
+		}
+		else
+		{
+			retval = new Rectangle2D.Double(0, 0, 1, 1);
+		}
+		return(retval);
+	}						
+
 	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
