@@ -74,6 +74,9 @@ public class FunctionTable
 		f = new Pow();
 		mFunctions.put(f.getName(), f);
 
+		f = new Protected();
+		mFunctions.put(f.getName(), f);
+
 		f = new Random();
 		mFunctions.put(f.getName(), f);
 
