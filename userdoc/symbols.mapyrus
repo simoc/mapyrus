@@ -967,7 +967,7 @@ begin leftticks_tick
 	stroke
 end
 
-begin leftticks
+begin Lleftticks
 	# Display line with tick marks on lefthand-side.
 	#
 	key "line", "Left Ticks"
@@ -987,7 +987,7 @@ begin centerline_c
 	label "c"
 end
 
-begin centerline
+begin Lcenterline
 	# Display line with 'c' letters along it.
 	#
 	key "line", "Centerline"
@@ -1004,7 +1004,7 @@ begin fence_tick
 	stroke
 end
 
-begin fence
+begin Lfence
 	# Display fence line: --|--|--
 	#
 	key "line", "Fence"
@@ -1042,7 +1042,7 @@ begin motorway_label routeNumber
 	endif
 end
 
-begin motorway routeNumber
+begin Lmotorway routeNumber
 	# Display motorway with route number label at intervals.
 	#
 	key "line", "Motorway", "M25"
@@ -1066,7 +1066,7 @@ begin border_dot
 	clearpath
 end
 
-begin border
+begin Lborder
 	# Display border.
 	#
 	key "line", "Border"
@@ -1078,6 +1078,134 @@ begin border
 		samplepath 20, 8
 		border_dot
 	endif
+end
+
+begin Lrailway
+	# Display railway line as alternating colors along line.
+	#
+	key "line", "Railway"
+	color "black"
+	linestyle 1, "butt", "bevel"
+	stroke
+	linestyle 1, "butt", "bevel", 2, 4, 4
+	color "grey60"
+	stroke
+end
+
+begin powerline_v
+	move -0.6, 1
+	draw 0, 0
+	draw 0.6, 1
+	stroke
+end
+
+begin Lpowerline
+	# Display electricity power line as ___v___v_
+	#
+	key "line", "Power Line"
+	color "black"
+	linestyle 0.1
+	stroke
+	if Mapyrus.path.length > 10
+	then
+		samplepath 10, 8
+		powerline_v
+	endif
+end
+
+begin Ldashdot
+	# Displays a simple dash dot line --- . --- .
+	#
+	key "line", "Dash Dot Line"
+	color "purple"
+	linestyle 1, "butt", "bevel", 0, 8, 2, 1, 2
+	stroke
+end
+
+begin Lmulticolorline
+	# Displays line twice with different, out of phase
+	# linestyles to give appearance of alternating dashes
+	# in different colors.
+	#
+	key "line", "Multi Color Line"
+	color "red"
+	linestyle 1, "butt", "bevel", 0, 4, 8
+	stroke
+	linestyle 1, "butt", "bevel", 6, 4, 8
+	color "darkred"
+	stroke
+end
+
+begin Larrowline_head r
+	# Draw arrowhead rotated to point at end of line.
+	#
+	rotate r
+	move 1.2, 1.2
+	draw 0, 0, 1.2, -1.2
+	stroke
+end
+
+begin Larrowline_start
+	# Split path into points with large spacing so there will be
+	# only one sample point at start of line.  Draw arrowhead there.
+	#
+	samplepath 99999, 0
+	Larrowline_head 0
+end
+
+begin Larrowline_end
+	# Draw arrowhead at end of line.
+	#
+	samplepath -99999, 0
+	Larrowline_head 180
+end
+
+begin Larrowline
+	# Displays line with arrows at either end.
+	#
+	key "line", "Arrow Line"
+	color "olive"
+	linestyle 0.1
+	stroke
+	Larrowline_start
+	Larrowline_end
+end
+
+begin Lsnakeline_segment
+	# Display segments with alternating arcs to give wiggling effect.
+	#
+	move -2, 0
+	arc -LsnakeY, 0, LsnakeY, 2, 0
+	let LsnakeY = -LsnakeY
+	stroke
+end
+
+begin Lsnakeline
+	# Displays wiggly snake that looks like a snake!
+	#
+	key "line", "Snake Line"
+	color "forestgreen"
+	linestyle 2, "round", "round"
+	samplepath 4, 2
+	let LsnakeY=1
+	Lsnakeline_segment
+end
+
+begin Linaccurateline_dot
+	local y
+	let y = random(1) - 0.5
+	box -0.3, y - 0.3, 0.3, y + 0.3
+	fill
+end
+
+begin Linaccurateline
+	# Displays dotted line that jumps up and down randomly that
+	# shows that position of line is not accurate.
+	#
+	key "line", "Inaccurate Line"
+	color "black"
+	samplepath 1.2, 0.6
+	Linaccurateline_dot
 end
 
 #u-bahn
@@ -1505,11 +1633,18 @@ then
 	emphasisedname "Ely"
 	streetname ""
 
-	centerline
-	leftticks
-	fence
-	motorway ""
-	border
+	Lcenterline
+	Lleftticks
+	Lfence
+	Lmotorway ""
+	Lborder
+	Lrailway
+	Ldashdot
+	Lmulticolorline
+	Lpowerline
+	Larrowline
+	Lsnakeline
+	Linaccurateline
 
 	hatch1
 	hatch2
@@ -1562,7 +1697,7 @@ then
 	do
 		clearpath
 		move x, y
-		if Mapyrus.key.next eq "line" or Mapyrus.key.next eq "zigzag"
+		if match(Mapyrus.key.next, "^L")
 		then
 			legend 20
 		else
