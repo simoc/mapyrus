@@ -15,13 +15,12 @@ WHERE GEOM && GeometryFromText( BOX3D(" . x1 . " " . y1 . \
 # Fetch each road as an OGC WKT geometry string and draw it.
 #
 dataset "jdbc", sql, "driver=org.postgresql.Driver \
-url=jdbc:postgresql:pogo \
-user=postgres password=postgres wktfields=geom"
+url=jdbc:postgresql:pogo user=postgres password=postgres"
 worlds x1, y1, x2, y2
 while Mapyrus.fetch.more
 do
   clearpath
   fetch
-  addpath geom
+  addpath parsewkt(geom)
   stroke
 done
