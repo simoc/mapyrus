@@ -99,8 +99,6 @@ public class GradientFillFactory
 				int c5Distance = (IMAGE_SIZE / 2 - x) * (IMAGE_SIZE / 2 - x) +
 					(IMAGE_SIZE / 2 - y) * (IMAGE_SIZE / 2 - y);
 
-				int sumDistances = c1Distance + c2Distance + c3Distance +
-					c4Distance + c5Distance;
 				int index = y * IMAGE_SIZE + x;
 
 				/*
