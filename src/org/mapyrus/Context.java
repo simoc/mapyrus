@@ -13,6 +13,8 @@ import java.awt.geom.Point2D.Double;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.util.Vector;
+import au.id.chenery.mapyrus.dataset.DatasetFactory;
+import au.id.chenery.mapyrus.dataset.GeographicDataset;;
 
 /**
  * Maintains state information during interpretation inside a single procedure block. 
@@ -101,6 +103,13 @@ public class Context
 	 * we must close the output file when this context is finished.
 	 */
 	private boolean mOutputDefined;
+
+	/*
+	 * Dataset currently being read from and the number of rows already
+	 * fetched from it.
+	 */
+	private GeographicDataset mDataset;
+	private int mDatasetRowCount;
 						
 	/**
 	 * Create a new context with reasonable default values.
@@ -122,6 +131,8 @@ public class Context
 		mOutputDefined = false;
 		mAttributesChanged = true;
 		mAttributesSet = false;
+		mDataset = null;
+		mDatasetRowCount = 0;
 	}
 
 	/**
@@ -138,6 +149,8 @@ public class Context
 		mXScaling = existing.mXScaling;
 		mYScaling = existing.mYScaling;
 		mRotation = existing.mRotation;
+		mDataset = existing.mDataset;
+		mDatasetRowCount = existing.mDatasetRowCount;
 
 		/*
 		 * Only create variable lookup table when values defined locally.
@@ -401,7 +414,24 @@ public class Context
 		mProjectionTransform = new WorldCoordinateTransform(sourceSystem,
 			destinationSystem);
 	}
-		
+
+	/**
+	 * Open dataset to read geometry from and begin a query to read geometry
+	 * that is in current world extents.
+	 * @param type is format of dataset, for example, "text".
+	 * @param name is name of dataset to open.
+	 * @param extras are special options for this dataset type such as database connection
+	 * information, or instructions for interpreting data.
+	 * @param geometryFieldNames is list of names of fields containing geometry.
+	 */
+	public void setDataset(String type, String name,
+		String extras, String []geometryFieldNames) throws MapyrusException
+	{
+		mDataset = DatasetFactory.open(type, name, extras, geometryFieldNames);
+		mDataset.query(getUnprojectedExtents());
+		mDatasetRowCount = 0;
+	}
+
 	/**
 	 * Returns X scaling value in current transformation.
 	 * @return m00 element from transformation matrix.
@@ -486,7 +516,7 @@ public class Context
 	 * in same bounding box as current world coordinate system.
 	 * @return bounding box.
 	 */
-	public Rectangle2D.Double getProjectedExtents() throws MapyrusException
+	public Rectangle2D.Double getUnprojectedExtents() throws MapyrusException
 	{
 		Rectangle2D.Double retval;
 		double xMin, yMin, xMax, yMax;
@@ -825,7 +855,60 @@ public class Context
 
 		return(bounds);
 	}
+
+	/**
+	 * Returns true if dataset being read has another row available.
+	 * @return true if another row available.
+	 */
+	public boolean datasetHasMoreRows() throws MapyrusException
+	{
+		return(mDataset != null && mDataset.hasMoreRows());
+	}
 	
+	/**
+	 * Return next row from dataset.
+	 * @return field values for next row.
+	 */
+	public Row fetchDatasetRow() throws MapyrusException
+	{
+		if (mDataset == null)
+			throw new MapyrusException("No current dataset to fetch from");
+		Row retval = mDataset.fetch();
+		mDatasetRowCount++;
+		return(retval);
+	}
+
+	/**
+	 * Return indexes of fields in a row in a dataset that contain geometry.
+	 * @return indexes of geometry fields.
+	 */
+	public int []getDatasetGeometryFieldIndexes() throws MapyrusException
+	{
+		if (mDataset == null)
+			throw new MapyrusException("No current dataset to fetch from");
+		return(mDataset.getGeometryFieldIndexes());
+	}
+
+	/**
+	 * Return names of fields in current dataset.
+	 * @return names of fields.
+	 */
+	public String []getDatasetFieldNames() throws MapyrusException
+	{
+		if (mDataset == null)
+			throw new MapyrusException("No current dataset to fetch from");
+		return(mDataset.getFieldNames());
+	}
+
+	/**
+	 * Return the number of rows already fetched from current dataset.
+	 * @return count of rows fetched.
+	 */
+	public int getDatasetFetchedCount()
+	{
+		return(mDatasetRowCount);
+	}
+		
 	/**
 	 * Returns value of a variable.
 	 * @param variable name to lookup.
