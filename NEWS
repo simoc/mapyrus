@@ -7,9 +7,9 @@ Copyright (C) 2003 Simon Chenery.
 * Converted documentation to LaTeX and generate manual in PDF format.
 * Added transparent colors.
 * Use ISOLatin1Encoding for PostScript fonts to display extended characters.
-* Add box command.
-* Change package name in JAR file to org.mapyrus.
-* change arguments to newpage command so that resolution is optional.
+* Added box, icon commands.
+* Changed package name in JAR file to org.mapyrus.
+* Changed arguments to newpage command so that resolution is optional.
 
 0.32, December 2003
 
