@@ -59,6 +59,7 @@ public class MapyrusMessages
 	public static final String INVALID_DATASET_TYPE = "invaliddatasettype";
 	public static final String INVALID_END_CAP = "invalidendcap";
 	public static final String INVALID_EXPRESSION = "invalidexpression";
+	public static final String INVALID_FIELD_NAME = "invalidfieldname";
 	public static final String INVALID_FONT = "invalidfont";
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
