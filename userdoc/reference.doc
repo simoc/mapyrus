@@ -217,6 +217,9 @@ Each command begins on a separate line.
 Any part of a line following a hash (<tt>#</tt>) character that is not
 part of a literal string is interpreted as a comment and is ignored.
 Leading and trailing spaces or tabs on a line are also ignored.
+A backslash (<tt>\</tt>) character at the end of a line is interpreted
+as a line continuation and the line and next line are joined into a single
+line.
 <p>
 A line beginning with the word <tt>include</tt>, followed by a filename
 or URL includes commands from another file.
