@@ -1765,18 +1765,29 @@ public class OutputFormat
 					distSquared = (lastX - x) * (lastX - x) + (lastY - y) * (lastY - y);
 					if (distSquared >= resolutionSquared)
 					{
-						lastX = x;
-						lastY = y;
 						if (mOutputType == SVG)
 						{
-							writeLine("L " + mCoordinateDecimal.format(lastX) +
-								" " + mCoordinateDecimal.format(mPageHeight - lastY));
+							String sx = mCoordinateDecimal.format(x);
+							String sy = mCoordinateDecimal.format(mPageHeight - y);
+
+							/*
+							 * Use shortcut path types for horizontal
+							 * and vertical line segments.
+							 */
+							if (x == lastX)
+								writeLine("V " + sy);
+							else if (y == lastY)
+								writeLine("H " + sx);
+							else
+								writeLine("L " + sx + " " + sy);
 						}
 						else
 						{
-							writeLine(mCoordinateDecimal.format(lastX) +
-								" " + mCoordinateDecimal.format(lastY) + " l");
+							writeLine(mCoordinateDecimal.format(x) +
+								" " + mCoordinateDecimal.format(y) + " l");
 						}
+						lastX = x;
+						lastY = y;
 						skippedLastSegment = false;
 					}
 					else
