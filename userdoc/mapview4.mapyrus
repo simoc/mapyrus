@@ -1,5 +1,9 @@
 # @(#) $Id$
 
+# Include box3d symbol definition.
+#
+include symbols.mapyrus
+
 # Draw label in black, with white highlight so that it is easier to read.
 #
 begin highlightlabel name
@@ -16,31 +20,6 @@ begin highlightlabel name
 	move 0, 0
 	color "black"
 	label name
-end
-
-# Draw a cube, viewed from the side and above.
-#
-begin box3d
-	linestyle 0.1
-
-	# Draw top side of box
-	#
-	move -1, 1
-	draw -2.73, 0, -0.73, 0, 1, 1, -1, 1
-
-	# Draw right side of box
-	#
-	move 1, 1
-	draw 1, -1, -0.73, -2, -0.73, 0
-
-	# Draw front side of box
-	#
-	box -2.73, -2, -0.73, 0
-
-	color "yellow"
-	fill
-	color "black"
-	stroke
 end
 
 begin warehouse name, inventory
