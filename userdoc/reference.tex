@@ -978,10 +978,13 @@ blended with colors of underlying shapes on the page.
 
 Colors are opaque if an alpha value is not given.
 
-PostScript is a language for defining the layout of shapes on a page.
+Transparent colors are only available for JPEG, PNG
+and Encapsulated PostScript format image (\texttt{epsimage}) output.
+
 The PostScript language does not contain any functions for setting
 transparency.
-All colors in a PostScript file will be opaque.
+All colors in PostScript and Encapsulated PostScript
+files will be opaque.
 
 The spelling \texttt{colour} is also accepted for this command.
 
@@ -1505,20 +1508,26 @@ newpage \textit{format}, \textit{filename}, \textit{width}, \textit{height}, \te
 \end{alltt}
 
 Begins output of a new page to a file.  Any previous output is closed.  The
-path, clipping path and world coordinates are cleared.  The new page has a
-white background, with origin in the lower-left corner.  \textit{format} is the
+path, clipping path and world coordinates are cleared.  The origin of
+the new page is in the lower-left corner.  \textit{format} is the
 file format to use for output, one of:
 
 \begin{itemize}
 \item
-\texttt{eps} for Encapsulated PostScript output.
+\texttt{eps} for Encapsulated PostScript output,
+with shapes and labels defined geometrically.
 \item
 \texttt{ps}, \texttt{postscript} or \texttt{application/postscript}
-for PostScript output.
+for PostScript output,
+with shapes and labels defined geometrically.
 \item
 \texttt{jpeg} or \texttt{image/jpeg} for JPEG image output.
 \item
 \texttt{png} or \texttt{image/png} for PNG image output.
+\item
+\texttt{epsimage} for Encapsulated PostScript image output.
+Output contains
+a single image in which all shapes and labels have been drawn.
 \end{itemize}
 
 See section \ref{pdf} for
@@ -1551,7 +1560,7 @@ required.
 See Table \ref{outputformats}
 for options available for each type of output.
 
-\begin{longtable}{|p{3cm}|p{10cm}|}
+\begin{longtable}{|p{4cm}|p{10cm}|}
 \hline
 \label{outputformats}
 File Format & Extras \\
@@ -1612,7 +1621,7 @@ as a portrait page. \\
 
 \hline
 
-PNG, JPEG images &
+PNG, JPEG images and Encapsulated PostScript images &
 
 \texttt{background=\textit{color}}
 
