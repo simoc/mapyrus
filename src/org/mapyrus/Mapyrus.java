@@ -17,7 +17,20 @@ public class Mapyrus
 	public static final String PROGRAM_NAME = "Mapyrus";
 	private static final int DEFAULT_PORT = 23177;
 	private static final String RCS_STATE = "$State$";
-	
+
+	/**
+	 * Get software version information.
+	 * @return version string.
+	 */
+	public static String getVersion()
+	{
+		/*
+		 * Strip off RCS stuff around state.
+		 */
+		String rcsState = RCS_STATE.substring(8).replace('$', ' ');
+		return(rcsState.trim());
+	}
+		
 	/*
 	 * Show software version number and usage message.
 	 */
@@ -40,7 +53,7 @@ public class Mapyrus
 			"on the given TCP/IP port.",
 		};
 		
-		System.out.println(PROGRAM_NAME + " version " + RCS_STATE.substring(8));
+		System.out.println(PROGRAM_NAME + " version " + getVersion());
 		System.out.println("");
 		
 		for (int i = 0; i < messages.length; i++)
