@@ -109,6 +109,7 @@ public class MapyrusMessages
 	public static final String NOT_A_AFM_FILE = "notaafmfile";
 	public static final String NOT_A_PFA_FILE = "notapfafile";
 	public static final String NOT_A_TTF_FILE = "notattffile";
+	public static final String NOT_MIF_FILE = "notmiffile";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
 	public static final String NOT_SHAPE_FILE = "notshapefile";
 	public static final String NOT_STRING_OPERATION = "notstringoperation";
