@@ -1,8 +1,3 @@
-/**
- * An argument is a literal value or variable name.
- * Several arguments are combined with operators to make an expression.
- */
-
 /*
  * $Id$
  */
@@ -11,11 +6,18 @@ package net.sourceforge.mapyrus;
 
 import java.lang.String;
 
+/**
+ * An argument is a literal value or variable name.
+ * Each field read from a dataset is an argument.
+ * Several arguments can be combined with operators to make an expression
+ * For example, '2 * a + 7' contains three arguments.
+ */
 public class Argument
 {
 	public static final int NUMERIC = 0;
 	public static final int STRING = 1;
 	public static final int VARIABLE = 2;
+	public static final int GEOMETRY = 3;
 	
 	private int mType;
 	private double mNumericValue;
@@ -80,5 +82,25 @@ public class Argument
 	public String getVariableName()
 	{
 		return(mVarname);
+	}
+
+	/**
+	 * Set argument to a numeric value.
+	 * @param d value to set.
+	 */	
+	public void setNumericValue(double d)
+	{
+		mType = NUMERIC;
+		mNumericValue = d;
+	}
+	
+	/**
+	 * Set argument to a string.
+	 * @param s value to set.
+	 */	
+	public void setStringValue(String s)
+	{
+		mType = STRING;
+		mStringValue = s;
 	}
 }
