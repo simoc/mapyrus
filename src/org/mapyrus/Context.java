@@ -10,6 +10,7 @@
 package net.sourceforge.mapyrus;
 
 import java.awt.Color;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -54,6 +55,11 @@ public class Context
 	private GeometricPath mExistingPath;
 
 	/*
+	 * Coordinates making up the clipping path.
+	 */
+	private GeometricPath mClippingPath;
+	
+	/*
 	 * Currently defined variables.
 	 */
 	private Hashtable mVars;
@@ -82,6 +88,7 @@ public class Context
 		mRotation = 0.0;
 		mVars = null;
 		mPath = null;
+		mClippingPath = null;
 		mOutputFormat = null;
 		mOutputDefined = false;
 		mAttributesChanged = true;
@@ -107,8 +114,8 @@ public class Context
 		mVars = null;
 
 		/*
-		 * Don't copy path -- it can be large.  Just keep reference to
-		 * existing path.
+		 * Don't copy path -- it can be large.
+		 * Just keep reference to existing path.
 		 * 
 		 * Create path locally when needed.  If it is referenced without
 		 * being created then take path from existing context instead.
@@ -120,9 +127,20 @@ public class Context
 			mExistingPath = existing.mPath;
 		else
 			mExistingPath = existing.mExistingPath;
-
+			
+		mClippingPath = existing.mClippingPath;
+			
 		mOutputFormat = existing.mOutputFormat;
 		mOutputDefined = false;
+
+		/*
+		 * Save state in parent context so it won't be disturbed by anything
+		 * that gets changed in this new context.
+		 */		
+		if (mOutputFormat != null)
+		{
+			mOutputFormat.saveState();
+		}
 
 		mAttributesChanged = existing.mAttributesChanged;
 		mAttributesSet = false;
@@ -136,7 +154,14 @@ public class Context
 	{
 		if (mAttributesChanged)
 		{
-			mOutputFormat.setAttributes(mColor, mLineWidth);
+			Shape clip;
+			
+			if (mClippingPath != null)
+				clip = mClippingPath.getShape();
+			else
+				clip = null;
+				
+			mOutputFormat.setAttributes(mColor, mLineWidth, clip);
 			mAttributesChanged = false;
 		}
 	}
@@ -170,10 +195,24 @@ public class Context
 	 * Closes a context.  Any output started in this context is completed,
 	 * memory used for context is released.
 	 * A context cannot be used again after this call.
-	 * @return flag indicating if graphical attributes set in this context.
+	 * @return flag true if graphical attributes were set in this context
+	 * and cannot be restored.
 	 */
 	public boolean closeContext() throws IOException, MapyrusException
 	{
+		boolean restoredState;
+
+		if (mOutputFormat != null && !mOutputDefined)
+		{
+			/*
+			 * If state could be restored then no need for caller set
+			 * graphical attributes back to their old values again.
+			 */
+			restoredState = mOutputFormat.restoreState();
+			if (restoredState)
+				mAttributesSet = false;
+		}
+		
 		if (mOutputDefined)
 		{
 			mOutputFormat.closeOutputFormat();
@@ -181,6 +220,7 @@ public class Context
 			mOutputDefined = false;
 		}
 		mPath = null;
+		mClippingPath = null;
 		mVars = null;
 		return(mAttributesSet);
 	}
@@ -202,9 +242,9 @@ public class Context
 	 * Sets color.
 	 * @param c is new color for drawing.
 	 */
-	public void setColor(Color c)
+	public void setColor(Color color)
 	{
-		mColor = c;
+		mColor = color;
 		mAttributesChanged = mAttributesSet = true;
 	}
 	
@@ -414,6 +454,33 @@ public class Context
 		}
 	}
 
+	/**
+	 * Set clipping to show only inside of currently defined path.
+	 */
+	public void clip()
+	{
+		GeometricPath path;
+		
+		/*
+		 * If path defined in this context then use that,
+		 * else use context defined in previous context.
+		 */
+		if (mPath != null)
+			path = mPath;
+		else
+			path = mExistingPath;
+		
+		if (path != null && mOutputFormat != null)
+		{
+			mClippingPath = new GeometricPath(path);
+			mAttributesChanged = mAttributesSet = true;
+			if (mOutputFormat != null)
+			{
+				mOutputFormat.clip(mClippingPath.getShape());
+			}
+		}
+	}
+	
 	/**
 	 * Returns the number of moveTo's in path defined in this context.
 	 * @return count of moveTo calls made.

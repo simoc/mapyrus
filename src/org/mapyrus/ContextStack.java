@@ -228,7 +228,15 @@ public class ContextStack
 	public void fill()
 	{
 		getCurrentContext().fill();
-	}	
+	}
+		
+	/**
+	 * Clip to show only area inside currently defined path.
+	 */
+	public void clip()
+	{
+		getCurrentContext().clip();
+	}
 
 	/**
 	 * Returns the number of moveTo's in path defined in current context.
