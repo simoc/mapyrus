@@ -1,5 +1,7 @@
 /**
- * Wrapper around a Reader to read from a file, whilst expanding any included files.
+ * Wrapper around a Reader to read from a file, whilst expanding
+ * any included files.
+ * Also allows for read characters to be pushed back onto input stream.
  */
 
 /*
@@ -26,11 +28,10 @@ class Preprocessor
 	private LinkedList mFilenameStack;
 
 	/*
-	 * Last character read.
+	 * Line we are currently reading from.
 	 */
-	private int mLastChar;
-	private int mPushedChar;
-	private boolean mCharPushedBack;
+	private StringBuffer mCurrentLine;
+	private int mCurrentLineIndex;
 
 	/**
 	 * Create new user input producer.
@@ -45,8 +46,8 @@ class Preprocessor
 		mFileStack.add(new LineNumberReader(in));
 		mFilenameStack.add(filename);
 
-		mLastChar = '\n';
-		mCharPushedBack = false;
+		mCurrentLine = null;
+		mCurrentLineIndex = 0;
 	}
 
 	/*
@@ -91,57 +92,22 @@ class Preprocessor
 		int c;
 		LineNumberReader in;
 
-		if (mCharPushedBack)
+		/*
+		 * Return next character from current line.
+		 */
+		if (mCurrentLine != null && mCurrentLineIndex < mCurrentLine.length())
 		{
-			/*
-			 * Return the character that was pushed back.
-			 */
-			mCharPushedBack = false;
-			return(mPushedChar);
+			c = mCurrentLine.charAt(mCurrentLineIndex++);
+			return(c);
 		}
-
-		in = (LineNumberReader)(mFileStack.getLast());
-		c = in.read();
 
 		/*
-		 * If we just read a newline then check if next line is an include
-		 * line.
+		 * Need to read a new line.
 		 */
-		if (mLastChar == '\n')
-		{
-			/*
-			 * Read whole line and see if we should include another file.
-			 */
-			in.mark(2048);
-			Character cs = new Character((char)c);
-			String nextLine = cs.toString() + in.readLine();
-			StringTokenizer st = new StringTokenizer(nextLine);
-            		if (st.hasMoreTokens())
-			{
-				String keyword = st.nextToken();
-				keyword.toLowerCase();
-				if (INCLUDE_KEYWORD.equals(keyword))
-				{
-					if (st.hasMoreTokens())
-					{
-						openIncludedFile(st.nextToken());
-						return(read());
-					}
-					else
-					{
-						throw new GfException("Missing include filename at " + getCurrentFilenameAndLine());
-					}
-				}
-			}
-
-			/*
-			 * It's not an include line so rewind back to the
-			 * character we just read.
-			 */
-			in.reset();
-		}
-
-		if (c == -1)
+		mCurrentLineIndex = 0;
+		in = (LineNumberReader)(mFileStack.getLast());
+		String s = in.readLine();
+		if (s == null)
 		{
 			/*
 			 * Got end-of-file.  Continue reading any file that included
@@ -152,21 +118,80 @@ class Preprocessor
 			mFilenameStack.removeLast();
 			if (mFileStack.size() > 0)
 			{
+				mCurrentLine = null;
 				return(read());
+			}
+			else
+			{
+				return(-1);
 			}
 		}
 
-		mLastChar = c;
+		/*
+		 * Check if this line includes another file.
+		 */
+		mCurrentLine = new StringBuffer(s);
+		mCurrentLine.append('\n');
+		StringTokenizer st = new StringTokenizer(s);
+		if (st.hasMoreTokens())
+		{
+			String keyword = st.nextToken();
+			keyword.toLowerCase();
+			if (INCLUDE_KEYWORD.equals(keyword))
+			{
+				if (st.hasMoreTokens())
+				{
+					/*
+					 * Open included file and start reading from
+					 * it.
+					 */
+					openIncludedFile(st.nextToken());
+					mCurrentLine = null;
+					return(read());
+				}
+				else
+				{
+					throw new GfException("Missing include filename at " + getCurrentFilenameAndLine());
+				}
+			}
+		}
+
+		c = mCurrentLine.charAt(mCurrentLineIndex++);
 		return(c);
 	}
 
-	/*
+	/**
 	 * Pushes a single character that was read back to the reader.
 	 */
 	public void unread(int c)
 	{
-		mPushedChar = c;
-		mCharPushedBack = true;
+		Character cs = new Character((char)c);
+
+		/*
+		 * Push character back into line we are reading from.
+		 */
+		if (mCurrentLine == null)
+		{
+			mCurrentLine = new StringBuffer(cs.toString());
+			mCurrentLineIndex = 0;
+		}
+		else
+		{
+			/*
+			 * Is the character being pushed back the last one
+			 * we read (it should be).  If so, we can just
+			 * step back one character so it can be read again.
+			 */
+			if (mCurrentLineIndex > 0 &&
+				c == mCurrentLine.charAt(mCurrentLineIndex - 1))
+			{
+				mCurrentLineIndex--;
+			}
+			else
+			{
+				mCurrentLine.insert(mCurrentLineIndex, cs.toString());
+			}
+		}
 	}
 
 	/**
