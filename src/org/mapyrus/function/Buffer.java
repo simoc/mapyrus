@@ -25,7 +25,6 @@ package org.mapyrus.function;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
-import org.mapyrus.MapyrusMessages;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
@@ -47,10 +46,6 @@ public class Buffer extends Function
 		throws MapyrusException
 	{
 		Argument retval;
-
-		if (arg1.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg1.toString());
 
 		String wkt = arg1.toString();
 		double distance = arg2.getNumericValue();
