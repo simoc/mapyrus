@@ -751,6 +751,43 @@ polygon.
 \label{tutorialshadow1}
 \end{figure}
 
+\subsection{Avoiding Overlapping Labels}
+
+Mapyrus maintains a list of rectangular
+areas on the page that have been marked as protected by the
+\texttt{protect} command.
+To avoid overlapping labels, check that the area that will be
+covered by a label is not protected before displaying the
+label using the \texttt{stringwidth} and \texttt{protected} functions.
+After displaying a label use the \texttt{protect} command to mark
+the area covered by the label as protected.
+
+This is demonstrated in the following example, with labels
+drawn to the right or left of a point, to avoid overlapping
+other labels.
+Output is shown in Figure \ref{tutorialprotect1}.
+
+\verbatiminput{tutorialprotect1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialprotect1.eps}
+\caption{Label positioning}
+\label{tutorialprotect1}
+\end{figure}
+
+For best results, display the most important labels first to maximise the
+chances of finding a position for a label that does not overlap previous
+labels.  For example, label large towns before villages.
+
+This method can be extended to draw labels left, right, above, below or offset
+from their true position, wherever they do not overlap other labels.
+
+Areas of the page containing important symbols or icons can be
+protected too.  However, in many cases it is simpler to
+display most important data last to ensure it is not overwritten.
+
+Use the \texttt{unprotect} command to clear protected areas.
+
 \subsection{Displaying Image Icons}
 \label{icons}
 
