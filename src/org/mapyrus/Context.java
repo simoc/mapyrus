@@ -33,15 +33,22 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
 import org.mapyrus.image.GradientFillFactory;
+import org.mapyrus.io.TFWFile;
 
 /**
  * Maintains state information during interpretation inside a single procedure block.
@@ -175,6 +182,13 @@ public class Context
 	 * Name of procedure block that this context is executing in.
 	 */
 	private String mBlockName;
+
+	/*
+	 * Cache of image extents we have read previously from .tfw files.
+	 * Avoid re-reading images which will be outside page area and
+	 * not visible.
+	 */
+	private static Hashtable mTFWCache = new Hashtable();
 
 	/**
 	 * Clear graphics context to empty state.
@@ -1560,6 +1574,142 @@ public class Context
 		{
 			setGraphicsAttributes(ATTRIBUTE_CLIP);
 			mOutputFormat.drawIcon(path.getMoveTos(), icon, size, mRotation, mScaling);
+		}
+	}
+
+	/**
+	 * Draws geo-referenced image on page.
+	 * @param filename geo-referenced image filename.
+	 */
+	public void drawGeoImage(String filename)
+		throws IOException, MapyrusException
+	{
+		BufferedImage image;
+		Rectangle2D.Double worldExtents = getWorldExtents();
+		TFWFile tfw;
+
+		/*
+		 * Reading large images takes a lot of time.
+		 * Do not open it for display if it is not visible
+		 * on the page.
+		 */
+		tfw = (TFWFile)mTFWCache.get(filename);
+		if (tfw != null && (!tfw.getBounds().intersects(worldExtents)))
+		{
+			return;
+		}
+
+		/*
+		 * Load image from either a URL, or as a plain file.
+		 */
+		try
+		{
+			URL url = new URL(filename);
+			image = ImageIO.read(url);
+		}
+		catch (MalformedURLException e)
+		{
+			image = ImageIO.read(new File(filename));
+		}
+		
+		if (image == null)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
+				": " + filename);
+		}
+
+		if (tfw == null)
+		{
+			tfw = new TFWFile(filename, image);
+			mTFWCache.put(filename, tfw);
+		}
+
+		/*
+		 * Convert world coordinate bounding box of image to millimetre
+		 * positions on the page.
+		 */
+		Rectangle2D bounds = tfw.getBounds();
+		double []cornerPts = new double[4];
+
+
+		setGraphicsAttributes(ATTRIBUTE_CLIP);
+
+		if (worldExtents.getBounds().contains(bounds))
+		{
+			cornerPts[0] = bounds.getMinX();
+			cornerPts[1] = bounds.getMinY();
+			cornerPts[2] = bounds.getMaxX();
+			cornerPts[3] = bounds.getMaxY();
+
+			if (mWorldCtm != null)
+				mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+
+			/*
+			 * Entire image is on page.  Draw it all.
+			 */
+			mOutputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
+					cornerPts[2] - cornerPts[0],
+					cornerPts[3] - cornerPts[1]);
+		}
+		else if (worldExtents.intersects(bounds))
+		{
+			/*
+			 * Image is partially on page.  Only draw the part of the
+			 * image that is visible.
+			 */
+			double x1factor = (worldExtents.getMinX() - bounds.getMinX()) /
+				bounds.getWidth();
+			double y1factor = (worldExtents.getMinY() - bounds.getMinY()) /
+				bounds.getHeight();
+			double x2factor = (worldExtents.getMaxX() - bounds.getMinX()) /
+				bounds.getWidth();
+			double y2factor = (worldExtents.getMaxY() - bounds.getMinY()) /
+				bounds.getHeight();
+
+			if (x1factor > 1)
+				x1factor = 1;
+			else if (x1factor < 0)
+				x1factor = 0;
+
+			if (y1factor > 1)
+				y1factor = 1;
+			else if (y1factor < 0)
+				y1factor = 0;
+
+			if (x2factor > 1)
+				x2factor = 1;
+			else if (x2factor < 0)
+				x2factor = 0;
+			
+			if (y2factor > 1)
+				y2factor = 1;
+			else if (y2factor < 0)
+				y2factor = 0;
+
+			double wx1 = bounds.getMinX() + bounds.getWidth() * x1factor;
+			double ix1 = image.getWidth() * x1factor;
+			double wy1 = bounds.getMinY() + bounds.getHeight() * y1factor;
+			double iy1 = image.getHeight() * y1factor;
+			double wx2 = bounds.getMinX() + bounds.getWidth() * x2factor;
+			double ix2 = image.getWidth() * x2factor;
+			double wy2 = bounds.getMinY() + bounds.getHeight() * y2factor;
+			double iy2 = image.getHeight() * y2factor;
+
+			cornerPts[0] = wx1;
+			cornerPts[1] = wy1;
+			cornerPts[2] = wx2;
+			cornerPts[3] = wy2;
+
+			if (mWorldCtm != null)
+				mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+
+			int iWidth = (int)Math.round(ix2 - ix1);
+			int iHeight = (int)Math.round(iy2 - iy1);
+			double iy = image.getHeight() - iy2;
+			image = image.getSubimage((int)Math.round(ix1), (int)Math.round(iy),
+				Math.max(iWidth, 1), Math.max(1, iHeight));
+			mOutputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
+				cornerPts[2] - cornerPts[0], cornerPts[3] - cornerPts[1]);
 		}
 	}
 
