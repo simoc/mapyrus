@@ -1,6 +1,6 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
- * Copyright (C) 2003 Simon Chenery.
+ * Copyright (C) 2003, 2004 Simon Chenery.
  *
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -184,7 +184,7 @@ public class Mapyrus
 		System.out.println(Constants.PROGRAM_NAME + " version " +
 			Constants.getVersion() + " " +
 			Constants.getReleaseDate() +
-			" Copyright (C) 2003 Simon Chenery");
+			" Copyright (C) 2003, 2004 Simon Chenery");
 		System.out.println("");
 
 		for (int i = 0; i < usage.length; i++)
