@@ -162,11 +162,11 @@ public class Interpreter
 				/*
 				 * Find named color in color name database.
 				 */
-				c = ColorDatabase.getColor(args[0].getStringValue());
+				c = ColorDatabase.getColor(color);
 				if (c == null)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
-						": " + args[0].getStringValue());
+						": " + color);
 				}
 			}
 			context.setColor(c);
