@@ -116,9 +116,6 @@ public class Mapyrus
 		Reader []readers;
 		ContextStack context;
 		
-		args = new String[1];
-		args[0] = "/home/simonc/expr.txt";
-
 		/*
 		 * Parse command line arguments -- these are the files and URLs to read commands from.
 		 */
