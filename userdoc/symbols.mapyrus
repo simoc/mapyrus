@@ -242,6 +242,23 @@ begin viewpoint
 	done
 end
 
+begin surveymarker
+	# Display a survey marker, like |X| |
+	#                               | |X|
+	#
+	key "point", "Survey Marker"
+	color "grey90"
+	linestyle 0.1
+	box -1, -1, 1, 1
+	fill
+	color "red"
+	stroke
+	clearpath
+	box -1, -1, 0, 0
+	box 0, 0, 1, 1
+	fill
+end
+
 begin trigstation
 	key "point", "Trig. Station"
 	color "red"
@@ -258,6 +275,32 @@ begin trigstation
 	draw -1.5, -1.5
 	closepath
 	fill
+end
+
+begin box3d
+	# Display a cube, viewed from the side and above.
+	#
+	key "point", "Box 3D"
+	linestyle 0.1
+
+	# Draw top side of box
+	#
+	move -1, 1
+	draw -2.73, 0, -0.73, 0, 1, 1, -1, 1
+
+	# Draw right side of box
+	#
+	move 1, 1
+	draw 1, -1, -0.73, -2, -0.73, 0
+
+	# Draw front side of box
+	#
+	box -2.73, -2, -0.73, 0
+
+	color "yellow"
+	fill
+	color "black"
+	stroke
 end
 
 begin witchshat
@@ -1596,7 +1639,9 @@ then
 
 	shipwreck
 	lighthouse
+	surveymarker
 	trigstation
+	box3d
 	witchshat
 	newmoon
 	oldmoon
