@@ -6,9 +6,9 @@ The folllowing examples demonstrate how to using Mapyrus.  Each example is also
 included as a file in the \texttt{doc} subdirectory in a Mapyrus installation.
 
 If the Ghostscript program or a printer is not available, then change the
-\texttt{eps} arguments in \texttt{newpage} commands to \texttt{png} to create
-the output files in PNG image format and view the output files in a web
-browser.
+\texttt{eps} arguments in \texttt{newpage} commands in examples to \texttt{png}
+to create the output files in PNG image format and view the output files in a
+web browser.
 
 \subsection{First Steps}
 
@@ -49,9 +49,10 @@ Change the file \texttt{first.txt} to contain the following lines.
 
 \verbatiminput{tutorialfirst2.mpy}
 
-In this example, color is set as a hex value instead of a name and
-the \texttt{fill} command is used to
-flood fill the path that has been defined.
+In this example, color is set as a hex value instead of a name,
+a rectangle is defined with the \texttt{box} command
+and the \texttt{fill} command is used to
+flood fill it.
 The characters on lines following a hash (\texttt{\#}) character that
 is not part of a string literal are ignored by Mapyrus.
 Figure \ref{tutorialfirst2} shows the output of these commands.
@@ -91,7 +92,7 @@ The output of these commands is shown in Figure \ref{tutorialfirst3}.
 Use variables and conditional tests to vary the appearance
 of the display.
 Use loops to display similar symbols repeatedly.
-Variables named \texttt{x} and \texttt{counter} are used in the
+Variables named \texttt{c1} and \texttt{c2} are used in the
 following example.  The variable
 \texttt{Mapyrus.page.width}
 is set by Mapyrus automatically.
@@ -101,15 +102,14 @@ The output of this example is shown in Figure \ref{tutorialvar1}.
 
 \begin{figure}[htb]
 \includegraphics{tutorialvar1.eps}
-\caption{Variables And Conditional Tests}
+\caption{Variables And Loops}
 \label{tutorialvar1}
 \end{figure}
 
 The second example demonstrates the use of the
-\texttt{split} and \texttt{length}
+\texttt{length} and \texttt{substr}
 functions
-to create an array, and stepping through the array one
-element at a time.
+and stepping through a string one element at a time.
 
 \verbatiminput{tutorialvar2.mpy}
 
@@ -308,7 +308,8 @@ command to define one or more points for labelling, followed by a
 \texttt{label} command.  The font and justification for labels
 are set with the \texttt{font} and \texttt{justify} commands.
 Setting fonts, justification and displaying multiple lines
-are demonstrated in the following example.
+are demonstrated in the following example, with output
+shown in Figure \ref{tutoriallabels1}.
 
 \verbatiminput{tutoriallabels1.mpy}
 
@@ -321,7 +322,8 @@ are demonstrated in the following example.
 Labels are displayed horizontally.  Rotate the axes with the \texttt{rotate}
 command before setting the font to display labels at an angle.  Drawing labels
 one pixel offset from original position and in a different color highlights the
-label.  These two techniques are demonstrated in the following example.
+label.  These two techniques are demonstrated in the following example,
+with output shown in Figure \ref{tutoriallabels2}.
 
 \verbatiminput{tutoriallabels2.mpy}
 
@@ -691,7 +693,7 @@ PostScript printers and the Ghostscript program
 understand a limited number of fonts,
 normally only \texttt{Courier},
 \texttt{Helvetica}, \texttt{Times-Roman} and the bold
-and italic variations of these fonts.
+and oblique (italic) variations of these fonts.
 
 When a PostScript printer prints a file containing an unknown font,
 a substitute font is used.
@@ -709,9 +711,9 @@ A PostScript Type 1 font definition file is a text file and
 the first line contains the name of the font defined in the file.
 
 To convert a True Type Font file to a PostScript Type 1 font use the
-ttf2pt1\footnote{Available from http://ttf2pt1.sourceforge.net}.  The following
-command converts the font in the file \texttt{BEANTOWN.TTF} to a PostScript
-Type 1 font in file \texttt{BEANTOWN.pfa}.
+ttf2pt1\footnote{Available from http://ttf2pt1.sourceforge.net} program.  The
+following command converts the font in the file \texttt{BEANTOWN.TTF} to a
+PostScript Type 1 font in file \texttt{BEANTOWN.pfa}.
 
 \begin{verbatim}
 ttf2pt1 -e BEANTOWN.TTF BEANTOWN
@@ -765,9 +767,10 @@ standard output to the web browser.
 
 To vary the display that is created by the Mapyrus HTTP Server, include
 variables in the URL.  For example,
-\begin{alltt}
-http://localhost:8410/tutorialurl.mpy?x1=11\&y1=48\&x2=12\&y2=49\&labels=off}
-\end{alltt}
+
+\begin{verbatim}
+http://localhost:8410/tutorialurl.mpy?x1=11&y1=48&x2=12&y2=49&labels=off
+\end{verbatim}
 
 The variables \texttt{x1}, \texttt{y1}, \texttt{x2}, \texttt{y2}
 and \texttt{labels} are automatically set in Mapyrus with the values
