@@ -36,12 +36,17 @@ public class MapyrusMessages
 	public static final String CANNOT_OPEN_URL = "cannotopenurl";
 	public static final String CLASS_NOT_FUNCTION = "classnotfunction";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
+	public static final String COPY = "copy";
 	public static final String DEFINE_TRANSFORM = "definetransform";
+	public static final String EDIT = "edit";
 	public static final String ERROR_PS = "errorps";
+	public static final String EXIT = "exit";
 	public static final String EXPECTED = "expected";
+	public static final String EXPORT_AS_PNG = "exportaspng";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
 	public static final String FIELD_NOT_OGC_TEXT = "fieldnotogctext";
+	public static final String FILE = "file";
 	public static final String FILE_NOT_FOUND = "filenotfound";
 	public static final String GEOMETRY_NOT_NUMERIC = "geometrynotnumeric";
 	public static final String HASHMAP_NOT_NUMERIC = "hashmapnotnumeric";
@@ -148,6 +153,7 @@ public class MapyrusMessages
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
 	public static final String PARSE_ERROR = "parseerror";
+	public static final String PNG_IMAGE_FILES = "pngimagefiles";
 	public static final String PROCESS_ERROR = "processerror";
 	public static final String READ_ONLY = "readonly";
 	public static final String RECURSION = "recursion";
