@@ -36,9 +36,10 @@ public class Statement
 	 * Possible types of statements.
 	 */
 	public static final int CONDITIONAL = 2;
-	public static final int WHILE_LOOP = 3;
-	public static final int FOR_LOOP = 4;
-	public static final int BLOCK = 5;
+	public static final int REPEAT_LOOP = 3;
+	public static final int WHILE_LOOP = 4;
+	public static final int FOR_LOOP = 5;
+	public static final int BLOCK = 6;
 
 	public static final int COLOR = 10;
 	public static final int LINESTYLE = 11;
@@ -265,20 +266,22 @@ public class Statement
 	}
 	
 	/**
-	 * Create a while loop block of statements.
+	 * Create a repeat or while loop block of statements.
 	 * @param test is expression to test before each iteration of loop.
 	 * @param loopStatements is statements to execute for each loop iteration.
+	 * @param isWhileLoop true for a while loop, false for a repeat loop.
 	 */
-	public Statement(Expression test, ArrayList loopStatements)
+	public Statement(Expression test, ArrayList loopStatements,
+		boolean isWhileLoop)
 	{
-		mType = WHILE_LOOP;
+		mType = isWhileLoop ? WHILE_LOOP : REPEAT_LOOP;
 		mExpressions = new Expression[1];
 		mExpressions[0] = test;
 		mLoopStatements = loopStatements;
 	}
 
 	/**
-	 * Create a while loop block of statements.
+	 * Create a for loop block of statements.
 	 * @param test is expression to test before each iteration of loop.
 	 * @param loopStatements is statements to execute for each loop iteration.
 	 */
