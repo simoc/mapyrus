@@ -79,12 +79,17 @@ public class OutputFormat
 	private static final int IMAGE_FILE = 2;
 
 	/*
+	 * Output to window on screen.
+	 */
+	private static final int SCREEN_WINDOW = 3;
+
+	/*
 	 * PostScript output can be created as either moveto-lineto-stroke
 	 * commands to draw shapes on page or as an single image covering
 	 * the whole page containing all drawn shapes.
 	 */
-	private static final int POSTSCRIPT_GEOMETRY = 3;
-	private static final int POSTSCRIPT_IMAGE = 4;
+	private static final int POSTSCRIPT_GEOMETRY = 4;
+	private static final int POSTSCRIPT_IMAGE = 5;
 
 	/*
 	 * Type of justification for labels on page, as used
@@ -736,7 +741,9 @@ public class OutputFormat
 			/*
 			 * Create image to draw into.
 			 */
-			if (mOutputType == IMAGE_FILE || mOutputType == POSTSCRIPT_IMAGE)
+			if (mOutputType == IMAGE_FILE ||
+				mOutputType == SCREEN_WINDOW ||
+				mOutputType == POSTSCRIPT_IMAGE)
 			{
 				if (mIsUpdatingFile && mOutputType == IMAGE_FILE)
 				{
@@ -843,6 +850,10 @@ public class OutputFormat
 		else if (mFormatName.equals("epsimage"))
 		{
 			mOutputType = POSTSCRIPT_IMAGE;
+		}
+		else if (mFormatName.equals("screen"))
+		{
+			mOutputType = SCREEN_WINDOW;
 		}
 		else
 		{
@@ -1278,6 +1289,16 @@ public class OutputFormat
 				mOutputStream.flush();
 			else
 				mOutputStream.close();
+		}
+		else if (mOutputType == SCREEN_WINDOW)
+		{
+			/*
+			 * Show image we have created in a window.
+			 * Then wait for user to close the window.
+			 */
+			String title = Constants.PROGRAM_NAME + ": " + mFilename;
+			MapyrusFrame frame = new MapyrusFrame(title, mImage);
+			frame.waitForClose();
 		}
 
 		mImage = null;
