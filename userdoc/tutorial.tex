@@ -2,14 +2,13 @@
 
 \section{Tutorial}
 
-The folllowing examples demonstrate how to create output
-using Mapyrus.  All examples are included
-as files in the \texttt{doc} subdirectory.
+The folllowing examples demonstrate how to using Mapyrus.  Each example is also
+included as a file in the \texttt{doc} subdirectory in a Mapyrus installation.
 
-If the Ghostscript program or a printer is not available,
-then change the \texttt{eps} arguments in 
-\texttt{newpage} commands to \texttt{png} to view the output
-as image files in a web browser.
+If the Ghostscript program or a printer is not available, then change the
+\texttt{eps} arguments in \texttt{newpage} commands to \texttt{png} to create
+the output files in PNG image format and view the output files in a web
+browser.
 
 \subsection{First Steps}
 
@@ -17,28 +16,25 @@ Enter the following lines into a text file named \texttt{first.txt}.
 
 \verbatiminput{tutorialfirst1.mpy}
 
-Each line in the file is a command for Mapyrus.  The
-first line sets output to a
-30mm square Encapsulated PostScript format image named
-\texttt{tutorialfirst1.eps}
-with the \texttt{newpage} command.
-The second and third lines set the color for drawing to black,
-with lines drawn 4 millimetres wide with rounded ends and corners.
-The fourth and fifth lines define a path on the page giving
-coordinates in millimetres.
-The sixth line is a \texttt{stroke} command to draw the
-path just defined onto the page using the current color and
-line style.
+Each line in the file is a command for Mapyrus.  The first line sets output to
+a 30mm square Encapsulated PostScript format file named
+\texttt{tutorialfirst1.eps} with the \texttt{newpage} command.  The second and
+third lines set the color for drawing to black, with lines drawn 4 millimetres
+wide with rounded ends and corners.  The fourth and fifth lines define a path
+on the page giving coordinates in millimetres.  The sixth line is a
+\texttt{stroke} command to draw the path just defined onto the page using the
+current color and line style.
 
-Open a terminal window and enter the following command
-(where \textit{install-dir} is the directory in which Mapyrus is installed).
+Open a terminal window and run Mapyrus using following command to execute the
+commands in the file \texttt{first.txt} (\textit{install-dir} is the directory
+in which Mapyrus is installed).
 
-\begin{verbatim}
+\begin{alltt}
 java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus first.txt
-\end{verbatim}
+\end{alltt}
 
-When Mapyrus reaches the end of the file \texttt{first.txt},
-the output file \texttt{tutorialfirst1.eps} is completed and Mapyrus exits.
+When Mapyrus reaches the end of the file \texttt{first.txt}
+the output file \texttt{tutorialfirst1.eps} is saved and Mapyrus exits.
 When the PostScript file is then printed, it appears as in
 Figure \ref{tutorialfirst1}.
 
@@ -70,12 +66,12 @@ Change the file \texttt{first.txt} to contain the following lines.
 
 \verbatiminput{tutorialfirst3.mpy}
 
-This example shows how to draw circular arcs,
+This example demonstrates drawing circular arcs,
 giving the direction (a positive value for clockwise and a negative
 value for anti-clockwise), center point and end point and
 yet another way of defining color.
 After being filled, the path remains and is used again to draw the outline
-of the same shape.
+of the shape.
 To clear the path before drawing another shape the
 \texttt{clearpath}
 command is used.
@@ -110,7 +106,7 @@ The output of this example is shown in Figure \ref{tutorialvar1}.
 \end{figure}
 
 The second example demonstrates the use of the
-\texttt{split} and \texttt{ength}
+\texttt{split} and \texttt{length}
 functions
 to create an array, and stepping through the array one
 element at a time.
@@ -479,7 +475,7 @@ checking the internal variables \texttt{Mapyrus.import.count} and
 
 A cartographic rule is that a map display must include a legend.  The
 \texttt{key} command is used to save each entry to be include in a legend and
-the \texttt{legend} command displays the legend.
+the \texttt{legend} command displays a legend.
 
 A \texttt{key} command in a procedure defines a legend entry.  Mapyrus saves
 each legend entry encountered whilst executing commands.  Each legend entry has
@@ -674,19 +670,22 @@ polygon.
 \end{figure}
 
 \subsection{Generating Portable Document Format (PDF) Output}
+\label{pdf}
 
 Portable Document Format (PDF) files are created by converting PostScript
 output from Mapyrus to PDF using the \texttt{ps2pdf} utility program, part of
 GhostScript.
 
 The pipe option of the \texttt{newpage} command is used to pipe PostScript
-output from Mapyrus through \texttt{ps2pdf} and into a PDF file.  For example,
+output from Mapyrus through \texttt{ps2pdf} and into a PDF file.  To create
+a PDF file with A4 page size using the following command:
 
 \begin{verbatim}
 newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
 \end{verbatim}
 
 \subsection{Using PostScript Fonts In PostScript Output}
+\label{psfonts}
 
 PostScript printers and \textit{Ghostscript}
 understand a limited number of fonts,
@@ -720,6 +719,7 @@ ttf2pt1 -e BEANTOWN.TTF BEANTOWN
 \end{verbatim}
 
 \subsection{Using TrueType Fonts In Output to Image Formats}
+\label{ttffonts}
 
 For output to image formats, TrueType format fonts are used.
 
@@ -753,11 +753,9 @@ directory containing the two files and start Mapyrus as an HTTP server on port
 8410 with the following command
 (where \textit{install-dir} is the directory in which Mapyrus is installed).
 
-\vspace{10pt}
-\framebox{
-\texttt{java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus -s 8410}
-}
-\vspace{10pt}
+\begin{alltt}
+java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus -s 8410
+\end{alltt}
 
 Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver1.mpy} in a
 web browser.  Mapyrus receives the request, executes the commands in the file
@@ -768,7 +766,6 @@ standard output to the web browser.
 
 To vary the display that is created by the Mapyrus HTTP Server, include
 variables in the URL.  For example,
-
 \texttt{http://localhost:8410/tutorialurl.mpy?x1=11\&y1=48\&x2=12\&y2=49\&labels=off}
 
 The variables \texttt{x1}, \texttt{y1}, \texttt{x2}, \texttt{y2}
