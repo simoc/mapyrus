@@ -40,6 +40,7 @@ public class MapyrusMessages
 	public static final String DEFINE_TRANSFORM = "definetransform";
 	public static final String EDIT = "edit";
 	public static final String ERROR_PS = "errorps";
+	public static final String ERROR_SVG = "errorsvg";
 	public static final String EXIT = "exit";
 	public static final String EXPECTED = "expected";
 	public static final String EXPORT_AS_PNG = "exportaspng";
