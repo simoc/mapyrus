@@ -10,8 +10,9 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.StringTokenizer;
 
 import au.id.chenery.mapyrus.Argument;
 import au.id.chenery.mapyrus.MapyrusException;
@@ -69,6 +70,11 @@ public class ShapefileDataset implements GeographicDataset
 	private String mFilename;
 	private int mShapeFileLength, mShapeFileType;
 	private int mDBFRecordLength;
+	
+	/*
+	 * Flags indicating which fields in DBF file that user wants to fetch.
+	 */
+	private ArrayList mDBFFieldsToFetch;
 
 	/*
 	 * Field names, types, and types and lengths as given in shape file.
@@ -106,7 +112,37 @@ public class ShapefileDataset implements GeographicDataset
 		throws FileNotFoundException, IOException, MapyrusException
 	{
 		String shapeFilename, dbfFilename;
-		
+		StringTokenizer st, st2;
+		String dbfFieldnames, token;
+		boolean foundField;
+		int i, nFields, index;
+		Hashtable extrasDBFFields;
+
+		/*
+		 * Set default options.  Then see if user wants to override any of them.
+		 */
+		extrasDBFFields = null;
+
+		st = new StringTokenizer(extras);
+		while (st.hasMoreTokens())
+		{
+			token = st.nextToken();
+			if (token.startsWith("dbffields="))
+			{
+				/*
+				 * Parse list of comma separated field names that user wants
+				 * to fetch.
+				 */
+				extrasDBFFields = new Hashtable();
+				st2 = new StringTokenizer(token.substring(10), ",");
+				while (st2.hasMoreTokens())
+				{
+					token = st2.nextToken();
+					extrasDBFFields.put(token, token);
+				}
+			}
+		}
+
 		/*
 		 * Determine full names of .shp and .dbf files.
 		 */
@@ -141,7 +177,7 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * Read header from database file to get names and types of other fields.
 		 */
-		readDBFHeader(geometryFieldNames);
+		readDBFHeader(geometryFieldNames, extrasDBFFields);
 	}
 
 	/**
@@ -274,14 +310,17 @@ public class ShapefileDataset implements GeographicDataset
 	/*
 	 * Read header from DBF database file
 	 */
-	private void readDBFHeader(String []geometryFieldNames) throws IOException
+	private void readDBFHeader(String []geometryFieldNames, Hashtable dbfFieldnameTable)
+		throws IOException
 	{
-		int nDBFRecords, headerLength, nFields;
+		int nDBFRecords, headerLength, nTotalFields, nFetchFields;
+		String fieldName;
 		int i, j;
-		int fieldType;
+		int fieldType, fieldIndex;
 		byte dbfField[];
-		Vector dbfFields = new Vector();
+		ArrayList dbfFields = new ArrayList();
 		int nBytesRead;
+		boolean fetchStatus;
 
 		mDBFStream.skipBytes(4);
 		nDBFRecords = readLittleEndianInt(mDBFStream);
@@ -293,6 +332,8 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * Read record describing each field.
 		 */
+		nTotalFields = nFetchFields = 0;
+		mDBFFieldsToFetch = new ArrayList();
 		do
 		{
 			dbfField = new byte[32];
@@ -301,43 +342,51 @@ public class ShapefileDataset implements GeographicDataset
 			if (dbfField[0] != DBF_HEADER_SENTINEL)
 			{
 				mDBFStream.read(dbfField, 1, dbfField.length - 1);
+				fieldName = unpackString(dbfField, 0, 11);
+
+				/*
+				 * Build list of flags indicating which fields we'll
+				 * be fetching for the user.
+				 */
+				fetchStatus = (dbfFieldnameTable == null ||
+					dbfFieldnameTable.get(fieldName) != null);
+				mDBFFieldsToFetch.add(new Boolean(fetchStatus));
+				if (fetchStatus)
+					nFetchFields++;
+
 				nBytesRead += dbfField.length - 1;
 				dbfFields.add(dbfField);
+				nTotalFields++;
 			}
 		}
 		while (dbfField[0] != DBF_HEADER_SENTINEL);
-		nFields = dbfFields.size();
 
 		/*
 		 * Add one extra field to end of field list for the geometry.
 		 */
-		mFieldNames = new String[nFields + 1];
-		mFieldTypes = new int[nFields + 1];
-		mShapeFieldTypes = new int[nFields];
-		mShapeFieldLengths = new int[nFields];
+		mFieldNames = new String[nFetchFields + 1];
+		mFieldTypes = new int[nFetchFields + 1];
+		mShapeFieldTypes = new int[nTotalFields];
+		mShapeFieldLengths = new int[nTotalFields];
 
 		mGeometryField = new int[1];
-		mGeometryField[0] = nFields;
+		mGeometryField[0] = nFetchFields;
 		if (geometryFieldNames.length > 0)
-			mFieldNames[nFields] = geometryFieldNames[0];
+			mFieldNames[nFetchFields] = geometryFieldNames[0];
 		else
-			mFieldNames[nFields] = "GEOMETRY";
-			
-		mFieldTypes[nFields] = Argument.GEOMETRY;
+			mFieldNames[nFetchFields] = "GEOMETRY";
+
+		mFieldTypes[nFetchFields] = Argument.GEOMETRY;
 
 		/*
 		 * Read description of each field.
 		 */
-		for (i = 0; i < nFields; i++)
+		for (i = fieldIndex = 0; i < nTotalFields; i++)
 		{
-			dbfField = (byte [])(dbfFields.elementAt(i));
+			dbfField = (byte [])(dbfFields.get(i));
 
-			/*
-			 * Extract null terminated field name.
-			 */			
-			mFieldNames[i] = unpackString(dbfField, 0, 11);
 			mShapeFieldTypes[i] = dbfField[11];
-			
+
 			/*
 			 * Length is unsigned byte value.
 			 */
@@ -347,19 +396,31 @@ public class ShapefileDataset implements GeographicDataset
 				mShapeFieldLengths[i] = 256 + dbfField[16];
 
 			/*
-			 * Convert shape field type to our representation of field types.
+			 * Unpack field information if we are going to be fetching this field.
 			 */
-			switch (mShapeFieldTypes[i])
+			if (((Boolean)mDBFFieldsToFetch.get(i)).booleanValue())
 			{
-				case DBF_CHARACTER:
-				case DBF_DATE:
-					mFieldTypes[i] = Argument.STRING;
-					break;
-				case DBF_LOGICAL:
-				case DBF_NUMBER:
-				case DBF_FLOATING:
-					mFieldTypes[i] = Argument.NUMERIC;
-					break;
+				/*
+				 * Extract null terminated field name.
+				 */
+				mFieldNames[fieldIndex] = unpackString(dbfField, 0, 11);
+	
+				/*
+				 * Convert shape field type to our representation of field types.
+				 */
+				switch (mShapeFieldTypes[i])
+				{
+					case DBF_CHARACTER:
+					case DBF_DATE:
+						mFieldTypes[fieldIndex] = Argument.STRING;
+						break;
+					case DBF_LOGICAL:
+					case DBF_NUMBER:
+					case DBF_FLOATING:
+						mFieldTypes[fieldIndex] = Argument.NUMERIC;
+						break;
+				}
+				fieldIndex++;
 			}
 		}
 
@@ -581,50 +642,57 @@ public class ShapefileDataset implements GeographicDataset
 
 				if (shapeInExtents)
 				{
-					int fieldIndex = 1;
+					int recordOffset = 1;
 					for (i = 0; i < mShapeFieldTypes.length; i++)
 					{
 						Argument arg = null;
 
-						if (mShapeFieldTypes[i] == DBF_CHARACTER ||
-							mShapeFieldTypes[i] == DBF_DATE)
+						/*
+						 * Only fetch fields that user asked for.
+						 */
+						if (((Boolean)mDBFFieldsToFetch.get(i)).booleanValue())
 						{
-							arg = new Argument(Argument.STRING,
-								unpackString(mDBFRecord, fieldIndex, mShapeFieldLengths[i]));
-						}
-						else if (mShapeFieldTypes[i] == DBF_NUMBER ||
-							mShapeFieldTypes[i] == DBF_FLOATING)
-						{
-							String s = unpackString(mDBFRecord,
-								fieldIndex, mShapeFieldLengths[i]);
-							try
+							if (mShapeFieldTypes[i] == DBF_CHARACTER ||
+								mShapeFieldTypes[i] == DBF_DATE)
 							{
-								fieldValue = Double.parseDouble(s);
+								arg = new Argument(Argument.STRING,
+									unpackString(mDBFRecord, recordOffset,
+									mShapeFieldLengths[i]));
 							}
-							catch (NumberFormatException e)
+							else if (mShapeFieldTypes[i] == DBF_NUMBER ||
+								mShapeFieldTypes[i] == DBF_FLOATING)
 							{
-								fieldValue = 0.0;
+								String s = unpackString(mDBFRecord,
+									recordOffset, mShapeFieldLengths[i]);
+								try
+								{
+									fieldValue = Double.parseDouble(s);
+								}
+								catch (NumberFormatException e)
+								{
+									fieldValue = 0.0;
+								}
+								arg = new Argument(fieldValue);
 							}
-							arg = new Argument(fieldValue);
-						}
-						else if (mShapeFieldTypes[i] == DBF_LOGICAL)
-						{
-							switch ((char)mDBFRecord[fieldIndex])
+							else if (mShapeFieldTypes[i] == DBF_LOGICAL)
 							{
-								case 'y':
-								case 'Y':
-								case 'T':
-								case 't':
-									arg = new Argument(1.0);
-									break;
-								default:
-									arg = new Argument(0.0);
-									break;
+								switch ((char)mDBFRecord[recordOffset])
+								{
+									case 'y':
+									case 'Y':
+									case 'T':
+									case 't':
+										arg = new Argument(1.0);
+										break;
+									default:
+										arg = new Argument(0.0);
+										break;
+								}
 							}
+							row.add(arg);
 						}
-						row.add(arg);
 
-						fieldIndex += mShapeFieldLengths[i];
+						recordOffset += mShapeFieldLengths[i];
 					}
 					
 					/*
