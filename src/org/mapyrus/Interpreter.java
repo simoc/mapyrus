@@ -72,6 +72,11 @@ public class Interpreter
 	private static final String IN_KEYWORD = "in";
 
 	/*
+	 * Keyword to return from procedure block.
+	 */
+	private static final String RETURN_KEYWORD = "return";
+
+	/*
 	 * States during parsing statements.
 	 */
 	private static final int AT_ARGUMENT = 1;		/* at start of arguments to a statement */
@@ -1888,6 +1893,10 @@ public class Interpreter
 				{
 					retval = parseForStatement(preprocessor, inProcedureDefn);
 				}
+				else if (lower.equals(RETURN_KEYWORD))
+				{
+					retval = new ParsedStatement(Statement.RETURN_STATEMENT);
+				}
 				else
 				{
 					/*
@@ -1952,11 +1961,13 @@ public class Interpreter
 		try
 		{
 			/*
-			 * Keep parsing until we get EOF.
+			 * Keep parsing until we get EOF or reach a 'RETURN' command.
 			 */
 			while ((st = parseStatement(preprocessor)) != null)
 			{
-				executeStatement(st);
+				int type = executeStatement(st);
+				if (type == Statement.RETURN)
+					break;
 			}
 		}
 		finally
@@ -1988,15 +1999,19 @@ public class Interpreter
 		for (int i = 0; i < v.size(); i++)
 		{
 			statement = (Statement)v.get(i);
-			executeStatement(statement);
+			int type = executeStatement(statement);
+			if (type == Statement.RETURN)
+				break;
 		}
 	}
 
 	/**
-	 * Recursive function for executing statements.
+	 * Recursive function for executing single statements and
+	 * blocks of statements.
 	 * @param statement is statement to execute.
+	 * @return type of last statement executed.
 	 */
-	private void executeStatement(Statement statement)
+	private int executeStatement(Statement statement)
 		throws IOException, MapyrusException
 	{
 		Argument []args;
@@ -2009,6 +2024,12 @@ public class Interpreter
 		if (statementType == Statement.BLOCK)
 		{
 			mStatementBlocks.put(statement.getBlockName(), statement);
+		}
+		else if (statementType == Statement.RETURN)
+		{
+			/*
+			 * Nothing to do, just return.
+			 */
 		}
 		else if (statementType == Statement.CONDITIONAL)
 		{
@@ -2048,7 +2069,9 @@ public class Interpreter
 				for (int i = 0; i < v.size(); i++)
 				{
 					statement = (Statement)v.get(i);
-					executeStatement(statement);
+					statementType = executeStatement(statement);
+					if (statementType == Statement.RETURN)
+						break;
 				}
 			}
 		}
@@ -2080,8 +2103,9 @@ public class Interpreter
 
 			/*
 			 * Execute loop while expression remains true (non-zero).
-			 */			
-			while (test.getNumericValue() != 0.0)
+			 */
+			boolean gotReturn = false;
+			while (test.getNumericValue() != 0.0 && !gotReturn)
 			{
 				/*
 				 * Execute each of the statements.
@@ -2089,14 +2113,22 @@ public class Interpreter
 				for (int i = 0; i < v.size(); i++)
 				{
 					Statement st = (Statement)v.get(i);
-					executeStatement(st);
+					statementType = executeStatement(st);
+					if (statementType == Statement.RETURN)
+					{
+						gotReturn = true;
+						break;
+					}
 				}
 
-				test = expr[0].evaluate(mContext, statement.getFilename());
-				if (test.getType() != Argument.NUMERIC)
+				if (!gotReturn)
 				{
-					throw new MapyrusException(statement.getFilenameAndLineNumber() +
-						": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
+					test = expr[0].evaluate(mContext, statement.getFilename());
+					if (test.getType() != Argument.NUMERIC)
+					{
+						throw new MapyrusException(statement.getFilenameAndLineNumber() +
+							": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
+					}
 				}
 			}
 		}
@@ -2135,7 +2167,8 @@ public class Interpreter
 				 * during the loop have no effect.
 				 */
 				Object []keys = hashMapVar.getHashMapKeys();
-				for (int i = 0; i < keys.length; i++)
+				boolean gotReturn = false;
+				for (int i = 0; i < keys.length && !gotReturn; i++)
 				{
 					String currentKey = (String)keys[i];
 					mContext.defineVariable(varName,
@@ -2147,7 +2180,12 @@ public class Interpreter
 					for (int j = 0; j < v.size(); j++)
 					{
 						Statement st = (Statement)v.get(j);
-						executeStatement(st);
+						statementType = executeStatement(st);
+						if (statementType == Statement.RETURN)
+						{
+							gotReturn = true;
+							break;
+						}
 					}
 				}
 			}
@@ -2256,6 +2294,7 @@ public class Interpreter
 					": " + e.getMessage());
 			}
 		}
+		return(statementType);
 	}
 
 	/**
