@@ -292,6 +292,8 @@ command to display parallel lines, following the original path.
 \label{tutoriallines6}
 \end{figure}
 
+Another method is
+
 \subsection{Displaying Polygons}
 
 Polygon outlines are drawn with the \texttt{stroke}
@@ -1265,8 +1267,19 @@ a certain distance of another geometry.
 Use the \texttt{overlaps} function to test whether two
 polygons or two lines overlap.
 
-Use the \texttt{union} function to join many geometries together
-and display the result as a single geometry.
+Use the \texttt{difference}, \texttt{intersection} and \texttt{union}
+functions to perform operations on geometries.
+Use of the \texttt{difference} function is demonstrated in the
+following example to find the parts of a polygon that are not inside a second
+polygon.  The output of this example is shown in Figure \ref{tutorialjts3}.
+
+\verbatiminput{tutorialjts3.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialjts3.eps}
+\caption{Difference Function}
+\label{tutorialjts3}
+\end{figure}
 
 \subsection{Creating Landscape Output on Portrait Pages}
 
