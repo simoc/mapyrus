@@ -22,6 +22,7 @@
  */
 package au.id.chenery.mapyrus;
 
+import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -60,10 +61,12 @@ public class HTTPRequest extends Thread
 	private Socket mSocket;
 
 	/*
-	 * The MIME type, filename and Mapyrus commands parsed for this request.
+	 * The MIME type, filename, image map coordinates and Mapyrus commands
+	 * parsed for this request.
 	 */
 	private String mMimeType;
 	private String mFilename;
+	private Point mImagemapPoint;
 	private String mCommands;
 
 	/*
@@ -86,6 +89,7 @@ public class HTTPRequest extends Thread
 		mSocket = socket;
 		mInterpreter = interpreter;
 		mPool = interpreterPool;
+		mImagemapPoint = null;
 		mReturnStatus = true;
 	}
 
@@ -114,9 +118,39 @@ public class HTTPRequest extends Thread
 	 */
 	private StringBuffer parseForm(String form) throws MapyrusException, IOException
 	{
+		StringTokenizer st;
 		StringBuffer retval = new StringBuffer(form.length() * 2);
-		StringTokenizer st = new StringTokenizer(form, "&");
-		
+
+		/*
+		 * Parse any imagemap coordinates like foo.map?144,75
+		 * from the end of the URL string.
+		 */
+		int questionIndex = form.lastIndexOf('?');
+		if (questionIndex >= 0)
+		{
+			try
+			{
+				String imageMapCoords = form.substring(questionIndex + 1);
+				form = form.substring(0, questionIndex);
+
+				st = new StringTokenizer(imageMapCoords, ",");
+				if (st.countTokens() == 2)
+				{
+					int x = Integer.parseInt(st.nextToken());
+					int y = Integer.parseInt(st.nextToken());
+					mImagemapPoint = new Point(x, y);
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				/*
+				 * Just ignore garbled imagemap coordinates that do not make sense.
+				 */
+			}
+		}
+
+		st = new StringTokenizer(form, "&");
+
 		/*
 		 * From a request like: x1=11&y1=48&x2=12&y2=49&label=on
 		 * create a string of commands for Mapyrus to interpret:
@@ -333,6 +367,10 @@ public class HTTPRequest extends Thread
 				 */
 				FileOrURL f = new FileOrURL(new StringReader(mCommands), getName());
 				ContextStack context = new ContextStack();
+				if (mImagemapPoint != null)
+				{
+					context.setImagemapPoint(mImagemapPoint);
+				}
 				PrintStream printStream = new PrintStream(byteArrayStream);
 				mInterpreter.interpret(context, f, printStream);
 				context.closeContextStack();
