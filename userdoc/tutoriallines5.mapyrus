@@ -14,7 +14,7 @@ begin quarterLabel
 		clearpath
 		move 0, 2
 		justify "center"
-		font "Helvetica", "plain", 3
+		font "Helvetica", 3
 		label percent . "%"
 	endif
 	percent = percent + 25

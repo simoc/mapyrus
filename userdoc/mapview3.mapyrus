@@ -25,7 +25,7 @@ begin stationlabel name
 		rotate -45
 	endif
 
-	font 'Helvetica', 'plain', 3
+	font 'Helvetica', 3
 	label name
 end
 

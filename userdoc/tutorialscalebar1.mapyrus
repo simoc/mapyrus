@@ -49,7 +49,7 @@ begin scalebar scale, units
 
 	color "black"
 	linestyle 0.1
-	font 'Helvetica', 'plain', 2.5
+	font 'Helvetica', 2.5
 	justify 'centre'
 
 	# If measurements are in thousands, or larger units then we can

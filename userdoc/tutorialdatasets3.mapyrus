@@ -12,7 +12,7 @@ begin hotel name, stars
 	clearpath
 	move 2, 1
 	color 'white'
-	font 'Dialog', 'plain', 3
+	font 'Dialog', 3
 	label name
 
 	# Draw box below hotel name, then show number of stars inside it.

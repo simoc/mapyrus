@@ -3,7 +3,7 @@
 # Draw label in black, with white highlight so that it is easier to read.
 #
 begin highlightlabel name
-	font "Helvetica", "bold", 3
+	font "Helvetica-Bold", 3
 	color "white"
 	clearpath
 	move -Mapyrus.page.resolution.mm, 0

@@ -2,7 +2,7 @@ begin capitalCity name
 	# Draw a labelled dot marking a capital city.
 	#
 	color "red"
-	font "Helvetica", "plain", 2.5
+	font "Helvetica", 2.5
 	move -1, -1
 	draw -1, 1, 1, 1, 1, -1
 	fill

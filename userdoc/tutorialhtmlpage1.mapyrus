@@ -47,7 +47,7 @@ then
 	dataset "shapefile", "/tmp/txt_p", "dbffields=COMMENT"
 	import
 	color "black"
-	font "Helvetica", "plain", 3
+	font "Helvetica", 3
 	while Mapyrus.import.more
 	do
 		clearpath

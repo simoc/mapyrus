@@ -8,7 +8,7 @@ begin streetNameLabel name
 	endif
 	move 0, 1
 	color 'black'
-	font 'Helvetica', 'plain', 2
+	font 'Helvetica', 2
 	justify 'center'
 	label name
 end

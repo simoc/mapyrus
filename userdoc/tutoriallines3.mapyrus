@@ -13,7 +13,7 @@ begin highway name
 
 	clearpath
 	color "white"
-	font "Helvetica", "plain", 3
+	font "Helvetica", 3
 	justify "center"
 	move 0, -1
 	label name

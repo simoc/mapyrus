@@ -19,7 +19,7 @@ begin spinning_top
 		#
 		clearpath
 		color "white"
-		font 'Helvetica', 'bold', 5
+		font 'Helvetica-Bold', 5
 		justify 'center'
 		move 0, -9 + Mapyrus.page.resolution.mm
 		move 0, -9 - Mapyrus.page.resolution.mm

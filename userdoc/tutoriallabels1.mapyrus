@@ -3,7 +3,7 @@ newpage "png", "tutoriallabels1.png", 120, 30, 96
 # Draw a simple label.
 #
 color "black"
-font 'Helvetica', 'bold', 12
+font 'Helvetica-Bold', 12
 clearpath
 move 2, 15
 label 'Köln 17°'
@@ -13,7 +13,7 @@ label 'Köln 17°'
 clearpath
 move 77, 18
 color "red"
-font 'Helvetica', 'plain', 4
+font 'Helvetica', 4
 justify 'center'
 label 'For Free Advice Call\n1-800-HOTLINE\n24 hours a day'
 

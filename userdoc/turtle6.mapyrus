@@ -45,7 +45,7 @@ begin teamStrip teamName, shirtColor, sleeveColor, shortsColor
 	color 'black'
 	clearpath
 	move 0, -9
-	font 'Helvetica', 'bold', 3
+	font 'Helvetica-Bold', 3
 	justify 'center'
 	label teamName
 end

@@ -4,7 +4,7 @@
 # spammers getting hold of it.
 #
 newpage "png", "contact.png", 42, 4, 96
-font 'Monospaced', 'plain', Mapyrus.page.resolution.mm * 12
+font 'Monospaced', Mapyrus.page.resolution.mm * 12
 color '#AF2F5F'
 justify 'left'
 clearpath

@@ -6,7 +6,7 @@ begin colorRange h1, s1, b1, h2, s2, b2, nColors
 
 	# Label bar with starting and ending HSB color values.
 	#
-	font 'Helvetica', 'plain', 2.5
+	font 'Helvetica', 2.5
 	color "black"
 	justify 'left'
 	clearpath
