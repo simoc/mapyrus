@@ -378,7 +378,7 @@ public class HTTPRequest extends Thread
 		BufferedReader inReader = null;
 		BufferedInputStream inStream = null;
 		String reply;
-		String contentType;
+		String interpreterMimeType = null;
 
 		/*
 		 * Read and parse and execute HTTP request from an HTTP client.
@@ -404,6 +404,7 @@ public class HTTPRequest extends Thread
 				try
 				{
 					mInterpreter.interpret(context, f, printStream);
+					interpreterMimeType = context.getMimeType();
 					context.closeContextStack();
 					context = null;
 				}
@@ -455,11 +456,13 @@ public class HTTPRequest extends Thread
 			outStream = new BufferedOutputStream(mSocket.getOutputStream());
 			if (mReturnStatus)
 			{
-				if (mMimeType != null)
-					contentType = mMimeType;
+				String contentType;
+				
+				if (mMimeType == null)
+					contentType = interpreterMimeType;
 				else
-					contentType = mInterpreter.getContentType();
-
+					contentType = mMimeType;
+ 
 				if (mLogger.isLoggable(Level.FINE))
 				{
 					mLogger.fine(getName() + ": " +
@@ -475,7 +478,7 @@ public class HTTPRequest extends Thread
 					Constants.LINE_SEPARATOR;
 
 				outStream.write(reply.getBytes());
-				
+
 				if (mMimeType == null)
 				{
 					/*
@@ -515,7 +518,7 @@ public class HTTPRequest extends Thread
 			}
 			else
 			{
-				contentType = MimeTypes.get("txt");
+				String contentType = MimeTypes.get("txt");
 
 				if (mLogger.isLoggable(Level.FINE))
 				{
