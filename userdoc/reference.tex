@@ -589,7 +589,8 @@ The path defined with
 \texttt{circle},
 \texttt{hexagon},
 \texttt{star},
-\texttt{triangle}
+\texttt{triangle},
+\texttt{wedge}
 and
 \texttt{addpath}
 commands.
@@ -1871,7 +1872,7 @@ stripepath \textit{spacing}, \textit{angle}
 
 Replaces current path with equally spaced parallel lines that completely cover
 the path.  \textit{spacing} is the distance between lines, measured in
-millimeters.  \textit{angle} is angle of each line, measured in
+millimeters.  \textit{angle} is angle of each line, measured
 counter-clockwise in degrees, with zero being horizontal.  Follow this command
 with a \texttt{clip} command to produce a hatched fill pattern.
 
@@ -1923,6 +1924,25 @@ and \texttt{rotate} values.
 
 The rectangular region cleared is always aligned with the X
 and Y axes of the page, regardless of any rotation angle.
+
+\subsubsection{wedge}
+
+\begin{alltt}
+wedge \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{angle}, \textit{sweep}
+\end{alltt}
+
+Adds a wedge (pie slice) shape to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and radius
+\textit{radius}.
+The wedge begins at angle \textit{angle} measured
+counter-clockwise in degrees, with zero being horizontal.
+The wedge is open \textit{sweep} degrees in a counter-clockwise direction.
+If \textit{sweep} is negative then the wedge opens in a clockwise direction.
+
+The center point and radius are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{worlds}
 
