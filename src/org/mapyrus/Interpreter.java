@@ -419,6 +419,130 @@ public class Interpreter
 		}
 	}
 
+	/**
+	 * Draw legend for procedures used at moveto points in current path.
+	 * @param st legend statement being executed. 
+	 * @param context contains path and output page.
+	 * @param legendEntrySize size of entry in legend.
+	 */
+	private void displayLegend(Statement st, ContextStack context, double legendEntrySize)
+		throws MapyrusException, IOException
+	{
+		LegendEntryList legendList = context.getLegendEntries();
+		ArrayList moveTos = context.getMoveTos();
+
+		/*
+		 * Drawing legend will itself generate new legend entries.
+		 * Ignore any new legend entries while the legend is being drawn.
+		 */
+		legendList.ignoreAdditions();
+
+		/*
+		 * Draw only as many legend entries as there are moveto points.
+		 */
+		long nEntries = Math.min(legendList.size(), moveTos.size()); 
+		for (int i = 0; i < nEntries; i++)
+		{
+			LegendEntry entry = legendList.pop();
+			String blockName = entry.getBlockName();
+
+			Statement block = (Statement)mStatementBlocks.get(blockName);
+			if (block == null)
+			{
+				throw new MapyrusException(st.getFilenameAndLineNumber() +
+					": " + MapyrusMessages.get(MapyrusMessages.UNDEFINED_PROC) +
+					": " + blockName);
+			}
+
+			/*
+			 * Check that correct number of parameters are being passed.
+			 */
+			ArrayList formalParameters = block.getBlockParameters();
+			if (entry.getBlockArgs().length != formalParameters.size())
+			{
+				throw new MapyrusException(st.getFilenameAndLineNumber() +
+					": " + MapyrusMessages.get(MapyrusMessages.WRONG_PARAMETERS));
+			}
+
+			context.saveState(blockName);
+			Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
+			context.setTranslation(pt.x, pt.y);
+
+			/*
+			 * Draw description label for legend entry just to the right of
+			 * the symbol, line or box.
+			 */
+			context.clearPath();
+			context.moveTo(legendEntrySize * 1.1 + 2, legendEntrySize / 2);
+			context.label(entry.getDescription());
+
+			/*
+			 * Set path to a point, line or box and then call procedure block
+			 * to draw the symbol for the legend.
+			 */
+			context.clearPath();
+			if (entry.getType() == LegendEntry.POINT_ENTRY)
+			{
+				/*
+				 * Set path to a single point.
+				 */
+				context.setTranslation(legendEntrySize / 2, legendEntrySize / 2);
+				context.moveTo(0.0, 0.0);
+			}
+			else if (entry.getType() == LegendEntry.LINE_ENTRY)
+			{
+				/*
+				 * Set path to a horizontal line.
+				 */
+				context.moveTo(0.0, legendEntrySize / 2);
+				context.lineTo(legendEntrySize, legendEntrySize / 2);
+			}
+			else if (entry.getType() == LegendEntry.ZIGZAG_ENTRY)
+			{
+				/*
+				 * Set path to a zigzag line /\/\.
+				 */
+				context.moveTo(0.0, legendEntrySize / 2);
+				context.lineTo(legendEntrySize / 3, legendEntrySize);
+				context.lineTo(legendEntrySize * 2 / 3, 0.0);
+				context.lineTo(legendEntrySize, legendEntrySize / 2);
+			}
+			else if (entry.getType() == LegendEntry.BOX_ENTRY)
+			{
+				/*
+				 * Set path to a square.
+				 */
+				context.moveTo(0.0, 0.0);
+				context.lineTo(0.0, legendEntrySize);
+				context.lineTo(legendEntrySize, legendEntrySize);
+				context.lineTo(legendEntrySize, 0.0);
+				context.lineTo(0.0, 0.0);
+			}
+
+			/*
+			 * Save additional state for boxes so that any clip region set
+			 * by the procedure block is cleared before drawing outline box.
+			 */
+			if (entry.getType() == LegendEntry.BOX_ENTRY)
+				context.saveState(blockName);
+				
+			makeCall(block, formalParameters, entry.getBlockArgs());
+
+			if (entry.getType() == LegendEntry.BOX_ENTRY)
+			{
+				/*
+				 * Draw black outline around box.
+				 */
+				context.restoreState();
+				context.setColor(Color.BLACK);
+				context.setLinestyle(0.1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0, null);
+				context.stroke();
+			}
+			context.restoreState();
+		}
+		legendList.acceptAdditions();
+	}
+
 	/*
 	 * Execute a single statement, changing the path, context or generating
 	 * some output.
@@ -432,6 +556,7 @@ public class Interpreter
 		double degrees;
 		double x1, y1, x2, y2;
 		int units;
+		double legendSize;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -849,6 +974,46 @@ public class Interpreter
 				 * Nothing to do -- any variables were assigned during expression
 				 * evaluation above.
 				 */
+				break;
+
+			case Statement.KEY:
+				if (nExpressions >= 2)
+				{
+					String entryType = mExecuteArgs[0].getStringValue();
+					String description = mExecuteArgs[1].getStringValue();
+					int eType;
+
+					if (entryType.equalsIgnoreCase("point"))
+						eType = LegendEntry.POINT_ENTRY;
+					else if (entryType.equalsIgnoreCase("line"))
+						eType = LegendEntry.LINE_ENTRY;
+					else if (entryType.equalsIgnoreCase("zigzag"))
+						eType = LegendEntry.ZIGZAG_ENTRY;
+					else if (entryType.equalsIgnoreCase("box"))
+						eType = LegendEntry.BOX_ENTRY;
+					else
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LEGEND_TYPE) +
+							": " + entryType);
+					}
+					mContext.addLegendEntry(description, eType, mExecuteArgs, 2, nExpressions - 2);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LEGEND_ENTRY));
+				}
+				break;
+
+			case Statement.LEGEND:
+				if (nExpressions == 1)
+				{
+					legendSize = mExecuteArgs[0].getNumericValue();
+					displayLegend(st, context, legendSize);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_LEGEND_SIZE));
+				}
 				break;
 		}		
 	}
@@ -1661,7 +1826,7 @@ public class Interpreter
 
 	/**
 	 * Recursive function for executing statements.
-	 * @param preprocessor is source to read statements from.
+	 * @param statement is statement to execute.
 	 */
 	private void executeStatement(Statement statement)
 		throws IOException, MapyrusException
@@ -1824,15 +1989,15 @@ public class Interpreter
 			/*
 			 * Find the statements for the procedure block we are calling.
 			 */
-			Statement block =
-				(Statement)mStatementBlocks.get(statement.getBlockName());
+			String blockName = statement.getBlockName();
+			Statement block = (Statement)mStatementBlocks.get(blockName);
 			if (block == null)
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
 					": " + MapyrusMessages.get(MapyrusMessages.UNDEFINED_PROC) +
-					": " + statement.getBlockName());
+					": " + blockName);
 			}
-			
+
 			/*
 			 * Check that correct number of parameters are being passed.
 			 */
@@ -1880,9 +2045,12 @@ public class Interpreter
 
 				for (int i = 0; i < moveToCount; i++)
 				{
-					mContext.saveState();
+					mContext.saveState(blockName);
 					Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
 					mContext.setTranslation(pt.x, pt.y);
+					mContext.clearPath();
+					mContext.moveTo(0.0, 0.0);
+
 					double rotation = ((Double)rotations.get(i)).doubleValue();
 					mContext.setRotation(rotation);
 					makeCall(block, formalParameters, args);
@@ -1895,7 +2063,7 @@ public class Interpreter
 				 * Execute statements in procedure block.  Surround statments
 				 * with a save/restore so nothing can be changed by accident.
 				 */
-				mContext.saveState();
+				mContext.saveState(blockName);
 				makeCall(block, formalParameters, args);
 				mContext.restoreState();
 			}
@@ -1925,7 +2093,7 @@ public class Interpreter
 
 	/**
 	 * Return type of content generated by this interpreter.
-	 * @return
+	 * @return MIME type of content.
 	 */
 	public String getContentType()
 	{
