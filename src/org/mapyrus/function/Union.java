@@ -25,7 +25,6 @@ package org.mapyrus.function;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
-import org.mapyrus.MapyrusMessages;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
@@ -51,26 +50,18 @@ public class Union extends Function
 
 		/*
 		 * If one of the geometries is nothing, then just return the other
-		 * value (provided it is a geeomtry).
+		 * value.
 		 */
-		if (wkt1.length() == 0 && arg2.getType() == Argument.GEOMETRY)
+		if (wkt1.length() == 0)
 		{
 			retval = arg2;
 		}
-		else if (wkt2.length() == 0 && arg1.getType() == Argument.GEOMETRY)
+		else if (wkt2.length() == 0)
 		{
 			retval = arg1;
 		}
 		else
 		{
-			if (arg1.getType() != Argument.GEOMETRY)
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-					": " + arg1.toString());
-
-			if (arg2.getType() != Argument.GEOMETRY)
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-					": " + arg2.toString());
-
 			try
 			{
 				Geometry g1 = new WKTReader().read(wkt1);
