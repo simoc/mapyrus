@@ -924,6 +924,7 @@ public class Expression
 			if (op1 == '=')
 			{
 				op2 = p.read();
+				p.unread(op2);
 				if (op2 != '=')
 				{
 					/*
@@ -951,7 +952,6 @@ public class Expression
 				}
 				else
 				{
-					p.unread(op2);
 					p.unread(op1);
 					break;
 				}
