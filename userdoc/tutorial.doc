@@ -236,6 +236,22 @@ The output of this example is.
 <img src="tutorialvar1.png">
 <p>
 
+The second example demonstrates the use of the
+<a href="reference.html#split"><tt>split</tt></a>
+and
+<a href="reference.html#length"><tt>length</tt></a>
+functions
+to create an array, and stepping through the array one
+element at a time.
+
+include beginex.doc
+include tutorialvar2.mpy
+include endex.doc
+
+<p>
+<img src="tutorialvar2.png">
+<p>
+
 include hr.doc
 
 <a name="procedures"></a>
