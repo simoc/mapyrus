@@ -105,6 +105,7 @@ public class MapyrusMessages
 	public static final String NO_EXPRESSION = "noexpression";
 	public static final String NO_GEOMETRY_FIELD = "nogeometryfield";
 	public static final String NO_JDBC_CLASS = "nojdbcclass";
+	public static final String NO_LEGEND_SIZE = "nolegendsize";
 	public static final String NO_MOVETO = "nomoveto";
 	public static final String NO_OUTPUT = "nooutput";
 	public static final String NO_ROWS = "norows";
