@@ -431,7 +431,8 @@ square brackets (<tt>[</tt> and <tt>]</tt>).
 The index is any string or number value.
 <p>
 
-The <tt>if</tt> and <tt>while</tt> flow control structures
+The <tt>if</tt>, <tt>while</tt> and <tt>for</tt>
+flow control structures
 found in other languages are available:
 <p>
 
@@ -470,6 +471,19 @@ as <i>condition</i> continues to evaluate to a non-zero value:
 <p>
 
 <tt>while</tt> <i>condition</i> <tt>do</tt>
+<br>
+&nbsp;&nbsp;<i>commands</i> ...
+<br>
+<tt>done</tt>
+<p>
+
+The <tt>for</tt> ... <tt>in</tt> keywords define a loop in which
+each element of <i>array</i> is assigned to variable <i>var</i>
+and <i>commands</i> are executed.
+Elements in <i>array</i> are accessed in no particular order:
+<p>
+
+<tt>for</tt> <i>var</i> <tt>in</tt> <i>array</i> <tt>do</tt>
 <br>
 &nbsp;&nbsp;<i>commands</i> ...
 <br>
@@ -969,13 +983,37 @@ include hr.doc
 
 <p>
 <a name="font"></a>
-<tt>font</tt> <i>name</i>, <i>style</i>, <i>size</i>
+<tt>font</tt> <i>name</i>, <i>size</i>
 <p>
 Sets font for labelling with the <a href="#label">label</a> command.
-Font <i>name</i> is the name of the font family,
-<i>style</i> is either <tt>plain</tt>, <tt>bold</tt>,
-<tt>italic</tt> or <tt>bolditalic</tt>.
-Font <i>size</i> is given in millimetres.
+Font <i>name</i> and <i>size</i> are the name and size in
+millimetres of the font to use.
+<p>
+If a scale factor was set with the
+<a href="#scale">scale</a> command
+then font size is scaled by this factor.
+<p>
+If a rotation was set with the
+<a href="#rotation">rotation</a> command
+then labels follow current rotation angle.
+If no rotation is set then labels are displayed
+horizontally.
+<p>
+Font <i>name</i>
+depends on the output format set with the
+<a href="#newpage">newpage</a> command.
+For PostScript output, <i>name</i> is the name of a PostScript Type 1
+font.
+For output to an image format, <i>name</i> is one of the Java Logical
+font names (<tt>Serif</tt>, <tt>SansSerif</tt>,
+<tt>Monospaced</tt>, <tt>Dialog</tt>, or <tt>DialogInput</tt>) or a TrueType
+font name.
+<p>
+Tutorial sections
+<a href="tutorial.html#psfonts">Using Fonts In PostScript Output</a>
+and
+<a href="tutorial.html#ttffonts">Using TrueType Fonts In Output to Image Formats</a>
+describe different font formats.
 
 include hr.doc
 
@@ -1031,7 +1069,7 @@ include hr.doc
 
 <p>
 <a name="let"></a>
-<tt>let</tt> <i>var</i> = <i>expression</i>
+<tt>let</tt> <i>var</i> = <i>expression</i>, ...
 <p>
 Assigns result of evaluating <i>expression</i>
 to a variable with name <i>var</i>.
@@ -1041,6 +1079,9 @@ current procedure with a
 <p>
 Variable <i>var</i> is either a simple variable name, an
 array, or an array element of the form <i>var</i>[<i>index</i>].
+<p>
+Several variables are assigned by separating each 
+<i>var</i> and <i>expression</i> pair by a comma.
 
 include hr.doc
 
