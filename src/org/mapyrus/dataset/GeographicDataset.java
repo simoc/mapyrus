@@ -5,6 +5,7 @@ package au.id.chenery.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
+import au.id.chenery.mapyrus.*;
 
 /**
  * Interface to a vector geographic format.  Provides methods to open and query
@@ -56,9 +57,8 @@ public interface GeographicDataset
 	 * new query closes the last one.
 	 * 
 	 * @param extents is area of interest for this query.
-	 * @param whereClause is additional SQL where clause for query.
 	 */
-	public void query(Rectangle2D.Double extents, String whereClause)
+	public void query(Rectangle2D.Double extents)
 		throws MapyrusException;
 		
 	/**
@@ -69,8 +69,7 @@ public interface GeographicDataset
 	
 	/**
 	 * Fetch next row that is a result of current query.
-	 * @param query handle to query.
-	 * @param row returns next row result.
+	 * @return row returns next row result.
 	 */
 	public Row fetch() throws MapyrusException;
 }
