@@ -1,0 +1,70 @@
+# Display requested area of file roads.shp in a PNG file.
+#
+imageFile = tempname("PNG")
+newpage "png", imageFile, 100, 100, 96
+
+dataset "shapefile", "/tmp/roads.shp", "dbffields="
+if x1 eq ""
+then
+	x1 = Mapyrus.dataset.min.x
+	y1 = Mapyrus.dataset.min.y
+	x2 = Mapyrus.dataset.max.x
+	y2 = Mapyrus.dataset.max.y
+endif
+
+worlds x1, y1, x2, y2
+import
+while Mapyrus.import.moreRecords
+do
+	clearpath
+	fetch
+	addpath GEOMETRY
+	stroke
+done
+
+x1 = Mapyrus.worlds.min.x
+y1 = Mapyrus.worlds.min.y
+x2 = Mapyrus.worlds.max.x
+y2 = Mapyrus.worlds.max.y
+xMid = (x1 + y2) / 2
+yMid = (y1 + y2) / 2
+xDiff = x2 - x1
+yDiff = y2 - y1
+
+panFactor = 0.2
+zoomFactor = 0.2
+
+xPan = panFactor * xDiff
+yPan = panFactor * yDiff
+xZoom = zoomFactor * xDiff
+yZoom = zoomFactor * yDiff
+
+# Set URLs for navigating around current display.
+#
+upURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 + yPan) . '&x2=' . x2 . '&y2=' . (y2 + yPan)
+downURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 - yPan) . '&x2=' . x2 . '&y2=' . (y2 - yPan)
+leftURL = Mapyrus.filename . '?x1=' . (x1 - xPan) . '&y1=' . y1 . '&x2=' . (x2 - xPan) . '&y2=' . y2
+rightURL = Mapyrus.filename . '?x1=' . (x1 + xPan) . '&y1=' . y1 . '&x2=' . (x2 + xPan) . '&y2=' . y2
+zoomInURL = Mapyrus.filename . '?x1=' . (x1 + xZoom) . '&y1=' . (y1 + yZoom) . '&x2=' . (x2 - xZoom) . '&y2=' . (y2 - yZoom)
+zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom) . '&x2=' . (x2 + xZoom) . '&y2=' . (y2 + yZoom)
+
+# Spool HTML file to standard output, replacing placeholder tokens
+# with actual values for this request.
+#
+dataset "textfile", "tutorialhtmlpage1.html", ""
+import
+while Mapyrus.import.moreRecords
+do
+	fetch
+	r = replace($0, '@placeholder_title@', 'Real Title')
+	r = replace(r, '@placeholder_coordinates@', xMid . ', ' . yMid)
+	r = replace(r, '@placeholder_image@', imageFile)
+	r = replace(r, '@placeholder_up_url@', upURL)
+	r = replace(r, '@placeholder_down_url@', downURL)
+	r = replace(r, '@placeholder_left_url@', leftURL)
+	r = replace(r, '@placeholder_right_url@', rightURL)
+	r = replace(r, '@placeholder_zoom_in_url@', zoomInURL)
+	r = replace(r, '@placeholder_zoom_out_url@', zoomOutURL)
+	print r
+done
+
