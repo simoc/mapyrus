@@ -439,7 +439,18 @@ public class Interpreter
 					{
 						if (field.getType() == Argument.GEOMETRY)
 						{
-							// XXX need to decide on format of multi-lines in double []
+							/*
+							 * Define path from fetched geometry.
+							 */
+							double []coords = field.getGeometryValue();
+							for (int j = 1; j < coords[0]; j++)
+							{
+								if (coords[j] == PathIterator.SEG_MOVETO)
+									context.moveTo(coords[j + 1], coords[j + 2]);
+								else
+									context.lineTo(coords[j + 1], coords[j + 2]);
+								j += 3;
+							}
 						}
 						else
 						{
