@@ -1927,17 +1927,34 @@ and Y axes of the page, regardless of any rotation angle.
 \subsubsection{worlds}
 
 \begin{alltt}
-worlds \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2} [, \textit{units}]
+worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2} [, \texttt{"units=\textit{u}"}]
+worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2}, \textit{px1}, \textit{py1}, \textit{px2}, \textit{py2} [, \texttt{"units=\textit{u}"}]
 \end{alltt}
 
-Defines a world coordinate system for the page with
-(\textit{x1}, \textit{y1}) in the lower-left corner of the page and
-(\textit{x2}, \textit{y2}) in the upper-right corner, replacing any existing
-world coordinate system.
+Defines a world coordinate system for the page.
+
+The coordinates
+(\textit{wx1}, \textit{wy1}) 
+and
+(\textit{wx2}, \textit{wy2})
+define the lower-left and upper-right world coordinate values.
+
+The coordinates
+(\textit{px1}, \textit{py1}) 
+and
+(\textit{px2}, \textit{py2})
+define the lower-left and upper-right positions on the page
+in millimetres.  The world coordinates are mapped into this area
+of the page.  If page coordinates are not given then the world
+coordinates are mapped to the whole page.
+
+The new world coordinates replace any world coordinates
+set with a previous \texttt{worlds} command.
+
 The world coordinate range is expanded in the X or Y axis,
 if necessary, to maintain uniform scaling.
 
-\textit{units} define the units of the world coordinates,
+\textit{u} defines the units of the world coordinates,
 either \texttt{metres}, \texttt{meters} or \texttt{feet}.
 If not given, units are assumed to be meters.
 
