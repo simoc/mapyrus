@@ -35,6 +35,23 @@ public class Substr extends Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
 	 */
+	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+		throws MapyrusException
+	{
+		Argument retval;
+
+		/*
+		 * Set extract length long enough for all remaining characters in string.
+		 */
+		String s = arg1.toString();
+		Argument arg3 = new Argument(s.length());
+		retval = evaluate(context, arg1, arg2, arg3);
+		return(retval);
+	}
+
+	/**
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 */
 	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
 		throws MapyrusException
 	{
@@ -85,7 +102,7 @@ public class Substr extends Function
 	 */
 	public int getMinArgumentCount()
 	{
-		return(3);
+		return(2);
 	}
 
 	/**
