@@ -594,12 +594,15 @@ public class Context
 	/**
 	 * Sets horizontal and vertical justification for labelling.
 	 * @param code is bit flags of JUSTIFY_* constant values for justification.
+	 * @return previous justification value.
 	 */
-	public void setJustify(int code)
+	public int setJustify(int code)
 	{
+		int previous = mJustify;
 		mJustify = code;
 		mAttributesChanged |= ATTRIBUTE_JUSTIFY;
 		mAttributesPending |= ATTRIBUTE_JUSTIFY;
+		return(previous);
 	}
 
 	/**
@@ -1589,18 +1592,21 @@ public class Context
 			double angle = Math.atan2(endPt.y - startPt.y, endPt.x - startPt.x);
 			int startIndex, endIndex;
 			int step;
+			int justify;
 
 			if (startPt.distanceSq(endPt) > 0 && Math.abs(angle + mRotation) > Math.PI / 2)
 			{
 				startIndex = pathPoints.size() - 1;
 				endIndex = 0;
 				step = -1;
+				justify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_TOP;
 			}
 			else
 			{
 				startIndex = 0;
 				endIndex = pathPoints.size() - 1;
 				step = 1;
+				justify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
 			}
 
 			/*
@@ -1626,6 +1632,7 @@ public class Context
 				 * Set rotation of font to follow current line segment.
 				 */
 				addFontRotation(angle);
+				int previousJustify = setJustify(justify);
 				setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
 
 				/*
@@ -1656,6 +1663,7 @@ public class Context
 				startIndex += step;
 
 				addFontRotation(-angle);
+				setJustify(previousJustify);
 			}
 		}
 	}
