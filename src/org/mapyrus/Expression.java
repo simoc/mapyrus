@@ -84,27 +84,47 @@ public class Expression
 	 */
 	private static final int ROUND_FUNCTION = 1;	/* round(3.14) = 3 */
 	private static final String ROUND_FUNCTION_NAME = "round";
+	
 	private static final int RANDOM_FUNCTION = 2;	/* random(3) = [0, 3) */
 	private static final String RANDOM_FUNCTION_NAME = "random";
+	
 	private static final int LOG10_FUNCTION = 3;	/* log10(1000) = 3 */
 	private static final String LOG10_FUNCTION_NAME = "log10";
+	
 	private static final int POW_FUNCTION = 4;	/* pow(3,2) = 9 */
 	private static final String POW_FUNCTION_NAME = "pow";
+	
 	private static final int SQRT_FUNCTION = 5;	/* sqrt(9) = 3 */
 	private static final String SQRT_FUNCTION_NAME = "sqrt";
+	
 	private static final int FLOOR_FUNCTION = 6;	/* floor(9.7) = 9 */
 	private static final String FLOOR_FUNCTION_NAME = "floor";
+	
 	private static final int CEIL_FUNCTION = 7;	/* ceil(9.7) = 10 */
 	private static final String CEIL_FUNCTION_NAME = "ceil";
-	private static final int LENGTH_FUNCTION = 8;	/* length("foo") = 3 */
+
+	private static final int SIN_FUNCTION = 8;	/* sin(90) = 1 */
+	private static final String SIN_FUNCTION_NAME = "sin";
+
+	private static final int COS_FUNCTION = 9;	/* cos(0) = 1 */
+	private static final String COS_FUNCTION_NAME = "cos";
+
+	private static final int TAN_FUNCTION = 10;	/* tan(45) = 1 */
+	private static final String TAN_FUNCTION_NAME = "tan";
+	
+	private static final int LENGTH_FUNCTION = 11;	/* length("foo") = 3 */
 	private static final String LENGTH_FUNCTION_NAME = "length";
-	private static final int MATCH_FUNCTION = 9;	/* match('foobar', 'ob') = 3 */
+	
+	private static final int MATCH_FUNCTION = 12;	/* match('foobar', 'ob') = 3 */
 	private static final String MATCH_FUNCTION_NAME = "match";
-	private static final int REPLACE_FUNCTION = 10;	/* replace('foobar', 'o*', '_') =  'f_bar' */
+	
+	private static final int REPLACE_FUNCTION = 13;	/* replace('foobar', 'o*', '_') =  'f_bar' */
 	private static final String REPLACE_FUNCTION_NAME = "replace";
-	private static final int TEMPNAME_FUNCTION = 11;	/* tempname('.jpg') =  'tmpABC123.jpg' */
+	
+	private static final int TEMPNAME_FUNCTION = 14;	/* tempname('.jpg') =  'tmpABC123.jpg' */
 	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
-	private static final int SUBSTR_FUNCTION = 12;	/* substr('foobar', 2, 3) = 'oob' */
+	
+	private static final int SUBSTR_FUNCTION = 15;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
 	/*
@@ -129,6 +149,9 @@ public class Expression
 		mFunctionTypeLookup.put(SQRT_FUNCTION_NAME, new Integer(SQRT_FUNCTION));
 		mFunctionTypeLookup.put(FLOOR_FUNCTION_NAME, new Integer(FLOOR_FUNCTION));
 		mFunctionTypeLookup.put(CEIL_FUNCTION_NAME, new Integer(CEIL_FUNCTION));
+		mFunctionTypeLookup.put(SIN_FUNCTION_NAME, new Integer(SIN_FUNCTION));
+		mFunctionTypeLookup.put(COS_FUNCTION_NAME, new Integer(COS_FUNCTION));
+		mFunctionTypeLookup.put(TAN_FUNCTION_NAME, new Integer(TAN_FUNCTION));
 		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
 		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
 		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
@@ -143,6 +166,9 @@ public class Expression
 		mFunctionArgumentCount[SQRT_FUNCTION] = 1;
 		mFunctionArgumentCount[FLOOR_FUNCTION] = 1;
 		mFunctionArgumentCount[CEIL_FUNCTION] = 1;
+		mFunctionArgumentCount[SIN_FUNCTION] = 1;
+		mFunctionArgumentCount[COS_FUNCTION] = 1;
+		mFunctionArgumentCount[TAN_FUNCTION] = 1;
 		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
 		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
 		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
@@ -287,7 +313,9 @@ public class Expression
 			 */
 			if (mFunction == ROUND_FUNCTION || mFunction == RANDOM_FUNCTION ||
 				mFunction == LOG10_FUNCTION || mFunction == SQRT_FUNCTION ||
-				mFunction == FLOOR_FUNCTION || mFunction == CEIL_FUNCTION)
+				mFunction == FLOOR_FUNCTION || mFunction == CEIL_FUNCTION ||
+				mFunction == SIN_FUNCTION || mFunction == COS_FUNCTION ||
+				mFunction == TAN_FUNCTION)
 			{
 				leftValue = traverse(mLeftBranch, context, interpreterFilename);
 				l = leftValue.getNumericValue();
@@ -314,9 +342,21 @@ public class Expression
 				{
 					d = Math.floor(l);
 				}
-				else
+				else if (mFunction == CEIL_FUNCTION)
 				{
 					d = Math.ceil(l);
+				}
+				else if (mFunction == SIN_FUNCTION)
+				{
+					d = Math.sin(Math.toRadians(l));
+				}
+				else if (mFunction == COS_FUNCTION)
+				{
+					d = Math.cos(Math.toRadians(l));
+				}
+				else
+				{
+					d = Math.tan(Math.toRadians(l));
 				}
 				retval = new Argument(d);
 			}
