@@ -1035,6 +1035,52 @@ begin stipple
 	repeaticon "0xaa44aa00aa44aa00", 5
 end
 
+begin weavefill_box
+	move -2, 0
+	draw 0, 2
+	color "black"
+	linestyle 1
+	stroke
+
+	clearpath
+	color "white"
+	linestyle 2
+	move -0.5, 0.5
+	draw -1.5, 1.5
+	stroke
+
+	clearpath
+	color "black"
+	linestyle 1
+	move -2, 2
+	draw 2, -2
+	stroke
+
+	clearpath
+	color "white"
+	linestyle 2
+	move 0.5, -1.5
+	draw 1.5, -0.5
+	stroke
+
+	clearpath
+	color "black"
+	linestyle 1
+	move 0, -2
+	draw 2, 0
+	stroke
+end
+
+begin weavefill
+	key "box", "Weave Fill"
+	color "white"
+	fill
+	clip "inside"
+	stripepath 4, 0
+	samplepath 4, 0
+	weavefill_box
+end
+
 begin aggregate_triangle
 	# Draw a triangle at a random angle at a random position.
 	#
@@ -1123,6 +1169,7 @@ then
 	quiltfill
 	circlefill
 	boxfill
+	weavefill
 	aggregate
 
 	newpage "eps", "allsymbols.eps", 210, 297
