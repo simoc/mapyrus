@@ -1349,6 +1349,29 @@ Prints each \textit{string} to standard output,
 separated by spaces.
 A newline is added after the final \textit{string}.
 
+\subsubsection{protect}
+
+\begin{alltt}
+protect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+\end{alltt}
+
+Marks a rectangular region of the page as protected.
+The function \texttt{protected} will return 1 for any
+point in this rectangular region.
+
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of the rectangle to mark as protected.
+
+The four corner points of the rectangle
+are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
+The rectangular region protected is always aligned with the X
+and Y axes of the page, regardless of any rotation angle.
+
 \subsubsection{rotate}
 
 \begin{alltt}
