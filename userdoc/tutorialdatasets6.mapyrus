@@ -9,8 +9,8 @@ let x1 = 191232, y1 = 243117, x2 = 191234, y2 = 243119
 # road network data inside an area of interest.
 #
 let sql = "SELECT AsText(GEOM) AS GEOM FROM ROADS_GEOM \
-WHERE GEOM && GeometryFromText( BOX3D(" . x1 . " " . y1 . \
-"," . x2 . " " . y2 . ") ::box3d,-1)"
+WHERE GEOM && GeometryFromText('BOX3D(" . x1 . " " . y1 . \
+"," . x2 . " " . y2 . ")'::box3d,-1)"
 
 # Fetch each road as an OGC WKT geometry string and draw it.
 #
