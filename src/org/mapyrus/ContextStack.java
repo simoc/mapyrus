@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.awt.geom.Rectangle2D;
 
+import au.id.chenery.mapyrus.dataset.DatasetFactory;
+import au.id.chenery.mapyrus.dataset.GeographicDataset;
+
 /**
  * Contexts for interpretation that are pushed and popped as procedure 
  * blocks are called and return so that changes in a procedure block
@@ -25,11 +28,13 @@ public class ContextStack
 	
 	/*
 	 * Variable names for geometry of currently defined path,
-	 * world coordinate system and coordinate system we are projecting from.
+	 * world coordinate system, coordinate system we are projecting from
+	 * and dataset we are reading from.
 	 */
 	private static final String GEOMETRY_VARIABLE = "geometry";
 	private static final String WORLDS_VARIABLE = "worlds";
 	private static final String UNPROJECTED_VARIABLE = "project";
+	private static final String DATASET_VARIABLE = "dataset";
 	
 	/*
 	 * Stack of contexts, with current context in last slot.
@@ -198,7 +203,17 @@ public class ContextStack
 	public void setDataset(String type, String name,
 		String extras, String []geometryFieldNames) throws MapyrusException
 	{
-		getCurrentContext().setDataset(type, name, extras, geometryFieldNames);
+		GeographicDataset dataset;
+		dataset = DatasetFactory.open(type, name, extras, geometryFieldNames);
+		getCurrentContext().setDataset(dataset);
+	}
+
+	/**
+	 * Begin query on current dataset.  All geometry inside or crossing
+	 */
+	public void queryDataset() throws MapyrusException
+	{
+		getCurrentContext().queryDataset();
 	}
 
 	/**
@@ -319,7 +334,7 @@ public class ContextStack
 	 */
 	public int []getDatasetGeometryFieldIndexes() throws MapyrusException
 	{
-		return(getCurrentContext().getDatasetGeometryFieldIndexes());
+		return(getCurrentContext().getDataset().getGeometryFieldIndexes());
 	}
 
 	/**
@@ -328,7 +343,7 @@ public class ContextStack
 	 */
 	public String []getDatasetFieldNames() throws MapyrusException
 	{
-		return(getCurrentContext().getDatasetFieldNames());
+		return(getCurrentContext().getDataset().getFieldNames());
 	}
 
 	/**
@@ -369,6 +384,7 @@ public class ContextStack
 		Argument retval = null;
 		String sub;
 		double d;
+		int i;
 		Rectangle2D bounds;
 
 		if (varName.startsWith(Mapyrus.PROGRAM_NAME + "."))
@@ -412,7 +428,7 @@ public class ContextStack
 			}
 			else if (sub.equals("import.count"))
 			{
-				retval = new Argument(getCurrentContext().getDatasetFetchedCount());
+				retval = new Argument(getCurrentContext().getDatasetQueryCount());
 			}
 			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
 			{
@@ -450,6 +466,33 @@ public class ContextStack
 				sub = sub.substring(UNPROJECTED_VARIABLE.length() + 1);
 				retval = getBoundingBoxVariable(sub, bounds);
 			}
+			else if (sub.startsWith(DATASET_VARIABLE + "."))
+			{
+				GeographicDataset dataset = getCurrentContext().getDataset();
+				if (dataset == null)
+					throw new MapyrusException("No dataset defined");
+
+				sub = sub.substring(DATASET_VARIABLE.length() + 1);
+				if (sub.equals("projection"))
+					retval = new Argument(Argument.STRING, dataset.getProjection());
+				else if (sub.equals("fieldnames"))
+				{
+					String []fieldNames = dataset.getFieldNames();
+					StringBuffer s = new StringBuffer();
+					
+					for (i = 0; i < fieldNames.length; i++)
+					{
+						if (i > 0)
+							s.append(" ");
+						s.append(fieldNames[i]);
+					}
+					retval = new Argument(Argument.STRING, s.toString());
+				}
+				else
+				{
+					retval = getBoundingBoxVariable(sub, dataset.getWorlds());
+				}
+			}
 			else
 			{
 				/*
@@ -475,7 +518,7 @@ public class ContextStack
 			 * Search back through stack for a context defining
 			 * this variable.
 			 */
-			int i = mStack.size() - 1;
+			i = mStack.size() - 1;
 			Context context;
 			
 			while (i >= 0 && retval == null)
