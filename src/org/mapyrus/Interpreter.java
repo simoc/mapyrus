@@ -1289,6 +1289,18 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.GEOIMAGE:
+				if (nExpressions == 1)
+				{
+					String filename = mExecuteArgs[0].getStringValue();
+					context.drawGeoImage(filename);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOIMAGE));
+				}
+				break;
+
 			case Statement.EPS:
 				if (nExpressions == 1 || nExpressions == 2)
 				{
