@@ -229,11 +229,12 @@ public class HTTPRequest extends Thread
 		/*
 		 * Block access to all files except those in current directory.
 		 */
+		File f = new File(mFilename);
 		if(mFilename.indexOf(File.separatorChar) >= 0 || mFilename.indexOf('/') >= 0 ||
-			mFilename.indexOf('\\') >= 0)
+			mFilename.indexOf('\\') >= 0 || (!f.exists()))
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HTTP_REQUEST) +
-							": " + firstLine);
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
+							": " + mFilename);
 		}
 
 		/*
@@ -340,17 +341,9 @@ public class HTTPRequest extends Thread
 			else
 			{
 				/*
-				 * Read in a plain file to be returned to client.
+				 * Open plain file to be returned to client.
 				 */
 				inStream = new BufferedInputStream(new FileInputStream(mFilename));
-				int c = inStream.read();
-				while (c >= 0)
-				{
-					byteArrayStream.write(c);
-					c = inStream.read();
-				}
-				inStream.close();
-				inStream = null;
 			}
 		}
 		catch (IOException e)
@@ -362,18 +355,6 @@ public class HTTPRequest extends Thread
 		{
 			mReturnStatus = false;
 			mErrorMessage = e.getMessage();
-		}
-
-		try
-		{
-			/*
-			 * Ensure any file being read by this request is closed in all cases.
-			 */
-			if (inStream != null)
-				inStream.close();
-		}
-		catch (IOException e)
-		{
 		}
 
 		try
@@ -398,7 +379,28 @@ public class HTTPRequest extends Thread
 					Constants.LINE_SEPARATOR;
 
 				outStream.write(reply.getBytes());
-				byteArrayStream.writeTo(outStream);
+				
+				if (mMimeType == null)
+				{
+					/*
+					 * Write output of interpreter back to HTTP client.
+					 */
+					byteArrayStream.writeTo(outStream);
+				}
+				else
+				{
+					/*
+					 * Spool requested file back to HTTP client.
+					 */
+					int c = inStream.read();
+					while (c >= 0)
+					{
+						outStream.write(c);
+						c = inStream.read();
+					}
+					inStream.close();
+					inStream = null;
+				}
 			}
 			else
 			{
@@ -419,7 +421,7 @@ public class HTTPRequest extends Thread
 			if (mReturnStatus)
 			{
 				mReturnStatus = false;
-				mErrorMessage = getName() + ": " + e.toString();
+				mErrorMessage = e.toString();
 			}
 
 			/*
@@ -429,6 +431,19 @@ public class HTTPRequest extends Thread
 			{
 				if (mSocket != null)
 					mSocket.close();
+			}
+			catch (IOException e2)
+			{
+			}
+			
+			try
+			{
+				/*
+				 * Make sure any file being read by this request is closed
+				 * in all circumstances.
+				 */
+				if (inStream != null)
+					inStream.close();
 			}
 			catch (IOException e2)
 			{
