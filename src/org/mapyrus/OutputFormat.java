@@ -35,6 +35,7 @@ import java.awt.Shape;
 import javax.imageio.*;
 import javax.swing.ImageIcon;
 
+import org.mapyrus.font.AdobeFontMetrics;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85OutputStream;
@@ -122,6 +123,11 @@ public class OutputFormat
 	 */
 	private HashSet mEncodeAsISOLatin1;
 
+	/*
+	 * Adobe Font Metrics files containing character width information for fonts. 
+	 */
+	private HashMap mAdobeFontMetrics;
+	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
 	 */
@@ -410,6 +416,8 @@ public class OutputFormat
 		ArrayList fontList = new ArrayList();
 		mEncodeAsISOLatin1 = new HashSet();
 		mTTFFonts = new HashMap();
+		mAdobeFontMetrics = new HashMap();
+		String afmFiles = null;
 
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -428,6 +436,10 @@ public class OutputFormat
 					if (pfaFilename.length() > 0)
 						fontList.add(new PostScriptFont(pfaFilename));
 				}
+			}
+			if (token.startsWith("afmfiles="))
+			{
+				afmFiles = token.substring(9);
 			}
 			else if (token.startsWith("isolatinfonts="))
 			{
@@ -475,6 +487,24 @@ public class OutputFormat
 						TrueTypeFont ttf = new TrueTypeFont(ttfFilename);
 						mTTFFonts.put(ttf.getName(), ttf);
 					}
+				}
+			}
+		}
+
+		/*
+		 * Load font metrics from files after we know which fonts are to be encoded
+		 * with ISOLatin1 character ordering.
+		 */
+		if (afmFiles != null)
+		{		
+			StringTokenizer st2 = new StringTokenizer(afmFiles, ",");
+			while (st2.hasMoreTokens())
+			{
+				String afmFilename = st2.nextToken();
+				if (afmFilename.length() > 0)
+				{
+					AdobeFontMetrics afm = new AdobeFontMetrics(afmFilename, mEncodeAsISOLatin1);
+					mAdobeFontMetrics.put(afm.getFontName(), afm);
 				}
 			}
 		}
@@ -563,6 +593,48 @@ public class OutputFormat
 	public double getResolution()
 	{
 		return(mResolution);
+	}
+
+	/**
+	 * Returns width of a string, drawn to current page.
+	 * @param s string to calculate width for.
+	 * @param fontName name of font to calculate width for.
+	 * @param fontSize size of characters in millimetres.
+	 * @return width of string in millimetres.
+	 */
+	public double getStringWidth(String s, String fontName, double fontSize)
+	{
+		double retval;
+
+		if (mOutputType == POSTSCRIPT)
+		{
+			double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
+			AdobeFontMetrics afm = (AdobeFontMetrics)mAdobeFontMetrics.get(fontName);
+			if (afm != null)
+			{
+					retval = afm.getStringWidth(s, (int)Math.round(pointSize));
+			}
+			else
+			{
+				/*
+				 * No Font Metric information given for this font.  Just
+				 * calculate approximate length assuming fixed with characters.
+				 */
+				retval = s.length() * pointSize;
+			}
+			retval = retval / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
+		}
+		else
+		{
+			/*
+			 * Use Java2D calculation for bounding box of string displayed with
+			 * horizontal font.
+			 */
+			FontRenderContext frc = mGraphics2D.getFontRenderContext();
+			Rectangle2D bounds = mBaseFont.getStringBounds(s, frc);
+			retval = bounds.getWidth();
+		}
+		return(retval);
 	}
 
 	/*
