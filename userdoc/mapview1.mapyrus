@@ -40,7 +40,7 @@ dataset "textfile", "aust_temperatures.dat", ""
 while Mapyrus.fetch.more
 do
 	fetch
-	let city = $0
+	let city = $1
 
 	clearpath
 	fetch
