@@ -574,6 +574,7 @@ The path defined with
 \texttt{arc},
 \texttt{circle},
 \texttt{hexagon},
+\texttt{star},
 \texttt{triangle}
 and
 \texttt{addpath}
@@ -1747,6 +1748,23 @@ sinkhole
 
 Replaces the current path containing a polygon with a single point in the
 middle of the polygon, farthest from the polygon perimeter.
+
+\subsubsection{star}
+
+\begin{alltt}
+star \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{points}
+\end{alltt}
+
+Adds a star shape to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}), distance
+\textit{radius}
+from the center to each point of the star.
+\textit{points} is the number of points for the star.
+
+The center point and radius are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{stripepath}
 
