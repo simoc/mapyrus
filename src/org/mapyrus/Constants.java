@@ -41,6 +41,18 @@ public class Constants
 		return("@software_version_token@");
 	}
 
+	/**
+	 * Return release date of software.
+	 * @return release date.
+	 */
+	public static String getReleaseDate()
+	{
+		/*
+		 * Release date set by ant Replace task during build.
+		 */
+		return("@release_date_token@");
+	}
+
 	/*
 	 * Maximum number of threads to run simultaneously handling HTTP requests.
 	 */
