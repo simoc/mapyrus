@@ -1,5 +1,5 @@
 Mapyrus Major Change History
-Copyright (C) 2003, 2004 Simon Chenery.
+Copyright (C) 2003, 2004, 2005 Simon Chenery.
 
 0.50, December 2004
 
