@@ -80,9 +80,10 @@ public class TransientFileFactory
 		}
 
 		/*
-		 * Include random number in filename to
+		 * Include random number and timestamp in filename to
 		 * make it unpredictable.
 		 */
+		random += (now % 397);
 		retval = "tmp" + mCounter + "a" + random + "." + suffix;
 		mCounter++;
 
