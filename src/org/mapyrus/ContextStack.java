@@ -605,7 +605,7 @@ public class ContextStack
 	 * Replace path with new paths at parallel distances to original path.
 	 * @param distances list of parallel distances for new paths.
 	 */
-	public void parallelPath(double []distances)
+	public void parallelPath(double []distances) throws MapyrusException
 	{
 		getCurrentContext().parallelPath(distances);
 	}

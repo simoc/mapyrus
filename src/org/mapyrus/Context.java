@@ -1354,15 +1354,16 @@ public class Context
 	 * Replace path with new paths at parallel distances to original path.
 	 * @param distances list of parallel distances for new paths.
 	 */
-	public void parallelPath(double []distances)
+	public void parallelPath(double []distances) throws MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
 
 		for (int i = 0; i < distances.length; i++)
 			distances[i] *= mScaling;
 
 		if (path != null)
-			mPath = path.parallelPath(distances);
+			mPath = path.parallelPath(distances, resolution);
 	}
 
 	/**
