@@ -271,8 +271,8 @@ public class HTTPRequest extends Thread
 			{
 				try
 				{
-					postRequestLength =
-						Integer.parseInt(nextLine.substring(CONTENT_LENGTH_KEYWORD.length() + 1));
+					String s = nextLine.substring(CONTENT_LENGTH_KEYWORD.length() + 1);
+					postRequestLength = Integer.parseInt(s.trim());
 				}
 				catch (NumberFormatException e)
 				{
