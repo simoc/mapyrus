@@ -120,12 +120,17 @@ public class ContextStack
 	}
 
 	/**
-	 * Sets line width.
+	 * Sets linestyle.
 	 * @param width is width for lines in millimetres.
+	 * @param cap is a BasicStroke end cap value.
+	 * @param join is a BasicStroke line join value.
+	 * @param phase is offset at which pattern is started.
+	 * @param dashes list of dash pattern lengths.
 	 */
-	public void setLineWidth(double width)
+	public void setLinestyle(double width, int cap, int join,
+		double phase, float []dashes)
 	{
-		getCurrentContext().setLineWidth(width);
+		getCurrentContext().setLinestyle(width, cap, join, phase, dashes);
 	}
 
 	/**

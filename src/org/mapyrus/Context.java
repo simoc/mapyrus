@@ -3,6 +3,7 @@
  */
 package au.id.chenery.mapyrus;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -41,12 +42,17 @@ public class Context
 	private static final int DEFAULT_PAGE_WIDTH = 210;
 	private static final int DEFAULT_PAGE_HEIGHT = 297;
 	private static final int DEFAULT_RESOLUTION = 96;
-	
+
+	/*
+	 * Fixed miter limit for line joins.
+	 */
+	private static final float MITER_LIMIT = 10.0f;
+
 	/*
 	 * Graphical attributes
 	 */	
 	private Color mColor;
-	private double mLineWidth;
+	private BasicStroke mLinestyle;
 	
 	/*
 	 * Have graphical attributes been set in this context?
@@ -118,14 +124,14 @@ public class Context
 	private GeographicDataset mDataset;
 	private Row mDatasetRow;
 	private int mDatasetRowCount;
-						
+
 	/**
 	 * Create a new context with reasonable default values.
 	 */		
 	public Context()
 	{
 		mColor = Color.GRAY;
-		mLineWidth = 0.1;
+		mLinestyle = new BasicStroke();
 	
 		mCtm = new AffineTransform();
 		mProjectionTransform = null;
@@ -151,7 +157,8 @@ public class Context
 	public Context(Context existing)
 	{
 		mColor = existing.mColor;
-		mLineWidth = existing.mLineWidth;
+		mLinestyle = existing.mLinestyle;
+
 		mCtm = new AffineTransform(existing.mCtm);
 		mProjectionTransform = null;
 		mWorldCtm = null;
@@ -279,7 +286,7 @@ public class Context
 			else
 				clip = null;
 				
-			mOutputFormat.setAttributes(mColor, mLineWidth, clip);
+			mOutputFormat.setAttributes(mColor, mLinestyle, clip);
 			mAttributesChanged = false;
 		}
 	}
@@ -346,15 +353,32 @@ public class Context
 	}
 					
 	/**
-	 * Sets line width.
+	 * Sets linestyle.
 	 * @param width is width for lines in millimetres.
+	 * @param cap is a BasicStroke end cap value.
+	 * @param join is a BasicStroke line join value.
+	 * @param phase is offset at which pattern is started.
+	 * @param dashes list of dash pattern lengths.
 	 */
-	public void setLineWidth(double width)
+	public void setLinestyle(double width, int cap, int join,
+		double phase, float []dashes)
 	{
 		/*
-		 * Adjust width by current scaling factor.
+		 * Adjust width and dashes by current scaling factor.
 		 */
-		mLineWidth = width * mScalingMagnitude;
+		if (dashes == null)
+		{
+			mLinestyle = new BasicStroke((float)(width * mScalingMagnitude),
+				cap, join, MITER_LIMIT);
+		}
+		else
+		{
+			for (int i = 0; i < dashes.length; i++)
+				dashes[i] *= mScalingMagnitude;
+
+			mLinestyle = new BasicStroke((float)(width * mScalingMagnitude), cap, join,
+				MITER_LIMIT, dashes, (float)phase);
+		}
 		mAttributesChanged = mAttributesSet = true;
 	}
 
