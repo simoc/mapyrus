@@ -47,5 +47,6 @@ do
 	print "DEBUG:", $0
 	clearpath
 	move $1, $2
-	capitalCity $3 . '\n(' . $4 . ')'
+	cityAndCountry = $3 . '\n(' . $4 . ')'
+	capitalCity cityAndCountry
 done
