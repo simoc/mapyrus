@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 
-package org.mapyrus;
+package org.mapyrus.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
