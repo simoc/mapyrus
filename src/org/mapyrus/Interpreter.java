@@ -1013,15 +1013,17 @@ public class Interpreter
 				int nChars = 0;
 				int labelIndex;
 				double offset = 0.0;
+				double spacing = 0.0;
 
 				if (type == Statement.FLOWLABEL)
 				{
-					if (nExpressions < 1)
+					if (nExpressions < 2)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_OFFSET));
 					}
-					offset = mExecuteArgs[0].getNumericValue();
-					labelIndex = 1;
+					spacing = mExecuteArgs[0].getNumericValue();
+					offset = mExecuteArgs[1].getNumericValue();
+					labelIndex = 2;
 				}
 				else
 				{
@@ -1058,7 +1060,7 @@ public class Interpreter
 				else if (nChars > 0)
 				{
 					if (type == Statement.FLOWLABEL)
-						context.flowLabel(offset, label);
+						context.flowLabel(spacing, offset, label);
 					else
 						context.label(label);
 				}
