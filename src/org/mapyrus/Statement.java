@@ -40,8 +40,8 @@ public class Statement
 	/*
 	 * Statements in an if-then-else statement.
 	 */
-	private Statement mThenStatement;
-	private Statement mElseStatement;
+	private Vector mThenStatements;
+	private Vector mElseStatements;
 	
 	/*
 	 * Name of procedure block,
@@ -133,18 +133,6 @@ public class Statement
 	}
 
 	/**
-	 * Creates a conditional statement.
-	 * @param type is the type of statement.
-	 * @param expressions are the arguments for this statement.
-	 */
-	public Statement(Expression condition,
-		Statement thenStatement, Statement elseStatement)
-	{
-		mType = CONDITIONAL;
-		mExpressions = new Expression[1];
-	}
-
-	/**
 	 * Creates a procedure, a block of statements to be executed together.
 	 * @param blockName is name of procedure block.
 	 * @param parameters variable names of parameters to this procedure.
@@ -158,6 +146,23 @@ public class Statement
 		mType = BLOCK;
 	}
 
+	/**
+	 * Create an if, then, else, endif block of statements.
+	 * @param test is expression to test.
+	 * @param thenStatement is statements to execute if expression is true.
+	 * @param elseStatement is statements to execute if expression is false,
+	 * or null if there is no statement to execute.
+	 */
+	public Statement(Expression test, Vector thenStatements,
+		Vector elseStatements)
+	{
+		mType = CONDITIONAL;
+		mExpressions = new Expression[1];
+		mExpressions[0] = test;
+		mThenStatements = thenStatements;
+		mElseStatements = elseStatements;
+	}
+	
 	/**
 	 * Sets the filename and line number that this statement was read from.
 	 * This is for use in any error message for this statement.
@@ -197,15 +202,23 @@ public class Statement
 	{
 		return(mAssignedVariable);
 	}
-		
-	public Statement getThenStatement()
+
+	/**
+	 * Returns list of statements in "then" section of "if" statement.
+	 * @return list of statements.
+	 */		
+	public Vector getThenStatements()
 	{
-		return(mThenStatement);
+		return(mThenStatements);
 	}
 
-	public Statement getElseStatement()
+	/**
+	 * Returns list of statements in "else" section of "if" statement.
+	 * @return list of statements.
+	 */	
+	public Vector getElseStatements()
 	{
-		return(mElseStatement);
+		return(mElseStatements);
 	}
 
 	/**
