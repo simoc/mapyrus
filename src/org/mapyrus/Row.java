@@ -32,4 +32,20 @@ import java.util.ArrayList;
 
 public class Row extends ArrayList
 {
+	/**
+	 * Create a new row.
+	 */
+	public Row()
+	{
+		super();
+	}
+
+	/**
+	 * Create a new row.
+	 * @param size initial number of fields for row.
+	 */
+	public Row(int size)
+	{
+		super(size);
+	}
 }
