@@ -62,7 +62,7 @@ public class Contains extends Function
 		}
 		catch (IllegalArgumentException e)
 		{
-			throw new MapyrusException(getName() + ": " + e.getMessage());
+			throw new MapyrusException(e.getMessage());
 		}
 		return(retval);
 	}
