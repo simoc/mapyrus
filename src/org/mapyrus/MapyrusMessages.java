@@ -37,7 +37,7 @@ public class MapyrusMessages
 	public static final String EXPECTED = "expected";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
-	public static final String FIELD_NOT_GEOMETRY = "fieldnotgeometry";
+
 	public static final String INVALID_ARC = "invalidarc";
 	public static final String INVALID_COLOR = "invalidcolor";
 	public static final String INVALID_COLOR_TYPE = "invalidcolortype";
@@ -47,10 +47,11 @@ public class MapyrusMessages
 	public static final String INVALID_DATASET = "invaliddataset";
 	public static final String INVALID_DATASET_TYPE = "invaliddatasettype";
 	public static final String INVALID_END_CAP = "invalidendcap";
+	public static final String INVALID_EXPRESSION = "invalidexpression";
 	public static final String INVALID_FONT = "invalidfont";
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_FONT_STYLE = "invalidfontstyle";
-	public static final String INVALID_EXPRESSION = "invalidexpression";
+	public static final String INVALID_GEOMETRY = "invalidgeometry";
 	public static final String INVALID_KEYWORD = "invalidkeyword";
 	public static final String INVALID_JUSTIFY = "invalidjustify";
 	public static final String INVALID_LINE_JOIN = "invalidlinejoin";
