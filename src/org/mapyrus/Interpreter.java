@@ -181,6 +181,12 @@ public class Interpreter
 			}
 			else
 			{
+				if (color.equals("contrast"))
+				{
+					context.contrastColor(alpha);
+					return;
+				}
+
 				/*
 				 * Find named color in color name database.
 				 */
