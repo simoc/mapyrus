@@ -47,16 +47,23 @@ public class TextfileDataset implements GeographicDataset
 	private Process mProcess;
 	
 	/*
-	 * Field separators.  Normally a comma or keyword 'whitespace' (meaning anything
+	 * Field separator.  Normally a comma or keyword 'whitespace' (meaning anything
 	 * blank).
 	 */
-	private String mDelimiters;
+	private Character mDelimiter;
 
 	/*
 	 * String that denotes comment lines in text file.  These lines
 	 * are ignored.
 	 */
 	private String mComment;
+
+	/*
+	 * Maximum number of fields found on one line so far.
+	 * Later lines with fewer fields will be padded to this number of fields
+	 * with empty fields.
+	 */
+	private int mMaxFields;
 
 	/*
 	 * Read next line from file, skipping comment lines.
@@ -72,22 +79,6 @@ public class TextfileDataset implements GeographicDataset
 		while (s != null && (mComment.length() > 0 && s.startsWith(mComment)));
 
 		return(s);
-	}
-
-	/**
-	 * Create string tokenizer to split line using delimiters set for this file.
-	 * @param str is string to be split into tokens.
-	 * @param delimiters are field delimiters, if null then whitespace is used.
-	 */
-	private StringTokenizer createStringTokenizer(String str, String delimiters)
-	{
-		StringTokenizer retval;
-		
-		if (delimiters == null)
-			retval = new StringTokenizer(str);
-		else
-			retval = new StringTokenizer(str, delimiters);
-		return(retval);
 	}
 
 	/**
@@ -126,8 +117,9 @@ public class TextfileDataset implements GeographicDataset
 		/*
 		 * Set default options.  Then see if user wants to override any of them.
 		 */
-		mDelimiters = null;
+		mDelimiter = null;
 		mComment = "#";
+		mMaxFields = 0;
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -135,8 +127,8 @@ public class TextfileDataset implements GeographicDataset
 			token = st.nextToken();
 			if (token.startsWith("comment="))
 				mComment = token.substring(8);
-			else if (token.startsWith("delimiters="))
-				mDelimiters = token.substring(11);
+			else if (token.startsWith("delimiter=") && token.length() == 11)
+				mDelimiter = new Character(token.charAt(10));
 		}
 	}
 
@@ -206,16 +198,66 @@ public class TextfileDataset implements GeographicDataset
 		 * First field is entire line to go in the $0 variable.
 		 */
 		row.clear();
-		row.add(new Argument(Argument.STRING, nextLine));
+		Argument firstField = new Argument(Argument.STRING, nextLine);
+		row.add(firstField);
 
 		/*
 		 * Split line into fields and build a row to be returned.
 		 */
-		st = createStringTokenizer(nextLine, mDelimiters);
-		while (st.hasMoreTokens())
+		if (mDelimiter == null)
 		{
-			fieldValue = st.nextToken();
-			row.add(new Argument(Argument.STRING, fieldValue));
+			st = new StringTokenizer(nextLine);
+			while (st.hasMoreTokens())
+			{
+				fieldValue = st.nextToken();
+				row.add(new Argument(Argument.STRING, fieldValue));
+			}
+		}
+		else
+		{
+			char delim = mDelimiter.charValue();
+			int lastIndex = 0;
+			int nextIndex = nextLine.indexOf(delim);
+			if (nextIndex < 0)
+			{
+				/*
+				 * No delimiters found, whole line is field.
+				 */
+				row.add(firstField);
+			}
+			else
+			{
+				while (nextIndex >= 0)
+				{
+					if (lastIndex == nextIndex)
+						row.add(Argument.emptyString);
+					else
+						row.add(new Argument(Argument.STRING, nextLine.substring(lastIndex, nextIndex)));
+
+					lastIndex = nextIndex + 1;
+					nextIndex = nextLine.indexOf(delim, lastIndex);
+				}
+				row.add(new Argument(Argument.STRING, nextLine.substring(lastIndex)));
+			}
+		}
+		
+		/*
+		 * Pad lines containing fewer fields than previous lines with empty fields.
+		 * This ensures that fields from earlier lines are overwritten by fields
+		 * from later lines.
+		 */
+		int nPaddingFields = mMaxFields - row.size();
+		if (nPaddingFields > 0)
+		{
+			while (nPaddingFields-- > 0)
+				row.add(Argument.emptyString);
+		}
+		else if (nPaddingFields < 0)
+		{
+			/*
+			 * This is the longest
+			 */
+			mMaxFields = row.size();
 		}
 		return(true);
 	}
