@@ -137,10 +137,30 @@ public class Interpreter
 	private void setColor(ContextStack context, Argument []args, int nArgs)
 		throws MapyrusException
 	{
-		if (nArgs == 1)
+		int alpha = 0;
+		float decimalAlpha = 0.0f;
+		boolean hasAlpha = false;
+
+		if (nArgs == 1 || nArgs == 2)
 		{
 			String color = args[0].getStringValue();
 			Color c;
+
+			if (nArgs == 2)
+			{
+				/*
+				 * Parse transparency value.
+				 */
+				decimalAlpha = (float)args[1].getNumericValue();
+				if (decimalAlpha < 0.0f)
+					decimalAlpha = 0.0f;
+				else if (decimalAlpha > 1.0f)
+					decimalAlpha = 1.0f;
+
+				alpha = (int)Math.round(decimalAlpha * 255.0);
+				hasAlpha = true;
+			}
+
 			if (color.startsWith("#"))
 			{
 				/*
@@ -150,7 +170,8 @@ public class Interpreter
 				try
 				{
 					int rgb = Integer.parseInt(color.substring(1), 16);
-					c = new Color(rgb);
+					rgb = (rgb & 0xffffff);
+					c = new Color(rgb | (alpha << 24), hasAlpha);
 				}
 				catch (NumberFormatException e)
 				{
@@ -168,18 +189,41 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
 						": " + color);
 				}
+
+				/*
+				 * Add transparency value to color, if given.
+				 */
+				if (hasAlpha)
+				{
+					c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+				}
 			}
 			context.setColor(c);
 		}
-		else if (nArgs == 4)
+		else if (nArgs == 4 || nArgs == 5)
 		{
 			String colorType = args[0].getStringValue();
 			float c1 = (float)args[1].getNumericValue();
 			float c2 = (float)args[2].getNumericValue();
 			float c3 = (float)args[3].getNumericValue();
 
+			if (nArgs == 5)
+			{
+				/*
+				 * Parse transparency value.
+				 */
+				decimalAlpha = (float)args[4].getNumericValue();
+				if (decimalAlpha < 0.0f)
+					decimalAlpha = 0.0f;
+				else if (decimalAlpha > 1.0f)
+					decimalAlpha = 1.0f;
+
+				alpha = (int)Math.round(decimalAlpha * 255.0);
+				hasAlpha = true;
+			}
+
 			/*
-			 * Constraint color to valid range.
+			 * Constrain color to valid range.
 			 */
 			if (c2 < 0.0f)
 				c2 = 0.0f;
@@ -197,7 +241,7 @@ public class Interpreter
 				 * Set HSB color.
 				 */
 				int rgb = Color.HSBtoRGB(c1, c2, c3);
-				context.setColor(new Color(rgb));
+				context.setColor(new Color(rgb | (alpha << 24), hasAlpha));
 			}
 			else if (colorType.equalsIgnoreCase("rgb"))
 			{
@@ -209,7 +253,10 @@ public class Interpreter
 				/*
 				 * Set RGB color.
 				 */
-				context.setColor(new Color(c1, c2, c3));
+				if (hasAlpha)
+					context.setColor(new Color(c1, c2, c3, decimalAlpha));
+				else
+					context.setColor(new Color(c1, c2, c3));
 			}
 			else
 			{
