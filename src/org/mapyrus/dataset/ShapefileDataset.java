@@ -22,7 +22,6 @@
  */
 package org.mapyrus.dataset;
 
-import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -88,7 +87,7 @@ public class ShapefileDataset implements GeographicDataset
 	/*
 	 * Empty path for null shapes.
 	 */
-	private static final double []EMPTY_PATH = {0};
+	private static final double []EMPTY_PATH = {Argument.GEOMETRY_POINT, 0};
 
 	/*
 	 * Files containing data, their lengths and type.
@@ -389,13 +388,13 @@ public class ShapefileDataset implements GeographicDataset
 			case POLYLINE:
 			case POLYLINE_Z:
 			case POLYLINE_M:
-				mGeometryType = Argument.GEOMETRY_LINESTRING;
+				mGeometryType = Argument.GEOMETRY_MULTILINESTRING;
 				break;
 			case POLYGON:
 			case POLYGON_Z:
 			case POLYGON_M:
 			case MULTIPATCH:
-				mGeometryType = Argument.GEOMETRY_POLYGON;
+				mGeometryType = Argument.GEOMETRY_MULTIPOLYGON;
 				break;
 			case MULTIPOINT:
 			case MULTIPOINT_Z:
@@ -630,18 +629,18 @@ public class ShapefileDataset implements GeographicDataset
 					 * Read point coordinates, see if they are inside
 					 * query extents.  Skip Z and Measure values for 3D shapes.
 					 */
-					path = new double[4];
-					path[0] = 4;
-					path[1] = PathIterator.SEG_MOVETO;
-					
-					path[2] = readLittleEndianDouble(mShapeStream);
+					path = new double[5];
+					path[0] = Argument.GEOMETRY_POINT;
+					path[1] = 1;
+					path[2] = Argument.MOVETO;
 					path[3] = readLittleEndianDouble(mShapeStream);
+					path[4] = readLittleEndianDouble(mShapeStream);
 					nBytes += 16;
 
 					/*
 					 * Accept points on query boundary rectangle, reject anything outside.
 					 */
-					shapeInExtents = (mQueryExtents.outcode(path[2], path[3]) == 0);
+					shapeInExtents = (mQueryExtents.outcode(path[3], path[4]) == 0);
 				}
 				else if (mShapeFileType == POLYLINE || mShapeFileType == POLYGON ||
 					mShapeFileType == POLYLINE_Z || mShapeFileType == POLYGON_Z ||
@@ -680,10 +679,29 @@ public class ShapefileDataset implements GeographicDataset
 							mShapeStream.skipBytes(nParts * 4);
 							nBytes += nParts * 4;
 						}
-						path = new double[nPoints * 3 + 1];
+						path = new double[2 + nParts * 2 + nPoints * 3];
+						int counter = 0;
+						int counterIndex = 0;
+						boolean isPolyline = (mShapeFileType == POLYLINE ||
+							mShapeFileType == POLYLINE_M || mShapeFileType == POLYLINE_Z);
+
+						/*
+						 * Polylines in shape file may be separate LINESTRING geometries.
+						 * Always return a MULTILINESTRING for polylines (even if it is
+						 * only one segment) so geometry type remains consistent.
+						 */
+						if (isPolyline)
+						{
+							path[0] = Argument.GEOMETRY_MULTILINESTRING;
+							path[1] = nParts;
+						}
+						else
+						{
+							path[0] = Argument.GEOMETRY_POLYGON;
+						}
 
 						partIndex = 0;
-						pathIndex = 1;
+						pathIndex = 2;
 						lastX = lastY = Double.MAX_VALUE;
 						for (i = 0; i < nPoints; i++)
 						{
@@ -695,7 +713,24 @@ public class ShapefileDataset implements GeographicDataset
 							nBytes += 2 * 8;
 							if (partIndex < nParts && parts[partIndex] == i)
 							{
-								path[pathIndex] = PathIterator.SEG_MOVETO;
+								if (isPolyline)
+								{
+									if (partIndex > 0)
+									{
+										/*
+										 * Set number of points in last part, allowing for duplicate
+										 * points that were skipped.
+										 */
+										path[counterIndex] = counter;
+									}
+									counter = 0;
+
+									path[pathIndex] = Argument.GEOMETRY_LINESTRING;
+									counterIndex = pathIndex + 1;
+									pathIndex += 2;
+								}
+								path[pathIndex] = Argument.MOVETO;
+								pathIndex++;
 								partIndex++;
 							}
 							else if (x == lastX && y == lastY)
@@ -707,14 +742,24 @@ public class ShapefileDataset implements GeographicDataset
 							}
 							else
 							{
-								path[pathIndex] = PathIterator.SEG_LINETO;
+								path[pathIndex] = Argument.LINETO;
+								pathIndex++;
 							}
-								
-							path[pathIndex + 1] = lastX = x;
-							path[pathIndex + 2] = lastY = y;
-							pathIndex += 3;
+
+							path[pathIndex] = lastX = x;
+							path[pathIndex + 1] = lastY = y;
+							pathIndex += 2;
+							counter++;
 						}
-						path[0] = pathIndex;
+
+						/*
+						 * Finally set number of points polygon or polyline, allowing
+						 * for duplicate points that were skipped.
+						 */
+						if (isPolyline)
+							path[counterIndex] = counter;
+						else
+							path[1] = counter;
 					}
 					else
 					{
@@ -744,18 +789,21 @@ public class ShapefileDataset implements GeographicDataset
 						/*
 						 * Read each of the points and add them to the path.
 						 */
-						path = new double[nPoints * 3 + 1];
-						
-						pathIndex = 1;					
+						path = new double[nPoints * 5 + 2];
+						path[0] = Argument.GEOMETRY_MULTIPOINT;
+						path[1] = nPoints;
+
+						pathIndex = 2;
 						for (i = 0; i < nPoints; i++)
 						{
-							path[pathIndex] = PathIterator.SEG_MOVETO;
-							path[pathIndex + 1] = readLittleEndianDouble(mShapeStream);
-							path[pathIndex + 2] = readLittleEndianDouble(mShapeStream);
-							pathIndex += 3;
+							path[pathIndex] = Argument.GEOMETRY_POINT;
+							path[pathIndex + 1] = 1;
+							path[pathIndex + 2] = Argument.MOVETO;
+							path[pathIndex + 3] = readLittleEndianDouble(mShapeStream);
+							path[pathIndex + 4] = readLittleEndianDouble(mShapeStream);
+							pathIndex += 5;
 							nBytes += 16;
 						}
-						path[0] = pathIndex;
 					}
 				}
 
