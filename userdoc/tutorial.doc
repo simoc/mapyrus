@@ -53,6 +53,12 @@ Tutorial
 
 <tr>
 <td>
+<a href="#piechart">Displaying Piecharts</a>
+</td>
+</tr>
+
+<tr>
+<td>
 <a href="#datasets">Displaying Geographic Information System Datasets</a>
 </td>
 </tr>
@@ -516,6 +522,23 @@ include endex.doc
 
 include hr.doc
 
+<a name="piechart"></a>
+<h3>Displaying Piecharts</h3>
+<p>
+Piecharts are used to represent relative values of several attributes at
+different locations.  For example, production levels or voting patterns.  The
+following example demonstrates a procedure for displaying piecharts.  Fixed
+data value are used.  In a real application this information is read from a
+database or GIS dataset.
+
+include beginex.doc
+include tutorialpiechart1.mpy
+include endex.doc
+
+<img src="tutorialpiechart1.png">
+<p>
+include hr.doc
+
 <a name="datasets"></a>
 <h3>Displaying Geographic Information System Datasets</h3>
 <p>
@@ -574,7 +597,7 @@ lines and polygons.
 <p>
 The following example demonstrates setting a world coordinate
 system and then reading and displaying a
-<a href="www.genaware.com">GenaMap</a> format export file
+<a href="http://www.genaware.com">GenaMap</a> format export file
 containing line features.
 
 include beginex.doc
