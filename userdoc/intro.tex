@@ -2,16 +2,23 @@
 
 \section{Introduction}
 
+%BEGINHTML <<this keyword marks parts of text to extract for HTML page>>
 Mapyrus is software for creating plots of points, lines, polygons and labels 
 to PostScript (high resolution, up to A0 paper size),
 Portable Document Format (PDF) and web image output formats.
+%ENDHTML
 
+%BEGINHTML
 The software combines the following three components.
+%ENDHTML
 
 \begin{enumerate}
 \item
 
-A Logo or turtle graphics program.  An imaginary pen is moved around a page,
+%BEGINHTML
+A Logo or turtle graphics program.
+%ENDHTML
+An imaginary pen is moved around a page,
 creating shapes that are drawn into an image file.
 Reusable routines are built up using a BASIC-like language.
 Branching and looping constructs enable complex shapes, symbols and patterns
@@ -30,6 +37,7 @@ to be be defined.  See Figure \ref{turtle}.
 
 \item
 
+%BEGINHTML
 Reading and displaying of geographic information
 systems (GIS) datasets, text files, or tables held in a relational database
 (including spatial databases such as PostGIS and Oracle Spatial).
@@ -38,6 +46,7 @@ symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
 appearance of the geographic data.
 Scalebars, legends, coordinate grids and north arrows are also available.
+%ENDHTML
 See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
 \ref{mapview4}.
 
@@ -69,6 +78,7 @@ See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
 \end{figure}
 
 \item
+%BEGINHTML
 Mapyrus runs as either
 a stand-alone program for integration into
 scripts and batch tasks  (this is suitable for generating a one-off
@@ -76,6 +86,7 @@ map or a series of similar maps from a template,
 showing different areas, or using different criteria for each map)
 or as a self-contained web server providing HTML pages, map and
 graph images and text reports to a web-based application.
+%ENDHTML
 
 \end{enumerate}
 
@@ -99,13 +110,14 @@ with 3D.
 \item
 Mapyrus does not include a library of ready-to-use symbols and patterns.
 Users must define their own, using examples in this manual as a basis.
-However, a large number of free TrueType format fonts found on the internet
+However, a large number of free icons
+and TrueType format fonts found on the internet
 defining shapes for animals, arrows and pointers, road signs, etc. are
 available for use in Mapyrus.
 
 \item
 Mapyrus cannot reproject coordinate values in geographic data from
-one projection to another.  However, this function is available in spatial
-databases.
+one projection to another.  However, this functionality
+is available in spatial databases.
 \end{itemize}
 
