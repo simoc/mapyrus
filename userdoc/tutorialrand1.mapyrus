@@ -5,7 +5,7 @@ begin flower
   while angle < 360
   do
     clearpath
-    box 2, -1, 6, 1
+    ellipse 5, 0, 3, 1.2
 
     let r = random(3)
     if r < 1
@@ -29,8 +29,8 @@ begin flower
 end
 
 newpage "eps", "tutorialrand1.eps", 40, 40
-move 8, 8
+move 9, 8
 move 24, 10
-move 7, 31
+move 8, 31
 move 25, 28
 flower
