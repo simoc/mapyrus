@@ -3,7 +3,8 @@
 imageFile = tempname("PNG")
 newpage "png", imageFile, 100, 100, 96
 
-# Parse variables passed
+# Parse variables passed from HTML form, using reasonable defaults if
+# they are out of range.
 #
 maxZoomlevel=5
 if zoomlevel eq '' or zoomlevel < 0
@@ -19,13 +20,15 @@ then
 	labels='off'
 endif
 
+# Display part of dataset, zooming in on centre
+#
 dataset "shapefile", "/tmp/rds_l", "dbffields="
 x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
 y1 = Mapyrus.dataset.min.y + Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
 x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
 y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
 
-worlds x1, y1, x2, y2, "degrees"
+worlds x1, y1, x2, y2
 import
 color "red"
 while Mapyrus.import.moreRecords
@@ -39,6 +42,8 @@ recordCount = Mapyrus.import.count
 
 if labels eq 'on'
 then
+	# Display point map containing labels.
+	#
 	dataset "shapefile", "/tmp/txt_p", "dbffields=COMMENT"
 	import
 	color "black"
@@ -50,37 +55,45 @@ then
 		addpath GEOMETRY
 		label COMMENT
 	done
+	recordCount = recordCount + Mapyrus.import.count
 endif
 
-print '<html>'
-print '<img src="' . imageFile . '">'
-print '<p>'
+print '&lt;html>'
+print '&lt;g src="' . imageFile . '">'
+print '&lt;'
 
-print '<form method=get action="' . Mapyrus.filename . '">'
+# Generate HTML form offering options for changing map display,
+# giving current values as defaults.
+#
+print '&lt;form method=get action="' . Mapyrus.filename . '">'
 print 'Zoom level'
-print '<select name=zoomlevel size=1>'
+print '&lt;select name=zoomlevel size=1>'
 i = 0
 while i <= maxZoomlevel
 do
-	print '<option value=' . i
+	print '&lt;option value=' . i
 	if i == zoomlevel
 	then
+		# Select current zoom factor in pop-up list.
+		#
 		print ' selected'
 	endif
 
 	print '>' . i
 	i=i+1
 done
-print '</select>'
+print '&lt;/select>'
 
-print '&nbsp;<input type=checkbox name=labels value=on'
+# Add toggle button for labels on/off.
+#
+print '&nbsp;&lt;input type=checkbox name=labels value=on'
 if labels eq 'on'
 then
 	print ' checked'
 endif
 print '> Display Labels'
-print '&nbsp;<input type="submit" name="submit" value="Redisplay">'
-print '</form>'
+print '&nbsp;&lt;input type="submit" name="submit" value="Redisplay">'
+print '&lt;/form>'
 
-print '<br>Record count ' . recordCount
+print '&lt;br>Record count ' . recordCount
 
