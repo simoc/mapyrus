@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Vector;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public class ContextStack
 {
@@ -24,6 +25,11 @@ public class ContextStack
 	 * Any deeper is probably infinite recursion.
 	 */
 	private static final int MAX_STACK_LENGTH = 30;
+	
+	/*
+	 * Variable name for bounding box of currently defined path.
+	 */
+	private static final String BOUNDING_BOX_VARIABLE = "boundingbox";
 	
 	/*
 	 * Stack of contexts, with current context in last slot.
@@ -145,7 +151,7 @@ public class ContextStack
 
 	/**
 	 * Sets rotation for subsequent coordinates.
-	 * @param angle is rotation angle in degrees, going anti-clockwise.
+	 * @param angle is rotation angle in radians, going anti-clockwise.
 	 */
 	public void setRotation(double angle)
 	{
@@ -189,6 +195,17 @@ public class ContextStack
 	public void slicePath(double spacing, double offset)
 	{
 		getCurrentContext().slicePath(spacing, offset);
+	}
+	
+	/**
+	 * Replace path defining polygon with parallel stripe
+	 * lines covering the polygon.
+	 * @param spacing is distance between stripes.
+	 * @param angle is angle of stripes, in radians, with zero horizontal.
+	 */
+	public void stripePath(double spacing, double angle)
+	{
+		getCurrentContext().stripePath(spacing, angle);
 	}
 	
 	/**
@@ -245,10 +262,12 @@ public class ContextStack
 	public Argument getVariableValue(String varName)
 	{
 		Argument retval = null;
-		
+		String sub;
+		double d;
+
 		if (varName.startsWith(Mapyrus.PROGRAM_NAME + "."))
 		{
-			String sub = varName.substring(Mapyrus.PROGRAM_NAME.length() + 1);
+			sub = varName.substring(Mapyrus.PROGRAM_NAME.length() + 1);
 		
 			/*
 			 * Return internal/system variable.
@@ -266,9 +285,44 @@ public class ContextStack
 			{
 				retval = new Argument(Argument.STRING, Mapyrus.getVersion());
 			}
-			else if (sub.equals("path.length"))
+			else if (sub.equals("rotation"))
+			{
+				retval = new Argument(Math.toDegrees(getCurrentContext().getRotation()));
+			}
+			else if (sub.equals("scale.x"))
+			{
+				retval = new Argument(getCurrentContext().getScalingX());
+			}
+			else if (sub.equals("scale.y"))
+			{
+				retval = new Argument(getCurrentContext().getScalingY());
+			}
+			else if (sub.equals("geometry.length"))
 			{
 				retval = new Argument(getCurrentContext().getPathLength());
+			}
+			else if (sub.startsWith(BOUNDING_BOX_VARIABLE + "."))
+			{
+				Rectangle2D bounds = getCurrentContext().getBounds2D();
+				
+				d = 0.0;
+				if (bounds != null)
+				{
+					sub = sub.substring(BOUNDING_BOX_VARIABLE.length() + 1);
+					if (sub.equals("min.x"))
+						d = bounds.getMinX();
+					else if (sub.equals("min.y"))
+						d = bounds.getMinY();
+					else if (sub.equals("max.x"))
+						d = bounds.getMaxX();
+					else if (sub.equals("max.y"))
+						d = bounds.getMaxY();
+					else if (sub.equals("width"))
+						d = bounds.getWidth();
+					else if (sub.equals("height"))
+						d = bounds.getHeight();
+				}
+				retval = new Argument(d);
 			}
 			else
 			{
