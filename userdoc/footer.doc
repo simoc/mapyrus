@@ -1,6 +1,6 @@
 <!-- $Id$ -->
 <p>
-<hr>
+include hr.doc
 Version
 include VERSION
 <center>

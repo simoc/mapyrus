@@ -1,0 +1,16 @@
+include header.doc
+<!-- @(#) $Id$ -->
+
+<h2>
+Tutorial
+</h2>
+
+Bla
+<pre>
+include tutorial1.txt
+</pre>
+<p>
+<img src="tutorial1.png">
+<p>
+
+include footer.doc

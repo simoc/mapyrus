@@ -26,12 +26,14 @@ to be be defined.  For example,
 <img src="turtle3.png">
 &nbsp;
 <img src="turtle4.png">
+&nbsp;
+<img src="turtle5.png">
 <p>
 
 </li>
 <li>
-Reading and displaying of from geographic information
-systems (GIS) datasets, text files, or relational databases tables.
+Reading and displaying of geographic information
+systems (GIS) datasets, text files, or tables held in a relational database.
 Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  For example,
 
@@ -39,6 +41,10 @@ symbolized maps and graphs.  For example,
 <img src="mapview1.png">
 &nbsp;
 <img src="mapview2.png">
+&nbsp;
+<img src="mapview3.png">
+&nbsp;
+<img src="mapview4.png">
 <p>
 
 </li>
@@ -67,14 +73,6 @@ or read from a text file prepared by the user.
 <li>
 Mapyrus cannot display three dimensional data and has nothing to do
 with 3D.
-</li>
-
-<li>
-For producing graphs of statistical data showing sample points,
-a line of best fit,
-X and Y axes with tick marks, other software such as 
-<a href="www.gnuplot.org">gnuplot</a>.
-is more suitable.
 </li>
 
 </ol>

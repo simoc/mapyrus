@@ -1,0 +1,114 @@
+# @(#) $Id$
+
+begin stationlabel name
+	color "black"
+	move 0, 0
+
+	# Determine angle and justification for label from the
+	# angle of the line being labelled.
+	#
+	if Mapyrus.rotation == 0
+	then
+		# Show label at 45 degree angle
+		#
+		rotate 45
+	elif Mapyrus.rotation == -45
+	then
+		# Show label horizontally to the right of the station.
+		#
+		rotate 45
+	elif Mapyrus.rotation == 45
+	then
+		# Show label horizontally to the left of the station.
+		#
+		justify 'right'
+		rotate -45
+	endif
+
+	font 'Helvetica', 'plain', 3
+	label name
+end
+
+begin branchline side
+	local finished, x, startLength
+
+	# Rotate axes to begin side branches at an angle
+	# from the line they are branched from.
+	#
+	if side eq 'LEFT' or side eq 'RIGHT'
+	then
+		if side eq 'LEFT'
+		then
+			startLength=28
+			rotate 45
+		else
+			startLength=10
+			rotate -45
+		endif
+
+		# Begin each branch line with a short straight
+		# segment to get clear of the line they are
+		# branched from and avoid overlapping labels.
+		#
+		color "#332299"
+		linestyle 2.5, 'round', 'round'
+		clearpath
+		move 0, 0
+		draw startLength, 0
+		stroke
+		x = startLength
+	endif
+
+	finished = 0
+	while Mapyrus.import.moreRows and finished == 0
+	do
+		fetch
+		if $1 eq '***'
+		then
+			# Finished this branch, return to
+			# continue drawing previous one.
+			#
+			finished = 1
+		else
+			clearpath
+			color "#332299"
+			linestyle 2.5, 'round', 'round'
+			move x, 0
+			draw x + 6, 0
+			stroke
+
+			clearpath
+			if $1 eq 'LEFT' or $1 eq 'RIGHT'
+			then
+				move x, 0
+				branchline $1
+			else
+				# Add a dot showing station.
+				#
+				color "white"
+				move x + 2.2, 0
+				arc 1, x + 3, 0, x + 2.2, 0
+				fill
+
+				# Put station name above dot.
+				#
+				clearpath
+				move x + 3, 2
+				stationlabel $1
+			endif
+			x = x + 6
+		endif
+	done
+end
+
+newpage "png", "mapview3.png", 90, 80, 96
+clearpath
+move 2, Mapyrus.page.height / 2
+
+# Begin import names of railway stations and branch lines for display.
+#
+dataset "textfile", "stations.dat", "delimiters=, comment=#"
+import
+
+branchline 'STRAIGHT'
+

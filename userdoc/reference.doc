@@ -449,6 +449,8 @@ include hr.doc
 <a name="color"></a>
 <tt>color</tt> <i>name</i>
 <br>
+<tt>color "#</tt><i>hexdigits</i><tt>"</tt>
+<br>
 <tt>color "rgb"</tt>, <i>red</i>, <i>green</i>, <i>blue</i>
 <br>
 <tt>color "hsb"</tt>, <i>hue</i>, <i>saturation</i>, <i>brightness</i>
@@ -457,6 +459,8 @@ Sets color for drawing.
 Named colors refer to colors in the file
 <tt>/usr/lib/X11/rgb.txt</tt>, or the file given 
 in the Java system property <tt>Mapyrus.rgbfile</tt>.
+<i>hexdigits</i> is a 6 digit hexadecimal value defining RGB values,
+as used in HTML pages.
 Values for RGB and HSB colors are given as intensities
 in the range 0-1.
 

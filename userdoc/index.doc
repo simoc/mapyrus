@@ -36,15 +36,18 @@ What was included in each version.
 </tr>
 <tr>
 <td>
-<a href="license.html"/>Licensing</a>
+<a href="COPYING"/>Licensing</a>
 </td>
 <td>
-Mapyrus uses the GNU Public License.
+Mapyrus is released under the GNU General Public License.
 </td>
 </tr>
 </table>
 <p>
-<hr>
+include hr.doc
+Version
+include VERSION
+<p>
 
 Send comments, bug reports and requests concerning Mapyrus to
 <a href="mailto:simon_chenery@yahoo.com">
