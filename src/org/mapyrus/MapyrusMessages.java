@@ -68,6 +68,7 @@ public class MapyrusMessages
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
 	public static final String INVALID_HASHMAP_KEY = "invalidhashmapkey";
+	public static final String INVALID_HEX_ICON = "invalidhexicon";
 	public static final String INVALID_HTTP_REQUEST = "invalidhttp";
 	public static final String INVALID_ICON = "invalidicon";
 	public static final String INVALID_IMPORT = "invalidimport";
