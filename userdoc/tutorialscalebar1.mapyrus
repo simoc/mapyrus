@@ -60,19 +60,23 @@ begin scalebar scale, units
 	#
 	if worldBarLength >= 1000
 	then
-		if units eq 'meters' or units eq 'metres' or units eq 'm'
+		if worldBarLength >= 1000000
 		then
-			if  worldBarLength >= 1000000
+			unitDivider = 1000000
+			if units eq 'meters' or units eq 'metres' or units eq 'm'
 			then
-				unitDivider = 1000000
 				unitLabel = "thousands of km"
 			else
-				unitLabel = "kilometres"
-				unitDivider = 1000
+				unitLabel = "millions of " . units
 			endif
 		else
-			unitLabel = "thousands of " . units
 			unitDivider = 1000
+			if units eq 'meters' or units eq 'metres' or units eq 'm'
+			then
+				unitLabel = "kilometres"
+			else
+				unitLabel = "thousands of " . units
+			endif
 		endif
 	else
 		unitDivider = 1
@@ -117,7 +121,7 @@ begin scalebar scale, units
 	# Show units under scalebar.
 	#
 	clearpath
-	move 20, 1
+	move mmScaleSize / 2, 1
 	label unitLabel
 end
 
