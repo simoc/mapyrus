@@ -22,18 +22,37 @@
  */
 package org.mapyrus;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.BasicStroke;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.Shape;
-import javax.imageio.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.mapyrus.font.AdobeFontMetricsManager;
@@ -42,25 +61,6 @@ import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85OutputStream;
 import org.mapyrus.io.WildcardFile;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.awt.image.*;
-import java.awt.Color;
 
 /**
  * Abstraction of a graphics format.  Provides methods to create new
@@ -856,18 +856,157 @@ public class OutputFormat
 	}
 
 	/**
-	 * Write bytes to PostScript file.
-	 * @param b bytes to write.
+	 * Write image to PostScript file.
+	 * @param image image to write.
+	 * @param x center position on page for image.
+	 * @param y center position on page for image.
+	 * @param width width of image in millimetres.
+	 * @param height height of image in millimetres.
+	 * @param rotation rotation angle for image.
 	 */
-	private void writePostScriptBytes(byte []b)
+	private void writePostScriptImage(Image image, double x, double y,
+		double width, double height, double rotation)
+		throws IOException, MapyrusException
 	{
-		for (int i = 0; i < b.length; i++)
+		/*
+		 * Grab pixels of icon.
+		 */
+		int j;
+		int pixelWidth, pixelHeight;
+		int []pixels = null;
+
+		try
 		{
-			if (i % 72 == 0)
-				mWriter.print(Constants.LINE_SEPARATOR + " ");
-			mWriter.print((char)(b[i]));
+			pixelWidth = image.getWidth(null);
+			pixelHeight = image.getHeight(null);
+			pixels = new int[pixelWidth * pixelHeight];
+			PixelGrabber grabber = new PixelGrabber(image, 0, 0,
+				pixelWidth, pixelHeight, pixels, 0, pixelWidth);
+
+			grabber.grabPixels();
 		}
-		mWriter.println("");
+		catch (InterruptedException e)
+		{
+			throw new MapyrusException(e.getMessage());
+		}
+		catch (NullPointerException e)
+		{
+			throw new OutOfMemoryError("Failed loading image.");
+		}
+
+		/*
+		 * Check if image is a single color.
+		 * Draw single color images with transparent background
+		 * using PostScript 'imagemask' operator.
+		 * Draw other images as RGB images using 'image' operator.
+		 */
+		Color singleColor = getSingleImageColor(pixels);
+
+		/*
+		 * Write PostScript image directionary entry to draw image.
+		 * Taken from Adobe PostScript Language Reference Manual
+		 * (2nd Edition), p. 234.
+		 */
+		writePostScriptLine("gs");
+		writePostScriptLine("/DeviceRGB setcolorspace");
+
+		writePostScriptLine(x + " " + y + " translate");
+		writePostScriptLine(rotation + " radtodeg rotate");
+		writePostScriptLine(width + " " + height + " scale");
+
+		/*
+		 * Image is centred at each point.
+		 * Shift image left and down half it's size so that it is displayed centred.
+		 */
+		writePostScriptLine("-0.5 -0.5 translate");
+
+		/*
+		 * Set color for drawing single color images.
+		 */
+		if (singleColor != null)
+		{
+			float []c = singleColor.getColorComponents(null);
+			writePostScriptLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
+		}
+
+		writePostScriptLine("<<");
+		writePostScriptLine("/ImageType 1");
+		writePostScriptLine("/Width " + pixelWidth);
+		writePostScriptLine("/Height " + pixelHeight);
+		if (singleColor != null)
+		{
+			writePostScriptLine("/BitsPerComponent 1");
+			writePostScriptLine("/Decode [0 1]");
+		}
+		else
+		{
+			writePostScriptLine("/BitsPerComponent 8");
+			writePostScriptLine("/Decode [0 1 0 1 0 1]");
+		}
+		writePostScriptLine("/ImageMatrix [" + pixelWidth + " 0 0 " +
+			-pixelHeight + " 0 " + pixelHeight + "]");
+		writePostScriptLine("/DataSource currentfile /ASCII85Decode filter");
+		writePostScriptLine(">>");
+
+		if (singleColor != null)
+			writePostScriptLine("imagemask");
+		else
+			writePostScriptLine("image");
+
+		/*
+		 * Write ASCII85 encoded string containing all pixel values.
+		 */
+		ASCII85OutputStream ascii85 = new ASCII85OutputStream(mWriter);
+		int byteValue = 0;
+		int bitCounter = 0;
+		for (j = 0; j < pixels.length; j++)
+		{
+			int pixel = pixels[j];
+
+			if (singleColor != null)
+			{
+				/*
+				 * Pixel is set in PostScript image if it is transparent.
+				 */
+				int nextBit = ((pixel >> 24) == 0) ? 1 : 0;
+
+				/*
+				 * Store next pixel value as a single bit in a byte.
+				 * If we've completed a byte or reached the end of a row
+				 * then write byte out and begin next byte.
+				 */
+				nextBit <<= (7 - bitCounter);
+				byteValue |= nextBit;
+				bitCounter++;
+
+				if (bitCounter == 8 || (j + 1) % pixelWidth == 0)
+				{
+					ascii85.write(byteValue);
+					byteValue = bitCounter = 0;
+				}
+			}
+			else
+			{
+				/*
+				 * Ignore transparency, we want only red, green, blue components
+				 * of pixel.
+				 */
+				int blue = (pixel & 0xff);
+				int green = ((pixel >> 8) & 0xff);
+				int red = ((pixel >> 16) & 0xff);
+
+				ascii85.write(red);
+				ascii85.write(green);
+				ascii85.write(blue);
+			}
+		}
+		ascii85.close();
+
+		/*
+		 * Write ASCII85 end-of-data marker.
+		 */
+		writePostScriptLine("~>");
+		writePostScriptLine("gr");
 	}
 
 	/**
@@ -1390,89 +1529,9 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			/*
-			 * Grab pixels of icon.
-			 */
-			int []pixels = null;
-
-			try
-			{
-				Image image = icon.getImage();
-				pixels = new int[pixelWidth * pixelHeight];
-				PixelGrabber grabber = new PixelGrabber(image, 0, 0,
-					pixelWidth, pixelHeight, pixels, 0, pixelWidth);
-
-				grabber.grabPixels();
-			}
-			catch (InterruptedException e)
-			{
-				throw new MapyrusException(e.getMessage());
-			}
-			catch (NullPointerException e)
-			{
-				throw new OutOfMemoryError("Failed loading icon.");
-			}
-
-			/*
-			 * Check if image is a single color.
-			 * Draw single color images with transparent background
-			 * using PostScript 'imagemask' operator.
-			 * Draw other images as RGB images using 'image' operator.
-			 */
-			Color singleColor = getSingleImageColor(pixels);
-
-			/*
-			 * Build ASCII85 encoded string containing all pixel values.
-			 */
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream(pixels.length * 2);
-			ASCII85OutputStream ascii85 = new ASCII85OutputStream(outStream);
-			int byteValue = 0;
-			int bitCounter = 0;
-			for (j = 0; j < pixels.length; j++)
-			{
-				int pixel = pixels[j];
-				
-				if (singleColor != null)
-				{
-					/*
-					 * Pixel is set in PostScript image if it is transparent.
-					 */
-					int nextBit = ((pixel >> 24) == 0) ? 1 : 0;
-
-					/*
-					 * Store next pixel value as a single bit in a byte.
-					 * If we've completed a byte or reached the end of a row
-					 * then write byte out and begin next byte.
-					 */
-					nextBit <<= (7 - bitCounter);
-					byteValue |= nextBit;
-					bitCounter++;
-
-					if (bitCounter == 8 || (j + 1) % pixelWidth == 0)
-					{
-						ascii85.write(byteValue);
-						byteValue = bitCounter = 0;
-					}
-				}
-				else
-				{
-					/*
-					 * Ignore transparency, we want only red, green, blue components
-					 * of pixel.
-					 */
-					int blue = (pixel & 0xff);
-					int green = ((pixel >> 8) & 0xff);
-					int red = ((pixel >> 16) & 0xff);
-
-					ascii85.write(red);
-					ascii85.write(green);
-					ascii85.write(blue);
-				}
-			}
-			ascii85.close();
-
-			/*
 			 * Draw icon at each position in list.
 			 */
+			Image image = icon.getImage();
 			for (i = 0; i < pointList.size(); i++)
 			{
 				pt = (Point2D)(pointList.get(i));
@@ -1485,68 +1544,7 @@ public class OutputFormat
 				if (x + mmWidth >= 0 && x - mmWidth <= mPageWidth &&
 					y + mmHeight >= 0.0 && y - mmHeight <= mPageHeight)
 				{
-					/*
-					 * Write PostScript image directionary entry to draw image.
-					 * Taken from Adobe PostScript Language Reference Manual
-					 * (2nd Edition), p. 234.
-					 */
-					writePostScriptLine("% " + icon.getDescription());
-					writePostScriptLine("gs");
-					writePostScriptLine("/DeviceRGB setcolorspace");
-					
-
-					writePostScriptLine(x + " " +
-						y + " translate");
-					writePostScriptLine(rotation + " radtodeg rotate");
-					writePostScriptLine(mmWidth + " " +
-						mmHeight + " scale");
-
-					/*
-					 * Image is centred at each point.
-					 * Shift image left and down half it's size so that it is displayed centred.
-					 */
-					writePostScriptLine("-0.5 -0.5 translate");
-					
-					/*
-					 * Set color for drawing single color images.
-					 */
-					if (singleColor != null)
-					{
-						float []c = singleColor.getColorComponents(null);
-						writePostScriptLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
-					}
-
-					writePostScriptLine("<<");
-					writePostScriptLine("/ImageType 1");
-					writePostScriptLine("/Width " + pixelWidth);
-					writePostScriptLine("/Height " + pixelHeight);
-					if (singleColor != null)
-					{
-						writePostScriptLine("/BitsPerComponent 1");
-						writePostScriptLine("/Decode [0 1]");
-					}
-					else
-					{
-						writePostScriptLine("/BitsPerComponent 8");
-						writePostScriptLine("/Decode [0 1 0 1 0 1]");
-					}
-					writePostScriptLine("/ImageMatrix [" + pixelWidth + " 0 0 " +
-						-pixelHeight + " 0 " + pixelHeight + "]");
-					writePostScriptLine("/DataSource currentfile /ASCII85Decode filter");
-					writePostScriptLine(">>");
-					
-					if (singleColor != null)
-						writePostScriptLine("imagemask");
-					else
-						writePostScriptLine("image");
-					
-					/*
-					 * Write pixels and ASCII85 end-of-data marker.
-					 */
-					writePostScriptBytes(outStream.toByteArray());
-					writePostScriptLine("~>");
-
-					writePostScriptLine("gr");
+					writePostScriptImage(image, x, y, mmWidth, mmHeight, rotation);
 				}
 			}
 		}
@@ -1586,7 +1584,7 @@ public class OutputFormat
 				{
 					/*
 					 * Sun JVM throws NullPointerException if image is
-					 * too big to 
+					 * too big to fit in memory.
 					 */
 					Image image = icon.getImage();
 					mGraphics2D.drawImage(image, affine, null);
