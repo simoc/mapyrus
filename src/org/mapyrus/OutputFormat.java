@@ -163,8 +163,11 @@ public class OutputFormat
 			}
 
 			if (found == false)
-				throw new MapyrusException("Cannot write image format: " + format);
-				
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.BAD_OUTPUT_FORMAT) +
+					": " + format);
+			}
+		
 			mOutputType = IMAGE_FILE;
 		}
 
