@@ -16,6 +16,11 @@ import java.util.Vector;
 public class Interpreter extends Thread
 {
 	/*
+	 * Character starting a comment on a line.
+	 */
+	private static final int COMMENT_CHAR = '#';
+	
+	/*
 	 * States during expression parsing.
 	 */
 	private static final int AT_START = 1;
@@ -32,16 +37,21 @@ public class Interpreter extends Thread
 	boolean mReturnStatus;
 	String mErrorMessage;
 
+	/**
+	 * Reads, parses and returns next statement.
+	 * @return next statement read from file, or null if EOF was reached
+	 * before a statement could be read.
+	 */
 	private Statement parseStatement() throws MapyrusException, IOException
 	{
 		int c;
 		int state = AT_START;
-		int type;
 		StringBuffer keyword = new StringBuffer();
 		Vector expressions = new Vector();
 		Expression expr;
 		Statement retval = null;
-		boolean isAssign = false;
+		boolean isAssignment = false;
+		boolean atEOF = false;
 
 		c = mPre.read();
 		while (true)
@@ -51,106 +61,108 @@ public class Interpreter extends Thread
 				/*
 				 * Reached EOF.
 				 */
+				atEOF = true;
 				break;
 			}
-			else if (c == '#')
+			else if (c == COMMENT_CHAR)
 			{
+				/*
+				 * Found the start of a comment, ignore everything else on line.
+				 */
 				state = IN_COMMENT;
 				c = mPre.read();
 			}
-			else
+			else if (c == '\n')
 			{
-				type = Character.getType((char)c);
-				if (c == Character.LINE_SEPARATOR)
-				{
-					if (state == AT_START_ARGS || state == IN_ARGS)
-					{
-						/*
-						 * End of line signals
-						 * end of statement.
-						 */
-						break;
-					}
-					else
-					{
-						/*
-						 * We did not even begin reading
-						 * a statement so expect to
-						 * read one on the next line.
-						 */
-						state = AT_START;
-					}
-					c = mPre.read();
-				}
-				else if (Character.isWhitespace((char)c))
+				if (keyword.length() > 0)
 				{
 					/*
-					 * Skip whitespace
+					 * End of line signals
+					 * end of statement.
 					 */
-					c = mPre.read();
+					break;
 				}
-				else if (state == IN_COMMENT)
+				else
 				{
 					/*
-					 * Do nothing -- we are reading a comment.
+					 * We did not even begin reading
+					 * a statement so expect to
+					 * read one on the next line.
 					 */
-					c = mPre.read();
+					state = AT_START;
 				}
-				else if (state == AT_START)
+				c = mPre.read();
+			}
+			else if (state == IN_COMMENT)
+			{
+				/*
+				 * Do nothing -- we are reading a comment.
+				 */
+				c = mPre.read();
+			}
+			else if (Character.isWhitespace((char)c))
+			{
+				/*
+				 * Skip whitespace
+				 */
+				c = mPre.read();
+			}
+			else if (state == AT_START)
+			{
+				/*
+				 * A statement begins with a keyword
+				 * which must begin with a letter.
+				 */
+				if (!Character.isLetter((char)c))
 				{
-					/*
-					 * A statement begins with a keyword
-					 * which must begin with a letter.
-					 */
-					if (!Character.isLetter((char)c))
-					{
-						throw new MapyrusException("Invalid statement at " + mPre.getCurrentFilenameAndLine());
-					}
+					throw new MapyrusException("Invalid statement at " + mPre.getCurrentFilenameAndLine());
+				}
 
-					/*
-					 * Read in whole keyword.
-					 */
-					do
-					{
-						keyword.append((char)c);
-						c = mPre.read();
-					}
-					while (Character.isLetterOrDigit((char)c));
-					state = AT_START_ARGS;
-				}
-				else if (state == AT_START_ARGS)
+				/*
+				 * Read in whole keyword.
+				 */
+				do
 				{
-					/*
-					 * Is this an assignment statement or
-					 * some other kind of statement?
-					 */
-					isAssign = (c == '=');
-					if (isAssign)
-					{
-						c = mPre.read();
-					}
-					state = IN_ARGS;
-				}
-				else if (state == IN_ARGS)
-				{
-					/*
-					 * Parse an expression.
-					 */
-					expr = new Expression(mPre);
-					expressions.add(expr);
-
-					/*
-					 * Gobble up any ',' separator too.
-					 */
+					keyword.append((char)c);
 					c = mPre.read();
-					if (c == '\n')
-					{
-						mPre.unread(c);
-					}
-					else if (c != ',')
-					{
-						throw new MapyrusException("Expecting ',' at " + mPre.getCurrentFilenameAndLine());
-					}
+				}
+				while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_');
+				state = AT_START_ARGS;
+			}
+			else if (state == AT_START_ARGS)
+			{
+				/*
+				 * Is this an assignment statement or
+				 * some other kind of statement?
+				 */
+				isAssignment = (c == '=');
+				if (isAssignment)
+				{
+					c = mPre.read();
+				}
+				else
+				{
+					mPre.unread(c);
+				}
+				state = IN_ARGS;
+			}
+			
+			if (state == IN_ARGS)
+			{
+				/*
+				 * Parse an expression.
+				 */
+				expr = new Expression(mPre);
+				expressions.add(expr);
+				/*
+				 * After an expression we expect a ',' and then another expression,
+				 * or a newline.
+				 */
+				c = mPre.read();
+				if (c != '\n' && c != ',' && c!= COMMENT_CHAR)
+				{
+					throw new MapyrusException("Expecting ',' between expressions at " +
+						mPre.getCurrentFilenameAndLine());
 				}
 			}
 		}
@@ -158,15 +170,24 @@ public class Interpreter extends Thread
 		/*
 		 * Build a statement structure for what we just parsed.
 		 */
-		if (isAssign)
+		if (atEOF && (state == AT_START || state == IN_COMMENT))
+		{
+			/*
+			 * Could not parse anything before we got EOF.
+			 */
+			return(null);
+		}
+		else if (isAssignment)
 		{
 			if (expressions.size() > 1)
 			{
-				throw new MapyrusException("Too many expressions in assignment at " + mPre.getCurrentFilenameAndLine());
+				throw new MapyrusException("Too many expressions in assignment at " +
+					mPre.getCurrentFilenameAndLine());
 			}
 			else if (expressions.size() == 0)
 			{
-				throw new MapyrusException("No expression in assignment at " + mPre.getCurrentFilenameAndLine());
+				throw new MapyrusException("No expression in assignment at " +
+					mPre.getCurrentFilenameAndLine());
 			}
 			retval = new Statement(keyword.toString(),
 				(Expression)expressions.elementAt(0));
@@ -174,13 +195,17 @@ public class Interpreter extends Thread
 		else
 		{
 			int statementType;
-			Expression []a;
+			Expression []a = new Expression[expressions.size()];
 
 			statementType = Statement.getStatementType(keyword.toString());
-			a = (Expression [])expressions.toArray();
 			if (statementType < 0)
 			{
-				throw new MapyrusException("Keyword " + keyword + " not recognized " + mPre.getCurrentFilenameAndLine());
+				throw new MapyrusException("Keyword " + keyword +
+					" not recognized " + mPre.getCurrentFilenameAndLine());
+			}
+			for (int i = 0; i < a.length; i++)
+			{
+				a[i] = (Expression)expressions.elementAt(i);
 			}
 			retval = new Statement(statementType, a);
 		}
@@ -191,7 +216,7 @@ public class Interpreter extends Thread
 	 * Gets status of completed interpreter.
 	 * @return true if interpreter finished successfully.
 	 */
-	boolean getReturnStatus()
+	public boolean getReturnStatus()
 	{
 		return(mReturnStatus);
 	}
@@ -200,11 +225,89 @@ public class Interpreter extends Thread
 	 * Gets error message of completed interpreter that has failed.
 	 * @return error message.
 	 */
-	String getErrorMessage()
+	public String getErrorMessage()
 	{
 		return(mErrorMessage);
 	}
-	
+
+	/*
+	 * Exceute a single statement, changing the path, context or generating
+	 * some output.
+	 */
+	private void execute(Statement st, Context context) throws MapyrusException
+	{
+		Expression []expr;
+		int nExpressions;
+		Argument []args = null;
+
+		expr = st.getExpressions();
+		nExpressions = expr.length;
+		
+		/*
+		 * Evaluate each of the expressions for this statement.
+		 */
+		if (nExpressions > 0)
+		{
+			args = new Argument[nExpressions];
+			for (int i = 0; i < nExpressions; i++)
+			{
+				args[i] = expr[i].evaluate(context);
+			}
+		}
+
+		switch (st.getType())
+		{
+			case Statement.COLOR:
+				if (nExpressions == 1 && args[0].getType() == Argument.STRING)
+				{
+					/*
+					 * Find named color in color name database.
+					 */
+				}
+				else if (nExpressions == 4 && args[0].getType() == Argument.STRING &&
+					args[0].getStringValue().equalsIgnoreCase("rgb"))
+				{
+					/*
+					 * Set RGB color.
+					 */
+				}
+				break;
+			case Statement.PRINT:
+				/*
+				 * Print to stdout each of the expressions passed.
+				 */
+				for (int i = 0; i <nExpressions; i++)
+				{
+					if (i > 0)
+					{
+						System.out.print(" ");
+					}
+					if (args[i].getType() == Argument.STRING)
+					{
+						System.out.print(args[i].getStringValue());
+					}
+					else
+					{
+						System.out.print(args[i].getNumericValue());
+					}
+				}
+				
+				try
+				{
+					System.out.print(System.getProperty("line.separator"));
+				}
+				catch (SecurityException e)
+				{
+				}
+				break;
+				
+			case Statement.ASSIGN:
+				context.defineVariable(st.getAssignedVariable(), args[0]);
+				break;
+		}		
+	}
+		
+		
 	/**
 	 * Begins interpretation of commands.
 	 */
@@ -219,8 +322,7 @@ public class Interpreter extends Thread
 			 */
 			while ((st = parseStatement()) != null)
 			{
-				System.out.println("Parsed a statement");
-				System.out.println(st.getType());
+				execute(st, mContext);
 			}
 		}
 		catch (MapyrusException e)
@@ -238,8 +340,8 @@ public class Interpreter extends Thread
 	/**
 	 * Create new language interpreter.
 	 * @param in is opened Reader to read from.
-	 * @param context is the context to use during interpretation.  This may be changed
-	 * at the end of the interpretation.
+	 * @param context is the context to use during interpretation.  This may be in
+	 * a changed state by the time the interpretation is finished.
 	 */
 	public Interpreter(Reader in, Context context)
 	{
@@ -249,4 +351,3 @@ public class Interpreter extends Thread
 		mReturnStatus = true;
 	}
 }
-
