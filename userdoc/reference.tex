@@ -1513,12 +1513,14 @@ and \textit{rotate} values.
 icon \textit{filename}, [, \textit{size}]
 icon "\textit{binarydigits}" [, \textit{size}]
 icon "0x\textit{hexdigits}" [, \textit{size}]
+icon "resource:\textit{resourcename}" [, \textit{size}]
 \end{alltt}
 
 Displays an image icon at each \texttt{move} point in
 the current path.  The icon is centered at each point.
 
-\textit{filename} is a the name of a file or URL containing the icon.
+\textit{filename} is a the name of a file, URL or Java resource
+containing the icon.
 The icon must be either \texttt{PNG}, \texttt{GIF} or \texttt{JPEG}
 image format.
 
@@ -1529,6 +1531,11 @@ Any other characters in the string are ignored.
 \textit{hexdigits} are 4, 16 or 64 hexadecimal digits defining
 a square single color bitmap image of size 4x4, 8x8 or 16x16 pixels.
 Any non-hexadecimal digit characters in the string are ignored.
+
+\textit{resourcename} is the name of the Java resource containing the
+image, in the form \texttt{au/com/company/filename.png}.
+This option enables images from a Java JAR file included in the 
+in the \texttt{-classpath} startup option to be displayed.
 
 \textit{size} is the optional size for the icon in millimeters.  If no size
 is given or size is zero then the icon is displayed at its natural size,
