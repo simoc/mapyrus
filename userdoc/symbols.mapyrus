@@ -63,16 +63,7 @@ end
 begin hexagon1
 	key "point", "hexagon1"
 	linestyle 0.1
-	move -1, -2
-	local i
-	let i = 0
-	while i < 5
-	do
-		rdraw 2, 0
-		rotate 60
-		let i = i + 1
-	done
-	closepath
+	hexagon 0, 0, 3
 	stroke
 end
 
@@ -1035,6 +1026,12 @@ begin stipple
 	repeaticon "0xaa44aa00aa44aa00", 5
 end
 
+begin brickfill
+	key "box", "Brick Fill"
+	color "firebrick"
+	repeaticon "0xff808080ff080808", 4
+end
+
 begin weavefill_box
 	move -2, 0
 	draw 0, 2
@@ -1079,6 +1076,34 @@ begin weavefill
 	stripepath 4, 0
 	samplepath 4, 0
 	weavefill_box
+end
+
+begin wedgefill_box
+	color "orange"
+
+	move -1.8, 1
+	draw 1.8, 0, -1.8, -1
+	closepath
+
+	move -1.8, 2
+	draw 1.8, 2, 1.8, 1
+	closepath
+
+	move -1.8, -2
+	draw 1.8, -2, 1.8, -1
+	closepath
+
+	fill
+end
+
+begin wedgefill
+	key "box", "Wedge Fill"
+	color "grey90"
+	fill
+	clip "inside"
+	stripepath 4, 0
+	samplepath 4, 0
+	wedgefill_box
 end
 
 begin aggregate_triangle
@@ -1165,12 +1190,14 @@ then
 	dotpattern
 	halftone
 	stipple
+	brickfill
 	halffill
 	quiltfill
 	circlefill
 	boxfill
 	weavefill
 	aggregate
+	wedgefill
 
 	newpage "eps", "allsymbols.eps", 210, 297
 	#newpage "png", "allsymbols.png", 210, 297
