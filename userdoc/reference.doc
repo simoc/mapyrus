@@ -427,15 +427,25 @@ The name of the file or URL being interpreted.
 
 <tr>
 <td>
-<tt>Mapyrus.geometry.length</tt>
+<tt>Mapyrus.path.length</tt>
+<br>
+<tt>Mapyrus.path.area</tt>
+<br>
+<tt>Mapyrus.path.min.x</tt>
+<br>
+<tt>Mapyrus.path.min.y</tt>
+<br>
+<tt>Mapyrus.path.max.x</tt>
+<br>
+<tt>Mapyrus.path.max.y</tt>
+<br>
+<tt>Mapyrus.path.width</tt>
+<br>
+<tt>Mapyrus.path.height</tt>
 <td>
-The length of the current path on the page, measured in millimetres.
-
-<tr>
-<td>
-<tt>Mapyrus.geometry.area</tt>
-<td>
-The area of the current path on the page, measured in square millimetres.
+The length of the current path on the page measured in millimetres,
+the area of the current path measured in square millimetres
+and the bounding rectangle of the current path.
 
 <tr>
 <td>
