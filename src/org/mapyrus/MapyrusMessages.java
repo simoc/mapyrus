@@ -75,6 +75,7 @@ public class MapyrusMessages
 	public static final String INVALID_PAGE_SIZE = "invalidpagesize";
 	public static final String INVALID_PAGE_RESOLUTION = "invalidpageresolution";
 	public static final String INVALID_PATH_SAMPLE = "invalidpathsample";
+	public static final String INVALID_PATH_SHIFT = "invalidpathshift";
 	public static final String INVALID_PATH_STRIPE = "invalidpathstripe";
 	public static final String INVALID_REGEX = "invalidregex";
 	public static final String INVALID_ROTATION = "invalidrotation";
