@@ -682,18 +682,10 @@ public class Interpreter
 				break;
 	
 			case Statement.DATASET:
-				if (nExpressions >= 3)
+				if (nExpressions == 3)
 				{
-					/*
-					 * Build array of geometry field names.
-					 */					
-					String []geometryFieldNames = new String[nExpressions - 3];
-					for (int i = 0; i < geometryFieldNames.length; i++)
-						geometryFieldNames[i] = mExecuteArgs[i + 3].getStringValue();
-
 					context.setDataset(mExecuteArgs[0].getStringValue(),
-						mExecuteArgs[1].getStringValue(), mExecuteArgs[2].getStringValue(),
-						geometryFieldNames);
+						mExecuteArgs[1].getStringValue(), mExecuteArgs[2].getStringValue());
 				}
 				else
 				{
