@@ -53,51 +53,53 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="doc" depends="jar" description="Build documentation and examples">
 <!-- Delete documentation generated previously -->
 <delete>
-<fileset dir="doc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
 </delete>
-<replace file="doc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
-<replace file="doc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
+<replace file="userdoc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
+<replace file="userdoc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
+
+<javadoc sourcefiles="src/org/mapyrus/Mapyrus.java" notree="true" nonavbar="true" classpath="build/classes" destdir="javadoc" failonerror="true"/>
 
 <!-- Generate all examples, doing tutorial examples separately so -->
 <!-- it is not necessary to show path being cleared in each example -->
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus"/>
 </java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst1.mapyrus"/>
 </java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst2.mapyrus"/>
 </java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst3.mapyrus"/>
 </java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialvar1.mapyrus tutorialvar2.mapyrus"/>
 </java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutoriallines1.mapyrus tutoriallines2.mapyrus tutoriallines3.mapyrus tutoriallines4.mapyrus tutoriallines5.mapyrus tutorialpolygons1.mapyrus tutorialpolygons2.mapyrus tutorialpolygons3.mapyrus tutorialpolygons4.mapyrus tutorialprocedures1.mapyrus tutorialprocedures2.mapyrus tutoriallabels1.mapyrus tutoriallabels2.mapyrus tutoriallabels3.mapyrus tutorialsinkhole.mapyrus tutorialdatasets1.mapyrus tutorialdatasets2.mapyrus tutorialdatasets3.mapyrus tutoriallegend1.mapyrus tutoriallegend2.mapyrus tutorialattribute1.mapyrus tutorialscalebar1.mapyrus tutorialshadow1.mapyrus tutorialicon1.mapyrus tutorialicon2.mapyrus"/>
 </java>
-<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialrand1.mapyrus tutorialrand2.mapyrus tutorialrand3.mapyrus tutorialpiechart1.mapyrus"/>
 </java>
 
 <!-- Build LaTex documentation into PDF file -->
 <!-- Run LaTeX three times so that all cross references are resolved. -->
 
-<exec dir="doc" executable="latex" failonerror="true">
+<exec dir="userdoc" executable="latex" failonerror="true">
 <arg line="${ant.project.name}.tex"/>
 </exec>
 
-<exec dir="doc" executable="latex" failonerror="true">
+<exec dir="userdoc" executable="latex" failonerror="true">
 <arg line="${ant.project.name}.tex"/>
 </exec>
 
-<exec dir="doc" executable="latex" failonerror="true">
+<exec dir="userdoc" executable="latex" failonerror="true">
 <arg line="${ant.project.name}.tex"/>
 </exec>
 
-<exec dir="doc" executable="dvipdf" failonerror="true">
+<exec dir="userdoc" executable="dvipdf" failonerror="true">
 <arg line="${ant.project.name}.dvi ${ant.project.name}.pdf"/>
 </exec>
 
@@ -108,7 +110,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, doc/**, manifest, ${ant.project.name}.jar, src/**, NEWS, VERSION" excludes="**/CVS, build/classes/**, doc/*.eps, doc/*.dvi"/>
+<fileset dir="." includes="build/**, build.xml, userdoc/**, javadoc/**, manifest, ${ant.project.name}.jar, src/**, NEWS, VERSION" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log"/>
 </zip>
 </target>
 
@@ -120,7 +122,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <delete>
 <fileset dir="." includes="${ant.project.name}.jar"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
-<fileset dir="doc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,${ant.project.name}.pdf"/>
+<fileset dir="javadoc" includes="**"/>
 </delete>
 </target>
 
