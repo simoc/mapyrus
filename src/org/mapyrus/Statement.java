@@ -25,26 +25,27 @@ public class Statement
 	public static final int LINEWIDTH = 11;
 	public static final int MOVE = 12;
 	public static final int DRAW = 13;
-	public static final int CLEARPATH = 14;
-	public static final int SLICEPATH = 15;
-	public static final int STRIPEPATH = 16;
-	public static final int STROKE = 17;
-	public static final int FILL = 18;
-	public static final int CLIP = 19;
-	public static final int SCALE = 20;
-	public static final int ROTATE = 21;
-	public static final int WORLDS = 22;
-	public static final int PROJECT = 23;
-	public static final int DATASET = 24;
-	public static final int IMPORT = 25;
-	public static final int FETCH = 26;
-	public static final int NEWPAGE = 27;
-	public static final int PRINT = 28;
+	public static final int ARC = 14;
+	public static final int CLEARPATH = 15;
+	public static final int SLICEPATH = 16;
+	public static final int STRIPEPATH = 17;
+	public static final int STROKE = 18;
+	public static final int FILL = 19;
+	public static final int CLIP = 20;
+	public static final int SCALE = 21;
+	public static final int ROTATE = 22;
+	public static final int WORLDS = 23;
+	public static final int PROJECT = 24;
+	public static final int DATASET = 25;
+	public static final int IMPORT = 26;
+	public static final int FETCH = 27;
+	public static final int NEWPAGE = 28;
+	public static final int PRINT = 29;
 
 	/*
 	 * Statement type for call to user defined procedure block.
 	 */
-	public static final int CALL = 100;
+	public static final int CALL = 1000;
 	
 	private int mType;
 	
