@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="compile" depends="init" description="Compile java source code">
 <replace dir="src" token="@software_version_token@" value="${version}" summary="yes"/>
 <replace dir="src" token="@release_date_token@" value="${today}" summary="yes"/>
-<javac srcdir="src" destdir="build/classes" excludes="**/CVS"/>
+<javac srcdir="src" listfiles="yes" destdir="build/classes" excludes="**/CVS/**"/>
 <copy file="src/${messagefile}" tofile="build/classes/${messagefile}"/>
 </target>
 
@@ -71,7 +71,7 @@ it is not necessary to show path being cleared in each example -->
 <arg line="tutorialvar1.mpy tutorialvar2.mpy"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutoriallines1.mpy tutoriallines2.mpy tutoriallines3.mpy tutoriallines4.mpy tutoriallines5.mpy tutorialpolygons1.mpy tutorialpolygons2.mpy tutorialpolygons3.mpy tutorialpolygons4.mpy tutorialprocedures1.mpy tutorialprocedures2.mpy tutoriallabels1.mpy tutoriallabels2.mpy tutorialdatasets1.mpy tutorialdatasets2.mpy tutorialdatasets3.mpy tutorialattribute1.mpy tutorialscalebar1.mpy tutorialshadow1.mpy"/>
+<arg line="tutoriallines1.mpy tutoriallines2.mpy tutoriallines3.mpy tutoriallines4.mpy tutoriallines5.mpy tutorialpolygons1.mpy tutorialpolygons2.mpy tutorialpolygons3.mpy tutorialpolygons4.mpy tutorialprocedures1.mpy tutorialprocedures2.mpy tutoriallabels1.mpy tutoriallabels2.mpy tutorialdatasets1.mpy tutorialdatasets2.mpy tutorialdatasets3.mpy tutoriallegend1.mpy tutoriallegend2.mpy tutorialattribute1.mpy tutorialscalebar1.mpy tutorialshadow1.mpy"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="tutorialrand1.mpy tutorialrand2.mpy tutorialrand3.mpy tutorialpiechart1.mpy"/>
