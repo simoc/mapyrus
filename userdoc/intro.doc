@@ -15,7 +15,7 @@ The software combines the following three components.
 A Logo or turtle graphics program.  An imaginary pen is moved around a page,
 creating shapes that are drawn into an image file.
 Reusable routines are built up using a BASIC-like language.
-Branching and looping contructs allow complex shapes, symbols and patterns
+Branching and looping constructs enable complex shapes, symbols and patterns
 to be be defined.  For example,
 
 <p>
