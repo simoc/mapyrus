@@ -857,8 +857,8 @@ public class Context
 
 		if (path != null)
 		{
-			path.samplePath(spacing * mScalingMagnitude, offset * mScalingMagnitude,
-				resolution);
+			mPath = path.samplePath(spacing * mScalingMagnitude,
+				offset * mScalingMagnitude, resolution);
 		}
 	}
 
@@ -873,7 +873,7 @@ public class Context
 		GeometricPath path = getDefinedPath();
 
 		if (path != null)
-			path.stripePath(spacing * mScalingMagnitude, angle);
+			mPath = path.stripePath(spacing * mScalingMagnitude, angle);
 	}
 
 	/**
@@ -881,6 +881,7 @@ public class Context
 	 */
 	public void stroke()
 	{
+// TODO I am getting an exception when stroking path begun with a drawTo
 		GeometricPath path = getDefinedPath();
 
 		if (path != null && mOutputFormat != null)

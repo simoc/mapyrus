@@ -353,17 +353,18 @@ public class GeometricPath
 	}
 	
 	/**
-	 * Replace path with regularly spaced points along it.
+	 * Create new path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
 	 * @param resolution is size of a pixel in mm, curves are expanded to be no
 	 * less accurate than this value.
+	 * @return new path containing sample points.
 	 * If spacing is positive then points are placed beginning
 	 * at start of path.  If spacing is negative then points
 	 * are placed beginning at end of the path, moving towards
 	 * start of path.
 	 */
-	public void samplePath(double spacing, double offset, double resolution)
+	public GeometricPath samplePath(double spacing, double offset, double resolution)
 	{
 		PathIterator pi;
 
@@ -374,7 +375,7 @@ public class GeometricPath
 		float xEnd, yEnd;
 		float xMoveTo = 0.0f, yMoveTo = 0.0f;
 		float x = 0.0f, y = 0.0f;
-		GeometricPath newPath = new GeometricPath();
+		GeometricPath retval = new GeometricPath();
 		double sinAngle, cosAngle;
 		double partLengths[] = null;
 		int stepDirection;
@@ -453,7 +454,7 @@ public class GeometricPath
 					x = (float)(xStart + nextOffset * cosAngle);
 					y = (float)(yStart + nextOffset * sinAngle);
 
-					newPath.moveTo(x, y, segmentAngle);
+					retval.moveTo(x, y, segmentAngle);
 
 					nextOffset += spacing;
 				}
@@ -467,25 +468,19 @@ public class GeometricPath
 			}
 			pi.next();
 		}
-
-		/*
-		 * Replace path with the new path containing points that we have just calculated.
-		 */		
-		mPath = (GeneralPath)newPath.getShape();
-		mNLineTos = newPath.getLineToCount();
-		mMoveTos = newPath.getMoveTos();	
-		mRotations = newPath.getMoveToRotations();
+		return(retval);
 	}
 
 	/**
-	 * Replace path defining a polygon with striped lines covering
+	 * Create new path defining a polygon with striped lines covering
 	 * the polygon.
 	 * @param spacing is distance between parallel lines.
 	 * @param angle is angle of stripes, in radians, with zero being horizontal.
+	 * @return new path with stripes.
 	 */
-	public void stripePath(double spacing, double angle)
+	public GeometricPath stripePath(double spacing, double angle)
 	{
-		GeometricPath newPath = new GeometricPath();
+		GeometricPath retval = new GeometricPath();
 		Rectangle2D bounds = getBounds2D();
 		int nPts = 4;
 		double pts[] = new double[nPts * 2];
@@ -543,19 +538,11 @@ public class GeometricPath
 			 */
 			rotateTransform.transform(pts, 0, pts, 0, 2);
 
-			newPath.moveTo((float)(pts[0]), (float)(pts[1]), 0.0f);
-			newPath.lineTo((float)(pts[2]), (float)(pts[3]));
+			retval.moveTo((float)(pts[0]), (float)(pts[1]), 0.0f);
+			retval.lineTo((float)(pts[2]), (float)(pts[3]));
 
 			y += spacing;
 		}
-	
-		/*
-		 * Replace path with the new path containing the stripes
-		 * we have just calculated.
-		 */		
-		mPath = (GeneralPath)newPath.getShape();	
-		mNLineTos = newPath.getLineToCount();
-		mMoveTos = newPath.getMoveTos();
-		mRotations = newPath.getMoveToRotations();
+		return(retval);
 	}
 }
