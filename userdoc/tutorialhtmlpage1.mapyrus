@@ -22,7 +22,7 @@ newpage "png", imageFile, 100, 100, 96
 
 # Display part of dataset, zooming in on centre based on zoom level.
 #
-dataset "shapefile", "/tmp/rds_l", "dbffields="
+dataset "shapefile", "coastline.shp", "dbffields="
 let x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
 let y1 = Mapyrus.dataset.min.y + Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel * 2 + 1))
 let x2 = Mapyrus.dataset.max.x - Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
@@ -30,12 +30,14 @@ let y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZooml
 
 worlds x1, y1, x2, y2
 import
-color "red"
 while Mapyrus.import.more
 do
 	clearpath
 	fetch
 	addpath GEOMETRY
+	color '#40ff40'
+	fill
+	color '#7f7f7f'
 	stroke
 done
 let recordCount = Mapyrus.import.count
@@ -44,16 +46,21 @@ if labels eq 'on'
 then
 	# Display point map containing labels.
 	#
-	dataset "shapefile", "/tmp/txt_p", "dbffields=COMMENT"
+	dataset "textfile", "aust_temperatures.dat", "comments=#"
 	import
 	color "black"
 	font "Helvetica", 3
+	justify "right"
 	while Mapyrus.import.more
 	do
 		clearpath
 		fetch
-		addpath GEOMETRY
-		label COMMENT
+		let placeName = $0
+		fetch
+		move $1, $2
+		fetch
+		fetch
+		label placeName
 	done
 	let recordCount = recordCount + Mapyrus.import.count
 endif
