@@ -1,0 +1,49 @@
+begin locpt
+  box -1, -1, 1, 1
+  fill
+end
+
+let polygonColorList = split("red:blue:green:orange", ":")
+
+# Draw all polygons in different colors and also save them into a list.
+#
+newpage "eps", "tutorialjts2.eps", 75, 50
+dataset "shapefile", "coastline.shp", ""
+worlds 600000, 5100000, 1500000, 6100000
+while Mapyrus.fetch.more
+do
+  fetch
+  let polygonList[Mapyrus.fetch.count] = GEOMETRY
+  clearpath
+  addpath GEOMETRY
+  color "lightgray"
+  fill
+  color polygonColorList[Mapyrus.fetch.count]
+  stroke
+done
+let nPolygons = length(polygonList)
+
+# Read list of points, finding which polygon contains each point,
+# and then drawing the point in a different colour depending on
+# which polygon contains the point.
+#
+dataset "textfile", "locations.txt", ""
+while Mapyrus.fetch.more
+do
+  fetch
+  let found = 0, i = 1
+  while found == 0 and i <= nPolygons
+  do
+    if contains(polygonList[i], $1, $2)
+    then
+      # This polygon contains point, draw point in color of polygon.
+      #
+      color polygonColorList[i]
+      clearpath
+      move $1, $2
+      locpt
+      let found = 1
+    endif
+    let i = i + 1
+  done
+done
