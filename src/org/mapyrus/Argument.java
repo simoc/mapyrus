@@ -114,9 +114,10 @@ public class Argument
 			mVarname = s;
 
 		/*
-		 * We don't know the numeric value of this argument.
+		 * We don't know the numeric or geometry value of this argument.
 		 */
 		mNumericValue = Double.NaN;
+		mGeometryValue = null;
 	}
 
 	/**
@@ -617,11 +618,24 @@ public class Argument
 	 * Returns value of geometry argument.
 	 * @return geometry argument value.
 	 */	
-	public double []getGeometryValue()
+	public double []getGeometryValue() throws MapyrusException
 	{
+		if (mType == NUMERIC || mType == HASHMAP || mType == VARIABLE)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY));
+
+		if (mGeometryValue == null)
+		{
+			/*
+			 * Try to convert string argument to a geometry, then store it so
+			 * we don't have to do conversion again for this argument.
+			 */
+			StringTokenizer st = new StringTokenizer(mStringValue, ",() ", true);
+			mGeometryValue = new double[st.countTokens() + 1];
+			parseGeometry(mStringValue, st, 0);
+		}
 		return(mGeometryValue);
 	}
-	
+
 	/**
 	 * Returns value of one entry in a hashmap.
 	 * @param key is key to lookup.
