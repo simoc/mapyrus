@@ -962,17 +962,16 @@ public class Interpreter
 				break;
 
 			case Statement.NEWPAGE:
-				if (nExpressions == 5 || nExpressions == 6)
+				if (nExpressions >= 4 && nExpressions <= 5)
 				{
-					String filename = mExecuteArgs[1].getStringValue();
 					String format = mExecuteArgs[0].getStringValue();
+					String filename = mExecuteArgs[1].getStringValue();
 					int width = (int)mExecuteArgs[2].getNumericValue();
 					int height = (int)mExecuteArgs[3].getNumericValue();
-					int resolution = (int)mExecuteArgs[4].getNumericValue();
-					
+
 					String extras;
-					if (nExpressions == 6)
-						extras = mExecuteArgs[5].getStringValue();
+					if (nExpressions == 5)
+						extras = mExecuteArgs[4].getStringValue();
 					else
 						extras = "";
 
@@ -986,13 +985,8 @@ public class Interpreter
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_SIZE) +
 							": " + height);
 					}
-					if (resolution <= 0)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_RESOLUTION) +
-							": " + resolution);
-					}
 
-					context.setOutputFormat(format, filename, width, height, resolution,
+					context.setOutputFormat(format, filename, width, height,
 						extras, mStdoutStream);
 
 					/*

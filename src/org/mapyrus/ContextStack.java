@@ -162,17 +162,16 @@ public class ContextStack
 	 * @param format is image format for saved output
 	 * @param width is the page width (in mm).
 	 * @param height is the page height (in mm).
-	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
 	 */
 	public void setOutputFormat(String format, String filename,
-		int width, int height, int resolution, String extras,
+		int width, int height, String extras,
 		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
 		getCurrentContext().setOutputFormat(format, filename,
-			width, height, resolution, extras, stdoutStream);
+			width, height, extras, stdoutStream);
 	}
 
 	/**
