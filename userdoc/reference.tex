@@ -253,6 +253,24 @@ Returns the largest integer value that is not larger than \textit{n}. \\
 
 \hline
 
+\texttt{interpolate(\textit{str}, \textit{n})} &
+Returns value calculated from \textit{n} using linear interpolation.
+\textit{str} contains list of numbers (given in increasing numeric
+order) and corresponding values:
+$n_{1}$ $v_{1}$ $n_{2}$ $v_{2}$ \ldots.
+Result is found by finding range
+$n_{i}$
+to
+$n_{i+1}$
+containing \texttt{n} and
+using linear interpolation to calculate a value between
+$v_{i}$
+and
+$v_{i+1}$.
+Each value $v_{i}$ is either a number or a named color.  \\
+
+\hline
+
 \texttt{intersection(\textit{g1}, \textit{g2})} &
 Returns a geometry containing the intersection
 of geometry \textit{g1} and geometry \textit{g2}.
