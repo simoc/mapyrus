@@ -1,7 +1,12 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery.
 
-0.51, January 2004
+0.52, March 2005
+
+* Add display of geo-referenced images with .tfw "worlds" file.
+* Add Scalable Vector Graphics (SVG) format output.
+
+0.51, January 2005
 
 * Moved project to new site: http://mapyrus.sourceforge.net.
 * Add selectpath command to select out parts of path for display.
