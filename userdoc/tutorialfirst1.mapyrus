@@ -1,5 +1,5 @@
 newpage "eps", "tutorialfirst1.eps", 30, 30
-color "black"
+color "indigo"
 linestyle 4, 'round', 'round'
 move 5, 20
 draw 20, 20, 5, 5, 20, 5
