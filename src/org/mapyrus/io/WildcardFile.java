@@ -24,10 +24,13 @@ package org.mapyrus.io;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
+
+import org.mapyrus.MapyrusMessages;
 
 /**
  * Finds files matching a file wildcard pattern containing asterisks.
@@ -46,7 +49,7 @@ public class WildcardFile
 	 */
 	private ArrayList mFilenameParts;
 
-	public WildcardFile(String wildcard)
+	public WildcardFile(String wildcard) throws IOException
 	{
 		/*
 		 * Separate wildcard pattern into directory and filename.
@@ -55,6 +58,11 @@ public class WildcardFile
 		mParentDirectory = f.getParentFile();
 		if (mParentDirectory == null)
 			mParentDirectory = new File(System.getProperty("user.dir"));
+		else if (!mParentDirectory.isDirectory())
+		{
+			throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
+				": " + mParentDirectory.toString());
+		}
 		String filename = f.getName();
 
 		/*
@@ -62,6 +70,16 @@ public class WildcardFile
 		 */
 		mFilenameParts = new ArrayList();
 		StringTokenizer st = new StringTokenizer(filename, "*", true);
+		
+		/*
+		 * If no wildcards in filename then check that exact match of file exists.
+		 */
+		if (st.countTokens() <= 1 && (!f.exists()))
+		{
+			throw new IOException(MapyrusMessages.get(MapyrusMessages.FILE_NOT_FOUND) +
+				": " + wildcard);
+		}
+
 		String lastToken = "";
 		while (st.hasMoreTokens())
 		{
@@ -136,9 +154,16 @@ public class WildcardFile
 	
 	public static void main(String []args)
 	{
-		WildcardFile w = new WildcardFile("/tmp/w/f*oobar.*");
-		Iterator it = w.getMatchingFiles();
-		while (it.hasNext())
-			System.out.println((String)it.next());
+		try
+		{
+			WildcardFile w = new WildcardFile("/tmp/wqqq");
+			Iterator it = w.getMatchingFiles();
+			while (it.hasNext())
+				System.out.println("> " + (String)it.next());
+		}
+		catch (IOException e)
+		{
+			System.err.println(e.getMessage());
+		}
 	}
 }
