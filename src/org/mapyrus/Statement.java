@@ -26,11 +26,13 @@ public class Statement
 	public static final int DRAW = 13;
 	public static final int CLEAR = 14;
 	public static final int SLICEPATH = 15;
-	public static final int STROKE = 16;
-	public static final int FILL = 17;
-	public static final int SCALE = 18;
-	public static final int NEWPAGE = 19;
-	public static final int PRINT = 20;
+	public static final int STRIPEPATH = 16;
+	public static final int STROKE = 17;
+	public static final int FILL = 18;
+	public static final int SCALE = 19;
+	public static final int ROTATE = 20;
+	public static final int NEWPAGE = 21;
+	public static final int PRINT = 22;
 
 	
 	/*
@@ -89,9 +91,11 @@ public class Statement
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
 		mStatementTypeLookup.put("clear", new Integer(CLEAR));
 		mStatementTypeLookup.put("slicepath", new Integer(SLICEPATH));
+		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
+		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 	}
