@@ -105,10 +105,11 @@ public class Context
 	private boolean mOutputDefined;
 
 	/*
-	 * Dataset currently being read from and the number of rows already
-	 * fetched from it.
+	 * Dataset currently being read from, the next row to provide to caller
+	 * and the number of rows already fetched from it.
 	 */
 	private GeographicDataset mDataset;
+	private Row mDatasetRow;
 	private int mDatasetRowCount;
 						
 	/**
@@ -132,6 +133,7 @@ public class Context
 		mAttributesChanged = true;
 		mAttributesSet = false;
 		mDataset = null;
+		mDatasetRow = null;
 		mDatasetRowCount = 0;
 	}
 
@@ -150,6 +152,7 @@ public class Context
 		mYScaling = existing.mYScaling;
 		mRotation = existing.mRotation;
 		mDataset = existing.mDataset;
+		mDatasetRow = existing.mDatasetRow;
 		mDatasetRowCount = existing.mDatasetRowCount;
 
 		/*
@@ -429,6 +432,7 @@ public class Context
 	{
 		mDataset = DatasetFactory.open(type, name, extras, geometryFieldNames);
 		mDataset.query(getUnprojectedExtents());
+		mDatasetRow = mDataset.fetch();
 		mDatasetRowCount = 0;
 	}
 
@@ -862,7 +866,7 @@ public class Context
 	 */
 	public boolean datasetHasMoreRows() throws MapyrusException
 	{
-		return(mDataset != null && mDataset.hasMoreRows());
+		return(mDataset != null && mDatasetRow != null);
 	}
 	
 	/**
@@ -873,7 +877,15 @@ public class Context
 	{
 		if (mDataset == null)
 			throw new MapyrusException("No current dataset to fetch from");
-		Row retval = mDataset.fetch();
+
+		if (mDatasetRow == null)
+			throw new MapyrusException("No more rows to fetch from dataset");
+
+		/*
+		 * Return row we've already fetched.
+		 */		
+		Row retval = mDatasetRow;
+		mDatasetRow = mDataset.fetch();
 		mDatasetRowCount++;
 		return(retval);
 	}
