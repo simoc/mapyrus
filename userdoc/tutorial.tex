@@ -12,7 +12,7 @@ If the Ghostscript program or a printer is not available, then change the
 to create the output files in PNG image format and view the output files in a
 web browser.
 
-\subsection{First Steps}
+\subsection{First Step}
 
 Enter the following lines into a text file named \texttt{first.mapyrus}.
 
@@ -27,13 +27,14 @@ on the page giving coordinates in millimeters.  The sixth line is a
 \texttt{stroke} command to draw the path just defined onto the page using the
 current color and line style.
 
-Open a terminal window and run Mapyrus using following command to execute the
-commands in the file \texttt{first.mapyrus}
-(\textit{install-dir} is the directory
-in which Mapyrus is installed).
+Open a terminal window (known as an "MSDOS Window" in MicroSoft Windows)
+and run Mapyrus using following command to execute the
+commands in the file \texttt{first.mapyrus}.
+% (\textit{install-dir} is the directory
+% in which Mapyrus is installed).
 
 \begin{alltt}
-java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
+java -classpath \textit{mapyrus-dir}/mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
 \end{alltt}
 
 When Mapyrus reaches the end of the file \texttt{first.mapyrus}
@@ -47,8 +48,28 @@ Figure \ref{tutorialfirst1}.
 \label{tutorialfirst1}
 \end{figure}
 
+To perform these steps on a MicroSoft Windows machine where the
+the ZIP file containing Mapyrus has been unpacked in directory
+\texttt{C:\textbackslash{}temp},
+the following commands are used:
 
-Change the file \texttt{first.mapyrus} to contain the following lines.
+\begin{alltt}
+C:\textbackslash{}>cd temp
+
+C:\textbackslash{}temp>dir /b *.jar \hspace{30pt} \textit{-- Check that Mapyrus is installed here}
+mapyrus.jar
+
+C:\textbackslash{}temp>notepad first.mapyrus \hspace{30pt} \textit{-- Create file with text editor}
+
+C:\textbackslash{}temp>java -classpath mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
+
+C:\textbackslash{}temp>gswin32 tutorialfirst1.eps \hspace{30pt} \textit{-- View output with GhostScript}
+\end{alltt}
+
+\subsection{Second Step}
+
+Change the file \texttt{first.mapyrus} to contain the following lines,
+then run Mapyrus again to create a new output file.
 
 \verbatiminput{tutorialfirst2.mapyrus}
 
