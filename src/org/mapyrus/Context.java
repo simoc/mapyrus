@@ -13,7 +13,9 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Double;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.util.Vector;
@@ -146,6 +148,21 @@ public class Context
 		mAttributesSet = false;
 	}
 
+	private GeometricPath getDefinedPath()
+	{
+		GeometricPath retval;
+		
+		/*
+		 * Return path defined in this context, or one defined
+		 * in previous context if nothing set here.
+		 */
+		if (mPath != null)
+			retval = mPath;
+		else
+			retval = mExistingPath;
+		return(retval);
+	}
+	
 	/**
 	 * Set graphics attributes (color, line width, etc.) if they
 	 * have changed since the last time we drew something.
@@ -370,16 +387,7 @@ public class Context
 	 */
 	public void slicePath(double spacing, double offset)
 	{
-		GeometricPath path;
-
-		/*
-		 * If path defined in this context then use that,
-		 * else use context defined in previous context.
-		 */
-		if (mPath != null)
-			path = mPath;
-		else
-			path = mExistingPath;
+		GeometricPath path = getDefinedPath();
 
 		if (path != null)
 			path.slicePath(spacing, offset);
@@ -393,16 +401,7 @@ public class Context
 	 */
 	public void stripePath(double spacing, double angle)
 	{
-		GeometricPath path;
-
-		/*
-		 * If path defined in this context then use that,
-		 * else use context defined in previous context.
-		 */
-		if (mPath != null)
-			path = mPath;
-		else
-			path = mExistingPath;
+		GeometricPath path = getDefinedPath();
 
 		if (path != null)
 			path.stripePath(spacing, angle);
@@ -413,17 +412,8 @@ public class Context
 	 */
 	public void stroke()
 	{
-		GeometricPath path;
+		GeometricPath path = getDefinedPath();
 
-		/*
-		 * If path defined in this context then use that,
-		 * else use context defined in previous context.
-		 */
-		if (mPath != null)
-			path = mPath;
-		else
-			path = mExistingPath;
-		
 		if (path != null && mOutputFormat != null)
 		{
 			setGraphicsAttributes();
@@ -436,16 +426,7 @@ public class Context
 	 */
 	public void fill()
 	{
-		GeometricPath path;
-		
-		/*
-		 * If path defined in this context then use that,
-		 * else use context defined in previous context.
-		 */
-		if (mPath != null)
-			path = mPath;
-		else
-			path = mExistingPath;
+		GeometricPath path = getDefinedPath();
 		
 		if (path != null && mOutputFormat != null)
 		{	
@@ -459,17 +440,8 @@ public class Context
 	 */
 	public void clip()
 	{
-		GeometricPath path;
-		
-		/*
-		 * If path defined in this context then use that,
-		 * else use context defined in previous context.
-		 */
-		if (mPath != null)
-			path = mPath;
-		else
-			path = mExistingPath;
-		
+		GeometricPath path = getDefinedPath();
+
 		if (path != null && mOutputFormat != null)
 		{
 			mClippingPath = new GeometricPath(path);
@@ -488,11 +460,12 @@ public class Context
 	public int getMoveToCount()
 	{
 		int retval;
+		GeometricPath path = getDefinedPath();
 
-		if (mPath == null)
+		if (path == null)
 			retval = 0;
 		else
-			retval = mPath.getMoveToCount();
+			retval = path.getMoveToCount();
 		return(retval);
 	}
 
@@ -503,11 +476,12 @@ public class Context
 	public int getLineToCount()
 	{
 		int retval;
+		GeometricPath path = getDefinedPath();
 
-		if (mPath == null)
+		if (path == null)
 			retval = 0;
 		else
-			retval = mPath.getLineToCount();
+			retval = path.getLineToCount();
 		return(retval);
 	}
 
@@ -518,11 +492,12 @@ public class Context
 	public double getPathLength()
 	{
 		double retval;
+		GeometricPath path = getDefinedPath();
 		
-		if (mPath == null)
+		if (path == null)
 			retval = 0.0;
 		else
-			retval = mPath.getLength();
+			retval = path.getLength();
 		return(retval);
 	}
 
@@ -533,22 +508,46 @@ public class Context
 	public double getPathArea()
 	{
 		double retval;
+		GeometricPath path = getDefinedPath();
 		
-		if (mPath == null)
+		if (path == null)
 			retval = 0.0;
 		else
-			retval = mPath.getArea();
+			retval = path.getArea();
+		return(retval);
+	}
+
+	/**
+	 * Returns geometric centroid of current path.
+	 * @return centroid of current path.
+	 */
+	public Point2D.Double getPathCentroid()
+	{
+		Point2D.Double retval;
+		GeometricPath path = getDefinedPath();
+		
+		if (path == null)
+			retval = new Point2D.Double();
+		else
+			retval = path.getCentroid();
 		return(retval);
 	}
 
 	/**
 	 * Returns coordinates and rotation angle for each each moveTo point in current path
-	 * @returns list of three element float arrays containing x, y coordinates and
+	 * @return list of three element float arrays containing x, y coordinates and
 	 * rotation angles. 
 	 */
 	public Vector getMoveTos()
 	{
-		return(mPath.getMoveTos());
+		Vector retval;
+		GeometricPath path = getDefinedPath();
+
+		if (path == null)
+			retval = null;
+		else
+			retval = path.getMoveTos();
+		return(retval);
 	}
 	
 	/**
@@ -558,17 +557,8 @@ public class Context
 	public Rectangle2D getBounds2D()
 	{
 		Rectangle2D bounds;
-		GeometricPath path;
+		GeometricPath path = getDefinedPath();
 
-		/*
-		 * If path defined in this context then use that,
-		 * else use context defined in previous context.
-		 */
-		if (mPath != null)
-			path = mPath;
-		else
-			path = mExistingPath;
-		
 		if (path == null)
 			bounds = null;
 		else
@@ -613,4 +603,3 @@ public class Context
 		mVars.put(varName, value);
 	}
 }
-
