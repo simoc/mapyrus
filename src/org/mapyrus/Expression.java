@@ -6,7 +6,7 @@ import java.lang.String;
 import java.util.Hashtable;
 import java.io.IOException;
 
-public class ArithmeticExpression
+public class Expression
 {
 	/*
 	 * Types of operations allowed between two numbers (or two expressions).
@@ -121,7 +121,7 @@ public class ArithmeticExpression
 	/*
 	 * Parse expression.
 	 */
-	private ExpressionTreeNode parseExpression(Preprocessor p) throws IOException, GfException
+	private ExpressionTreeNode parseExpression(Preprocessor p) throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, term;
 		int op;
@@ -151,7 +151,7 @@ public class ArithmeticExpression
 	/*
 	 * Parse term.
 	 */
-	private ExpressionTreeNode parseTerm(Preprocessor p) throws IOException, GfException
+	private ExpressionTreeNode parseTerm(Preprocessor p) throws IOException, MapyrusException
 	{
 		ExpressionTreeNode term, factor;
 		int op;
@@ -180,7 +180,7 @@ public class ArithmeticExpression
 	/*
 	 * Parse a single number.
 	 */
-	private ExpressionTreeNode parseFactor(Preprocessor p) throws IOException, GfException
+	private ExpressionTreeNode parseFactor(Preprocessor p) throws IOException, MapyrusException
 	{
 		boolean hasUnaryMinus = false;
 		boolean parsedDecimalPoint = false;
@@ -220,7 +220,7 @@ public class ArithmeticExpression
 					 */
 					if (parsedDecimalPoint)
 					{
-						throw new GfException("Invalid number in expression at " + p.getCurrentFilenameAndLine());
+						throw new MapyrusException("Invalid number in expression at " + p.getCurrentFilenameAndLine());
 					}
 					parsedDecimalPoint = true;
 				}
@@ -245,12 +245,12 @@ public class ArithmeticExpression
 
 		if (c == -1)
 		{
-			throw new GfException("Unexpected end of file at " + p.getCurrentFilenameAndLine());
+			throw new MapyrusException("Unexpected end of file at " + p.getCurrentFilenameAndLine());
 		}
 
 		if (c != '(')
 		{
-			throw new GfException("Invalid expression at " + p.getCurrentFilenameAndLine());
+			throw new MapyrusException("Invalid expression at " + p.getCurrentFilenameAndLine());
 		}
 
 		nestedExpression = parseExpression(p);
@@ -258,7 +258,7 @@ public class ArithmeticExpression
 		c = p.readNonSpace();
 		if (c != ')')
 		{
-			throw new GfException("Unmatched '(' in expression at " + p.getCurrentFilenameAndLine());
+			throw new MapyrusException("Unmatched '(' in expression at " + p.getCurrentFilenameAndLine());
 		}
 
 		if (hasUnaryMinus)
@@ -281,7 +281,7 @@ public class ArithmeticExpression
 	 * as part of an expression.
 	 * @param p is the preprocessed output to read from.
 	 */
-	public ArithmeticExpression(Preprocessor p) throws IOException, GfException
+	public Expression(Preprocessor p) throws IOException, MapyrusException
 	{
 		mExprTree = parseExpression(p);
 	}
@@ -289,7 +289,7 @@ public class ArithmeticExpression
 	/**
 	 * Create an expression containing a simple numeric value.
 	 */
-	public ArithmeticExpression(double d)
+	public Expression(double d)
 	{
 		mExprTree = new ExpressionTreeNode(d);
 	}
