@@ -390,6 +390,69 @@ begin trafficlights c
 	fill
 end
 
+begin quadrants q1, q2, q3, q4, qLabels
+	# Draws 4 quadrants, showing 4 levels of some attribute.
+	# Relative levels are shown.
+	#
+	key "point", "Quadrant Chart", 3, 4, 6, 3.3, 1
+	local maxValue
+	let maxValue = max(q1, q2)
+	let maxValue = max(maxValue, q3)
+	let maxValue = max(maxValue, q4)
+
+	# Show box in each quadrant, with size depending on value
+	# for that quadrant.
+	#
+	color "orangered"
+	box 0, 0, q2 / maxValue * 5, q2 / maxValue * 5
+	fill
+	clearpath
+	box 0, -q3 / maxValue * 5, q3 / maxValue * 5, 0
+	fill
+	clearpath
+	box -q4 / maxValue * 5, -q4 / maxValue * 5, 0, 0
+	fill
+	clearpath
+	box -q1 / maxValue * 5, 0, 0, q1 / maxValue * 5
+	fill
+
+	# Label quadrants, normally it is enough to show labels
+	# in legend and at each place it is drawn on the map.
+	#
+	color "black"
+	if qLabels == 1
+	then
+		font "Helvetica", 2.5
+		justify "left"
+
+		clearpath
+		move 1, 1
+		label "Q2"
+
+		clearpath
+		move 1, -2.5
+		label "Q3"
+
+		clearpath
+		move -4, -2.5
+		label "Q4"
+
+		clearpath
+		move -4, 1
+		label "Q1"
+	endif
+
+	# Draw black plus.
+	#
+	linestyle 0.1
+	clearpath
+	move -5.5, 0
+	draw 5.5, 0
+	move 0, -5.5
+	draw 0, 5.5
+	stroke
+end
+
 begin speechbubble message
 	# Draw a speech bubble containing a message at a point.
 	#
@@ -1422,6 +1485,8 @@ begin boxfill_box
 end
 
 begin boxfill
+	# Fill polygon with regularly space boxes.
+	#
 	key "box", "Box Fill"
 	color "white"
 	fill
@@ -1483,7 +1548,7 @@ begin brickfill
 	color "firebrick"
 	fill
 	color "sandybrown"
-	repeaticon "0xff808080ff080808", 3
+	repeaticon "0xff808080ff080808", 2
 end
 
 begin weavefill_box
@@ -1523,6 +1588,9 @@ begin weavefill_box
 end
 
 begin weavefill
+	# Fill polygon with perpendicular lines that appear to weave
+	# in between each other.
+	#
 	key "box", "Weave Fill"
 	color "white"
 	fill
@@ -1540,6 +1608,8 @@ begin hashfill_box
 end
 
 begin hashfill
+	# Fill polygon with '#' characters.
+	#
 	key "box", "Hash Fill"
 	color "ivory"
 	fill
@@ -1568,6 +1638,8 @@ begin wedgefill_box
 end
 
 begin wedgefill
+	# Fill polygon with triangular wedge pattern.
+	#
 	key "box", "Wedge Fill"
 	color "grey90"
 	fill
@@ -1586,6 +1658,9 @@ begin aggregate_triangle
 end
 
 begin aggregate
+	# Show triangular aggregrate rock symbols in random pattern
+	# through polygon.
+	#
 	key "box", "Aggregate"
 	linestyle 0.1
 	color "slateblue"
@@ -1596,7 +1671,123 @@ begin aggregate
 	aggregate_triangle
 end
 
+begin savannah_v
+	# Show 'v' symbol at random position.
+	#
+	local x, y
+	let x = 1 - random(2)
+	let y = 1 - random(2)
+	clearpath
+	move x - 0.6, y + 1
+	draw x, y
+	draw x + 0.6, y + 1
+	stroke
+end
+
+begin savannah
+	# Fill polygon with 'v' symbols.
+	#
+	key "box", "Grassland"
+	clip "inside"
+	stripepath 5, 0
+	samplepath 5, 0
+	color "#44cc44"
+	linestyle 0.2
+	savannah_v
+end
+
+begin wheatfield_kernel
+	# Show wheat kernel symbol.
+	#
+	rotate -Mapyrus.rotation
+	move -0.8, 2
+	draw -0.8, 0
+	draw 0, -0.5
+	draw 0, -1.5
+	draw 0, -0.5
+	draw 0.8, 0
+	draw 0.8, 2
+	stroke
+	move 0, 3
+	draw 0, 1
+	stroke
+end
+
+begin wheatfield
+	# Fill polygon with wheat symbols.
+	#
+	key "box", "Wheat Field"
+	clip "inside"
+	stripepath 6, 10
+	samplepath 6, 0
+	color "orange"
+	linestyle 0.2
+	wheatfield_kernel
+end
+
+begin barerock_rock
+	# Show rock symbol as '/\_'.
+	#
+	rotate -Mapyrus.rotation
+	move -1, 0
+	draw 0, 3, 1, 0, 2, 0
+	stroke
+	move 1, 0
+	draw 0.8, 0, -0.1, 2.8, 0, 3
+	stroke
+end
+
+begin barerock
+	# Fill polygon with rock symbols.
+	#
+	key "box", "Bare Rock",
+	clip "inside"
+	stripepath 6, 45
+	samplepath 6, 0
+	color "#cccccc"
+	linestyle 0.1
+	barerock_rock
+end
+
+begin marsh_grass
+	# Show marsh grass symbol as '\|/'.
+	#
+	local x
+	rotate -Mapyrus.rotation
+	let x = 2 - random(4)
+	clearpath
+	move x - 1, 0
+	draw x + 1, 0
+	move x, 0
+	draw x, 1
+	move x, 0
+	draw x + 1, 1
+	move x, 0
+	draw x - 1, 1
+	stroke
+end
+
+begin marsh
+	# Fill polygon with marsh symbols.
+	#
+	key "box", "Marsh"
+	clip "inside"
+	stripepath 6, 45
+	samplepath 6, 0
+	color "#a52a2a"
+	linestyle 0.1
+	marsh_grass
+end
+
+begin water
+	key "box", "Water"
+	color "#80b2ff"
+	fill
+end
+
 begin citylimits
+	# Display thick border line around inside of polygon.
+	#
 	key "box", "City Limits"
 	linestyle 0.1
 	stroke
@@ -1607,6 +1798,8 @@ begin citylimits
 end
 
 begin restrictedarea
+	# Display thick border line around outside of polygon.
+	#
 	key "box", "Restricted Area"
 	linestyle 0.1
 	stroke
@@ -1616,81 +1809,86 @@ begin restrictedarea
 	stroke
 end
 
-let show_symbols_legend = 1
+# If special variable is set then show all above symbols in a legend
+# on a separate page.
+#
 if show_symbols_legend == 1
 then
-	move 0, 0
+	# Force each symbol to be used so that it is included as a
+	# legend entry.
+	#
+	# Then draw the legend which is what we really want to see.
+	#
+	move -10, -10
 	circleoutline
 	equitriangle
 	squareoutline
 	filledsquare
 	filledpentagon
-	octagonoutline
 	filledhexagon
+	octagonoutline
 	x1
+	plus1
 	sixpointstar
 	fivepointstar
-	plus1
 	arrowupoutline
 	arrowdownoutline
 	arrowleftoutline
 	arrowrightoutline
 	arrowupleftoutline
-
 	shipwreck
-	lighthouse
+	viewpoint
 	surveymarker
 	trigstation
 	box3d
 	witchshat
-	newmoon
 	oldmoon
+	newmoon
 	trafficlights ""
+	quadrants 1, 1, 1, 1, 0
 	speechbubble ""
-	viewpoint
-	sbahn
-	ubahn
-	tree
-	hospital
-	radiotower
-	parking
-	tent
-	cemetary
-	hut
-	church
 	bordercrossing
 	crosshair
+	lighthouse
 	information
-	library
-	school
-	fairground
-	postoffice
-	police
-	waypoint
+	sbahn
+	ubahn
+	parking
 	coveredparking
 	cave
 	flag
 	pennant
+	tree
+	radiotower
+	church
+	hospital
+	tent
+	hut
+	fairground
 	factory
+	school
+	postoffice
+	library
+	police
+	cemetary
+	waypoint
 	capitalcity "Ely"
 	city "Ely"
 	town "Ely"
 	emphasisedname "Ely"
 	streetname ""
-
-	Lcenterline
 	Lleftticks
+	Lcenterline
 	Lfence
 	Lmotorway ""
 	Lborder
 	Lrailway
+	Lpowerline
 	Ldashdot
 	Lmulticolorline
-	Lpowerline
 	Larrowline
 	Lsnakeline
 	Linaccurateline
-
 	hatch1
 	hatch2
 	hatch3
@@ -1699,6 +1897,10 @@ then
 	mesh
 	doublestripefill
 	triplestripefill
+	halffill
+	quiltfill
+	circlefill
+	boxfill
 	chessboard
 	walltiling
 	trellistiling
@@ -1706,18 +1908,19 @@ then
 	halftone
 	stipple
 	brickfill
-	halffill
-	quiltfill
-	circlefill
-	boxfill
 	weavefill
-	aggregate
+	hashfill
 	wedgefill
+	aggregate
+	savannah
+	wheatfield
+	barerock
+	marsh
+	water
 	citylimits
 	restrictedarea
-	hashfill
 
-	newpage "eps", "allsymbols.eps", 210, 297
+	newpage "eps", "symbols.eps", 210, 297
 
 	let x = 10, y = Mapyrus.page.height - 10
 	color "black"
