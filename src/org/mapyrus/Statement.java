@@ -1,33 +1,53 @@
 /**
  * A parsed statement.
  * Can be one of several types.  An assignment statement, a conditional
- * statement or just a plain command.
+ * statement, a block of statements making a procedure or just a plain command.
  */
 
 /*
  * $Id$
  */
+import java.util.Vector;
+
 public class Statement
 {
 	/*
 	 * Possible types of statements.
 	 */
 	public static final int ASSIGN = 1;
-	public static final int CONDITION = 2;
-
-	public static final int COLOR = 3;
-	public static final int LINEWIDTH = 4;
-	public static final int MOVE = 5;
-	public static final int DRAW = 6;
-	public static final int STROKE = 7;
-	public static final int FILL = 8;
-	public static final int SCALE = 9;
-	public static final int NEWPAGE = 10;
-	public static final int PRINT = 11;
+	public static final int CONDITIONAL = 2;
+	public static final int BLOCK = 3;
+	
+	public static final int COLOR = 4;
+	public static final int LINEWIDTH = 5;
+	public static final int MOVE = 6;
+	public static final int DRAW = 7;
+	public static final int STROKE = 8;
+	public static final int FILL = 9;
+	public static final int SCALE = 10;
+	public static final int NEWPAGE = 11;
+	public static final int PRINT = 12;
 	
 	private int mType;
+	
+	/*
+	 * Statements in an if-then-else statement.
+	 */
 	Statement mThenStatement;
 	Statement mElseStatement;
+	
+	/*
+	 * Name of procedure block,
+	 * variable names of parameters to this procedure
+	 * and block of statements in a procedure in order of execution
+	 */
+	String mBlockName;
+	Vector mStatementBlock;
+	Expression []mParameters;
+	
+	/*
+	 * Name of variable in assignment.
+	 */
 	String mAssignedVariable;
 
 	Expression []mExpressions;
@@ -114,11 +134,24 @@ public class Statement
 	public Statement(Expression condition,
 		Statement thenStatement, Statement elseStatement)
 	{
-		mType = CONDITION;
+		mType = CONDITIONAL;
 		mExpressions = new Expression[1];
-		//mExpressions[0] = value;
 	}
 
+	/**
+	 * Creates a procedure, a block of statements to be executed together.
+	 * @param blockName is name of procedure block.
+	 * @param parameters variable names of parameters to this procedure.
+	 * @param statements statements that make up this procedure block.
+	 */
+	public Statement(String blockName, Expression []parameters, Vector statements)
+	{
+		mBlockName = blockName;
+		mParameters = parameters;
+		mStatementBlock = statements;
+		mType = BLOCK;
+	}
+	
 	public int getType()
 	{
 		return(mType);
@@ -142,5 +175,32 @@ public class Statement
 	public Statement getElseStatement()
 	{
 		return(mElseStatement);
+	}
+
+	/**
+	 * Return name of procedure block.
+	 * @return name of procedure.
+	 */
+	public String getBlockName()
+	{
+		return(mBlockName);
+	}
+	
+	/**
+	 * Return variable names of parameters to a procedure.
+	 * @return array of variable names.
+	 */
+	public Expression []getBlockParameters()
+	{
+		return(mParameters);
+	}
+	
+	/**
+	 * Return statements in a procedure.
+	 * @return vector of statements that make up the procedure.
+	 */
+	public Vector getStatementBlock()
+	{
+		return(mStatementBlock);
 	}
 }
