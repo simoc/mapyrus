@@ -11,6 +11,10 @@
 # e-mail a copy to <mapyrus@chenery.id.au> so that they can be added to
 # this file.
 #
+# On many computers, interpreting this large file takes more than one second.
+# If this is too long, copy only the definitions being used to a separate
+# file and interpret that file instead.
+#
 print 'timer=', Mapyrus.timer
 
 begin circle1
@@ -165,6 +169,21 @@ begin trigstation
 	draw 1.5, -1.5
 	draw -1.5, -1.5
 	closepath
+	fill
+end
+
+begin witchshat
+	key "point", "Witch's Hat"
+	color "orangered"
+	linestyle 0.2
+	move -1.7, 0
+	draw 1.7, 0
+	stroke
+
+	clearpath
+	move -1.4, 0
+	draw 0, 3.5
+	draw 1.4, 0
 	fill
 end
 
@@ -1078,6 +1097,23 @@ begin weavefill
 	weavefill_box
 end
 
+begin hashfill_box
+	color "indigo"
+	font "Helvetica", 3
+	move 0, 0
+	label "#"
+end
+
+begin hashfill
+	key "box", "Hash Fill"
+	color "ivory"
+	fill
+	clip "inside"
+	stripepath 2.7, 0
+	samplepath 2.7, 0
+	hashfill_box
+end
+
 begin wedgefill_box
 	color "orange"
 
@@ -1125,6 +1161,27 @@ begin aggregate
 	aggregate_triangle
 end
 
+begin citylimits
+	key "box", "City Limits"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	linestyle 3, "round", "round"
+	color "pink", 0.5
+	stroke
+end
+
+begin restrictedarea
+	key "box", "Restricted Area"
+	linestyle 0.1
+	stroke
+	clip "outside"
+	linestyle 3, "round", "round"
+	color "olive"
+	stroke
+end
+
+
 print 'timer=', Mapyrus.timer
 
 if 1 #allSymbolsLegend = 1
@@ -1141,6 +1198,7 @@ then
 	shipwreck
 	lighthouse
 	trigstation
+	witchshat
 	newmoon
 	oldmoon
 	trafficlights ""
@@ -1198,6 +1256,9 @@ then
 	weavefill
 	aggregate
 	wedgefill
+	citylimits
+	restrictedarea
+	hashfill
 
 	newpage "eps", "allsymbols.eps", 210, 297
 	#newpage "png", "allsymbols.png", 210, 297
