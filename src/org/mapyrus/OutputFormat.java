@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.zip.GZIPOutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -535,6 +536,7 @@ public class OutputFormat
 		Color backgroundColor = null;
 		boolean labelAntiAliasing = true;
 		boolean lineAntiAliasing = false;
+		boolean compressOutput = false;
 		Rectangle2D existingBoundingBox = null;
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
@@ -673,6 +675,11 @@ public class OutputFormat
 				String flag = token.substring(7);
 				mIsUpdatingFile = flag.equalsIgnoreCase("true");
 			}
+			else if (token.startsWith("compress="))
+			{
+				String flag = token.substring(9);
+				compressOutput = flag.equalsIgnoreCase("true");
+			}
 			else if (token.startsWith("background="))
 			{
 				String colorName = token.substring(11);
@@ -714,6 +721,12 @@ public class OutputFormat
 				else
 					mOutputStream = new FileOutputStream(filename);
 			}
+
+			/*
+			 * Compress output too if the user wants it.
+			 */
+			if (compressOutput)
+				mOutputStream = new GZIPOutputStream(mOutputStream);
 		}
 
 		File f = new File(filename);
