@@ -1,0 +1,60 @@
+include scalebar.mapyrus
+
+# Settings for page layout.  To use this a template, read these settings
+# from files using commands like 'let title=spool("mytitle.txt")' instead.
+#
+let title = "My Title"
+let map = "coastline.shp"
+
+newpage "eps", "tutoriallayout1.eps", 105, 147, "background=lightgrey"
+
+# Draw the title and logo.
+#
+move 10, 125
+font "Palatino", 24
+color "black"
+label title
+clearpath
+move 80, 10
+icon "mapyrus.png"
+
+begin land
+  key "box", "Land"
+  color "khaki"
+  fill
+  color "black"
+  stroke
+end
+
+# Set world coordinates in center of page, then draw map.
+#
+clearpath
+box 5, 20, 80, 115
+stroke
+dataset "shapefile", map, ""
+worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
+  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y, 10, 25, 75, 110
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  land
+done
+let mapScale = Mapyrus.worlds.scale
+
+# Next set world coordinates back to be the same as page coordinates.
+#
+worlds 0, 0, Mapyrus.page.width, Mapyrus.page.height
+
+# Now draw the legend to the right of the map.
+#
+clearpath
+move 85, 70, 85, 60
+font "Palatino", 4
+legend 5
+
+# Finally draw a scalebar below the map.
+#
+clearpath
+scalebar mapScale, "m", 5, 5
