@@ -316,23 +316,27 @@ public class Mapyrus
 		String versionMessage = Constants.PROGRAM_NAME + " " +
 			Constants.getVersion() + " " +
 			Constants.getReleaseDate();
+		String threadMessage = MapyrusMessages.get(MapyrusMessages.HTTP_THREADED_SERVER) + ": " + Constants.MAX_HTTP_THREADS;
 		String acceptingMessage = MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port;
 		logger.config(versionMessage);
+		logger.config(threadMessage);
 		logger.config(acceptingMessage);
 		if (!logger.isLoggable(Level.CONFIG))
 		{
 			System.out.println(versionMessage);
+			System.out.println(threadMessage);
 			System.out.println(acceptingMessage);
 		}
 
 		while (true)
 		{
+			Socket socket = null;
 			try
 			{
 				/*
 				 * Listen on socket for next client connection.
 				 */
-				Socket socket = serverSocket.accept();
+				socket = serverSocket.accept();
 				socket.setSoTimeout(Constants.HTTP_SOCKET_TIMEOUT);
 
 				/*
@@ -348,9 +352,16 @@ public class Mapyrus
 
 				HTTPRequest request = new HTTPRequest(socket,
 					interpreter, interpreterPool, logger);
+
 				activeThreads.add(request);
 				logger.fine(MapyrusMessages.get(MapyrusMessages.STARTED_THREAD) +
 					": " + request.getName());
+
+				/*
+				 * Forget about socket, the request thread guarantees that it
+				 * will be closed.
+				 */
+				socket = null;
 				request.start();
 
 				/*
@@ -385,6 +396,20 @@ public class Mapyrus
 			catch (MapyrusException e)
 			{
 				logger.severe(e.getMessage());
+			}
+			finally
+			{
+				/*
+				 * Ensure that socket is always closed.
+				 */
+				try
+				{
+					if (socket != null)
+						socket.close();
+				}
+				catch (IOException e)
+				{
+				}
 			}
 		}
 	}
