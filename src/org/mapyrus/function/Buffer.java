@@ -66,7 +66,7 @@ public class Buffer extends Function
 			Geometry g = new WKTReader().read(wkt);
 			BufferOp bufOp = new BufferOp(g);
 			bufOp.setEndCapStyle(capType);
-			Geometry buffer = g.buffer(distance);
+			Geometry buffer = bufOp.getResultGeometry(distance);
 			retval = new Argument(buffer.toText());
 		}
 		catch (ParseException e)
