@@ -1,15 +1,3 @@
-# Display whole dataset, expanding world coordinates a bit so there
-# is space for highlight around all polygons.
-#
-dataset "shapefile", "coastline.shp", "dbffields="
-newpage "eps", "tutorialshadow1.eps", 60, 60, 300
-let x1 = Mapyrus.dataset.min.x, y1 = Mapyrus.dataset.min.y
-let x2 = Mapyrus.dataset.max.x, y2 = Mapyrus.dataset.max.y
-let xRange = x2 - x1, yRange = y2 - y1
-let x1 = x1 - xRange / 10, y1 = y1 - yRange / 10
-let x2 = x2 + xRange / 10, y2 = y2 + yRange / 10
-worlds x1, y1, x2, y2
-
 begin shadowed2
   # Protect polygon interiors and draw shadow offset from polygon.
   #
@@ -33,6 +21,10 @@ begin shadowed
   color 'black'
   stroke
 end
+
+dataset "shapefile", "coastline.shp", "dbffields="
+newpage "eps", "tutorialshadow1.eps", 60, 60, 300
+worlds -2800000, 4800000, 2150000, 9190000
 
 # Fetch all polygons into current path.
 #
