@@ -79,6 +79,7 @@ public class MapyrusMessages
 	public static final String NO_GEOMETRY_FIELD = "nogeometryfield";
 	public static final String NO_MOVETO = "nomoveto";
 	public static final String NO_ROWS = "norows";
+	public static final String NUMERIC_FUNCTION = "numericfunction";
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
 	public static final String PARSE_ERROR = "parseerror";
@@ -92,6 +93,7 @@ public class MapyrusMessages
 	public static final String UNMATCHED_BRACKET = "unmatchedbracket";
 	public static final String VARIABLE_UNDEFINED = "variableundefined";
 	public static final String WRONG_COORDINATE = "wrongcoordinate";
+	public static final String WRONG_FUNCTION_VALUES = "wrongfunctionvalues";
 	public static final String WRONG_PARAMETERS = "wrongparameters";
 	public static final String WRONG_TYPES = "wrongtypes";
 	public static final String ZERO_WORLD_RANGE = "zeroworldrange";
