@@ -287,21 +287,6 @@ public class JDBCDataset implements GeographicDataset
 	}
 
 	/**
-	 * Begin SQL query.
-	 * @param extents area to query.
-	 * @param resolution resolution at which to query data.
-	 */
-	public void query(Double extents, double resolution)
-		throws MapyrusException
-	{
-		/*
-		 * Already sent query to RDBMS so nothing to do.
-		 * Ignore query extents, callers must include this in the SQL
-		 * statement themselves.
-		 */
-	}
-
-	/**
 	 * Fetch next row returned by query.
 	 * @return next row returned by query, or null if no more rows available.
 	 */
