@@ -1,25 +1,34 @@
-begin border2
+begin border2 n
 	clip
-	color "yellow"
-	linestyle 3
+	if n == 1 then
+		color "yellow"
+	else
+		color "pink"
+	endif
+	linestyle 5
 	stroke
 end
 
-begin border
-	# Draw border as thick line on inside of polygon and dashed border.
+begin border n
+	# Draw border as thick line on inside of polygon then solid border.
 	#
-	border2
-	linestyle 0.1, 'butt', 'bevel', 0, 4, 1, 1, 1
-	color "orange"
+	border2 n
+	linestyle 0.1
+	color "black"
 	stroke
 end
 
-newpage "png", "tutorialpolygons4.png", 60, 30, 96
+newpage "png", "tutorialpolygons4.png", 65, 55, 96
+
+# Display adjacent polygons, each with a thick interior border.
+#
+clearpath
+move 10, 10
+draw 7, 31, 34, 47, 30, 25, 42, 10, 10, 10
+border 2
 
 clearpath
-move 5, 5
-draw 45, 5
-arc 0, 45, 15, 45, 25
-draw 35, 25, 35, 10, 5, 10, 5, 5
+move 30, 25
+draw 34, 47, 58, 51, 64, 24, 46, 5, 42, 10, 30, 25
+border 1
 
-border
