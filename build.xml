@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
 <!-- Name of properties file containing error and status messages -->
-<property name="messagefile" value="MapyrusMessages.properties"/>
+<property name="messagefile" value="org/mapyrus/Messages.properties"/>
 
 <target name="init" description="Setup properties">
 <loadfile property="version" srcFile="VERSION">
