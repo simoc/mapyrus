@@ -92,6 +92,7 @@ public class Mapyrus
 		 */
 		StringReader sr = makeStringReader(commands);
 		FileOrURL f = new FileOrURL(sr, "commands");
+
 		ColorDatabase.load();
 		mInterpreter.interpret(mContext, f, stdout);
 	}
@@ -121,9 +122,27 @@ public class Mapyrus
 	 */
 	public void close() throws IOException, MapyrusException
 	{
-		mContext.closeContextStack();
-		mContext = null;
-		mInterpreter = null;
+		try
+		{
+			if (mContext != null)
+				mContext.closeContextStack();
+		}
+		catch (IOException e)
+		{
+			throw e;
+		}
+		catch (MapyrusException e)
+		{
+			throw e;
+		}
+		finally
+		{
+			/*
+			 * Always clears fields so we only attempt a close once.
+			 */	
+			mContext = null;
+			mInterpreter = null;
+		}
 	}
 
 	/**
