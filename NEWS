@@ -1,6 +1,16 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004 Simon Chenery.
 
+0.46, August 2004
+
+* Add roundedbox, triangle commands for drawing shapes.
+* Add parallelpath command for parallel line linestyles.
+* Add flowlabel command for labels following streets, rivers, etc.
+* Add interpolate function for interpolating sizes, colors, etc. from
+  attribute values.
+* Add optional display of frequency of each item shown in legend.
+* Add manual example demonstrating how to display histograms on map.
+
 0.45, July 2004
 
 * Add listfiles function so that multiple datasets can be displayed more easily.
