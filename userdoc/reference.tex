@@ -228,6 +228,15 @@ Returns the smaller of values \textit{a} and \textit{b}. \\
 
 \hline
 
+\texttt{parsewkt(\textit{str})} &
+Parses OGC WKT geometry string from \textit{str}
+into geometry suitable for use
+in \texttt{addpath} command.  See
+\textit{OpenGIS Simple Features Specification For SQL}
+for definition of geometry strings. \\
+
+\hline
+
 \texttt{pow(\textit{a}, \textit{b})} &
 Returns \textit{a} to the power \textit{b}. \\
 
@@ -827,16 +836,6 @@ Username for connecting to the database.
 Password for connecting to the database.
 
 \vspace{10pt}
-\texttt{wktfields=\textit{field1},\textit{field2},...}
-
-Comma-separated list of
-fieldnames that contain OGC Well Known Text geometry strings.
-These fields are read as geometry values suitable for the
-\texttt{addpath} command.
-See the
-\textit{OpenGIS Simple Features Specification For SQL}
-for a description of geometry strings.
-
 Other values are set as properties for the JDBC driver. \\
 
 \hline
