@@ -527,7 +527,11 @@ public class ContextStack
 							bufferedImage.setRGB(x, y, rgbPixel);
 					}
 				}
-				icon = new ImageIcon(bufferedImage);
+
+				String description = filename;
+				if (description.length() > 64)
+					description = description.substring(0, 64) + "...";
+				icon = new ImageIcon(bufferedImage, filename);
 			}
 			else
 			{
