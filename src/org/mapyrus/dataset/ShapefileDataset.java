@@ -177,7 +177,8 @@ public class ShapefileDataset implements GeographicDataset
 				}
 				catch (NumberFormatException e)
 				{
-					throw new MapyrusException(MapyrusMessages.INVALID_NUMBER + ": " + s);
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+						": " + s);
 				}
 				if (token.startsWith("xmin="))
 					xMin = d;
