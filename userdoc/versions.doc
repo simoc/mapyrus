@@ -5,6 +5,16 @@ include header.doc
 Versions
 </h2>
 
+<h3>0.41, January 2004</h3>
+<p>
+Added legends.
+<br>
+Added caching of datasets for faster display.
+<br>
+Added transparent colors.
+<br>
+include hr.doc
+
 <h3>0.32, December 2003</h3>
 <p>
 Improved HTML documentation.
