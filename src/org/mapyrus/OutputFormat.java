@@ -84,7 +84,12 @@ public class OutputFormat
 		mWriter.println("%%Creator: " + Mapyrus.PROGRAM_NAME);
 		mWriter.println("%%EndComments");
 		mWriter.println("");
-		
+
+		/*
+		 * Prevent anything being displayed outside bounding box we've just defined.
+		 */
+		mWriter.println("0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
+
 		/*
 		 * Set plotting units to millimetres.
 		 */
