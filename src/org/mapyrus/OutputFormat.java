@@ -827,7 +827,7 @@ public class OutputFormat
 			{
 				buffer.append('\\');
 				mWriter.println(buffer.toString());
-				buffer.delete(0, buffer.length());
+				buffer.setLength(0);
 			}
 
 			/*
