@@ -429,7 +429,7 @@ public class Context
 		String extras, String []geometryFieldNames) throws MapyrusException
 	{
 		mDataset = DatasetFactory.open(type, name, extras, geometryFieldNames);
-		mDataset.query(getUnprojectedExtents());
+		mDataset.query(getUnprojectedExtents(), 1.0);
 		mDatasetRow = mDataset.fetch();
 		mDatasetRowCount = 0;
 	}

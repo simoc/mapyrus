@@ -485,7 +485,8 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#query(Double)
 	 */
-	public void query(Rectangle2D.Double extents) throws MapyrusException
+	public void query(Rectangle2D.Double extents, double resolution)
+		throws MapyrusException
 	{
 		if (extents.intersects(mExtents))
 		{

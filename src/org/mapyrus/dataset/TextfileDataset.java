@@ -169,9 +169,6 @@ public class TextfileDataset implements GeographicDataset
 				startLine = token.substring(10);
 		}
 		
-
-
-
 		/*
 		 * If field names and types not given then read them from first two lines
 		 * of file.  Then skip more lines until we get to start of data.
@@ -329,7 +326,7 @@ public class TextfileDataset implements GeographicDataset
 	/**
 	 * @see net.sourceforge.mapyrus.GeographicDataset#getWorlds()
 	 */
-	public Rectangle2D getWorlds()
+	public Rectangle2D.Double getWorlds()
 	{
 		return null;
 	}
@@ -338,8 +335,10 @@ public class TextfileDataset implements GeographicDataset
 	 * Begins a query on a text file dataset.
 	 * @param extents the area of interest for the query.  Geometry outside
 	 * these extents will be skipped.
+	 * @param resolution is hint for minimum distance between coordinate values.
 	 */
-	public void query(Rectangle2D.Double extents) throws MapyrusException
+	public void query(Rectangle2D.Double extents, double resolution)
+		throws MapyrusException
 	{
 		mQueryExtents = extents;
 
@@ -390,12 +389,13 @@ public class TextfileDataset implements GeographicDataset
 		{
 			fieldValue = st.nextToken();
 
-			field = (Argument)(mRow.elementAt(i));
+			field = (Argument)(mRow.get(i));
 			if (mFieldTypes[i] == Argument.NUMERIC)
 			{
 				try
 				{
-					field.setNumericValue(Double.parseDouble(fieldValue));
+//XXX
+//					field.setNumericValue(Double.parseDouble(fieldValue));
 				}
 				catch (NumberFormatException e)
 				{
@@ -407,7 +407,8 @@ public class TextfileDataset implements GeographicDataset
 			}
 			else
 			{
-				field.setStringValue(fieldValue);
+// XXX need to make new Argument object
+//				field.setStringValue(fieldValue);
 			}
 			i++;
 		}
@@ -442,8 +443,8 @@ public class TextfileDataset implements GeographicDataset
 				left = right = bottom = top = inX = inY = false;
 				for (i = 0; i < mGeometryFieldIndexes.length; i += 2)
 				{
-					x = (Argument)(mRow.elementAt(i));
-					y = (Argument)(mRow.elementAt(i + 1));
+					x = (Argument)(mRow.get(i));
+					y = (Argument)(mRow.get(i + 1));
 					outcode = mQueryExtents.outcode(x.getNumericValue(),
 						y.getNumericValue());
 						

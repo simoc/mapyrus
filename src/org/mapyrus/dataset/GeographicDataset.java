@@ -53,12 +53,15 @@ public interface GeographicDataset
 	/**
 	 * Query the dataset.  Finds all data inside or crossing the area of interest
 	 * and matching the where clause.  Makes results available to be fetched.
+	 * Resolution value is a hint to allow an appropriate level of detail to be
+	 * returned in fetched geometry data.  
 	 * Only one query can be made on a dataset at one time, beginning a
 	 * new query closes the last one.
 	 * 
 	 * @param extents is area of interest for this query.
+	 * @param resolution is minimum distance between coordinate values.
 	 */
-	public void query(Rectangle2D.Double extents)
+	public void query(Rectangle2D.Double extents, double resolution)
 		throws MapyrusException;
 		
 	/**
