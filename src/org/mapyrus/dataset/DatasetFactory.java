@@ -60,6 +60,8 @@ public class DatasetFactory
 				retval = new TextfileDataset(name, extras, geometryFieldNames);
 			else if (type.equalsIgnoreCase("shapefile"))
 				retval = new ShapefileDataset(name, extras, geometryFieldNames);
+			else if (type.equalsIgnoreCase("jdbc"))
+				retval = new JDBCDataset(name, extras, geometryFieldNames);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET_TYPE) +
