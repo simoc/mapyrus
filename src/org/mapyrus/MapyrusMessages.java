@@ -53,6 +53,7 @@ public class MapyrusMessages
 	public static final String HTTP_TIMEOUT = "httptimeout";
 	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INVALID_ARC = "invalidarc";
+	public static final String INVALID_BEZIER = "invalidbezier";
 	public static final String INVALID_BOX = "invalidbox";
 	public static final String INVALID_CIRCLE = "invalidcircle";
 	public static final String INVALID_COLOR = "invalidcolor";
@@ -132,6 +133,7 @@ public class MapyrusMessages
 	public static final String NOT_STRING_OPERATION = "notstringoperation";
 	public static final String NOT_TEXT_FILE = "nottextfile";
 	public static final String NO_ARC_START = "noarcstart";
+	public static final String NO_BEZIER_START = "nobezierstart";
 	public static final String NO_CLIP_SIDE = "noclipside";
 	public static final String NO_DATASET = "nodataset";
 	public static final String NO_DEFAULT_PRINTER = "nodefaultprinter";
