@@ -133,4 +133,15 @@ public class Dataset
 	{
 		return(mDatasetRowCount);
 	}
+	
+	/**
+	 * Closes dataset.
+	 */
+	public void close() throws MapyrusException
+	{
+		mDataset.close();
+		mDataset = null;
+		mDatasetRow = null;
+		mDatasetRowCount = 0;
+	}
 }
