@@ -1046,6 +1046,34 @@ Other values are set as properties for the JDBC driver. \\
 
 \hline
 
+\texttt{mif} &
+Reads from a MapInfo Interchange Format (MIF)
+file with filename \textit{name}.
+The geometry for each fetched record is assigned to a variable named
+\texttt{GEOMETRY}, attribute field values are assigned to
+variables with attribute field names.
+
+Color and symbol information for each point read from the MIF file
+is assigned to variables
+named \texttt{SYMBOLSHAPE}, \texttt{SYMBOLCOLOR}, \texttt{SYMBOLSIZE}
+and \texttt{SYMBOLFONT}.  For each line and polygon, the variables
+named \texttt{PENWIDTH}, \texttt{PENPATTERN}, \texttt{PENCOLOR}
+are assigned.  For each polygon, variables
+named \texttt{BRUSHPATTERN}, \texttt{BRUSHFORECOLOR}, \texttt{BRUSHBACKCOLOR}
+are also assigned with the fill style for the polygon.
+
+\vspace{10pt}
+Extras:
+
+\texttt{midfields=\textit{field1},\textit{field2},...}
+
+Comma-separated list of
+attribute fields to read from the MID file accompanying the
+MIF file.  By default, all fields are read.  Reading fewer attribute
+fields improves performance.  \\
+
+\hline
+
 \texttt{shapefile} &
 Reads from ESRI Shape format file with filename \textit{name}.
 The geometry for each fetched record is assigned to a variable named
