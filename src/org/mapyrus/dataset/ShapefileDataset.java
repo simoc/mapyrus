@@ -116,15 +116,15 @@ public class ShapefileDataset implements GeographicDataset
 	private int []mDBFFieldLengths;
 
 	/*
-	 * Extents of shape file.
+	 * Extents of shape file and extents being queried.
 	 */
 	private Rectangle2D.Double mExtents;
+	private Rectangle2D.Double mQueryExtents;
 	
 	/*
-	 * Extents being queried and number of records read for query.
+	 * Number of bytes already read for query.
 	 * A record read from DBF file for query.
 	 */
-	private Rectangle2D.Double mQueryExtents;
 	private int mBytesRead;
 	private byte []mDBFRecord;
 
@@ -138,13 +138,16 @@ public class ShapefileDataset implements GeographicDataset
 	{
 		String shapeFilename, dbfFilename, prjFilename;
 		StringTokenizer st, st2;
-		String token;
+		String token, s;
 		HashSet extrasDBFFields;
+		double d, xMin, yMin, xMax, yMax;
 
 		/*
 		 * Set default options.  Then see if user wants to override any of them.
 		 */
 		extrasDBFFields = null;
+		xMin = yMin = -Float.MAX_VALUE;
+		xMax = yMax = Float.MAX_VALUE;
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -164,7 +167,29 @@ public class ShapefileDataset implements GeographicDataset
 					extrasDBFFields.add(token);
 				}
 			}
+			else if (token.startsWith("xmin=") || token.startsWith("ymin=") ||
+				token.startsWith("xmax=") || token.startsWith("ymax="))
+			{
+				s = token.substring(5);
+				try
+				{
+					d = Double.parseDouble(s);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.INVALID_NUMBER + ": " + s);
+				}
+				if (token.startsWith("xmin="))
+					xMin = d;
+				else if (token.startsWith("ymin="))
+					yMin = d;
+				else if (token.startsWith("xmax="))
+					xMax = d;
+				else
+					yMax = d;
+			}
 		}
+		mQueryExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 
 		/*
 		 * Determine full names of .shp and .dbf files.
@@ -222,11 +247,24 @@ public class ShapefileDataset implements GeographicDataset
 		 * correct byte order.
 		 */
 		readShapeHeader();
-		
+
 		/*
 		 * Read header from database file to get names and types of other fields.
 		 */
 		readDBFHeader(extrasDBFFields);
+
+		if (mQueryExtents.intersects(mExtents))
+		{
+			mBytesRead = 0;
+			mDBFRecord = new byte[mDBFRecordLength];
+		}
+		else
+		{
+			/*
+			 * Shape file does not overlap current extents.  Fetch will return nothing.
+			 */
+			mBytesRead = mShapeFileLength;
+		}
 	}
 
 	/**
@@ -541,27 +579,6 @@ public class ShapefileDataset implements GeographicDataset
 	public Rectangle2D.Double getWorlds()
 	{
 		return(mExtents);
-	}
-
-	/**
-	 * @see org.mapyrus.dataset.GeographicDataset#query(Double)
-	 */
-	public void query(Rectangle2D.Double extents, double resolution)
-		throws MapyrusException
-	{
-		if (extents.intersects(mExtents))
-		{
-			mBytesRead = 0;
-			mQueryExtents = extents;
-			mDBFRecord = new byte[mDBFRecordLength];
-		}
-		else
-		{
-			/*
-			 * Shape file does not overlap current extents.  Query will return nothing.
-			 */
-			mBytesRead = mShapeFileLength;
-		}
 	}
 
 	/**
