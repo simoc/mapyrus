@@ -19,7 +19,7 @@ newpage "eps", "tutorialpolygons4.eps", 65, 40
 clearpath
 move 5, 5
 draw 7, 31, 42, 33, 40, 19, 20, 19, 19, 24, 15, 24, 13, 5, 5, 5
-border "red"
+border "pink"
 clearpath
 move 13, 5
 draw 15, 24, 19, 24, 20, 19, 40, 19, 42, 9, 13, 5
