@@ -1,0 +1,48 @@
+begin hotel name, stars
+	# Draw hotel name inside a box about as wide as the name.
+	#
+	color '#0000A0'
+	clearpath
+	move 2, 0
+	draw 2, 4, length(name) * 2, 4, length(name) * 2, 0, 2, 0
+	move 0, 2
+	draw 2, 4, 2, 0, 0, 2
+	fill
+
+	clearpath
+	move 2, 1
+	color 'white'
+	font 'Dialog', 'plain', 3
+	label name
+
+	# Draw box below hotel name, then show number of stars inside it.
+	#
+	clearpath
+	color '#0000A0'
+	move 2, -2
+	draw 2, 0, stars * 3, 0, stars * 3, -2
+	fill
+
+	clearpath
+	color 'yellow'
+	move 2, -2
+	label substr('* * * * *', 1, stars * 2)
+end
+
+# Display the ESRI Shape file hotel.shp in a PNG file.
+#
+newpage "png", "tutorialdatasets3.png", 60, 50, 96
+dataset "shapefile", "hotel.shp", ""
+
+# Expand bounding box to the right so labels don't run off edge of page.
+#
+worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, Mapyrus.dataset.max.x + Mapyrus.dataset.width / 5, Mapyrus.dataset.max.y
+import
+while Mapyrus.import.moreRecords
+do
+	fetch
+	clearpath
+	addpath GEOMETRY
+	print "DEBUG:", GEOMETRY, HOTELNAME, STARRATING
+	hotel HOTELNAME, STARRATING
+done
