@@ -209,6 +209,24 @@ public class Mapyrus
 
 			i++;
 		}
+
+		/*
+		 * Finished off anything being created in this context.
+		 */
+		try
+		{
+			context.closeContextStack();
+		}
+		catch (IOException e)
+		{
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
+		catch (MapyrusException e)
+		{
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
 		System.exit(0);
 	}
 }
