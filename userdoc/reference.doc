@@ -933,8 +933,8 @@ Named colors refer to colors in the file
 <a href="#startupvariables">variable</a> at startup.
 <i>hexdigits</i> is a 6 digit hexadecimal value defining RGB values,
 as used in HTML pages.
-Values for RGB and HSB colors are given as intensities
-in the range 0-1.
+Values for RGB and Hue-saturation-brightness (HSB)
+colors are given as intensities in the range 0-1.
 The spelling <tt>colour</tt> is also accepted for this command.
 
 include hr.doc
