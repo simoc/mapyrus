@@ -50,31 +50,18 @@ public class Mapyrus
 	}
 	
 	/**
-	 * Run an interpreter on a file, wait for it to finish, trap any
-	 * exceptions that occur and see if it succeeded.
+	 * Parse and interpret a file.  Trap any exceptions.
+	 * @return flag indicating whether interpretation succeeeded.
 	 */
-	private static boolean processFile(Reader f, Context context)
+	private static boolean processFile(Reader f, Interpreter interpreter)
 	{
-		Interpreter interpreter;
-		interpreter = new Interpreter(f, context);
-
 		try
 		{
-			/*
-			 * Run interpreter, wait for it to finish and then see whether it
-			 * succeeded or not.
-			 */
-			interpreter.start();
-			interpreter.join();
-			if (interpreter.getReturnStatus() == false)
-			{
-				System.err.println(interpreter.getErrorMessage());
-				return(false);
-			}
+			interpreter.interpret(f);
 		}
-		catch (InterruptedException e)
+		catch (Exception e)
 		{
-			System.err.println(interpreter.getErrorMessage());
+			System.err.println(e.getMessage());
 			return(false);
 		}		
 		return(true);
@@ -107,6 +94,7 @@ public class Mapyrus
 	public static void main(String []args)
 	{
 		BufferedReader f;
+		Reader []readers;
 		Context context;
 		
 		args = new String[1];
@@ -141,7 +129,9 @@ public class Mapyrus
 			initialise();
 			f = new BufferedReader(new InputStreamReader(System.in));
 			context = new Context();
-			processFile(f, context);
+			Interpreter interpreter = new Interpreter(context);
+
+			processFile(f, interpreter);
 			
 			try
 			{
@@ -185,6 +175,7 @@ public class Mapyrus
 
 			initialise();
 			context = new Context();
+			Interpreter interpreter = new Interpreter(context);
 			
 			/*
 			 * Process each file and URL given as command line argument.
@@ -198,7 +189,7 @@ public class Mapyrus
 				{
 					URL url = new URL(args[i]);
 					f = new BufferedReader(new InputStreamReader(url.openStream()));
-					if (processFile(f, context) == false)
+					if (processFile(f, interpreter) == false)
 					{
 						System.exit(1);
 					}
@@ -208,7 +199,7 @@ public class Mapyrus
 					try
 					{
 						f = new BufferedReader(new FileReader(args[i]));
-						if (processFile(f, context) == false)
+						if (processFile(f, interpreter) == false)
 						{
 							System.exit(1);
 						}
