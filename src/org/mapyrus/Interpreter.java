@@ -748,6 +748,26 @@ public class Interpreter
 		return(new ParsedStatement(statement));
 	}
 
+	/*
+	 * Static keyword lookup table for fast keyword lookup.
+	 */
+	private static Hashtable mKeywordLookup;
+
+	static
+	{
+		mKeywordLookup = new Hashtable();
+		mKeywordLookup.put(END_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_END));
+		mKeywordLookup.put(THEN_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_THEN));
+		mKeywordLookup.put(ELSE_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_ELSE));
+		mKeywordLookup.put(ELSIF_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_ELSIF));
+		mKeywordLookup.put(ENDIF_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_ENDIF));
+	}
+
 	/**
 	 * Reads, parses and returns next statement, or block of statements.
 	 * @param preprocessor source to read from.
@@ -790,12 +810,12 @@ public class Interpreter
 			else
 			{
 				String keyword = parseWord(c, preprocessor);
+				String lower = keyword.toLowerCase();
 
 				/*
 				 * Is this the start or end of a procedure block definition?
-				 * Or, is it an if ... then ... else ... endif statement?
 				 */
-				if (keyword.equalsIgnoreCase(BEGIN_KEYWORD))
+				if (lower.equals(BEGIN_KEYWORD))
 				{
 					/*
 					 * Nested procedure blocks not allowed.
@@ -808,34 +828,26 @@ public class Interpreter
 					}
 					retval = parseProcedureBlock(preprocessor);
 				}
-				else if (keyword.equalsIgnoreCase(END_KEYWORD))
-				{
-					retval = new ParsedStatement(ParsedStatement.PARSED_END);
-				}
-				else if (keyword.equalsIgnoreCase(IF_KEYWORD))
+				else if (lower.equals(IF_KEYWORD))
 				{
 					retval = parseIfStatement(preprocessor, inProcedureDefn);
 				}
-				else if (keyword.equalsIgnoreCase(THEN_KEYWORD))
-				{
-					retval = new ParsedStatement(ParsedStatement.PARSED_THEN);
-				}
-				else if (keyword.equalsIgnoreCase(ELSE_KEYWORD))
-				{
-					retval = new ParsedStatement(ParsedStatement.PARSED_ELSE);
-				}
-				else if (keyword.equalsIgnoreCase(ELSIF_KEYWORD))
-				{
-					retval = new ParsedStatement(ParsedStatement.PARSED_ELSIF);
-				}
-				else if (keyword.equalsIgnoreCase(ENDIF_KEYWORD))
-				{
-					retval = new ParsedStatement(ParsedStatement.PARSED_ENDIF);
-				}
 				else
 				{
-					Statement st = parseSimpleStatement(keyword, preprocessor);
-					retval = new ParsedStatement(st);
+					/*
+					 * Does keyword match a control-flow keyword?
+				 	 * like "then", or "else"?
+					 */
+					retval = (ParsedStatement)mKeywordLookup.get(lower);
+					if (retval == null)
+					{
+						/*
+						 * It must be a regular type of statement if we
+						 * can't match any special words.
+						 */
+						Statement st = parseSimpleStatement(keyword, preprocessor);
+						retval = new ParsedStatement(st);
+					}
 				}
 				finishedStatement = true;
 			}
