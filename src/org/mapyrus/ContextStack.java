@@ -519,14 +519,12 @@ public class ContextStack
 				Color c = getCurrentContext().getColor();
 				int rgbPixel = c.getRGB();
 				int bitIndex = 0;
-				for (int y = iconSize - 1; y >= 0; y--)
+				for (int y = 0; y < iconSize; y++)
 				{
 					for (int x = 0; x < iconSize; x++)
 					{
 						if (bits[bitIndex++] != 0)
 							bufferedImage.setRGB(x, y, rgbPixel);
-						else
-							bufferedImage.setRGB(x, y, 0xffffff);
 					}
 				}
 				icon = new ImageIcon(bufferedImage);
