@@ -419,6 +419,13 @@ The elapsed processing time, measured in seconds.
 
 <tr>
 <td>
+<tt>Mapyrus.filename</tt>
+<td>
+The name of the file or URL being interpreted.
+
+
+<tr>
+<td>
 <tt>Mapyrus.geometry.length</tt>
 <td>
 The length of the current path on the page, measured in millimetres.
@@ -821,6 +828,8 @@ If not given, units are assumed to be metres.
 Coordinate system transformation.
 -->
 
+include hr.doc
+
 <p>
 <a name="dataset"></a>
 <tt>dataset</tt> <i>type</i>, <i>name</i>, <i>extras</i>,
@@ -833,6 +842,8 @@ an SQL query statement when accessing an RDBMS.
 <i>extras</i> defines further options for accessing the dataset, given
 as <i>variable=value</i> values, separated by whitespace.
 The following dataset types and options are available:
+
+<p>
 
 <table border=1 width=400>
 <tr>
@@ -868,7 +879,7 @@ for accessing data in ESRI Shape file format.
 <p>
 Extras:
 <p>
-<tt>dbffields=<i>field1</i>,...</tt>
+<tt>dbffields=<i>field1</i>,<i>field2</i>,...</tt>
 <br>
 Comma-separated list of
 attribute fields to read from the DBF database file accompanying the
@@ -893,6 +904,8 @@ The JDBC connection string for connecting to the RDBMS.
 
 <i>geometryfield</i>
 defines which columns are to be interpreted as geometry
+
+include hr.doc
 
 <p>
 <a name="import"></a>
@@ -963,6 +976,8 @@ or
 to execute the command in a sub-shell if 
 environment variables, file redirection or other shell features are
 required.
+
+include hr.doc
 
 <p>
 <a name="print"></a>
