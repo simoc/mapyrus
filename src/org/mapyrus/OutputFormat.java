@@ -529,7 +529,7 @@ public class OutputFormat
 			else if (token.startsWith("background="))
 			{
 				String colorName = token.substring(11);
-				backgroundColor = ColorDatabase.getColor(colorName, 0);
+				backgroundColor = ColorDatabase.getColor(colorName, 255);
 				if (backgroundColor == null)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
