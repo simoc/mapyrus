@@ -19,7 +19,7 @@ newpage "png", "tutorialdatasets2.png", 60, 60, 96
 dataset "textfile", "streets.EE", ""
 worlds 324846, 1257086, 325300, 1257476
 import
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	# Header line for each feature contains coordinate count.
 	#
