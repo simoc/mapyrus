@@ -528,6 +528,12 @@ public class ContextStack
 				{
 					icon = ImageIO.read(new File(filename));
 				}
+
+				if (icon == null)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
+						": " + filename);
+				}
 			}
 
 			/*
@@ -539,6 +545,16 @@ public class ContextStack
 				mIconCache.put(filename, icon);
 		}
 		getCurrentContext().drawIcon(icon, size);
+	}
+
+	/**
+	 * Draws geo-referenced image on page.
+	 * @param filename geo-referenced image filename.
+	 */
+	public void drawGeoImage(String filename)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().drawGeoImage(filename);
 	}
 
 	/**
