@@ -31,7 +31,7 @@ y2 = Mapyrus.dataset.max.y - Mapyrus.dataset.height * (zoomlevel / (maxZoomlevel
 worlds x1, y1, x2, y2
 import
 color "red"
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	clearpath
 	fetch
@@ -48,7 +48,7 @@ then
 	import
 	color "black"
 	font "Helvetica", "plain", 3
-	while Mapyrus.import.moreRecords
+	while Mapyrus.import.more
 	do
 		clearpath
 		fetch

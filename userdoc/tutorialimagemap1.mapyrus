@@ -45,7 +45,7 @@ y2 = Mapyrus.worlds.max.y
 # Read shape file and draw it into image file.
 #
 import
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	clearpath
 	fetch

@@ -8,7 +8,7 @@ dataset "shapefile", "coastline.shp", ""
 worlds -3000000, 5500000, 2600000, 8500000
 
 import
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	fetch
 	addpath GEOMETRY
@@ -143,7 +143,7 @@ end
 #
 dataset "textfile", "aust_temperatures.dat", ""
 import
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	fetch
 	city = $0

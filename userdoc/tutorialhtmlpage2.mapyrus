@@ -14,7 +14,7 @@ endif
 
 worlds x1, y1, x2, y2
 import
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	clearpath
 	fetch
@@ -62,7 +62,7 @@ zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom) . 
 #
 dataset "textfile", "tutorialhtmlpage2.html", ""
 import
-while Mapyrus.import.moreRecords
+while Mapyrus.import.more
 do
 	fetch
 	r = replace($0, '@placeholder_title@', 'Real Title')
