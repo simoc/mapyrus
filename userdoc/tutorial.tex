@@ -506,6 +506,27 @@ symbols.
 \label{tutorialdatasets3}
 \end{figure}
 
+\subsection{Displaying Data Stored In MIF files}
+
+Reading data from a MIF file format follows the same pattern as reading
+from a text file or ESRI Shape file.
+
+MIF files commonly include colors, line and fill styles for the data.
+Linestyle values are set as variables
+for each row that is fetched and enable the data to be displayed with
+similar appearance as in MapInfo.
+
+The following example demonstrates reading a MIF file containing
+street network data.
+
+\verbatiminput{tutorialdatasets4.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialdatasets4.eps}
+\caption{Displaying MIF Files}
+\label{tutorialdatasets4}
+\end{figure}
+
 \subsection{Displaying Data Stored In A Database}
 
 Data is read from a relational database using
@@ -522,7 +543,7 @@ row and assigned to variables named
 An SQL where clause is used to limit data read from
 the database to inside the area of interest.
 
-\verbatiminput{tutorialdatasets4.mapyrus}
+\verbatiminput{tutorialdatasets5.mapyrus}
 
 For databases supporting the \textit{OpenGIS Simple Features Specification For
 SQL}, add fields containing OGC WKT geometry strings or WKB geometry values
@@ -533,7 +554,7 @@ must be converted to a text string and then back to a geometry.
 The following example demonstrates fetching a geometry field named \texttt{geom}
 from the database as a WKT string and displaying it.
 
-\verbatiminput{tutorialdatasets5.mapyrus}
+\verbatiminput{tutorialdatasets6.mapyrus}
 
 \subsection{Displaying Many Datasets}
 
@@ -543,7 +564,7 @@ a filename pattern.  Then display each dataset in a loop.
 Displaying from many ESRI Shape files is demonstrated in the following
 example.
 
-\verbatiminput{tutorialdatasets6.mapyrus}
+\verbatiminput{tutorialdatasets7.mapyrus}
 
 \subsection{Display Performance}
 
