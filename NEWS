@@ -1,6 +1,13 @@
 Mapyrus Major Change History
 Copyright (C) 2003 Simon Chenery.
 
+0.43, May 2004
+
+* Add rdraw, circle, hexagon commands.
+* Add protect, unprotect commands to avoid overlapping labels.
+* Allow hexadecimal digits to be used to define an icon.
+* Add library of sample shapes and patterns.
+
 0.42, March 2004
 
 * Add Java API and change licensing to LGPL.
