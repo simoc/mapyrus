@@ -578,6 +578,20 @@ public class Context
 	}
 
 	/**
+	 * Adds rotation for font.
+	 * @param rotation is angle in degrees.
+	 * @return previous rotation value.
+	 */
+	private double addFontRotation(double rotation)
+	{
+		double retval = mFontRotation;
+		mFontRotation += rotation;
+		mAttributesChanged |= ATTRIBUTE_FONT;
+		mAttributesPending |= ATTRIBUTE_FONT;
+		return(retval);
+	}
+
+	/**
 	 * Sets horizontal and vertical justification for labelling.
 	 * @param code is bit flags of JUSTIFY_* constant values for justification.
 	 */
@@ -1502,6 +1516,147 @@ public class Context
 		{	
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
 			mOutputFormat.label(path.getMoveTos(), label);
+		}
+	}
+
+
+
+	/**
+	 * Draw label along currently defined path.
+	 * @param spacing spacing between letters.
+	 * @param offset offset along path at which to begin label.
+	 * @param label label to draw.
+	 */
+	public void flowLabel(double spacing, double offset, String label)
+		throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+		Point2D.Double startPt, endPt;
+
+		if (path != null && path.getMoveToCount() > 0 && mOutputFormat != null)
+		{
+			spacing *= mScaling;
+			offset *= mScaling;
+			int nLetters = label.length();
+
+			/*
+			 * Find length of each letter in string, and total string
+			 * length including spaces between characters.
+			 */
+			String []letters = new String[nLetters];
+			double []stringWidths = new double[nLetters];
+			double totalStringWidth = 0.0;
+			for (int i = 0; i < nLetters; i++)
+			{
+				if (i > 0)
+					totalStringWidth += spacing;
+
+				letters[i] = new String(label.substring(i, i + 1));
+				stringWidths[i] = getStringDimension(letters[i]).getWidth();
+				totalStringWidth += stringWidths[i];
+			}
+
+			if ((mJustify & OutputFormat.JUSTIFY_RIGHT) != 0)
+				offset -= totalStringWidth;
+			if ((mJustify & OutputFormat.JUSTIFY_CENTER) != 0)
+				offset -= totalStringWidth / 2;
+
+			/*
+			 * Make list of points of the line segments along which label 
+			 * will be drawn.
+			 */
+			ArrayList pathPoints = path.getSubPathPoints(offset, totalStringWidth);
+			
+			/*
+			 * If path could not be calculated then just use horizontal line from
+			 * first point of path.
+			 */
+			if (pathPoints.isEmpty())
+			{
+				startPt = (Point2D.Double)path.getMoveTos().get(0);
+				endPt = new Point2D.Double(startPt.x + Math.cos(mRotation) * totalStringWidth,
+					startPt.y + Math.sin(mRotation) * totalStringWidth);
+				pathPoints.add(startPt);
+				pathPoints.add(endPt);
+			}
+
+			/*
+			 * Find direction of path.  If it goes left or down then walk through it
+			 * in reverse direction so that label appears the right way up.
+			 */
+			startPt = (Point2D.Double)pathPoints.get(0);
+			endPt = (Point2D.Double)pathPoints.get(pathPoints.size() - 1);
+			double angle = Math.atan2(endPt.y - startPt.y, endPt.x - startPt.x);
+			int startIndex, endIndex;
+			int step;
+
+			if (startPt.distanceSq(endPt) > 0 && Math.abs(angle + mRotation) > Math.PI / 2)
+			{
+				startIndex = pathPoints.size() - 1;
+				endIndex = 0;
+				step = -1;
+			}
+			else
+			{
+				startIndex = 0;
+				endIndex = pathPoints.size() - 1;
+				step = 1;
+			}
+
+			/*
+			 * Draw letters along each line segment.
+			 */
+			int letterIndex = 0;
+			ArrayList pointPath = new ArrayList();
+
+			offset = 0;
+			while (letterIndex < nLetters && startIndex != endIndex)
+			{
+				startPt = (Point2D.Double)pathPoints.get(startIndex);
+				endPt = (Point2D.Double)pathPoints.get(startIndex + step);
+
+				double xDiff = endPt.x - startPt.x;
+				double yDiff = endPt.y - startPt.y;
+				double dist = Math.sqrt(xDiff * xDiff + yDiff * yDiff); 
+				angle = Math.atan2(yDiff, xDiff);
+				double cosAngle = Math.cos(angle);
+				double sinAngle = Math.sin(angle);
+
+				/*
+				 * Set rotation of font to follow current line segment.
+				 */
+				addFontRotation(angle);
+				setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
+
+				/*
+				 * Draw each of the letters that will fit along
+				 * this line segment.
+				 *
+				 * If path is not long enough for all letters, then
+				 * last line segment is extended to fit in all letters.
+				 */
+				boolean isLastSegment = (startIndex + step == endIndex);
+				while (letterIndex < nLetters &&
+					(offset + stringWidths[letterIndex] / 2 < dist || isLastSegment))
+				{
+					double x = startPt.x + offset * cosAngle;
+					double y = startPt.y + offset * sinAngle;
+					pointPath.clear();
+					pointPath.add(new Point2D.Double(x, y));
+
+					mOutputFormat.label(pointPath, letters[letterIndex]);
+					offset += stringWidths[letterIndex] + spacing;
+					letterIndex++;
+				}
+
+				/*
+				 * Continue remaining letters on next line segment.
+				 */
+				offset -= dist;
+				startIndex += step;
+
+				addFontRotation(-angle);
+			}
 		}
 	}
 
