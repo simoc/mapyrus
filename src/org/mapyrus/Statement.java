@@ -65,32 +65,33 @@ public class Statement
 	public static final int STRIPEPATH = 31;
 	public static final int SHIFTPATH = 32;
 	public static final int PARALLELPATH = 33;
-	public static final int SINKHOLE = 34;
-	public static final int GUILLOTINE = 35;
-	public static final int STROKE = 36;
-	public static final int FILL = 37;
-	public static final int GRADIENTFILL = 38;
-	public static final int PROTECT = 39;
-	public static final int UNPROTECT = 40;
-	public static final int CLIP = 41;
-	public static final int LABEL = 42;
-	public static final int FLOWLABEL = 43;
-	public static final int ICON = 44;
-	public static final int EPS = 45;
-	public static final int SCALE = 46;
-	public static final int ROTATE = 47;
-	public static final int WORLDS = 48;
-	public static final int PROJECT = 49;
-	public static final int DATASET = 50;
-	public static final int FETCH = 51;
-	public static final int NEWPAGE = 52;
-	public static final int PRINT = 53;
-	public static final int LOCAL = 54;
-	public static final int LET = 55;
-	public static final int EVAL = 56;
-	public static final int KEY = 57;
-	public static final int LEGEND = 58;
-	public static final int MIMETYPE = 59;
+	public static final int SELECTPATH = 34;
+	public static final int SINKHOLE = 35;
+	public static final int GUILLOTINE = 36;
+	public static final int STROKE = 37;
+	public static final int FILL = 38;
+	public static final int GRADIENTFILL = 39;
+	public static final int PROTECT = 40;
+	public static final int UNPROTECT = 41;
+	public static final int CLIP = 42;
+	public static final int LABEL = 43;
+	public static final int FLOWLABEL = 44;
+	public static final int ICON = 45;
+	public static final int EPS = 46;
+	public static final int SCALE = 47;
+	public static final int ROTATE = 48;
+	public static final int WORLDS = 49;
+	public static final int PROJECT = 50;
+	public static final int DATASET = 51;
+	public static final int FETCH = 52;
+	public static final int NEWPAGE = 53;
+	public static final int PRINT = 54;
+	public static final int LOCAL = 55;
+	public static final int LET = 56;
+	public static final int EVAL = 57;
+	public static final int KEY = 58;
+	public static final int LEGEND = 59;
+	public static final int MIMETYPE = 60;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -167,6 +168,7 @@ public class Statement
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
 		mStatementTypeLookup.put("shiftpath", new Integer(SHIFTPATH));
 		mStatementTypeLookup.put("parallelpath", new Integer(PARALLELPATH));
+		mStatementTypeLookup.put("selectpath", new Integer(SELECTPATH));
 		mStatementTypeLookup.put("sinkhole", new Integer(SINKHOLE));
 		mStatementTypeLookup.put("guillotine", new Integer(GUILLOTINE));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
@@ -204,7 +206,7 @@ public class Statement
 	{
 		RETURN_STATEMENT = new Statement("", null);
 		RETURN_STATEMENT.mType = RETURN;
-	};
+	}
 
 	/**
 	 * Looks up identifier for a statement name.
