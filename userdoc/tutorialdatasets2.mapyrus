@@ -1,0 +1,59 @@
+begin streetNameLabel name
+	if Mapyrus.rotation > 90 or Mapyrus.rotation < -90
+	then
+		# Ensure labels are always 'right way up'
+		# and readable.
+		#
+		rotate 180
+	endif
+	move 0, 1
+	color 'black'
+	font 'Helvetica', 'plain', 2
+	justify 'center'
+	label name
+end
+
+# Draw the GenaMap export file streets.EE in a PNG file.
+#
+newpage "png", "tutorialdatasets2.png", 60, 60, 96
+dataset "textfile", "streets.EE", ""
+worlds 324846, 1257086, 325300, 1257476
+import
+while Mapyrus.import.moreRecords
+do
+	# Header line for each feature contains coordinate count.
+	#
+	fetch
+	nCoords = substr($0, 51, 5)
+	tag = substr($0, 16, 32)
+
+	# Strip trailing spaces and abbreviate street names.
+	#
+	tag = replace(tag, '  *$', '')
+	tag = replace(tag, 'AVENUE$', 'AVE')
+	tag = replace(tag, 'STREET$', 'ST')
+	tag = replace(tag, 'ROAD$', 'RD')
+
+	fetch
+	clearpath
+	move $1, $2
+	i = 1
+	while i < nCoords
+	do
+		# Add all coordinates for this feature to the path.
+		#
+		fetch
+		draw $1, $2
+		i = i + 1
+	done
+
+	color 'red'
+	stroke
+	if Mapyrus.path.length > 15
+	then
+		# Don't label short streets.
+		#
+		samplepath 99999, Mapyrus.path.length / 2
+		streetNameLabel tag
+	endif
+done
