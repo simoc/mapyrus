@@ -1,0 +1,42 @@
+begin highway name
+	# Force symbol to appear upright, regardless of orientation of
+	# line at point where symbol is drawn.
+	#
+	rotate -Mapyrus.rotation
+
+	# Draw rectangle, then label inside it.
+	#
+	move -3, -2
+	draw -3, 2, 3, 2, 3, -2, -3, -2
+	color "blue"
+	fill
+
+	clearpath
+	color "white"
+	font "Helvetica", "plain", 3
+	justify "center"
+	move 0, -1
+	label name
+end
+
+newpage "png", "tutoriallines3.png", 60, 30, 96
+clearpath
+
+move 5, 5
+draw 45, 5
+arc 0, 45, 15, 45, 25
+draw 35, 25, 35, 10, 5, 10
+
+# Demonstrate overplotting of lines.
+#
+color 'red'
+linestyle 1.32, 'round', 'round'
+stroke
+color 'yellow'
+linestyle 0.1
+stroke
+
+# Draw path one more time as symbols showing name of highway.
+#
+samplepath 17, 9
+highway 'A99'

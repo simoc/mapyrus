@@ -1,0 +1,19 @@
+begin arrow
+	# Draws a filled '>' symbol.
+	#
+	move -1, -1
+	draw -1, 1
+	draw 2, 0
+	fill
+end
+
+newpage "png", "tutoriallines1.png", 60, 30, 96
+color "orange"
+
+clearpath
+move 5, 5
+draw 45, 5
+arc 0, 45, 15, 45, 25
+draw 35, 25, 35, 10, 5, 10
+samplepath 5, 2.5
+arrow

@@ -53,37 +53,43 @@ Tutorial
 
 <tr>
 <td>
-<a href="#pdf"/>Generating Portable Document Format (PDF) output</a>
+<a href="#pdf"/>Generating Portable Document Format (PDF) Output</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#httpserver"/>Setting up Mapyrus as an HTTP Server</a>
+<a href="#httpserver"/>Setting Up Mapyrus As An HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#url"/>Passing Variables to Mapyrus HTTP Server Through URLs</a>
+<a href="#url"/>Passing Variables To Mapyrus HTTP Server Through URLs</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#htmlpage"/>Returning HTML Pages from Mapyrus HTTP Server</a>
+<a href="#htmlpage"/>Returning HTML Pages From Mapyrus HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#htmladd"/>Returning Additional Information from Mapyrus HTTP Server</a>
+<a href="#htmladd"/>Returning Additional Information From Mapyrus HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#imagemap"/>Using Imagemaps with Mapyrus HTTP Server</a>
+<a href="#imagemap"/>Using Imagemaps With Mapyrus HTTP Server</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#external"/>Accessing Mapyrus HTTP Server From Other Software</a>
 </td>
 </tr>
 
@@ -173,10 +179,6 @@ basic shapes in different colours
 Use variables and conditional tests to vary the appearance
 of the display.
 Use loops to display similar symbols repeatedly.
-Variables named <tt>x</tt> and <tt>counter</tt> are used in the
-following example.  The variable
-<tt>Mapyrus.page.width</tt>
-is set by Mapyrus automatically.
 
 include beginex.doc
 include tutorialvar1.mpy
@@ -188,10 +190,79 @@ The output of this example is.
 <img src="tutorialvar1.png">
 <p>
 
+include beginex.doc
+include tutorialvar2.mpy
+include endex.doc
+
 <a name="procedures"/></a>
 <h3>Building Procedures</h3>
 <p>
 
+<a name="lines"/></a>
+<h3>Displaying Lines</h3>
+<p>
+Solid and dashed line styles are set with the
+<a href="reference.html#linestyle">linestyle</a>
+command.  To draw a line with repeated symbols, use the
+<a href="reference.html#samplepath">samplepath</a>
+command to replaces the path with evenly spaced sample points and
+then call a procedure to draw a symbol at each sample point.
+The following example demonstrates this.
+
+include beginex.doc
+include tutoriallines1.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallines1.png">
+<p>
+
+The following example demonstrates
+combining solid and dashed linestyles.
+
+include beginex.doc
+include tutoriallines2.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallines2.png">
+<p>
+
+The following example demonstrates combining thick and
+thin linestyles and symbols at sampled points.  For best
+results display all lines with a thick linestyle,
+then display all lines again with a thin linestyle.
+
+include beginex.doc
+include tutoriallines3.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallines3.png">
+<p>
+
+The following examples demonstrate creating sample points
+from the path to generate further line styles.
+
+include beginex.doc
+include tutoriallines4.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallines4.png">
+<p>
+
+include beginex.doc
+include tutoriallines5.mpy
+include endex.doc
+
+<p>
+<img src="tutoriallines5.png">
+<p>
+
+<a name="polygons"/></a>
+<h3>Displaying Polygons</h3>
+<p>
 
 <a name="rand"/></a>
 <h3>Random Effects</h3>
@@ -230,7 +301,7 @@ include endex.doc
 
 
 <a name="pdf"></a>
-<h3>Generating Portable Document Format (PDF) output</h3>
+<h3>Generating Portable Document Format (PDF) Output</h3>
 <p>
 
 Portable Document Format (PDF) files are created by converting
@@ -248,7 +319,7 @@ include endex.doc
 
 <p>
 <a name="httpserver"></a>
-<h3>Setting up Mapyrus as an HTTP Server</h3>
+<h3>Setting Up Mapyrus As An HTTP Server</h3>
 <p>
 
 Enter the following lines into a text file named
@@ -267,7 +338,7 @@ Mapyrus as an HTTP server on port 8410 with
 the following command.
 
 include beginex.doc
-java -jar mapyrus.jar -httpserver 8410
+java -jar mapyrus.jar -s 8410
 include endex.doc
 
 Then enter the following URL in a web browser.  Mapyrus
@@ -281,7 +352,7 @@ http://localhost:8410/tutorialhttpserver1.mpy
 
 <p>
 <a name="url"></a>
-<h3>Passing Variables to Mapyrus HTTP Server Through URLs</h3>
+<h3>Passing Variables To Mapyrus HTTP Server Through URLs</h3>
 <p>
 
 To vary the display that is created by the Mapyrus HTTP Server, include
@@ -292,7 +363,8 @@ http://localhost:8410/tutorialurl.mpy?x1=11&y1=48&x2=12&y2=49&labels=off
 </pre>
 
 The variables <tt>x1</tt>, <tt>y1</tt>, <tt>x2</tt>, <tt>y2</tt>
-and <tt>labels</tt> are automatically set before interpreting
+and <tt>labels</tt> are automatically set with the values
+passed in the URL before interpreting
 the commands in the file <tt>tutorialurl.mpy</tt>.
 <p>
 
@@ -303,7 +375,7 @@ application.
 
 <p>
 <a name="htmlpage"></a>
-<h3>Returning HTML Pages from Mapyrus HTTP Server</h3>
+<h3>Returning HTML Pages From Mapyrus HTTP Server</h3>
 <p>
 
 An application for web browsers is based on HTML pages.
@@ -318,14 +390,30 @@ unique filenames using the
 <tt>tempname</tt>
 </a>
 function and return references to the images in the HTML.
+<p>
 
-The following example demonstrates this, displaying two ESRI Shape files
+The following example demonstrates this, displaying ESRI Shape files
+<tt>/tmp/rds_l</tt>
+and
+<tt>/tmp/txt_p</tt>
 and using an HTML form to allow
 the user to change the map display.
+Enter the following lines into a text file named
+<tt>tutorialhtmlpage1.mpy</tt>.
 
 include beginex.doc
 include tutorialhtmlpage1.mpy
 include endex.doc
+
+Start Mapyrus with the
+<a href="#httpserver"/>
+HTTP Server
+</a>
+option and enter the following URL in a web browser.
+
+<pre>
+http://localhost:8410/tutorialhtmlpage1.mpy
+</pre>
 
 To simplify editing of HTML pages for an application, setup
 template HTML pages with placeholders for the information that
@@ -346,7 +434,7 @@ include endex.doc
 
 <p>
 <a name="imagemap"></a>
-<h3>Using Imagemaps with Mapyrus HTTP Server</h3>
+<h3>Using Imagemaps With Mapyrus HTTP Server</h3>
 <p>
 
 When Mapyrus receives a URL requested by the user
@@ -367,6 +455,38 @@ position clicked in the imagemap.
 include beginex.doc
 include tutorialimagemap1.mpy
 include endex.doc
+
+<p>
+<a name="external"></a>
+<h3>Accessing Mapyrus HTTP Server From Other Software</h3>
+<p>
+
+Starting as server makes immediately available
+of the display.
+Use loops to display similar symbols repeatedly.
+access
+data
+repeatedly
+avoid startup time.
+contact remotely.
+
+python, perl
+make web request
+
+Shell script
+include beginex.doc
+lynx -dump http://localhost:8410/wsrv.mpy?gemeinde=Erding > g.png
+include endex.doc
+
+include beginex.doc
+f = urllib.urlopen("http://localhost:8410/i1.mpy?%s" % params)
+print f.read()
+include endex.doc
+
+Java
+
+HttpURLConnection h = new HttpURLConnection(new URL("http://localhost:8410/wsrv.mpy?gemeinde=Erding"));
+
 
 include footer.doc
 

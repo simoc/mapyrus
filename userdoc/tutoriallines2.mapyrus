@@ -1,0 +1,16 @@
+newpage "png", "tutoriallines2.png", 60, 30, 96
+
+# Demonstrate combination of solid and dashed linestyles.
+#
+clearpath
+move 5, 5
+draw 45, 5
+arc 0, 45, 15, 45, 25
+draw 35, 25, 35, 10, 5, 10
+
+linestyle 1, 'butt', 'round'
+color 'black'
+stroke
+linestyle 1, 'butt', 'round', 1, 2, 2
+color 'grey'
+stroke

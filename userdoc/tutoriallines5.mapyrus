@@ -1,0 +1,41 @@
+begin quarterLabel
+	# Drawing tick and label at intermediate position along line.
+	#
+	if percent > 0 and percent < 100
+	then
+		# Tick
+		#
+		move -2, -2
+		draw 0, 0, 2, -2
+		fill
+
+		# Label
+		#
+		clearpath
+		move 0, 2
+		justify "center"
+		font "Helvetica", "plain", 3
+		label percent . "%"
+	endif
+	percent = percent + 25
+end
+begin labelQuarters pathLen
+	# Divide path into quarters and drawing ticks and percentage
+	# label at points 1/4, 2/4, 3/4 positions along line.
+	#
+	samplepath pathLen / 4, 0
+	percent = 0
+	quarterLabel
+end
+
+newpage "png", "tutoriallines5.png", 60, 30, 96
+
+clearpath
+move 5, 5
+draw 45, 5
+arc 0, 45, 15, 55, 15
+draw 55, 25
+linestyle 0.1
+color '#006400'
+stroke
+labelQuarters Mapyrus.path.length
