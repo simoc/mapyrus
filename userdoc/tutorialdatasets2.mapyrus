@@ -16,14 +16,12 @@ do
   fetch
   move $1, $2
 
-  let i = 2
-  while i <= nCoords
+  repeat (nCoords - 1)
   do
     # Add the rest of feature's coordinates to the path.
     #
     fetch
     draw $1, $2
-    let i = i + 1
   done
 
   # Draw each line in red.
