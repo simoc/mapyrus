@@ -118,8 +118,7 @@ worlds 40000, 40000, 50000, 45000
 # Import polygons of imaginary vegetation.
 #
 dataset "textfile", "vegetation.dat", "comment=#"
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
 	fetch
 	let nCoords = $1

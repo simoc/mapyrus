@@ -18,8 +18,7 @@ dataset "jdbc", sql, "driver=org.postgresql.Driver \
 url=jdbc:postgresql:pogo \
 user=postgres password=postgres wktfields=geom"
 worlds x1, y1, x2, y2
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   clearpath
   fetch

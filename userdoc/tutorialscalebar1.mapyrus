@@ -128,8 +128,7 @@ newpage "eps", "tutorialscalebar1.eps", 60, 60
 dataset "shapefile", "coastline.shp", ""
 worlds -3000000, 5500000, 2600000, 8500000
 
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   fetch
   clearpath
@@ -154,8 +153,7 @@ newpage "eps", "tutorialscalebar2.eps", 60, 60
 dataset "shapefile", "coastline.shp", ""
 worlds -1300000, 7700000, 300000, 8900000
 
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   fetch
   clearpath

@@ -83,8 +83,7 @@ fill
 clearpath
 dataset "textfile", "muc_freight.dat", "comment=#"
 worlds 11, 48, 11.5, 48.5
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
 	fetch
 	let nCoords = $1

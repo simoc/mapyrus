@@ -25,7 +25,7 @@ begin hotel name, stars
   label '* ' x stars
 end
 
-# Display the ESRI Shape file hotel.shp in a PNG file.
+# Display the ESRI Shape file hotel.shp in a PostScript file.
 #
 newpage "eps", "tutorialdatasets3.eps", 65, 50
 dataset "shapefile", "hotel.shp", ""
@@ -33,8 +33,7 @@ dataset "shapefile", "hotel.shp", ""
 #
 worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
   Mapyrus.dataset.max.x + Mapyrus.dataset.width / 5, Mapyrus.dataset.max.y
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   fetch
   clearpath

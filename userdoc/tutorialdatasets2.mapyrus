@@ -18,8 +18,7 @@ end
 newpage "eps", "tutorialdatasets2.eps", 60, 60
 dataset "textfile", "streets.EE", ""
 worlds 324846, 1257086, 325300, 1257476
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   # Header line for each feature contains coordinate count.
   #

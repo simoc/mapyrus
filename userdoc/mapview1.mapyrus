@@ -7,8 +7,7 @@ clearpath
 dataset "shapefile", "coastline.shp", ""
 worlds -3000000, 5500000, 2600000, 8500000
 
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
 	fetch
 	addpath GEOMETRY
@@ -142,8 +141,7 @@ end
 # Show histograms of temperature for each city.
 #
 dataset "textfile", "aust_temperatures.dat", ""
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
 	fetch
 	let city = $0

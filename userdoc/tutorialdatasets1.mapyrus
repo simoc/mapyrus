@@ -40,8 +40,7 @@ stroke
 #
 dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiters=,"
 worlds 150, -45, 170, -5
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   fetch
   print "DEBUG:", $0
