@@ -913,6 +913,23 @@ polygons or two lines overlap.
 Use the \texttt{union} function to join many geometries together
 and display the result as a single geometry.
 
+\subsection{Creating Landscape Output on Portrait Pages}
+
+Many PostScript printers accept only portrait orientation pages.
+To print a landscape orientation page, 
+give the \texttt{turnpage=true} option to the \texttt{newpage} command.
+This option turns a landscape page 90 degrees to fit on a portrait page
+and is demonstrated in the following example.
+with output shown in Figure \ref{tutorialturnpage1}.
+
+\verbatiminput{tutorialturnpage1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialturnpage1.eps}
+\caption{Rotated Landscape Page}
+\label{tutorialturnpage1}
+\end{figure}
+
 \subsection{Generating Portable Document Format (PDF) Output}
 \label{pdf}
 
