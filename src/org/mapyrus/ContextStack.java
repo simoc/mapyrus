@@ -480,10 +480,12 @@ public class ContextStack
 	
 	/**
 	 * Returns value of a variable.
-	 * @param variable name to lookup.
+	 * @param varName variable name to lookup.
+	 * @param interpreterFilename name of file being interpreted.
 	 * @return value of variable, or null if it is not defined.
 	 */
-	public Argument getVariableValue(String varName) throws MapyrusException
+	public Argument getVariableValue(String varName, String interpreterFilename)
+		throws MapyrusException
 	{
 		Argument retval = null;
 		String sub;
@@ -532,6 +534,10 @@ public class ContextStack
 			else if (c == 'v' && varName.equals(INTERNAL_VARIABLE_PREFIX + "version"))
 			{
 				retval = new Argument(Argument.STRING, Constants.getVersion());
+			}
+			else if (c == 'f' && varName.equals(INTERNAL_VARIABLE_PREFIX + "filename"))
+			{
+				retval = new Argument(Argument.STRING, interpreterFilename);
 			}
 			else if (c == 'r' && varName.equals(INTERNAL_VARIABLE_PREFIX + "rotation"))
 			{
