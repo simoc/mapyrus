@@ -489,7 +489,7 @@ public class Expression
 		boolean hasUnaryMinus = false;
 		boolean parsedDecimalPoint = false;
 		StringBuffer buf = new StringBuffer();
-		ExpressionTreeNode nestedExpression;
+		ExpressionTreeNode expr;
 		int c, lastC, quote;
 		int type;
 
@@ -587,41 +587,40 @@ public class Expression
 			throw new MapyrusException("Unexpected end of file at " + p.getCurrentFilenameAndLineNumber());
 		}
 
-		if (c != '(')
+		if (c == '(')
+		{
+			expr = parseAndBoolean(p);
+
+			c = p.readNonSpace();
+			if (c != ')')
+			{
+				throw new MapyrusException("Unmatched '(' in expression at " +
+					p.getCurrentFilenameAndLineNumber());
+			}
+		}
+		else if (Character.isLetter((char)c))
 		{
 			/*
 			 * It does not look like a numeric expression or a string
 			 * expression so maybe it is a variable name.
 			 */
-			if (Character.isLetter((char)c))
+			buf.append((char)c);
+			c = p.read();
+			while (c != -1 && (c == '.' || c == '_' ||
+				Character.isLetterOrDigit((char)c)))
 			{
 				buf.append((char)c);
 				c = p.read();
-				while (c != -1 && (c == '.' || c == '_' ||
-					Character.isLetterOrDigit((char)c)))
-				{
-					buf.append((char)c);
-					c = p.read();
-				}
-				p.unread(c);
-				return(new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString())));	
 			}
-			else
-			{
-				/*
-				 * It's nothing that we understand.
-				 */
-				throw new MapyrusException("Invalid expression at " +
-					p.getCurrentFilenameAndLineNumber());
-			}
+			p.unread(c);
+			expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));	
 		}
-
-		nestedExpression = parseAndBoolean(p);
-
-		c = p.readNonSpace();
-		if (c != ')')
+		else
 		{
-			throw new MapyrusException("Unmatched '(' in expression at " +
+			/*
+			 * It's nothing that we understand.
+			 */
+			throw new MapyrusException("Invalid expression at " +
 				p.getCurrentFilenameAndLineNumber());
 		}
 
@@ -631,11 +630,10 @@ public class Expression
 			 * Expand expression to negate value.
 			 */
 			ExpressionTreeNode left = new ExpressionTreeNode(new Argument(-1.0));
-			nestedExpression = new ExpressionTreeNode(left,
-				MULTIPLY_OPERATION, nestedExpression);
+			expr = new ExpressionTreeNode(left, MULTIPLY_OPERATION, expr);
 		}
 
-		return(nestedExpression);
+		return(expr);
 	}
 
 	/**
