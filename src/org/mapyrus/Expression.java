@@ -209,19 +209,19 @@ public class Expression
 				}
 				else
 				{
-					String s;
+					StringBuffer s;
 					String l = leftValue.getStringValue();
 					if (op == MULTIPLY_OPERATION)
 					{
 						/*
 						 * Repeat string N times.
 						 */
-						s = new String();
+						s = new StringBuffer();
 						for (int i = 0; i < rightValue.getNumericValue(); i++)
 						{
-							s = s + l;
+							s.append(l);
 						}
-						retval = new Argument(Argument.STRING, s);
+						retval = new Argument(Argument.STRING, s.toString());
 					}
 					else if (op == PLUS_OPERATION)
 					{
