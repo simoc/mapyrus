@@ -43,6 +43,7 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -65,6 +66,7 @@ import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
+import org.mapyrus.ps.PostScriptFile;
 
 /**
  * Abstraction of a graphics format.  Provides methods to create new
@@ -113,6 +115,7 @@ public class OutputFormat
 	private boolean mIsStandardOutput;
 	private boolean mIsUpdatingFile;
 	private Process mOutputProcess;
+	private File mTempFile;
 	
 	/*
 	 * Frequently used fonts.
@@ -210,6 +213,9 @@ public class OutputFormat
 		else
 			mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 
+		if ((!mFormatName.equals("eps")) && (!mFormatName.equals("epsimage")))
+			mWriter.println("%%Pages: 1");
+
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
@@ -293,12 +299,6 @@ public class OutputFormat
 		}
 
 		/*
-		 * Set plotting units to millimetres.
-		 */
-		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
-			" div dup scale");
-
-		/*
 		 * Define shorter names for most commonly used operations.
 		 * Bind all operators names to improve performance (see 3.11 of
 		 * PostScript Language Reference Manual).
@@ -345,6 +345,19 @@ public class OutputFormat
 		mWriter.println("");
 	}
 
+	/*
+	 * Set scale in PostScript file so that we can give all coordinate
+	 * positions in millimetres.
+	 */
+	private void writePostScriptScaling()
+	{
+		/*
+		 * Set plotting units to millimetres.
+		 */
+		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
+			" div dup scale");
+	}
+	
 	/**
 	 * Sets correct rendering hints and transformation
 	 * for buffered image we will plot to.
@@ -460,6 +473,7 @@ public class OutputFormat
 		Color backgroundColor = null;
 		boolean labelAntiAliasing = true;
 		boolean lineAntiAliasing = false;
+		Rectangle2D existingBoundingBox = null;
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
@@ -609,8 +623,8 @@ public class OutputFormat
 			}
 		}
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE ||
-			(mOutputType == IMAGE_FILE && (!mIsUpdatingFile)))
+		if ((mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE ||
+			mOutputType == IMAGE_FILE) && (!mIsUpdatingFile))
 		{
 			/*
 			 * Should we pipe the output to another program
@@ -638,19 +652,91 @@ public class OutputFormat
 			}
 		}
 
+		File f = new File(filename);
+		if (mIsUpdatingFile)
+		{
+			if (!f.canWrite())
+			{
+				throw new IOException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + filename);
+			}
+		}
+
 		/*
 		 * Setup file we are writing to.
 		 */
 		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE)
 		{
-			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
+			if (mIsUpdatingFile)
+			{
 				
+				PostScriptFile ps = new PostScriptFile(filename);
+				if (ps.getNumberOfPages() > 1)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_PS_FILE) + ": " + filename);
+				}
+
+				/*
+				 * Use size of existing PostScript file as size for new page.
+				 */
+				existingBoundingBox = ps.getBoundingBox();
+				width = existingBoundingBox.getMaxX() / Constants.POINTS_PER_INCH *
+					Constants.MM_PER_INCH;
+				height = existingBoundingBox.getMaxY() / Constants.POINTS_PER_INCH *
+					Constants.MM_PER_INCH;
+
+				/*
+				 * Start writing to a temporary file in same directory.  We'll replace the
+				 * original file at the end when the file is successfully completed.
+				 */
+				mTempFile = File.createTempFile(Constants.PROGRAM_NAME, null,
+					new File(filename).getAbsoluteFile().getParentFile());
+				mOutputStream = new FileOutputStream(mTempFile);
+			}
+
+			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
+
 			mSuppliedFontResources = new HashSet();
-	
+
 			writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
-	
+
 			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
+
+			if (mIsUpdatingFile)
+			{
+				/*
+				 * Append contents of existing file as an included document
+				 * to the new file we are creating.
+				 */
+				writePostScriptLine("save");
+				writePostScriptLine("/showpage {} def");
+				writePostScriptLine("%%BeginDocument: " + filename);
+				BufferedReader r = null;
+
+				try
+				{
+					r = new BufferedReader(new FileReader(filename));
+					String line;
+					while ((line = r.readLine()) != null)
+					{
+						writePostScriptLine(line);
+					}
+				}
+				finally
+				{
+					try
+					{
+						if (r != null)
+							r.close();
+					}
+					catch (IOException e)
+					{
+					}
+				}
+				writePostScriptLine("%%EndDocument");
+				writePostScriptLine("restore");
+			}
+			writePostScriptScaling();
 		}
 
 		if (mOutputType != POSTSCRIPT_GEOMETRY)
@@ -660,22 +746,18 @@ public class OutputFormat
 			 */
 			if (mOutputType == IMAGE_FILE || mOutputType == POSTSCRIPT_IMAGE)
 			{
-				if (mIsUpdatingFile)
+				if (mIsUpdatingFile && mOutputType == IMAGE_FILE)
 				{
 					/*
 					 * Read existing image for editing.
 					 * Set page width and height to size of existing image.
 					 */
-					File f = new File(filename);
 					mImage = ImageIO.read(f);
 					if (mImage == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) + ": " + filename);
 					}
-					if (!f.canWrite())
-					{
-						throw new IOException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + filename);
-					}
+
 					width = mImage.getWidth() / (resolution / Constants.MM_PER_INCH);
 					height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
 				}
@@ -1166,6 +1248,19 @@ public class OutputFormat
 			{
 				throw new MapyrusException(mFilename +
 					": " + MapyrusMessages.get(MapyrusMessages.ERROR_PS));
+			}
+
+			/*
+			 * If updating file then replace existing file with completed
+			 * temporary file now.
+			 */
+			if (mTempFile != null)
+			{
+				if ((!new File(mFilename).delete()) || (!mTempFile.renameTo(new File(mFilename))))
+				{
+					mTempFile.delete();
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + mFilename);
+				}
 			}
 		}
 		else if (mOutputType == IMAGE_FILE)
