@@ -1143,7 +1143,25 @@ public class Interpreter
 				}
 				context.fill();
 				break;
-				
+
+			case Statement.GRADIENTFILL:
+				if (nExpressions == 4 || nExpressions == 5)
+				{
+					Color c1 = ColorDatabase.getColor(mExecuteArgs[0].toString(), 255);
+					Color c2 = ColorDatabase.getColor(mExecuteArgs[1].toString(), 255);
+					Color c3 = ColorDatabase.getColor(mExecuteArgs[2].toString(), 255);
+					Color c4 = ColorDatabase.getColor(mExecuteArgs[3].toString(), 255);
+					Color c5 = null;
+					if (nExpressions == 5)
+						c5 = ColorDatabase.getColor(mExecuteArgs[4].toString(), 255);
+					context.gradientFill(c1, c2, c3, c4, c5);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GRADIENT_FILL));
+				}
+				break;
+
 			case Statement.CLIP:
 				if (nExpressions != 1)
 				{
