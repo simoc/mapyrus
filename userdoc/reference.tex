@@ -698,15 +698,25 @@ output, or a combination of these.
 \textit{type} is the type of dataset and
 \textit{extras} defines further options for accessing the dataset, given
 as \textit{variable=value} values, separated by whitespace.
-The following dataset types and options are available:
+Dataset types and options are shown in Table \ref{datasettypes}.
 
 
-\begin{table}[htb]
-\begin{tabular}{|p{2cm}|p{10cm}|}
+\begin{longtable}{|p{3cm}|p{10cm}|}
+\hline
+\label{datasettypes}
+Dataset Type & Description and Extras \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Dataset Types} \\
+\endfoot
+
 \hline
 Dataset Type & Description and Extras \\
 \hline
 \hline
+\endhead
 
 \texttt{jdbc} &
 for accessing data held in a relational database with
@@ -720,6 +730,7 @@ or numeric zero, depending on their type.
 Some databases convert all field names to upper case, or to lowercase.
 Use a field name alias for fields that are the result of an expression.
 
+\vspace{10pt}
 Extras:
 
 \texttt{driver=\textit{string}}
@@ -731,6 +742,7 @@ This class name is required if not given in the startup variable
 The JAR file containing the class must be included in the \texttt{-classpath}
 option when starting Mapyrus.
 
+\vspace{10pt}
 \texttt{url=\textit{string}}
 
 URL containing the database name, host and other information for identifying
@@ -742,14 +754,17 @@ When Mapyrus is run using the HTTP Server option,
 requests using with the same \texttt{url} value share a
 single database connection.
 
+\vspace{10pt}
 \texttt{user=\textit{string}}
 
 Username for connecting to the database.
 
+\vspace{10pt}
 \texttt{password=\textit{string}}
 
 Password for connecting to the database.
 
+\vspace{10pt}
 \texttt{wktfields=\textit{field1},\textit{field2},...}
 
 Comma-separated list of
@@ -770,6 +785,7 @@ The geometry for each fetched record is assigned to a variable named
 \texttt{GEOMETRY}, attribute field values are assigned to
 variables with attribute field names.
 
+\vspace{10pt}
 Extras:
 
 \texttt{dbffields=\textit{field1},\textit{field2},...}
@@ -789,6 +805,7 @@ are assigned to variables
 and the whole record is assigned to variable
 \texttt{\$0}.
 
+\vspace{10pt}
 Extras:
 
 \texttt{comment=\textit{string}}
@@ -796,15 +813,13 @@ Extras:
 Character string at start of a line marking a comment line that
 is to be ignored.  Default value is a hash character (\texttt{\#}).
 
+\vspace{10pt}
 \texttt{delimeters=\textit{string}}
 
 Characters separating fields in the text file.  Default value
-is all whitespace characters.
+is all whitespace characters. \\
 
-\end{tabular}
-\caption{Dataset Types}
-\label{datasettypes}
-\end{table}
+\end{longtable}
 
 \subsubsection{draw}
 
