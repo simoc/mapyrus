@@ -12,14 +12,12 @@ begin sun
   color "rgb", 1, 0.6, 0
   fill
   # Draw 8 rays pointing out from perimeter of circle
-  let i = 0
-  while i < 8
+  repeat 8
   do
     clearpath
     rotate 360 / 8
     move 9, 0
     sunray
-    let i = i + 1
   done
 end
 #
