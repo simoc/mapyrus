@@ -282,50 +282,56 @@ public class ColorDatabase
 			return;
 		}
 
-		while ((line = reader.readLine()) != null)
+		try
 		{
-			/*
-			 * Parse RGB values and color name from each line.
-			 */
-			st = new StringTokenizer(line);
-			if (st.countTokens() >= 4)
+			while ((line = reader.readLine()) != null)
 			{
-				String red = st.nextToken();
-				String green = st.nextToken();
-				String blue = st.nextToken();
-				
 				/*
-				 * Name may be a single word or multiple words.
-				 * Both "green" and "dark green" are accepted.
+				 * Parse RGB values and color name from each line.
 				 */
-				String name = st.nextToken();
-				while (st.hasMoreTokens())
+				st = new StringTokenizer(line);
+				if (st.countTokens() >= 4)
 				{
-					name = name.concat(st.nextToken());
-				}
-				
-				/*
-				 * Skip lines that begin with comment character.
-				 */
-				if (!red.startsWith("!"))
-				{
-					try
+					String red = st.nextToken();
+					String green = st.nextToken();
+					String blue = st.nextToken();
+					
+					/*
+					 * Name may be a single word or multiple words.
+					 * Both "green" and "dark green" are accepted.
+					 */
+					String name = st.nextToken();
+					while (st.hasMoreTokens())
 					{
-						int r = Integer.parseInt(red);
-						int g = Integer.parseInt(green);
-						int b = Integer.parseInt(blue);
-						mColors.put(name.toLowerCase(), new Color(r, g, b));
+						name = name.concat(st.nextToken());
 					}
-					catch (NumberFormatException e)
+					
+					/*
+					 * Skip lines that begin with comment character.
+					 */
+					if (!red.startsWith("!"))
 					{
-						throw new MapyrusException(filename + ":" +
-							reader.getLineNumber() + ": " +
-							MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
+						try
+						{
+							int r = Integer.parseInt(red);
+							int g = Integer.parseInt(green);
+							int b = Integer.parseInt(blue);
+							mColors.put(name.toLowerCase(), new Color(r, g, b));
+						}
+						catch (NumberFormatException e)
+						{
+							throw new MapyrusException(filename + ":" +
+								reader.getLineNumber() + ": " +
+								MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
+						}
 					}
 				}
 			}
 		}
-		reader.close();
+		finally
+		{
+			reader.close();
+		}
 	}
 
 	/**
