@@ -1,10 +1,9 @@
-
 begin asset
-	# Draw filled square
-	#
-	move -1, -1
-	draw -1, 1, 1, 1, 1, -1
-	fill
+  # Draw filled square
+  #
+  move -1, -1
+  draw -1, 1, 1, 1, 1, -1
+  fill
 end
 
 # Display the geographic data held in RDBMS table in a PNG file.
@@ -15,9 +14,13 @@ let x1 = 151.03, y1 = -31.25, x2 = 151.04, y2 = -31.24
 
 # Build SQL statement to fetch point data in area of interest.
 #
-let sql = "select Assetcode, Longitude, Latitude from SURVEY where Logdate > '1 Dec 2001' and LogDate < '15 Dec 2001' and Longitude >= " . x1 . " and Latitude >= " . y1 . " and Longitude <= " . x2 . " and Latitude <= " . y2
+let sql = "select Assetcode, Longitude, Latitude from SURVEY \
+where Logdate > '1 Dec 2001' and LogDate < '15 Dec 2001' \
+and Longitude >= " . x1 . " and Latitude >= " . y1 . " \
+and Longitude <= " . x2 . " and Latitude <= " . y2
 
-dataset "jdbc", sql, "driver=org.postgresql.Driver url=jdbc:postgresql:nemo user=postgres password=postgres"
+dataset "jdbc", sql, "driver=org.postgresql.Driver \
+  url=jdbc:postgresql:nemo user=postgres password=postgres"
 worlds x1, y1, x2, y2
 
 # Print names of fields being fetched from database for debugging,
@@ -26,8 +29,8 @@ worlds x1, y1, x2, y2
 let i = 1
 while i <= length(Mapyrus.dataset.fieldnames)
 do
-	print "DEBUG: ", Mapyrus.dataset.fieldnames[i]
-	let i = i + 1
+  print "DEBUG: ", Mapyrus.dataset.fieldnames[i]
+  let i = i + 1
 done
 
 # Fetch and draw each point, varying color depending on asset code.
@@ -35,18 +38,18 @@ done
 import
 while Mapyrus.import.more
 do
-	clearpath
-	fetch
-	move longitude, latitude
-	if assetcode eq "BN" or assetcode eq "BZ"
-	then
-		color "red"
-	elif assetcode eq "CN"
-	then
-		color "blue"
-	else
-		color "green"
-	endif
+  clearpath
+  fetch
+  move longitude, latitude
+  if assetcode eq "BN" or assetcode eq "BZ"
+  then
+    color "red"
+  elif assetcode eq "CN"
+  then
+    color "blue"
+  else
+    color "green"
+  endif
 
-	asset
+  asset
 done
