@@ -192,11 +192,12 @@ public class OutputFormat
 	private PageMask mPageMask;
 
 	/*
-	 * Counts clip paths set for SVG output so each clip path
-	 * can be given a unique id.
+	 * Counts clip paths and gradient fills set for SVG output
+	 * so each clip path and gradient can be given a unique id.
 	 */
 	private int mClipPathCounter;
 	private boolean mIsClipPathActive;
+	private int mGradientCounter;
 
 	/*
 	 * Format for writing coordinate values.
@@ -2336,7 +2337,7 @@ public class OutputFormat
 		{
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
-				String uniqueId = "g" + System.currentTimeMillis();
+				String uniqueId = "gradient" + mGradientCounter++;
 				writeLine("<defs>");
 				writeLine("<linearGradient id=\"" + uniqueId + "\"");
 
