@@ -23,11 +23,9 @@
 package au.id.chenery.mapyrus;
 
 import java.io.*;
-import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.lang.String;
-import java.util.StringTokenizer;
 
 /**
  * Wrapper around a Reader to read from a file or URL, whilst expanding
@@ -39,71 +37,6 @@ class Preprocessor
 	private static final String INCLUDE_KEYWORD = "include";
 
 	/*
-	 * Holds file handle, filename and URL information together
-	 * for a file or URL that we are reading from.
-	 */
-	class FileInfo
-	{
-		private LineNumberReader mLineNumberReader;
-		private String mFilename;
-		private boolean mIsURL;
-		private URL mUrl;
-
-		/*
-		 * New reader from a plain file.
-		 */
-		public FileInfo(LineNumberReader in, String filename)
-		{
-			mLineNumberReader = in;
-			mFilename = filename;
-			mIsURL = false;
-		}
-
-		/*
-		 * New reader from a URL.
-		 */
-		public FileInfo(LineNumberReader in, String filename, URL url)
-		{
-			mLineNumberReader = in;
-			mFilename = filename;
-			mUrl = url;
-			mIsURL = true;
-		}
-
-		/*
-		 * Returns file 
-		 */
-		public LineNumberReader getReader()
-		{
-			return(mLineNumberReader);
-		}
-
-		/*
-		 * Returns name of file being read.
-		 */
-		public String getFilename()
-		{
-			return(mFilename);
-		}
-
-		/*
-		 * Returns true if file being read was accessed through a URL.
-		 */
-		public boolean isURL()
-		{
-			return(mIsURL);
-		}
-
-		/*
-		 * Returns URL that data is being read from.
-		 */
-		public URL getURL()
-		{
-			return(mUrl);
-		}
-	}
-
-	/*
 	 * Files we are reading from and their names.
 	 * Built up as a stack as we include nested files.
 	 */
@@ -112,7 +45,7 @@ class Preprocessor
 	/*
 	 * First file we are reading from.
 	 */
-	private FileInfo mInitialFile;
+	private FileOrURL mInitialFile;
 	
 	/*
 	 * Line we are currently reading from.
@@ -124,7 +57,7 @@ class Preprocessor
 	 * Create stack of files being read.
 	 * @param f is the first file to push onto the stack.
 	 */
-	private void initFileStack(FileInfo f)
+	private void initFileStack(FileOrURL f)
 	{
 		mFileStack = new LinkedList();
 		mFileStack.add(f);
@@ -133,13 +66,10 @@ class Preprocessor
 
 	/**
 	 * Create new user input producer from an already open Reader.
-	 * @param in is a source to read input from.
-	 * @param filename is filename or URL of in for use in error messages.
+	 * @param f is a file or URL to read from.
 	 */
-	public Preprocessor(Reader in, String filename)
+	public Preprocessor(FileOrURL f)
 	{
-		LineNumberReader l = new LineNumberReader(in);
-		FileInfo f = new FileInfo(l, filename);
 		initFileStack(f);
 	}
 
@@ -147,71 +77,35 @@ class Preprocessor
 	 * Create new user input producer from a file.
 	 * @param filename is a file to open and read from.
 	 */
-	public Preprocessor(String filename) throws FileNotFoundException
+	public Preprocessor(String filename) throws FileNotFoundException, MapyrusException
 	{
-		LineNumberReader in;
-
-		in = new LineNumberReader(new FileReader(filename));
-		FileInfo f = new FileInfo(in, filename);
+		FileOrURL f = new FileOrURL(filename);
 		initFileStack(f);
 	}
 
 	/*
 	 * Open new file to read from and push it on stack of files being read.
 	 */
-	private void openIncludedFile(String filename) throws FileNotFoundException, MalformedURLException, IOException, MapyrusException
+	private void openIncludedFile(String filename) throws MalformedURLException, IOException, MapyrusException
 	{
 		LineNumberReader in;
 		InputStream urlStream;
-		FileInfo f;
+		FileOrURL f;
 
-		FileInfo includingFile = (FileInfo)mFileStack.getLast();
+		FileOrURL includingFile = (FileOrURL)mFileStack.getLast();
 
-		try
+		if (includingFile.isURL())
+			f = new FileOrURL(filename, includingFile);
+		else
+			f = new FileOrURL(filename);
+
+		if (f.isURL())
 		{
-			/*
-			 * Try filename first as an absolute URL.
-			 */
-			URL url = new URL(filename);
-			if (!url.openConnection().getContentType().startsWith("text/plain"))
+			String contentType = f.getURLContentType();
+			if (!contentType.startsWith("text/"))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_TEXT_FILE) +
-					": " + filename);
-			}
-
-			urlStream = url.openStream();
-			in = new LineNumberReader(new
-				InputStreamReader(urlStream));
-			f = new FileInfo(in, filename, url);
-		}
-		catch (MalformedURLException e)
-		{
-			if (includingFile.isURL())
-			{
-				/*
-				 * Perhaps it a relative URL from the URL that
-				 * is including it.
-				 */
-				URL lastURL = includingFile.getURL();
-				URL url = new URL(lastURL, filename);
-				if (!url.openConnection().getContentType().startsWith("text/plain"))
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_TEXT_FILE) +
-						": " + filename);
-				}
-
-				urlStream = url.openStream();
-				in = new LineNumberReader(new
-					InputStreamReader(urlStream));
-				f = new FileInfo(in, filename, url);
-			}
-			else
-			{
-				/*
-				 * Well, maybe it is just a regular file.
-				 */
-				in = new LineNumberReader(new FileReader(filename));
-				f = new FileInfo(in, filename);
+					": " + f.toString());
 			}
 		}
 		mFileStack.add(f);
@@ -221,7 +115,7 @@ class Preprocessor
 	 * Reads next line.
 	 * @return line read, or null if end of stream is already reached.
 	 */
-	public String readLine() throws IOException, MapyrusException
+	private String readLine() throws IOException, MapyrusException
 	{
 		StringBuffer retval = new StringBuffer();
 		int c;
@@ -281,7 +175,8 @@ class Preprocessor
 	public int read() throws IOException, MapyrusException
 	{
 		int c;
-		LineNumberReader in;
+		int i;
+		LineNumberReader reader;
 
 		/*
 		 * Return next character from current line.
@@ -296,16 +191,16 @@ class Preprocessor
 		 * Need to read a new line.
 		 */
 		mCurrentLineIndex = 0;
-		FileInfo f = (FileInfo)mFileStack.getLast();
-		in = f.getReader();
-		String s = in.readLine();
+		FileOrURL f = (FileOrURL)mFileStack.getLast();
+		reader = f.getReader();
+		String s = reader.readLine();
 		if (s == null)
 		{
 			/*
 			 * Got end-of-file.  Close file and continue reading any file that included
 			 * this one.
 			 */
-			in.close();
+			reader.close();
 			mFileStack.removeLast();
 			if (mFileStack.size() > 0)
 			{
@@ -323,39 +218,36 @@ class Preprocessor
 		 */
 		mCurrentLine = new StringBuffer(s);
 		mCurrentLine.append('\n');
-		StringTokenizer st = new StringTokenizer(s);
-		if (st.hasMoreTokens())
+
+		String trimmed = s.trim();
+		if (trimmed.toLowerCase().startsWith(INCLUDE_KEYWORD))
 		{
-			String keyword = st.nextToken();
-			keyword.toLowerCase();
-			if (INCLUDE_KEYWORD.equals(keyword))
+			if (trimmed.length() == INCLUDE_KEYWORD.length())
 			{
-				if (st.hasMoreTokens())
+				throw new MapyrusException(getCurrentFilenameAndLineNumber() +
+					": " + MapyrusMessages.get(MapyrusMessages.MISSING_FILENAME));
+			}
+
+			if (Character.isWhitespace(s.charAt(INCLUDE_KEYWORD.length())))
+			{
+				String filename = trimmed.substring(INCLUDE_KEYWORD.length() + 1).trim();
+
+				/*
+				 * Open included file and start
+				 * reading from it.
+				 */
+				try
 				{
-					String filename = st.nextToken();
-
-					/*
-					 * Open included file and start
-					 * reading from it.
-					 */
-					try
-					{
-						openIncludedFile(filename);
-					}
-					catch (Exception e)
-					{
-						throw new MapyrusException(getCurrentFilenameAndLineNumber() +
-							": " + e.getMessage());
-					}
-
-					mCurrentLine = null;
-					return(read());
+					openIncludedFile(filename);
 				}
-				else
+				catch (Exception e)
 				{
 					throw new MapyrusException(getCurrentFilenameAndLineNumber() +
-						": " + MapyrusMessages.get(MapyrusMessages.MISSING_FILENAME));
+						": " + e.getMessage());
 				}
+
+				mCurrentLine = null;
+				return(read());
 			}
 		}
 
@@ -405,15 +297,15 @@ class Preprocessor
 
 	/**
 	 * Returns information about file currently being read.
-	 * @retval file information.
+	 * @return file information.
 	 */
-	private FileInfo getCurrentFileInfo()
+	private FileOrURL getCurrentFileOrURL()
 	{
-		FileInfo retval;
+		FileOrURL retval;
 
 		if (mFileStack.size() > 0)
 		{
-			retval = (FileInfo)mFileStack.getLast();
+			retval = (FileOrURL)mFileStack.getLast();
 		}
 		else
 		{
@@ -427,22 +319,22 @@ class Preprocessor
 	
 	/**
 	 * Returns name of file being read.
-	 * @retval the name of the file currently being read.
+	 * @return the name of the file currently being read.
 	 */		
 	public String getCurrentFilename()
 	{
-		FileInfo f = getCurrentFileInfo();
-		return(f.getFilename());
+		FileOrURL f = getCurrentFileOrURL();
+		return(f.toString());
 	}
 
 	/**
 	 * Returns name of file being read.
-	 * @retval the name of the file currently being read.
+	 * @return the name of the file currently being read.
 	 */		
 	public int getCurrentLineNumber()
 	{
-		FileInfo f = getCurrentFileInfo();
-		return(f.mLineNumberReader.getLineNumber());
+		FileOrURL f = getCurrentFileOrURL();
+		return(f.getReader().getLineNumber());
 	}
 		
 	/**
