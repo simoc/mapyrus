@@ -565,7 +565,12 @@ public class ContextStack
 						": " + filename);
 				}
 			}
-			mIconCache.put(filename, icon);
+			
+			/*
+			 * Do not cache large icons, load them each time they are needed.
+			 */
+			if (icon.getIconHeight() * icon.getIconWidth() <= 128 * 128)
+				mIconCache.put(filename, icon);
 		}
 		getCurrentContext().drawIcon(icon, size);
 	}
