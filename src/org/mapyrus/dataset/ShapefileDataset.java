@@ -143,9 +143,7 @@ public class ShapefileDataset implements GeographicDataset
 	{
 		String shapeFilename, dbfFilename, prjFilename;
 		StringTokenizer st, st2;
-		String dbfFieldnames, token;
-		boolean foundField;
-		int i, nFields, index;
+		String token;
 		Hashtable extrasDBFFields;
 
 		/*
@@ -303,7 +301,7 @@ public class ShapefileDataset implements GeographicDataset
 	private void readShapeHeader() throws IOException, MapyrusException
 	{
 		int magic;
-		double xMin, yMin, xMax, yMax, zMin, zMax, mMin, mMax;
+		double xMin, yMin, xMax, yMax;
 
 		magic = mShapeStream.readInt();
 		if (magic != MAGIC_NUMBER)
@@ -318,16 +316,17 @@ public class ShapefileDataset implements GeographicDataset
 		mShapeStream.readInt();
 		mShapeStream.readInt();
 		mShapeFileLength = mShapeStream.readInt() * 2 - 100;
-		int version = readLittleEndianInt(mShapeStream);
+		readLittleEndianInt(mShapeStream);	/* version */
 		mShapeFileType = readLittleEndianInt(mShapeStream);
 		xMin = readLittleEndianDouble(mShapeStream);
 		yMin = readLittleEndianDouble(mShapeStream);
 		xMax = readLittleEndianDouble(mShapeStream);
 		yMax = readLittleEndianDouble(mShapeStream);
-		zMin = readLittleEndianDouble(mShapeStream);
-		zMax = readLittleEndianDouble(mShapeStream);
-		mMin = readLittleEndianDouble(mShapeStream);
-		mMax = readLittleEndianDouble(mShapeStream);
+		
+		readLittleEndianDouble(mShapeStream);	/* zMin */
+		readLittleEndianDouble(mShapeStream);	/* zMax */
+		readLittleEndianDouble(mShapeStream);	/* mMin */
+		readLittleEndianDouble(mShapeStream);	/* mMax */
 		mExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 
 		/*
@@ -390,17 +389,17 @@ public class ShapefileDataset implements GeographicDataset
 	private void readDBFHeader(String []geometryFieldNames, Hashtable dbfFieldnameTable)
 		throws IOException
 	{
-		int nDBFRecords, headerLength, nTotalFields;
+		int headerLength, nTotalFields;
 		String fieldName;
-		int i, j;
-		int fieldType, fieldIndex;
+		int i;
+		int fieldIndex;
 		byte dbfField[];
 		ArrayList dbfFields = new ArrayList();
 		int nBytesRead;
 		boolean fetchStatus;
 
 		mDBFStream.skipBytes(4);
-		nDBFRecords = readLittleEndianInt(mDBFStream);
+		readLittleEndianInt(mDBFStream);	/* number of DBF records */
 		headerLength = readLittleEndianShort(mDBFStream);
 		mDBFRecordLength = readLittleEndianShort(mDBFStream);
 		mDBFStream.skipBytes(20);
@@ -576,7 +575,6 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	public Row fetch() throws MapyrusException
 	{
-		int recordNumber;
 		int recordLength;
 		double x, y, lastX, lastY, xMin, yMin, xMax, yMax;
 		double fieldValue;
@@ -598,7 +596,7 @@ public class ShapefileDataset implements GeographicDataset
 				/*
 				 * Read header for next shape.  Convert record length to byte length.
 				 */
-				recordNumber = mShapeStream.readInt();
+				mShapeStream.readInt();	/* record number */
 				recordLength = mShapeStream.readInt() * 2;
 				
 				shapeType = readLittleEndianInt(mShapeStream);
