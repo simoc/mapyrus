@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 
 /**
  * Language interpreter.  Parse and executes commands read from file, or
@@ -76,12 +77,17 @@ public class Interpreter
 	 * this interpreter.
 	 */
 	private Hashtable mStatementBlocks;
+
+	/*
+	 * Formats for printing numbers in statements.
+	 */	
+	private DecimalFormat mDoubleformat, mExponentialFormat;
 	
 	/*
 	 * Static world coordinate system units lookup table.
 	 */
 	private static Hashtable mWorldUnitsLookup;
-	
+
 	static
 	{
 		mWorldUnitsLookup = new Hashtable();
@@ -501,9 +507,10 @@ public class Interpreter
 						 * to give more significant digits.
 						 */				
 						if (absoluteD != 0 && (absoluteD < 0.01 || absoluteD > 10000000.0))
-							format = new DecimalFormat("#.################E0");
+							format = mExponentialFormat;
 						else
-							format = new DecimalFormat("#.################");
+							format = mDoubleformat;
+
 						System.out.print(format.format(d));
 					}
 				}
@@ -1379,15 +1386,16 @@ public class Interpreter
 				 * Step through path, setting origin and rotation for each
 				 * point and then calling procedure block.
 				 */
-				float coords[];
 				ArrayList moveTos = mContext.getMoveTos();
-				
+				ArrayList rotations = mContext.getMoveToRotations();
+
 				for (int i = 0; i < moveToCount; i++)
 				{
 					mContext.saveState();
-					coords = (float [])moveTos.get(i);
-					mContext.setTranslation(coords[0], coords[1]);
-					mContext.setRotation(coords[2]);
+					Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
+					mContext.setTranslation(pt.x, pt.y);
+					double rotation = ((Double)rotations.get(i)).doubleValue();
+					mContext.setRotation(rotation);
 					makeCall(block, formalParameters, args);
 					mContext.restoreState();
 				}
@@ -1436,5 +1444,8 @@ public class Interpreter
 	{
 		mContext = context;
 		mStatementBlocks = new Hashtable();
+
+		mDoubleformat = new DecimalFormat("#.################");
+		mExponentialFormat = new DecimalFormat("#.################E0");
 	}
 }
