@@ -20,7 +20,6 @@ and Longitude <= " . x2 . " and Latitude <= " . y2
 
 dataset "jdbc", sql, "driver=org.postgresql.Driver \
   url=jdbc:postgresql:nemo user=postgres password=postgres"
-worlds x1, y1, x2, y2
 
 # Print names of fields being fetched from database for debugging,
 # as some databases convert all field names to uppercase or lowercase.
@@ -34,8 +33,8 @@ done
 
 # Fetch and draw each point, varying color depending on asset code.
 #
-import
-while Mapyrus.import.more
+worlds x1, y1, x2, y2
+while Mapyrus.fetch.more
 do
   clearpath
   fetch
