@@ -3,7 +3,10 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.lang.String;
+import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.io.*;
 
 /**
@@ -36,9 +39,59 @@ public class Expression
 	private static final int OR_OPERATION = 14;
 
 	/*
+	 * Maximum number of compiled regular expressions we'll cache.
+	 */
+	private static final int MAX_COMPILED_REGEX = 100;
+	
+	/*
 	 * Line separator replaces '\n' sequences in expressions.
 	 */
-	private static final String mLineSeparator = System.getProperty("line.separator");
+	private static final String mLineSeparator;
+
+	/*
+	 * Static table of frequently used regular expressions.  They
+	 * are thread-safe so can be reused by everyone and this saves
+	 * the effort of compiling them again and again.
+	 */
+	private static Hashtable mRegexHashtable;
+	
+	static
+	{
+		mLineSeparator = System.getProperty("line.separator");
+		
+		mRegexHashtable = new Hashtable();
+	}
+
+	/**
+	 * Compile a regular expression string into a Pattern that can be used for matching.
+	 * Patterns are cached to avoid recomputing them again and again.
+	 * @param regex is regular expression to compile.
+	 * @return compiled pattern
+	 */
+	private Pattern compileRegex(String regex) throws MapyrusException
+	{
+		Pattern retval = (Pattern)(mRegexHashtable.get(regex));
+		
+		if (retval == null)
+		{
+			try
+			{
+				retval = Pattern.compile(regex);
+			}
+			catch (PatternSyntaxException e)
+			{
+				throw new MapyrusException(e.getMessage());
+			}
+
+			/*
+			 * Cache newly compiled regular expression if we've not
+			 * already cached a large number of them.
+			 */
+			if (mRegexHashtable.size() < MAX_COMPILED_REGEX)
+				mRegexHashtable.put(regex, retval);
+		}
+		return(retval);
+	}
 
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
@@ -235,7 +288,8 @@ public class Expression
 					else
 					{
 						/*
-						 * Mixed types in expression, just join string representations.
+						 * Mixed types in plus expression,
+						 * just join string representations together.
 						 */
 						retval = new Argument(Argument.STRING,
 							leftValue.toString() + rightValue.toString());
@@ -273,7 +327,11 @@ public class Expression
 						else if (op == NOT_EQUALS_OPERATION)
 							d = l.equals(r) ? 0 : 1;
 						else if (op == CONTAINS_OPERATION)
-							d = (l.indexOf(r) > 0) ? 1 : 0;
+						{
+								Pattern pattern = compileRegex(r);
+								Matcher matcher = pattern.matcher(l);
+								d = matcher.find() ? 1 : 0;
+						}
 						else if (op == GREATER_THAN_OPERATION)
 							d = (l.compareTo(r) > 0) ? 1 : 0;
 						else if (op == GREATER_EQUAL_OPERATION)
