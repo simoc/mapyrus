@@ -29,7 +29,7 @@ end
 newpage "eps", "turtle4.eps", 30, 30, "background=white"
 move 5, 5
 draw 20, 5
-arc -1, 20, 13, 12, 13
-draw 5, 13
+bezier 35, 5, 15, 40, 15, 25
+draw 15, 10, 5, 10
+closepath
 cutHere
-
