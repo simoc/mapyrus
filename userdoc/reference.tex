@@ -1032,7 +1032,7 @@ blended with colors of underlying shapes on the page.
 
 Colors are opaque if an alpha value is not given.
 
-Transparent colors are only available for JPEG, PNG
+Transparent colors are only available for JPEG, PNG, SVG
 and Encapsulated PostScript format image (\texttt{epsimage}) output.
 
 The PostScript language does not contain any functions for setting
@@ -1355,7 +1355,7 @@ font names (\texttt{Serif}, \texttt{SansSerif},
 \texttt{Monospaced}, \texttt{Dialog}, or \texttt{DialogInput}) or a TrueType
 font name.
 
-Tutorial Sections \ref{psfonts} and \ref{ttffonts}
+Tutorial Sections \ref{psfonts}, \ref{ttffonts} and \ref{svgfonts}
 describe different font formats.
 
 \textit{extras} defines further options for the font, given as
@@ -1405,6 +1405,7 @@ defining the world coordinate range covered by the image.
 See Table \ref{geoimageextras}
 for available options.
 
+Images cannot be displayed when creating SVG format output.
 
 \begin{longtable}{|l|p{7cm}|}
 \hline
@@ -1540,6 +1541,8 @@ Icon images are loaded into memory.
 Loading very large images will use a large amount of memory.
 Page \pageref{morememory} describes how to make more memory available
 for Mapyrus.
+
+Icons cannot be displayed when creating SVG format output.
 
 \subsubsection{justify}
 
@@ -1728,6 +1731,9 @@ with shapes and labels defined geometrically.
 \texttt{epsimage} for Encapsulated PostScript image output.
 Output contains
 a single image in which all shapes and labels have been drawn.
+\item
+\texttt{svg} or \texttt{image/svg+xml} for Scalable Vector Graphics
+(SVG) output.
 \end{itemize}
 
 See section \ref{pdf} for
@@ -1833,6 +1839,20 @@ Page size is set to the size of the existing page,
 
 \hline
 
+Scalable Vector Graphics (SVG) &
+
+\texttt{background=\textit{color}}
+
+Background color for page, as a named color or as hex digits.
+
+\vspace{10pt}
+\texttt{resolution=\textit{value}}
+
+Resolution for page, given as a dots-per-inch value.  Replaces
+default value of screen resolution. \\
+
+\hline
+
 PNG, JPEG images, output to a window on screen
 and Encapsulated PostScript images &
 
@@ -1858,7 +1878,7 @@ Lines are not drawn with anti-aliasing by default.
 \texttt{resolution=\textit{value}}
 
 Resolution for page, given as a dots-per-inch value.  Replaces
-default value of 96.
+default value of screen resolution.
 
 \vspace{10pt}
 \texttt{ttffiles=\textit{filename},\textit{filename2},...}
