@@ -6,7 +6,7 @@ end
 # Fill polygon with tiled icon image pattern.
 #
 begin iconPattern
-  clip
+  clip "in"
   stripepath 6, 0
   samplepath 6, 0
   singleIcon
