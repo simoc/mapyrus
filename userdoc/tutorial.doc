@@ -152,7 +152,9 @@ include beginex.doc
 include tutorialfirst3.mpy
 include endex.doc
 
-This example shows yet another way of defining color.
+This example shows how to draw circular arcs,
+giving the center point and end point and
+yet another way of defining color.
 
 <p>
 <img src="tutorialfirst3.png">
@@ -172,7 +174,9 @@ Use variables and conditional tests to vary the appearance
 of the display.
 Use loops to display similar symbols repeatedly.
 Variables named <tt>x</tt> and <tt>counter</tt> are used in the
-following example.
+following example.  The variable
+<tt>Mapyrus.page.width</tt>
+is set by Mapyrus automatically.
 
 include beginex.doc
 include tutorialvar1.mpy
@@ -248,32 +252,108 @@ include endex.doc
 <p>
 
 Enter the following lines into a text file named
-<tt>tutorialhttpserver.mpy</tt>, replacing the filename
+<tt>tutorialhttpserver1.mpy</tt>, replacing the filename
 <tt>/tmp/roads.shp</tt>
 with the filename of an available ESRI Shape file.
 
 include beginex.doc
-include tutorialhttpserver.mpy
+include tutorialhttpserver1.mpy
 include endex.doc
 
 In a terminal window, change to the directory containing the
 file
-<tt>tutorialhttpserver.mpy</tt>, and start
+<tt>tutorialhttpserver1.mpy</tt>, and start
 Mapyrus as an HTTP server on port 8410 with
 the following command.
 
-<pre>
+include beginex.doc
 java -jar mapyrus.jar -httpserver 8410
-</pre>
+include endex.doc
 
 Then enter the following URL in a web browser.  Mapyrus
 receives the request, executes the commands in the file
-<tt>tutorialhttpserver.mpy</tt> and returns the output
-to the web browser.
+<tt>tutorialhttpserver.mpy</tt> and returns the PNG file
+that is created to the web browser.
 
 <pre>
 http://localhost:8410/tutorialhttpserver.mpy
 </pre>
+
+<p>
+<a name="url"></a>
+<h3>Passing Variables to Mapyrus HTTP Server Through URLs</h3>
+<p>
+
+To vary the display that is created by the Mapyrus HTTP Server, include
+variables in the URL.  For example,
+
+<pre>
+http://localhost:8410/tutorialurl.mpy?x1=11&y1=48&x2=12&y2=49&labels=off
+</pre>
+
+The variables <tt>x1</tt>, <tt>y1</tt>, <tt>x2</tt>, <tt>y2</tt>
+and <tt>labels</tt> are automatically set before
+
+This method is suitable for applications with a client side
+the client written in Java or Visual Basic
+
+<p>
+<a name="htmlpage"></a>
+<h3>Returning HTML Pages from Mapyrus HTTP Server</h3>
+<p>
+
+To build HTML based application
+
+returns
+<tt>tempname</tt>
+<a href="reference.html#internalvars"/>
+internal variables
+</a>
+one simplistic example.  Another example showing HTML being
+print '<html>'
+web browser
+
+To simplify editing of HTML pages for the application, setup
+template HTML pages with placeholders for the information that
+Mapyrus provides.  Return the HTML pages with the placeholder
+information replaced by real data.  The following template
+HTML file and Mapyrus commands demonstrate this.
+
+include beginex.doc
+include tutorialhtmlpage1.html
+include endex.doc
+
+include beginex.doc
+include tutorialhtmlpage1.mpy
+include endex.doc
+
+read through Mapyrus, magic tokens are replaced and then it is
+sent back to web browser.
+replace ($0, '@image_filename@', t)
+
+<p>
+<a name="imagemap"></a>
+<h3>Using Imagemaps with Mapyrus HTTP Server</h3>
+<p>
+
+When Mapyrus receives a URL requested by the user
+clicking on an HTML imagemap, the
+<a href="reference.html#internalvars"/>
+internal variables
+</a>
+<tt>Mapyrus.imagemap.x</tt> and
+<tt>Mapyrus.imagemap.y</tt> are automatically set with the pixel position
+clicked in the image (with origin in top-left corner of the image).
+Use these variables to recenter, or zoom the display to the
+point clicked in the imagemap.
+<p>
+The following example demonstrates
+using these variables to generate a new image, based on the
+position clicked in the imagemap.
+
+include beginex.doc
+include tutorialimagemap1.mpy
+include endex.doc
 
 include footer.doc
 
