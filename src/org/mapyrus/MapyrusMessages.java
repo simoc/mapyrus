@@ -94,10 +94,12 @@ public class MapyrusMessages
 	public static final String INVALID_PATH_SAMPLE = "invalidpathsample";
 	public static final String INVALID_PATH_SHIFT = "invalidpathshift";
 	public static final String INVALID_PATH_STRIPE = "invalidpathstripe";
+	public static final String INVALID_RADIUS = "invalidradius";
 	public static final String INVALID_REGEX = "invalidregex";
 	public static final String INVALID_ROTATION = "invalidrotation";
 	public static final String INVALID_SCALING = "invalidscaling";
 	public static final String INVALID_TRANSFORM = "invalidtransform";
+	public static final String INVALID_TRIANGLE = "invalidtriangle";
 	public static final String INVALID_VARIABLE = "invalidvariable";
 	public static final String INVALID_WORLDS = "invalidworlds";
 	public static final String INVALID_WORLD_UNITS = "invalidworldunits";
