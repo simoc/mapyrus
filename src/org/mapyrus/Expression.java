@@ -18,19 +18,23 @@ public class Expression
 	 * Types of operations allowed between two numbers or strings
 	 * (or two expressions).
 	 */
+	private static final int NO_OPERATION = 0;
 	private static final int PLUS_OPERATION = 1;
 	private static final int MINUS_OPERATION = 2;
 	private static final int MULTIPLY_OPERATION = 3;	/* 'qw' * 2 = 'qwqw' */
 	private static final int DIVIDE_OPERATION = 4;
 
-	private static final int CONTAINS_OPERATION = 6; /* 'foo' ~ 'o' = 1 */
+	private static final int CONTAINS_OPERATION = 6; /* 'foobar' ~ 'b' = 1 */
 	private static final int EQUALS_OPERATION = 7;
-	private static final int GREATER_THAN_OPERATION = 8;
-	private static final int LESS_THAN_OPERATION = 9;
+	private static final int NOT_EQUALS_OPERATION = 8;
+	private static final int GREATER_THAN_OPERATION = 9;
+	private static final int LESS_THAN_OPERATION = 10;
+	private static final int GREATER_EQUAL_OPERATION = 11;
+	private static final int LESS_EQUAL_OPERATION = 12;
 
-	private static final int AND_OPERATION = 10;
-	private static final int OR_OPERATION = 11;
-	
+	private static final int AND_OPERATION = 13;
+	private static final int OR_OPERATION = 14;
+
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
@@ -120,7 +124,8 @@ public class Expression
 				 */
 				if (leftValue.getType() == Argument.VARIABLE)
 				{
-					Argument leftVarValue = context.getVariableValue(leftValue.getVariableName());
+					Argument leftVarValue =
+						context.getVariableValue(leftValue.getVariableName());
 					if (leftVarValue == null)
 					{
 						throw new MapyrusException("Variable " +
@@ -130,7 +135,8 @@ public class Expression
 				}
 				if (rightValue.getType() == Argument.VARIABLE)
 				{
-					Argument rightVarValue = context.getVariableValue(rightValue.getVariableName());
+					Argument rightVarValue =
+						context.getVariableValue(rightValue.getVariableName());
 					if (rightVarValue == null)
 					{
 						throw new MapyrusException("Variable " +
@@ -172,12 +178,18 @@ public class Expression
 						d = l * r;
 					else if (op == DIVIDE_OPERATION)
 						d = l / r;
-					else if (op == GREATER_THAN_OPERATION)
-						d = (l > r) ? 1 : 0;
-					else if (op == LESS_THAN_OPERATION)
-						d = (l < r) ? 1 : 0;
 					else if (op == EQUALS_OPERATION)
 						d = (l == r) ? 1 : 0;
+					else if (op == NOT_EQUALS_OPERATION)
+						d = (l != r) ? 1 : 0;
+					else if (op == GREATER_THAN_OPERATION)
+						d = (l > r) ? 1 : 0;
+					else if (op == GREATER_EQUAL_OPERATION)
+						d = (l >= r) ? 1 : 0;
+					else if (op == LESS_THAN_OPERATION)
+						d = (l < r) ? 1 : 0;
+					else if (op == LESS_EQUAL_OPERATION)
+						d = (l <= r) ? 1 : 0;
 					else if (op == AND_OPERATION)
 					{
 						d = (l != 0.0 &&
@@ -218,14 +230,20 @@ public class Expression
 					else
 					{
 						String r = rightValue.getStringValue();
-						if (op == CONTAINS_OPERATION)
+						if (op == EQUALS_OPERATION)
+							d = l.equals(r) ? 1 : 0;
+						else if (op == NOT_EQUALS_OPERATION)
+							d = l.equals(r) ? 0 : 1;
+						else if (op == CONTAINS_OPERATION)
 							d = (l.indexOf(r) > 0) ? 1 : 0;
 						else if (op == GREATER_THAN_OPERATION)
 							d = (l.compareTo(r) > 0) ? 1 : 0;
+						else if (op == GREATER_EQUAL_OPERATION)
+							d = (l.compareTo(r) >= 0) ? 1 : 0;
 						else if (op == LESS_THAN_OPERATION)
 							d = (l.compareTo(r) < 0) ? 1 : 0;
-						else if (op == EQUALS_OPERATION)
-							d = l.equals(r) ? 1 : 0;
+						else if (op == LESS_EQUAL_OPERATION)
+							d = (l.compareTo(r) <= 0) ? 1 : 0;
 						else
 						{
 							throw new MapyrusException("Operation not permitted between strings");
@@ -241,44 +259,165 @@ public class Expression
 	ExpressionTreeNode mExprTree;
 
 	/*
-	 * Parse a conditional expression.
+	 * Parse expression including "and" boolean operations.
 	 */
-	private ExpressionTreeNode parseCondition(Preprocessor p)
+	private ExpressionTreeNode parseAndBoolean(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, b;
+		int op1, op2, op3;
+
+		expr = parseOrBoolean(p);
+		while (true)
+		{
+			/*
+			 * If next three characters spell "and" then parse
+			 * right hand side of expression.
+			 */
+			op1 = p.readNonSpace();
+			if (op1 == 'a' || op1 == 'A')
+			{
+				op2 = p.read();
+				if (op2 == 'n' || op2 == 'N')
+				{
+					op3 = p.read();
+					if (op3 == 'd' || op3 == 'D')
+					{
+						b = parseOrBoolean(p);
+						expr = new ExpressionTreeNode(expr, AND_OPERATION, b);
+					}
+					else
+					{
+						p.unread(op3);
+						p.unread(op2);
+						p.unread(op1);
+						break;
+					}
+				}
+				else
+				{
+					p.unread(op2);
+					p.unread(op1);
+					break;
+				}
+			}
+			else				
+			{
+				p.unread(op1);
+				break;
+			}
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse expression including "or" boolean operations.
+	 */
+	private ExpressionTreeNode parseOrBoolean(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, comp;
+		int op1, op2;
+
+		expr = parseComparison(p);
+		while (true)
+		{
+			/*
+			 * If next two characters spell "or" then parse
+			 * right hand side of expression.
+			 */
+			op1 = p.readNonSpace();
+			if (op1 == 'o' || op1 == 'O')
+			{
+				op2 = p.read();
+				if (op2 == 'r' || op2 == 'R')
+				{
+					comp = parseComparison(p);
+					expr = new ExpressionTreeNode(expr, OR_OPERATION, comp);
+				}
+				else
+				{
+					p.unread(op2);
+					p.unread(op1);
+					break;
+				}
+			}
+			else				
+			{
+				p.unread(op1);
+				break;
+			}
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse a comparison expression.
+	 */
+	private ExpressionTreeNode parseComparison(Preprocessor p)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, cond;
-		int op;
+		int op1, op2;
+		int opType;
 
 		cond = parseExpression(p);
 		while (true)
 		{
-			op = p.readNonSpace();
-			if (op == '~' || op == '<' || op == '=' || op == '>')
+			/*
+		 	 * What type of comparison have we got?
+		 	 */
+			opType = NO_OPERATION;
+			op1 = p.readNonSpace();
+			if (op1 == '<' || op1 == '>' || op1 == '!')
 			{
-				int opType;
-
-				expr = parseExpression(p);
-				
-				if (op == '~')
-					opType = CONTAINS_OPERATION;
-				else if (op == '<')
-					opType = LESS_THAN_OPERATION;
-				else if (op == '=')
-					opType = EQUALS_OPERATION;
+				op2 = p.read();
+				if (op2 == '=')
+				{
+					if (op1 == '!')
+						opType = NOT_EQUALS_OPERATION;
+					if (op1 == '<')
+						opType = LESS_EQUAL_OPERATION;
+					else
+						opType = GREATER_EQUAL_OPERATION;
+				}
 				else
-					opType = GREATER_THAN_OPERATION;
+				{
+					p.unread(op2);
 
+					if (op1 == '<')
+						opType = LESS_THAN_OPERATION;
+					else if (op1 == '>')
+						opType = GREATER_THAN_OPERATION;
+				}
+			}
+			else if (op1 == '~')
+			{
+				opType = CONTAINS_OPERATION;
+			}
+			else if (op1 == '=')
+			{
+				opType = EQUALS_OPERATION;
+			}
+
+			/*
+			 * If we found a valid comparison then parse right-hand
+			 * side of comparison.
+			 */
+			if (opType != NO_OPERATION)
+			{
+				expr = parseExpression(p);
 				cond = new ExpressionTreeNode(cond, opType, expr);
 			}
 			else				
 			{
-				p.unread(op);
+				p.unread(op1);
 				break;
 			}
 		}
 		return(cond);
 	}
-	
+
 	/*
 	 * Parse expression.
 	 */
@@ -477,7 +616,7 @@ public class Expression
 			}
 		}
 
-		nestedExpression = parseCondition(p);
+		nestedExpression = parseAndBoolean(p);
 
 		c = p.readNonSpace();
 		if (c != ')')
@@ -508,7 +647,7 @@ public class Expression
 	 */
 	public Expression(Preprocessor p) throws IOException, MapyrusException
 	{
-		mExprTree = parseCondition(p);
+		mExprTree = parseAndBoolean(p);
 	}
 
 	/**
