@@ -194,12 +194,11 @@ public class ContextStack
 	/**
 	 * Sets font for labelling with.
 	 * @param name is name of font.
-	 * @param style is a style as defined in java.awt.Font class.
 	 * @param size is size for labelling in millimetres.
 	 */
-	public void setFont(String name, int style, double size)
+	public void setFont(String name, double size)
 	{
-		getCurrentContext().setFont(name, style, size);
+		getCurrentContext().setFont(name, size);
 	}
 
 	/**
@@ -369,7 +368,7 @@ public class ContextStack
 	/**
 	 * Draw currently defined path.
 	 */
-	public void stroke()
+	public void stroke() throws IOException, MapyrusException
 	{
 		getCurrentContext().stroke();
 	}
@@ -377,7 +376,7 @@ public class ContextStack
 	/**
 	 * Fill currently defined path.
 	 */
-	public void fill()
+	public void fill() throws IOException, MapyrusException
 	{
 		getCurrentContext().fill();
 	}
@@ -402,7 +401,7 @@ public class ContextStack
 	/**
 	 * Draw label positioned at (or along) currently defined path.
 	 */
-	public void label(String label)
+	public void label(String label) throws IOException, MapyrusException
 	{
 		getCurrentContext().label(label);
 	}
