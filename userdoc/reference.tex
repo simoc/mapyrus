@@ -554,7 +554,7 @@ are defined as variables in Mapyrus.
 
 Mapyrus maintains the internal variables shown in Table \ref{internalvariables}.
 
-\begin{longtable}{|p{5cm}|p{7cm}|}
+\begin{longtable}{|p{6cm}|p{7cm}|}
 \hline
 \label{internalvariables}
 Variable Name & Description \\
@@ -676,6 +676,18 @@ range -180 to +180 degrees. \\
 
 \texttt{Mapyrus.scale} &
 The current scale factor set by \texttt{scale} command. \\
+
+\hline
+
+\texttt{Mapyrus.screen.height},
+\texttt{Mapyrus.screen.width},
+\texttt{Mapyrus.screen.resolution.dpi},
+\texttt{Mapyrus.screen.resolution.mm} &
+The height, width and resolution of the screen in which Mapyrus
+is running.
+Height and width are in millimetres.  Resolution is available
+as either a dots-per-inch value, or a distance in millimetres between
+dots. \\
 
 \hline
 
