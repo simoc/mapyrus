@@ -161,15 +161,17 @@ public class Interpreter
 				hasAlpha = true;
 			}
 
-			if (color.startsWith("#"))
+			if (color.startsWith("#") || color.startsWith("0x"))
 			{
+				int startIndex = (color.charAt(0) == '#') ? 1 : 2;
+
 				/*
 				 * Parse color from a 6 digit hex value like '#ff0000',
 				 * as used in HTML pages.
 				 */
 				try
 				{
-					int rgb = Integer.parseInt(color.substring(1), 16);
+					int rgb = Integer.parseInt(color.substring(startIndex), 16);
 					rgb = (rgb & 0xffffff);
 					c = new Color(rgb | (alpha << 24), hasAlpha);
 				}
