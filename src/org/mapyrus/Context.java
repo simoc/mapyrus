@@ -1035,10 +1035,10 @@ public class Context
 	public Row fetchDatasetRow() throws MapyrusException
 	{
 		if (mDataset == null)
-			throw new MapyrusException("No dataset defined");
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
 
 		if (mDatasetRow == null)
-			throw new MapyrusException("No more rows in dataset");
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ROWS));
 
 		/*
 		 * Return row we've already fetched.
@@ -1056,7 +1056,7 @@ public class Context
 	public void queryDataset() throws MapyrusException
 	{
 		if (mDataset == null)
-			throw new MapyrusException("No dataset defined");
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
 		mDataset.query(getUnprojectedExtents(), 1.0);
 		
 		/*

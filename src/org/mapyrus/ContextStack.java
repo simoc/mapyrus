@@ -97,7 +97,7 @@ public class ContextStack
 	{
 		if (mStack.size() == MAX_STACK_LENGTH)
 		{
-			throw new MapyrusException("Procedure block nesting too deep");
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.RECURSION));
 		}
 		mStack.add(new Context(getCurrentContext()));
 	}
@@ -145,7 +145,7 @@ public class ContextStack
 	public void setScaling(double x, double y) throws MapyrusException
 	{
 		if (x == 0.0 || y == 0.0)
-			throw new MapyrusException("Invalid scaling values");
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SCALING));
 		else if (x != 1.0 || y != 1.0)
 			getCurrentContext().setScaling(x, y);
 	}
@@ -509,7 +509,7 @@ public class ContextStack
 			{
 				GeographicDataset dataset = getCurrentContext().getDataset();
 				if (dataset == null)
-					throw new MapyrusException("No dataset defined");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
 
 				sub = sub.substring(DATASET_VARIABLE.length() + 1);
 				if (sub.equals("projection"))

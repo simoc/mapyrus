@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 import au.id.chenery.mapyrus.Argument;
 import au.id.chenery.mapyrus.MapyrusException;
+import au.id.chenery.mapyrus.MapyrusMessages;
 import au.id.chenery.mapyrus.Row;
 
 /**
@@ -283,7 +284,8 @@ public class ShapefileDataset implements GeographicDataset
 		magic = mShapeStream.readInt();
 		if (magic != MAGIC_NUMBER)
 		{
-			throw new MapyrusException(mFilename + ": File not ESRI shape file format");
+			throw new MapyrusException(mFilename + ": " +
+				MapyrusMessages.get(MapyrusMessages.NOT_SHAPE_FILE));
 		}
 
 		mShapeStream.readInt();

@@ -164,7 +164,7 @@ public class OutputFormat
 
 			if (found == false)
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.BAD_OUTPUT_FORMAT) +
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OUTPUT) +
 					": " + format);
 			}
 		
@@ -320,7 +320,7 @@ public class OutputFormat
 			if (mWriter.checkError())
 			{
 				throw new MapyrusException(mFilename +
-					": Error writing to PostScript file");
+					": " + MapyrusMessages.get(MapyrusMessages.ERROR_PS));
 			}
 		}
 		else if (mOutputType == IMAGE_FILE)
@@ -353,8 +353,8 @@ public class OutputFormat
 			
 			if (retval != 0)
 			{
-				throw new MapyrusException("Process returned failure status: " +
-					mFilename);
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
+					": " + mFilename);
 			}
 		}
 	}

@@ -156,7 +156,8 @@ class Preprocessor
 			URL url = new URL(filename);
 			if (!url.openConnection().getContentType().startsWith("text/plain"))
 			{
-				throw new MapyrusException("Not a plain text file: " + filename);
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_TEXT_FILE) +
+					": " + filename);
 			}
 
 			urlStream = url.openStream();
@@ -176,7 +177,8 @@ class Preprocessor
 				URL url = new URL(lastURL, filename);
 				if (!url.openConnection().getContentType().startsWith("text/plain"))
 				{
-					throw new MapyrusException("Not a plain text file: " + filename);
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_TEXT_FILE) +
+						": " + filename);
 				}
 
 				urlStream = url.openStream();
@@ -333,7 +335,7 @@ class Preprocessor
 				else
 				{
 					throw new MapyrusException(getCurrentFilenameAndLineNumber() +
-						": Missing filename");
+						": " + MapyrusMessages.get(MapyrusMessages.MISSING_FILENAME));
 				}
 			}
 		}
@@ -430,7 +432,7 @@ class Preprocessor
 	 */
 	public String getCurrentFilenameAndLineNumber()
 	{
-		return(getCurrentFilename() + " line " + getCurrentLineNumber());
+		return(getCurrentFilename() + ":" + getCurrentLineNumber());
 	}
 
 	private static void processLine(PrintWriter writer, String s)

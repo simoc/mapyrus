@@ -141,8 +141,8 @@ public class Interpreter
 					Color c = ColorDatabase.getColor(args[0].getStringValue());
 					if (c == null)
 					{
-						throw new MapyrusException("Color not found: " +
-							args[0].getStringValue());
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+							": " + args[0].getStringValue());
 					}
 					context.setColor(c); 
 				}
@@ -174,13 +174,13 @@ public class Interpreter
 					}
 					else
 					{
-						throw new MapyrusException("Unknown color type: " +
-							colorType);
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR_TYPE) +
+							": " + colorType);
 					}
 				}
 				else
 				{
-					throw new MapyrusException("Invalid color");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
 				}
 				break;
 
@@ -194,7 +194,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid line width");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH));
 				}
 				break;
 			
@@ -209,7 +209,7 @@ public class Interpreter
 					{
 						if (args[0].getType() != Argument.NUMERIC)
 						{
-							throw new MapyrusException("Invalid coordinate value");
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE));
 						}
 					}
 					
@@ -232,7 +232,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Wrong number of coordinate values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_COORDINATE));
 				}
 				break;
 
@@ -253,14 +253,14 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid arc values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ARC));
 				}
 				break;
 				
 			case Statement.CLEARPATH:
 				if (nExpressions > 0)
 				{
-					throw new MapyrusException("Unexpected arguments");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
 				}
 				context.clearPath();
 				break;
@@ -273,7 +273,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid path slice values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_SLICE));
 				}
 				break;
 				
@@ -286,14 +286,14 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid path stripe values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_STRIPE));
 				}
 				break;
 
 			case Statement.STROKE:
 				if (nExpressions > 0)
 				{
-					throw new MapyrusException("Unexpected arguments");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
 				}
 				context.stroke();
 				break;
@@ -301,7 +301,7 @@ public class Interpreter
 			case Statement.FILL:
 				if (nExpressions > 0)
 				{
-					throw new MapyrusException("Unexpected arguments");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
 				}
 				context.fill();
 				break;
@@ -309,7 +309,7 @@ public class Interpreter
 			case Statement.CLIP:
 				if (nExpressions > 0)
 				{
-					throw new MapyrusException("Unexpected arguments");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
 				}
 				context.clip();
 				break;	
@@ -324,7 +324,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid scaling values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SCALING));
 				}
 				break;
 
@@ -336,7 +336,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid rotation value");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ROTATION));
 				}
 				break;
 
@@ -359,14 +359,14 @@ public class Interpreter
 							i = (Integer)mWorldUnitsLookup.get(args[4].getStringValue());
 							if (i == null)
 							{
-								throw new MapyrusException("Unknown world units value: " +
-									args[4].getStringValue());
+								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
+									": " + args[4].getStringValue());
 							}
 							units = i.intValue();
 						}
 						else
 						{
-							throw new MapyrusException("Invalid world units value");
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS));
 						}
 					}
 					else
@@ -376,13 +376,13 @@ public class Interpreter
 					
 					if (x2 - x1 == 0.0 || y2 - y1 == 0.0)
 					{
-						throw new MapyrusException("Zero world coordinate range");
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.ZERO_WORLD_RANGE));
 					}	
 					context.setWorlds(x1, y1, x2, y2, units);
 				}
 				else
 				{
-					throw new MapyrusException("Invalid worlds values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLDS));
 				}
 				break;
 
@@ -395,7 +395,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid transformation");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TRANSFORM));
 				}
 				break;
 	
@@ -408,7 +408,7 @@ public class Interpreter
 					for (int i = 0; i < nExpressions; i++)
 					{
 						if (args[i].getType() != Argument.STRING)
-							throw new MapyrusException("Invalid dataset");
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET));
 					}
 
 					/*
@@ -424,7 +424,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid dataset");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE));
 				}
 				break;
 
@@ -505,7 +505,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException("Invalid page values");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE));
 				}
 				break;	
 							
@@ -564,7 +564,7 @@ public class Interpreter
 		if (!Character.isLetter((char)c))
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Invalid keyword");
+				": " + MapyrusMessages.get(MapyrusMessages.INVALID_KEYWORD));
 		}
 		
 		/*
@@ -682,7 +682,8 @@ public class Interpreter
 				if (c != ARGUMENT_SEPARATOR)
 				{
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-						": Expected: " + ARGUMENT_SEPARATOR);
+						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+						": " + ARGUMENT_SEPARATOR);
 				}
 				c = readSkipComments(preprocessor);
 				state = AT_ARG;
@@ -705,7 +706,7 @@ public class Interpreter
 				 * Parsing is lost.  Don't know what is wrong.
 				 */
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Parsing error");
+					": " + MapyrusMessages.get(MapyrusMessages.PARSE_ERROR));
 			}
 		}
 
@@ -727,12 +728,12 @@ public class Interpreter
 			if (expressions.size() > 1)
 			{
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Too many expressions in assignment");
+					": " + MapyrusMessages.get(MapyrusMessages.TOO_MANY_EXPRESSIONS));
 			}
 			else if (expressions.size() == 0)
 			{
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": No expression in assignment");
+					": " + MapyrusMessages.get(MapyrusMessages.NO_EXPRESSION));
 			}
 
 			retval = new Statement(keyword, (Expression)expressions.get(0));
@@ -801,7 +802,8 @@ public class Interpreter
 				if (c != PARAM_SEPARATOR)
 				{
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-						": Expected: " + PARAM_SEPARATOR);
+						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+						": " + PARAM_SEPARATOR);
 				}
 				state = AT_PARAM;
 				c = readSkipComments(preprocessor);
@@ -850,7 +852,7 @@ public class Interpreter
 				 * Should not reach end of file inside a procedure block.
 				 */
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Unexpected end of file");
+					": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 			}
 
 			if (st.isStatement())
@@ -874,7 +876,8 @@ public class Interpreter
 				 * that we did not expect.
 				 */
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Expected: " + END_KEYWORD);
+					": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+					": " + END_KEYWORD);
 			}
 		}
 		while(!parsedEndKeyword);
@@ -914,13 +917,14 @@ public class Interpreter
 			 * Should not reach end of file inside while loop.
 			 */
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Unexpected end of file");
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 		}
 		else if (st.isStatement() ||
 			st.getKeywordType() != ParsedStatement.PARSED_DO)
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Expected: " + DO_KEYWORD);
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + DO_KEYWORD);
 		}
 		
 		/*
@@ -933,7 +937,7 @@ public class Interpreter
 			 * Should not reach end of file inside loop.
 			 */
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Unexpected end of file");
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 		}
 		while (st.isStatement())
 		{
@@ -945,7 +949,7 @@ public class Interpreter
 			 	* Should not reach end of file inside loop
 			 	*/
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Unexpected end of file");
+					": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 			}
 		}
 		
@@ -955,7 +959,8 @@ public class Interpreter
 		if (st.getKeywordType() != ParsedStatement.PARSED_DONE)
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Expected: " + DONE_KEYWORD);
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + DONE_KEYWORD);
 		}
 
 		statement = new Statement(test, loopStatements);
@@ -993,13 +998,14 @@ public class Interpreter
 			 * Should not reach end of file inside if statement.
 			 */
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Unexpected end of file");
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 		}
 		else if (st.isStatement() ||
 			st.getKeywordType() != ParsedStatement.PARSED_THEN)
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Expected: " + THEN_KEYWORD);
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + THEN_KEYWORD);
 		}
 
 		/*
@@ -1012,7 +1018,7 @@ public class Interpreter
 			 * Should not reach end of file inside if statement.
 			 */
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Unexpected end of file");
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 		}
 		while (st.isStatement())
 		{
@@ -1024,7 +1030,7 @@ public class Interpreter
 			 	* Should not reach end of file inside if statement.
 			 	*/
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Unexpected end of file");
+					": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 			}
 		}
 
@@ -1043,7 +1049,7 @@ public class Interpreter
 			 	* Should not reach end of file inside if statement.
 			 	*/
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Unexpected end of file");
+					": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 			}
 			while (st.isStatement())
 			{
@@ -1055,7 +1061,7 @@ public class Interpreter
 			 		 * Should not reach end of file inside if statement.
 			 		 */
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-						": Unexpected end of file");
+						": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 				}
 			}
 		}
@@ -1069,7 +1075,8 @@ public class Interpreter
 			if (!st.isStatement())
 			{
 				throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-					": Expected: " + ENDIF_KEYWORD);
+					": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+					": " + ENDIF_KEYWORD);
 			}
 			elseStatements.add(st.getStatement());
 			checkForEndif = false;
@@ -1081,7 +1088,8 @@ public class Interpreter
 		if (checkForEndif && st.getKeywordType() != ParsedStatement.PARSED_ENDIF)
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Expected: " + ENDIF_KEYWORD);
+				": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
+				": " + ENDIF_KEYWORD);
 		}
 
 		statement = new Statement(test, thenStatements, elseStatements);
@@ -1167,7 +1175,7 @@ public class Interpreter
 					if (inProcedureDefn)
 					{
 						throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-							": Procedure block definition inside procedure block");
+							": " + MapyrusMessages.get(MapyrusMessages.NESTED_PROC));
 					}
 					retval = parseProcedureBlock(preprocessor);
 				}
@@ -1219,7 +1227,7 @@ public class Interpreter
 		else if (!st.isStatement())
 		{
 			throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-				": Invalid keyword");
+				": " + MapyrusMessages.get(MapyrusMessages.INVALID_KEYWORD));
 		}
 		return(st.getStatement());
 	}
@@ -1296,7 +1304,7 @@ public class Interpreter
 			if (test.getType() != Argument.NUMERIC)
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
-					": Invalid expression");
+					": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
 			}
 			
 			if (test.getNumericValue() != 0.0)
@@ -1329,7 +1337,7 @@ public class Interpreter
 			if (test.getType() != Argument.NUMERIC)
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
-					": Invalid expression");
+					": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
 			}
 
 			/*
@@ -1350,7 +1358,7 @@ public class Interpreter
 				if (test.getType() != Argument.NUMERIC)
 				{
 					throw new MapyrusException(statement.getFilenameAndLineNumber() +
-						": Invalid expression");
+						": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
 				}
 			}
 		}
@@ -1364,7 +1372,8 @@ public class Interpreter
 			if (block == null)
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
-					": Procedure not defined: " + statement.getBlockName());
+					": " + MapyrusMessages.get(MapyrusMessages.UNDEFINED_PROC) +
+					": " + statement.getBlockName());
 			}
 			
 			/*
@@ -1375,7 +1384,7 @@ public class Interpreter
 			if (actualParameters.length != formalParameters.size())
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
-					": Wrong number of parameters in procedure call");
+					": " + MapyrusMessages.get(MapyrusMessages.WRONG_PARAMETERS));
 			}
 
 			try

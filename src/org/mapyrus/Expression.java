@@ -102,8 +102,8 @@ public class Expression
 					retval = context.getVariableValue(t.mLeafArg.getVariableName());
 					if (retval == null)
 					{
-						throw new MapyrusException("Variable not defined: " +
-							t.mLeafArg.getVariableName());
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
+							": " + t.mLeafArg.getVariableName());
 					}
 				}
 				else
@@ -128,8 +128,8 @@ public class Expression
 						context.getVariableValue(leftValue.getVariableName());
 					if (leftVarValue == null)
 					{
-						throw new MapyrusException("Variable not defined: " +
-							leftValue.getVariableName());
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
+							": " + leftValue.getVariableName());
 					}
 					leftValue = leftVarValue;
 				}
@@ -139,8 +139,8 @@ public class Expression
 						context.getVariableValue(rightValue.getVariableName());
 					if (rightVarValue == null)
 					{
-						throw new MapyrusException("Variable not defined: " +
-							rightValue.getVariableName());
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_UNDEFINED) +
+							": " + rightValue.getVariableName());
 					}
 					rightValue = rightVarValue;
 				}
@@ -154,12 +154,12 @@ public class Expression
 				{
 					if (rightValue.getType() != Argument.NUMERIC)
 					{
-						throw new MapyrusException("Wrong types for mulitplication");
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_TYPES));
 					}
 				}
 				else if (leftValue.getType() != rightValue.getType())
 				{
-					throw new MapyrusException("Types do match in expression");
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_TYPES));
 				}
 				
 				/*
@@ -202,7 +202,7 @@ public class Expression
 					}
 					else
 					{
-						throw new MapyrusException("Operation not permitted between numbers");
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_OPERATION));
 					}
 
 					if (d == 0.0)
@@ -252,7 +252,7 @@ public class Expression
 							d = (l.compareTo(r) <= 0) ? 1 : 0;
 						else
 						{
-							throw new MapyrusException("Operation not permitted between strings");
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_STRING_OPERATION));
 						}
 						
 						if (d == 0.0)
@@ -517,7 +517,7 @@ public class Expression
 				if (c == -1)
 				{
 					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-						": unexpected end of file in string");
+						": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 				}
 
 				if (c == '\\' && lastC != '\\')
@@ -584,7 +584,7 @@ public class Expression
 			if (!parsedDigit)
 			{
 				throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-					": invalid number in expression");
+					": " + MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER));
 			}
 
 			if (c == 'e' || c == 'E')
@@ -603,7 +603,7 @@ public class Expression
 				if (!Character.isDigit((char)c))
 				{
 					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-						": invalid number in expression");
+						": " + MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER));
 				}
 
 				while (Character.isDigit((char)c))
@@ -637,7 +637,7 @@ public class Expression
 		if (c == -1)
 		{
 			throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-				": unexpected end of file");
+				": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 		}
 
 		if (c == '(')
@@ -648,7 +648,7 @@ public class Expression
 			if (c != ')')
 			{
 				throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-					": unmatched '(' in expression");
+					": " + MapyrusMessages.get(MapyrusMessages.UNMATCHED_BRACKET));
 			}
 		}
 		else if (Character.isLetter((char)c))
@@ -674,7 +674,7 @@ public class Expression
 			 * It's nothing that we understand.
 			 */
 			throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-				": invalid expression");
+				": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
 		}
 
 		if (hasUnaryMinus)
