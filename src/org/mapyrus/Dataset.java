@@ -113,9 +113,24 @@ public class Dataset
 	 */
 	public void close() throws MapyrusException
 	{
-		mDataset.close();
-		mDataset = null;
-		mDatasetRow = null;
-		mDatasetRowCount = 0;
+		try
+		{
+			if (mDataset != null)
+				mDataset.close();
+		}
+		catch (MapyrusException e)
+		{
+			throw e;
+		}
+		finally
+		{
+			/*
+			 * Always clear dataset after attempting to close it
+			 * so that we will never try to close it again.
+			 */
+			mDataset = null;
+			mDatasetRow = null;
+			mDatasetRowCount = 0;
+		}
 	}
 }
