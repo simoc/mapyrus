@@ -292,44 +292,50 @@ http://localhost:8410/tutorialurl.mpy?x1=11&y1=48&x2=12&y2=49&labels=off
 </pre>
 
 The variables <tt>x1</tt>, <tt>y1</tt>, <tt>x2</tt>, <tt>y2</tt>
-and <tt>labels</tt> are automatically set before
+and <tt>labels</tt> are automatically set before interpreting
+the commands in the file <tt>tutorialurl.mpy</tt>.
+<p>
 
-This method is suitable for applications with a client side
-the client written in Java or Visual Basic
+This method is suitable for applications that manage state
+in the HTTP client, such as clients written in Java or Visual Basic.
 
 <p>
 <a name="htmlpage"></a>
 <h3>Returning HTML Pages from Mapyrus HTTP Server</h3>
 <p>
 
-To build HTML based application
-
-returns
-<tt>tempname</tt>
-<a href="reference.html#internalvars"/>
-internal variables
+An application for web browsers is based on HTML pages.
+Generate HTML in Mapyrus and return it with
+<a href="reference.html#print"/>
+print
 </a>
-one simplistic example.  Another example showing HTML being
-print '<html>'
-web browser
-
-To simplify editing of HTML pages for the application, setup
-template HTML pages with placeholders for the information that
-Mapyrus provides.  Return the HTML pages with the placeholder
-information replaced by real data.  The following template
-HTML file and Mapyrus commands demonstrate this.
-
-include beginex.doc
-include tutorialhtmlpage1.html
-include endex.doc
+commands.
+Generate images to include in the HTML page with unique filenames using the
+<a href="reference.html#tempname"/>
+<tt>tempname</tt>
+</a>
+function.  The following simplistic example demonstrates this.
 
 include beginex.doc
 include tutorialhtmlpage1.mpy
 include endex.doc
 
-read through Mapyrus, magic tokens are replaced and then it is
-sent back to web browser.
-replace ($0, '@image_filename@', t)
+To simplify editing of HTML pages for the application, setup
+template HTML pages with placeholders for the information that
+Mapyrus provides.  Return the HTML pages with the placeholders
+replaced by real values using the
+<a href="reference.html#replace"/>
+<tt>replace</tt>
+</a>
+function.  The following
+<a href="tutorialhtmlpage2.txt">
+template HTML file
+</a>
+and Mapyrus commands demonstrate this.
+
+include beginex.doc
+include tutorialhtmlpage2.mpy
+include endex.doc
 
 <p>
 <a name="imagemap"></a>
