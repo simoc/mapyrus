@@ -1,10 +1,6 @@
 # Another simple example.
 #
-newpage "eps", "tutorialfirst2.eps", 30, 30, 300
+newpage "eps", "tutorialfirst2.eps", 30, 30, 96
 color "#bb0000"	        # dark red
-move 5, 5
-draw 5, 25
-draw 25, 25
-draw 25, 5
-draw 5, 5
+box 5, 5, 25, 25
 fill
