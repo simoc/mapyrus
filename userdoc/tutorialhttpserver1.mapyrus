@@ -5,8 +5,7 @@ newpage "png", "-", 100, 100
 dataset "shapefile", "coastline.shp", ""
 worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
   Mapyrus.dataset.max.x, Mapyrus.dataset.max.y
-import
-while Mapyrus.import.more
+while Mapyrus.fetch.more
 do
   clearpath
   fetch
