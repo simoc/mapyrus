@@ -74,9 +74,6 @@ public class FunctionTable
 		f = new Min();
 		mFunctions.put(f.getName(), f);
 
-		f = new Parsewkt();
-		mFunctions.put(f.getName(), f);
-
 		f = new Pow();
 		mFunctions.put(f.getName(), f);
 
