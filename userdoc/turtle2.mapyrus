@@ -1,24 +1,24 @@
 # @(#) $Id$
-begin fernbranch length
-	if length > 1
+begin fernbranch branchLength
+	if branchLength > 1
 	then
 		# Draw right branch (and its shorter sub-branches),
 		# then left branch
 		rotate 20
 		move 0, 0
-		draw 0, length
+		draw 0, branchLength
 		stroke
 		clearpath
-		move 0, length
-		fernbranch length * 0.75
+		move 0, branchLength
+		fernbranch branchLength * 0.75
 
 		rotate -40
 		move 0, 0
-		draw 0, length
+		draw 0, branchLength
 		stroke
 		clearpath
-		move 0, length
-		fernbranch length * 0.75
+		move 0, branchLength
+		fernbranch branchLength * 0.75
 	endif
 end
 begin fern
