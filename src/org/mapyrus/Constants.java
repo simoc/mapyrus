@@ -66,6 +66,12 @@ public class Constants
 	public static final int HTTP_SOCKET_TIMEOUT = 30 * 1000;
 
 	/*
+	 * Timeout in seconds for connecting to RDBMS and for executing
+	 * SQL queries.
+	 */
+	public static final int DB_CONNECTION_TIMEOUT = 30;
+	
+	/*
 	 * Number of points and millimetres per inch.
 	 */
 	public static final int POINTS_PER_INCH = 72;
