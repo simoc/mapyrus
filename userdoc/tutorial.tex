@@ -3,7 +3,9 @@
 \section{Tutorial}
 
 The folllowing examples demonstrate how to using Mapyrus.  Each example is also
-included as a file in the \texttt{doc} subdirectory.
+included as a file in the \texttt{doc} subdirectory.  All example files
+have file suffix \texttt{.mapyrus}.  This suffix is not required but makes
+identification of files that are to be interpreted by Mapyrus easier.
 
 If the Ghostscript program or a printer is not available, then change the
 \texttt{eps} arguments in \texttt{newpage} commands in examples to \texttt{png}
@@ -587,11 +589,20 @@ piechart or histogram at each point.
 \label{tutorialscalebar}
 
 Another cartographic rule is that a map display must include a scalebar.  The
-following example creates two PostScript files using the
-internal variable \texttt{Mapyrus.worlds.scale} to add a scale bar to the
-lower-left corner of a map display.  An alternative approach is to save the
-scale value in a variable, use the \texttt{newpage} command to create a new
-output file and display the scalebar in a separate file from the map.
+following example creates two PostScript files using the internal variable
+\texttt{Mapyrus.worlds.scale} to add a scale bar to the lower-left corner of a
+map display.
+
+The included file \texttt{scalebar.mapyrus} (available in the \texttt{doc}
+subdirectory) defines a procedure named \texttt{scalebar}.  This procedure
+performs the task of displaying the scalebar.  Include this file and call the
+\texttt{scalebar} procedure whenever a scalebar is required for a map display.
+
+Output from the example is shown in Figure \ref{tutorialscalebar1}.
+
+An alternative approach for displaying scalebars is to save the scale value in
+a variable, use the \texttt{newpage} command to create a new output file and
+display the scalebar in a separate file from the map.
 
 \verbatiminput{tutorialscalebar1.mpy}
 
@@ -606,10 +617,16 @@ output file and display the scalebar in a separate file from the map.
 
 Piecharts are used to represent relative values of several attributes at
 different locations.  For example, production levels or voting patterns.  The
-following example demonstrates a procedure for displaying piecharts.  Fixed
-data values are used.  In a real application this information is read from a
-database or GIS dataset.  The output is shown in Figure
-\ref{tutorialpiechart1}.
+following example demonstrates this using fixed data values
+In a real application this information is read from a
+database or GIS dataset.
+
+The included file \texttt{piechart.mapyrus} (available in the \texttt{doc}
+subdirectory) defines a procedure named \texttt{piechart}.  This procedure
+performs the task of displaying a piechart.  Include this file and call the
+\texttt{piechart} procedure whenever piecharts are to be displayed.
+
+The output is shown in Figure \ref{tutorialpiechart1}.
 
 \verbatiminput{tutorialpiechart1.mpy}
 
