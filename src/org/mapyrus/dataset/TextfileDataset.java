@@ -267,11 +267,23 @@ public class TextfileDataset implements GeographicDataset
 					throw new MapyrusException(e.getMessage());
 				}
 			}
-			mReader.close();
 		}
 		catch (IOException e)
 		{
 			throw new MapyrusException(e.getMessage());
+		}
+		finally
+		{
+			/*
+			 * Ensure that file being read is always closed.
+			 */
+			try
+			{
+				mReader.close();
+			}
+			catch (IOException e)
+			{
+			}
 		}
 	}
 }
