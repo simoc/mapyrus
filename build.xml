@@ -24,7 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <target name="init" description="Setup properties">
 
 <!-- 'Java Topology Suite' JAR file required for building some Java classes -->
-<property name="jtsjarfile" value="jts-1.4.0.jar"/>
+<property name="jts.jar" value="jts-1.4.0.jar"/>
+<available file="${jts.jar}" property="jts.jar.isAvailable"/>
+<fail message="Java Topology Suite JAR file ${jts.jar} not found" unless="jts.jar.isAvailable"/>
+
 <loadfile property="version" srcFile="VERSION">
 <filterchain><striplinebreaks/></filterchain>
 </loadfile>
@@ -38,7 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <replace dir="src" token="@release_date_token@" value="${today}"/>
 
 <mkdir dir="build/classes"/>
-<javac srcdir="src" listfiles="yes" classpath="${jtsjarfile}" destdir="build/classes" excludes="**/CVS/**"/>
+<javac srcdir="src" listfiles="yes" classpath="${jts.jar}" destdir="build/classes" excludes="**/CVS/**"/>
 
 <!-- Copy resource files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
@@ -90,7 +93,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
 <classpath>
 <pathelement path="${ant.project.name}.jar"/>
-<pathelement path="${jtsjarfile}"/>
+<pathelement path="${jts.jar}"/>
 </classpath>
 <arg line="tutorialjts1.mapyrus tutorialjts2.mapyrus"/>
 </java>
