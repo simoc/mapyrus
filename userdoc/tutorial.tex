@@ -419,7 +419,22 @@ Fields are assigned to variables
 \texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots and the whole record is
 assigned to variable \texttt{\$0}.
 
-The following example demonstrates reading the text file shown in Figure
+Coordinates in GIS datasets are normally stored
+in a world coordinate system such as
+Universal Transverse Mercator.  To transform these coordinates to millimeter
+coordinates on the page use the \texttt{worlds} command.  This sets a
+transformation to map a range of world coordinates onto the whole page.  All
+coordinates given for later \texttt{addpath}, \texttt{move}, \texttt{arc},
+\texttt{box},
+\texttt{draw},
+\texttt{circle} and
+\texttt{hexagon}
+commands are converted from world coordinate to page coordinates
+through this transformation.
+
+The following example demonstrates
+setting a world coordinate system and then
+reading the text file shown in Figure
 \ref{tutorialdatasets1txt} and displaying the
 geographic data that it contains.  The output of this example is shown in
 Figure \ref{tutorialdatasets1}.
@@ -438,20 +453,13 @@ Figure \ref{tutorialdatasets1}.
 \label{tutorialdatasets1}
 \end{figure}
 
-Coordinates in GIS datasets are often stored
-in a world coordinate system such as
-Universal Transverse Mercator.  To transform these coordinates to millimeter
-coordinates on the page use the \texttt{worlds} command.  This sets a
-transformation to map a range of world coordinates onto the whole page.  All
-coordinates given for later \texttt{addpath}, \texttt{move}, \texttt{arc},
-\texttt{box} and
-\texttt{draw} commands are converted from world coordinate to page coordinates
-through this transformation.
+Gazeteer files, GPS measurement files and export files of GIS datasets
+are also read as text files.
 
-Export files of GIS datasets are also read as text files.  A loop and counter
-are used to read all coordinates making up lines and polygons.
+For files containing lines and polygons, a loop and counter
+are used to read all coordinates for each line and polygon.
 
-The following example demonstrates setting a world coordinate system and then
+The following example demonstrates
 reading and displaying the GenaMap GIS ZF19 format export file shown in Figure
 \ref{streetsEE} containing line
 features.  The tag of each line is used as a street name label.
@@ -517,10 +525,13 @@ the database to inside the area of interest.
 \verbatiminput{tutorialdatasets4.mapyrus}
 
 For databases supporting the \textit{OpenGIS Simple Features Specification For
-SQL}, add fields containing OGC WKT geometry strings
-to the current path with an \texttt{addpath} command.  The
-following example demonstrates fetching a geometry field named \texttt{geom}
-from the database and displaying it.
+SQL}, add fields containing OGC WKT geometry strings or WKB geometry values
+to the current path with an \texttt{addpath} command.  Using WKT geometry
+strings is less efficient than WKB geometry strings because all geometry
+must be converted to a text string and then back to a geometry.
+
+The following example demonstrates fetching a geometry field named \texttt{geom}
+from the database as a WKT string and displaying it.
 
 \verbatiminput{tutorialdatasets5.mapyrus}
 
