@@ -539,6 +539,18 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_STRIPE));
 				}
 				break;
+				
+			case Statement.SHIFTPATH:
+				if (nExpressions == 2)
+				{
+					context.translatePath(mExecuteArgs[0].getNumericValue(),
+						mExecuteArgs[1].getNumericValue());
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PATH_SHIFT));
+				}
+				break;
 
 			case Statement.STROKE:
 				if (nExpressions > 0)
