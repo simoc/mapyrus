@@ -22,13 +22,13 @@
  */
 package org.mapyrus.io;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FilterOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
- * Filters an java.io.OutputStream, converting bytes to an ASCII85
+ * Converts bytes to ASCII85 representation and writes them to a file.
  * representation of data, using only 85 printable ASCII characters.
  * Each set of 4 bytes written to this stream is converted into
  * 5 ASCII characters.
@@ -36,7 +36,7 @@ import java.io.OutputStream;
  * Implements algorithm described in section 3.13.3, 'ASCII85EncodeFilter'
  * of Adobe PostScript Language Reference Manual (2nd Edition).
  */
-public class ASCII85OutputStream extends FilterOutputStream
+public class ASCII85OutputStream
 {
 	/*
 	 * Bytes buffered but yet to be encoded.
@@ -45,36 +45,25 @@ public class ASCII85OutputStream extends FilterOutputStream
 	private int mNUnencodedBytes;
 
 	/*
-	 * Encoded bytes ready to be written to stream.
+	 * Encoded bytes ready to be written to file.
 	 */
-	private byte []mEncodedBytes;
+	private char []mEncodedChars;
+
+	/*
+	 * File to write bytes to.
+	 */
+	private Writer mWriter;
 
 	/**
 	 * Create new ASCII85 filtered output stream.
 	 * @param outStream stream to build filter on top of.
 	 */
-	public ASCII85OutputStream(OutputStream outStream)
+	public ASCII85OutputStream(Writer writer)
 	{
-		super(outStream);
 		mUnencodedBytes = new int[4];
 		mNUnencodedBytes = 0;
-		mEncodedBytes = new byte[5];
-	}
-
-	public void flush()
-	{
-	}
-
-	public void write(byte []b) throws IOException
-	{
-		for (int i = 0; i < b.length; i++)
-			write(b[i]);
-	}
-
-	public void write(byte []b, int off, int len) throws IOException
-	{
-		for (int i = 0; i < len; i++)
-			write(b[off + i]);
+		mEncodedChars = new char[5];
+		mWriter = writer;
 	}
 
 	/**
@@ -96,37 +85,32 @@ public class ASCII85OutputStream extends FilterOutputStream
 
 		if ((!isFinalSet) && l == 0)
 		{
-			out.write('z');
+			mWriter.write('z');
 		}
 		else
 		{
-			mEncodedBytes[4] = (byte)((l % 85) + '!');
+			mEncodedChars[4] = (char)((l % 85) + '!');
 			l /= 85;
-			mEncodedBytes[3] = (byte)((l % 85) + '!');
+			mEncodedChars[3] = (char)((l % 85) + '!');
 			l /= 85;
-			mEncodedBytes[2] = (byte)((l % 85) + '!');
+			mEncodedChars[2] = (char)((l % 85) + '!');
 			l /= 85;
-			mEncodedBytes[1] = (byte)((l % 85) + '!');
-			mEncodedBytes[0] = (byte)((l / 85) + '!');
+			mEncodedChars[1] = (char)((l % 85) + '!');
+			mEncodedChars[0] = (char)((l / 85) + '!');
 
 			/*
 			 * Length of final set of encoded bytes is one byte
 			 * more than number of unencoded bytes.
 			 */
 			if (isFinalSet)
-				out.write(mEncodedBytes, 0, mNUnencodedBytes + 1);
+			{
+					mWriter.write(mEncodedChars, 0, mNUnencodedBytes + 1);
+			}
 			else
-				out.write(mEncodedBytes);
+			{
+					mWriter.write(mEncodedChars);
+			}
 		}
-	}
-
-	/**
-	 * Write byte to stream.
-	 * @param b byte to write.
-	 */
-	public void write(byte b) throws IOException
-	{
-		write((int)b);
 	}
 
 	/**
@@ -148,6 +132,9 @@ public class ASCII85OutputStream extends FilterOutputStream
 		}
 	}
 
+	/**
+	 * Flush and close this writer, without closing the underlying writer.
+	 */
 	public void close() throws IOException
 	{
 		/*
@@ -159,19 +146,21 @@ public class ASCII85OutputStream extends FilterOutputStream
 				mUnencodedBytes[i] = 0;
 			writeEncoded(true);
 		}
-		out.close();
 	}
 
 	static public void main(String args[])
 	{
 		String message = "The quick brown fox jumped over the lazy dog.";
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		ASCII85OutputStream ascii85 = new ASCII85OutputStream(b);
+
 		try
 		{
-			ascii85.write(message.getBytes());
+			PrintWriter writer = new PrintWriter(new FileWriter("ascii85.txt"));
+			ASCII85OutputStream ascii85 = new ASCII85OutputStream(writer);
+			byte []messageBytes = message.getBytes();
+			for (int i = 0; i < messageBytes.length; i++)
+				ascii85.write(messageBytes[i]);
 			ascii85.close();
-			System.out.println("<~" + b.toString() + "~>");
+			writer.close();
 		}
 		catch (IOException e)
 		{
