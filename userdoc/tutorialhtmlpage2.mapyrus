@@ -3,7 +3,7 @@
 imageFile = tempname("PNG")
 newpage "png", imageFile, 100, 100, 96
 
-dataset "shapefile", "/tmp/roads.shp", "dbffields="
+dataset "shapefile", "/tmp/roads.shp", "dbffields=FEATURE"
 if x1 eq ""
 then
 	x1 = Mapyrus.dataset.min.x
@@ -19,6 +19,15 @@ do
 	clearpath
 	fetch
 	addpath GEOMETRY
+
+	# Display different classes of roads in different colors.
+	#
+	if FEATURE eq 'Principal Highway'
+	then
+		color "red"
+	else
+		color "orange"
+	endif
 	stroke
 done
 
@@ -28,16 +37,16 @@ x2 = Mapyrus.worlds.max.x
 y2 = Mapyrus.worlds.max.y
 xMid = (x1 + y2) / 2
 yMid = (y1 + y2) / 2
-xDiff = x2 - x1
-yDiff = y2 - y1
 
+# Ratio of area being displayed to zoom or pan each time.
+#
 panFactor = 0.2
 zoomFactor = 0.2
 
-xPan = panFactor * xDiff
-yPan = panFactor * yDiff
-xZoom = zoomFactor * xDiff
-yZoom = zoomFactor * yDiff
+xPan = panFactor * Mapyrus.worlds.width
+yPan = panFactor * Mapyrus.worlds.height
+xZoom = zoomFactor * Mapyrus.worlds.width
+yZoom = zoomFactor * Mapyrus.worlds.height
 
 # Set URLs for navigating around current display.
 #
@@ -51,7 +60,7 @@ zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom) . 
 # Spool HTML file to standard output, replacing placeholder tokens
 # with actual values for this request.
 #
-dataset "textfile", "tutorialhtmlpage1.html", ""
+dataset "textfile", "tutorialhtmlpage2.html", ""
 import
 while Mapyrus.import.moreRecords
 do
