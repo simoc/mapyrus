@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 
 public class Mapyrus
 {
-	private static final String PROGRAM_NAME = "Mapyrus";
+	public static final String PROGRAM_NAME = "Mapyrus";
 	private static final int DEFAULT_PORT = 23177;
 	private static final String RCS_STATE = "$State$";
 	
