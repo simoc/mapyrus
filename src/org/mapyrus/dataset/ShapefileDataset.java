@@ -89,7 +89,7 @@ public class ShapefileDataset implements GeographicDataset
 	private DataInputStream mShapeStream;
 	private DataInputStream mDBFStream;
 	private String mFilename;
-	private int mShapeFileLength, mShapeFileType;
+	private int mShapeFileLength, mShapeFileType, mGeometryType;
 	private int mDBFRecordLength;
 	private String mProjection;
 	
@@ -323,6 +323,37 @@ public class ShapefileDataset implements GeographicDataset
 		mMin = readLittleEndianDouble(mShapeStream);
 		mMax = readLittleEndianDouble(mShapeStream);
 		mExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
+
+		/*
+		 * Convert geometry type to the type we use internally.
+		 */		
+		switch (mShapeFileType)
+		{
+			case NULL_SHAPE:
+				mGeometryType = 0;
+				break;
+			case POINT:
+			case POINT_Z:
+			case POINT_M:
+				mGeometryType = Argument.GEOMETRY_POINT;
+				break;
+			case POLYLINE:
+			case POLYLINE_Z:
+			case POLYLINE_M:
+				mGeometryType = Argument.GEOMETRY_LINESTRING;
+				break;
+			case POLYGON:
+			case POLYGON_Z:
+			case POLYGON_M:
+			case MULTIPATCH:
+				mGeometryType = Argument.GEOMETRY_POLYGON;
+				break;
+			case MULTIPOINT:
+			case MULTIPOINT_Z:
+			case MULTIPOINT_M:
+				mGeometryType = Argument.GEOMETRY_MULTIPOINT;
+				break;
+		}
 	}
 
 	/**
@@ -337,10 +368,10 @@ public class ShapefileDataset implements GeographicDataset
 	{
 		String retval;
 		int i = offset + length - 1;
-		while (i > offset && (buf[i] == 0 || Character.isWhitespace((char)buf[i])))
+		while (i >= offset && (buf[i] == 0 || Character.isWhitespace((char)buf[i])))
 			i--;
 
-		if (i == offset)
+		if (i < offset)
 			retval = "";
 		else
 			retval = new String(buf, offset, i - offset + 1);
@@ -497,14 +528,6 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getFieldTypes()
-	 */
-	public int[] getFieldTypes()
-	{
-		return(mFieldTypes);
-	}
-
-	/**
 	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getGeometryFieldIndexes()
 	 */
 	public int[] getGeometryFieldIndexes() 
@@ -589,7 +612,10 @@ public class ShapefileDataset implements GeographicDataset
 					path[3] = readLittleEndianDouble(mShapeStream);
 					nBytes += 16;
 
-					shapeInExtents = mQueryExtents.contains(path[2], path[3]);
+					/*
+					 * Accept points on query boundary rectangle, reject anything outside.
+					 */
+					shapeInExtents = (mQueryExtents.outcode(path[2], path[3]) == 0);
 				}
 				else if (mShapeFileType == POLYLINE || mShapeFileType == POLYGON ||
 					mShapeFileType == POLYLINE_Z || mShapeFileType == POLYGON_Z ||
@@ -792,7 +818,7 @@ public class ShapefileDataset implements GeographicDataset
 					/*
 					 * Add geometry as final field.
 					 */
-					row.add(new Argument(path));
+					row.add(new Argument(mGeometryType, path));
 				}
 			}
 		}
