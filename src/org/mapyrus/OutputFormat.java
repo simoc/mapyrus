@@ -59,7 +59,7 @@ import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
-import org.mapyrus.io.ASCII85OutputStream;
+import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
 
 /**
@@ -956,7 +956,7 @@ public class OutputFormat
 		/*
 		 * Write ASCII85 encoded string containing all pixel values.
 		 */
-		ASCII85OutputStream ascii85 = new ASCII85OutputStream(mWriter);
+		ASCII85Writer ascii85 = new ASCII85Writer(mWriter);
 		int byteValue = 0;
 		int bitCounter = 0;
 		for (j = 0; j < pixels.length; j++)
