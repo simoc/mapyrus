@@ -25,7 +25,7 @@ public class Statement
 	public static final int LINEWIDTH = 11;
 	public static final int MOVE = 12;
 	public static final int DRAW = 13;
-	public static final int CLEAR = 14;
+	public static final int CLEARPATH = 14;
 	public static final int SLICEPATH = 15;
 	public static final int STRIPEPATH = 16;
 	public static final int STROKE = 17;
@@ -35,8 +35,10 @@ public class Statement
 	public static final int ROTATE = 21;
 	public static final int WORLDS = 22;
 	public static final int PROJECT = 23;
-	public static final int NEWPAGE = 24;
-	public static final int PRINT = 25;
+	public static final int IMPORT = 24;
+	public static final int FETCH = 25;
+	public static final int NEWPAGE = 26;
+	public static final int PRINT = 27;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -92,7 +94,7 @@ public class Statement
 		mStatementTypeLookup.put("linewidth", new Integer(LINEWIDTH));
 		mStatementTypeLookup.put("move", new Integer(MOVE));
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
-		mStatementTypeLookup.put("clear", new Integer(CLEAR));
+		mStatementTypeLookup.put("clearpath", new Integer(CLEARPATH));
 		mStatementTypeLookup.put("slicepath", new Integer(SLICEPATH));
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
@@ -102,6 +104,8 @@ public class Statement
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
 		mStatementTypeLookup.put("project", new Integer(PROJECT));
+		mStatementTypeLookup.put("import", new Integer(IMPORT));
+		mStatementTypeLookup.put("fetch", new Integer(FETCH));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 	}
