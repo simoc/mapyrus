@@ -51,7 +51,7 @@ Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
 appearance of the geographic data.
-Scalebars, coordinate grids and north arrows are also available.
+Scalebars, legends, coordinate grids and north arrows are also available.
 For example,
 <p>
 
@@ -79,6 +79,8 @@ Railways Lines in East Kent
 <tr align="center">
 <td>
 <img src="mapview2.png">
+&nbsp;
+<img src="mapview2legend.png">
 <td>
 <img src="mapview4.png">
 
