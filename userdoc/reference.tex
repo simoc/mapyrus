@@ -670,14 +670,20 @@ The current path is not.
 \begin{alltt}
 color \textit{name} [, \textit{alpha}]
 color "\#\textit{hexdigits}" [, \textit{alpha}]
+color "0x\textit{hexdigits}" [, \textit{alpha}]
 color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
 color "hsb", \textit{hue}, \textit{saturation}, \textit{brightness} [, \textit{alpha}]
 \end{alltt}
 
 Sets color for drawing.  Named colors refer to colors in the file
 \texttt{/usr/lib/X11/rgb.txt}, or the file given as a startup variable (see
-Table \ref{startupvariables}).  \textit{hexdigits} is a 6 digit hexadecimal
-value defining RGB values, as used in HTML pages.  Values for RGB colors and
+Table \ref{startupvariables} on page \pageref{startupvariables}).
+
+\textit{hexdigits} is a 6 digit hexadecimal
+value defining RGB values, as used in HTML pages.
+
+\textit{red}, \textit{green} and \textit{blue} values for RGB colors and
+\textit{hue}, \textit{saturation} and \textit{brightness} values for
 Hue-saturation-brightness (HSB) colors are given as intensities in the range
 0-1.
 
