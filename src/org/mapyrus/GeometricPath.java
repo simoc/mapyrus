@@ -24,6 +24,7 @@ package org.mapyrus;
 
 import java.awt.geom.*;
 import java.util.ArrayList;
+import java.awt.geom.Ellipse2D;
 
 import org.mapyrus.geom.LineEquation;
 
@@ -160,6 +161,29 @@ public class GeometricPath
 		}
 	
 		mPath.append(arc, true);
+		mNLineTos++;
+	}
+
+	/**
+	 * Add ellipse to path.
+	 * @param xMin minimum X coordinate of ellipse.
+	 * @param yMin minimum Y coordinate of ellipse.
+	 * @param xMax maximum X coordinate of ellipse.
+	 * @param yMax maximum Y coordinate of ellipse.
+	 */
+	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
+	{
+		Point2D pt;
+		pt = new Point2D.Float((float)xMax, (float)((yMin + yMax) / 2));
+		mMoveTos.add(pt);
+
+		/*
+		 * Create elliptical shape and add it to path.
+		 */
+		Ellipse2D.Double ellipse = new Ellipse2D.Double(xMin, yMin,
+			xMax - xMin, yMax - yMin);
+
+		mPath.append(ellipse, false);
 		mNLineTos++;
 	}
 
