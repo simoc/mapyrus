@@ -73,17 +73,24 @@ public class Expression
 	private static final String ROUND_FUNCTION_NAME = "round";
 	private static final int RANDOM_FUNCTION = 2;	/* random(3) = [0, 3) */
 	private static final String RANDOM_FUNCTION_NAME = "random";
-	private static final int LENGTH_FUNCTION = 3;	/* length("foo") = 3 */
+	private static final int LOG10_FUNCTION = 3;	/* log10(1000) = 3 */
+	private static final String LOG10_FUNCTION_NAME = "log10";
+	private static final int LENGTH_FUNCTION = 4;	/* length("foo") = 3 */
 	private static final String LENGTH_FUNCTION_NAME = "length";
-	private static final int MATCH_FUNCTION = 4;	/* match('foobar', 'ob') = 3 */
+	private static final int MATCH_FUNCTION = 5;	/* match('foobar', 'ob') = 3 */
 	private static final String MATCH_FUNCTION_NAME = "match";
-	private static final int REPLACE_FUNCTION = 5;	/* replace('foobar', 'o*', '_') =  'f_bar' */
+	private static final int REPLACE_FUNCTION = 6;	/* replace('foobar', 'o*', '_') =  'f_bar' */
 	private static final String REPLACE_FUNCTION_NAME = "replace";
-	private static final int TEMPNAME_FUNCTION = 6;	/* tempname('.jpg') =  'tmpABC123.jpg' */
+	private static final int TEMPNAME_FUNCTION = 7;	/* tempname('.jpg') =  'tmpABC123.jpg' */
 	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
-	private static final int SUBSTR_FUNCTION = 7;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final int SUBSTR_FUNCTION = 8;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
+	/*
+	 * Constant for calculating base 10 logarithms.
+	 */
+	private static final double LOG_OF_10 = Math.log(10.0);
+	
 	/*
 	 * Lookup tables of functions and the number of
 	 * arguments that they each take.
@@ -96,6 +103,7 @@ public class Expression
 		mFunctionTypeLookup = new HashMap();
 		mFunctionTypeLookup.put(ROUND_FUNCTION_NAME, new Integer(ROUND_FUNCTION));
 		mFunctionTypeLookup.put(RANDOM_FUNCTION_NAME, new Integer(RANDOM_FUNCTION));
+		mFunctionTypeLookup.put(LOG10_FUNCTION_NAME, new Integer(LOG10_FUNCTION));
 		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
 		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
 		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
@@ -105,6 +113,7 @@ public class Expression
 		mFunctionArgumentCount = new byte[SUBSTR_FUNCTION + 1];
 		mFunctionArgumentCount[ROUND_FUNCTION] = 1;
 		mFunctionArgumentCount[RANDOM_FUNCTION] = 1;
+		mFunctionArgumentCount[LOG10_FUNCTION] = 1;
 		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
 		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
 		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
@@ -265,14 +274,23 @@ public class Expression
 				/*
 				 * Evaluate function.
 				 */
-				if (t.mFunction == ROUND_FUNCTION || t.mFunction == RANDOM_FUNCTION)
+				if (t.mFunction == ROUND_FUNCTION || t.mFunction == RANDOM_FUNCTION ||
+					t.mFunction == LOG10_FUNCTION)
 				{
 					leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+					l = leftValue.getNumericValue();
 					
 					if (t.mFunction == ROUND_FUNCTION)
-						d = Math.round(leftValue.getNumericValue());
+						d = Math.round(l);
+					else if (t.mFunction == RANDOM_FUNCTION)
+						d = Math.random() * l;
 					else
-						d = Math.random() * leftValue.getNumericValue();
+					{
+						if (l <= 0.0)
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
+
+						d = Math.log(l) / LOG_OF_10;
+					}
 					retval = new Argument(d);
 				}
 				else if (t.mFunction == LENGTH_FUNCTION)
