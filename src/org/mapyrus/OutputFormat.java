@@ -25,6 +25,7 @@ package org.mapyrus;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
@@ -501,6 +502,12 @@ public class OutputFormat
 				BufferedImage.TYPE_3BYTE_BGR);
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution);
+
+			/*
+			 * Fonts look so much better with anti-aliasing so always use it.
+			 */
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
 		}
 		mFilename = filename;
 		mPageWidth = width;
