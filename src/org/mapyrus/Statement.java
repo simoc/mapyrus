@@ -81,9 +81,10 @@ public class Statement
 	public static final int MIMETYPE = 48;
 
 	/*
-	 * Statement type for call to user defined procedure block.
+	 * Statement type for call and return to/from user defined procedure block.
 	 */
 	public static final int CALL = 1000;
+	public static final int RETURN = 1001;
 
 	private int mType;
 
@@ -170,6 +171,17 @@ public class Statement
 		mStatementTypeLookup.put("legend", new Integer(LEGEND));
 		mStatementTypeLookup.put("mimetype", new Integer(MIMETYPE));
 	}
+
+	/**
+	 * Constant for 'return' statement.
+	 */
+	public static final Statement RETURN_STATEMENT;
+
+	static
+	{
+		RETURN_STATEMENT = new Statement("", null);
+		RETURN_STATEMENT.mType = RETURN;
+	};
 
 	/**
 	 * Looks up identifier for a statement name.
