@@ -1,0 +1,33 @@
+begin x
+	# Draw 'x' symbol.
+	#
+	color "#C5C500"
+	linestyle 0.1
+	move -1, -1
+	draw 1, 1
+	move -1, 1
+	draw 1, -1
+	stroke
+end
+
+begin randomx
+	# Set random position, then draw 'x' symbol there.
+	#
+	clearpath
+	move random(3), random(3)
+	x
+end
+
+newpage "png", "tutorialrand3.png", 40, 40, 96
+move 5, 5
+draw 7, 32, 31, 29, 27, 8, 5, 5
+
+# Draw outline polygon, then symbols covering the polygon.
+#
+color "black"
+linestyle 0.1
+stroke
+clip
+stripepath 5, 0
+samplepath 5, 0
+randomx
