@@ -8,11 +8,11 @@
 /*
  * $Id$
  */
-
-import java.io.*;
-import java.util.Vector;
-import java.util.Hashtable;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class Interpreter
 {
@@ -23,19 +23,37 @@ public class Interpreter
 	 */
 	private static final char COMMENT_CHAR = '#';
 	private static final char ARGUMENT_SEPARATOR = ',';
-	private static final String BEGIN_BLOCK = "begin";
-	private static final String END_BLOCK = "end";
-	
+	private static final char PARAM_SEPARATOR = ',';
+	private static final String BEGIN_KEYWORD = "begin";
+	private static final String END_KEYWORD = "end";
+
 	/*
-	 * States during expression parsing.
+	 * Keyword for if ... then ... else ... endif block.
 	 */
-	private static final int AT_START = 1;		/* at start of a statement */
-	private static final int AT_START_ARGS = 2;	/* got statement name, now expecting arguments */
+	private static final String IF_KEYWORD = "if";
+	private static final String THEN_KEYWORD = "then";
+	private static final String ELSE_KEYWORD = "else";
+	private static final String ELSIF_KEYWORD = "elsif";
+	private static final String ENDIF_KEYWORD = "endif";
+
+	/*
+	 * States during parsing statements.
+	 */
+	private static final int AT_STATEMENT = 1;		/* at start of a statement */
 	private static final int AT_ARG = 3;		/* at argument to a statement */
 	private static final int AT_ARG_SEPARATOR = 4;	/* at separator between arguments */
-	private static final int AT_BLOCK_NAME = 6;	/* expecting procedure block name */
-	private static final int AT_BLOCK_PARAM = 7;	/* at parameter to a procedure block */
+
+	private static final int AT_PARAM = 7;	/* at parameter to a procedure block */
 	private static final int AT_PARAM_SEPARATOR = 8;	/* at separator between parameters */
+
+
+	private static final int AT_BLOCK_NAME = 6;	/* expecting procedure block name */
+	private static final int AT_BLOCK_PARAM = 7;
+	
+	private static final int AT_IF_TEST = 9;	/* at expression to test in if ... then block */
+	private static final int AT_THEN_KEYWORD = 10;	/* at "then" keyword in if ... then block */
+	private static final int AT_ELSE_KEYWORD = 11;	/* at "else" keyword in if ... then block */
+	private static final int AT_ENDIF_KEYWORD = 12;	/* at "endif" keyword in if ... then block */
 
 	private ContextStack mContext;
 	
@@ -44,349 +62,9 @@ public class Interpreter
 	 * this interpreter.
 	 */
 	private Hashtable mStatementBlocks;
-
-	/**
-	 * Parse a statement name or variable name.
-	 * @param c is first character of name.
-	 * @param preprocessor is source to continue reading from.
-	 * @return word parsed from preprocessor.
-	 */
-	private String parseWord(int c, Preprocessor preprocessor)
-		throws IOException, MapyrusException
-	{
-		StringBuffer word = new StringBuffer();
-
-		/*
-		 * A statement or procedure name begins with a keyword
-		 * which must begin with a letter.
-		 */
-		if (!Character.isLetter((char)c))
-		{
-			throw new MapyrusException("Invalid keyword at " +
-				preprocessor.getCurrentFilenameAndLineNumber());
-		}
-		
-		/*
-		 * Read in whole word.
-		 */
-		do
-		{
-			word.append((char)c);
-			c = preprocessor.read();
-		}
-		while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_');
-
-		/*
-		 * Put back the character we read that is not part of the word.	
-		 */	
-		preprocessor.unread(c);
-		return(word.toString());
-	}
 	
-	/**
-	 * Reads, parses and returns next statement.
-	 * @return next statement read from file, or null if EOF was reached
-	 * before a statement could be read.
-	 */
-	private Statement parseStatement(Preprocessor preprocessor)
-		throws MapyrusException, IOException
-	{
-		int c;
-		int state;
-		String keyword = null;
-		String blockName = null;
-		Vector expressions = null;
-		Expression expr;
-		Statement retval = null;
-		Vector procedureStatements = null;
-		Vector procedureParameters = null;
-		boolean isAssignmentStatement = false;
-		boolean inProcedureBlock = false;
-		boolean inComment;
-		boolean atEOF = false;
-
-		do
-		{
-			inComment = false;
-			state = AT_START;
-			c = preprocessor.read();
-			while (true)
-			{
-				if (c == -1)
-				{
-					/*
-					 * Reached EOF.
-					 */
-					atEOF = true;
-					break;
-				}
-				else if (c == COMMENT_CHAR)
-				{
-					/*
-					 * Found the start of a comment, ignore everything else on line.
-					 */
-					inComment = true;
-					c = preprocessor.read();
-				}
-				else if (c == '\n')
-				{
-					if (keyword != null && keyword.length() > 0)
-					{
-						/*
-						 * End of line signals
-						 * end of statement.
-						 */
-						break;
-					}
-					else
-					{
-						/*
-						 * We did not even begin reading
-						 * a statement so expect to
-						 * read one on the next line.
-						 */
-						state = AT_START;
-						inComment = false;
-					}
-					c = preprocessor.read();
-				}
-				else if (inComment)
-				{
-					/*
-					 * Do nothing -- we are reading a comment.
-					 */
-					c = preprocessor.read();
-				}
-				else if (Character.isWhitespace((char)c))
-				{
-					/*
-					 * Skip whitespace
-					 */
-					c = preprocessor.read();
-				}
-				else if (state == AT_ARG_SEPARATOR)
-				{
-					/*
-					 * Skip separator between arguments.
-					 */
-					if (c != ARGUMENT_SEPARATOR)
-					{
-						throw new MapyrusException("Expecting '" +
-							ARGUMENT_SEPARATOR + "' at " +
-							preprocessor.getCurrentFilenameAndLineNumber());
-					}
-					state = AT_ARG;
-					c = preprocessor.read();
-				}
-				else if (state == AT_PARAM_SEPARATOR)
-				{
-					/*
-					 * Skip separator between parameters.
-					 */
-					if (c != ARGUMENT_SEPARATOR)
-					{
-						throw new MapyrusException("Expecting '" +
-							ARGUMENT_SEPARATOR + "' at " +
-							preprocessor.getCurrentFilenameAndLineNumber());
-					}
-					state = AT_BLOCK_PARAM;
-					c = preprocessor.read();
-				}
-				else if (state == AT_START || state == AT_BLOCK_NAME)
-				{
-					keyword = parseWord(c, preprocessor);
-					c = preprocessor.read();
-					
-					/*
-					 * Is this a procedure block definition?
-					 */
-					if (state == AT_START && keyword.equalsIgnoreCase(BEGIN_BLOCK))
-					{
-						state = AT_BLOCK_NAME;
-						procedureParameters = new Vector();
-					}
-					else if (state == AT_BLOCK_NAME)
-					{
-						/*
-						 * After parsing procedure block name we parse parameters for
-						 * this procedure block definition.
-						 */
-						state = AT_BLOCK_PARAM;
-					}
-					else
-					{
-						/*
-						 * After parsing statement we parse arguments to statement.
-						 */
-						state = AT_START_ARGS;
-						expressions = new Vector();
-					}
-				}
-				else if (state == AT_START_ARGS)
-				{
-					/*
-					 * Is this an assignment statement or
-					 * some other kind of statement?
-					 */
-					isAssignmentStatement = (c == '=');
-					if (isAssignmentStatement)
-					{
-						c = preprocessor.read();
-					}
-					state = AT_ARG;
-				}
-				else if (state == AT_ARG)
-				{
-					/*
-					 * Parse an expression.
-					 */
-					preprocessor.unread(c);
-					expr = new Expression(preprocessor);
-					expressions.add(expr);
-					state = AT_ARG_SEPARATOR;
-					c = preprocessor.read();
-				}
-				else if (state == AT_BLOCK_PARAM)
-				{
-					/*
-					 * Parse a parameter name for procedure block.
-					 */
-					procedureParameters.add(parseWord(c, preprocessor));
-					state = AT_PARAM_SEPARATOR;
-					c = preprocessor.read();
-				}
-				else
-				{
-					/*
-					 * Parsing is lost.  Don't know what is wrong.
-					 */
-					throw new MapyrusException("Error at " +
-						preprocessor.getCurrentFilenameAndLineNumber());
-				}
-			}
-	
-			/*
-			 * Build a statement structure for what we just parsed.
-			 */
-			if (atEOF && state == AT_START)
-			{
-				if (inProcedureBlock)
-				{
-					throw new MapyrusException("Unfinished procedure " +
-						blockName + " at " +
-						preprocessor.getCurrentFilenameAndLineNumber());
-				}
-
-				/*
-				 * Could not parse anything before we got EOF.
-				 */
-				return(null);
-			}
-			else if (state == AT_BLOCK_NAME)
-			{
-				/*
-				 * Began a procedure block but didn't find its name.
-				 */
-				throw new MapyrusException("No procedure name given at " +
-					preprocessor.getCurrentFilenameAndLineNumber());
-			}
-			else if (keyword.equalsIgnoreCase(END_BLOCK))
-			{
-				/*
-				 * Finish procedure currently being defined.
-				 */
-				if (!inProcedureBlock)
-				{
-					throw new MapyrusException("Unexpected end of procedure at " +
-						preprocessor.getCurrentFilenameAndLineNumber());
-				}
-				inProcedureBlock = false;
-				
-				/*
-				 * Create single statement for all statements making
-				 * up the procedure.
-				 */
-				retval = new Statement(blockName,
-					procedureParameters,
-					procedureStatements);
-					
-				retval.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
-					preprocessor.getCurrentLineNumber());
-			}
-			else if (state == AT_PARAM_SEPARATOR || state == AT_BLOCK_PARAM)
-			{
-				/*
-				 * Nested procedures are not allowed.
-				 */
-				if (inProcedureBlock)
-				{
-					throw new MapyrusException("Procedure definition within " +
-						"existing procedure definition of " + blockName + " at " +
-						preprocessor.getCurrentFilenameAndLineNumber());
-				}
-				inProcedureBlock = true;
-				procedureStatements = new Vector();
-				blockName = keyword;
-
-			}
-			else
-			{
-				Statement statement;
-
-				if (isAssignmentStatement)
-				{
-					/*
-					 * Exactly one expression is assigned in a statement.
-					 */
-					if (expressions.size() > 1)
-					{
-						throw new MapyrusException("Too many expressions in assignment at " +
-							preprocessor.getCurrentFilenameAndLineNumber());
-					}
-					else if (expressions.size() == 0)
-					{
-						throw new MapyrusException("No expression in assignment at " +
-							preprocessor.getCurrentFilenameAndLineNumber());
-					}
-
-					statement = new Statement(keyword, (Expression)expressions.elementAt(0));
-				}
-				else
-				{	
-					Expression []a = new Expression[expressions.size()];
-					
-					for (int i = 0; i < a.length; i++)
-					{
-						a[i] = (Expression)expressions.elementAt(i);
-					}
-					statement = new Statement(keyword, a);
-				}
-				
-				statement.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
-					preprocessor.getCurrentLineNumber());
-				
-				/*
-				 * Add statement to the procedure we are defining, or
-				 * return it for immediate execution if we are not defining
-				 * a procedure.
-				 */			
-				if (inProcedureBlock)
-				{
-					procedureStatements.add(statement);
-				}
-				else
-				{
-					retval = statement;
-				}
-			}
-		}
-		while (inProcedureBlock);
-		
-		return(retval);
-	}
-
 	/*
-	 * Exceute a single statement, changing the path, context or generating
+	 * Execute a single statement, changing the path, context or generating
 	 * some output.
 	 */
 	private void execute(Statement st, ContextStack context)
@@ -609,10 +287,586 @@ public class Interpreter
 				break;
 		}		
 	}
-		
-		
+
 	/**
-	 * Reads commands from file and interprets them.
+	 * Parse a statement name or variable name.
+	 * @param c is first character of name.
+	 * @param preprocessor is source to continue reading from.
+	 * @return word parsed from preprocessor.
+	 */
+	private String parseWord(int c, Preprocessor preprocessor)
+		throws IOException, MapyrusException
+	{
+		StringBuffer word = new StringBuffer();
+
+		/*
+		 * A statement or procedure name begins with a keyword
+		 * which must begin with a letter.
+		 */
+		if (!Character.isLetter((char)c))
+		{
+			throw new MapyrusException("Invalid keyword at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		
+		/*
+		 * Read in whole word.
+		 */
+		do
+		{
+			word.append((char)c);
+			c = preprocessor.read();
+		}
+		while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_');
+
+		/*
+		 * Put back the character we read that is not part of the word.	
+		 */	
+		preprocessor.unread(c);
+		return(word.toString());
+	}
+
+	/*
+	 * Are we currently reading a comment?
+	 */
+	private boolean mInComment = false;
+
+	/*
+	 * Read next character, ignoring comments.
+	 */
+	private int readSkipComments(Preprocessor preprocessor)
+		throws IOException, MapyrusException
+	{
+		int c;
+
+		c = preprocessor.read();
+		while (mInComment == true || c == COMMENT_CHAR)
+		{
+			if (c == COMMENT_CHAR)
+			{
+				mInComment = true;
+				c = preprocessor.read();
+			}
+			else if (c == '\n')
+			{
+				mInComment = false;
+				c = preprocessor.read();
+			}
+			else if (c == -1)
+			{
+				mInComment = false;
+			}
+		}
+		return(c);
+	}
+
+	/**
+	 * Reads, parses and returns next statement.
+	 * @param preprocessor is source to read statement from.
+	 * @param keyword is first token that has already been read.
+	 * @return next statement read from file, or null if EOF was reached
+	 * before a statement could be read.
+	 */
+	private Statement parseSimpleStatement(String keyword, Preprocessor preprocessor)
+		throws MapyrusException, IOException
+	{
+		int state;
+		Vector expressions = new Vector();
+		Expression expr;
+		Statement retval = null;
+		boolean isAssignmentStatement = false;
+		boolean finishedStatement = false;
+		int c;
+
+		state = AT_STATEMENT;
+		c = readSkipComments(preprocessor);
+		finishedStatement = false;
+		while (!finishedStatement)
+		{
+			if (c == -1 || c == '\n')
+			{
+				/*
+				 * End of line or end of file signifies end of statement.
+				 */
+				finishedStatement = true;
+			}
+			else if (Character.isWhitespace((char)c))
+			{
+				/*
+				 * Ignore any whitespace.
+				 */
+				c = readSkipComments(preprocessor);
+			}
+			else if (state == AT_STATEMENT)
+			{
+				/*
+				 * Is this an assignment statement of the form: var = value
+				 */
+				isAssignmentStatement = (c == '=');
+				if (isAssignmentStatement)
+					c = readSkipComments(preprocessor);
+				state = AT_ARG;
+			}
+			else if (state == AT_ARG_SEPARATOR)
+			{
+				/*
+				 * Expect a ',' between arguments and parameters to
+				 * procedure block.
+				 */ 
+				if (c != ARGUMENT_SEPARATOR)
+				{
+					throw new MapyrusException("Expecting '" +
+						ARGUMENT_SEPARATOR + "' at " +
+						preprocessor.getCurrentFilenameAndLineNumber());
+				}
+				c = readSkipComments(preprocessor);
+				state = AT_ARG;
+			}
+			else if (state == AT_ARG)
+			{
+					/*
+					 * Parse an expression.
+					 */
+					preprocessor.unread(c);
+					expr = new Expression(preprocessor);
+					expressions.add(expr);
+
+					state = AT_ARG_SEPARATOR;
+					c = preprocessor.read();
+			}
+			else
+			{
+				/*
+				 * Parsing is lost.  Don't know what is wrong.
+				 */
+				throw new MapyrusException("Error at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+		}
+
+		/*
+		 * Build a statement structure for what we just parsed.
+		 */
+		if (c == -1 && state == AT_STATEMENT)
+		{
+			/*
+			 * Could not parse anything before we got EOF.
+			 */
+			retval = null;
+		}
+		else if (isAssignmentStatement)
+		{
+			/*
+			 * Exactly one expression is assigned in a statement.
+			 */
+			if (expressions.size() > 1)
+			{
+				throw new MapyrusException("Too many expressions in assignment at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+			else if (expressions.size() == 0)
+			{
+				throw new MapyrusException("No expression in assignment at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+
+			retval = new Statement(keyword, (Expression)expressions.elementAt(0));
+
+			retval.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
+					preprocessor.getCurrentLineNumber());
+		}
+		else
+		{
+			Expression []a = new Expression[expressions.size()];
+
+			for (int i = 0; i < a.length; i++)
+			{
+				a[i] = (Expression)expressions.elementAt(i);
+			}
+			retval = new Statement(keyword, a);
+
+			retval.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
+					preprocessor.getCurrentLineNumber());
+		}
+
+		return(retval);
+	}
+
+	/**
+	 * Parse paramters in a procedure block definition.
+	 * Reads comma separated list of parameters
+	 * @param preprocessor is source to read from.
+	 * @return list of parameter names.
+	 */
+	private Vector parseParameters(Preprocessor preprocessor)
+		throws IOException, MapyrusException
+	{
+		int c;
+		Vector parameters = new Vector();
+		int state;
+
+		/*
+		 * Read parameter names separated by ',' characters.
+		 */
+		state = AT_PARAM;
+		c = readSkipComments(preprocessor);
+		while (c != -1 && c != '\n')
+		{
+			if (Character.isWhitespace((char)c))
+			{
+				/*
+				 * Ignore whitespace.
+				 */
+				c = readSkipComments(preprocessor);
+			}
+			else if (state == AT_PARAM)
+			{
+				/*
+				 * Expect a parameter name.
+				 */
+				parameters.add(parseWord(c, preprocessor));
+				state = AT_PARAM_SEPARATOR;
+				c = readSkipComments(preprocessor);
+			}
+			else
+			{
+				/*
+				 * Expect a ',' between parameter names.
+				 */
+				if (c != PARAM_SEPARATOR)
+				{
+					throw new MapyrusException("Expected '" + PARAM_SEPARATOR +
+						"' at " + preprocessor.getCurrentFilenameAndLineNumber());
+				}
+				state = AT_PARAM;
+				c = readSkipComments(preprocessor);
+			}
+		}
+		return(parameters);
+	}
+
+	/**
+	 * Reads and parses a procedure block, several statements
+	 * grouped together between "begin" and "end" keywords.
+	 * @param preprocessor is source to read from.
+	 * @retval parsed procedure block as single statement.
+	 */
+	private ParsedStatement parseProcedureBlock(Preprocessor preprocessor)
+		throws IOException, MapyrusException
+	{
+		String blockName;
+		Vector parameters;
+		Vector procedureStatements = new Vector();
+		ParsedStatement st;
+		Statement retval;
+		boolean parsedEndKeyword = false;
+		int c;
+
+		/*
+		 * Skip whitespace between "begin" and block name.
+		 */		
+		c = readSkipComments(preprocessor);
+		while (Character.isWhitespace((char)c))
+			c = readSkipComments(preprocessor);
+		
+		blockName = parseWord(c, preprocessor);
+		parameters = parseParameters(preprocessor);
+
+		/*
+		 * Keep reading statements until we get matching "end"
+		 * keyword.
+		 */
+		do
+		{
+			st = parseStatementOrKeyword(preprocessor, true);
+			if (st == null)
+			{
+				/*
+				 * Should not reach end of file inside a procedure block.
+				 */
+				throw new MapyrusException("Unexpected end of file at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+
+			if (st.isStatement())
+			{
+				/*
+				 * Accumulate statements for this procedure block.
+				 */
+				procedureStatements.add(st.getStatement());
+			}
+			else if (st.getKeywordType() == ParsedStatement.PARSED_END)
+			{
+				/*
+				 * Found matching "end" keyword for this procedure block.
+				 */
+				parsedEndKeyword = true;
+			}
+			else
+			{
+				/*
+				 * Found some other sort of control-flow keyword
+				 * that we did not expect.
+				 */
+				throw new MapyrusException("Expected '" +
+					END_KEYWORD + "' at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+		}
+		while(!parsedEndKeyword);
+
+		/*
+		 * Return procedure block as a single statement.
+		 */
+		retval = new Statement(blockName, parameters, procedureStatements);
+		return(new ParsedStatement(retval));
+	}
+
+	/**
+	 * Reads and parses conditional statement.
+	 * Parses test expression, "then" keyword, some
+	 * statements, an "else" keyword, some statements and
+	 * "endif" keyword.
+	 * @param preprocessor is source to read from.
+	 * @return parsed if block as single statement.
+	 */
+	private ParsedStatement parseIfStatement(Preprocessor preprocessor,
+		boolean inProcedureDefn)
+		throws IOException, MapyrusException
+	{
+		ParsedStatement st;
+		Expression test;
+		Vector thenStatements = new Vector();
+		Vector elseStatements = new Vector();
+		Statement statement;
+		boolean checkForEndif = true;	/* do we need to check for "endif" keyword at end of statement? */
+
+		test = new Expression(preprocessor);
+
+		/*
+		 * Expect to parse "then" keyword.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside if statement.
+			 */
+			throw new MapyrusException("Unexpected end of file at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		else if (st.isStatement() ||
+			st.getKeywordType() != ParsedStatement.PARSED_THEN)
+		{
+			throw new MapyrusException("Expected '" + THEN_KEYWORD +
+				"' at " + preprocessor.getCurrentFilenameAndLineNumber());
+		}
+
+		/*
+		 * Now we want some statements for when the expression is true.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside if statement.
+			 */
+			throw new MapyrusException("Unexpected end of file at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		while (st.isStatement())
+		{
+			thenStatements.add(st.getStatement());
+			st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+			if (st == null)
+			{
+				/*
+			 	* Should not reach end of file inside if statement.
+			 	*/
+				throw new MapyrusException("Unexpected end of file at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+		}
+
+		/*
+		 * There may be an "else" part to the statement too.
+		 */
+		if (st.getKeywordType() == ParsedStatement.PARSED_ELSE)
+		{
+			/*
+			 * Now get the statements for when the expression is false.
+			 */
+			st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+			if (st == null)
+			{
+				/*
+			 	* Should not reach end of file inside if statement.
+			 	*/
+				throw new MapyrusException("Unexpected end of file at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+			while (st.isStatement())
+			{
+				elseStatements.add(st.getStatement());
+				st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+				if (st == null)
+				{
+					/*
+			 		 * Should not reach end of file inside if statement.
+			 		 */
+					throw new MapyrusException("Unexpected end of file at " +
+						preprocessor.getCurrentFilenameAndLineNumber());
+				}
+			}
+		}
+		else if (st.getKeywordType() == ParsedStatement.PARSED_ELSIF)
+		{
+			/*
+			 * Parse "elsif" block as a single, separate "if" statement
+			 * that is part of the "else" case.
+			 */
+			st = parseIfStatement(preprocessor, inProcedureDefn);
+			if (!st.isStatement())
+			{
+				throw new MapyrusException("Expecting '" + ENDIF_KEYWORD + "' at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+			elseStatements.add(st.getStatement());
+			checkForEndif = false;
+		}
+
+		/*
+		 * Expect "endif" after statements.
+		 */
+		if (checkForEndif && st.getKeywordType() != ParsedStatement.PARSED_ENDIF)
+		{
+			throw new MapyrusException("Expected '" + ENDIF_KEYWORD + "' at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+
+		statement = new Statement(test, thenStatements, elseStatements);
+		return(new ParsedStatement(statement));
+	}
+
+	/**
+	 * Reads, parses and returns next statement, or block of statements.
+	 * @param preprocessor source to read from.
+	 * @param inProcedureDefn true if currently parsing inside an
+	 * procedure block.
+	 * @return next statement read from file, or null if EOF was reached
+	 * before a statement could be read.
+	 */
+	private ParsedStatement parseStatementOrKeyword(Preprocessor preprocessor,
+		boolean inProcedureDefn)
+		throws MapyrusException, IOException
+	{
+		int c;
+		ParsedStatement retval = null;
+		Statement statement;
+		Vector procedureStatements = null;
+		int state;
+		boolean finishedStatement = false;
+
+		state = AT_STATEMENT;
+		c = readSkipComments(preprocessor);
+		finishedStatement = false;
+		while (!finishedStatement)
+		{
+			if (c == -1)
+			{
+				/*
+				 * Reached EOF.
+				 */
+				finishedStatement = true;
+				break;
+			}
+			else if (Character.isWhitespace((char)c))
+			{
+				/*
+				 * Skip whitespace
+				 */
+				c = readSkipComments(preprocessor);
+			}
+			else
+			{
+				String keyword = parseWord(c, preprocessor);
+
+				/*
+				 * Is this the start or end of a procedure block definition?
+				 * Or, is it an if ... then ... else ... endif statement?
+				 */
+				if (keyword.equalsIgnoreCase(BEGIN_KEYWORD))
+				{
+					/*
+					 * Nested procedure blocks not allowed.
+					 */
+					if (inProcedureDefn)
+					{
+						throw new MapyrusException("Procedure block " +
+							"definition inside procedure block at " +
+							preprocessor.getCurrentFilenameAndLineNumber());
+					}
+					retval = parseProcedureBlock(preprocessor);
+				}
+				else if (keyword.equalsIgnoreCase(END_KEYWORD))
+				{
+					retval = new ParsedStatement(ParsedStatement.PARSED_END);
+				}
+				else if (keyword.equalsIgnoreCase(IF_KEYWORD))
+				{
+					retval = parseIfStatement(preprocessor, inProcedureDefn);
+				}
+				else if (keyword.equalsIgnoreCase(THEN_KEYWORD))
+				{
+					retval = new ParsedStatement(ParsedStatement.PARSED_THEN);
+				}
+				else if (keyword.equalsIgnoreCase(ELSE_KEYWORD))
+				{
+					retval = new ParsedStatement(ParsedStatement.PARSED_ELSE);
+				}
+				else if (keyword.equalsIgnoreCase(ELSIF_KEYWORD))
+				{
+					retval = new ParsedStatement(ParsedStatement.PARSED_ELSIF);
+				}
+				else if (keyword.equalsIgnoreCase(ENDIF_KEYWORD))
+				{
+					retval = new ParsedStatement(ParsedStatement.PARSED_ENDIF);
+				}
+				else
+				{
+					Statement st = parseSimpleStatement(keyword, preprocessor);
+					retval = new ParsedStatement(st);
+				}
+				finishedStatement = true;
+			}
+		}
+
+		return(retval);
+	}
+
+	/*
+	 * Reads and parses a single statement.
+	 * @param preprocessor is source to read statement from.
+	 * @return next statement read and parsed.
+	 */
+	private Statement parseStatement(Preprocessor preprocessor)
+		throws IOException, MapyrusException
+	{
+		ParsedStatement st = parseStatementOrKeyword(preprocessor, false);
+		if (st == null)
+		{
+			return(null);
+		}
+		else if (!st.isStatement())
+		{
+			throw new MapyrusException("Invalid keyword at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		return(st.getStatement());
+	}
+
+	/**
+	 * Reads and parses commands from file and executes them.
 	 * @param f is open file or URL to read from.
 	 * @param filename is name of file or URL (for use in error messages).
 	 */
@@ -621,83 +875,135 @@ public class Interpreter
 	{
 		Statement st;
 		Preprocessor preprocessor = new Preprocessor(f, filename);
-				
+		mInComment = false;
+		
 		/*
 		 * Keep parsing until we get EOF.
 		 */
 		while ((st = parseStatement(preprocessor)) != null)
 		{
-			/*
-			 * Store procedure blocks away for later execution,
-			 * execute any other statements immediately.
-			 */
-			if (st.getType() == Statement.BLOCK)
-			{
-				mStatementBlocks.put(st.getBlockName(), st);
-			}
-			else if (st.getType() == Statement.CALL)
-			{
-				/*
-				 * Find the statements for the procedure block we are calling.
-				 */
-				Statement block = (Statement)mStatementBlocks.get(st.getBlockName());
-				if (block == null)
-				{
-					throw new MapyrusException("Procedure not defined: " +
-						st.getBlockName());
-				}
-				
-				/*
-				 * Check that correct number of parameters are being passed.
-				 */
-				Vector formalParameters = block.getBlockParameters();
-				Expression []actualParameters = st.getExpressions();
-				if (actualParameters.length != formalParameters.size())
-				{
-					throw new MapyrusException("Wrong number of parameters " +
-						"in call to " + st.getBlockName());
-				}
+			executeStatement(st);
+		}
+	}
 
+	/**
+	 * Recursive function for executing statements.
+	 * @param preprocessor is source to read statements from.
+	 */
+	private void executeStatement(Statement statement)
+		throws IOException, MapyrusException
+	{
+		Argument []args;
+
+		/*
+		 * Store procedure blocks away for later execution,
+		 * execute any other statements immediately.
+		 */
+		if (statement.getType() == Statement.BLOCK)
+		{
+			mStatementBlocks.put(statement.getBlockName(), statement);
+		}
+		else if (statement.getType() == Statement.CONDITIONAL)
+		{
+			/*
+			 * Execute correct part of if statement depending on value of expression.
+			 */
+			Expression []expr = statement.getExpressions();
+			Argument test = expr[0].evaluate(mContext);
+			Vector v;
+			
+			if (test.getType() != Argument.NUMERIC)
+			{
+				throw new MapyrusException("Invalid expression at " + statement.getFilenameAndLineNumber());
+			}
+			
+			if (test.getNumericValue() != 0.0)
+				v = statement.getThenStatements();
+			else
+				v = statement.getElseStatements();
+			
+			/*
+			 * Execute each of the statements.
+			 */	
+			for (int i = 0; i < v.size(); i++)
+			{
+				statement = (Statement)v.elementAt(i);
+				executeStatement(statement);
+			}
+		}
+		else if (statement.getType() == Statement.CALL)
+		{
+			/*
+			 * Find the statements for the procedure block we are calling.
+			 */
+			Statement block = (Statement)mStatementBlocks.get(statement.getBlockName());
+			if (block == null)
+			{
+				throw new MapyrusException("Procedure not defined: " +
+					statement.getBlockName() + " at " + statement.getFilenameAndLineNumber());
+			}
+			
+			/*
+			 * Check that correct number of parameters are being passed.
+			 */
+			Vector formalParameters = block.getBlockParameters();
+			Expression []actualParameters = statement.getExpressions();
+			if (actualParameters.length != formalParameters.size())
+			{
+				throw new MapyrusException("Wrong number of parameters " +
+					"in call to " + statement.getBlockName() +
+					" at " + statement.getFilenameAndLineNumber());
+			}
+			
+			try
+			{
 				/*
 				 * Save state and set parameters passed to the procedure.
 				 */
-				Argument []args = new Argument[actualParameters.length];
+				args = new Argument[actualParameters.length];
 				for (int i = 0; i < args.length; i++)
+				{
 					args[i] = actualParameters[i].evaluate(mContext);
-				
-				mContext.saveState();
-				for (int i = 0; i < args.length; i++)
-				{
-					mContext.defineVariable((String)formalParameters.elementAt(i), args[i]);
 				}
-				 				
-				/*
-				 * Execute each of the statements in the procedure block.
-				 */
-				Vector v = block.getStatementBlock();
-				for (int i = 0; i < v.size(); i++)
-				{
-					st = (Statement)v.elementAt(i);
-					execute(st, mContext);
-				}
-				
-				mContext.restoreState();
 			}
-			else
+			catch (MapyrusException e)
 			{
-				execute(st, mContext);
+				throw new MapyrusException(e.getMessage() + " at " +
+					statement.getFilenameAndLineNumber());
 			}
+			
+			mContext.saveState();
+			for (int i = 0; i < args.length; i++)
+			{
+				mContext.defineVariable((String)formalParameters.elementAt(i), args[i]);
+			}
+			 				
+			/*
+			 * Execute each of the statements in the procedure block.
+			 */
+			Vector v = block.getStatementBlock();
+			for (int i = 0; i < v.size(); i++)
+			{
+				statement = (Statement)v.elementAt(i);
+				executeStatement(statement);
+			}
+			
+			mContext.restoreState();
+		}			
+		else
+		{
+			execute(statement, mContext);
 		}
 	}
 
 	/**
 	 * Create new language interpreter.
-	 * @param context is the context to use during interpretation.  This may be in
-	 * a changed state by the time interpretation is finished.
+	 * @param context is the context to use during interpretation.
+	 * This may be in a changed state by the time interpretation
+	 * is finished.
 	 */
 	public Interpreter(ContextStack context)
 	{
-		super();
 		mContext = context;
 		mStatementBlocks = new Hashtable();
 	}
