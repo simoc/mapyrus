@@ -340,16 +340,16 @@ public class OutputFormat
 	 * @param format is the graphics format to use.
 	 * @param width is the page width (in mm).
 	 * @param height is the page height (in mm).
-	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
 	 */
 	public OutputFormat(String filename, String format,
-		double width, double height, double resolution, String extras,
+		double width, double height, String extras,
 		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
 		mFormatName = format.toLowerCase();
+		int resolution;
 
 		/*
 		 * Check that Java can write this image format to a file.
@@ -357,6 +357,7 @@ public class OutputFormat
 		if (mFormatName.equals("ps") || mFormatName.equals("eps"))
 		{
 			mOutputType = POSTSCRIPT;
+			resolution = 300;
 		}	
 		else
 		{
@@ -367,6 +368,7 @@ public class OutputFormat
 			}
 		
 			mOutputType = IMAGE_FILE;
+			resolution = 96;
 		}
 
 		/*
@@ -395,6 +397,82 @@ public class OutputFormat
 		}
 
 		/*
+		 * Parse list of additional options given by caller.
+		 */
+
+		ArrayList fontList = new ArrayList();
+		mEncodeAsISOLatin1 = new HashSet();
+		mTTFFonts = new HashMap();
+
+		StringTokenizer st = new StringTokenizer(extras);
+		while (st.hasMoreTokens())
+		{
+			String token = st.nextToken();
+			if (token.startsWith("pfafiles="))
+			{
+				/*
+				 * Build list of font filenames user wants
+				 * to include in this PostScript file.
+				 */
+				StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
+				while (st2.hasMoreTokens())
+				{
+					String pfaFilename = st2.nextToken();
+					if (pfaFilename.length() > 0)
+						fontList.add(new PostScriptFont(pfaFilename));
+				}
+			}
+			else if (token.startsWith("isolatinfonts="))
+			{
+				/*
+				 * Build list of fonts to encode in ISOLatin1.
+				 */
+				StringTokenizer st2 = new StringTokenizer(token.substring(14), ",");
+				while (st2.hasMoreTokens())
+				{
+					String fontName = st2.nextToken();
+					if (fontName.length() > 0)
+						mEncodeAsISOLatin1.add(fontName);
+				}
+			}
+			else if (token.startsWith("resolution="))
+			{
+				String r = token.substring(11);
+				try
+				{
+					resolution = Integer.parseInt(r);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_RESOLUTION) +
+						": " + r);
+				}
+				if (resolution < 1)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_RESOLUTION) +
+						": " + r);
+				}	
+			}
+			else if (token.startsWith("ttffiles="))
+			{
+				/*
+				 * Build list of TrueType font filenames user wants
+				 * to open with Java methods.
+				 */
+				StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
+				while (st2.hasMoreTokens())
+				{
+					String ttfFilename = st2.nextToken();
+					if (ttfFilename.length() > 0)
+					{
+						TrueTypeFont ttf = new TrueTypeFont(ttfFilename);
+						mTTFFonts.put(ttf.getName(), ttf);
+					}
+				}
+			}
+		}
+
+		/*
 		 * Setup file we are writing to.
 		 */
 		if (mOutputType == POSTSCRIPT)
@@ -405,40 +483,7 @@ public class OutputFormat
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 			
 			mSuppliedFontResources = new HashSet();
-			ArrayList fontList = new ArrayList();
-			StringTokenizer st = new StringTokenizer(extras);
-			mEncodeAsISOLatin1 = new HashSet();
-			while (st.hasMoreTokens())
-			{
-				String token = st.nextToken();
-				if (token.startsWith("pfafiles="))
-				{
-					/*
-					 * Build list of font filenames user wants
-					 * to include in this PostScript file.
-					 */
-					StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
-					while (st2.hasMoreTokens())
-					{
-						String pfaFilename = st2.nextToken();
-						if (pfaFilename.length() > 0)
-							fontList.add(new PostScriptFont(pfaFilename));
-					}
-				}
-				else if (token.startsWith("isolatinfonts="))
-				{
-					/*
-					 * Build list of fonts to encode in ISOLatin1.
-					 */
-					StringTokenizer st2 = new StringTokenizer(token.substring(14), ",");
-					while (st2.hasMoreTokens())
-					{
-						String fontName = st2.nextToken();
-						if (fontName.length() > 0)
-							mEncodeAsISOLatin1.add(fontName);
-					}
-				}
-			}
+
 			writePostScriptHeader(width, height, fontList);
 
 			mPostScriptIndent = 0;
@@ -456,30 +501,6 @@ public class OutputFormat
 				BufferedImage.TYPE_3BYTE_BGR);
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution);
-			
-			mTTFFonts = new HashMap();
-			StringTokenizer st = new StringTokenizer(extras);
-			while (st.hasMoreTokens())
-			{
-				String token = st.nextToken();
-				if (token.startsWith("ttffiles="))
-				{
-					/*
-					 * Build list of TrueType font filenames user wants
-					 * to open with Java methods.
-					 */
-					StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
-					while (st2.hasMoreTokens())
-					{
-						String ttfFilename = st2.nextToken();
-						if (ttfFilename.length() > 0)
-						{
-							TrueTypeFont ttf = new TrueTypeFont(ttfFilename);
-							mTTFFonts.put(ttf.getName(), ttf);
-						}
-					}
-				}
-			}
 		}
 		mFilename = filename;
 		mPageWidth = width;
