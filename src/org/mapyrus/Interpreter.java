@@ -33,7 +33,6 @@ public class Interpreter
 	private static final int AT_START_ARGS = 2;	/* got statement name, now expecting arguments */
 	private static final int AT_ARG = 3;		/* at argument to a statement */
 	private static final int AT_ARG_SEPARATOR = 4;	/* at separator between arguments */
-	private static final int IN_COMMENT = 5;	/* in comment, ignoring rest of line */
 	private static final int AT_BLOCK_NAME = 6;	/* expecting procedure block name */
 	private static final int AT_BLOCK_PARAM = 7;	/* at parameter to a procedure block */
 	private static final int AT_PARAM_SEPARATOR = 8;	/* at separator between parameters */
@@ -103,10 +102,12 @@ public class Interpreter
 		Vector procedureParameters = null;
 		boolean isAssignmentStatement = false;
 		boolean inProcedureBlock = false;
+		boolean inComment;
 		boolean atEOF = false;
 
 		do
 		{
+			inComment = false;
 			state = AT_START;
 			c = preprocessor.read();
 			while (true)
@@ -124,7 +125,7 @@ public class Interpreter
 					/*
 					 * Found the start of a comment, ignore everything else on line.
 					 */
-					state = IN_COMMENT;
+					inComment = true;
 					c = preprocessor.read();
 				}
 				else if (c == '\n')
@@ -145,10 +146,11 @@ public class Interpreter
 						 * read one on the next line.
 						 */
 						state = AT_START;
+						inComment = false;
 					}
 					c = preprocessor.read();
 				}
-				else if (state == IN_COMMENT)
+				else if (inComment)
 				{
 					/*
 					 * Do nothing -- we are reading a comment.
@@ -266,12 +268,12 @@ public class Interpreter
 			/*
 			 * Build a statement structure for what we just parsed.
 			 */
-			if (atEOF && (state == AT_START || state == IN_COMMENT))
+			if (atEOF && state == AT_START)
 			{
 				if (inProcedureBlock)
 				{
 					throw new MapyrusException("Unfinished procedure " +
-						keyword + " at " +
+						blockName + " at " +
 						preprocessor.getCurrentFilenameAndLine());
 				}
 
@@ -316,7 +318,7 @@ public class Interpreter
 				if (inProcedureBlock)
 				{
 					throw new MapyrusException("Procedure definition within " +
-						"existing procedure at " +
+						"existing procedure definition of " + blockName + " at " +
 						preprocessor.getCurrentFilenameAndLine());
 				}
 				inProcedureBlock = true;
@@ -554,12 +556,13 @@ public class Interpreter
 	/**
 	 * Reads commands from file and interprets them.
 	 * @param f is open file or URL to read from.
+	 * @param filename is name of file or URL (for use in error messages).
 	 */
-	public void interpret(Reader f)
+	public void interpret(Reader f, String filename)
 		throws IOException, MapyrusException
 	{
 		Statement st;
-		Preprocessor preprocessor = new Preprocessor(f);
+		Preprocessor preprocessor = new Preprocessor(f, filename);
 				
 		/*
 		 * Keep parsing until we get EOF.
