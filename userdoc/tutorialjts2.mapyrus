@@ -1,13 +1,16 @@
-begin locpt
+begin locpt name
   box -1, -1, 1, 1
   fill
+  clearpath
+  move 2, 0
+  label name
 end
 
 let polygonColorList = split("red:blue:green:orange", ":")
 
 # Draw all polygons in different colors and also save them into a list.
 #
-newpage "eps", "tutorialjts2.eps", 75, 50
+newpage "eps", "tutorialjts2.eps", 85, 50
 dataset "shapefile", "coastline.shp", ""
 worlds 600000, 5100000, 1500000, 6100000
 while Mapyrus.fetch.more
@@ -27,7 +30,7 @@ let nPolygons = length(polygonList)
 # and then drawing the point in a different colour depending on
 # which polygon contains the point.
 #
-dataset "textfile", "locations.txt", ""
+dataset "textfile", "locations.txt", "delimiters=,"
 while Mapyrus.fetch.more
 do
   fetch
@@ -41,7 +44,7 @@ do
       color polygonColorList[i]
       clearpath
       move $1, $2
-      locpt
+      locpt $3
       let found = 1
     endif
     let i = i + 1
