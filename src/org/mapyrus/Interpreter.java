@@ -24,6 +24,8 @@ package org.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -100,6 +102,7 @@ public class Interpreter
 
 	private ContextStack mContext;
 	private PrintStream mStdoutStream;
+	private InputStream mStdinStream;
 
 	/*
 	 * Evaluted arguments for statement currently being executed.
@@ -1248,7 +1251,9 @@ public class Interpreter
 				if (nExpressions == 3)
 				{
 					context.setDataset(mExecuteArgs[0].getStringValue(),
-						mExecuteArgs[1].getStringValue(), mExecuteArgs[2].getStringValue());
+						mExecuteArgs[1].getStringValue(),
+						mExecuteArgs[2].getStringValue(),
+						mStdinStream);
 				}
 				else
 				{
@@ -1326,7 +1331,9 @@ public class Interpreter
 					StringReader stringReader = new StringReader(command);
 					String filename = "(in eval)";
 					FileOrURL f = new FileOrURL(stringReader, filename);
-					interpret(context, f, mStdoutStream);
+					byte []emptyBuffer = new byte[0];
+					interpret(context, f, new ByteArrayInputStream(emptyBuffer),
+						mStdoutStream);
 				}
 				else
 				{
@@ -2150,15 +2157,18 @@ public class Interpreter
 	 * Reads and parses commands from file and executes them.
 	 * @param context is the context to use during interpretation.
 	 * @param f is open file or URL to read from.
+	 * @param stdin is stream to use for standard input by this intepreter.
 	 * @param stdout is stream to use for standard output by this intepreter.
 	 * File f is closed by this method when reading is completed.
 	 */
-	public void interpret(ContextStack context, FileOrURL f, PrintStream stdout)
+	public void interpret(ContextStack context, FileOrURL f,
+		InputStream stdin, PrintStream stdout)
 		throws IOException, MapyrusException
 	{
 		Statement st;
 		Preprocessor preprocessor = new Preprocessor(f);
 		mInComment = false;
+		mStdinStream = stdin;
 		mStdoutStream = stdout;
 		mContext = context;
 
@@ -2522,6 +2532,7 @@ public class Interpreter
 		retval.mInComment = false;
 		retval.mStatementBlocks = (HashMap)(this.mStatementBlocks.clone());
 		retval.mStdoutStream = null;
+		retval.mStdinStream = null;
 		return((Object)retval);
 	}
 }
