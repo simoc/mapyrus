@@ -17,11 +17,6 @@ import java.util.Vector;
 public class GeometricPath
 {
 	/*
-	 * Flags that we want full length of path, not just part of it.
-	 */
-	private static final int FULL_PATH_LENGTH = -1;
-	
-	/*
 	 * An identity matrix results in no transformation.
 	 */
 	static AffineTransform identityMatrix = new AffineTransform();
@@ -379,6 +374,91 @@ public class GeometricPath
 
 		/*
 		 * Replace path with the new path containing points that we have just calculated.
+		 */		
+		mPath = (GeneralPath)newPath.getShape();	
+		mNLineTos = newPath.getLineToCount();
+		mMoveTos = newPath.getMoveTos();
+	}
+	
+	/**
+	 * Replace path defining a polygon with striped lines covering
+	 * the polygon.
+	 * @param spacing is distance between parallel lines.
+	 * @param angle is angle of stripes, in radians, with zero being horizontal.
+	 */
+	public void stripePath(double spacing, double angle)
+	{
+		GeometricPath newPath = new GeometricPath();
+		Rectangle2D bounds = getBounds2D();
+		int nPts = 4;
+		double pts[] = new double[nPts * 2];
+		AffineTransform rotateTransform = new AffineTransform();
+		AffineTransform inverseRotateTransform = new AffineTransform();
+		double xMin, yMin, xMax, yMax, y;
+		
+		/*
+		 * Reverse transform a rectangle with same size as
+		 * the bounding box of the polygon to be striped.
+		 */
+		pts[0] = 0.0;
+		pts[1] = 0.0;
+		
+		pts[2] = 0.0;
+		pts[3] = bounds.getHeight();
+		
+		pts[4] = bounds.getWidth();
+		pts[5] = pts[3];
+		
+		pts[6] = pts[4];
+		pts[7] = 0.0;
+		
+		inverseRotateTransform.rotate(-angle);
+		inverseRotateTransform.transform(pts, 0, pts, 0, nPts);
+
+		/*
+		 * Find area covered by transformed rectangle.
+		 */
+		xMin = xMax = pts[0];
+		yMin = yMax = pts[1];
+		for (int i = 1; i < nPts; i++)
+		{
+			xMin = Math.min(xMin, pts[i * 2]);
+			yMin = Math.min(yMin, pts[i * 2 + 1]);
+			xMax = Math.max(xMax, pts[i * 2]);
+			yMax = Math.max(yMax, pts[i * 2 + 1]);
+		}
+
+		double stripeLength = xMax - xMin;
+		double d, minValue, maxValue;
+		float startCoords[];
+		float endCoords[] = new float[2];
+
+		rotateTransform.rotate(angle);
+		y = yMin;
+		while (y < yMax)
+		{
+			pts[0] = xMin;
+			pts[1] = pts[3] = y;
+			pts[2] = xMax;
+			rotateTransform.transform(pts, 0, pts, 0, 2);
+
+			startCoords = new float[3];
+			startCoords[0] = (float)(pts[0] + bounds.getMinX());
+			startCoords[1] = (float)(pts[1] + bounds.getMinY());
+			startCoords[2] = 0.0f;
+
+			endCoords[0] = (float)(pts[2] + bounds.getMinX());
+			endCoords[1] = (float)(pts[3] + bounds.getMinY());
+
+			newPath.moveTo(startCoords);
+			newPath.lineTo(endCoords);
+
+			y += spacing;
+		}
+	
+		/*
+		 * Replace path with the new path containing the stripes
+		 * we have just calculated.
 		 */		
 		mPath = (GeneralPath)newPath.getShape();	
 		mNLineTos = newPath.getLineToCount();
