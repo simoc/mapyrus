@@ -18,7 +18,25 @@ public class Argument
 	public static final int STRING = 1;
 	public static final int VARIABLE = 2;
 	public static final int GEOMETRY = 3;
-	
+
+	/**
+	 * Constant for numeric value zero.
+	 * Avoids allocating many arguments for this commonly used value.
+	 */
+	public static final Argument numericZero = new Argument(0.0);
+
+	/**
+	 * Constant for numeric value one.
+	 * Avoids allocating many arguments for this commonly used value.
+	 */
+	public static final Argument numericOne = new Argument(1.0);
+
+	/**
+	 * Constant for empty string.
+	 * Avoids allocating many arguments for this commonly used value.
+	 */
+	public static final Argument emptyString = new Argument(Argument.STRING, "");
+
 	private int mType;
 	private double mNumericValue;
 	private String mStringValue;
@@ -102,35 +120,5 @@ public class Argument
 	public double []getGeometryValue()
 	{
 		return(mGeometryValue);
-	}
-	
-	/**
-	 * Set argument to a numeric value.
-	 * @param d value to set.
-	 */	
-	public void setNumericValue(double d)
-	{
-		mType = NUMERIC;
-		mNumericValue = d;
-	}
-	
-	/**
-	 * Set argument to a string.
-	 * @param s value to set.
-	 */	
-	public void setStringValue(String s)
-	{
-		mType = STRING;
-		mStringValue = s;
-	}
-	
-	/**
-	 * Set argument to geometry.
-	 * @param coords is geometry to set.
-	 */
-	public void setGeometryValue(double []coords)
-	{
-		mType = GEOMETRY;
-		mGeometryValue = coords;
 	}
 }
