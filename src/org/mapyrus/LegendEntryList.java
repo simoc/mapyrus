@@ -123,17 +123,41 @@ public class LegendEntryList
 
 	/**
 	 * Pop first legend entry from list and return it.
-	 * @return next legend entry.
+	 * @return next legend entry, or null if list is empty.
 	 */
 	public LegendEntry pop()
 	{
+		LegendEntry retval = null;
+
 		/*
 		 * Ensure that entries are returned in alphabetical order.
 		 */
-		Collections.sort(mLegendList);
+		if (mLegendList.size() > 0)
+		{
+			Collections.sort(mLegendList);
 
-		LegendEntry retval = (LegendEntry)mLegendList.removeFirst();
-		mLegendSet.remove(hash(retval.getBlockName(), retval.getDescription()));
+			retval = (LegendEntry)mLegendList.removeFirst();
+			mLegendSet.remove(hash(retval.getBlockName(), retval.getDescription()));
+		}
+		return(retval);
+	}
+
+	/**
+	 * Return first legend entry in list.
+	 * @return first legend entry, or null if list is empty.
+	 */
+	public LegendEntry first()
+	{
+		LegendEntry retval = null;
+
+		/*
+		 * Ensure that entries are returned in alphabetical order.
+		 */
+		if (mLegendList.size() > 0)
+		{
+			Collections.sort(mLegendList);
+			retval = (LegendEntry)mLegendList.getFirst();
+		}
 		return(retval);
 	}
 }
