@@ -507,7 +507,6 @@ include hr.doc
 <a name="datasets"></a>
 <h3>Displaying Geographic Information System Datasets</h3>
 <p>
-// TODO explain worlds command Mercator, transformation, etc.
 Mapyrus reads geographic data and associated relational attributes
 from geographic information system (GIS) datasets.  The simplest
 source of data is a text file, with one record per line.
@@ -538,11 +537,31 @@ include endex.doc
 
 <img src="tutorialdatasets1.png">
 <p>
+Coordinates in GIS datasets are given in a world coordinate system
+such as Universal Transverse Mercator.
+To transform these coordinates to millimetre coordinates on the page
+use the
+<a href="reference.html#worlds">worlds</a>
+command.
+This sets a transformation to map
+a range of world coordinates onto the whole page.
+All coordinates given for later
+<a href="reference.html#addpath">addpath</a>,
+<a href="reference.html#move">move</a>,
+<a href="reference.html#arc">arc</a>
+and
+<a href="reference.html#draw">draw</a>
+commands are converted from world coordinate to page coordinates through
+this transformation.
+
+<p>
 Export files of 
 GIS datasets are also read as text files.  A loop
 and counter are used to read all coordinates making up
 lines and polygons.
-The following example demonstrates reading and displaying a
+<p>
+The following example demonstrates setting a world coordinate
+system and then reading and displaying a
 <a href="www.genaware.com">GenaMap</a> format export file
 containing line features.
 
@@ -565,19 +584,21 @@ A Shape file defines a bounding rectangle so the
 <tt>Mapyrus.dataset.max.x</tt>,
 and
 <tt>Mapyrus.dataset.max.y</tt>
-are used to set world coordinates to the bounding rectangle of the dataset.
+are available to set world coordinates to the bounding rectangle of the dataset.
 <p>
 An ESRI Shape file also defines field names.  Fields
 fetched with the
 <a href="reference.html#fetch">fetch</a>
-command are assigned to these variable names.  The
+command are assigned to variables with the same name as the field.  The
 geometry for each record is assigned to a variable named
 <tt>GEOMETRY</tt> and is added to the current path with the
 <a href="reference.html#addpath">addpath</a>
 command.
 <p>
 The following example demonstrates reading an ESRI Shape file
-containing attribute fields named HOTELNAME and STARRATING.
+containing attribute fields named <tt>HOTELNAME</tt>
+and
+<tt>STARRATING</tt>.
 
 include beginex.doc
 include tutorialdatasets3.mpy
