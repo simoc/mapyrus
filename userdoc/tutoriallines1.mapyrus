@@ -1,9 +1,8 @@
 begin arrow
-  # Draws a filled '>' symbol.
+  # Draws a filled '|>' symbol.
   #
   move -1, -1
-  draw -1, 1
-  draw 2, 0
+  draw -1, 1, 2, 0
   fill
 end
 
