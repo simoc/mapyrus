@@ -1383,6 +1383,7 @@ and \textit{rotate} values.
 
 \begin{alltt}
 icon \textit{filename}, [, \textit{size}]
+icon "\textit{binarydigits}" [, \textit{size}]
 icon "0x\textit{hexdigits}" [, \textit{size}]
 \end{alltt}
 
@@ -1392,6 +1393,10 @@ the current path.  The icon is centered at each point.
 \textit{filename} is a the name of a file or URL containing the icon.
 The icon must be either \texttt{PNG}, \texttt{GIF} or \texttt{JPEG}
 image format.
+
+\textit{binarydigits} are 16, 64 or 256 binary digits (all 0's and 1's)
+defining a square single color bitmap of size 4x4, 8x8 or 16x16 pixels.
+Any other characters in the string are ignored.
 
 \textit{hexdigits} are 4, 16 or 64 hexadecimal digits defining
 a square single color bitmap image of size 4x4, 8x8 or 16x16 pixels.
