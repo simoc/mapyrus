@@ -342,44 +342,4 @@ class Preprocessor
 	{
 		return(getCurrentFilename() + ":" + getCurrentLineNumber());
 	}
-
-	private static void processLine(PrintWriter writer, String s)
-		throws IOException, InterruptedException
-	{
-		writer.println(s);
-	}
-
-	/*
-	 * Preprocess files given on command line.
-	 */
-	public static void main(String []args) throws IOException, MapyrusException,
-		InterruptedException
-	{
-		String s;
-		Preprocessor p;
-		PrintWriter writer;
-
-		/*
-		 * Read from first file, write to second file.
-		 */
-		if (args.length != 2)
-		{
-			System.err.println("Usage: [infile] [outfile]");
-			System.err.println("Read from one file, expanding include lines,");
-			System.err.println("write output to other file.");
-			System.exit(1);
-		}
-		
-		p = new Preprocessor(args[0]);
-		writer = new PrintWriter(new FileWriter(args[1]));
-
-		/*
-		 * Read each line from first file, writing to second file.
-		 */
-		while ((s = p.readLine()) != null)
-			processLine(writer, s);
-		writer.close();
-
-		System.exit(0);
-	}
 }

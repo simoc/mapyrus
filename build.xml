@@ -21,10 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <project name="mapyrus" default="deploy" basedir=".">
 
 
-<!-- Name of class for preprocessing documentation -->
-<property name="preprocessor" value="au.id.chenery.mapyrus.Preprocessor"/>
-
-
 <!-- Name of properties file containing error and status messages -->
 <property name="messagefile" value="MapyrusMessages.properties"/>
 
@@ -79,24 +75,20 @@ it is not necessary to show path being cleared in each example -->
 
 <!-- Use preprocessor inside Mapyrus which expands macros in -->
 <!-- documentation to generate final HTML files -->
-<java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="index.doc index.html"/>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="-i index.doc index.html"/>
 </java>
-
-<java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="intro.doc intro.html"/>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="-i intro.doc intro.html"/>
 </java>
-
-<java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="tutorial.doc tutorial.html"/>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="-i tutorial.doc tutorial.html"/>
 </java>
-
-<java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="reference.doc reference.html"/>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="-i reference.doc reference.html"/>
 </java>
-
-<java classname="${preprocessor}" classpath="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="versions.doc versions.html"/>
+<java jar="${ant.project.name}.jar" fork="yes" dir="doc">
+<arg line="-i versions.doc versions.html"/>
 </java>
 <delete file="doc/VERSION"/>
 
