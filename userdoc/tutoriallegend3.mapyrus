@@ -1,0 +1,38 @@
+begin dormantcell
+  key "box", "Dormant Cell (#) occurrences"
+  color "skyblue"
+  fill
+  color "black"
+  stroke
+end
+begin activecell
+  key "box", "Active Cell (#) occurrences"
+  color "red"
+  fill
+  color "black"
+  stroke
+end
+
+newpage "eps", "tutoriallegend3.eps", 45, 30
+
+clearpath
+hexagon 10, 18, 8
+dormantcell
+
+clearpath
+hexagon 22, 10, 8
+activecell
+
+clearpath
+hexagon 34, 18, 8
+activecell
+
+# Make separate PostScript file containing legend.
+#
+newpage "eps", "tutoriallegend3legend.eps", 45, 40
+clearpath
+color "black"
+move 5, 5, 5, 12, 5, 19, 5, 26, 5, 33
+justify "middle"
+font "Helvetica", 2.5
+legend 4
