@@ -100,9 +100,12 @@ public class ColorDatabase
 			mColors.put("blue", Color.BLUE);
 			mColors.put("cyan", Color.CYAN);
 			mColors.put("darkgray", Color.DARK_GRAY);
+			mColors.put("darkgrey", Color.DARK_GRAY);
 			mColors.put("gray", Color.GRAY);
+			mColors.put("grey", Color.GRAY);
 			mColors.put("green", Color.GREEN);
 			mColors.put("lightgray", Color.LIGHT_GRAY);
+			mColors.put("lightgrey", Color.LIGHT_GRAY);
 			mColors.put("magenta", Color.MAGENTA);
 			mColors.put("orange", Color.ORANGE);
 			mColors.put("pink", Color.PINK);
