@@ -30,11 +30,12 @@ public class ContextStack
 	private static final int MAX_STACK_LENGTH = 30;
 	
 	/*
-	 * Variable name for bounding box of currently defined path
-	 * and for geometrical attributes of current path.
+	 * Variable names for geometry of currently defined path,
+	 * world coordinate system and coordinate system we are projecting from.
 	 */
-	private static final String BOUNDING_BOX_VARIABLE = "boundingbox";
 	private static final String GEOMETRY_VARIABLE = "geometry";
+	private static final String WORLDS_VARIABLE = "worlds";
+	private static final String UNPROJECTED_VARIABLE = "project";
 	
 	/*
 	 * Stack of contexts, with current context in last slot.
@@ -110,11 +111,11 @@ public class ContextStack
 	 * @param height is the page height (in points).
 	 * @param extras contains extra settings for this output.
 	 */
-	public void setOutputFormat(String filename, String format,
+	public void setOutputFormat(String format, String filename,
 		int width, int height, String extras)
 		throws IOException, MapyrusException
 	{
-		getCurrentContext().setOutputFormat(filename, format,
+		getCurrentContext().setOutputFormat(format, filename,
 			width, height, extras);
 	}
 
@@ -173,10 +174,11 @@ public class ContextStack
 	 * @param y1 minimum Y world coordinate.
 	 * @param x2 maximum X world coordinate.
 	 * @param y2 maximum Y world coordinate.
+	 * @param units of world coordinates (WORLD_UNITS_METRES, WORLD_UNITS_FEET, etc)
 	 */
-	public void setWorlds(double x1, double y1, double x2, double y2)
+	public void setWorlds(double x1, double y1, double x2, double y2, int units)
 	{
-		getCurrentContext().setWorlds(x1, y1, x2, y2);
+		getCurrentContext().setWorlds(x1, y1, x2, y2, units);
 	}
 
 	/**
@@ -188,7 +190,7 @@ public class ContextStack
 	public void setTransform(String sourceSystem, String destinationSystem)
 		throws MapyrusException
 	{
-		getCurrentContext().setTransform(sourceSystem, destinationSystem);
+		getCurrentContext().setReprojection(sourceSystem, destinationSystem);
 	}
 
 	/**
@@ -295,15 +297,44 @@ public class ContextStack
 	}
 
 	/**
+	 * Returns one component of a bounding box.
+	 * @param part the information to be taken from the bounding box, "min.x", "width", etc.
+	 * @param bounds the bounding box to be queried
+	 * @return part of the information from bounding box, or "undef" if part is unknown.
+	 */
+	private Argument getBoundingBoxVariable(String part, Rectangle2D bounds)
+	{
+		Argument retval;
+		
+		if (part.equals("min.x"))
+			retval = new Argument(bounds.getMinX());
+		else if (part.equals("min.y"))
+			retval = new Argument(bounds.getMinY());
+		else if (part.equals("max.x"))
+			retval = new Argument(bounds.getMaxX());
+		else if (part.equals("max.y"))
+			retval = new Argument(bounds.getMaxY());
+		else if (part.equals("width"))
+			retval = new Argument(bounds.getWidth());
+		else if (part.equals("height"))
+			retval = new Argument(bounds.getHeight());
+		else
+			retval = new Argument(Argument.STRING, "undef");
+
+		return(retval);
+	}
+	
+	/**
 	 * Returns value of a variable.
 	 * @param variable name to lookup.
 	 * @return value of variable, or null if it is not defined.
 	 */
-	public Argument getVariableValue(String varName)
+	public Argument getVariableValue(String varName) throws MapyrusException
 	{
 		Argument retval = null;
 		String sub;
 		double d;
+		Rectangle2D bounds;
 
 		if (varName.startsWith(Mapyrus.PROGRAM_NAME + "."))
 		{
@@ -349,34 +380,29 @@ public class ContextStack
 				else if (sub.equals("centroid.y"))
 					retval = new Argument(getCurrentContext().getPathCentroid().getY());
 				else
-					retval = new Argument(Argument.STRING, "undef");
-			}
-			else if (sub.startsWith(BOUNDING_BOX_VARIABLE + "."))
-			{
-				Rectangle2D bounds = getCurrentContext().getBounds2D();
-				
-				if (bounds != null)
 				{
-					sub = sub.substring(BOUNDING_BOX_VARIABLE.length() + 1);
-					if (sub.equals("min.x"))
-						retval = new Argument(bounds.getMinX());
-					else if (sub.equals("min.y"))
-						retval = new Argument(bounds.getMinY());
-					else if (sub.equals("max.x"))
-						retval = new Argument(bounds.getMaxX());
-					else if (sub.equals("max.y"))
-						retval = new Argument(bounds.getMaxY());
-					else if (sub.equals("width"))
-						retval = new Argument(bounds.getWidth());
-					else if (sub.equals("height"))
-						retval = new Argument(bounds.getHeight());
-					else
-						retval = new Argument(Argument.STRING, "undef");
+					bounds = getCurrentContext().getBounds2D();
+					retval = getBoundingBoxVariable(sub, bounds);
+				}
+			}
+			else if (sub.startsWith(WORLDS_VARIABLE + "."))
+			{
+				bounds = getCurrentContext().getWorldExtents();
+				sub = sub.substring(WORLDS_VARIABLE.length() + 1);
+				if (sub.equals("scale"))
+				{
+					retval = new Argument(getCurrentContext().getWorldScale());
 				}
 				else
 				{
-					retval = new Argument(Argument.STRING, "undef");
+					retval = getBoundingBoxVariable(sub, bounds);
 				}
+			}
+			else if (sub.startsWith(UNPROJECTED_VARIABLE + "."))
+			{
+				bounds = getCurrentContext().getProjectedExtents();
+				sub = sub.substring(UNPROJECTED_VARIABLE.length() + 1);
+				retval = getBoundingBoxVariable(sub, bounds);
 			}
 			else
 			{
