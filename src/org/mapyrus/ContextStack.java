@@ -781,6 +781,30 @@ public class ContextStack
 
 		c.defineVariable(varName, value);
 	}
+	
+	/**
+	 * Define an key-value entry in a hashmap in context,
+	 * replacing any existing entry with the same key.
+	 * @param hashMapName name of hashmap to add entry to.
+	 * @param key is key to add.
+	 * @param value is value to add.
+	 */
+	public void defineHashMapEntry(String hashMapName, String key, Argument value)
+	{
+		Context currentContext = getCurrentContext();
+		Context c;
+
+		/*
+		 * Define variable in first (global) context
+		 * unless defined local.
+		 */
+		if (currentContext.hasLocalScope(hashMapName))
+			c = currentContext;
+		else
+			c = (Context)(mStack.getFirst());
+
+		c.defineHashMapEntry(hashMapName, key, value);
+	}
 
 	/**
 	 * Save current context so that it can be restored later with restoreState.
