@@ -1,6 +1,20 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004 Simon Chenery.
 
+0.45, July 2004
+
+* Add listfiles function so that multiple datasets can be displayed more easily.
+* Add bookmarks to PDF manual.
+* Interpret BLOB and BINARY fields fetched from an RDBMS as OGC WKB geometries.
+* Change to use uppercase variable names for parameters passed in a URL
+  when running as an HTTP server.
+* Remove Java API.
+* Require use of new mimetype command to set MIME type for output being
+  returned to HTTP client.
+* Add return keyword.
+* Allow MIME types to be given for output format type in newpage command.
+* Add reading of MapInfo Interchange Format (MIF) format files.
+
 0.44, June 2004
 
 * Removed parsewkt function.  Commands and functions that require a geometry
