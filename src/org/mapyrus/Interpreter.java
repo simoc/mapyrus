@@ -1098,7 +1098,7 @@ public class Interpreter
 			word.append((char)c);
 			c = preprocessor.read();
 		}
-		while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_');
+		while (Character.isLetterOrDigit((char)c) || c == '.' || c == '_' || c == ':');
 
 		/*
 		 * Put back the character we read that is not part of the word.	
