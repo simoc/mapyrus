@@ -226,6 +226,13 @@ public class Argument
 
 			retval = format.format(mNumericValue);
 		}
+		else if (mGeometryValue[0] == 0)
+		{
+			/*
+			 * Geometry is empty.
+			 */
+			retval = "NULL";
+		}
 		else if (mType == GEOMETRY_POINT)
 		{
 			/*
