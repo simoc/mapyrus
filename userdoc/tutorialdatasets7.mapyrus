@@ -1,0 +1,19 @@
+let allFiles = listfiles(user.home . "\\data\\shape\\*\\*.shp")
+let nFiles = length(allFiles)
+let i = 1
+
+newpage "eps", "tutorialdatasets7.eps", 180, 260
+worlds 1600000, 610000, 1770000, 710000
+
+while i <= nFiles
+do
+  dataset "shapefile", allFiles[i], "dbffields="
+  while Mapyrus.fetch.more
+  do
+    fetch
+    clearpath
+    addpath GEOMETRY
+    stroke
+  done
+  let i = i + 1
+done
