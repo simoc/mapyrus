@@ -27,8 +27,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class for Mapyrus, a program for generating plots of points, lines and polygons
@@ -184,18 +184,17 @@ public class Mapyrus
 		}
 
 		/*
-		 * Log startup configuration information and write it to
-		 * the terminal too so user cannot miss it.
+		 * Log startup configuration information or write it to the terminal.
 		 */
-		String version = Constants.PROGRAM_NAME + " " + Constants.getVersion();
-		String accepting = MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port;
-		if (logger.isLoggable(Level.CONFIG))
+		String versionMessage = Constants.PROGRAM_NAME + " " + Constants.getVersion();
+		String acceptingMessage = MapyrusMessages.get(MapyrusMessages.ACCEPTING_HTTP) + ": " + port;
+		logger.config(versionMessage);
+		logger.config(acceptingMessage);
+		if (!logger.isLoggable(Level.CONFIG))
 		{
-			logger.config(version);
-			logger.config(accepting);
+			System.out.println(versionMessage);
+			System.out.println(acceptingMessage);
 		}
-		System.out.println(version);
-		System.out.println(accepting);
 
 		while (true)
 		{
@@ -219,7 +218,7 @@ public class Mapyrus
 				}
 
 				HTTPRequest request = new HTTPRequest(socket,
-					interpreter, interpreterPool);
+					interpreter, interpreterPool, logger);
 				activeThreads.add(request);
 				logger.fine(MapyrusMessages.get(MapyrusMessages.STARTED_THREAD) +
 					": " + request.getName());
