@@ -266,38 +266,6 @@ public class Mapyrus
 		}
 	}
 
-	/**
-	 * Run preprocessor on a file, expanding include lines and writing output to another file.
-	 * @param sourceFilename filename to read from. 
-	 * @param destFilename filename to write to.
-	 */
-	private static void preprocessFile(String sourceFilename, String destFilename)
-	{
-		try
-		{
-			Preprocessor p = new Preprocessor(sourceFilename);
-			BufferedWriter writer = new BufferedWriter(new FileWriter(destFilename));
-	
-			/*
-			 * Read each line from first file, writing to second file.
-			 */
-			int c;
-			while ((c = p.read()) >= 0)
-				writer.write(c);
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			System.err.println(e.getMessage());
-			System.exit(1);
-		}
-		catch (MapyrusException e)
-		{
-			System.err.println(e.getMessage());
-			System.exit(1);
-		}
-	}
-
 	/*
 	 * Parse command line arguments and start processing.
 	 */
@@ -349,19 +317,6 @@ public class Mapyrus
 			}
 			argStartIndex = 2;
 			isHttpServer = true;
-		}
-		else if (args[0].equals("-i"))
-		{
-			/*
-			 * Hidden option for building Mapyrus documentation.
-			 */
-			if (args.length != 3)
-			{
-				System.err.println("Input and output files missing");
-				System.exit(1);
-			}
-			preprocessFile(args[1], args[2]);
-			System.exit(0);
 		}
 
 		initialise();
