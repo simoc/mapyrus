@@ -123,8 +123,11 @@ public class Expression
 	
 	private static final int TEMPNAME_FUNCTION = 14;	/* tempname('.jpg') =  'tmpABC123.jpg' */
 	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
+
+	private static final int SPLIT_FUNCTION = 15;	/* split("foo:bar", ":") = [1] -> "foo", [2]->"bar" */
+	private static final String SPLIT_FUNCTION_NAME = "split";
 	
-	private static final int SUBSTR_FUNCTION = 15;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final int SUBSTR_FUNCTION = 16;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
 	/*
@@ -156,6 +159,7 @@ public class Expression
 		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
 		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
 		mFunctionTypeLookup.put(TEMPNAME_FUNCTION_NAME, new Integer(TEMPNAME_FUNCTION));
+		mFunctionTypeLookup.put(SPLIT_FUNCTION_NAME, new Integer(SPLIT_FUNCTION));
 		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
 		
 		mFunctionArgumentCount = new byte[SUBSTR_FUNCTION + 1];
@@ -173,8 +177,14 @@ public class Expression
 		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
 		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
 		mFunctionArgumentCount[TEMPNAME_FUNCTION] = 1;
+		mFunctionArgumentCount[SPLIT_FUNCTION] = 2;
 		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
 	}
+
+	/*
+	 * Pre-defined hashmap keys for split function.
+	 */
+	private static String mSplitIndexes[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 	/*
 	 * Maximum number of compiled regular expressions we'll cache.
@@ -377,7 +387,10 @@ public class Expression
 			else if (mFunction == LENGTH_FUNCTION)
 			{
 				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				retval = new Argument(leftValue.toString().length());
+				if (leftValue.getType() == Argument.HASHMAP)
+					retval = new Argument(leftValue.getHashMapSize());
+				else
+					retval = new Argument(leftValue.toString().length());
 			}
 			else if (mFunction == MATCH_FUNCTION)
 			{
@@ -429,6 +442,29 @@ public class Expression
 				leftValue = traverse(mLeftBranch, context, interpreterFilename);
 				retval = new Argument(Argument.STRING,
 					TransientFileFactory.generate(leftValue.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
+			}
+			else if (mFunction == SPLIT_FUNCTION)
+			{
+				/*
+				 * Split string on regular expression and assign as hashmap entries
+				 * with keys, "1", "2", "3", ...
+				 */
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				rightValue = traverse(mRightBranch, context, interpreterFilename);
+				String []split = leftValue.toString().split(rightValue.toString());
+				String key;
+				retval = new Argument();
+				for (int i = 0; i < split.length; i++)
+				{
+					/*
+					 * Use pre-allocated strings to reduce object creation.
+					 */
+					if (i < mSplitIndexes.length)
+						key = mSplitIndexes[i];
+					else
+						key = String.valueOf(i + 1);
+					retval.addHashMapEntry(key, new Argument(Argument.STRING, split[i]));
+				}
 			}
 			else /* SUBSTR_FUNCTION */
 			{
@@ -525,7 +561,8 @@ public class Expression
 			else if (t.mOperation == ASSIGN_OPERATION)
 			{
 				rightValue = traverse(t.mRightBranch, context, interpreterFilename);
-				if (t.mLeftBranch.mIsLeaf)
+				ExpressionTreeNode leftBranch = t.mLeftBranch;
+				if (leftBranch.mIsLeaf)
 				{
 					/*
 					 * Simple assignment: a = b.
@@ -533,12 +570,17 @@ public class Expression
 					String varName = t.mLeftBranch.mLeafArg.getVariableName();
 					context.defineVariable(varName, rightValue);
 				}
-				else
+				else if (leftBranch.mOperation == HASHMAP_REFERENCE &&
+					leftBranch.mLeftBranch.mIsLeaf)
 				{
 					/*
 					 * Assign value as entry in a hashmap: a[55] = "foo".
 					 */
-					String hashMapName = t.mLeftBranch.mLeftBranch.mLeafArg.getVariableName();
+					String hashMapName = leftBranch.mLeftBranch.mLeafArg.getVariableName();
+					if (hashMapName == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE));
+					}
 					Argument key = traverse(t.mLeftBranch.mRightBranch, context,
 						interpreterFilename);
 					if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
@@ -548,6 +590,10 @@ public class Expression
 					context.defineHashMapEntry(hashMapName, key.getStringValue(),
 						rightValue);
 				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE));
+				}
 
 				/*
 				 * Return value assigned.
@@ -556,18 +602,33 @@ public class Expression
 			}
 			else if (t.mOperation == HASHMAP_REFERENCE)
 			{
+				Argument hashMapVar;
+
 				/*
 				 * Lookup an individual entry in a hash map from a hash map
 				 * variable name and key.
 				 */
-				String varName = t.mLeftBranch.mLeafArg.getStringValue();
+				if (t.mLeftBranch.mIsLeaf && t.mLeftBranch.mLeafArg.getType() == Argument.VARIABLE)
+				{
+					String varName = t.mLeftBranch.mLeafArg.getVariableName();
+					hashMapVar = context.getVariableValue(varName, interpreterFilename);
+				}
+				else if (t.mLeftBranch.mIsFunction)
+				{
+					hashMapVar = traverse(t.mLeftBranch, context, interpreterFilename);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+				}
+
 				Argument key = traverse(t.mRightBranch, context, interpreterFilename);
 				if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HASHMAP_KEY));
 				}
-				Argument hashMapVar = context.getVariableValue(varName, interpreterFilename);
-				if (hashMapVar == null || hashMapVar.getType() != Argument.HASHMAP)
+				
+				if (hashMapVar.getType() != Argument.HASHMAP)
 				{
 					/*
 					 * No hash map exists with this name so return empty string.
@@ -837,7 +898,7 @@ public class Expression
 	}
 
 	ExpressionTreeNode mExprTree;
-	
+
 	/*
 	 * Parse expression including "or" boolean operations.
 	 */
@@ -1025,13 +1086,10 @@ public class Expression
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 						}
 					}
-					else
+					else if (expr.mOperation != HASHMAP_REFERENCE)
 					{
-						if (expr.mOperation != HASHMAP_REFERENCE)
-						{
-							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
-						}
 					}
 					value = parseAssignment(p);
 					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
@@ -1181,7 +1239,7 @@ public class Expression
 		ExpressionTreeNode term, factor;
 		int op;
 
-		term = parseFactor(p);
+		term = parseHashMapReference(p);
 		while (true)
 		{
 			op = p.readNonSpace();
@@ -1198,7 +1256,7 @@ public class Expression
 				else
 					opType = REPEAT_OPERATION;
 
-				factor = parseFactor(p);
+				factor = parseHashMapReference(p);
 				term = new ExpressionTreeNode(term, opType, factor);
 			}
 			else
@@ -1209,7 +1267,50 @@ public class Expression
 		}
 		return(term);
 	}
+	
+	/*
+	 * Parse expression including reference to an element in a hashmap.
+	 */
+	private ExpressionTreeNode parseHashMapReference(Preprocessor p)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, keyExpr;
+		int op1;
 
+		expr = parseFactor(p);
+		while (true)
+		{
+			/*
+			 * If next character is '[' then parse hashmap key, then closing ']'.
+			 */
+			op1 = p.readNonSpace();
+			if (op1 == '[')
+			{
+				keyExpr = parseOrBoolean(p);
+				op1 = p.readNonSpace();
+				if (op1 != ']')
+				{
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": ']'");
+				}
+
+				/*
+				 * Expression tree for the hashmap reference a["foo"] is:
+				 *      []
+				 *     /  \
+				 *    a   "foo"
+				 */
+				expr = new ExpressionTreeNode(expr, HASHMAP_REFERENCE, keyExpr);
+			}
+			else
+			{
+				p.unread(op1);
+				break;
+			}
+		}
+		return(expr);
+	}
+	
 	/*
 	 * Parse a single number, string or variable name.
 	 */
@@ -1441,39 +1542,8 @@ public class Expression
 			}
 			else
 			{
-				/*
-				 * Is this a reference to a value in an hashmap?
-				 */
-				if (Character.isWhitespace((char)c) && c != '\n')
-					c = p.readNonSpace();
-				if (c == '[')
-				{
-					/*
-					 * Parse opening '[', hashmap key, then closing ']'.
-					 */
-					expr = parseOrBoolean(p);
-					c = p.readNonSpace();
-					if (c != ']')
-					{
-						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-							": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": ']'");
-					}
-					Argument key = new Argument(Argument.VARIABLE, buf.toString());
-					
-					/*
-					 * Expression tree for the hashmap reference a["foo"] is:
-					 *      []
-					 *     /  \
-					 *    b   "foo"
-					 */
-					expr = new ExpressionTreeNode(new ExpressionTreeNode(key),
-						HASHMAP_REFERENCE, expr);
-				}
-				else
-				{
-					p.unread(c);
-					expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));
-				}
+				p.unread(c);
+				expr = new ExpressionTreeNode(new Argument(Argument.VARIABLE, buf.toString()));
 			}	
 		}
 		else
