@@ -486,9 +486,10 @@ the database to inside the area of interest.
 \verbatiminput{tutorialdatasets4.mapyrus}
 
 For databases supporting the \textit{OpenGIS Simple Features Specification For
-SQL}, list the geometry fields being fetched with the \texttt{wktfields}
-option.  Fetched geometry fields containing point, line or polygon data are
-added to the current path directly with an \texttt{addpath} command.  The
+SQL}, convert fields containing OGC WKT geometry strings
+into geometry using the \texttt{parsewkt}
+function.  The geometry is then added to the current
+path directly with an \texttt{addpath} command.  The
 following example demonstrates fetching a geometry field named \texttt{geom}
 from the database and displaying it.
 
