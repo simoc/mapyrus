@@ -1,22 +1,24 @@
 begin quarterLabel
   # Drawing tick and label at intermediate position along line.
   #
-  if percent > 0 and percent < 100
+  if percent < 0 or percent > 100
   then
-    # Tick
-    #
-    move -2, -2
-    draw 0, 0, 2, -2
-    fill
-
-    # Label
-    #
-    clearpath
-    move 0, 2
-    justify "center"
-    font "Helvetica", 3
-    label percent . "%"
+    return
   endif
+
+  # Tick
+  #
+  move -2, -2
+  draw 0, 0, 2, -2
+  fill
+
+  # Label
+  #
+  clearpath
+  move 0, 2
+  justify "center"
+  font "Helvetica", 3
+  label percent . "%"
   let percent = percent + 25
 end
 
