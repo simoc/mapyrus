@@ -959,6 +959,127 @@ begin streetname name
 	endif
 end
 
+# LINEPATTERNS
+
+begin leftticks_tick
+	move 0, 0
+	draw 0, 0.6
+	stroke
+end
+
+begin leftticks
+	# Display line with tick marks on lefthand-side.
+	#
+	key "line", "Left Ticks"
+	color "red"
+	linestyle 0.1
+	stroke
+	samplepath 3, 1.5
+	leftticks_tick
+end
+
+begin centerline_c
+	# Display letter 'c' rotated to follow line.
+	#
+	font "Helvetica", 3
+	justify "center, middle"
+	move 0, 0.7
+	label "c"
+end
+
+begin centerline
+	# Display line with 'c' letters along it.
+	#
+	key "line", "Centerline"
+	color "black"
+	linestyle 0.2, "round", "round", 0, 4, 4
+	stroke
+	samplepath 8, 6
+	centerline_c
+end
+
+begin fence_tick
+	move 0, -0.8
+	draw 0, 0.8
+	stroke
+end
+
+begin fence
+	# Display fence line: --|--|--
+	#
+	key "line", "Fence"
+	color "forestgreen"
+	linestyle 0.1, "round", "round", 0, 3, 2
+	stroke
+	samplepath 5, 4
+	fence_tick
+end
+
+begin motorway_label routeNumber
+	local w
+
+	# Remove any rotation and force symbol to appear horizontally.
+	#
+	rotate -Mapyrus.rotation
+	font "Helvetica", 3
+	justify "center"
+	let w = stringwidth(routeNumber) + 1
+
+	# Skip label if it overwrites an existing label.
+	#
+	if not protected(-w / 2, -1.5, w / 2, 1.5)
+	then
+		box -w / 2, -1.5, w / 2, 1.5
+		color "white"
+		fill
+		color "black"
+		linestyle 0.1
+		stroke
+		clearpath
+		move 0, -1
+		label routeNumber
+		protect -w / 2, -1.5, w / 2, 1.5
+	endif
+end
+
+begin motorway routeNumber
+	# Display motorway with route number label at intervals.
+	#
+	key "line", "Motorway", "M25"
+	color "red"
+	linestyle 1, "round", "round"
+	stroke
+
+	# Skip labels on short motorway segments.
+	#
+	if Mapyrus.path.length > 15
+	then
+		samplepath 20, 12
+		motorway_label routeNumber
+	endif
+end
+
+begin border_dot
+	color "black"
+	circle 0, 0, 1
+	fill
+	clearpath
+end
+
+begin border
+	# Display border.
+	#
+	key "line", "Border"
+	color "black"
+	linestyle 0.5, "round", "round"
+	stroke
+	if Mapyrus.path.length > 10
+	then
+		samplepath 20, 8
+		border_dot
+	endif
+end
+
 #u-bahn
 #camping
 #vehicle
@@ -1384,6 +1505,12 @@ then
 	emphasisedname "Ely"
 	streetname ""
 
+	centerline
+	leftticks
+	fence
+	motorway ""
+	border
+
 	hatch1
 	hatch2
 	hatch3
@@ -1435,7 +1562,13 @@ then
 	do
 		clearpath
 		move x, y
-		legend 8
+		if Mapyrus.key.next eq "line" or Mapyrus.key.next eq "zigzag"
+		then
+			legend 20
+		else
+			legend 8
+		endif
+
 		let y = y - 10
 		if y < 10
 		then
