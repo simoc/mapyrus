@@ -500,6 +500,26 @@ public class ContextStack
 	}
 
 	/**
+	 * Returns width of a string, drawn to current page with current font.
+	 * @param s string to calculate width for.
+	 * @return width of string in millimetres.
+	 */	
+	public double getStringWidth(String s) throws MapyrusException
+	{
+		double retval = 0.0;
+		try
+		{
+			retval = getCurrentContext().getStringWidth(s);
+		}
+		catch (IOException e)
+		{
+			throw new MapyrusException(e.getMessage());
+		}
+		return(retval);
+		
+	}
+
+	/**
 	 * Return next row from dataset.
 	 * @return field values for next row.
 	 */
