@@ -150,7 +150,7 @@ public class TextfileDataset implements GeographicDataset
 	 */
 	public String getProjection()
 	{
-		return("undef");
+		return("");
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class TextfileDataset implements GeographicDataset
 
 	/**
 	 * Return names of fields in this text file.
-	 * @return fieldnames.
+	 * @return null, no fieldnames known.
 	 */
 	public String[] getFieldNames()
 	{
@@ -180,8 +180,7 @@ public class TextfileDataset implements GeographicDataset
 	}
 	
 	/**
-	 * Return extents in text file.  These are not known unless we
-	 * scan the whole file and we don't want to do that.
+	 * Return extents of text file.  We do not know this.
 	 * @return degree values covering the whole world
 	 */
 	public Rectangle2D.Double getWorlds()
