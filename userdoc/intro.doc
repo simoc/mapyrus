@@ -30,9 +30,10 @@ to be be defined.  For example,
 
 </li>
 <li>
-Reading and displaying of geographic information system (GIS) datasets.
-Drawing routines are applied to mapping data to produce annotated and
-symbolized maps and graphs.
+Reading and displaying of from geographic information
+systems (GIS) datasets, text files, or relational databases tables.
+Drawing routines are applied to geographic data to produce annotated and
+symbolized maps and graphs.  For example,
 
 <p>
 <img src="mapview1.png">
@@ -43,7 +44,8 @@ symbolized maps and graphs.
 </li>
 <li>
 Mapyrus runs as a stand-alone program, or as a multi-threaded HTTP server.
-Develop web applications
+This makes development of simple web applications easy, showing
+maps or graphs of datasets.
 
 <pre>
 http://localhost:8071/mapyrusdemo?layer1=on&layer2=off&x1=11.03&x2=11.07&y1=52.44&y2=52.48
@@ -65,6 +67,14 @@ or read from a text file prepared by the user.
 <li>
 Mapyrus cannot display three dimensional data and has nothing to do
 with 3D.
+</li>
+
+<li>
+For producing graphs of statistical data showing sample points,
+a line of best fit,
+X and Y axes with tick marks, other software such as 
+<a href="www.gnuplot.org">gnuplot</a>.
+is more suitable.
 </li>
 
 </ol>
