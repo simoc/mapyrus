@@ -194,7 +194,11 @@ public class Context
 		mDatasetDefined = false;
 		mAttributesPending = mAttributesChanged = 0;
 		mDataset = null;
-		mBlockName = "";
+		
+		/*
+		 * First context is outside of any procedure block.
+		 */
+		mBlockName = null;
 	}
 
 	/**
@@ -823,7 +827,7 @@ public class Context
 
 	/**
 	 * Get name of procedure block containing statements currently being executed.
-	 * @return procedure block name.
+	 * @return procedure block name, or null if outside of any procedure block.
 	 */
 	public String getBlockName()
 	{
