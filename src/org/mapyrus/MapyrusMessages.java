@@ -54,6 +54,7 @@ public class MapyrusMessages
 	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INVALID_ARC = "invalidarc";
 	public static final String INVALID_BOX = "invalidbox";
+	public static final String INVALID_CIRCLE = "invalidcircle";
 	public static final String INVALID_COLOR = "invalidcolor";
 	public static final String INVALID_COLOR_TYPE = "invalidcolortype";
 	public static final String INVALID_COORDINATE = "invalidcoordinate";
