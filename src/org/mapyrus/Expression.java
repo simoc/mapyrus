@@ -482,7 +482,7 @@ public class Expression
 				{
 					if (op1 == '!')
 						opType = NOT_EQUALS_OPERATION;
-					if (op1 == '<')
+					else if (op1 == '<')
 						opType = LESS_EQUAL_OPERATION;
 					else
 						opType = GREATER_EQUAL_OPERATION;
