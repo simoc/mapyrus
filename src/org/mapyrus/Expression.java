@@ -1368,7 +1368,12 @@ public class Expression
 		boolean parsedDigit;
 		StringBuffer buf = new StringBuffer();
 		ExpressionTreeNode expr;
-		int c, lastC, quote;
+		int c, quote;
+
+		boolean inOctalCode;
+		boolean inEscape;
+		int octalCode;
+		int nOctalDigits;
 
 		c = p.readNonSpace();
 		if (c == '\'' || c == '"')
@@ -1376,8 +1381,10 @@ public class Expression
 			/*
 			 * It's a quoted string.  Keep reading up until matching quote.
 			 */
-			lastC = quote = c;
-			while ((c = p.read()) != quote || lastC == '\\')
+			quote = c;
+			inOctalCode = inEscape = false;
+			octalCode = nOctalDigits = 0;
+			while ((c = p.read()) != quote || inEscape)
 			{
 				if (c == -1)
 				{
@@ -1385,25 +1392,74 @@ public class Expression
 						": " + MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF));
 				}
 
-				if (lastC == '\\')
+				if (inOctalCode)
 				{
 					/*
-					 * '\\' compressed to single backslash,
-					 * '\n' converted to a newline, '\r' is stripped -- it
-					 * is not useful since we use Java's line separator internally.
-					 * Escaping of other characters is ignored.
+					 * If next character is a digit then it is part of a
+					 * a '\nnn' octal character code.
 					 */
-					if (c == 'n')
-						buf.append(Constants.LINE_SEPARATOR);
-					else if (c != 'r')
-						buf.append((char)c);
+					if (Character.isDigit((char)c) && nOctalDigits < 3)
+					{
+						octalCode *= 8;
+						octalCode += c - '0';
+						nOctalDigits++;
+					}
+					else
+					{
+						/*
+						 * Next character is not part of octal code.
+						 * Add character with octal code we've built
+						 * then return to regular parsing.
+						 */
+						buf.append((char)octalCode);
+						inOctalCode = false;
+					}
 				}
-				else if (c != '\\')
+
+				if (!inOctalCode)
 				{
-					buf.append((char)c);
+					if (inEscape)
+					{
+						/*
+						 * '\\' compressed to single backslash,
+						 * '\n' converted to a newline, '\r' is stripped -- it
+						 * is not useful since we use Java's line separator internally.
+						 * '\367' is converted to character code (3 * 64) + (6 * 8) + 7.
+						 * Escaping of other characters is ignored.
+						 */
+						if (c == 'n')
+						{
+							buf.append(Constants.LINE_SEPARATOR);
+						}
+						else if (Character.isDigit((char)c))
+						{
+							inOctalCode = true;
+							octalCode = c - '0';
+							nOctalDigits = 1;
+						}
+						else if (c != 'r')
+						{
+							buf.append((char)c);
+						}
+						inEscape = false;
+					}
+					else if (c == '\\')
+					{
+						inEscape = true;
+					}
+					else
+					{
+						buf.append((char)c);
+					}
 				}
-				lastC = c;
 			}
+
+			/*
+			 * Add any character we were building as octal code when quoted string finished.
+			 */
+			if (inOctalCode)
+				buf.append((char)octalCode);
+
 			return(new ExpressionTreeNode(new Argument(Argument.STRING, buf.toString())));
 		}
 
