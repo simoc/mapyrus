@@ -1,0 +1,37 @@
+begin spray
+  move 0, 0
+  rotate random(360)
+  color "limegreen"
+  icon "00000000
+        01000100
+        00010010
+        00101000
+        01000010
+        00010100
+        01000001
+        00101010", 3
+end
+
+# Fill polygon with spray paint pattern.
+#
+begin sprayPattern
+  stroke
+  clip "inside"
+  stripepath 3, 0
+  samplepath 3, 0
+  spray
+end
+
+# Read map and plot it.
+#
+dataset "shapefile", "coastline.shp", "dbffields="
+newpage "eps", "tutorialicon3.eps", 60, 60
+worlds -2800000, 4800000, 2150000, 9190000
+clearpath
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  sprayPattern
+done
