@@ -1,0 +1,934 @@
+% @(#) $Id$
+
+\section{Tutorial}
+
+The folllowing examples demonstrate how to create output
+using Mapyrus.  All examples are included
+as files in the \texttt{doc} subdirectory.
+
+If the Ghostscript program or a printer is not available,
+then change the \texttt{eps} arguments in 
+\texttt{newpage} commands to \texttt{png} to view the output
+as image files in a web browser.
+
+\subsection{First Steps}
+
+Enter the following lines into a text file named \texttt{first.txt}.
+
+\verbatiminput{tutorialfirst1.mpy}
+
+Each line in the file is a command for Mapyrus.  The
+first line sets output to a
+30mm square Encapsulated PostScript format image named
+\texttt{tutorialfirst1.eps}
+with the \texttt{newpage} command.
+The second and third lines set the color for drawing to black,
+with lines drawn 4 millimetres wide with rounded ends and corners.
+The fourth and fifth lines define a path on the page giving
+coordinates in millimetres.
+The sixth line is a \texttt{stroke} command to draw the
+path just defined onto the page using the current color and
+line style.
+
+Open a terminal window and enter the following command
+(where \textit{install-dir} is the directory in which Mapyrus is installed).
+
+\begin{verbatim}
+java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus first.txt
+\end{verbatim}
+
+When Mapyrus reaches the end of the file \texttt{first.txt},
+the output file \texttt{tutorialfirst1.eps} is completed and Mapyrus exits.
+When the PostScript file is then printed, it appears as in
+Figure \ref{tutorialfirst1}.
+
+\begin{figure}[h]
+\includegraphics{tutorialfirst1.eps}
+\caption{First Step}
+\label{tutorialfirst1}
+\end{figure}
+
+
+Change the file \texttt{first.txt} to contain the following lines.
+
+\verbatiminput{tutorialfirst2.mpy}
+
+In this example, color is set as a hex value instead of a name and
+the \texttt{fill} command is used to
+flood fill the path that has been defined.
+The characters on lines following a hash (\texttt{\#}) character that
+is not part of a string literal are ignored by Mapyrus.
+Figure \ref{tutorialfirst2} shows the output of these commands.
+
+\begin{figure}[h]
+\includegraphics{tutorialfirst2.eps}
+\caption{Second Step}
+\label{tutorialfirst2}
+\end{figure}
+
+Change the file \texttt{first.txt} to contain the following lines.
+
+\verbatiminput{tutorialfirst3.mpy}
+
+This example shows how to draw circular arcs,
+giving the direction (a positive value for clockwise and a negative
+value for anti-clockwise), center point and end point and
+yet another way of defining color.
+After being filled, the path remains and is used again to draw the outline
+of the same shape.
+To clear the path before drawing another shape the
+\texttt{clearpath}
+command is used.
+The second shape contains an island (or hole).  When a shape is
+self-intersecting or contains islands, the winding rule is
+used for determining which areas get filled.
+The output of these commands is shown in Figure \ref{tutorialfirst3}.
+
+\begin{figure}[h]
+\includegraphics{tutorialfirst3.eps}
+\caption{Third Step}
+\label{tutorialfirst3}
+\end{figure}
+
+\subsection{Using Variables}
+
+Use variables and conditional tests to vary the appearance
+of the display.
+Use loops to display similar symbols repeatedly.
+Variables named \texttt{x} and \texttt{counter} are used in the
+following example.  The variable
+\texttt{Mapyrus.page.width}
+is set by Mapyrus automatically.
+The output of this example is shown in Figure \ref{tutorialvar1}.
+
+\verbatiminput{tutorialvar1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialvar1.eps}
+\caption{Variables And Conditional Tests}
+\label{tutorialvar1}
+\end{figure}
+
+The second example demonstrates the use of the
+\texttt{split} and \texttt{ength}
+functions
+to create an array, and stepping through the array one
+element at a time.
+
+\verbatiminput{tutorialvar2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialvar2.eps}
+\caption{Variables And Functions}
+\label{tutorialvar2}
+\end{figure}
+
+
+\subsection{Building Procedures}
+
+Store frequently used sequences of commands in a procedure.
+A procedure has a unique name, takes a fixed number of arguments and
+may be called from any place where a command is expected.
+
+Private variables in a procedure are defined with the 
+\texttt{local} command.
+
+When a procedure is called, the graphics state
+is saved, the commands for the procedure are executed and then the
+graphics state is restored before returning.
+
+The following example shows a simple procedure named \texttt{trail}.
+The output of this example is shown in Figure \ref{tutorialprocedures1}.
+
+\verbatiminput{tutorialprocedures1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialprocedures1.eps}
+\caption{Calling Procedures}
+\label{tutorialprocedures1}
+\end{figure}
+
+If the current path contains only points added with \texttt{move}
+commands when a procedure is called, then the
+procedure is called once for each point with the origin
+moved to that point.  This permits several symbols to be drawn
+easily and is demonstrated in the following example.  The 
+output of this example is shown in Figure \ref{tutorialprocedures2}.
+
+\verbatiminput{tutorialprocedures2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialprocedures2.eps}
+\caption{Procedures And Move Points}
+\label{tutorialprocedures2}
+\end{figure}
+
+
+Put frequently used procedures in a separate file and use an
+\texttt{include}
+line to include it in other files.  When this is done for the
+previous example, the procuedure is put in a file.
+
+\verbatiminput{tutorialprocedures3.mpy}
+
+and the file containing the commands to execute
+
+\verbatiminput{tutorialprocedures4.mpy}
+
+\subsection{Displaying Lines}
+
+Solid and dashed line styles are set with the
+\texttt{linestyle} command.  To draw a line with repeated symbols, use the
+\texttt{samplepath}
+command to replace the path with evenly spaced sample points and
+then call a procedure to draw a symbol at each sample point.
+The following example demonstrates this.
+
+\verbatiminput{tutoriallines1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallines1.eps}
+\caption{Repeating Symbols Along A Line}
+\label{tutoriallines1}
+\end{figure}
+
+The next example demonstrates
+combining solid and dashed linestyles.
+For best results display all lines with a solid linestyle,
+then display all lines again with a dashed linestyle.
+
+\verbatiminput{tutoriallines2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallines2.eps}
+\caption{Combining Solid And Dashed Linestyles}
+\label{tutoriallines2}
+\end{figure}
+
+The following example demonstrates combining thick and
+thin linestyles and symbols at sampled points.
+For best results display all lines with a thick linestyle,
+then display all lines again with a thin linestyle.
+
+\verbatiminput{tutoriallines3.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallines3.eps}
+\caption{Combining Several Linestyles}
+\label{tutoriallines3}
+\end{figure}
+
+The following examples demonstrate creating sample points
+from the path to generate further line styles.
+
+\verbatiminput{tutoriallines4.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallines4.eps}
+\caption{Linestyle Using Begin And End Points}
+\label{tutoriallines4}
+\end{figure}
+
+\verbatiminput{tutoriallines5.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallines5.eps}
+\caption{Linestyle Using Sample Points}
+\label{tutoriallines5}
+\end{figure}
+
+\subsection{Displaying Polygons}
+
+Polygon outlines are drawn with the \texttt{stroke}
+command and filled with the \texttt{fill} command.
+To draw repeated stripes (also known as hatching) through
+the polygon, use the \texttt{clip}
+command to limit the area displayed to inside the polygon,
+then the \texttt{stripepath}
+command to replace the path with evenly spaced stripes and
+then draw each line.  The following example demonstrates this,
+with the output shown in Figure \ref{tutorialpolygons1}.
+
+\verbatiminput{tutorialpolygons1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialpolygons1.eps}
+\caption{Hatching Polygons}
+\label{tutorialpolygons1}
+\end{figure}
+
+To fill a polygon with cross-hatching use procedures to
+draw each set of hatch lines at different angles.  Two procedures
+are used so that modifying the current path with the
+\texttt{stripepath}
+command is isolated and the original path remains unmodified in
+the calling procedure.
+This is demonstrated in the following example, with the output
+shown in Figure \ref{tutorialpolygons2}.
+
+\verbatiminput{tutorialpolygons2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialpolygons2.eps}
+\caption{Cross-Hatching Polygons}
+\label{tutorialpolygons2}
+\end{figure}
+
+Use the \texttt{stripepath} and \texttt{samplepath}
+commands in combination to generate a grid of points through the
+polygon, then call a procedure to draw a symbol at each point.
+This is demonstrated in the following example, with the output
+shown in Figure \ref{tutorialpolygons3}.
+
+\verbatiminput{tutorialpolygons3.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialpolygons3.eps}
+\caption{Displaying Points in Polygons}
+\label{tutorialpolygons3}
+\end{figure}
+
+To display a border around the inside of the polygon
+use the \texttt{clip}
+command to limit the area displayed to inside the polygon
+and then draw the outline with a thick linestyle.
+The following example demonstrates this, with the output shown
+in Figure \ref{tutorialpolygons4}.
+Use the \texttt{protect} command instead of \texttt{clip}
+to display a border around the outside of a polygon.
+
+\verbatiminput{tutorialpolygons4.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialpolygons4.eps}
+\caption{Displaying Polygon Borders}
+\label{tutorialpolygons4}
+\end{figure}
+
+\subsection{Displaying Labels}
+
+Labels are displayed using the \texttt{move}
+command to define one or more points for labelling, followed by a
+\texttt{label} command.  The font and justification for labels
+are set with the \texttt{font} and \texttt{justify} commands.
+Setting fonts, justification and displaying multiple lines
+are demonstrated in the following example.
+
+\verbatiminput{tutoriallabels1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallabels1.eps}
+\caption{Displaying Labels}
+\label{tutoriallabels1}
+\end{figure}
+
+Labels are displayed horizontally.  Rotate the axes with the \texttt{rotate}
+command before setting the font to display labels at an angle.  Drawing labels
+one pixel offset from original position and in a different color highlights the
+label.  These two techniques are demonstrated in the following example.
+
+\verbatiminput{tutoriallabels2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallabels2.eps}
+\caption{Rotated and Highlighted Labels}
+\label{tutoriallabels2}
+\end{figure}
+
+\subsection{Displaying Data Stored In Text Files}
+
+The simplest source of data is a text file, with one record per line.  The
+filename and type of dataset to read is given in a \texttt{dataset} command.
+An \texttt{import} command is used to begin reading from the dataset.  Then
+each record is retrieved with a \texttt{fetch} command in a loop and a variable
+is assigned for each field in the record.  Fields are assigned to variables
+\texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots and the whole record is
+assigned to variable \texttt{\$0}.
+
+The following example demonstrates reading a text file shown in Figure
+\ref{tutorialdatasets1txt} and displaying the
+geographic data that it contains.  The output of this example is shown in
+Figure \ref{tutorialdatasets1}.
+
+\begin{figure}[h]
+\verbatiminput{tutorialdatasets1.txt}
+\caption{Text File tutorialdatasets1.txt}
+\label{tutorialdatasets1txt}
+\end{figure}
+
+\verbatiminput{tutorialdatasets1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialdatasets1.eps}
+\caption{Displaying Contents Of Text File}
+\label{tutorialdatasets1}
+\end{figure}
+
+Coordinates in GIS datasets are given in a world coordinate system such as
+Universal Transverse Mercator.  To transform these coordinates to millimetre
+coordinates on the page use the \texttt{worlds} command.  This sets a
+transformation to map a range of world coordinates onto the whole page.  All
+coordinates given for later \texttt{addpath}, \texttt{move}, \texttt{arc} and
+\texttt{draw} commands are converted from world coordinate to page coordinates
+through this transformation.
+
+Export files of GIS datasets are also read as text files.  A loop and counter
+are used to read all coordinates making up lines and polygons.
+
+The following example demonstrates setting a world coordinate system and then
+reading and displaying the GenaMap ZF19 format export file shown in Figure
+\ref{streetsEE} containing line
+features.  The tag of each line is used as a street name label.
+The output is shown in Figure \ref{tutorialdatasets2}.
+
+\begin{figure}[h]
+\verbatiminput{streets.EE}
+\caption{GIS Export File streets.EE}
+\label{streetsEE}
+\end{figure}
+
+\verbatiminput{tutorialdatasets2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialdatasets2.eps}
+\caption{Displaying GIS Export Files}
+\label{tutorialdatasets2}
+\end{figure}
+
+\subsection{Displaying Data Stored In Shape Files}
+
+Reading data from an ESRI Shape file format is similar to reading a text file.
+A Shape file defines a bounding rectangle so the internal variables
+\texttt{Mapyrus.dataset.min.x}, \texttt{Mapyrus.dataset.min.y},
+\texttt{Mapyrus.dataset.max.x}, and \texttt{Mapyrus.dataset.max.y} are
+available to set world coordinates to the bounding rectangle of the dataset.
+
+An ESRI Shape file also defines field names.  Fields fetched with the
+\texttt{fetch} command are assigned to variables with the same name as the
+field.  The geometry for each record is assigned to a variable named
+\texttt{GEOMETRY} and is added to the current path with the \texttt{addpath}
+command.
+
+The following example demonstrates reading an ESRI Shape file containing points
+and attribute fields named \texttt{HOTELNAME} and \texttt{STARRATING}.  The
+attribute fields are used as labels and to control the appearance of the
+symbols.
+
+\verbatiminput{tutorialdatasets3.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialdatasets3.eps}
+\caption{Displaying ESRI Shape Files}
+\label{tutorialdatasets3}
+\end{figure}
+
+\subsection{Displaying Data Stored In A Database}
+
+Data is read from a relational database using
+the Java JDBC interface and a JDBC driver provided
+as part of the database.
+Each field in a database table has a name.
+Fields fetched with the
+\texttt{fetch}
+command are assigned to variables with the same name as the field.
+In the following example three fields are fetched from each
+row and assigned to variables named
+\texttt{longitude}, \texttt{latitude} and \texttt{assetcode}.
+
+An SQL where clause is used to limit data read from
+the database to inside the area of interest.
+
+\verbatiminput{tutorialdatasets4.mpy}
+
+For databases supporting the \textit{OpenGIS Simple Features Specification For
+SQL}, list the geometry fields being fetched with the \texttt{wktfields}
+option.  Fetched geometry fields containing point, line or polygon data are
+added to the current path directly with an \texttt{addpath} command.  The
+following example demonstrates fetching a geometry field named \texttt{geom}
+from the database and displaying it.
+
+\verbatiminput{tutorialdatasets5.mpy}
+
+\subsection{Display Performance}
+
+The following techniques help improve the display speed of large datasets.
+
+Check the internal variable \texttt{Mapyrus.worlds.scale} before displaying a
+large, detailed dataset.  If the scale is too high then the details will not be
+legible so skip display of the detailed part of the dataset.  For example,
+display all streets when zoomed in, but only highways when zoomed out.
+
+Store two copies of the same data.  One at high resolution and one at low
+resolution.  Select the dataset with the resolution closest to the current
+display scale.
+
+For dense data, with many points very close to each other, skip every second
+piece of data in the dataset using two \texttt{fetch} commands together.  When
+the dataset is in a database this is more efficiently done by ignoring odd
+numbered rows using an SQL statement like:
+
+\begin{verbatim}
+select X, Y, Freq from SCATTER where MOD(rowid, 2) = 0
+\end{verbatim}
+
+Set an upper limit on the number of rows fetched or the time for display by
+checking the internal variables \texttt{Mapyrus.import.count} and
+\texttt{Mapyrus.timer} in a loop and ending when the limit is exceeded.
+
+\subsection{Displaying A Legend}
+
+A cartographic rule is that a map display must include a legend.  The
+\texttt{key} command is used to save each entry to be include in a legend and
+the \texttt{legend} command displays the legend.
+
+A \texttt{key} command in a procedure defines a legend entry.  Mapyrus saves
+each legend entry encountered whilst executing commands.  Each legend entry has
+a description label and a type, defining whether the entry appears as a point,
+line or box in the legend.
+
+When display of all data is complete, points for legend entries are defined
+with \texttt{move} commands and the \texttt{legend} command is used to display
+each legend entry.  Each legend entry is automatically displayed by calling the
+procedure in which it was defined.
+
+If insufficient \texttt{move} points are defined then some legend entries
+remain undisplayed.
+
+Display the legend in a separate image file to prevent overwriting the map.
+
+This is demonstrated in the following example.
+The two output files are shown in Figure \ref{tutoriallegend1}.
+Note that the legend entry for the procedure \texttt{road} is
+not included in the legend because this procedure is not
+executed in the example.
+
+\verbatiminput{tutoriallegend1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallegend1.eps}
+\includegraphics{tutoriallegend1legend.eps}
+\caption{Displaying A Legend}
+\label{tutoriallegend1}
+\end{figure}
+
+To display each legend entry in a separate image file use a loop, checking the
+internal variable \texttt{Mapyrus.key.count} to find how many legend entries
+remain to be displayed.
+
+In each loop iteration, create a new image file, set a single \texttt{move}
+point and then display a single legend entry with a \texttt{legend} command.
+Continue until all legend entries are displayed.
+
+This is demonstrated in the following example, with each separate
+legend entry PostScript files inserted into a table.
+The output is shown in Figure \ref{tutoriallegend2}.
+//TODO Also useful in an HTML table.
+
+\verbatiminput{tutoriallegend2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutoriallegend2.eps}
+
+\begin{tabular}{|c|}
+\hline
+Legend \\
+\hline
+\includegraphics{tutoriallegend2legend1.eps} \\
+\hline
+\includegraphics{tutoriallegend2legend2.eps} \\
+\hline
+\includegraphics{tutoriallegend2legend3.eps} \\
+\hline
+\includegraphics{tutoriallegend2legend4.eps} \\
+\hline
+\end{tabular}
+
+\caption{Displaying Legend Entries Individually}
+\label{tutoriallegend2}
+\end{figure}
+
+\subsection{Using Attributes To Control Display}
+
+Use attributes of geographic data to control
+color, size, shape, labelling, highlighting and alignment of symbols, lines
+and polygons.
+Use \texttt{if}-\texttt{then}-\texttt{endif}
+statements to display different classes of data
+differently.  For example, display private, local, and major roads
+with different types of lines.
+
+To display data with a known range of attribute values in different
+colors based on the attribute value, define colors for minimum and
+maximum values and calculate the color for each point or polygon
+using linear interpolation.  This is demonstrated in the following
+example by passing a \texttt{reading} attribute value for each point
+that is displayed.  The output is shown in Figure \ref{tutorialattribute1}.
+A legend is also created to show how the coloring works.
+
+\verbatiminput{tutorialattribute1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialattribute1.eps}
+\includegraphics{tutorialattribute1legend.eps}
+\caption{Using Attributes}
+\label{tutorialattribute1}
+\end{figure}
+
+Further examples are varying the size of a symbol depending on a
+population or measurement value, varying line width depending on
+traffic between two points, or varying the symbols plotted inside
+polygons depending on soil or rock type.
+
+To display values of several attributes at point locations, draw a
+piechart or histogram at each point.
+
+\subsection{Displaying A Scalebar}
+
+Another cartographic rule is that a map display must include a scalebar.  The
+following example demonstrates generates two PostScript files using the
+internal variable \texttt{Mapyrus.worlds.scale} to add a scale bar to the
+lower-left corner of a map display.  An alternative approach is to save the
+scale value in a variable, use the \texttt{newpage} command to create a new
+output file and display the scalebar in a separate file from the map.
+
+\verbatiminput{tutorialscalebar1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialscalebar1.eps}
+\includegraphics{tutorialscalebar2.eps}
+\caption{Displaying A Scalebar}
+\label{tutorialscalebar1}
+\end{figure}
+
+\subsection{Displaying Piecharts}
+
+Piecharts are used to represent relative values of several attributes at
+different locations.  For example, production levels or voting patterns.  The
+following example demonstrates a procedure for displaying piecharts.  Fixed
+data values are used.  In a real application this information is read from a
+database or GIS dataset.  The output is shown in Figure
+\ref{tutorialpiechart1}.
+
+\verbatiminput{tutorialpiechart1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialpiechart1.eps}
+\caption{Displaying Piecharts}
+\label{tutorialpiechart1}
+\end{figure}
+
+\subsection{Random Effects}
+
+Random effects are generated using the \texttt{random}
+function and help give a less mechanical appearance.
+The following example demonstrates setting size and color randomly.
+The output is shown in Figure \ref{tutorialrand1}.
+
+\verbatiminput{tutorialrand1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialrand1.eps}
+\caption{Random Size And Color}
+\label{tutorialrand1}
+\end{figure}
+
+The next example demonstrates setting rotation randomly, with output shown in
+Figure \ref{tutorialrand2}.
+
+\verbatiminput{tutorialrand2.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialrand2.eps}
+\caption{Random Rotation}
+\label{tutorialrand2}
+\end{figure}
+
+The next example demonstrates setting position randomly for polygon fill, with
+output shown in Figure \ref{tutorialrand3}.
+
+\verbatiminput{tutorialrand3.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialrand3.eps}
+\caption{Random Position}
+\label{tutorialrand3}
+\end{figure}
+
+\subsection{Shadow Effects}
+
+To highlight polygons with a shadow, draw the outline of the polygon, use a
+\texttt{protect} command to prevent the interior of the polygon being drawn,
+then repeatedly use the \texttt{shiftpath} command to move the polygon a small
+distance from its original position, drawing it each time.  This is
+demonstrated in the following example, with output shown in Figure
+\ref{tutorialshadow1}.  Change the sign of the shift values in the
+\texttt{shiftpath} command to draw the highlight on a different side of the
+polygon.
+
+\verbatiminput{tutorialshadow1.mpy}
+
+\begin{figure}[h]
+\includegraphics{tutorialshadow1.eps}
+\caption{Shadow Effects}
+\label{tutorialshadow1}
+\end{figure}
+
+\subsection{Generating Portable Document Format (PDF) Output}
+
+Portable Document Format (PDF) files are created by converting PostScript
+output from Mapyrus to PDF using the \texttt{ps2pdf} utility program, part of
+GhostScript.
+
+The pipe option of the \texttt{newpage} command is used to pipe PostScript
+output from Mapyrus through \texttt{ps2pdf} and into a PDF file.  For example,
+
+\begin{verbatim}
+newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
+\end{verbatim}
+
+\subsection{Using PostScript Fonts In PostScript Output}
+
+PostScript printers and \textit{Ghostscript}
+understand a limited number of fonts,
+normally only \texttt{Courier},
+\texttt{Helvetica}, \texttt{Times-Roman} and the bold
+and italic variations of these fonts.
+
+When a PostScript printer prints a file containing an unknown font,
+a substitute font is used.
+
+To make a font known to the printer, include the definition of
+the font in the PostScript file being printed.
+
+A PostScript Type 1 font definition file has suffix \texttt{.pfa}.  PostScript
+font definition files are included in a PostScript file using the
+\textit{extras} \texttt{pfafiles} option to the \texttt{newpage} command.
+Include filenames of PostScript font definition files for all fonts to be used
+in the page that are not known by the printer.
+
+A PostScript Type 1 font definition file is a text file and
+the first line contains the name of the font defined in the file.
+
+To convert a True Type Font file to a PostScript Type 1 font use the
+\textit{ttf2pt1} program freely available from
+\texttt{http://ttf2pt1.sourceforge.net}.  The following command converts the
+font in the file \texttt{BEANTOWN.TTF} to a PostScript Type 1 font in file
+\texttt{BEANTOWN.pfa}.
+
+\begin{verbatim}
+ttf2pt1 -e BEANTOWN.TTF BEANTOWN
+\end{verbatim}
+
+\subsection{Using TrueType Fonts In Output to Image Formats}
+
+For output to image formats, TrueType format fonts are used.
+
+MicroSoft Windows and Macintosh operating systems support TrueType
+fonts directly and all installed TrueType fonts are available
+for use in the \texttt{font} command.
+Additional TrueType fonts are installed using operating system commands.
+
+A TrueType font is defined in a binary file with suffix
+\texttt{.ttf}.
+The name of a TrueType font normally does not match the filename exactly.
+MicroSoft Windows Explorer and font display programs show the name of
+a font contained in a TrueType font file.
+
+Other operating systems do not support TrueType fonts.  To use TrueType fonts
+on other operating systems using the \textit{extras} \texttt{ttffiles} option
+to the \texttt{newpage} command.  Include filenames of TrueType font definition
+files to be used in the page.
+
+\subsection{Setting Up Mapyrus As An HTTP Server}
+
+Enter the following lines into a text file named
+\texttt{tutorialhttpserver1.mpy}.
+
+\verbatiminput{tutorialhttpserver1.mpy}
+
+Copy the file \texttt{coastline.shp} from the \texttt{doc} subdirectory in the
+Mapyrus installation into the same directory as the file
+\texttt{tutorialhttpserver1.mpy}.  In a terminal window, change to the
+directory containing the two files and start Mapyrus as an HTTP server on port
+8410 with the following command
+(where \textit{install-dir} is the directory in which Mapyrus is installed).
+
+\vspace{10pt}
+\framebox{
+\texttt{java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus -s 8410}
+}
+\vspace{10pt}
+
+Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver1.mpy} in a
+web browser.  Mapyrus receives the request, executes the commands in the file
+\texttt{tutorialhttpserver1.mpy} and returns the PNG image that is written to
+standard output to the web browser.
+
+\subsection{Passing Variables To Mapyrus HTTP Server Through URLs}
+
+To vary the display that is created by the Mapyrus HTTP Server, include
+variables in the URL.  For example,
+
+\texttt{http://localhost:8410/tutorialurl.mpy?x1=11\&y1=48\&x2=12\&y2=49\&labels=off}
+
+The variables \texttt{x1}, \texttt{y1}, \texttt{x2}, \texttt{y2}
+and \texttt{labels} are automatically set in Mapyrus with the values
+passed in the URL before interpreting
+the commands in the file \texttt{tutorialurl.mpy}.
+
+For applications that manage state
+and provide a graphical user interface (such as clients written in
+Java or Visual Basic), use this method for returning data to the
+application.
+
+\subsection{Returning HTML Pages From Mapyrus HTTP Server}
+
+An application for web browsers is based on HTML pages.
+Generate HTML in Mapyrus and return it with \texttt{print} commands.
+Generate temporary images for the HTML page with
+unique filenames using the
+\texttt{tempname}
+function and return references to the images in the HTML.
+
+The following example demonstrates this, displaying ESRI Shape file
+\texttt{coastline.shp}
+and text file
+\texttt{aust\_temperatures.dat}
+and using an HTML form to allow
+the user to change the map display.
+Enter the following lines into a text file named
+\texttt{tutorialhtmlpage1.mpy}.
+
+\verbatiminput{tutorialhtmlpage1.mpy}
+
+Copy the files
+\texttt{coastline.shp}
+and 
+\texttt{aust\_temperatures.dat}
+into the same directory as \texttt{tutorialhtmlpage1.mpy}.
+Then start Mapyrus with the HTTP Server
+option in the same directory as these two files
+and enter the URL
+\texttt{http://localhost:8410/tutorialhtmlpage1.mpy}
+in a web browser.
+
+To simplify editing of HTML pages for an application, setup
+template HTML pages with placeholders for the information that
+Mapyrus provides.  Return the HTML pages with the placeholders
+replaced by real values using the
+\texttt{replace}
+function.  The Mapyrus commands in the file \texttt{tutorialhtmlpage2.mpy}
+and the template HTML file \texttt{tutorialhtmlpage2.txt}
+demonstrate this.  Both files are found in the
+\texttt{doc} subdirectory.
+
+\subsection{Returning Additional Information From Mapyrus HTTP Server}
+
+Further ideas for building a complete HTML application are:
+
+For datasets covering a wide area generate two images for
+each HTML page: a detailed map display and an overview map display
+with a box showing the position of the detailed map in the dataset.
+
+Generate an image containing a scalebar
+and include this in the HTML page.
+
+Restrict layers to a limited scale range by checking the
+internal variable
+\texttt{Mapyrus.worlds.scale}.
+
+\subsection{Using Imagemaps With Mapyrus HTTP Server}
+
+When Mapyrus receives a URL requested by the user
+clicking on an HTML imagemap, the
+internal variables
+\texttt{Mapyrus.imagemap.x} and
+\texttt{Mapyrus.imagemap.y} are automatically set with the pixel position
+clicked in the image (with origin in top-left corner of the image).
+Use these variables to re-center, or zoom the display to the
+point clicked in the imagemap.
+
+The following example demonstrates
+using these variables to generate a new image, based on the
+position clicked in the imagemap.
+
+\verbatiminput{tutorialimagemap1.mpy}
+
+\subsection{Combining Mapyrus With Other Software}
+
+To combine Mapyrus with other software use the following
+techniques.
+
+Pass parameters from calling environment to Mapyrus using the Java
+\texttt{-D} option.
+
+To use Mapyrus in a pipeline of commands,
+give \texttt{-} as output file in the
+\texttt{newpage}
+command to write image to standard output.
+
+Use Mapyrus in combination with the freely available software \textit{Netpbm}
+and \textit{Ghostscript} to post-process image output and convert images and
+PostScript output to other formats.
+
+The following examples demonstrate these methods.
+
+\begin{verbatim}
+java -DDATADIR=$DATADIR -DNameidx=Q7B80L -classpath mapyrus.jar \
+  org.mapyrus.Mapyrus mycommands.txt | pngtopnm | ppmtopgm | \
+  pgmtopbm | pbmtoascii -2x4
+\end{verbatim}
+
+\begin{verbatim}
+java -classpath mapyrus.jar org.mapyrus.Mapyrus \
+  $HOME/common.txt mycommands.txt > myfile.ps
+gs -sDEVICE=faxg3 -sOutputFile=myfile.fax \
+  -TextAlphaBits=4 myfile.ps
+\end{verbatim}
+
+A Java Virtual Machine takes more than one second to start on many computers.
+For applications that must start Mapyrus many times to perform short tasks,
+start Mapyrus as an HTTP server and make HTTP requests instead so that
+startup time is eliminated.
+Most programming languages include a method of making HTTP requests.
+From Perl use the \textit{libwww-perl} modules.
+From Java use the \textit{java.net.HttpURLConnection} class.
+
+Use \textit{lynx} or \textit{w3m} from languages without the ability to make
+HTTP requests.  For example,
+
+\begin{verbatim}
+w3m -dump_source \
+  http://localhost:8410/wsrv.mpy?landkreis=Erding&zoomlevel=3 > m.png
+\end{verbatim}
+
+\subsection{Building Mapyrus From Source}
+
+To build Mapyrus from source code, the following development tools
+are required:
+
+\begin{itemize}
+\item
+Ant build tool.
+\item
+Java 2 SDK 1.4, or higher.
+\item
+\LaTeX
+\end{itemize}
+
+The build process build is defined in the file \texttt{build.xml} in the
+Mapyrus installation directory.  To build the software, documentation and zip
+file for distribution, create a terminal window, change to the directory in
+which Mapyrus is installed and execute the following command.
+
+\begin{verbatim}
+ant -v
+\end{verbatim}
+
+The build process also generates the PDF manual and manual examples in the
+\texttt{doc} subdirectory from source files using \LaTeX.
+
+All source code is in Java and contains javadoc style comments.  To view and
+edit the source code, use a Java development environment such as Eclipse and
+import the source code into a new project.
+
