@@ -94,6 +94,7 @@ public class Context
 	private String mFontName;
 	private double mFontSize;
 	private double mFontRotation;
+	private double mFontOutlineWidth;
 
 	/*
 	 * Bit flags of graphical attributes that have been changed by caller
@@ -188,6 +189,7 @@ public class Context
 		mFontName = "SansSerif";
 		mFontSize = 5;
 		mFontRotation = 0;
+		mFontOutlineWidth = 0;
 
 		mPath = mExistingPath = null;
 		mClippingPaths = null;
@@ -237,6 +239,7 @@ public class Context
 		mFontName = existing.mFontName;
 		mFontSize = existing.mFontSize;
 		mFontRotation = existing.mFontRotation;
+		mFontOutlineWidth = existing.mFontOutlineWidth;
 
 		mCtm = new AffineTransform(existing.mCtm);
 		mProjectionTransform = null;
@@ -384,7 +387,7 @@ public class Context
 		int maskComplement = (~attributeMask);
 
 		if ((mAttributesPending & ATTRIBUTE_FONT & attributeMask) != 0)
-			mOutputFormat.setFontAttribute(mFontName, mFontSize, mFontRotation);
+			mOutputFormat.setFontAttribute(mFontName, mFontSize, mFontRotation, mFontOutlineWidth);
 		if ((mAttributesPending & ATTRIBUTE_JUSTIFY & attributeMask) != 0)
 			mOutputFormat.setJustifyAttribute(mJustify);
 		if ((mAttributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
@@ -567,12 +570,15 @@ public class Context
 	 * Sets font for labelling with.
 	 * @param fontName is name of font as defined in java.awt.Font class.
 	 * @param fontSize is size for labelling in millimetres.
+	 * @param fontOutlineWidth if non-zero, gives line width to use for drawing
+	 * outline of each character of labels.
 	 */
-	public void setFont(String fontName, double fontSize)
+	public void setFont(String fontName, double fontSize, double fontOutlineWidth)
 	{
 		mFontName = fontName;
 		mFontSize = fontSize * mScaling;
 		mFontRotation = mRotation;
+		mFontOutlineWidth = fontOutlineWidth * mScaling;
 		mAttributesChanged |= ATTRIBUTE_FONT;
 		mAttributesPending |= ATTRIBUTE_FONT;
 	}
