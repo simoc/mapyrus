@@ -59,6 +59,7 @@ public class MapyrusMessages
 	public static final String NO_DATASET = "nodataset";
 	public static final String NO_EXPRESSION = "noexpression";
 	public static final String NO_GEOMETRY_FIELD = "nogeometryfield";
+	public static final String NO_MOVETO = "nomoveto";
 	public static final String NO_ROWS = "norows";
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";

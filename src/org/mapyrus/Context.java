@@ -769,6 +769,12 @@ public class Context
 
 		srcPts[0] = x;
 		srcPts[1] = y;
+
+		/*
+		 * Make sure that a start point for path was defined.
+		 */
+		if (mPath == null || mPath.getMoveToCount() == 0)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MOVETO));
 		
 		/*
 		 * Transform to correct world coordinate system.
@@ -809,6 +815,12 @@ public class Context
 		centrePts[1] = yCentre;
 		endPts[0] = xEnd;
 		endPts[1] = yEnd;
+
+		/*
+		 * Make sure that a start point for arc was defined.
+		 */
+		if (mPath == null || mPath.getMoveToCount() == 0)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ARC_START));
 		
 		/*
 		 * Transform to correct world coordinate system.
@@ -831,8 +843,6 @@ public class Context
 		mCtm.transform(centrePts, 0, dstPts, 0, 1);
 		mCtm.transform(endPts, 0, dstPts, 2, 1);
 
-		if (mPath == null)
-			mPath = new GeometricPath();
 		mPath.arcTo(direction, dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
 	}
 	
@@ -841,6 +851,9 @@ public class Context
 	 */
 	public void clearPath()
 	{
+		/*
+		 * If a path was defined then clear it.
+		 */
 		if (mPath != null)
 			mPath.reset();
 	}
@@ -881,7 +894,6 @@ public class Context
 	 */
 	public void stroke()
 	{
-// TODO I am getting an exception when stroking path begun with a drawTo
 		GeometricPath path = getDefinedPath();
 
 		if (path != null && mOutputFormat != null)
