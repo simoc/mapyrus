@@ -11,103 +11,103 @@ Tutorial
 
 <tr>
 <td>
-<a href="#first"/>First Steps</a>
+<a href="#first">First Steps</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#var"/>Using Variables</a>
+<a href="#var">Using Variables</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#procedures"/>Building Procedures</a>
+<a href="#procedures">Building Procedures</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#lines"/>Displaying Lines</a>
+<a href="#lines">Displaying Lines</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#polygons"/>Displaying Polygons</a>
+<a href="#polygons">Displaying Polygons</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#labels"/>Displaying Labels</a>
+<a href="#labels">Displaying Labels</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#rand"/>Random Effects</a>
+<a href="#rand">Random Effects</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#datasets"/>Displaying Geographic Information System Datasets</a>
+<a href="#datasets">Displaying Geographic Information System Datasets</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#scalebar"/>Displaying A Scalebar</a>
+<a href="#scalebar">Displaying A Scalebar</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#pdf"/>Generating Portable Document Format (PDF) Output</a>
+<a href="#pdf">Generating Portable Document Format (PDF) Output</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#httpserver"/>Setting Up Mapyrus As An HTTP Server</a>
+<a href="#httpserver">Setting Up Mapyrus As An HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#url"/>Passing Variables To Mapyrus HTTP Server Through URLs</a>
+<a href="#url">Passing Variables To Mapyrus HTTP Server Through URLs</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#htmlpage"/>Returning HTML Pages From Mapyrus HTTP Server</a>
+<a href="#htmlpage">Returning HTML Pages From Mapyrus HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#htmladd"/>Returning Additional Information From Mapyrus HTTP Server</a>
+<a href="#htmladd">Returning Additional Information From Mapyrus HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#imagemap"/>Using Imagemaps With Mapyrus HTTP Server</a>
+<a href="#imagemap">Using Imagemaps With Mapyrus HTTP Server</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#combining"/>Combining Mapyrus With Other Software</a>
+<a href="#combining">Combining Mapyrus With Other Software</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#building"/>Building Mapyrus From Source</a>
+<a href="#building">Building Mapyrus From Source</a>
 </td>
 </tr>
 
@@ -220,7 +220,7 @@ The output of this example is.
 
 include hr.doc
 
-<a name="procedures"/></a>
+<a name="procedures"></a>
 <h3>Building Procedures</h3>
 <p>
 
@@ -278,7 +278,7 @@ include endex.doc
 
 include hr.doc
 
-<a name="lines"/></a>
+<a name="lines"></a>
 <h3>Displaying Lines</h3>
 <p>
 Solid and dashed line styles are set with the
@@ -344,7 +344,7 @@ include endex.doc
 
 include hr.doc
 
-<a name="polygons"/></a>
+<a name="polygons"></a>
 <h3>Displaying Polygons</h3>
 <p>
 Polygon outlines are drawn with the
@@ -423,7 +423,7 @@ include endex.doc
 
 include hr.doc
 
-<a name="labels"/></a>
+<a name="labels"></a>
 <h3>Displaying Labels</h3>
 <p>
 
@@ -467,7 +467,7 @@ include endex.doc
 
 include hr.doc
 
-<a name="rand"/></a>
+<a name="rand"></a>
 <h3>Random Effects</h3>
 <p>
 Random effects are generated using the
@@ -608,7 +608,7 @@ include endex.doc
 <p>
 
 Check the
-<a href="reference.html#internalvars"/>
+<a href="reference.html#internalvars">
 internal variable
 </a>
 <tt>Mapyrus.worlds.scale</tt>
@@ -625,7 +625,7 @@ include hr.doc
 <p>
 A cartographic rule is that a map display must include a scalebar.
 The following example demonstrates generates two images using the
-<a href="reference.html#internalvars"/>
+<a href="reference.html#internalvars">
 internal variable
 </a>
 <tt>Mapyrus.worlds.scale</tt>
@@ -731,13 +731,13 @@ include hr.doc
 
 An application for web browsers is based on HTML pages.
 Generate HTML in Mapyrus and return it with
-<a href="reference.html#print"/>
+<a href="reference.html#print">
 print
 </a>
 commands.
 Generate temporary images for the HTML page with
 unique filenames using the
-<a href="reference.html#tempname"/>
+<a href="reference.html#tempname">
 <tt>tempname</tt>
 </a>
 function and return references to the images in the HTML.
@@ -757,7 +757,7 @@ include tutorialhtmlpage1.mpy
 include endex.doc
 
 Start Mapyrus with the
-<a href="#httpserver"/>
+<a href="#httpserver">
 HTTP Server
 </a>
 option and enter the following URL in a web browser.
@@ -770,7 +770,7 @@ To simplify editing of HTML pages for an application, setup
 template HTML pages with placeholders for the information that
 Mapyrus provides.  Return the HTML pages with the placeholders
 replaced by real values using the
-<a href="reference.html#replace"/>
+<a href="reference.html#replace">
 <tt>replace</tt>
 </a>
 function.  The following
@@ -791,7 +791,7 @@ include hr.doc
 
 When Mapyrus receives a URL requested by the user
 clicking on an HTML imagemap, the
-<a href="reference.html#internalvars"/>
+<a href="reference.html#internalvars">
 internal variables
 </a>
 <tt>Mapyrus.imagemap.x</tt> and
@@ -873,9 +873,9 @@ are required:
 
 <ul>
 <li>
-<a href="http://jakarta.apache.org/"/>Ant</a> build tool.
+<a href="http://jakarta.apache.org/">Ant</a> build tool.
 <li>
-<a href="http://java.sun.com/"/>Java 2 SDK 1.4</a>, or higher.
+<a href="http://java.sun.com/">Java 2 SDK 1.4</a>, or higher.
 </ul>
 
 The build process build is defined in the file <tt>build.xml</tt>
@@ -901,7 +901,7 @@ style comments.
 <p>
 To view and edit the source code, use a 
 development environment such as
-<a href="http://www.eclipse.org/"/>Eclipse</a>
+<a href="http://www.eclipse.org/">Eclipse</a>
 and import the source code into a new project.
 
 include footer.doc

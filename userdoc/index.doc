@@ -5,7 +5,7 @@ include header.doc
 
 <tr>
 <td>
-<a href="intro.html"/>Introduction</a>
+<a href="intro.html">Introduction</a>
 </td>
 <td>
 What is Mapyrus?  What is it not?
@@ -14,7 +14,7 @@ What is Mapyrus?  What is it not?
 
 <tr>
 <td>
-<a href="tutorial.html"/>Tutorial</a>
+<a href="tutorial.html">Tutorial</a>
 </td>
 <td>
 The quickest way to get familiar with the software.
@@ -23,7 +23,7 @@ The quickest way to get familiar with the software.
 
 <tr>
 <td>
-<a href="reference.html"/>Reference</a>
+<a href="reference.html">Reference</a>
 </td>
 <td>
 All the commands and options and
@@ -33,7 +33,7 @@ requirements for running the software.
 
 <tr>
 <td>
-<a href="versions.html"/>Versions</a>
+<a href="versions.html">Versions</a>
 </td>
 <td>
 What was included in each version.
@@ -45,7 +45,7 @@ What was included in each version.
 <!-- Make sure link for download includes correct version number -->
 <a href="http://www.chenery.id.au/mapyrus/mapyrus-
 include VERSION
-.zip"/>Download</a>
+.zip">Download</a>
 </td>
 <td>
 Download current version of the software.
@@ -55,7 +55,7 @@ Download current version of the software.
 
 <tr>
 <td>
-<a href="COPYING"/>Licensing</a>
+<a href="COPYING">Licensing</a>
 </td>
 <td>
 Mapyrus is released under the GNU General Public License.

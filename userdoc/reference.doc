@@ -10,31 +10,31 @@ Reference
 <table>
 <tr>
 <td>
-<a href="#softreq"/>Software Requirements</a>
+<a href="#softreq">Software Requirements</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#usage"/>Usage</a>
+<a href="#usage">Usage</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#language"/>Language</a>
+<a href="#language">Language</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#internalvars"/>Internal Variables</a>
+<a href="#internalvars">Internal Variables</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#commands"/>Commands</a>
+<a href="#commands">Commands</a>
 <font size=-1>
 <br>
 &nbsp;
@@ -73,13 +73,13 @@ Reference
 
 <tr>
 <td>
-<a href="#errors"/>Error Handling</a>
+<a href="#errors">Error Handling</a>
 </td>
 </tr>
 
 <tr>
 <td>
-<a href="#httpserver"/>Mapyrus HTTP Server</a>
+<a href="#httpserver">Mapyrus HTTP Server</a>
 </td>
 </tr>
 
@@ -714,13 +714,13 @@ For these commands, each combination of arguments is listed.
 Adds geometry in each <i>geometry-field</i> to current path.
 A <i>geometry-field</i> is geometry fetched from a dataset
 with a
-<a href="#fetch"/>fetch</a> command.
+<a href="#fetch">fetch</a> command.
 <p>
 Coordinates are transformed through any
 transformation set with a <a href="#worlds">worlds</a> command,
-then scaled and rotated by <a href="#scale"/>scale</a>
+then scaled and rotated by <a href="#scale">scale</a>
 and
-<a href="#rotate"/>rotate</a>
+<a href="#rotate">rotate</a>
 values.
 
 include hr.doc
@@ -742,9 +742,9 @@ to the distance from the center to the end point.
 <p>
 Points are transformed through any
 transformation set with a <a href="#worlds">worlds</a> command,
-then scaled and rotated by <a href="#scale"/>scale</a>
+then scaled and rotated by <a href="#scale">scale</a>
 and
-<a href="#rotate"/>rotate</a>
+<a href="#rotate">rotate</a>
 values.
 
 include hr.doc
@@ -763,7 +763,7 @@ include hr.doc
 <p>
 Sets a clip path containing the area covered by the current path.
 Opposite of the
-<a href="#protect"/>protect</a>
+<a href="#protect">protect</a>
 command.
 Later drawing commands are limited to draw only inside this area.
 If the path is clipped in a procedure, then the area remains
@@ -788,7 +788,7 @@ include hr.doc
 Sets color for drawing.
 Named colors refer to colors in the file
 <tt>/usr/lib/X11/rgb.txt</tt>, or the file given as a
-<a href="#startupvariables"/>variable</a> at startup.
+<a href="#startupvariables">variable</a> at startup.
 <i>hexdigits</i> is a 6 digit hexadecimal value defining RGB values,
 as used in HTML pages.
 Values for RGB and HSB colors are given as intensities
@@ -870,9 +870,9 @@ A straight line segment is added from the previously defined point
 to (<i>x</i>, <i>y</i>) and then to each further point given.
 Points are first transformed through any world coordinate
 transformation set with a <a href="#worlds">worlds</a> command
-then scaled and rotated by <a href="#scale"/>scale</a>
+then scaled and rotated by <a href="#scale">scale</a>
 and
-<a href="#rotate"/>rotate</a>
+<a href="#rotate">rotate</a>
 values.
 
 include hr.doc
@@ -953,9 +953,9 @@ include hr.doc
 Draws a label at each point in the path
 set with the <a href="#move">move</a> command, using the
 font, justification and rotation set with the
-<a href="#font"/>font</a>,
-<a href="#justify"/>justify</a> and
-<a href="#rotate"/>rotate</a>
+<a href="#font">font</a>,
+<a href="#justify">justify</a> and
+<a href="#rotate">rotate</a>
 commands.
 <i>string</i> values are separated by spaces.
 If <i>string</i> contains newline characters (<tt>\n</tt>) then
@@ -1005,9 +1005,9 @@ include hr.doc
 Adds the point (<i>x</i>, <i>y</i>) to the current path.  The
 point is first transformed through any world coordinate
 transformation set with a <a href="#worlds">worlds</a> command,
-then scaled and rotated by <a href="#scale"/>scale</a>
+then scaled and rotated by <a href="#scale">scale</a>
 and
-<a href="#rotate"/>rotate</a>
+<a href="#rotate">rotate</a>
 values.
 
 include hr.doc
@@ -1088,7 +1088,7 @@ Defines a clip path to
 protect the area of the page covered by the current path and
 prevent it from being overwritten by later drawing commands.
 Opposite of the
-<a href="#clip"/>clip</a>
+<a href="#clip">clip</a>
 command.
 If the path is protected in a procedure, then the area remains
 protected until the procedure is complete.  Otherwise, the area
@@ -1265,7 +1265,7 @@ When all threads in the HTTP server are busy handling requests,
 further requests are queued.
 <p>
 Logging of HTTP requests is controlled by setting a
-<a href="#startupvariables"/>variable</a> at startup defining
+<a href="#startupvariables">variable</a> at startup defining
 a logging configuration file.
 
 include footer.doc
