@@ -24,6 +24,11 @@ from
 The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com},
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
+\item
+The OGR library from
+\texttt{http://openev.sourceforge.net}
+if reading of GIS data formats other than ESRI Shape format
+and relational database tables is required.
 \end{itemize}
 
 \subsection{Usage}
@@ -1089,31 +1094,25 @@ Other values are set as properties for the JDBC driver. \\
 
 \hline
 
-\texttt{mif} &
-Reads from a MapInfo Interchange Format (MIF)
-file with filename \textit{name}.
+\texttt{ogrinfo} &
+Reads the output of the \texttt{ogrinfo} program, part of
+the freely-available OGR library.
+The filename \textit{name} contains either,
+\begin{enumerate}
+\item
+An \texttt{ogrinfo} program command followed by a pipe (\texttt{|}) character.
+Mapyrus runs this command and reads the output.  Use \texttt{ogrinfo}
+command options to limit the data to an area of interest, or to data
+matching an SQL-like where clause.
+\item
+(\texttt{-}) to read standard input to Mapyrus.
+\item
+The name of a file containing \texttt{ogrinfo} output.
+\end{enumerate}
+
 The geometry for each fetched record is assigned to a variable named
 \texttt{GEOMETRY}, attribute field values are assigned to
-variables with attribute field names.
-
-Color and symbol information for each point read from the MIF file
-is assigned to variables
-named \texttt{SYMBOLSHAPE}, \texttt{SYMBOLCOLOR}, \texttt{SYMBOLSIZE}
-and \texttt{SYMBOLFONT}.  For each line and polygon, the variables
-named \texttt{PENWIDTH}, \texttt{PENPATTERN}, \texttt{PENCOLOR}
-are assigned.  For each polygon, variables
-named \texttt{BRUSHPATTERN}, \texttt{BRUSHFORECOLOR}, \texttt{BRUSHBACKCOLOR}
-are also assigned with the fill style for the polygon.
-
-\vspace{10pt}
-Extras:
-
-\texttt{midfields=\textit{field1},\textit{field2},...}
-
-Comma-separated list of
-attribute fields to read from the MID file accompanying the
-MIF file.  By default, all fields are read.  Reading fewer attribute
-fields improves performance.  \\
+variables with attribute field names. \\
 
 \hline
 
@@ -1700,7 +1699,7 @@ Encapsulated PostScript file or a PostScript file containing only
 a single page.
 Drawing commands will draw over the top of the existing page.
 Page size is set to the size of the existing page,
-\textit{width} and \textit{height} are ignored.  \\
+\textit{width} and \textit{height} of the new page are ignored.  \\
 
 \hline
 
@@ -1755,7 +1754,7 @@ If \textit{flag} is \texttt{true} then the file with name
 Drawing commands will draw over the top of the existing image
 in the file.
 Page size is set to the size of the existing image,
-\textit{width} and \textit{height} are ignored.  \\
+\textit{width} and \textit{height} of the new page are ignored.  \\
 
 \hline
 
