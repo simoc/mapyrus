@@ -42,6 +42,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -168,7 +169,12 @@ public class OutputFormat
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: " + Constants.PROGRAM_NAME);
-		
+		Date now = new Date();
+		mWriter.println("%%CreationDate: " + now.toString());
+		String username = System.getProperty("user.name");
+		if (username != null)
+			mWriter.println("%%For: " + username);
+
 		/*
 		 * List fonts included in this PostScript file.
 		 */
@@ -203,6 +209,14 @@ public class OutputFormat
 			mWriter.println("%%EndResource");			
 		}
 		mWriter.println("%%EndSetup");
+
+		/*
+		 * Set color and linestyle to reasonable default values.
+		 * Taken from 'initgraphics' operator example in PostScript Language
+		 * Reference Manual. 
+		 */
+		mWriter.println("1 setlinewidth 0 setlinecap 0 setlinejoin");
+		mWriter.println("[] 0 setdash 0 setgray 10 setmiterlimit");
 
 		/*
 		 * Prevent anything being displayed outside bounding box we've just defined.
@@ -255,7 +269,6 @@ public class OutputFormat
 		 */
 		mWriter.println("/gs { gsave 4 dict begin } bind def");
 		mWriter.println("/gr { end grestore } bind def");
-
 		mWriter.println("");
 	}
 
