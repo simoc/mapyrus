@@ -397,7 +397,7 @@ public class Context
 			mOutputFormat.closeOutputFormat();
 
 			/*
-			 * Clear world extents, projection and clip path from previous page.
+			 * Clear world extents, transformation, projection and clip path from previous page.
 			 * Other page settings are independent of a particular page so leave
 			 * them alone.  
 			 */
@@ -405,6 +405,10 @@ public class Context
 			mWorldCtm = null;
 			mProjectionTransform = null;
 			mClippingPaths = null;
+
+			mScaling = 1.0;
+			mRotation = 0.0;
+			mCtm = new AffineTransform();
 		}
 
 		mOutputFormat = new OutputFormat(filename, format,
@@ -979,6 +983,33 @@ public class Context
 
 		if (path != null)
 			mPath = path.stripePath(spacing * mScaling, angle);
+	}
+
+	/**
+	 * Shift all coordinates in path shifted by a fixed amount.
+	 * @param xShift distance in millimetres to shift X coordinate values.
+	 * @param yShift distance in millimetres to shift Y coordinate values.
+	 */
+	public void translatePath(double xShift, double yShift)
+	{
+		GeometricPath path = getDefinedPath();
+		double coords[] = new double[2];
+		coords[0] = xShift;
+		coords[1] = yShift;
+
+		/*
+		 * Scale and rotate shift to current transformation matrix.
+		 */
+		if (!mCtm.isIdentity())
+		{
+			AffineTransform at = AffineTransform.getRotateInstance(mRotation);
+			at.scale(mScaling, mScaling);
+		
+			at.transform(coords, 0, coords, 0, 1);
+		}
+
+		if (path != null)
+			mPath = path.translatePath(coords[0], coords[1]);
 	}
 
 	/**
