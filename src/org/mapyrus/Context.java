@@ -90,9 +90,7 @@ public class Context
 	 * Transformation matrix and cumulative scaling factors and rotation.
 	 */
 	private AffineTransform mCtm;
-	private double mXScaling;
-	private double mYScaling;
-	private double mScalingMagnitude;
+	private double mScaling;
 	private double mRotation;
 
 	/*
@@ -168,7 +166,7 @@ public class Context
 		mCtm = new AffineTransform();
 		mProjectionTransform = null;
 		mWorldCtm = null;
-		mXScaling = mYScaling = mScalingMagnitude = 1.0;
+		mScaling =  1.0;
 		mRotation = 0.0;
 		mVars = null;
 		mLocalVars = null;
@@ -199,9 +197,7 @@ public class Context
 		mCtm = new AffineTransform(existing.mCtm);
 		mProjectionTransform = null;
 		mWorldCtm = null;
-		mXScaling = existing.mXScaling;
-		mYScaling = existing.mYScaling;
-		mScalingMagnitude = existing.mScalingMagnitude;
+		mScaling = existing.mScaling;
 		mRotation = existing.mRotation;
 		mDataset = existing.mDataset;
 
@@ -443,15 +439,15 @@ public class Context
 		 */
 		if (dashes == null)
 		{
-			mLinestyle = new BasicStroke((float)(width * mScalingMagnitude),
+			mLinestyle = new BasicStroke((float)(width * mScaling),
 				cap, join, MITER_LIMIT);
 		}
 		else
 		{
 			for (int i = 0; i < dashes.length; i++)
-				dashes[i] *= mScalingMagnitude;
+				dashes[i] *= mScaling;
 
-			mLinestyle = new BasicStroke((float)(width * mScalingMagnitude), cap, join,
+			mLinestyle = new BasicStroke((float)(width * mScaling), cap, join,
 				MITER_LIMIT, dashes, (float)phase);
 		}
 		mAttributesChanged = mAttributesSet = true;
@@ -477,7 +473,7 @@ public class Context
 	{
 		mFontName = fontName;
 		mFontStyle = fontStyle;
-		mFontSize = fontSize * mScalingMagnitude;
+		mFontSize = fontSize * mScaling;
 		mFontRotation = mRotation;
 		mAttributesChanged = mAttributesSet = true;
 	}
@@ -494,15 +490,12 @@ public class Context
 
 	/**
 	 * Sets scaling for subsequent coordinates.
-	 * @param x is new scaling in X axis.
-	 * @param y is new scaling in Y axis.
+	 * @param factor is new scaling in X and Y axes.
 	 */
-	public void setScaling(double x, double y)
+	public void setScaling(double factor)
 	{
-		mCtm.scale(x, y);
-		mXScaling *= x;
-		mYScaling *= y;
-		mScalingMagnitude = Math.max(Math.abs(mXScaling), Math.abs(mYScaling));
+		mCtm.scale(factor, factor);
+		mScaling *= factor;
 		mAttributesChanged = mAttributesSet = true;
 	}
 	
@@ -617,21 +610,12 @@ public class Context
 	}
 
 	/**
-	 * Returns X scaling value in current transformation.
-	 * @return X scale value.
+	 * Returns scaling factor in current transformation.
+	 * @return scale value.
 	 */
-	public double getScalingX()
+	public double getScaling()
 	{
-		return(mXScaling);
-	}
-
-	/**
-	 * Returns Y scaling value in current transformation.
-	 * @return Y scale value
-	 */
-	public double getScalingY()
-	{
-		return(mYScaling);
+		return(mScaling);
 	}
 
 	/**
@@ -937,8 +921,8 @@ public class Context
 
 		if (path != null)
 		{
-			mPath = path.samplePath(spacing * mScalingMagnitude,
-				offset * mScalingMagnitude, resolution);
+			mPath = path.samplePath(spacing * mScaling,
+				offset * mScaling, resolution);
 		}
 	}
 
@@ -953,7 +937,7 @@ public class Context
 		GeometricPath path = getDefinedPath();
 
 		if (path != null)
-			mPath = path.stripePath(spacing * mScalingMagnitude, angle);
+			mPath = path.stripePath(spacing * mScaling, angle);
 	}
 
 	/**
