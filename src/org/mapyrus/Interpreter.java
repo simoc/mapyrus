@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
 /**
@@ -489,6 +490,27 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ARC));
 				}
 				break;
+			
+			case Statement.ADDPATH:
+				for (int i = 0; i < nExpressions; i++)
+				{
+					if (args[i].getType() != Argument.GEOMETRY)
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY));
+				}
+				for (int i = 0; i < nExpressions; i++)
+				{
+					double coords[] = args[i].getGeometryValue();
+					int len = (int)(coords[0]);
+					
+					for (int j = 1; j < len; j += 3)
+					{
+						if (coords[j] == PathIterator.SEG_MOVETO)
+							context.moveTo(coords[j + 1], coords[j + 2]);
+						else
+							context.lineTo(coords[j + 1], coords[j + 2]);
+					}
+				}
+				break;
 				
 			case Statement.CLEARPATH:
 				if (nExpressions > 0)
@@ -574,6 +596,7 @@ public class Interpreter
 					}
 					label = s.toString();
 				}
+// TODO skip labelling if string is empty.
 				context.label(label);
 				break;
 						
@@ -675,56 +698,15 @@ public class Interpreter
 
 			case Statement.FETCH:
 				/*
-				 * Add next row from dataset to path.
+				 * Fetch next row from dataset.
 				 */
 				Row row = context.fetchRow();
-//				int index = 0;
-//				int []geometryFieldIndexes = context.getDatasetGeometryFieldIndexes();
-// TODO need an addpath command to add geometry to path.
+
 				String []fieldNames = context.getDatasetFieldNames();
 				String fieldName;
-//				double x = 0.0;
+
 				for (int i = 0; i < row.size(); i++)
 				{
-					Argument field = (Argument)row.get(i);
-//					if (geometryFieldIndexes != null &&
-//						index < geometryFieldIndexes.length &&
-//						i == geometryFieldIndexes[index])
-//					{
-//						if (field.getType() == Argument.GEOMETRY)
-//						{
-//							/*
-//							 * Define path from fetched geometry.
-//							 */
-//							double []coords = field.getGeometryValue();
-//							int j = 1;
-//							while (j < coords[0])
-//							{
-//								if (coords[j] == PathIterator.SEG_MOVETO)
-//									context.moveTo(coords[j + 1], coords[j + 2]);
-//								else
-//									context.lineTo(coords[j + 1], coords[j + 2]);
-//								j += 3;
-//							}
-//						}
-//						else
-//						{
-//							/*
-//							 * First pair of geometry fields contain moveTo coordinates.
-//							 * Successive pairs define lineTo coordinates.
-//							 */
-//							if (index == 1)
-//								context.moveTo(x, field.getNumericValue());
-//							else if (index % 2 == 0)
-//								x = field.getNumericValue();
-//							else
-//								context.lineTo(x, field.getNumericValue());
-//						}
-//						index++;
-//					}
-//
-//					if (field.getType() != Argument.GEOMETRY)
-//					{
 						/*
 						 * Define all fields as variables.
 						 */
@@ -732,8 +714,7 @@ public class Interpreter
 							fieldName = fieldNames[i];
 						else
 							fieldName = DefaultFieldNames.get(i);
-						context.defineVariable(fieldName, field);
-//					}
+						context.defineVariable(fieldName, (Argument)(row.get(i)));
 				}
 				break;
 
