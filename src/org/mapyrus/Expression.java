@@ -30,7 +30,7 @@ public class Expression
 
 	private static final int AND_OPERATION = 10;
 	private static final int OR_OPERATION = 11;
-
+	
 	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
@@ -68,18 +68,19 @@ public class Expression
 
 		/**
 		 * Evaluate binary tree expression..
+		 * @param context variable definitions and other context information.
 		 * @return numeric or string value of the expression.
 		 */
-		public Argument evaluate(Hashtable h) throws MapyrusException
+		public Argument evaluate(Context context) throws MapyrusException
 		{
-			return(traverse(this, h));
+			return(traverse(this, context));
 		}
 
 		/*
 		 * Recursively traverse binary expression tree to
 		 * determine its value.
 		 */
-		private Argument traverse(ExpressionTreeNode t, Hashtable h)
+		private Argument traverse(ExpressionTreeNode t, Context context)
 			throws MapyrusException
 		{
 			Argument retval;
@@ -89,22 +90,37 @@ public class Expression
 
 			if (t.mIsLeaf)
 			{
-				retval = t.mLeafArg;
+				/*
+				 * Evaluate any variable name.
+				 */
+				if (t.mLeafArg.getType() == Argument.VARIABLE)
+				{
+					retval = context.getVariableValue(t.mLeafArg.getVariableName());
+					if (retval == null)
+					{
+						throw new MapyrusException("Variable " +
+							t.mLeafArg.getVariableName() + " not defined");
+					}
+				}
+				else
+				{
+					retval = t.mLeafArg;
+				}
 			}
 			else
 			{
 				/*
 				 * Either expressions can be numeric or string.
 				 */
-				leftValue = traverse(t.mLeftBranch, h);
-				rightValue = traverse(t.mRightBranch, h);
+				leftValue = traverse(t.mLeftBranch, context);
+				rightValue = traverse(t.mRightBranch, context);
 
 				/*
 				 * Evaluate any variable names.
 				 */
 				if (leftValue.getType() == Argument.VARIABLE)
 				{
-					Argument leftVarValue = (Argument)h.get(leftValue.getVariableName());
+					Argument leftVarValue = context.getVariableValue(leftValue.getVariableName());
 					if (leftVarValue == null)
 					{
 						throw new MapyrusException("Variable " +
@@ -114,7 +130,7 @@ public class Expression
 				}
 				if (rightValue.getType() == Argument.VARIABLE)
 				{
-					Argument rightVarValue = (Argument)h.get(rightValue.getVariableName());
+					Argument rightVarValue = context.getVariableValue(rightValue.getVariableName());
 					if (rightVarValue == null)
 					{
 						throw new MapyrusException("Variable " +
@@ -353,17 +369,21 @@ public class Expression
 						p.getCurrentFilenameAndLine());
 				}
 
-				if (c == '\\' && lastC == '\\')
+				if (c == '\\' && lastC != '\\')
+				{
+					/*
+					 * Ignore all escaped characters except '\\'.
+					 */
+				}
+				else
 				{
 					/*
 					 * Compress '\\' in string into
 					 * a single backslash.
 					 */
-				}
-				else
-				{
 					buf.append((char)c);
 				}
+				lastC = c;
 			}
 			return(new ExpressionTreeNode(new Argument(Argument.STRING, buf.toString())));
 		}
@@ -512,9 +532,9 @@ public class Expression
 	 * @param vars are all currently defined variables and their values.
 	 * @return the evaluated expression, either a string or a number.
 	 */
-	public Argument evaluate(Hashtable vars) throws MapyrusException
+	public Argument evaluate(Context context) throws MapyrusException
 	{
-		return(mExprTree.evaluate(vars));
+		return(mExprTree.evaluate(context));
 	}
 
 	public static void main(String []args)
@@ -523,10 +543,10 @@ public class Expression
 		{
 			Preprocessor p;
 			Expression e1, e2;
-			Hashtable h = new Hashtable();
+			Context context = new Context();
 			Argument a1, a2;
 
-			h.put("pi", new Argument(3.1415));
+			context.defineVariable("pi", new Argument(3.1415));
 			
 			/*
 			 * Read two expressions separated by a comma or newline.
@@ -535,8 +555,8 @@ public class Expression
 			e1 = new Expression(p);
 			p.read();
 			e2 = new Expression(p);
-			a1 = e1.evaluate(h);
-			a2 = e2.evaluate(h);
+			a1 = e1.evaluate(context);
+			a2 = e2.evaluate(context);
 			if (a1.getType() == Argument.NUMERIC)
 			{
 				System.out.println("a1=" + a1.getNumericValue());
