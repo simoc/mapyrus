@@ -5,6 +5,11 @@
 \usepackage{verbatim}
 \usepackage{longtable}
 \usepackage{alltt}
+% Use hyperref to get bookmarks and links in created PDF file.
+% hyperref package manual states that it should be last because it
+% overwrites some internal LaTeX definitions.
+\usepackage[dvips, bookmarks]{hyperref}
+
 
 % Current software version number and release date
 % set by ant Replace task during build.
