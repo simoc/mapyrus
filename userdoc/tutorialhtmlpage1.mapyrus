@@ -45,7 +45,7 @@ if LABELS eq 'on'
 then
 	# Display point map containing labels.
 	#
-	dataset "textfile", "aust_temperatures.dat", "comments=#"
+	dataset "textfile", "aust_cities.dat", "comments=#"
 	color "black"
 	font "Helvetica", 3
 	justify "right"
