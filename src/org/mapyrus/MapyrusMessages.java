@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 
 /**
  * Wrapper around a java resource file containing messages for various
- * locales.  Provides single function to get a message for the current
+ * languages.  Provides single function to get a message for the current
  * locale, given the message key identifier.  
  */
 public class MapyrusMessages
@@ -58,7 +58,6 @@ public class MapyrusMessages
 	public static final String INVALID_EXPRESSION = "invalidexpression";
 	public static final String INVALID_FONT = "invalidfont";
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
-	public static final String INVALID_FONT_STYLE = "invalidfontstyle";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
 	public static final String INVALID_HTTP_REQUEST = "invalidhttp";
 	public static final String INVALID_IMPORT = "invalidimport";
@@ -86,6 +85,8 @@ public class MapyrusMessages
 	public static final String MISSING_HTTP_POST = "missinghttppost";
 	public static final String NESTED_PROC = "nestedproc";
 	public static final String NO_OUTPUT = "nooutput";
+	public static final String NOT_A_PFA_FILE = "notapfafile";
+	public static final String NOT_A_TTF_FILE = "notattffile";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
 	public static final String NOT_NUMERIC_VALUE = "notnumericvalue";
 	public static final String NOT_SHAPE_FILE = "notshapefile";
