@@ -178,6 +178,7 @@ public class OutputFormat
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
+		mWriter.println("%%OperatorMessage: (Map plotting...)");
 		Date now = new Date();
 		mWriter.println("%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
@@ -1330,7 +1331,7 @@ public class OutputFormat
 			mGraphics2D.draw(shape);
 		}
 	}
-	
+
 	/**
 	 * Fill currently defined path on output page.
 	 */
