@@ -49,7 +49,7 @@ begin church name, ruined
   stroke
 end
 
-newpage "eps", "tutoriallegend2.eps", 50, 30
+newpage "eps", "tutoriallegend2.eps", 50, 30, "background=grey90"
 clearpath
 move 5, 5
 monument

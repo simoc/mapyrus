@@ -41,7 +41,7 @@ begin church
   stroke
 end
 
-newpage "eps", "tutoriallegend1.eps", 50, 30
+newpage "eps", "tutoriallegend1.eps", 50, 30, "background=grey90"
 
 clearpath
 move 5, 5
