@@ -327,6 +327,20 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.PROJECT:
+				if (nExpressions == 2 && args[0].getType() == Argument.STRING &&
+					args[1].getType() == Argument.STRING)
+				{
+						context.setTransform(args[0].getStringValue(),
+							args[1].getStringValue());
+				}
+				else
+				{
+					throw new MapyrusException("Invaild transformation at " +
+						st.getFilenameAndLineNumber());
+				}
+				break;
+				
 			case Statement.NEWPAGE:
 				if (nExpressions == 4 &&
 					args[0].getType() == Argument.STRING &&
