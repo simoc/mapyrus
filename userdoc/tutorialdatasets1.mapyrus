@@ -32,7 +32,6 @@ newpage "eps", "tutorialdatasets1.eps", 85, 85
 # Draw black outline around edge of image.
 #
 color "black"
-move 0.1, 0.1
 box 0.1, 0.1, Mapyrus.page.height - 0.1, Mapyrus.page.width - 0.1
 stroke
 
