@@ -41,6 +41,7 @@ public class LegendEntry implements Comparable
 	private Argument[] mBlockArgs;
 	private int mType;
 	private String mDescription;
+	private int mReferenceCount;
 
 	/**
 	 * Create new legend entry.
@@ -55,6 +56,24 @@ public class LegendEntry implements Comparable
 		mBlockArgs = blockArgs;
 		mType = type;
 		mDescription = description;
+		mReferenceCount = 1;
+	}
+
+	/**
+	 * Mark this legend entry as being used again.
+	 */
+	public void addReference()
+	{
+		mReferenceCount++;
+	}
+
+	/**
+	 * Return number of times this legend entry has been used.
+	 * @return reference count.
+	 */
+	public int getReferenceCount()
+	{
+		return(mReferenceCount);
 	}
 
 	/**
@@ -149,7 +168,7 @@ public class LegendEntry implements Comparable
 	{
 		return(mDescription);
 	}
-	
+
 	/**
 	 * Convert object to string.
 	 * @return string representation.
