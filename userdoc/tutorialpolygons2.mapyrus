@@ -10,6 +10,7 @@ begin hatchMinus45
 end
 
 begin crosshatch
+	linestyle 0.01
 	color "red"
 	stroke
 	hatch45
@@ -20,7 +21,6 @@ newpage "png", "tutorialpolygons2.png", 60, 30, 96
 
 clearpath
 move 5, 5
-draw 45, 5
-arc 0, 45, 15, 45, 25
-draw 35, 25, 35, 10, 5, 10, 5, 5
+draw 45, 5, 45, 25, 30, 25, 30, 20, 35, 20, 35, 10, 20, 10
+draw 20, 25, 10, 25, 5, 5
 crosshatch
