@@ -797,6 +797,61 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.STAR:
+				if (nExpressions == 4)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
+					int nPoints = (int)mExecuteArgs[3].getNumericValue();
+
+					if (radius > 0 && nPoints > 0)
+					{
+						double angleBetweenPoints = (Math.PI * 2) / nPoints;
+						double angle = Math.PI / 2;
+
+						/*
+						 * Angle of each point of the star.
+						 */
+						double starPointAngle = angleBetweenPoints / 3;
+
+						/*
+						 * Calculate distance from center of star to inner
+						 * coordinates of star using rule:
+						 * a / sin(A) = b / sin(B).
+						 */
+						double dist = radius * Math.sin(starPointAngle / 2) /
+							Math.sin(Math.PI - starPointAngle / 2 - angleBetweenPoints / 2);
+
+						/*
+						 * Add each point of the star, starting at the top
+						 * and proceeding clockwise.
+						 */
+						for (int i = 0; i < nPoints; i++)
+						{
+							x2 = x1 + Math.cos(angle) * radius;
+							y2 = y1 + Math.sin(angle) * radius;
+
+							if (i == 0)
+								context.moveTo(x2, y2);
+							else
+								context.lineTo(x2, y2);
+
+							x2 = x1 + Math.cos(angle - angleBetweenPoints / 2) * dist;
+							y2 = y1 + Math.sin(angle - angleBetweenPoints / 2) * dist;
+							context.lineTo(x2, y2);
+
+							angle -= angleBetweenPoints;
+						}
+						context.closePath();
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_STAR));
+				}
+				break;
+
 			case Statement.BOX:
 			case Statement.ROUNDEDBOX:
 			case Statement.GUILLOTINE:
