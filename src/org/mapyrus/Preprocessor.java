@@ -173,12 +173,28 @@ class Preprocessor
 		}
 
 		/*
-		 * Check if this line includes another file.
+		 * Join line with next line if it ends with '\'.
 		 */
 		mCurrentLine = new StringBuffer(s);
+		while (s != null && s.endsWith("\\"))
+		{
+			/*
+			 * Remove '\' at end of buffer, read and append next line
+			 * to buffer.
+			 */
+			int len = mCurrentLine.length();
+			mCurrentLine.deleteCharAt(len - 1);
+
+			s = reader.readLine();
+			if (s != null)
+				mCurrentLine.append(s);
+		}
 		mCurrentLine.append('\n');
 
-		String trimmed = s.trim();
+		/*
+		 * Check if this line includes another file.
+		 */
+		String trimmed = mCurrentLine.toString().trim();
 		if (trimmed.toLowerCase().startsWith(INCLUDE_KEYWORD))
 		{
 			if (trimmed.length() == INCLUDE_KEYWORD.length())
@@ -187,7 +203,7 @@ class Preprocessor
 					": " + MapyrusMessages.get(MapyrusMessages.MISSING_FILENAME));
 			}
 
-			if (Character.isWhitespace(s.charAt(INCLUDE_KEYWORD.length())))
+			if (Character.isWhitespace(trimmed.charAt(INCLUDE_KEYWORD.length())))
 			{
 				String filename = trimmed.substring(INCLUDE_KEYWORD.length() + 1).trim();
 
