@@ -330,17 +330,37 @@ shown in Figure \ref{tutoriallabels1}.
 \end{figure}
 
 Labels are displayed horizontally.  Rotate the axes with the \texttt{rotate}
-command before setting the font to display labels at an angle.  Drawing labels
-one pixel offset from original position and in a different color highlights the
-label.  These two techniques are demonstrated in the following example,
+command before setting the font to display labels at an angle.
+This is demonstrated in the following example,
 with output shown in Figure \ref{tutoriallabels2}.
 
 \verbatiminput{tutoriallabels2.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallabels2.eps}
-\caption{Rotated and Highlighted Labels}
+\caption{Rotated Labels}
 \label{tutoriallabels2}
+\end{figure}
+
+Several methods are available for changing the appearance of labels.
+
+Drawing a label with a small offset from its original position in a different
+color highlights a label.
+
+The \texttt{stringwidth} function (see Table \ref{functions}
+on page \pageref{functions}) calculates the
+width of a label.  This value is used to underline a label, draw a box
+surrounding a label, or to join several labels together on a single line.
+
+These techniques are demonstrated in the following example,
+with output shown in Figure \ref{tutoriallabels3}.
+
+\verbatiminput{tutoriallabels3.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutoriallabels3.eps}
+\caption{Highlighted Labels}
+\label{tutoriallabels3}
 \end{figure}
 
 \subsection{Displaying Data Stored In Text Files}
