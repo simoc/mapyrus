@@ -51,22 +51,23 @@ public class Statement
 	public static final int CLEARPATH = 18;
 	public static final int SAMPLEPATH = 19;
 	public static final int STRIPEPATH = 20;
-	public static final int STROKE = 21;
-	public static final int FILL = 22;
-	public static final int PROTECT = 23;
-	public static final int CLIP = 24;
-	public static final int LABEL = 25;
-	public static final int SCALE = 26;
-	public static final int ROTATE = 27;
-	public static final int WORLDS = 28;
-	public static final int PROJECT = 29;
-	public static final int DATASET = 30;
-	public static final int IMPORT = 31;
-	public static final int FETCH = 32;
-	public static final int NEWPAGE = 33;
-	public static final int PRINT = 34;
-	public static final int LOCAL = 35;
-	public static final int LET = 36;
+	public static final int SHIFTPATH = 21;
+	public static final int STROKE = 22;
+	public static final int FILL = 23;
+	public static final int PROTECT = 24;
+	public static final int CLIP = 25;
+	public static final int LABEL = 26;
+	public static final int SCALE = 27;
+	public static final int ROTATE = 28;
+	public static final int WORLDS = 29;
+	public static final int PROJECT = 30;
+	public static final int DATASET = 31;
+	public static final int IMPORT = 32;
+	public static final int FETCH = 33;
+	public static final int NEWPAGE = 34;
+	public static final int PRINT = 35;
+	public static final int LOCAL = 36;
+	public static final int LET = 37;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -129,6 +130,7 @@ public class Statement
 		mStatementTypeLookup.put("clearpath", new Integer(CLEARPATH));
 		mStatementTypeLookup.put("samplepath", new Integer(SAMPLEPATH));
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
+		mStatementTypeLookup.put("shiftpath", new Integer(SHIFTPATH));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
 		mStatementTypeLookup.put("protect", new Integer(PROTECT));
