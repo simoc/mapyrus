@@ -1048,6 +1048,8 @@ public class GeometricPath
 			if (offsets[i] < 0)
 			{
 				lengths[i] += offsets[i];
+				if (lengths[i] < 0)
+					lengths[i] = 0;
 				offsets[i] = 0;
 			}
 		}
