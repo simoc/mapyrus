@@ -374,20 +374,37 @@ public class Interpreter
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
-		
+
 		/*
-		 * Evaluate each of the expressions for this statement.
+		 * Do not evaluate variables for global statement -- we want the
+		 * original list of variable names instead.
 		 */
-		if (nExpressions > 0)
+		type = st.getType();
+		if (type == Statement.GLOBAL)
 		{
-			args = new Argument[nExpressions];
 			for (int i = 0; i < nExpressions; i++)
 			{
-				args[i] = expr[i].evaluate(context);
+				String varName = expr[i].getVariableName();
+				if (varName == null)
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+				context.setGlobalScope(varName);
 			}
 		}
-		
-		type = st.getType();
+		else
+		{
+			/*
+			 * Evaluate each of the expressions for this statement.
+			 */
+			if (nExpressions > 0)
+			{
+				args = new Argument[nExpressions];
+				for (int i = 0; i < nExpressions; i++)
+				{
+					args[i] = expr[i].evaluate(context);
+				}
+			}
+		}
+
 		switch (type)
 		{
 			case Statement.COLOR:
@@ -726,6 +743,9 @@ public class Interpreter
 				System.out.println("");
 				break;
 				
+			case Statement.GLOBAL:
+				break;
+
 			case Statement.ASSIGN:
 				context.defineVariable(st.getAssignedVariable(), args[0]);
 				break;
