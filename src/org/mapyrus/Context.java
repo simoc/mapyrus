@@ -10,6 +10,7 @@
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.util.Vector;
@@ -31,9 +32,12 @@ public class Context
 	private boolean mAttributesChanged;
 	
 	/*
-	 * Transformation matrix.
+	 * Transformation matrix and cumulative scaling factors and rotation.
 	 */
 	private AffineTransform mCtm;
+	private double mXScaling;
+	private double mYScaling;
+	private double mRotation;
 	
 	/*
 	 * Coordinates making up path.
@@ -72,6 +76,8 @@ public class Context
 		mLineWidth = 0.1;
 	
 		mCtm = new AffineTransform();
+		mXScaling = mYScaling = 1.0;
+		mRotation = 0.0;
 		mVars = null;
 		mPath = null;
 		mOutputFormat = null;
@@ -89,6 +95,9 @@ public class Context
 		mColor = existing.mColor;
 		mLineWidth = existing.mLineWidth;
 		mCtm = new AffineTransform(existing.mCtm);
+		mXScaling = existing.mXScaling;
+		mYScaling = existing.mYScaling;
+		mRotation = existing.mRotation;
 
 		/*
 		 * Only create variable lookup table when values defined locally.
@@ -179,7 +188,10 @@ public class Context
 	 */
 	public void setLineWidth(double width)
 	{
-		mLineWidth = width;
+		/*
+		 * Adjust width by current scaling factor.
+		 */
+		mLineWidth = width * Math.min(mXScaling, mYScaling);
 		mAttributesChanged = mAttributesSet = true;
 	}
 
@@ -201,6 +213,8 @@ public class Context
 	public void setScaling(double x, double y)
 	{
 		mCtm.scale(x, y);
+		mXScaling *= x;
+		mYScaling *= y;
 		mAttributesChanged = mAttributesSet = true;
 	}
 	
@@ -217,14 +231,42 @@ public class Context
 	
 	/**
 	 * Sets rotation for subsequent coordinates.
-	 * @param angle is rotation angle in degrees, going anti-clockwise.
+	 * @param angle is rotation angle in radians, going anti-clockwise.
 	 */
 	public void setRotation(double angle)
 	{
 		mCtm.rotate(angle);
+		mRotation += angle;
 		mAttributesChanged = mAttributesSet = true;
 	}
-			
+
+	/**
+	 * Returns X scaling value in current transformation.
+	 * @return m00 element from transformation matrix.
+	 */
+	public double getScalingX()
+	{
+		return(mXScaling);
+	}
+
+	/**
+	 * Returns X scaling value in current transformation.
+	 * @return m00 element from transformation matrix.
+	 */
+	public double getScalingY()
+	{
+		return(mYScaling);
+	}
+
+	/**
+	 * Returns X scaling value in current transformation.
+	 * @return m00 element from transformation matrix.
+	 */
+	public double getRotation()
+	{
+		return(mRotation);
+	}
+					
 	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
@@ -285,10 +327,44 @@ public class Context
 	 */
 	public void slicePath(double spacing, double offset)
 	{
+		GeometricPath path;
+
+		/*
+		 * If path defined in this context then use that,
+		 * else use context defined in previous context.
+		 */
 		if (mPath != null)
-			mPath.slicePath(spacing, offset);
+			path = mPath;
+		else
+			path = mExistingPath;
+
+		if (path != null)
+			path.slicePath(spacing, offset);
 	}
 	
+	/**
+	 * Replace path defining polygon with parallel stripe
+	 * lines covering the polygon.
+	 * @param spacing is distance between stripes.
+	 * @param angle is angle of stripes, in radians, with zero horizontal.
+	 */
+	public void stripePath(double spacing, double angle)
+	{
+		GeometricPath path;
+
+		/*
+		 * If path defined in this context then use that,
+		 * else use context defined in previous context.
+		 */
+		if (mPath != null)
+			path = mPath;
+		else
+			path = mExistingPath;
+
+		if (path != null)
+			path.stripePath(spacing, angle);
+	}
+
 	/**
 	 * Draw currently defined path.
 	 */
@@ -388,6 +464,32 @@ public class Context
 	public Vector getMoveTos()
 	{
 		return(mPath.getMoveTos());
+	}
+	
+	/**
+	 * Returns bounding box of this geometry.
+	 * @return bounding box, or null if no path is defined.
+	 */
+	public Rectangle2D getBounds2D()
+	{
+		Rectangle2D bounds;
+		GeometricPath path;
+
+		/*
+		 * If path defined in this context then use that,
+		 * else use context defined in previous context.
+		 */
+		if (mPath != null)
+			path = mPath;
+		else
+			path = mExistingPath;
+		
+		if (path == null)
+			bounds = null;
+		else
+			bounds = path.getBounds2D();
+
+		return(bounds);
 	}
 	
 	/**
