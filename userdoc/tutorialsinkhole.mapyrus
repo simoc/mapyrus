@@ -1,0 +1,25 @@
+# Draw outline of polygon, with label in the middle.
+#
+begin district name
+  stroke
+  sinkhole
+  font "Helvetica-Narrow-Bold", 3
+  justify "center, middle"
+  label name
+end
+
+# Display labelled polygons.
+#
+newpage "eps", "tutorialsinkhole.eps", 65, 40
+clearpath
+move 5, 5
+draw 7, 31, 42, 33, 40, 19, 20, 19, 19, 24, 15, 24, 13, 5, 5, 5
+district "Packer"
+clearpath
+move 13, 5
+draw 15, 24, 19, 24, 20, 19, 40, 19, 42, 9, 13, 5
+district "Hamilton"
+clearpath
+move 42, 9
+draw 40, 19, 42, 33, 48, 33, 56, 7, 42, 9
+district "Ashley"
