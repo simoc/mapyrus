@@ -53,8 +53,6 @@ import java.awt.Color;
  */
 public class OutputFormat
 {
-	private static final String cvsid = "@(#) $Id";
-
 	/*
 	 * Type of output currently being generated.
 	 */
