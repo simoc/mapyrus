@@ -64,9 +64,11 @@ public class Interpreter
 	private static final String ENDIF_KEYWORD = "endif";
 
 	/*
-	 * Keywords for while ... do ... done block.
+	 * Keywords for while ... do ... done and
+	 * repeat ... do ... doneblocks.
 	 */
 	private static final String WHILE_KEYWORD = "while";
+	private static final String REPEAT_KEYWORD = "repeat";
 	private static final String DO_KEYWORD = "do";
 	private static final String DONE_KEYWORD = "done";
 
@@ -1804,14 +1806,16 @@ public class Interpreter
 	}
 	
 	/**
-	 * Reads and parses while loop statement.
+	 * Reads and parses repeat or while loop statement.
 	 * Parses test expression, "do" keyword, some
 	 * statements, and then "done" keyword.
 	 * @param preprocessor is source to read from.
+	 * @param isWhileLoop true if parsing a while loop, false for a repeat loop.
+	 * @param inProcedureDefn true if already parsing inside a procedure defn.
 	 * @return parsed loop as single statement.
 	 */
-	private ParsedStatement parseWhileStatement(Preprocessor preprocessor,
-		boolean inProcedureDefn)
+	private ParsedStatement parseLoopStatement(Preprocessor preprocessor,
+		boolean isWhileLoop, boolean inProcedureDefn)
 		throws IOException, MapyrusException
 	{
 		ParsedStatement st;
@@ -1879,7 +1883,7 @@ public class Interpreter
 				": " + DONE_KEYWORD);
 		}
 
-		statement = new Statement(test, loopStatements);
+		statement = new Statement(test, loopStatements, isWhileLoop);
 		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
 		return(new ParsedStatement(statement));		
 	}
@@ -2206,7 +2210,11 @@ public class Interpreter
 				}
 				else if (lower.equals(WHILE_KEYWORD))
 				{
-					retval = parseWhileStatement(preprocessor, inProcedureDefn);
+					retval = parseLoopStatement(preprocessor, true, inProcedureDefn);
+				}
+				else if (lower.equals(REPEAT_KEYWORD))
+				{
+					retval = parseLoopStatement(preprocessor, false, inProcedureDefn);
 				}
 				else if (lower.equals(FOR_KEYWORD))
 				{
@@ -2397,7 +2405,8 @@ public class Interpreter
 				}
 			}
 		}
-		else if (statementType == Statement.WHILE_LOOP)
+		else if (statementType == Statement.WHILE_LOOP ||
+			statementType == Statement.REPEAT_LOOP)
 		{
 			/*
 			 * Find expression to test and loop statements to execute.
@@ -2416,18 +2425,40 @@ public class Interpreter
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
 					": " + e.getMessage());
 			}
-			
+
 			if (test.getType() != Argument.NUMERIC)
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
 					": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
 			}
 
+			int nIterations = 0;
+			if (statementType == Statement.REPEAT_LOOP)
+			{
+				/*
+				 * Protect against round-off.
+				 */
+				double d = test.getNumericValue();
+				if (NumericalAnalysis.equals(d, (int)d))
+					nIterations = (int)Math.round(d);
+				else
+					nIterations = (int)test.getNumericValue();
+			}
+
 			/*
 			 * Execute loop while expression remains true (non-zero).
 			 */
 			boolean gotReturn = false;
-			while (test.getNumericValue() != 0.0 && !gotReturn)
+			int iter = 0;
+			int loopStatementType = statementType;
+			while
+			(
+				(!gotReturn) &&
+			 	((loopStatementType == Statement.WHILE_LOOP &&
+					test.getNumericValue() != 0.0) ||
+			 	(loopStatementType == Statement.REPEAT_LOOP &&
+				 	iter < nIterations))
+			)
 			{
 				/*
 				 * Execute each of the statements.
@@ -2443,7 +2474,7 @@ public class Interpreter
 					}
 				}
 
-				if (!gotReturn)
+				if (loopStatementType == Statement.WHILE_LOOP && (!gotReturn))
 				{
 					test = expr[0].evaluate(mContext, statement.getFilename());
 					if (test.getType() != Argument.NUMERIC)
@@ -2452,6 +2483,7 @@ public class Interpreter
 							": " + MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
 					}
 				}
+				iter++;
 			}
 		}
 		else if (statementType == Statement.FOR_LOOP)
