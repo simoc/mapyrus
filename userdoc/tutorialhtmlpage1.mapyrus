@@ -1,8 +1,3 @@
-# Display requested area of file roads.shp in a PNG file.
-#
-imageFile = tempname("PNG")
-newpage "png", imageFile, 100, 100, 96
-
 # Parse variables passed from HTML form, using reasonable defaults if
 # they are out of range.
 #
@@ -20,7 +15,12 @@ then
 	labels='off'
 endif
 
-# Display part of dataset, zooming in on centre
+# Create temporary PNG file containing map display for this HTTP request.
+#
+imageFile = tempname("PNG")
+newpage "png", imageFile, 100, 100, 96
+
+# Display part of dataset, zooming in on centre based on zoom level.
 #
 dataset "shapefile", "/tmp/rds_l", "dbffields="
 x1 = Mapyrus.dataset.min.x + Mapyrus.dataset.width * (zoomlevel / (maxZoomlevel * 2 + 1))
@@ -59,8 +59,7 @@ then
 endif
 
 print '&lt;html>'
-print '&lt;g src="' . imageFile . '">'
-print '&lt;'
+print '&lt;img src="' . imageFile . '">'
 
 # Generate HTML form offering options for changing map display,
 # giving current values as defaults.
