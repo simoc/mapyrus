@@ -1,0 +1,31 @@
+# @(#) $Id$
+begin diamond
+	move 0, -2
+	draw -4, 0, 0, 2, 4, 0, 0, -2
+	fill
+end
+begin shield_interior
+	color "white"
+	fill
+	clip
+	# fill shield with diamond pattern.
+	stripepath 4, -45
+	samplepath 8, 0
+	color "rgb", 0.2, 0.9, 0.9
+	diamond
+end
+begin shield
+	# Define outline of shield, shade interior pattern, then draw outline.
+	move -10, 5
+	draw 10, 5, 10, -10
+	arc 1, 0, -10, -10, -10
+	draw -10, 5
+	shield_interior
+	color "rgb", 0.2, 0.9, 0.9
+	linestyle 0.1
+	stroke
+end
+newpage "png", "turtle3.png", 30, 30, 96
+clearpath
+move 15, 20
+shield

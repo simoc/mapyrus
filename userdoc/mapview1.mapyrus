@@ -1,0 +1,27 @@
+# @(#) $Id$
+newpage "png", "mapview1.png", 40, 40, 96
+#begin australia
+	clearpath
+	worlds -2600000, 5000000, 2000000, 9000000, "m"
+	dataset "textfile", "aust_utm.dat", "fieldnames=x,y,name fieldtypes=number,number,string", "x", "y"
+	import
+	lastName=""
+	while Mapyrus.import.moreRows
+	do
+		fetch
+		if name != lastName
+		then
+			lastName = name
+			color "black"
+			stroke
+			clearpath
+			print name
+		endif
+	done
+	color "black"
+	stroke
+#end
+
+#clearpath
+#move 30, 20
+#australia

@@ -1,0 +1,28 @@
+# @(#) $Id$
+begin scissors
+	color "black"
+	linestyle 0.1
+	move 1, 0
+	arc 1, 1, 1, 1, 0
+	arc 1, 1, -1, 1, 0
+	stroke
+	clearpath
+	move 0, 1
+	draw -3, -1
+	move 0, -1
+	draw -3, 1
+	stroke
+end
+begin cuthere
+	color "rgb", 0.9, 0.9, 0.9
+	linestyle 1, "butt", "bevel", 3, 1, 1
+	stroke
+	samplepath 10, 5
+	scissors
+end
+
+newpage "png", "turtle4.png", 30, 30, 96
+move 10, 5
+draw 20, 5, 20, 25, 30, 25
+cuthere
+
