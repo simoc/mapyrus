@@ -9,7 +9,8 @@ to PostScript (high resolution, up to A0 paper size),
 Portable Document Format (PDF) and web image output formats.
 
 Mapyrus is freely-available and is implemented entirely in Java,
-using Java's 2D Graphics, JDBC and multi-threading capabilities.
+using Java's platform independence,
+2D Graphics, JDBC and multi-threading capabilities.
 
 The software combines the following four features.
 
@@ -80,6 +81,14 @@ See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
 \end{figure}
 
 %BEGINHTML
+
+\item
+Integration with the freely-available
+\textit{Java Topology Suite} from Vivid Solutions
+(\texttt{www.vividsolutions.com}).
+This library provides geometric algorithms
+such as buffering and polygon intersection.
+
 \item
 Flexibility.  Running in one of three ways.
 
@@ -88,7 +97,7 @@ Flexibility.  Running in one of three ways.
 As a stand-alone program for integration into
 scripts and batch tasks  (suitable for generating a one-off
 map or a series of similar maps from a template
-showing different areas, or using different criteria for each map)
+showing different areas, or using different criteria for each map).
 
 \item
 As a self-contained web server providing HTML pages, map and
@@ -97,13 +106,6 @@ graph images and text reports to a web-based application.
 \item
 As a Java API embedded in a Java application.
 \end{enumerate}
-
-\item
-Integration with the freely-available
-\textit{Java Topology Suite} from Vivid Solutions
-(\texttt{www.vividsolutions.com}).
-This library provides geometrical algorithms
-such as buffering, convex hull calculation and polygon intersection.
 
 \end{enumerate}
 
