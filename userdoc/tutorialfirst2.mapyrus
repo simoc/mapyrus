@@ -1,6 +1,6 @@
 # Another simple example.
 #
-newpage "png", "tutorialfirst2.png", 30, 30, 96
+newpage "eps", "tutorialfirst2.eps", 30, 30, 300
 color "#bb0000"	        # dark red
 move 5, 5
 draw 5, 25

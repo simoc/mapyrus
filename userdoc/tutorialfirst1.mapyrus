@@ -1,4 +1,4 @@
-newpage "png", "tutorialfirst1.png", 30, 30, 96
+newpage "eps", "tutorialfirst1.eps", 30, 30, 300
 color "black"
 linestyle 4, 'round', 'round'
 move 5, 20
