@@ -33,7 +33,6 @@ import java.util.ResourceBundle;
 public class MapyrusMessages
 {
 	public static final String ACCEPTING_HTTP = "acceptinghttp";
-	public static final String CANNOT_OPEN_ICON = "cannotopenicon";
 	public static final String CANNOT_OPEN_URL = "cannotopenurl";
 	public static final String CLASS_NOT_FUNCTION = "classnotfunction";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
@@ -74,6 +73,7 @@ public class MapyrusMessages
 	public static final String INVALID_FONT_SIZE = "invalidfontsize";
 	public static final String INVALID_FORMAT = "invalidformat";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
+	public static final String INVALID_GRADIENT_FILL = "invalidgradientfill";
 	public static final String INVALID_GRASS_FILE = "invalidgrassfile";
 	public static final String INVALID_HASHMAP_KEY = "invalidhashmapkey";
 	public static final String INVALID_HEXAGON = "invalidhexagon";
