@@ -22,12 +22,12 @@ public class Expression
 	 */
 	private static final int NO_OPERATION = 0;
 	private static final int PLUS_OPERATION = 1;
-// TODO add '.' as string concatenation operation instead of '+'.
 	private static final int MINUS_OPERATION = 2;
-	private static final int MULTIPLY_OPERATION = 3;	/* 'qw' * 2 = 'qwqw' */
-	private static final int DIVIDE_OPERATION = 4;
+	private static final int CONCAT_OPERATION = 3; /* 'qw' . 'er' . 7 = 'qwer7' */
+	private static final int MULTIPLY_OPERATION = 4;	/* 'qw' * 2 = 'qwqw' */
+	private static final int DIVIDE_OPERATION = 5;
 
-	private static final int CONTAINS_OPERATION = 6; /* 'foobar' ~ 'b' = 1 */
+	private static final int CONTAINS_OPERATION = 6; /* 'foobar' ~ '^f' = 1 */
 	private static final int EQUALS_OPERATION = 7;
 	private static final int NOT_EQUALS_OPERATION = 8;
 	private static final int GREATER_THAN_OPERATION = 9;
@@ -194,15 +194,15 @@ public class Expression
 				}
 
 				/*
-				 * Check types for operation.  Adding a string and numbers is OK and
-				 * so is multiplying a string.  But everything else requires matching
+				 * Check types for operation.  Concatenating a string and numbers is OK
+				 * and so is multiplying a string.  But everything else requires matching
 				 * types.
 				 */
 				op = t.mOperation;
-				if (op == PLUS_OPERATION)
+				if (op == CONCAT_OPERATION)
 				{
 					/*
-					 * Different types can be added or joined together.
+					 * Different types can be concatenated.
 					 */
 				}
 				else if (op == MULTIPLY_OPERATION && leftValue.getType() == Argument.STRING)
@@ -222,11 +222,16 @@ public class Expression
 				 */
 				if (leftValue.getType() == Argument.NUMERIC)
 				{
-					double l = leftValue.getNumericValue();
-					if (rightValue.getType() == Argument.NUMERIC)
+					if (op == CONCAT_OPERATION)
 					{
+						retval = new Argument(Argument.STRING,
+							leftValue.toString() + rightValue.toString());
+					}
+					else
+					{
+						double l = leftValue.getNumericValue();
 						double r = rightValue.getNumericValue();
-						
+
 						if (op == PLUS_OPERATION)
 							d = l + r;
 						else if (op == MINUS_OPERATION)
@@ -275,15 +280,6 @@ public class Expression
 						else
 							retval = new Argument(d);
 					}
-					else
-					{
-						/*
-						 * Mixed types in plus expression,
-						 * just join string representations together.
-						 */
-						retval = new Argument(Argument.STRING,
-							leftValue.toString() + rightValue.toString());
-					}
 				}
 				else
 				{
@@ -301,7 +297,7 @@ public class Expression
 						}
 						retval = new Argument(Argument.STRING, s.toString());
 					}
-					else if (op == PLUS_OPERATION)
+					else if (op == CONCAT_OPERATION)
 					{
 						/*
 						 * Add whatever is on right-hand side to string.
@@ -523,10 +519,16 @@ public class Expression
 		while (true)
 		{
 			op = p.readNonSpace();
-			if (op == '+' || op == '-')
+			if (op == '+' || op == '-' || op == '.')
 			{
 				term = parseTerm(p);
-				int opType = (op == '+') ? PLUS_OPERATION : MINUS_OPERATION;
+				int opType;
+				if (op == '+')
+					opType = PLUS_OPERATION;
+				else if (op == '-') 
+					opType = MINUS_OPERATION;
+				else
+					opType = CONCAT_OPERATION;
 
 				expr = new ExpressionTreeNode(expr, opType, term);
 			}
