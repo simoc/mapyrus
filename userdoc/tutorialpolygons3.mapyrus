@@ -1,28 +1,31 @@
 begin plus
-	# Draws a plus symbol, like '+'.
-	#
-	move 0, -0.78
-	draw 0, 0.78
-	move -0.78, 0
-	draw 0.78, 0
-	stroke
+  # Draws a plus symbol, like '+'.
+  #
+  move 0, -0.78
+  draw 0, 0.78
+  move -0.78, 0
+  draw 0.78, 0
+  stroke
+end
+begin plusfill
+  color "#804040"
+  stroke
+  clip
+
+  # Replace path with sample points covering the whole polygon.
+  #
+  stripepath 3, 0
+  samplepath 3, 0
+  color "#C0A0A0"
+  plus
 end
 
-newpage "png", "tutorialpolygons3.png", 60, 30, 96
-color "#804040"
+newpage "eps", "tutorialpolygons3.eps", 60, 30, 300
 
 clearpath
 move 5, 5
 draw 45, 5
-arc 0, 45, 15, 45, 25
+arc -1, 45, 15, 45, 25
 draw 35, 25, 35, 10, 25, 10, 30, 25, 10, 25, 15, 10
 draw 5, 10, 5, 5
-stroke
-clip
-
-# Replace path with sample points covering the whole polygon.
-#
-stripepath 3, 0
-samplepath 3, 0
-color "#C0A0A0"
-plus
+plusfill
