@@ -26,12 +26,14 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -1822,6 +1824,144 @@ public class OutputFormat
 					throw new OutOfMemoryError("Failed loading icon.");
 				}
 			}
+		}
+	}
+
+	/**
+	 * Draw EPS file at points on page.
+	 * @param pointList is list of Point2D objects at which to draw EPS file.
+	 * @param EPS filename.
+	 * @param size size for EPS file on page in millimetres.
+	 * @param rotation rotation angle for EPS file.
+	 * @param scaling scale factor for EPS file.
+	 */
+	public void drawEPS(ArrayList pointList, String filename,
+		double size, double rotation, double scaling)
+		throws IOException, MapyrusException
+	{
+		PostScriptFile psfile = new PostScriptFile(filename);
+		Rectangle boundingBox = psfile.getBoundingBox();
+		int pointWidth = (int)boundingBox.getWidth();
+		int pointHeight = (int)boundingBox.getHeight();
+		Point2D pt;
+		int i;
+		double x, y;
+
+		/*
+		 * If size not given then make EPS about as large as defined in the EPS file.
+		 */
+		if (size <= 0.0)
+		{
+			size = Math.max(pointWidth, pointHeight) *
+				(Constants.MM_PER_INCH / Constants.POINTS_PER_INCH);
+		}
+		size *= scaling;
+
+		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		{
+			/*
+			 * Include EPS file at each position in list.
+			 */
+			for (i = 0; i < pointList.size(); i++)
+			{
+				pt = (Point2D)(pointList.get(i));
+				x = pt.getX();
+				y = pt.getY();
+
+				/*
+				 * Skip points that are outside page.
+				 */
+				if (x + size >= 0 && x - size <= mPageWidth &&
+					y + size >= 0.0 && y - size <= mPageHeight)
+				{
+					writePostScriptLine("save");
+					writePostScriptLine(x + " " + y + " translate");
+					writePostScriptLine(rotation + " radtodeg rotate");
+
+					/*
+					 * EPS file is centred at each point.
+					 * Shift position left and down half it's size
+					 * so that it is displayed centered.
+					 */
+					writePostScriptLine(-(size / 2) + " " + -(size / 2) + " translate");
+
+					double scale = size / Math.max(pointWidth, pointHeight);
+					writePostScriptLine(scale + " dup scale");
+
+					/*
+					 * Shift EPS file so that lower-left corner of EPS file is in
+					 * lower left corner of our box on the page.
+					 */
+					writePostScriptLine(-boundingBox.getMinX() + " " + -boundingBox.getMinY() +
+						" translate");
+						
+					/*
+					 * Set graphics attributes to initial values, as described
+					 * on page 728 of PostScript Language Reference Manual.
+					 */
+					writePostScriptLine("/showpage {} def");
+					writePostScriptLine("0 setgray 0 setlinecap 1 setlinewidth");
+					writePostScriptLine("0 setlinejoin 10 setmiterlimit [] 0 setdash newpath");
+
+					writePostScriptLine("%%BeginDocument: (" + filename + ")");
+					BufferedReader reader = null;
+					try
+					{
+						reader = new FileOrURL(filename).getReader();
+
+						String line;
+						while ((line = reader.readLine()) != null)
+						{
+							writePostScriptLine(line);
+						}
+						writePostScriptLine("%%EndDocument");
+						writePostScriptLine("restore");
+					}
+					finally
+					{
+						/*
+						 * Ensure EPS file is always closed.
+						 */
+						if (reader != null)
+							reader.close();
+					}
+				}
+			}
+		}
+		else
+		{
+			/*
+			 * We cannot show EPS files when drawing to an image file so show a
+			 * transparent grey box where the EPS file would appear.
+			 */
+			GeneralPath path = new GeneralPath();
+			Color currentColor = mGraphics2D.getColor();
+			mGraphics2D.setColor(new Color(127, 127, 127, 127));
+
+			for (i = 0; i < pointList.size(); i++)
+			{
+				pt = (Point2D)(pointList.get(i));
+				x = pt.getX();
+				y = pt.getY();
+				double xDist = Math.cos(rotation) * size / 2;
+				double yDist = Math.sin(rotation) * size / 2;
+				Point2D currentPoint;
+
+				path.reset();
+				path.moveTo((float)(x - xDist + yDist), (float)(y - yDist - xDist));
+				currentPoint = path.getCurrentPoint();
+				path.lineTo((float)(currentPoint.getX() - yDist - yDist),
+					(float)(currentPoint.getY() + xDist + xDist));
+				currentPoint = path.getCurrentPoint();
+				path.lineTo((float)(currentPoint.getX() + xDist + xDist),
+					(float)(currentPoint.getY() + yDist + yDist));
+				currentPoint = path.getCurrentPoint();
+				path.lineTo((float)(currentPoint.getX() + yDist + yDist),
+					(float)(currentPoint.getY() - xDist - xDist));
+				path.closePath();
+				fill(path);
+			}
+			mGraphics2D.setColor(currentColor);	
 		}
 	}
 
