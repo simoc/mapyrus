@@ -282,7 +282,7 @@ public class AdobeFontMetrics
 	 * @param pointSize point size in which string is displayed.
 	 * @return width of string in points.
 	 */
-	public int getStringWidth(String s, int pointSize)
+	public double getStringWidth(String s, double pointSize)
 	{
 		int total = 0;
 		int sLength = s.length();
@@ -313,6 +313,6 @@ public class AdobeFontMetrics
 			}
 			pointLen = (double)total / FULL_CHAR_WIDTH * pointSize;
 		}
-		return((int)pointLen);
+		return(pointLen);
 	}
 }

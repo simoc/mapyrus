@@ -143,9 +143,9 @@ public class AdobeFontMetricsManager
 	 * @param s string to calculate width for.
 	 * @return width of string in points.
 	 */
-	public int getStringWidth(String fontName, int pointSize, String s)
+	public double getStringWidth(String fontName, double pointSize, String s)
 	{
-		int retval = 0;
+		double retval = 0;
 
 		AdobeFontMetrics afm = (AdobeFontMetrics)mFontMetrics.get(fontName);
 		if (afm != null)
