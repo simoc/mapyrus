@@ -5,12 +5,151 @@ include header.doc
 Tutorial
 </h2>
 
-Bla
-<pre>
-include tutorial1.txt
-</pre>
-<p>
-<img src="tutorial1.png">
 <p>
 
+<table>
+
+<tr>
+<td>
+<a href="#first"/>First Steps</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#variables"/>Using Variables</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#pdf"/>Generating Portable Document Format (PDF) output</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#servlet"/>Setting up Mapyrus as a Servlet</a>
+</td>
+</tr>
+
+</table>
+
+include hr.doc
+
+<a name="first"></a>
+<h3>First Steps</h3>
+
+Enter the following lines into a text file named <tt>first.txt</tt>.
+
+<pre>
+include tutorial11.mpy
+</pre>
+
+Each line in the file is a command for Mapyrus.  The
+first line sets output to a
+PNG format image with the
+<a href="reference.html#newpage">newpage</a> command.
+The second and third lines set the color for drawing to black,
+with lines drawn 4 millimetres wide with rounded ends and corners.
+The fourth and fifth lines define a path on the page giving
+coordinates in millimetres.
+The sixth line is a
+<a href="reference.html#stroke">stroke</a> command to draw the
+path just defined onto the page using the current color and
+line style.
+
+<p>
+Mapyrus runs as a command line program in a terminal window.
+Open a terminal window and enter the following command:
+
+<pre>
+java -jar mapyrus.jar first.txt
+</pre>
+
+Then type the following line into the terminal window.
+Begin output to an image file.
+
+Define the path, coordinates
+
+Clear the path
+<pre>
+include tutorial11.mpy
+</pre>
+
+Change the file to contain the following
+Color is set as a hex value instead of a name.
+<a href="reference.html#fill">fill</a> command to
+flood fill
+the path that is defined
+
+<pre>
+include tutorial12.mpy
+</pre>
+
+<pre>
+include tutorial13.mpy
+</pre>
+
+Shows another way to define the color.
+<pre>
+include tutorial14.mpy
+</pre>
+
+<p>
+<img src="tutorial11.png">
+<p>
+<p>
+<img src="tutorial12.png">
+<p>
+
+define page
+basic shapes in different colours
+
+<a name="variables"></a>
+<h3>Using Variables</h3>
+
+Variables, loops and conditional tests
+similar
+repeatedly
+vary appearance each time
+Variables named <tt>x</tt> and <tt>counter</tt> are used in the
+following example.
+
+<pre>
+include tutorial21.mpy
+</pre>
+
+The output of this
+
+<p>
+<img src="tutorial21.png">
+<p>
+
+<a name="pdf"></a>
+<h3>Generating Portable Document Format (PDF) output</h3>
+<p>
+
+Portable Document Format (PDF) files are created by converting
+PostScript output from Mapyrus to PDF using the <tt>ps2pdf</tt>
+utility program, part of the GhostScript.
+<p>
+The pipe option of the
+<a href="reference.html#newpage">newpage</a> command
+is used to pipe PostScript output from Mapyrus through <tt>ps2pdf</tt>
+and into a PDF file.  For example,
+
+<pre>
+newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
+</pre>
+
+<p>
+<a name="servlet"></a>
+<h3>Setting up Mapyrus as a Servlet</h3>
+
+<p>
+Tomcat
+Hello World
+
 include footer.doc
+

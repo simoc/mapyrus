@@ -5,7 +5,7 @@ include header.doc
 Reference
 </h2>
 
-include hr.doc
+<p>
 
 <table>
 <tr>
@@ -40,7 +40,7 @@ Java Runtime Environment 1.4.1
 </li>
 <li>
 The Ghostscript PostScript interpreter from 
-<a href="http://www.aladdin.com">www.aladdin.com</a>,
+<a href="http://www.aladdin.com">www.ghostscript.com</a>,
 if creation of PDF files is required.
 </li>
 <li>
@@ -49,6 +49,10 @@ The PROJ.4 library from
 and a Java Native Interface shared library to the PROJ.4
 library for your operating system,
 if reprojection between coordinate systems is required.
+</li>
+<li>
+A Java Servlet container, if Mapyrus is to be run as a Servlet.
+<a href="http://jakarta.apache.org/tomcat">Tomcat</a> is recommended.
 </li>
 </ol>
 
@@ -60,13 +64,14 @@ include hr.doc
 text files or URLs of text filename
 
 <pre>
-$ java -jar mapyrus.jar myfile.txt
+java -jar mapyrus.jar myfile.txt ...
 </pre>
 
 The purpose of Mapyrus is to display
 A page is 
 
 path
+origin (0, 0) is bottom left corner of page.
 
 dataset
 fetch each record
@@ -88,17 +93,21 @@ Each command is given on a separate line.
 <p>
 Any part of a line following a hash (<tt>#</tt>) character that is not
 part of a literal string is interpreted as a comment and is ignored.
+Leading and trailing spaces or tabs on a line are also ignored.
+<p>
+A line beginning with the word <tt>include</tt>, followed by a filename
+or URL includes commands from another file.
 <p>
 Each command is passed zero or more arguments separated by commas.
 An argument is a number, a string literal in single quotes (<tt>'</tt>)
 or double quotes (<tt>"</tt>), a variable name, or an expression.
 <p>
 An expression contains arguments and operators and functions
-on those arguments, just like in other languages such as BASIC, C, or Python.
-The following operators and functions are available:
+on those arguments, just like in BASIC, C, or Python.
+The following operators and functions are provided:
 <p>
 
-<table border=1 width=300>
+<table border=1 width=400>
 <tr>
 
 <td>
@@ -123,10 +132,11 @@ parentheses
 <tr>
 
 <td>
-<tt>*</tt>, <tt>/</tt>, <tt>x</tt>
+<tt>*</tt>, <tt>/</tt>, <tt>%</tt>, <tt>x</tt>
 </td>
 <td>
-numeric multiplication, numeric division, string repetition
+numeric multiplication, numeric division, modulo (works
+with real numbers too), string repetition
 </td>
 
 </tr>
@@ -176,7 +186,7 @@ Logical or
 </table>
 
 <p>
-<table border=1 width=500>
+<table border=1 width=600>
 <tr>
 <td>
 <b>Function Name</b>
@@ -225,13 +235,18 @@ The first character in <i>str</i> has an index of 1.
 </table>
 
 <p>
-An arguments or expression is  assigned to a named variable using the equals
+An argument or expression is assigned to a named variable using the equals
 sign (<tt>=</tt>).  A variable name begins with a
 letter or dollar sign (<tt>$</tt>) and contains only letters, numbers,
 dots (<tt>.</tt>) and underbars (<tt>_</tt>).
 Variable names are case-sensitive.
-Variables that are referenced without having been defined have a
+Variables that are accessed without having been defined have a
 value of zero, or an empty string.
+<p>
+Variables accepted as parameters to a procedure, or
+declared in the procedure with the <a href="#local">local</a> command
+are local to that procedure and not visible outside the procedure.
+All other variables are global.
 <p>
 
 The <tt>if</tt> and <tt>while</tt> flow control structures
@@ -280,7 +295,8 @@ as <i>condition</i> continues to evaluate to a non-zero value:
 
 <p>
 
-procedures
+Procedures group frequently used commands together:
+
 <p>
 <tt>begin</tt> <i>name</i> [<i>arg1</i>, ...]
 <br>
@@ -288,6 +304,49 @@ procedures
 <br>
 <tt>end</tt>
 <p>
+
+A procedure is defined to take
+
+All procedure names are global.
+Nested procedure definitions are not allowed.
+
+The graphics state (
+<ul>
+<li>
+path defined with,
+<a href="#move">move</a>,
+<a href="#draw">draw</a> and
+<a href="#arc">arc</a>.
+</li>
+
+<li>
+<a href="#clip">clip</a>,
+<a href="#protect">protect</a>,
+</li>
+
+<li>
+Current drawing settings set by
+<a href="#color">color</a>,
+<a href="#linestyle">linestyle</a>,
+<a href="#font">font</a> and
+<a href="#justify">justify</a> commands.
+</li>
+
+<li>
+<a href="#rotate">rotate</a>,
+<a href="#scale">scale</a>,
+</li>
+
+</ul>
+
+worlds, dataset
+
+linestyle, font, justify, clip path
+save state
+special moveto
+If the path contains only one or more
+<a href="#move">move</a>
+and no draw
 Save context
 variables
 graphics state, path, clip path
@@ -300,6 +359,7 @@ world coordinates
 
 Precedence from highest to lowest
 
+Mapyrus maintains the following built-in variables:
 
 <p>
 <table border=1>
@@ -442,7 +502,7 @@ The bounding rectangle of world coordinates set with the
 <br>
 <td>
 The real-world scale factor, determined by
-dividing of the X axis coordinate range of world coordinates
+dividing of the X axis world coordinate range
 by the page width.
 
 </table>
@@ -522,6 +582,16 @@ vertically.
 include hr.doc
 
 <p>
+<a name="local"></a>
+<tt>local</tt> <i>name</i>, [<i>name</i> ...]
+<p>
+Declares the listed variable names as local to a procedure.
+The variables are not visible outside the enclosing procedure
+and their values are lost when the procedure ends.
+
+include hr.doc
+
+<p>
 <a name="move"></a>
 <tt>move</tt> <i>x</i>, <i>y</i>
 <p>
@@ -550,11 +620,14 @@ include hr.doc
 <i>xEnd</i>, <i>yEnd</i>
 <p>
 Adds a circular arc to the current path.  The arc begins at
-the last point currently in the path, extend
-Circular arc
-Extended
+the last point added to the path and ends at (<i>xEnd</i>, <i>yEnd</i>)
+with center at (<i>xCenter</i>, <i>yCenter</i>).
 If <i>direction</i> is a positive number, the arc travels clockwise,
 otherwise the arc travels in an anti-clockwise direction.
+If the begin and end points are the same then the arc is a complete circle.
+A straight line segment is first added to the path if
+the distance from the beginning point to the center is different
+to the distance from the center to the end point.
 
 include hr.doc
 
@@ -631,14 +704,15 @@ Protects
 <a name="label"></a>
 <tt>label</tt> <i>string</i> [, <i>string</i> ...]
 <p>
-Draws a label at the last point added to the path, using the
+Draws a label at each point in the path
+set with the <a href="#move">move</a> command, using the
 font, justification and rotation set with the
 <a href="#font"/>font</a>,
 <a href="#justify"/>justify</a> and
 <a href="#rotate"/>rotate</a>
 commands.
-If more than one <i>string</i> is given, or a <i>string</i>
-contains newline characters (<tt>\n</tt>) then
+<i>string</i> values are separated by spaces.
+If <i>string</i> contains newline characters (<tt>\n</tt>) then
 labels are displayed as multiple lines, one below the other,
 with each line justified independently.
 
@@ -655,14 +729,17 @@ ROTATE
 <tt>worlds</tt> <i>x1</i>, <i>y1</i>, <i>x2</i>, <i>y2</i> [, <i>units</i>]
 <p>
 Defines a world coordinate system.
+Either the X or Y axis is expanded to be make the world
 uniform scaling
-<i>units</i>
+<i>units</i> define the world
 scale factor
 assumed metres.
+<tt>Mapyrus.worlds.scale</tt>
 
 <p>
 <a name="project"></a>
-PROJECT
+<tt>project</tt> <i>from</i>, <i>to</i>
+Coordinate system transformation.
 
 <p>
 <a name="dataset"></a>
@@ -672,7 +749,7 @@ PROJECT
 
 <p>
 <a name="import"></a>
-IMPORT
+<tt>import</tt>
 
 <p>
 <a name="fetch"></a>
@@ -681,15 +758,56 @@ IMPORT
 Fetches next row from current dataset.
 A variable with the name of
 each column value
+Before fetching a row, check the variable
+<tt>Mapyrus.import.moreRows</tt>
+to ensure that another row is available.
 
 <p>
 <a name="newpage"></a>
 <tt>newpage</tt> <i>format</i>, <i>filename</i>, <i>width</i>,
 <i>height</i>, <i>resolution</i>
 <p>
-Begins output
-any previous output file is closed.
+Begins output of a new page to a file.  Any previous output is closed.
+The path, clipping path and world coordinates are cleared.
+The new page has a white background.
+<i>format</i> is the type of output to create, one of:
+<ul>
+<li>
+<tt>eps</tt> for Encapsulated PostScript output.
+</li>
+<li>
+<tt>ps</tt> for PostScript output.
+</li>
+<li>
+<tt>jpeg</tt> for JPEG image output.
+</li>
+<li>
+<tt>png</tt> for PNG image output.
+</li>
+</ul>
+
+See the <a href="tutorial.html#pdf">Tutorial</a> section for
+information on converting PostScript output to PDF format.
+<p>
+<i>width</i> and <i>height</i> are the dimensions of the page,
+in millimetres.
 <i>resolution</i> is given as a dots-per-inch value.
+<p>
+<i>filename</i> is the name of the file to write the page to.
+If <i>filename</i> is a dash (<tt>-</tt>)
+then the page is written to standard output.
+If <i>filename</i> begins with a pipe (<tt>|</tt>) then the rest
+of <i>filename</i> is interpreted as an operating system
+command.  The operating system command is executed and Mapyrus
+writes the page to the standard input of the executing
+operating system command.
+Mapyrus executes the operating command directly.  Set <i>filename</i> to
+<tt>| sh <i>myscript.sh</i></tt>
+or
+<tt>| cmd <i>myscript.bat<i></tt>
+to execute the command in a sub-shell if 
+environment variables, file redirection or other shell features are
+required.
 
 <p>
 <a name="print"></a>
