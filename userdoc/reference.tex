@@ -1960,6 +1960,20 @@ is scale factor for X and Y axes.  All later coordinates given in
 \texttt{move}, \texttt{draw}, \texttt{arc} and \texttt{addpath} commands are
 scaled by this factor.
 
+\subsubsection{selectpath}
+
+\begin{alltt}
+selectpath \textit{offset}, \textit{length} [, \textit{offset}, \textit{length}  \dots ]
+\end{alltt}
+
+Selects one or more parts of the current path.
+
+Each \textit{offset} is a distance along the path at which to begin selecting
+the path.  \textit{length} is the length of path to select at that offset.
+
+Offsets and lengths are scaled by \texttt{scale} values but are independent of
+any world coordinate transformation.
+
 \subsubsection{shiftpath}
 
 \begin{alltt}
