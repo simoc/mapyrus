@@ -1,27 +1,17 @@
 # @(#) $Id$
 newpage "png", "mapview1.png", 80, 80, 96
 clearpath
-worlds -3000000, 5500000, 2600000, 8500000
 
 # Import coastline of Australia.
 #
-dataset "textfile", "aust_utm.dat", ""
+dataset "shapefile", "coastline.shp", ""
+worlds -3000000, 5500000, 2600000, 8500000
+
 import
 while Mapyrus.import.moreRecords
 do
 	fetch
-	nCoords = $1
-
-	fetch
-	move $1, $2
-	i = 1
-	while i < nCoords
-	do
-		fetch
-		draw $1, $2
-		i = i + 1
-	done
-
+	addpath GEOMETRY
 done
 
 # Show seaward side of coastline with thick blue line.
