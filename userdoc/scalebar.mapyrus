@@ -1,12 +1,12 @@
 # @(#) $Id$
-begin scalebar scale, units
+begin scalebar scale, units, x, y
 
 	local worldBarLength
 	local power10, lastPower10
 	local digit
 	local mmBarLength, mmScaleSize
 	local unitDivider, unitLabel
-	local toggle, counter, x
+	local toggle, counter, x2
 
 	# 10mm long bars in a scale look good.  What distance does this
 	# represent in world coordinates?
@@ -51,7 +51,7 @@ begin scalebar scale, units
 	#
 	clearpath
 	color "white"
-	box 0, 0, mmScaleSize, 10
+	box x, y, x + mmScaleSize, y + 10
 	fill
 	clearpath
 
@@ -91,11 +91,11 @@ begin scalebar scale, units
 
 	let toggle = "off"
 	let counter = 0
-	let x = 2
-	while x + mmBarLength < mmScaleSize - 5
+	let x2 = x + 2
+	while x2 + mmBarLength < x + mmScaleSize - 5
 	do
 		clearpath
-		move x, 4
+		move x2, y + 4
 
 		label (worldBarLength / unitDivider) * counter
 		let counter = counter + 1
@@ -103,7 +103,7 @@ begin scalebar scale, units
 		# Display bars alternately as black and empty rectangles.
 		#
 		clearpath
-		box x, 7, x + mmBarLength, 9
+		box x2, y + 7, x2 + mmBarLength, y + 9
 		if toggle eq "off"
 		then
 			stroke
@@ -113,12 +113,12 @@ begin scalebar scale, units
 			stroke
 			let toggle = "off"
 		endif
-		let x = x + mmBarLength
+		let x2 = x2 + mmBarLength
 
-		if x + mmBarLength >= mmScaleSize - 5
+		if x2 + mmBarLength >= x + mmScaleSize - 5
 		then
 			clearpath
-			move x, 4
+			move x2, y + 4
 			label (worldBarLength / unitDivider) * counter
 		endif
 	done
@@ -126,6 +126,6 @@ begin scalebar scale, units
 	# Show units under scalebar.
 	#
 	clearpath
-	move mmScaleSize / 2, 1
+	move x + mmScaleSize / 2, y + 1
 	label unitLabel
 end
