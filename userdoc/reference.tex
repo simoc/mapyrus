@@ -1366,6 +1366,15 @@ Declares the listed variable names as local to a procedure.
 The variables are not visible outside the enclosing procedure
 and their values are lost when the procedure ends.
 
+\subsubsection{mimetype}
+
+\begin{alltt}
+mimetype \textit{type}
+\end{alltt}
+
+Sets MIME type for content being returned from HTTP request
+when Mapyrus is running as an HTTP server.
+
 \subsubsection{move}
 
 \begin{alltt}
@@ -1723,6 +1732,7 @@ by Mapyrus using the following steps.
 \item
 Set any parameters passed in the URL (following the \texttt{?} character in
 the URL or passed in an HTML form) as variables in Mapyrus.
+Uppercase variable names are used.
 \item
 Read and execute the commands from the filename given in the URL.
 \item
