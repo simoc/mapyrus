@@ -23,6 +23,45 @@ Reference
 <tr>
 <td>
 <a href="#language"/>Language And Commands</a>
+<font size=-1>
+<br>
+&nbsp;
+&nbsp;
+<a href="#addpath">addpath</a>,
+<a href="#arc">arc</a>,
+<a href="#clearpath">clearpath</a>,
+<a href="#clip">clip</a>,
+<a href="#color">color</a>,
+<a href="#dataset">dataset</a>,
+<a href="#draw">draw</a>,
+<a href="#fetch">fetch</a>,
+<a href="#fill">fill</a>,
+<a href="#font">font</a>,
+<a href="#import">import</a>,
+<a href="#justify">justify</a>,
+<a href="#label">label</a>,
+<br>
+&nbsp;
+&nbsp;
+<a href="#linestyle">linestyle</a>,
+<a href="#local">local</a>,
+<a href="#move">move</a>,
+<a href="#newpage">newpage</a>,
+<a href="#print">print</a>,
+<a href="#protect">protect</a>,
+<a href="#rotate">rotate</a>,
+<a href="#samplepath">samplepath</a>,
+<a href="#scale">scale</a>,
+<a href="#stripepath">stripepath</a>,
+<a href="#stroke">stroke</a>,
+<a href="#worlds">worlds</a>
+</font>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#errors"/>Error Handling</a>
 </td>
 </tr>
 
@@ -1077,6 +1116,21 @@ A newline is added after the final <i>string</i>.
 
 include hr.doc
 
+<a name="errors"></a>
+<h3>Error Handling</h3>
+<p>
+If Mapyrus encounters an error when interpreting commands,
+an error message is printed including the filename and line number
+at which the error occurs and Mapyrus exits immediately.
+The Java interpreter exits with a non-zero status.
+If an error occurs when using the
+<a href="#httpserver">HTTP Server</a>
+option, an HTTP failure status and the error message
+are returned to the HTTP client.  The HTTP server continues,
+handling the next request.
+
+include hr.doc
+
 <a name="httpserver"></a>
 <h3>Mapyrus HTTP Server</h3>
 <p>
@@ -1094,7 +1148,8 @@ The HTTP server is multi-threaded to enable several requests to
 be handled at the same time.  If an HTTP request is for a file with a suffix
 matching a well-known MIME type (<tt>html</tt>, <tt>txt</tt>, <tt>ps</tt>,
 <tt>pdf</tt>, <tt>zip</tt> or a web image format),
-then the file is returned.
+then the contents of that file are returned by the HTTP server to the
+HTTP client.
 Requests for files with no suffix, or with unknown file suffix are
 interpreted by Mapyrus using the following steps.
 
@@ -1115,11 +1170,6 @@ An HTTP error state is returned if the request fails.
 </ol>
 
 <p>
-For 
-The HTTP server 
-Recommend <tt>.mpy</tt> suffix, or use no suffix.
-
-<p>
 Requests using either GET or POST methods are accepted by Mapyrus.
 <p>
 The HTTP server runs forever and
@@ -1132,7 +1182,7 @@ are available when interpreting HTTP requests.  This enables
 common procedures to be loaded only once at startup and not with every
 HTTP request.
 <p>
-The HTTP server only replies to requests
+For security, the HTTP server only replies to requests
 from the directory in which Mapyrus was started.
 Requests for files from other directories return an error to the HTTP client.
 If communication between HTTP client and Mapyrus is blocked for longer than
