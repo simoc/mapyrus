@@ -33,7 +33,7 @@ requirements for running the software.
 
 <tr>
 <td>
-<a href="version.html"/>Versions</a>
+<a href="versions.html"/>Versions</a>
 </td>
 <td>
 What was included in each version.
@@ -66,5 +66,5 @@ include VERSION
 <p>
 
 E-mail comments, bug reports and requests concerning Mapyrus to
-<tt>mapyrus&#64;chenery&#46;id.au</tt>.
+<img align=center src="contact.png">.
 
