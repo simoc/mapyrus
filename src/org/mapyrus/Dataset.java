@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 import org.mapyrus.dataset.GeographicDataset;
 
 /**
- * Manages a dataset being queried.  Methods are provided to simplify
+ * Manages a dataset being read.  Methods are provided to simplify
  * fetching and checking for reaching last row.
  */
 public class Dataset
@@ -37,13 +37,13 @@ public class Dataset
 	private int mDatasetRowCount;
 
 	/**
-	 * Setup a new dataset for query.
-	 * @param dataset is dataset to be queried.
+	 * Setup a new dataset for reading.
+	 * @param dataset is dataset to be read.
 	 */
-	public Dataset(GeographicDataset dataset)
+	public Dataset(GeographicDataset dataset) throws MapyrusException
 	{
 		mDataset = dataset;
-		mDatasetRow = null;
+		mDatasetRow = dataset.fetch();
 		mDatasetRowCount = 0;
 	}
 
@@ -72,24 +72,6 @@ public class Dataset
 	}
 
 	/**
-	 * Begins new query on dataset, closing any previous query.
-	 * @param extents is area of interest for this query.
-	 * @param resolution is minimum distance between coordinate values.
-	 * @see org.mapyrus.dataset.GeographicDataset#query(Rectangle2D.Double, double). 
-	 */	
-	public void query(Rectangle2D.Double extents, double resolution)
-		throws MapyrusException
-	{
-		mDataset.query(extents, resolution);
-
-		/*
-		 * Fetch first row so we know if there are any more rows available.
-		 */
-		mDatasetRow = mDataset.fetch();
-		mDatasetRowCount = 0;
-	}
-
-	/**
 	 * Indicates whether another row can be fetched for query with fetchRow().
 	 * @return true if another row is available.
 	 */	
@@ -108,7 +90,7 @@ public class Dataset
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ROWS));
 
 		/*
-		 * Return row we've already fetched.
+		 * Return row we've already fetched, then fetch another.
 		 */		
 		Row retval = mDatasetRow;
 		mDatasetRow = mDataset.fetch();
@@ -118,7 +100,7 @@ public class Dataset
 	}
 
 	/**
-	 * Returns the number of rows already fetched fro query with fetchRow() method.
+	 * Returns the number of rows already fetched from dataset.
 	 * @return row count.
 	 */
 	public int getFetchCount()
