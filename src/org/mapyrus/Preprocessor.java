@@ -131,25 +131,6 @@ class Preprocessor
 		initFileStack(f);
 	}
 
-	/**
-	 * Create new user input producer from a URL.
-	 * @param url is a URL to open and read from.
-	 */
-	//public Preprocessor(URL url) throws IOException, MapyrusException
-	//{
-	//	LineNumberReader in;
-//
-//		if (!url.openConnection().getContentType().startsWith("text/plain"))
-//		{
-//			throw new MapyrusException("URL " + url.toString() + " is not a text file");
-//		}
-//
-//		InputStream urlStream = url.openStream();
-//		in = new LineNumberReader(new InputStreamReader(urlStream));
-//		FileInfo f = new FileInfo(in, url.toString(), url);
-//		initFileStack(f);
-//	}
-
 	/*
 	 * Open new file to read from and push it on stack of files being read.
 	 */
@@ -318,8 +299,6 @@ class Preprocessor
 	 */
 	public void unread(int c)
 	{
-		Character cs = new Character((char)c);
-
 		/*
 		 * Push character back into line we are reading from.
 		 */
@@ -331,6 +310,7 @@ class Preprocessor
 		}
 		if (mCurrentLine == null)
 		{
+			Character cs = new Character((char)c);
 			mCurrentLine = new StringBuffer(cs.toString());
 			mCurrentLineIndex = 0;
 		}
@@ -348,6 +328,7 @@ class Preprocessor
 			}
 			else
 			{
+				Character cs = new Character((char)c);
 				mCurrentLine.insert(mCurrentLineIndex, cs.toString());
 			}
 		}
