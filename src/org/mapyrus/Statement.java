@@ -22,16 +22,17 @@ public class Statement
 	public static final int LINEWIDTH = 5;
 	public static final int MOVE = 6;
 	public static final int DRAW = 7;
-	public static final int STROKE = 8;
-	public static final int FILL = 9;
-	public static final int SCALE = 10;
-	public static final int NEWPAGE = 11;
-	public static final int PRINT = 12;
+	public static final int CLEAR = 8;
+	public static final int STROKE = 9;
+	public static final int FILL = 10;
+	public static final int SCALE = 11;
+	public static final int NEWPAGE = 12;
+	public static final int PRINT = 13;
 	
 	/*
 	 * Statement type for call to user defined procedure block.
 	 */
-	public static final int CALL = 13;
+	public static final int CALL = 14;
 	
 	private int mType;
 	
@@ -150,7 +151,7 @@ public class Statement
 	 * Creates a procedure, a block of statements to be executed together.
 	 * @param blockName is name of procedure block.
 	 * @param parameters variable names of parameters to this procedure.
-	 * @param statements statements that make up this procedure block.
+	 * @param statements list of statements that make up this procedure block.
 	 */
 	public Statement(String blockName, Vector parameters, Vector statements)
 	{
