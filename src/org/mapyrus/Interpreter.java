@@ -90,6 +90,7 @@ public class Interpreter
 		int type;
 		Argument []args = null;
 		double degrees;
+		double x1, y1, x2, y2;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -315,10 +316,16 @@ public class Interpreter
 					args[2].getType() == Argument.NUMERIC &&
 					args[3].getType() == Argument.NUMERIC)
 				{
-					context.setWorlds(args[0].getNumericValue(),
-						args[1].getNumericValue(),
-						args[2].getNumericValue(),
-						args[3].getNumericValue());
+					x1 = args[0].getNumericValue();
+					y1 = args[1].getNumericValue();
+					x2 = args[2].getNumericValue();
+					y2 = args[3].getNumericValue();
+					if (x2 - x1 == 0.0 || y2 - y1 == 0.0)
+					{
+						throw new MapyrusException("Zero world coordinate range at " +
+							st.getFilenameAndLineNumber());
+					}	
+					context.setWorlds(x1, y1, x2, y2);
 				}
 				else
 				{
