@@ -191,6 +191,16 @@ public class GeometricPath
 			totalLength += lengths[i];
 		return(totalLength);
 	}
+	
+	/**
+	 * Returns geometric centroid of full closed path.
+	 * @return path centroid.
+	 */
+	public Point2D.Double getCentroid()
+	{
+		double pt[] = walkPath(CALCULATE_CENTROID);
+		return(new Point2D.Double(pt[0], pt[1]));
+	}
 
 	/**
 	 * Walks path, calculating length, area or centroid.  Length or area
@@ -206,14 +216,17 @@ public class GeometricPath
 		float xStart = 0.0f, yStart = 0.0f;
 		float xEnd, yEnd;
 		float xMoveTo = 0.0f, yMoveTo =0.0f;
-		double partLengths[], partAreas[];
+		double partLengths[], partAreas[], centroid[];
 		double len;
 		int moveToCount = 0;
+		double ai, aSum, xSum, ySum;
 
 		/*
 		 * Create array to hold length and area of each part of path.
 		 */
-		partAreas = partLengths = new double[getMoveToCount()];
+		aSum = xSum = ySum = 0.0;
+		int nEls = (attributeToCalculate == CALCULATE_CENTROID) ? 2 : getMoveToCount();
+		centroid = partAreas = partLengths = new double[nEls];
 		for (int i = 0; i < partLengths.length; i++)
 			partLengths[i] = 0.0;
 
@@ -256,14 +269,24 @@ public class GeometricPath
 					partAreas[moveToCount - 1] +=
 						(xStart * yEnd - xEnd * yStart) / 2.0;
 				}
-				else
+				else if (attributeToCalculate == CALCULATE_CENTROID)
 				{
+					ai = xStart * yEnd - xEnd * yStart;
+					aSum += ai;
+					xSum += (xEnd + xStart) * ai;
+					ySum += (yEnd + yStart) * ai;
 				}
 
 				xStart = xEnd;
 				yStart = yEnd;
 			}
 			pi.next();
+		}
+
+		if (attributeToCalculate == CALCULATE_CENTROID)
+		{
+			centroid[0] = xSum / (3.0 * aSum);
+			centroid[1] = ySum / (3.0 * aSum);
 		}
 		return(partLengths);
 	}
