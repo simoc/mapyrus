@@ -17,23 +17,24 @@ public class Statement
 	 */
 	public static final int ASSIGN = 1;
 	public static final int CONDITIONAL = 2;
-	public static final int BLOCK = 3;
+	public static final int LOOP = 3;
+	public static final int BLOCK = 4;
 	
-	public static final int COLOR = 4;
-	public static final int LINEWIDTH = 5;
-	public static final int MOVE = 6;
-	public static final int DRAW = 7;
-	public static final int CLEAR = 8;
-	public static final int STROKE = 9;
-	public static final int FILL = 10;
-	public static final int SCALE = 11;
-	public static final int NEWPAGE = 12;
-	public static final int PRINT = 13;
+	public static final int COLOR = 10;
+	public static final int LINEWIDTH = 11;
+	public static final int MOVE = 12;
+	public static final int DRAW = 13;
+	public static final int CLEAR = 14;
+	public static final int STROKE = 15;
+	public static final int FILL = 16;
+	public static final int SCALE = 17;
+	public static final int NEWPAGE = 18;
+	public static final int PRINT = 19;
 	
 	/*
 	 * Statement type for call to user defined procedure block.
 	 */
-	public static final int CALL = 14;
+	public static final int CALL = 100;
 	
 	private int mType;
 	
@@ -42,7 +43,12 @@ public class Statement
 	 */
 	private Vector mThenStatements;
 	private Vector mElseStatements;
-	
+
+	/*
+	 * Statements in a while loop statement.
+	 */
+	private Vector mLoopStatements;
+		
 	/*
 	 * Name of procedure block,
 	 * variable names of parameters to this procedure
@@ -149,8 +155,8 @@ public class Statement
 	/**
 	 * Create an if, then, else, endif block of statements.
 	 * @param test is expression to test.
-	 * @param thenStatement is statements to execute if expression is true.
-	 * @param elseStatement is statements to execute if expression is false,
+	 * @param thenStatements is statements to execute if expression is true.
+	 * @param elseStatements is statements to execute if expression is false,
 	 * or null if there is no statement to execute.
 	 */
 	public Statement(Expression test, Vector thenStatements,
@@ -163,6 +169,19 @@ public class Statement
 		mElseStatements = elseStatements;
 	}
 	
+	/**
+	 * Create a while loop block of statements.
+	 * @param test is expression to test before each iteration of loop.
+	 * @param loopStatements is statements to execute for each loop iteration.
+	 */
+	public Statement(Expression test, Vector loopStatements)
+	{
+		mType = LOOP;
+		mExpressions = new Expression[1];
+		mExpressions[0] = test;
+		mLoopStatements = loopStatements;
+	}
+
 	/**
 	 * Sets the filename and line number that this statement was read from.
 	 * This is for use in any error message for this statement.
@@ -221,6 +240,15 @@ public class Statement
 		return(mElseStatements);
 	}
 
+	/**
+	 * Returns list of statements in while loop statement.
+	 * @return list of statements.
+	 */	
+	public Vector getLoopStatements()
+	{
+		return(mLoopStatements);
+	}
+	
 	/**
 	 * Return name of procedure block.
 	 * @return name of procedure.
