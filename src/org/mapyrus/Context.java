@@ -1151,7 +1151,9 @@ public class Context
 
 		if (mPath == null)
 			mPath = new GeometricPath();
-		mPath.ellipseTo(dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
+		mPath.ellipseTo((dstPts[0] + dstPts[2]) / 2, (dstPts[1] + dstPts[3]) / 2,
+			(cornerPts[2] - cornerPts[0]) * mScaling,
+			(cornerPts[3] - cornerPts[1]) * mScaling, mRotation);
 	}
 
 	/**

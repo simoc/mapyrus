@@ -166,24 +166,39 @@ public class GeometricPath
 
 	/**
 	 * Add ellipse to path.
-	 * @param xMin minimum X coordinate of ellipse.
-	 * @param yMin minimum Y coordinate of ellipse.
-	 * @param xMax maximum X coordinate of ellipse.
-	 * @param yMax maximum Y coordinate of ellipse.
+	 * @param xCenter X coordinate of center of ellipse.
+	 * @param yCenter Y coordinate of center of ellipse.
+	 * @param xDiameter width of ellipse.
+	 * @param yDiameter height of ellipse.
+	 * @param rotation rotation angle of ellipse, in radians.
 	 */
-	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
+	public void ellipseTo(double xCenter, double yCenter, double xDiameter, double yDiameter, double rotation)
 	{
 		Point2D pt;
-		pt = new Point2D.Float((float)xMax, (float)((yMin + yMax) / 2));
-		mMoveTos.add(pt);
 
 		/*
 		 * Create elliptical shape and add it to path.
 		 */
-		Ellipse2D.Double ellipse = new Ellipse2D.Double(xMin, yMin,
-			xMax - xMin, yMax - yMin);
+		Ellipse2D.Double ellipse = new Ellipse2D.Double(xCenter - xDiameter / 2, yCenter - yDiameter / 2,
+			xDiameter, yDiameter);
+		if (rotation != 0)
+		{
+			/*
+			 * Rotate ellipse to correct angle before adding it to path.
+			 */
+			GeneralPath g = new GeneralPath(ellipse);
+			AffineTransform affine = AffineTransform.getRotateInstance(rotation, xCenter, yCenter);
+			g.transform(affine);
+			mPath.append(g, false);
+			pt = g.getCurrentPoint();
+		}
+		else
+		{
+			mPath.append(ellipse, false); 
+			pt = new Point2D.Float((float)(xCenter + xDiameter), (float)yCenter);
+		}
 
-		mPath.append(ellipse, false);
+		mMoveTos.add(pt);
 		mNLineTos++;
 	}
 
