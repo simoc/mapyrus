@@ -3,14 +3,11 @@ begin highway name
   # orientation of line at point where symbol is drawn.
   #
   rotate -Mapyrus.rotation
-
   # Draw rectangle, then label inside it.
   #
-  move -3, -2
-  draw -3, 2, 3, 2, 3, -2, -3, -2
+  box -3, -2, 3, 2
   color "blue"
   fill
-
   clearpath
   color "white"
   font "Helvetica", 3
