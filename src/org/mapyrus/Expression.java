@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
 
@@ -22,6 +22,7 @@ public class Expression
 	 */
 	private static final int NO_OPERATION = 0;
 	private static final int PLUS_OPERATION = 1;
+// TODO add '.' as string concatenation operation instead of '+'.
 	private static final int MINUS_OPERATION = 2;
 	private static final int MULTIPLY_OPERATION = 3;	/* 'qw' * 2 = 'qwqw' */
 	private static final int DIVIDE_OPERATION = 4;

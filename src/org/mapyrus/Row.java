@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * @(#) $Id$
  */
  
 /**
@@ -9,7 +9,7 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.util.ArrayList;;
+import java.util.ArrayList;
 
 public class Row extends ArrayList 
 {

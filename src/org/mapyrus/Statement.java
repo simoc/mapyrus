@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
 
