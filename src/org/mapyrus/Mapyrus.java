@@ -196,8 +196,7 @@ public class Mapyrus
 		}
 		
 		System.out.println("");
-		System.out.println("Report bugs to <" + Constants.PROGRAM_NAME.toLowerCase() +
-			"@chenery.id.au>.");
+		System.out.println("Report bugs to <simoc@sourceforge.net>.");
 		System.exit(1);
 	}
 
