@@ -1609,16 +1609,25 @@ transformation set with a \texttt{worlds} command
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{roundpath}
+\subsubsection{roundedbox}
 
 \begin{alltt}
-roundpath \textit{radius}
+roundedbox \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+roundedbox \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}, \textit{radius}
 \end{alltt}
 
-Rounds corners of current path.
-\textit{radius} is the radius for the rounded corners, given in millimetres.
-Circular arcs and straight segments that are too short to round are not
-changed.
+Adds a rectangle with rounded corners to the current path.
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of the rectangle.
+
+The radius of circular arcs at the rounded corners is 
+\textit{radius}, or 10\% of the size of the rectangle if not given.
+
+The points and radius are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{samplepath}
 
