@@ -34,9 +34,16 @@ public interface GeographicDataset
 	
 	/**
 	 * Return list of types of fields in this dataset.
+	 * @return list of field types.
 	 */
 	public int []getFieldTypes();
-	
+
+	/**
+	 * Return indexes of geometry fields in list of field names.
+	 * @return list of field indexes.
+	 */
+	public int[] getGeometryFieldIndexes();
+
 	/**
 	 * Return world coordinate extents of this dataset in projection of dataset.
 	 * @return extents.
@@ -52,7 +59,8 @@ public interface GeographicDataset
 	 * @param extents is area of interest for this query.
 	 * @param whereClause is additional SQL where clause for query.
 	 */
-	public void query(Rectangle2D.Double extents, String whereClause) throws MapyrusException;
+	public void query(Rectangle2D.Double extents, String whereClause)
+		throws MapyrusException;
 		
 	/**
 	 * Finds if current query has more data available. 
