@@ -59,10 +59,15 @@ public class OutputFormat
 	private PrintWriter mWriter;
 	private OutputStream mOutputStream;
 	private Graphics2D mGraphics2D;
-
 	private boolean mPipedOutput;	
 	private Process mOutputProcess;
 
+	/*
+	 * Page dimensions.
+	 */
+	private double mPageWidth;
+	private double mPageHeight;
+	
 	/*
 	 * Indentation for PostScript commands.
 	 */
@@ -232,6 +237,8 @@ public class OutputFormat
 		}
 		mFilename = filename;
 		mPostScriptIndent = 0;
+		mPageWidth = width;
+		mPageHeight = height;
 	}
 
 	/**
@@ -241,12 +248,34 @@ public class OutputFormat
 	public OutputFormat(BufferedImage image)
 		throws IOException, MapyrusException
 	{
+		int resolution = getResolution();
+		
 		mOutputType = BUFFERED_IMAGE;
 		mImage = image;
 		mGraphics2D = (Graphics2D)(mImage.getGraphics());
-		setupBufferedImage(getResolution());
+		setupBufferedImage(resolution);
 		mPipedOutput = false;
 		mPostScriptIndent = 0;
+		mPageWidth = (double)mImage.getWidth() / resolution;
+		mPageWidth = (double)mImage.getHeight() / resolution;
+	}
+	
+	/**
+	 * Return page width.
+	 * @return width in millimetres.
+	 */
+	public double getPageWidth()
+	{
+		return(mPageWidth);
+	}
+	
+	/**
+	 * Return page height.
+	 * @return height in millimetres.
+	 */
+	public double getPageHeight()
+	{
+		return(mPageHeight);
 	}
 
 	/*
