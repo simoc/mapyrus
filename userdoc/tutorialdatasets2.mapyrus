@@ -27,7 +27,7 @@ do
   let tag = substr($0, 16, 32)
   # Strip trailing spaces and abbreviate street names.
   #
-  let tag = replace(tag, '  *$', '')
+  let tag = trim(tag)
   let tag = replace(tag, 'AVENUE$', 'AVE')
   let tag = replace(tag, 'STREET$', 'ST')
   let tag = replace(tag, 'ROAD$', 'RD')
