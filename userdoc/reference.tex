@@ -59,12 +59,22 @@ Mapyrus runs as an HTTP Server when started with the
 The variables available for configuring Mapyrus at startup are
 shown in Table \ref{startupvariables}.
 
-\begin{table}[htb]
-\begin{tabular}{|l|p{7cm}|}
+\begin{longtable}{|l|p{7cm}|}
+\hline
+\label{startupvariables}
+Variable & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Startup Variables} \\
+\endfoot
+
 \hline
 Variable & Description \\
 \hline
 \hline
+\endhead
 
 \texttt{Mapyrus.rgb.file=\textit{filename}} &
 Defines an X Windows color names file to use for color
@@ -100,10 +110,7 @@ The JAR file containing the class must be included in the \texttt{-classpath}
 option when starting Mapyrus. \\
 
 \hline
-\end{tabular}
-\caption{Startup Variables}
-\label{startupvariables}
-\end{table}
+\end{longtable}
 
 \subsection{Language}
 
