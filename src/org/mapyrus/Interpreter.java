@@ -1,6 +1,8 @@
 /**
  * Language interpreter.  Parse and executes commands read from file, or
  * typed by user.
+ * 
+ * Interpretation runs as a separate thread.
  */
 
 /*
@@ -14,7 +16,7 @@ import java.util.Vector;
 public class Interpreter extends Thread
 {
 	/*
-	 * States during parsing an expression.
+	 * States during expression parsing.
 	 */
 	private static final int AT_START = 1;
 	private static final int AT_START_ARGS = 2;
@@ -22,15 +24,22 @@ public class Interpreter extends Thread
 	private static final int IN_COMMENT = 4;
 
 	Preprocessor mPre;
+	Context mContext;
+	
+	/*
+	 * Return status of interpreter and error message when something has gone wrong.
+	 */
+	boolean mReturnStatus;
+	String mErrorMessage;
 
-	private Statement parseStatement() throws GfException, IOException
+	private Statement parseStatement() throws MapyrusException, IOException
 	{
 		int c;
 		int state = AT_START;
 		int type;
 		StringBuffer keyword = new StringBuffer();
 		Vector expressions = new Vector();
-		ArithmeticExpression expr;
+		Expression expr;
 		Statement retval = null;
 		boolean isAssign = false;
 
@@ -95,7 +104,7 @@ public class Interpreter extends Thread
 					 */
 					if (!Character.isLetter((char)c))
 					{
-						throw new GfException("Invalid statement at " + mPre.getCurrentFilenameAndLine());
+						throw new MapyrusException("Invalid statement at " + mPre.getCurrentFilenameAndLine());
 					}
 
 					/*
@@ -127,7 +136,7 @@ public class Interpreter extends Thread
 					/*
 					 * Parse an expression.
 					 */
-					expr = new ArithmeticExpression(mPre);
+					expr = new Expression(mPre);
 					expressions.add(expr);
 
 					/*
@@ -140,7 +149,7 @@ public class Interpreter extends Thread
 					}
 					else if (c != ',')
 					{
-						throw new GfException("Expecting ',' at " + mPre.getCurrentFilenameAndLine());
+						throw new MapyrusException("Expecting ',' at " + mPre.getCurrentFilenameAndLine());
 					}
 				}
 			}
@@ -153,25 +162,25 @@ public class Interpreter extends Thread
 		{
 			if (expressions.size() > 1)
 			{
-				throw new GfException("Too many expressions in assignment at " + mPre.getCurrentFilenameAndLine());
+				throw new MapyrusException("Too many expressions in assignment at " + mPre.getCurrentFilenameAndLine());
 			}
 			else if (expressions.size() == 0)
 			{
-				throw new GfException("No expression in assignment at " + mPre.getCurrentFilenameAndLine());
+				throw new MapyrusException("No expression in assignment at " + mPre.getCurrentFilenameAndLine());
 			}
 			retval = new Statement(keyword.toString(),
-				(ArithmeticExpression)expressions.elementAt(0));
+				(Expression)expressions.elementAt(0));
 		}
 		else
 		{
 			int statementType;
-			ArithmeticExpression []a;
+			Expression []a;
 
 			statementType = Statement.getStatementType(keyword.toString());
-			a = (ArithmeticExpression [])expressions.toArray();
+			a = (Expression [])expressions.toArray();
 			if (statementType < 0)
 			{
-				throw new GfException("Keyword " + keyword + " not recognized " + mPre.getCurrentFilenameAndLine());
+				throw new MapyrusException("Keyword " + keyword + " not recognized " + mPre.getCurrentFilenameAndLine());
 			}
 			retval = new Statement(statementType, a);
 		}
@@ -179,7 +188,25 @@ public class Interpreter extends Thread
 	}
 
 	/**
-	 * Begin interpretation.
+	 * Gets status of completed interpreter.
+	 * @return true if interpreter finished successfully.
+	 */
+	boolean getReturnStatus()
+	{
+		return(mReturnStatus);
+	}
+	
+	/**
+	 * Gets error message of completed interpreter that has failed.
+	 * @return error message.
+	 */
+	String getErrorMessage()
+	{
+		return(mErrorMessage);
+	}
+	
+	/**
+	 * Begins interpretation of commands.
 	 */
 	public void run()
 	{
@@ -188,7 +215,7 @@ public class Interpreter extends Thread
 		try
 		{
 			/*
-			 * Keep parsing until we read EOF.
+			 * Keep parsing until we get EOF.
 			 */
 			while ((st = parseStatement()) != null)
 			{
@@ -196,32 +223,30 @@ public class Interpreter extends Thread
 				System.out.println(st.getType());
 			}
 		}
-		catch (GfException e)
+		catch (MapyrusException e)
 		{
+			mErrorMessage = e.getMessage();
+			mReturnStatus = false;
 		}
 		catch (IOException e)
 		{
+			mErrorMessage = e.getMessage();
+			mReturnStatus = false;
 		}
-	}
-
-	/**
-	 * Create new language interpreter from a file.
-	 * @param filename is file to read from.
-	 */
-	public Interpreter(String filename) throws GfException, FileNotFoundException
-	{
-		super();
-		mPre = new Preprocessor(filename);
 	}
 
 	/**
 	 * Create new language interpreter.
 	 * @param in is opened Reader to read from.
+	 * @param context is the context to use during interpretation.  This may be changed
+	 * at the end of the interpretation.
 	 */
-	public Interpreter(Reader in) throws GfException
+	public Interpreter(Reader in, Context context)
 	{
 		super();
+		mContext = context;
 		mPre = new Preprocessor(in);
+		mReturnStatus = true;
 	}
 }
 
