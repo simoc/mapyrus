@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.awt.geom.Rectangle2D;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -45,6 +47,20 @@ public class Overlaps extends Function
 	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
 		throws MapyrusException
 	{
+		/*
+		 * Geometries cannot possibly overlap if their
+		 * bounding rectangles do not overlap.
+		 */
+		Rectangle2D.Double rect1 = arg1.getGeometryBoundingBox();
+		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
+		if (rect1 == null || rect2 == null)
+			return(Argument.numericZero);
+		if (rect2.getMaxX() < rect1.getMinX() || rect2.getMinX() > rect1.getMaxX() ||
+			rect2.getMaxY() < rect1.getMinY() || rect2.getMinY() > rect1.getMaxY())
+		{
+			return(Argument.numericZero);
+		}
+
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
 
@@ -53,7 +69,7 @@ public class Overlaps extends Function
 		{
 			Geometry g1 = new WKTReader().read(wkt1);
 			Geometry g2 = new WKTReader().read(wkt2);
-			if (g1.overlaps(g2))
+			if (g2.overlaps(g1))
 				retval = Argument.numericOne;
 			else
 				retval = Argument.numericZero;
