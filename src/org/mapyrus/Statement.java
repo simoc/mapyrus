@@ -63,7 +63,7 @@ public class Statement
 	public static final int FETCH = 31;
 	public static final int NEWPAGE = 32;
 	public static final int PRINT = 33;
-	public static final int GLOBAL = 34;
+	public static final int LOCAL = 34;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -139,7 +139,7 @@ public class Statement
 		mStatementTypeLookup.put("fetch", new Integer(FETCH));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
 		mStatementTypeLookup.put("print", new Integer(PRINT));
-		mStatementTypeLookup.put("global", new Integer(GLOBAL));
+		mStatementTypeLookup.put("local", new Integer(LOCAL));
 	}
 	
 	/**
