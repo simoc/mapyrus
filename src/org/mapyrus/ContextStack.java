@@ -23,10 +23,11 @@
 package org.mapyrus;
 
 import java.awt.Color;
-import java.awt.MediaTracker;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -38,7 +39,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 
 import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
@@ -478,12 +479,12 @@ public class ContextStack
 	public void drawIcon(String filename, double size)
 		throws IOException, MapyrusException
 	{
-		ImageIcon icon;
+		Image icon;
 
 		/*
 		 * Have we opened icon before and cached it?
 		 */
-		icon = (ImageIcon)mIconCache.get(filename);
+		icon = (Image)mIconCache.get(filename);
 		if (icon == null)
 		{
 			URL url;
@@ -564,7 +565,7 @@ public class ContextStack
 				String description = filename;
 				if (description.length() > 64)
 					description = description.substring(0, 64) + "...";
-				icon = new ImageIcon(bufferedImage, filename);
+				icon = bufferedImage;
 			}
 			else
 			{
@@ -574,27 +575,18 @@ public class ContextStack
 				try
 				{
 					url = new URL(filename);
-					icon = new ImageIcon(url);
+					icon = ImageIO.read(url);
 				}
 				catch (MalformedURLException e)
 				{
-					icon = new ImageIcon(filename);
-				}
-	
-				/*
-				 * Open icon and cache it.
-				 */
-				if (icon.getImageLoadStatus() != MediaTracker.COMPLETE)
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_ICON) +
-						": " + filename);
+					icon = ImageIO.read(new File(filename));
 				}
 			}
-			
+
 			/*
 			 * Do not cache large icons, load them each time they are needed.
 			 */
-			if (icon.getIconHeight() * icon.getIconWidth() <= 128 * 128)
+			if (icon.getHeight(null) * icon.getWidth(null) <= 128 * 128)
 				mIconCache.put(filename, icon);
 		}
 		getCurrentContext().drawIcon(icon, size);
@@ -716,6 +708,23 @@ public class ContextStack
 	public void fill() throws IOException, MapyrusException
 	{
 		getCurrentContext().fill();
+	}
+
+	/**
+	 * Gradient fill current path.  Colors at each of the four corners
+	 * of the path are defined.  Colors will gradually fade
+	 * through the area covered by the path to give a smooth change
+	 * of color.
+	 * @param c1 color for lower left corner of path.
+	 * @param c2 color for lower right corner of path.
+	 * @param c3 color for upper left corner of path.
+	 * @param c4 color for upper right corner of path.
+	 * @param c5 color in center of path.
+	 */
+	public void gradientFill(Color c1, Color c2, Color c3, Color c4, Color c5)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().gradientFill(c1, c2, c3, c4, c5);
 	}
 
 	/**
