@@ -1270,6 +1270,49 @@ public class Context
 		}
 	}
 
+	public boolean isPageMaskAllZero(double x1, double y1, double x2, double y2)
+		throws MapyrusException
+	{
+		boolean retval = true;
+
+		if (mOutputFormat != null)
+		{
+			double srcPts[] = new double[4];
+			float dstPts[] = new float[4];
+
+			srcPts[0] = x1;
+			srcPts[1] = y1;
+
+			srcPts[2] = x2;
+			srcPts[3] = y2;
+
+			/*
+			 * Transform rectangle to correct world coordinate system.
+			 */
+			if (mProjectionTransform != null)
+			{
+				mProjectionTransform.forwardTransform(srcPts);
+			}
+
+			/*
+			 * Transform rectangle from world coordinates
+			 * to millimetre position on page.
+			 */
+			if (mWorldCtm != null)
+				mWorldCtm.transform(srcPts, 0, srcPts, 0, 2);
+			mCtm.transform(srcPts, 0, dstPts, 0, 2);
+
+			/*
+			 * Get mask for this page and check whether area is protected.
+			 */
+			PageMask pageMask = mOutputFormat.getPageMask();
+
+			retval = pageMask.isAllZero(Math.round(dstPts[0]), Math.round(dstPts[1]),
+				Math.round(dstPts[2]), Math.round(dstPts[3]));
+		}
+		return(retval);
+	}
+
 	/**
 	 * Shift all coordinates in path shifted by a fixed amount.
 	 * @param xShift distance in millimetres to shift X coordinate values.
