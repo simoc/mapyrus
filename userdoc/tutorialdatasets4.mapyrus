@@ -20,7 +20,8 @@ let sql = "select Assetcode, Longitude, Latitude from SURVEY where Logdate > '1 
 dataset "jdbc", sql, "driver=org.postgresql.Driver url=jdbc:postgresql:nemo user=postgres password=postgres"
 worlds x1, y1, x2, y2
 
-# Print names of fields being fetched from database, for debugging.
+# Print names of fields being fetched from database for debugging,
+# as some databases convert all field names to uppercase or lowercase.
 #
 let i = 1
 while i <= length(Mapyrus.dataset.fieldnames)
