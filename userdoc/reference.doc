@@ -919,13 +919,13 @@ include hr.doc
 
 <p>
 <a name="color"></a>
-<tt>color</tt> <i>name</i>
+<tt>color</tt> <i>name</i> [, <i>alpha</i>]
 <br>
-<tt>color "#</tt><i>hexdigits</i><tt>"</tt>
+<tt>color "#</tt><i>hexdigits</i><tt>"</tt> [, <i>alpha</i>]
 <br>
-<tt>color "rgb"</tt>, <i>red</i>, <i>green</i>, <i>blue</i>
+<tt>color "rgb"</tt>, <i>red</i>, <i>green</i>, <i>blue</i> [, <i>alpha</i>]
 <br>
-<tt>color "hsb"</tt>, <i>hue</i>, <i>saturation</i>, <i>brightness</i>
+<tt>color "hsb"</tt>, <i>hue</i>, <i>saturation</i>, <i>brightness</i> [, <i>alpha</i>]
 <p>
 Sets color for drawing.
 Named colors refer to colors in the file
@@ -933,8 +933,18 @@ Named colors refer to colors in the file
 <a href="#startupvariables">variable</a> at startup.
 <i>hexdigits</i> is a 6 digit hexadecimal value defining RGB values,
 as used in HTML pages.
-Values for RGB and Hue-saturation-brightness (HSB)
+Values for RGB colors and Hue-saturation-brightness (HSB)
 colors are given as intensities in the range 0-1.
+<p>
+The alpha value is optional and defines transparency as a value in the
+range 0-1.
+An alpha value of 1 is completely opaque and the color overwrites
+underlying colors.
+An alpha value of 0 is completely transparent and the color is not visible.
+Intermediate values are partially transparent and the color is blended with
+colors of underlying shapes on the page.
+Colors are opaque if an alpha value is not given.
+<p>
 The spelling <tt>colour</tt> is also accepted for this command.
 
 include hr.doc
