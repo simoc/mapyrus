@@ -496,11 +496,9 @@ public class TextfileDataset implements GeographicDataset
 	 */
 	public Row fetch() throws MapyrusException
 	{
-		boolean status;
-
 		/*
 		 * Fetch next row if it has not been read already.
-		 */		
+		 */
 		if (mRowAvailable == false)
 			mRowAvailable = readMatchingRow();
 
