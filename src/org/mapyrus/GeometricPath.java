@@ -17,9 +17,17 @@ import java.util.Vector;
 public class GeometricPath
 {
 	/*
+	 * What to calculate when walking through path?
+	 */
+	static final int CALCULATE_LENGTHS = 1;
+	static final int CALCULATE_AREAS = 2;
+	static final int CALCULATE_CENTROID = 3;
+	static final int CALCULATE_PIP = 4;	/* point in polygon */
+
+	/*
 	 * An identity matrix results in no transformation.
 	 */
-	static AffineTransform identityMatrix = new AffineTransform();
+	static AffineTransform mIdentityMatrix = new AffineTransform();
 
 	/*
 	 * Coordinates of path and moveto points with rotation angles.
@@ -163,7 +171,21 @@ public class GeometricPath
 		mMoveTos.clear();
 		mNLineTos = 0;
 	}
-	
+
+	/**
+	 * Returns geometric area of full path.
+	 * @return path area.
+	 */
+	public double getArea()
+	{
+		double totalArea = 0.0;
+		double areas[] = walkPath(CALCULATE_AREAS);
+
+		for (int i = 0; i < areas.length; i++)
+			totalArea += areas[i];
+		return(totalArea);
+	}
+
 	/**
 	 * Returns geometric length of full path.
 	 * @return path length.
@@ -171,39 +193,40 @@ public class GeometricPath
 	public double getLength()
 	{
 		double totalLength = 0.0;
-		double lengths[] = calculateLengths();
-		
+		double lengths[] = walkPath(CALCULATE_LENGTHS);
+
 		for (int i = 0; i < lengths.length; i++)
 			totalLength += lengths[i];
 		return(totalLength);
 	}
-	
+
 	/**
-	 * Returns geometric length of path.  Length for each moveTo, lineTo, ...
-	 * part is calculated separately.
-	 * @return length of each part of the path.
+	 * Walks path, calculating length, area or centroid.  Length or area
+	 * for each moveTo, lineTo, ... part is calculated separately.
+	 * If the path is not closed then the calculated area is meaningless.
+	 * @return array with length or area of each part of the path.
 	 */
-	private double []calculateLengths()
+	private double []walkPath(int attributeToCalculate)
 	{
 		int segmentType;
-		PathIterator pi = mPath.getPathIterator(identityMatrix);
+		PathIterator pi = mPath.getPathIterator(mIdentityMatrix);
 		float coords[] = new float[6];
 		float xStart = 0.0f, yStart = 0.0f;
 		float xEnd, yEnd;
 		float xMoveTo = 0.0f, yMoveTo =0.0f;
-		double partLengths[];
+		double partLengths[], partAreas[];
 		double len;
 		int moveToCount = 0;
 
 		/*
-		 * Create array to hold lengths of each part of path.
+		 * Create array to hold length and area of each part of path.
 		 */
-		partLengths = new double[getMoveToCount()];
+		partAreas = partLengths = new double[getMoveToCount()];
 		for (int i = 0; i < partLengths.length; i++)
 			partLengths[i] = 0.0;
 
 		/*
-		 * Walk through path, summing up length of segments.
+		 * Walk through path, summing up length and area of segments.
 		 */
 		while (!pi.isDone())
 		{
@@ -228,11 +251,22 @@ public class GeometricPath
 				}
 
 				/*
-				 * Sum up length of this segment.
+				 * Sum up length or area of this segment.
 				 */
-				partLengths[moveToCount - 1] +=
-					Math.sqrt((xEnd - xStart) * (xEnd - xStart) +
-					(yEnd - yStart) * (yEnd - yStart));
+				if (attributeToCalculate == CALCULATE_LENGTHS)
+				{
+					partLengths[moveToCount - 1] +=
+						Math.sqrt((xEnd - xStart) * (xEnd - xStart) +
+						(yEnd - yStart) * (yEnd - yStart));
+				}
+				else if (attributeToCalculate == CALCULATE_AREAS)
+				{
+					partAreas[moveToCount - 1] +=
+						(xStart * yEnd - xEnd * yStart) / 2.0;
+				}
+				else
+				{
+				}
 
 				xStart = xEnd;
 				yStart = yEnd;
@@ -286,21 +320,21 @@ public class GeometricPath
 		 * A negative spacing means that we must start at end
 		 * of line and step towards beginning.  To do this,
 		 * we find the length of each part of the path so
-		 * we can calculate a starting offset and step
+		 * we can calculate a starting offset and then step
 		 * forwards through the path.
 		 */
 		if (spacing < 0.0)
 		{
 			stepDirection = -1;
 			spacing = -spacing;
-			partLengths = calculateLengths();
+			partLengths = walkPath(CALCULATE_LENGTHS);
 		}
 		else
 		{
 			stepDirection = 1;
 		}
 		
-		pi = mPath.getPathIterator(identityMatrix);	
+		pi = mPath.getPathIterator(mIdentityMatrix);	
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);
