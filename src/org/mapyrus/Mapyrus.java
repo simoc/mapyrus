@@ -53,11 +53,11 @@ public class Mapyrus
 	 * Parse and interpret a file.  Trap any exceptions.
 	 * @return flag indicating whether interpretation succeeeded.
 	 */
-	private static boolean processFile(Reader f, Interpreter interpreter)
+	private static boolean processFile(Reader f, String filename, Interpreter interpreter)
 	{
 		try
 		{
-			interpreter.interpret(f);
+			interpreter.interpret(f, filename);
 		}
 		catch (Exception e)
 		{
@@ -131,7 +131,7 @@ public class Mapyrus
 			context = new ContextStack();
 			Interpreter interpreter = new Interpreter(context);
 
-			processFile(f, interpreter);
+			processFile(f, "standard input", interpreter);
 			
 			try
 			{
@@ -189,7 +189,7 @@ public class Mapyrus
 				{
 					URL url = new URL(args[i]);
 					f = new BufferedReader(new InputStreamReader(url.openStream()));
-					if (processFile(f, interpreter) == false)
+					if (processFile(f, args[i], interpreter) == false)
 					{
 						System.exit(1);
 					}
@@ -199,7 +199,7 @@ public class Mapyrus
 					try
 					{
 						f = new BufferedReader(new FileReader(args[i]));
-						if (processFile(f, interpreter) == false)
+						if (processFile(f, args[i], interpreter) == false)
 						{
 							System.exit(1);
 						}
