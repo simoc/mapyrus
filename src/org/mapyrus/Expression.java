@@ -135,6 +135,9 @@ public class Expression
 	
 	private static final int SUBSTR_FUNCTION = 18;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
+	
+	private static final int STRINGWIDTH_FUNCTION = 19;	/* stringwidth('foo') = 26 */
+	private static final String STRINGWIDTH_FUNCTION_NAME = "stringwidth";
 
 	/*
 	 * Constant for calculating base 10 logarithms.
@@ -169,8 +172,9 @@ public class Expression
 		mFunctionTypeLookup.put(TEMPNAME_FUNCTION_NAME, new Integer(TEMPNAME_FUNCTION));
 		mFunctionTypeLookup.put(SPLIT_FUNCTION_NAME, new Integer(SPLIT_FUNCTION));
 		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
+		mFunctionTypeLookup.put(STRINGWIDTH_FUNCTION_NAME, new Integer(STRINGWIDTH_FUNCTION));
 		
-		mFunctionArgumentCount = new byte[SUBSTR_FUNCTION + 1];
+		mFunctionArgumentCount = new byte[STRINGWIDTH_FUNCTION + 1];
 		mFunctionArgumentCount[ROUND_FUNCTION] = 1;
 		mFunctionArgumentCount[RANDOM_FUNCTION] = 1;
 		mFunctionArgumentCount[LOG10_FUNCTION] = 1;
@@ -189,6 +193,7 @@ public class Expression
 		mFunctionArgumentCount[TEMPNAME_FUNCTION] = 1;
 		mFunctionArgumentCount[SPLIT_FUNCTION] = 2;
 		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
+		mFunctionArgumentCount[STRINGWIDTH_FUNCTION] = 1;
 	}
 
 	/*
@@ -489,7 +494,7 @@ public class Expression
 					retval.addHashMapEntry(key, new Argument(Argument.STRING, split[i]));
 				}
 			}
-			else /* SUBSTR_FUNCTION */
+			else if (mFunction == SUBSTR_FUNCTION)
 			{
 				int startIndex, extractLen, len;
 	
@@ -525,9 +530,16 @@ public class Expression
 						s.substring(startIndex, startIndex + extractLen));
 				}
 			}
+			else	/* STRINGWIDTH_FUNCTION */
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				s = leftValue.toString();
+				d = context.getStringWidth(s);
+				retval = new Argument(d);
+			}
 			return(retval);
 		}
-		
+
 		/*
 		 * Recursively traverse binary expression tree to
 		 * determine its value.
