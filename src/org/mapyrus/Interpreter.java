@@ -667,6 +667,7 @@ public class Interpreter
 		
 			case Statement.MOVE:
 			case Statement.DRAW:
+			case Statement.RDRAW:
 				if (nExpressions > 0 && nExpressions % 2 == 0)
 				{
 					for (int i = 0; i < nExpressions; i += 2)
@@ -679,9 +680,14 @@ public class Interpreter
 							context.moveTo(mExecuteArgs[i].getNumericValue(),
 								mExecuteArgs[i + 1].getNumericValue());
 						}
-						else
+						else if (type == Statement.DRAW)
 						{
 							context.lineTo(mExecuteArgs[i].getNumericValue(),
+								mExecuteArgs[i + 1].getNumericValue());
+						}
+						else /* RDRAW */
+						{
+							context.rlineTo(mExecuteArgs[i].getNumericValue(),
 								mExecuteArgs[i + 1].getNumericValue());
 						}
 					}
@@ -711,6 +717,8 @@ public class Interpreter
 
 			case Statement.BOX:
 			case Statement.GUILLOTINE:
+			case Statement.PROTECT:
+			case Statement.UNPROTECT:
 				if (nExpressions == 4)
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
@@ -748,9 +756,17 @@ public class Interpreter
 						context.lineTo(xMax, yMin);
 						context.closePath();
 					}
-					else
+					else if (type == Statement.GUILLOTINE)
 					{
 						context.guillotine(xMin, yMin, xMax, yMax);
+					}
+					else if (type == Statement.PROTECT)
+					{
+						context.protect(xMin, yMin, xMax, yMax);
+					}
+					else /* UNPROTECT */
+					{
+						context.unprotect(xMin, yMin, xMax, yMax);
 					}
 				}
 				else
