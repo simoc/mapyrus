@@ -550,11 +550,12 @@ public class ContextStack
 	/**
 	 * Draws geo-referenced image on page.
 	 * @param filename geo-referenced image filename.
+	 * @param extras extra parameters to control display of image.
 	 */
-	public void drawGeoImage(String filename)
+	public void drawGeoImage(String filename, String extras)
 		throws IOException, MapyrusException
 	{
-		getCurrentContext().drawGeoImage(filename);
+		getCurrentContext().drawGeoImage(filename, extras);
 	}
 
 	/**
