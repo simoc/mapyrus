@@ -3,10 +3,10 @@ begin x
 	#
 	color "#C5C500"
 	linestyle 0.1
-	move -1, -1
-	draw 1, 1
-	move -1, 1
-	draw 1, -1
+	move -0.7, -0.7
+	draw 0.7, 0.7
+	move -0.7, 0.7
+	draw 0.7, -0.7
 	stroke
 end
 
