@@ -1,0 +1,15 @@
+# Display the file roads.shp in a PNG file that is sent to standard output.
+#
+newpage "png", "-", 100, 100, 96
+color "red"
+
+dataset "shapefile", "/tmp/roads.shp", "dbffields="
+worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, Mapyrus.dataset.max.x, Mapyrus.dataset.max.y
+import
+while Mapyrus.import.moreRecords
+do
+	clearpath
+	fetch
+	addpath GEOMETRY
+	stroke
+done
