@@ -55,6 +55,7 @@ public class ContextStack
 	private static final String WORLDS_VARIABLE = "worlds";
 	private static final String UNPROJECTED_VARIABLE = "project";
 	private static final String DATASET_VARIABLE = "dataset";
+	private static final String PAGE_VARIABLE = "page";
 	
 	/*
 	 * Stack of contexts, with current context in last slot.
@@ -537,18 +538,22 @@ public class ContextStack
 			{
 				retval = new Argument(getCurrentContext().getScalingY());
 			}
-			else if (sub.equals("page.width"))
+			else if (sub.startsWith(PAGE_VARIABLE))
 			{
-				retval = new Argument(getCurrentContext().getPageWidth());
-			}
-			else if (sub.equals("page.height"))
-			{
-				retval = new Argument(getCurrentContext().getPageHeight());
-			}
-			else if (sub.equals("page.resolution"))
-			{
-				retval = new Argument(Constants.MM_PER_INCH /
-					getCurrentContext().getResolution());
+				sub = sub.substring(PAGE_VARIABLE.length() + 1);
+				if (sub.equals("width"))
+					retval = new Argument(getCurrentContext().getPageWidth());
+				else if (sub.equals("height"))
+					retval = new Argument(getCurrentContext().getPageHeight());
+				else if (sub.equals("format"))
+					retval = new Argument(Argument.STRING, getCurrentContext().getPageFormat());
+				else if (sub.equals("resolution"))
+				{
+					retval = new Argument(Constants.MM_PER_INCH /
+						getCurrentContext().getResolution());
+				}
+				else
+					retval = null;
 			}
 			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
 			{
