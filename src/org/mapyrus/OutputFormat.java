@@ -6,6 +6,7 @@ package au.id.chenery.mapyrus;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
+import java.awt.FontMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -96,6 +97,19 @@ public class OutputFormat
 	private int mPostScriptIndent;
 
 	/*
+	 * Justification for labels as fraction of string height and width
+	 * to move string in X and Y direction to achieve correct justification.
+	 */
+	private double mJustificationShiftX;
+	private double mJustificationShiftY;
+
+	/*
+	 * Rotation of current font in radians, with 0 horizontal,
+	 * measured counter-clockwise.
+	 */
+	private double mFontRotation;
+	
+	/*
 	 * Write PostScript file header, including document structuring conventions (DSC).
 	 */
 	private void writePostScriptHeader(double width, double height)
@@ -134,6 +148,8 @@ public class OutputFormat
 		 */
 		mWriter.println("/m { moveto } def /l { lineto } def");
 		mWriter.println("/s { stroke } def /f { fill } def");
+		mWriter.println("/font { /fjy exch def /fjx exch def /frot exch def");
+		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
 		mWriter.println("/radtodeg { 180 mul 3.1415629 div } def");
 		mWriter.println("% Rotate and justify text using current font settings");
 		mWriter.println("/t { gsave currentpoint translate frot radtodeg rotate");
@@ -258,6 +274,7 @@ public class OutputFormat
 		mPageHeight = height;
 		mResolution = Constants.MM_PER_INCH / resolution;
 		mFontCache = new FontCache();
+		mJustificationShiftX = mJustificationShiftY = mFontRotation = 0.0;
 	}
 
 	/**
@@ -429,6 +446,26 @@ public class OutputFormat
 		Font font;
 		int pointSize;
 
+		/*
+		 * Calculate fraction of string height and width to move text to get required
+		 * justification.
+		 */
+		if ((justify & JUSTIFY_LEFT) != 0)
+			mJustificationShiftX = 0.0;
+		else if ((justify & JUSTIFY_CENTER) != 0)
+			mJustificationShiftX = -0.5;
+		else
+			mJustificationShiftX = -1.0;
+
+		if ((justify & JUSTIFY_BOTTOM) != 0)
+			mJustificationShiftY = 0.0;
+		else if ((justify & JUSTIFY_MIDDLE) != 0)
+			mJustificationShiftY = -0.5;
+		else
+			mJustificationShiftY = -1.0;
+
+		mFontRotation = fontRotation;
+
 		if (mOutputType == POSTSCRIPT)
 		{
 			/*
@@ -482,7 +519,9 @@ public class OutputFormat
 				mColorFormat.format(c[2]) + " rgb");
 				
 			/*
-			 * Set font for labelling.
+			 * Set font for labelling.  Define dictionary entries for justification
+			 * settings for PostScript procedure to use for aligning text correctly
+			 * itself.
 			 */
 			if (fontStyle == Font.BOLD)
 				styleName = "Bold";
@@ -493,33 +532,13 @@ public class OutputFormat
 			else
 				styleName = "";
 
-			String psFontName = fontName + styleName;
-			writePostScriptLine("/fsize " + mLinearFormat.format(fontSize) + " def");
-			writePostScriptLine("/" + psFontName + " findfont fsize scalefont setfont");
-			writePostScriptLine("/frot " + mRotationFormat.format(fontRotation) + " def");
+			String psFontName = "/" + fontName + styleName;
+
+			writePostScriptLine(psFontName + " " +
+				mLinearFormat.format(fontSize) + " " +
+				mRotationFormat.format(fontRotation) + " " +
+				mJustificationShiftX + " " + mJustificationShiftY + " font");
 			mFontResources.add(psFontName);
-
-			/*
-			 * Set justification for labels as fraction of string height and
-			 * width to move string in X and Y direction to achieve justification
-			 * the user wants.
-			 */
-			double justX, justY;
-			if ((justify & JUSTIFY_LEFT) != 0)
-				justX = 0.0;
-			else if ((justify & JUSTIFY_CENTER) != 0)
-				justX = -0.5;
-			else
-				justX = -1.0;
-
-			if ((justify & JUSTIFY_BOTTOM) != 0)
-				justY = 0.0;
-			else if ((justify & JUSTIFY_MIDDLE) != 0)
-				justY = -0.5;
-			else
-				justY = -1.0;
-
-			writePostScriptLine("/fjx " + justX + " def /fjy " + justY + " def");
 		}
 		else
 		{
@@ -529,7 +548,7 @@ public class OutputFormat
 			 * displayed with a Graphics2D object scaled to millimetre units.
 			 */
 			int size = (int)Math.round(fontSize);
-			font = mFontCache.get(fontName, fontStyle, size);
+			font = mFontCache.get(fontName, fontStyle, size, fontRotation);
 			if (font == null)
 			{
 				font = new Font(fontName, fontStyle, size);
@@ -539,12 +558,11 @@ public class OutputFormat
 				 * with a Graphics2D object that has inverted the Y axis to
 				 * increase upwards.
 				 */
-				AffineTransform fontTransform = AffineTransform.getScaleInstance(1.0, -1.0);
-				if (fontRotation != 0.0)
-					fontTransform.rotate(fontRotation);
+				AffineTransform fontTransform =
+					AffineTransform.getRotateInstance(fontRotation);
+				fontTransform.scale(1, -1);
 				font = font.deriveFont(fontTransform);
-				mFontCache.put(fontName, fontStyle, size, font);
-// TODO how does font cache deal with rotated fonts?
+				mFontCache.put(fontName, fontStyle, size, fontRotation, font);
 			}
 
 			/*
@@ -554,7 +572,6 @@ public class OutputFormat
 			mGraphics2D.setStroke(linestyle);
 			mGraphics2D.setClip(clipPath);
 			mGraphics2D.setFont(font);
-			// TODO make sure font is right size with mGraphics2D.getTransform();
 		}
 	}
 
@@ -693,7 +710,7 @@ public class OutputFormat
 			}
 
 			/*
-			 * Convert backslashes to '\\' and other special characters to octal.
+			 * Convert backslashes to '\\' and other special characters to octal code.
 			 */
 			c = s.charAt(i);
 			if (c == '\\')
@@ -729,23 +746,41 @@ public class OutputFormat
 	 */
 	public void label(ArrayList pointList, String label)
 	{
+		Point2D pt;
+		double x, y;
+
 		/*
 		 * Draw label at each position in list.
 		 */
 		for (int i = 0; i < pointList.size(); i++)
 		{
-			Point2D pt = (Point2D)(pointList.get(i));
+			pt = (Point2D)(pointList.get(i));
+			x = pt.getX();
+			y = pt.getY();
+
 			if (mOutputType == POSTSCRIPT)
 			{
-				writePostScriptLine(mLinearFormat.format(pt.getX()) + " " +
-					mLinearFormat.format(pt.getY()) + " m");
+				writePostScriptLine(mLinearFormat.format(x) + " " +
+					mLinearFormat.format(y) + " m");
 // TODO need to split multiline strings.
 				writePostScriptString(label);
 				writePostScriptLine("t");
 			}
 			else
 			{
-				mGraphics2D.drawString(label, (float)pt.getX(), (float)pt.getY());
+				/*
+				 * Reposition label from original point so it has correct justification.
+				 */
+				if (mJustificationShiftX != 0.0 || mJustificationShiftY != 0.0)
+				{
+   					FontMetrics fontMetrics = mGraphics2D.getFontMetrics();
+   					Rectangle2D bounds = fontMetrics.getStringBounds(label, mGraphics2D);
+   					x += bounds.getWidth() * mJustificationShiftX * Math.cos(mFontRotation) +
+   						bounds.getHeight() * mJustificationShiftY * Math.sin(mFontRotation);
+					y += bounds.getWidth() * mJustificationShiftX * Math.sin(mFontRotation) +
+						bounds.getHeight() * mJustificationShiftY * Math.sin(mFontRotation);
+				}
+				mGraphics2D.drawString(label, (float)x, (float)y);
 			}
 		}
 	}
