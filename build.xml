@@ -113,10 +113,12 @@ it is not necessary to show path being cleared in each example -->
 
 
 <target name="clean" description="Remove everything we have built">
-<delete dir="build/classes" includes="**/*.class"/>
+<delete>
+<fileset dir="build/classes"/>
+</delete>
 <delete file="${ant.project.name}.jar"/>
 <delete>
-<fileset includes="${ant.project.name}*.zip"/>
+<fileset dir="." includes="${ant.project.name}*.zip"/>
 <fileset dir="doc" includes="*.html, *.png" excludes="mapyrus.png"/>
 </delete>
 </target>
