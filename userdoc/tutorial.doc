@@ -95,7 +95,7 @@ Tutorial
 
 <tr>
 <td>
-<a href="#external"/>Accessing Mapyrus From Other Software</a>
+<a href="#combining"/>Combining Mapyrus With Other Software</a>
 </td>
 </tr>
 
@@ -702,54 +702,52 @@ include tutorialimagemap1.mpy
 include endex.doc
 
 <p>
-<a name="external"></a>
-<h3>Accessing Mapyrus From Other Software</h3>
+<a name="combining"></a>
+<h3>Combining Mapyrus With Other Software</h3>
 <p>
 
-Pass parameters to java
--D option
-Mapyrus works well with
-Give <tt>-</tt> as output file in
+To combine Mapyrus with other software use the following
+techniques.
+<p>
+Pass parameters from calling environment to Mapyrus using the Java -D option.
+<p>
+To use Mapyrus in a pipeline of commands,
+give <tt>-</tt> as output file in the
 <a href="reference.html#newpage">newpage</a>
-command to write image file to standard output.
+command to write image to standard output.
 <p>
-A Java JVM takes more than one second to start on some computers.  For
-applications that must start Mapyrus many times to perform short tasks it is
-better to start Mapyrus as an HTTP server and make HTTP requests.
-<p>
-Most languages have a built-in method of making HTTP requests.
-lynx
-
-Starting as server makes immediately available
-of the display.
-Use loops to display similar symbols repeatedly.
-access
-data
-repeatedly
-avoid startup time.
-contact remotely.
-
-python, perl
-make web request
-
-Shell script
+Use Mapyrus in combination with the freely available software
+<a href="http://netpbm.sourceforge.net">Netpbm</a>
+and
+<a href="http://www.ghostscript.com">Ghostscript</a>
+to post-process image output and convert images to other formats.
+The following examples demonstrate this.
 
 include beginex.doc
-tmpFile=$$.png
-lynx -dump http://localhost:8410/wsrv.mpy?gemeinde=Erding > $tmpFile
-mailx -s ' -a $tmpFile
-/bin/rm $tmpFile
+java -DDATADIR=$DATADIR -Dfoo=bar -jar mapyrus.jar mycommands.txt | pngtopnm | ppmtopgm | pgmtopbm | pbmtoascii -2x4
 include endex.doc
 
 include beginex.doc
-f = urllib.urlopen("http://localhost:8410/i1.mpy?%s" % params)
-print f.read()
+java -jar mapyrus.jar $HOME/common.txt mycommands.txt > myfile.ps
+gs -sDEVICE=faxg3 -sOutputFile=myfile.fax -TextAlphaBits=4 myfile.ps
 include endex.doc
 
-Java
+A Java Virtual Machine takes more than one second to start on many computers.
+For applications that must start Mapyrus many times to perform short tasks,
+start Mapyrus as an HTTP server and make HTTP requests instead.
+Most languages include method of making HTTP requests.
+From Perl use the
+<a href="www.cpan.org">libwww-perl</a> modules.
+From Java use the
+<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/net/HttpURLConnection.html">java.net.HttpURLConnection</a>
+class.
+Use <a href="http://www.lynx.org">lynx</a> from
+languages without the ability to make HTTP requests.
+For example,
 
-HttpURLConnection h = new HttpURLConnection(new URL("http://localhost:8410/wsrv.mpy?gemeinde=Erding"));
-
+include beginex.doc
+lynx -dump http://localhost:8410/wsrv.mpy?gemeinde=Erding > myfile.png
+include endex.doc
 
 include footer.doc
 
