@@ -30,10 +30,10 @@ move 90, 15
 move 95, 25
 label 'READY'
 
-# Draw characters for pi and theta from Symbols font.
+# Draw symbols from ZapfDingbats font.
 #
 color "black"
-font 'Symbol', 12
+font 'ZapfDingbats', 12
 clearpath
-move 110, 10
-label 'pq'
+move 105, 10
+label '0&'
