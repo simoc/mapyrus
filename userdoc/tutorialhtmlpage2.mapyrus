@@ -4,15 +4,15 @@ let imageFile = tempname("PNG")
 newpage "png", imageFile, 100, 100
 
 dataset "shapefile", "/tmp/roads.shp", "dbffields=FEATURE"
-if x1 eq ""
+if X1 eq ""
 then
-	let x1 = Mapyrus.dataset.min.x
-	let y1 = Mapyrus.dataset.min.y
-	let x2 = Mapyrus.dataset.max.x
-	let y2 = Mapyrus.dataset.max.y
+	let X1 = Mapyrus.dataset.min.x
+	let Y1 = Mapyrus.dataset.min.y
+	let X2 = Mapyrus.dataset.max.x
+	let Y2 = Mapyrus.dataset.max.y
 endif
 
-worlds x1, y1, x2, y2
+worlds X1, Y1, X2, Y2
 while Mapyrus.fetch.more
 do
 	clearpath
@@ -25,17 +25,17 @@ do
 	then
 		color "red"
 	else
-		color "orange"
+		color "black"
 	endif
 	stroke
 done
 
-let x1 = Mapyrus.worlds.min.x
-let y1 = Mapyrus.worlds.min.y
-let x2 = Mapyrus.worlds.max.x
-let y2 = Mapyrus.worlds.max.y
-let xMid = (x1 + y2) / 2
-let yMid = (y1 + y2) / 2
+let X1 = Mapyrus.worlds.min.x
+let Y1 = Mapyrus.worlds.min.y
+let X2 = Mapyrus.worlds.max.x
+let Y2 = Mapyrus.worlds.max.y
+let xMid = (X1 + X2) / 2
+let yMid = (Y1 + Y2) / 2
 
 # Ratio of area being displayed to zoom or pan each time.
 #
@@ -49,12 +49,12 @@ let yZoom = zoomFactor * Mapyrus.worlds.height
 
 # Set URLs for navigating around current display.
 #
-let upURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 + yPan) . '&x2=' . x2 . '&y2=' . (y2 + yPan)
-let downURL = Mapyrus.filename . '?x1=' . x1 . '&y1=' . (y1 - yPan) . '&x2=' . x2 . '&y2=' . (y2 - yPan)
-let leftURL = Mapyrus.filename . '?x1=' . (x1 - xPan) . '&y1=' . y1 . '&x2=' . (x2 - xPan) . '&y2=' . y2
-let rightURL = Mapyrus.filename . '?x1=' . (x1 + xPan) . '&y1=' . y1 . '&x2=' . (x2 + xPan) . '&y2=' . y2
-let zoomInURL = Mapyrus.filename . '?x1=' . (x1 + xZoom) . '&y1=' . (y1 + yZoom) . '&x2=' . (x2 - xZoom) . '&y2=' . (y2 - yZoom)
-let zoomOutURL = Mapyrus.filename . '?x1=' . (x1 - xZoom) . '&y1=' . (y1 - yZoom) . '&x2=' . (x2 + xZoom) . '&y2=' . (y2 + yZoom)
+let upURL = Mapyrus.filename . '?X1=' . X1 . '&Y1=' . (Y1 + yPan) . '&X2=' . X2 . '&Y2=' . (Y2 + yPan)
+let downURL = Mapyrus.filename . '?X1=' . X1 . '&Y1=' . (Y1 - yPan) . '&X2=' . X2 . '&Y2=' . (Y2 - yPan)
+let leftURL = Mapyrus.filename . '?X1=' . (X1 - xPan) . '&Y1=' . Y1 . '&X2=' . (X2 - xPan) . '&Y2=' . Y2
+let rightURL = Mapyrus.filename . '?X1=' . (X1 + xPan) . '&Y1=' . Y1 . '&X2=' . (X2 + xPan) . '&Y2=' . Y2
+let zoomInURL = Mapyrus.filename . '?X1=' . (X1 + xZoom) . '&Y1=' . (Y1 + yZoom) . '&X2=' . (X2 - xZoom) . '&Y2=' . (Y2 - yZoom)
+let zoomOutURL = Mapyrus.filename . '?X1=' . (X1 - xZoom) . '&Y1=' . (Y1 - yZoom) . '&X2=' . (X2 + xZoom) . '&Y2=' . (Y2 + yZoom)
 
 # Spool HTML file to standard output, replacing placeholder tokens
 # with actual values for this request.
