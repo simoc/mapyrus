@@ -6,12 +6,14 @@ package au.id.chenery.mapyrus;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
 import java.io.IOException;
 import java.util.ArrayList;
-import au.id.chenery.mapyrus.dataset.GeographicDataset;;
+import au.id.chenery.mapyrus.dataset.GeographicDataset;
+;
 
 /**
  * Maintains state information during interpretation inside a single procedure block. 
@@ -53,6 +55,7 @@ public class Context
 	private AffineTransform mCtm;
 	private double mXScaling;
 	private double mYScaling;
+	private double mScalingMagnitude;
 	private double mRotation;
 
 	/*
@@ -120,7 +123,7 @@ public class Context
 		mCtm = new AffineTransform();
 		mProjectionTransform = null;
 		mWorldCtm = null;
-		mXScaling = mYScaling = 1.0;
+		mXScaling = mYScaling = mScalingMagnitude = 1.0;
 		mRotation = 0.0;
 		mVars = null;
 		mPath = null;
@@ -147,6 +150,7 @@ public class Context
 		mWorldCtm = null;
 		mXScaling = existing.mXScaling;
 		mYScaling = existing.mYScaling;
+		mScalingMagnitude = existing.mScalingMagnitude;
 		mRotation = existing.mRotation;
 		mDataset = null;
 		mDatasetRow = null;
@@ -293,7 +297,7 @@ public class Context
 		/*
 		 * Adjust width by current scaling factor.
 		 */
-		mLineWidth = width * Math.min(mXScaling, mYScaling);
+		mLineWidth = width * mScalingMagnitude;
 		mAttributesChanged = mAttributesSet = true;
 	}
 
@@ -317,6 +321,7 @@ public class Context
 		mCtm.scale(x, y);
 		mXScaling *= x;
 		mYScaling *= y;
+		mScalingMagnitude = Math.max(Math.abs(mXScaling), Math.abs(mYScaling));
 		mAttributesChanged = mAttributesSet = true;
 	}
 	
@@ -599,7 +604,7 @@ public class Context
 	public void moveTo(double x, double y) throws MapyrusException
 	{
 		double srcPts[] = new double[2];
-		float dstPts[] = new float[3];
+		float dstPts[] = new float[2];
 
 		srcPts[0] = x;
 		srcPts[1] = y;
@@ -625,9 +630,7 @@ public class Context
 		/*
 		 * Set no rotation for point.
 		 */
-		dstPts[2] = 0.0f;
-		
-		mPath.moveTo(dstPts);
+		mPath.moveTo(dstPts[0], dstPts[1], 0.0f);
 	}
 
 	/**
@@ -660,7 +663,7 @@ public class Context
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
-		mPath.lineTo(dstPts);
+		mPath.lineTo(dstPts[0], dstPts[1]);
 	}
 
 	/**
@@ -682,9 +685,9 @@ public class Context
 		GeometricPath path = getDefinedPath();
 
 		if (path != null)
-			path.slicePath(spacing, offset);
+			path.slicePath(spacing * mScalingMagnitude, offset * mScalingMagnitude);
 	}
-	
+
 	/**
 	 * Replace path defining polygon with parallel stripe
 	 * lines covering the polygon.
@@ -696,7 +699,7 @@ public class Context
 		GeometricPath path = getDefinedPath();
 
 		if (path != null)
-			path.stripePath(spacing, angle);
+			path.stripePath(spacing * mScalingMagnitude, angle);
 	}
 
 	/**
@@ -826,19 +829,66 @@ public class Context
 	}
 
 	/**
-	 * Returns coordinates and rotation angle for each each moveTo point in current path
-	 * @return list of three element float arrays containing x, y coordinates and
-	 * rotation angles. 
+	 * Returns rotation angle for each each moveTo point in current path
+	 * @return array of rotation angles relative to rotation in current 
+	 * transformation matrix. 
 	 */
-	public ArrayList getMoveTos()
+	public ArrayList getMoveToRotations()
 	{
 		ArrayList retval;
+		ArrayList list;
+		double rotation;
 		GeometricPath path = getDefinedPath();
 
 		if (path == null)
 			retval = null;
 		else
-			retval = path.getMoveTos();
+			retval = path.getMoveToRotations();
+		return(retval);
+	}
+
+	/**
+	 * Returns coordinate for each each moveTo point in current path.
+	 * @return array of Point2D.Float objects relative to current transformation matrix.
+	 */
+	public ArrayList getMoveTos() throws MapyrusException
+	{
+		ArrayList retval = null;
+		GeometricPath path = getDefinedPath();
+		AffineTransform inverse;
+		ArrayList moveTos;
+
+		try
+		{
+			if (path != null)
+			{
+				/*
+				 * If there is no transformation matrix then we can return original
+				 * coordinates, otherwise we must convert all coordinates to be relative
+				 * to the current transformation matrix and build a new list.
+				 */
+				if (mCtm.isIdentity())
+				{
+					retval = path.getMoveTos();
+				}
+				else
+				{
+					inverse = mCtm.createInverse();
+					moveTos = path.getMoveTos();
+					retval = new ArrayList(moveTos.size());
+
+					for (int i = 0; i < moveTos.size(); i++)
+					{
+						Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
+						retval.add(inverse.transform(pt, null));
+					}
+				}
+			}
+		}
+		catch (NoninvertibleTransformException e)
+		{
+			throw new MapyrusException(e.getMessage());
+		}
 		return(retval);
 	}
 
@@ -936,7 +986,7 @@ public class Context
 	
 	/**
 	 * Define variable in current context, replacing any existing
-	 * variable of the same name.
+	 * variable with the same name.
 	 * @param varName name of variable to define.
 	 * @param value is value for this variable
 	 */
