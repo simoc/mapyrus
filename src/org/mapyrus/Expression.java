@@ -9,6 +9,12 @@ import java.io.IOException;
 public class Expression
 {
 	/*
+	 * Types of expressions.
+	 */
+	public static final int NUMERIC = 0;
+	public static final int STRING = 1;
+	
+	/*
 	 * Types of operations allowed between two numbers (or two expressions).
 	 */
 	private static final int PLUS_OPERATION = 1;
@@ -28,8 +34,10 @@ public class Expression
 	 */
 	class ExpressionTreeNode
 	{
+		int mType;
 		boolean mIsLeaf;
-		double mLeafValue;
+		double mLeafNumber;
+		String mLeafString;
 
 		int mOperation;
 		ExpressionTreeNode mLeftBranch, mRightBranch;
@@ -40,52 +48,85 @@ public class Expression
 		public ExpressionTreeNode(double leafValue)
 		{
 			mIsLeaf = true;
-			mLeafValue = leafValue;
+			mType = Expression.NUMERIC;
+			mLeafNumber = leafValue;
 		}
-
+		
+		/*
+		 * Create a leaf value containing just a string.
+		 */
+		public ExpressionTreeNode(String leafValue)
+		{
+			mIsLeaf = true;
+			mType = Expression.STRING;
+			mLeafString = leafValue;
+		}
 		/*
 		 * Create a node joining two sub-expressions with an
 		 * operation between them.
 		 */
 		public ExpressionTreeNode(ExpressionTreeNode left,
 			int operation,
-			ExpressionTreeNode right)
+			ExpressionTreeNode right, int type)
 		{
-			mIsLeaf = false;
+			mIsLeaf = false;			
 			mLeftBranch = left;
 			mRightBranch = right;
 			mOperation = operation;
+			mType = type;
 		}
 
-
-		/*
-		 * Evaluate binary tree containing an expression.
-		 * Returns the value of the expression.
+		/**
+		 * Evaluate binary tree containing a numeric expression.
+		 * @return numeric value of the expression.
 		 */
-		public double evaluate(Hashtable h1, Hashtable h2)
+		public double evaluateNumeric(Hashtable h)
 		{
-			return(traverse(this, h1, h2));
+			return(traverseNumeric(this, h));
 		}
 
 		/*
 		 * Recursively traverse binary expression tree to
-		 * calculate its value.
+		 * calculate its numeric value.
 		 */
-		private double traverse(ExpressionTreeNode t,
-			Hashtable h1, Hashtable h2)
+		private double traverseNumeric(ExpressionTreeNode t, Hashtable h)
 		{
 			double retval;
-			double leftValue, rightValue;
-			int op;
 
 			if (t.mIsLeaf)
 			{
-				retval = t.mLeafValue;
+				retval = t.mLeafNumber;
 			}
 			else
 			{
-				leftValue = traverse(t.mLeftBranch, h1, h2);
-				rightValue = traverse(t.mRightBranch, h1, h2);
+				double leftValue = 0.0, rightValue = 0.0;
+				String leftString = null, rightString = null;
+				int op;
+
+				/*
+				 * Both expressions can be either numeric or string.
+				 */
+				if (t.mLeftBranch.mType == NUMERIC)
+				{
+					leftValue = traverseNumeric(t.mRightBranch, h);
+				}
+				else
+				{
+					leftString = traverseString(t.mRightBranch, h);
+				}
+
+				if (t.mRightBranch.mType == NUMERIC)
+				{
+					rightValue = traverseNumeric(t.mRightBranch, h);
+				}
+				else
+				{
+					rightString = traverseString(t.mRightBranch, h);
+				}
+
+				/*
+				 * Do operation and get a numeric value as a result.
+				 */
 				op = t.mOperation;
 				if (op == PLUS_OPERATION)
 					retval = leftValue + rightValue;
@@ -96,11 +137,38 @@ public class Expression
 				else if (op == DIVIDE_OPERATION)
 					retval = leftValue / rightValue;
 				else if (op == GREATER_OPERATION)
-					retval = (leftValue > rightValue) ? 1 : 0;
+				{
+					if (mLeftBranch.mType == Expression.NUMERIC)
+					{
+						retval = (leftValue > rightValue) ? 1 : 0;
+					}
+					else
+					{
+						retval = (leftString.compareTo(rightString) > 0) ? 1 : 0;
+					}
+				}
 				else if (op == LESS_OPERATION)
-					retval = (leftValue < rightValue) ? 1 : 0;
+				{
+					if (mLeftBranch.mType == Expression.NUMERIC)
+					{
+						retval = (leftValue < rightValue) ? 1 : 0;
+					}
+					else
+					{
+						retval = (leftString.compareTo(rightString) < 0) ? 1 : 0;
+					}
+				}
 				else if (op == EQUALS_OPERATION)
-					retval = (leftValue == rightValue) ? 1 : 0;
+				{
+					if (mLeftBranch.mType == Expression.NUMERIC)
+					{
+						retval = (leftValue == rightValue) ? 1 : 0;
+					}
+					else
+					{
+						retval = (leftString.equals(rightString)) ? 1 : 0;
+					}
+				}
 				else if (op == AND_OPERATION)
 				{
 					retval = (leftValue != 0.0 &&
@@ -114,6 +182,76 @@ public class Expression
 			}
 			return(retval);
 		}
+		
+		/**
+		 * Evaluate binary tree containing a string expression.
+		 * @return string value of the expression.
+		 */
+		public String evaluateString(Hashtable h)
+		{
+			return(traverseString(this, h));
+		}
+
+		/*
+		 * Recursively traverse binary expression tree to
+		 * calculate its string value.
+		 */
+		private String traverseString(ExpressionTreeNode t, Hashtable h)
+		{
+			String retval;
+
+			if (t.mIsLeaf)
+			{
+				retval = t.mLeafString;
+			}
+			else
+			{
+				double leftValue = 0.0, rightValue = 0.0;
+				String leftString = null, rightString = null;
+				int op;
+
+				if (t.mLeftBranch.mType == NUMERIC)
+				{
+					leftValue = traverseNumeric(t.mRightBranch, h);
+				}
+				else
+				{
+					leftString = traverseString(t.mRightBranch, h);
+				}
+
+				if (t.mRightBranch.mType == NUMERIC)
+				{
+					rightValue = traverseNumeric(t.mRightBranch, h);
+				}
+				else
+				{
+					rightString = traverseString(t.mRightBranch, h);
+				}
+
+				/*
+				 * Do operation and get a string as a result.
+				 */
+				op = t.mOperation;
+				if (op == PLUS_OPERATION)
+				{
+					retval = leftString + rightString;
+				}
+				else /* MULTIPLY_OPERATION */
+				{
+					int count = (int)Math.round(rightValue);
+					retval = new String();
+
+					/*
+					 * Repeat string N times.
+					 */
+					for (int i = 0; i < count; i++)
+					{
+						retval.concat(leftString);
+					}
+				}
+			}
+			return(retval);
+		}
 	}
 
 	ExpressionTreeNode mExprTree;
@@ -121,7 +259,8 @@ public class Expression
 	/*
 	 * Parse expression.
 	 */
-	private ExpressionTreeNode parseExpression(Preprocessor p) throws IOException, MapyrusException
+	private ExpressionTreeNode parseExpression(Preprocessor p)
+		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, term;
 		int op;
@@ -130,16 +269,29 @@ public class Expression
 		while (true)
 		{
 			op = p.readNonSpace();
-			if (op == '+' || op == '-')
+			if (expr.mType == NUMERIC && (op == '+' || op == '-'))
 			{
 				term = parseTerm(p);
-				int opType = (op == '+') ? PLUS_OPERATION :
-					MINUS_OPERATION;
+				if (term.mType != NUMERIC)
+				{
+					throw new MapyrusException("Expected number in expression at " +
+						p.getCurrentFilenameAndLine());
+				}
+				int opType = (op == '+') ? PLUS_OPERATION : MINUS_OPERATION;
 
-				expr = new ExpressionTreeNode(expr,
-					opType, term);
+				expr = new ExpressionTreeNode(expr, opType, term, NUMERIC);
 			}
-			else
+			else if (expr.mType == STRING && op == '+')
+			{
+				term = parseTerm(p);
+				if (term.mType != NUMERIC)
+				{
+					throw new MapyrusException("Expected number in expression at " +
+						p.getCurrentFilenameAndLine());
+				}
+				expr = new ExpressionTreeNode(expr,	PLUS_OPERATION, term, STRING);
+			}
+			else				
 			{
 				p.unread(op);
 				break;
@@ -151,7 +303,8 @@ public class Expression
 	/*
 	 * Parse term.
 	 */
-	private ExpressionTreeNode parseTerm(Preprocessor p) throws IOException, MapyrusException
+	private ExpressionTreeNode parseTerm(Preprocessor p)
+		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode term, factor;
 		int op;
@@ -160,13 +313,27 @@ public class Expression
 		while (true)
 		{
 			op = p.readNonSpace();
-			if (op == '*' || op == '/')
+			if (term.mType == NUMERIC && (op == '*' || op == '/'))
 			{
 				factor = parseFactor(p);
-				int opType = (op == '*') ? MULTIPLY_OPERATION :
-					DIVIDE_OPERATION;
+				if (factor.mType != NUMERIC)
+				{
+					throw new MapyrusException("Expected number in expression at " +
+						p.getCurrentFilenameAndLine());
+				}
+				int opType = (op == '*') ? MULTIPLY_OPERATION : DIVIDE_OPERATION;
+				term = new ExpressionTreeNode(term,	opType, factor, NUMERIC);
+			}
+			else if (term.mType == STRING && op == 'x')
+			{
+				factor = parseFactor(p);
+				if (factor.mType != NUMERIC)
+				{
+					throw new MapyrusException("Expected number in expression at " +
+						p.getCurrentFilenameAndLine());
+				}
 				term = new ExpressionTreeNode(term,
-					opType, factor);
+					MULTIPLY_OPERATION, factor, STRING);
 			}
 			else
 			{
@@ -178,17 +345,47 @@ public class Expression
 	}
 
 	/*
-	 * Parse a single number.
+	 * Parse a single number or string.
 	 */
 	private ExpressionTreeNode parseFactor(Preprocessor p) throws IOException, MapyrusException
 	{
 		boolean hasUnaryMinus = false;
 		boolean parsedDecimalPoint = false;
-		StringBuffer numBuffer = new StringBuffer();
+		StringBuffer buf = new StringBuffer();
 		ExpressionTreeNode nestedExpression;
-		int c;
+		int c, lastC, quote;
+		int type;
 
 		c = p.readNonSpace();
+		if (c == '\'' || c == '"')
+		{
+			/*
+			 * It's a quoted string.  Keep reading up until matching quote.
+			 */
+			lastC = quote = c;
+			while ((c = p.read()) != quote || lastC == '\\')
+			{
+				if (c == -1)
+				{
+					throw new MapyrusException("Unexpected end of file in string at " +
+						p.getCurrentFilenameAndLine());
+				}
+
+				if (c == '\\' && lastC == '\\')
+				{
+					/*
+					 * Compress '\\' in string into
+					 * a single backslash.
+					 */
+				}
+				else
+				{
+					buf.append((char)c);
+				}
+			}
+			return(new ExpressionTreeNode(buf.toString()));	
+		}
+
 		if (c == '+')
 		{
 			/*
@@ -212,7 +409,7 @@ public class Expression
 			 */
 			while (Character.isDigit((char)c) || c == '.')
 			{
-				numBuffer.append((char)c);
+				buf.append((char)c);
 				if (c == '.')
 				{
 					/*
@@ -231,7 +428,7 @@ public class Expression
 			double d = 0.0;
 			try
 			{
-				d = Double.parseDouble(numBuffer.toString());
+				d = Double.parseDouble(buf.toString());
 			}
 			catch (NumberFormatException e)
 			{
@@ -250,7 +447,31 @@ public class Expression
 
 		if (c != '(')
 		{
-			throw new MapyrusException("Invalid expression at " + p.getCurrentFilenameAndLine());
+			/*
+			 * It does not look like a numeric expression or a string
+			 * expression so maybe it is a variable name.
+			 */
+			if (Character.isLetter((char)c))
+			{
+				buf.append((char)c);
+				c = p.read();
+				while (c != -1 && (c == '.' || c == '_' ||
+					Character.isLetterOrDigit((char)c)))
+				{
+					buf.append((char)c);
+					c = p.read();
+				}
+				p.unread(c);
+				return(new ExpressionTreeNode(buf.toString()));	
+			}
+			else
+			{
+				/*
+				 * It's nothing that we understand.
+				 */
+				throw new MapyrusException("Invalid expression at " +
+					p.getCurrentFilenameAndLine());
+			}
 		}
 
 		nestedExpression = parseExpression(p);
@@ -268,14 +489,14 @@ public class Expression
 			 */
 			ExpressionTreeNode left = new ExpressionTreeNode(-1.0);
 			nestedExpression = new ExpressionTreeNode(left,
-				MULTIPLY_OPERATION, nestedExpression);
+				MULTIPLY_OPERATION, nestedExpression, NUMERIC);
 		}
 
 		return(nestedExpression);
 	}
 
 	/**
-	 * Read an arithmetic expression and create a tree from it
+	 * Read an arithmetic or string expression and create a tree from it
 	 * that can later be evaluated.
 	 * As many characters as possible are read that can be interpreted
 	 * as part of an expression.
@@ -288,22 +509,49 @@ public class Expression
 
 	/**
 	 * Create an expression containing a simple numeric value.
+	 * @param d is value to store as expression.
 	 */
 	public Expression(double d)
 	{
 		mExprTree = new ExpressionTreeNode(d);
 	}
-
+	
 	/**
-	 * Evaluate an arithmetic expression.
-	 * @param systemVariables are the currently defined internal variables
-	 * and their values.
-	 * @param userVariables are variables defined by user and their values.
+	 * Create an expression containing a simple string value.
+	 * @param s is string to store as expression.
+	 */
+	public Expression(String s)
+	{
+		mExprTree = new ExpressionTreeNode(s);
+	}
+	
+	/**
+	 * Returns the type of an expression.
+	 * @return either NUMERIC or STRING.
+	 */
+	public int getType()
+	{
+		return(mExprTree.mType);
+	}
+	
+	/**
+	 * Evaluate a numeric expression.
+	 * @param vars are all currently defined internal variables and their values.
 	 * @return the evaluated expression.
 	 */
-	public double evaluate(Hashtable systemVariables, Hashtable userVariables)
+	public double evaluateNumeric(Hashtable vars)
 	{
-		return(mExprTree.evaluate(systemVariables, userVariables));
+		return(mExprTree.evaluateNumeric(vars));
+	}
+	
+	/**
+	 * Evaluate a string expression.
+	 * @param vars are all currently defined internal variables and their values.
+	 * @return the evaluated expression.
+	 */
+	public String evaluateString(Hashtable vars)
+	{
+		return(mExprTree.evaluateString(vars));
 	}
 }
 
