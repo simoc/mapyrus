@@ -591,6 +591,11 @@ public class ContextStack
 				sub = sub.substring(UNPROJECTED_VARIABLE.length() + 1);
 				retval = getBoundingBoxVariable(sub, bounds);
 			}
+			else if (sub.equals("server.tempname"))
+			{
+				retval = new Argument(Argument.STRING,
+					TransientFileFactory.generate(Constants.HTTP_TEMPFILE_LIFESPAN));
+			}
 			else if (sub.startsWith(DATASET_VARIABLE + "."))
 			{
 				Dataset dataset = getCurrentContext().getDataset();
