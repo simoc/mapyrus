@@ -865,7 +865,7 @@ public class MIFDataset implements GeographicDataset
 			 */
 			Argument arg = new Argument((int)geometry[0], geometry);
 			row.add(arg);
-			
+
 			/*
 			 * Add symbol and color information for this geometry.
 			 */
@@ -876,7 +876,10 @@ public class MIFDataset implements GeographicDataset
 				/*
 				 * Convert pixel width to millimetres.
 				 */
-				double w = (Integer.parseInt(penWidth) & 7);
+				double w = Integer.parseInt(penWidth);
+				if (w >= 11)
+					w = (w - 10) / 10;
+
 				w = w / Constants.getScreenResolution() * Constants.MM_PER_INCH;
 				row.add(new Argument(w));
 			}
@@ -885,12 +888,12 @@ public class MIFDataset implements GeographicDataset
 				row.add(Argument.numericZero);
 			else
 				row.add(new Argument(Double.parseDouble(penPattern)));
-				
+
 			if (penColor == null)
 				row.add(DEFAULT_COLOR);
 			else
 				row.add(new Argument(Argument.STRING, intToColor(penColor)));
-				
+
 			if (brushPattern == null)
 				row.add(Argument.numericZero);
 			else
