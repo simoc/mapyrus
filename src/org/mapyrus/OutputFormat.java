@@ -151,13 +151,23 @@ public class OutputFormat
 		mWriter.println("/font { /fjy exch def /fjx exch def /frot exch def");
 		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
 		mWriter.println("/radtodeg { 180 mul 3.1415629 div } def");
-		mWriter.println("% Rotate and justify text using current font settings");
+		
+		/*
+		 * Rotate and justify text using current font settings.
+		 */
 		mWriter.println("/t { gsave currentpoint translate frot radtodeg rotate");
 		mWriter.println("dup stringwidth pop fjx mul fsize fjy mul rmoveto");
 		mWriter.println("show grestore newpath } def");
-		mWriter.println("/gs { gsave } def /gr { grestore } def");
 		mWriter.println("/rgb { setrgbcolor } def");
 		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap setlinewidth } def");
+		
+		/*
+		 * Use new dictionary in saved state so that variables we define
+		 * do not overwrite variables in parent state.
+		 */
+		mWriter.println("/gs { gsave 4 dict begin } def");
+		mWriter.println("/gr { end grestore } def");
+
 		mWriter.println("");
 	}
 
@@ -533,7 +543,6 @@ public class OutputFormat
 				styleName = "";
 
 			String psFontName = "/" + fontName + styleName;
-
 			writePostScriptLine(psFontName + " " +
 				mLinearFormat.format(fontSize) + " " +
 				mRotationFormat.format(fontRotation) + " " +
@@ -558,9 +567,10 @@ public class OutputFormat
 				 * with a Graphics2D object that has inverted the Y axis to
 				 * increase upwards.
 				 */
-				AffineTransform fontTransform =
-					AffineTransform.getRotateInstance(fontRotation);
+				AffineTransform fontTransform;
+				fontTransform = AffineTransform.getRotateInstance(fontRotation);
 				fontTransform.scale(1, -1);
+				
 				font = font.deriveFont(fontTransform);
 				mFontCache.put(fontName, fontStyle, size, fontRotation, font);
 			}
