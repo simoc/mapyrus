@@ -315,16 +315,6 @@ This function requires the \textit{Java Topology Suite}. \\
 
 \hline
 
-\texttt{parsewkt(\textit{str})} &
-Parses OGC WKT geometry string from \textit{str}
-into geometry suitable for use
-in \texttt{addpath} command and functions performing geometric calculations.
-See
-\textit{OpenGIS Simple Features Specification For SQL}
-for definition of geometry strings. \\
-
-\hline
-
 \texttt{pow(\textit{a}, \textit{b})} &
 Returns \textit{a} to the power \textit{b}. \\
 
@@ -804,7 +794,8 @@ addpath \textit{geometry-field} [, \textit{geometry-field} ...]
 
 Adds geometry in each \textit{geometry-field} to current path.
 A \textit{geometry-field} is geometry fetched from a dataset
-with a \texttt{fetch} command.
+with a \texttt{fetch} command or a string containing an
+OGC WKT geometry.
 
 Coordinates are transformed through any
 transformation set with a \texttt{worlds} command,
