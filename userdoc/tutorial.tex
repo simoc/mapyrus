@@ -585,7 +585,7 @@ for display.
 The following example demonstrates reading a MapInfo TAB format
 file containing street network data.  Mapyrus runs the
 given \texttt{ogrinfo} command ending with a pipe (\texttt{|})
-and reads the output of the command.
+and reads the output of this command.
 
 \verbatiminput{tutorialdatasets4.mapyrus}
 
@@ -597,9 +597,11 @@ On UNIX operating systems, it is possible to pipe the output of
 following example, reading \texttt{ogrinfo} output containing points as
 standard input (\texttt{-})
 in Mapyrus and displaying them in a PostScript file.
+The \texttt{ogrinfo -where} option is used to limit displayed
+data to monuments.
 
 \begin{verbatim}
-ogrinfo /tmp/landmarks.tab landmarks | \
+ogrinfo -where "TYPE = 'monument'" /tmp/landmarks.tab landmarks | \
   java -classpath mapyrus.jar org.mapyrus.Mapyrus -e '
 dataset "ogrinfo", "-", ""
 newpage "ps", "landmarks.ps", 210, 297, ""
