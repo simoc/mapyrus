@@ -538,7 +538,7 @@ public class ContextStack
 				Date now = new Date();
 				retval = new Argument(Argument.STRING, now.toString());
 			}
-			else if (c == 'e' && varName.equals(INTERNAL_VARIABLE_PREFIX + "elapsedtime"))
+			else if (c == 't' && varName.equals(INTERNAL_VARIABLE_PREFIX + "timer"))
 			{
 				/*
 				 * The elapsed time in seconds since this context was created
