@@ -609,6 +609,7 @@ The path defined with
 \texttt{draw},
 \texttt{box},
 \texttt{arc},
+\texttt{bezier},
 \texttt{circle},
 \texttt{ellipse},
 \texttt{hexagon},
@@ -888,6 +889,29 @@ If the begin and end points are the same then the arc is a complete circle.
 A straight line segment is first added to the path if
 the distance from the beginning point to the center is different
 to the distance from the center to the end point.
+
+Points are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
+\subsubsection{bezier}
+
+\begin{alltt}
+bezier \textit{xControl1}, \textit{yControl1}, \textit{xControl2}, \textit{yControl2}, \textit{xEnd}, \textit{yEnd}
+\end{alltt}
+
+Adds a Bezier curve (a spline curve) to the current path.  The curve begins at
+the last point added to the path and ends at (\textit{xEnd}, \textit{yEnd})
+with control points (\textit{xControl1}, \textit{yControl1}) and
+(\textit{xControl2}, \textit{yControl2}).
+
+The control points define the direction of the line at the start and
+end points of the Bezier curve.
+At the start of the Bezier curve, the direction of the curve is towards
+the first control point.
+At the end of the Bezier curve, the direction of the curve is from
+the second control point.
 
 Points are transformed through any
 transformation set with a \textit{worlds} command,
