@@ -48,7 +48,9 @@ include tutorial11.mpy
 
 Each line in the file is a command for Mapyrus.  The
 first line sets output to a
-PNG format image with the
+PNG format image named
+<tt>tutorial11.png</tt>
+with the
 <a href="reference.html#newpage">newpage</a> command.
 The second and third lines set the color for drawing to black,
 with lines drawn 4 millimetres wide with rounded ends and corners.
@@ -67,41 +69,46 @@ Open a terminal window and enter the following command:
 java -jar mapyrus.jar first.txt
 </pre>
 
-Then type the following line into the terminal window.
-Begin output to an image file.
+When Mapyrus reaches the end of the file <tt>first.txt</tt>,
+the output file <tt>tutorial11.png</tt> is completed and the Mapyrus exits.
+When the output file is then viewed in a web browser, the following
+image is shown.
 
-Define the path, coordinates
+<p>
+<img src="tutorial11.png">
+<p>
 
-Clear the path
-<pre>
-include tutorial11.mpy
-</pre>
-
-Change the file to contain the following
-Color is set as a hex value instead of a name.
-<a href="reference.html#fill">fill</a> command to
-flood fill
-the path that is defined
+Change the file <tt>first.txt</tt> to contain the following lines.
 
 <pre>
 include tutorial12.mpy
 </pre>
 
+In this example, color is set as a hex value instead of a name and
+the <a href="reference.html#fill">fill</a> command is used to
+flood fill the path that has been defined.  The output file
+<tt>tutorial12.png</tt> contains the following image.
+
+<p>
+<img src="tutorial12.png">
+<p>
+
+Change the file <tt>first.txt</tt> to contain the following lines.
+
 <pre>
 include tutorial13.mpy
 </pre>
 
-Shows another way to define the color.
+This example shows yet another way of defining color.
+
+<p>
+<img src="tutorial13.png">
+<p>
+
 <pre>
 include tutorial14.mpy
 </pre>
 
-<p>
-<img src="tutorial11.png">
-<p>
-<p>
-<img src="tutorial12.png">
-<p>
 
 define page
 basic shapes in different colours

@@ -2,6 +2,7 @@ include header.doc
 <!-- @(#) $Id$ -->
 
 <table>
+
 <tr>
 <td>
 <a href="intro.html"/>Introduction</a>
@@ -10,6 +11,7 @@ include header.doc
 What is Mapyrus?  What is it not?
 </td>
 </tr>
+
 <tr>
 <td>
 <a href="tutorial.html"/>Tutorial</a>
@@ -17,6 +19,8 @@ What is Mapyrus?  What is it not?
 <td>
 The quickest way to get familiar with the software.
 </td>
+</tr>
+
 <tr>
 <td>
 <a href="reference.html"/>Reference</a>
@@ -26,6 +30,7 @@ All the commands and options and
 requirements for running the software.
 </td>
 </tr>
+
 <tr>
 <td>
 <a href="version.html"/>Versions</a>
@@ -34,6 +39,17 @@ requirements for running the software.
 What was included in each version.
 </td>
 </tr>
+
+<tr>
+<td>
+<a href="http://www.chenery.id.au/mapyrus/mapyrus.zip"/>Download</a>
+</td>
+<td>
+Download current version of the software.
+</td>
+</tr>
+
+
 <tr>
 <td>
 <a href="COPYING"/>Licensing</a>
@@ -49,7 +65,6 @@ Version
 include VERSION
 <p>
 
-Send comments, bug reports and requests concerning Mapyrus to
-<a href="mailto:simon_chenery@yahoo.com">
-simon_chenery@yahoo.com</a>.
+E-mail comments, bug reports and requests concerning Mapyrus to
+<tt>mapyrus&#64;chenery&#46;id.au</tt>.
 

@@ -43,17 +43,6 @@ The Ghostscript PostScript interpreter from
 <a href="http://www.aladdin.com">www.ghostscript.com</a>,
 if creation of PDF files is required.
 </li>
-<li>
-The PROJ.4 library from
-<a href="http://www.remotesensing.org">www.remotesensing.org</a>
-and a Java Native Interface shared library to the PROJ.4
-library for your operating system,
-if reprojection between coordinate systems is required.
-</li>
-<li>
-A Java Servlet container, if Mapyrus is to be run as a Servlet.
-<a href="http://jakarta.apache.org/tomcat">Tomcat</a> is recommended.
-</li>
 </ol>
 
 include hr.doc
@@ -431,15 +420,18 @@ command, or 0 if no more rows available.
 
 <tr>
 <td>
+<tt>Mapyrus.page.format</tt>
+<br>
 <tt>Mapyrus.page.height</tt>
 <br>
 <tt>Mapyrus.page.width</tt>
 <br>
 <tt>Mapyrus.page.resolution</tt>
 <td>
-The height, width and resolution of page that were given to
-<a href="#newpage">newpage</a> command.  Height and width are
-in millimetres, resolution is in dots-per-inch.
+The file format, page height, page width
+and resolution that were passed to the
+<a href="#newpage">newpage</a> command.  File format is in lowercase.
+Height and width are in millimetres, resolution is in dots-per-inch.
 
 <tr>
 <td>
@@ -675,6 +667,8 @@ produce a hatched fill pattern.
 <p>
 <a name="stroke"></a>
 <tt>stroke</tt>
+Draws the current path using the current color and linestyle.
+The path is not modified.
 
 <p>
 <a name="fill"></a>
@@ -718,11 +712,12 @@ with each line justified independently.
 
 <p>
 <a name="scale"></a>
-SCALE
+<tt>rotate</tt> <i>x</i> <i>y</i>
 
 <p>
 <a name="rotate"></a>
-ROTATE
+<tt>rotate</tt> <i>angle</i>
+<p>
 
 <p>
 <a name="worlds"></a>
@@ -736,10 +731,12 @@ scale factor
 assumed metres.
 <tt>Mapyrus.worlds.scale</tt>
 
+<!--
 <p>
 <a name="project"></a>
 <tt>project</tt> <i>from</i>, <i>to</i>
 Coordinate system transformation.
+-->
 
 <p>
 <a name="dataset"></a>
@@ -770,7 +767,7 @@ to ensure that another row is available.
 Begins output of a new page to a file.  Any previous output is closed.
 The path, clipping path and world coordinates are cleared.
 The new page has a white background.
-<i>format</i> is the type of output to create, one of:
+<i>format</i> is the file format to use for output, one of:
 <ul>
 <li>
 <tt>eps</tt> for Encapsulated PostScript output.
@@ -804,7 +801,7 @@ operating system command.
 Mapyrus executes the operating command directly.  Set <i>filename</i> to
 <tt>| sh <i>myscript.sh</i></tt>
 or
-<tt>| cmd <i>myscript.bat<i></tt>
+<tt>| cmd <i>myscript.bat</i></tt>
 to execute the command in a sub-shell if 
 environment variables, file redirection or other shell features are
 required.
