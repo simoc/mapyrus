@@ -115,7 +115,7 @@ The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
 include beginex.doc
-java -jar <i>install-path</i>/mapyrus.jar <i>filename</i>
+java -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus <i>filename</i>
 include endex.doc
 
 <i>install-path</i> is the directory in which
@@ -130,7 +130,7 @@ Variables passed to Mapyrus using the Java <tt>-D</tt> option
 are available in the Mapyrus interpreter.
 
 include beginex.doc
-java -D<i>variable</i>=<i>value</i> ... -jar <i>install-path</i>/mapyrus.jar <i>filename</i>
+java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus <i>filename</i>
 include endex.doc
 
 Mapyrus runs as an 
@@ -138,7 +138,7 @@ Mapyrus runs as an
 <tt>-s</tt> option.
 
 include beginex.doc
-java -jar <i>install-path</i>/mapyrus.jar -s <i>port</i> <i>filename</i> ...
+java -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
 include endex.doc
 
 <a name="startupvariables"></a>
@@ -189,8 +189,9 @@ Default logging writes only errors to error output.
 <td>
 <tt>jdbc.drivers=<i>class</i></tt>
 <td>
-Defines class containing JDBC driver to load at startup.
-A JDBC driver is required for connecting to a relational database.
+Defines class containing JDBC 1.0 (or higher) driver to load at startup.
+A JDBC driver is required for connecting to a relational database and
+is provided along with a relational database.
 See the
 <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/sql/DriverManager.html">
 Java JDBC DriverManager API documentation
@@ -942,6 +943,80 @@ The following dataset types and options are available:
 
 <tr>
 <td>
+<tt>jdbc</tt>
+<td>
+for accessing data held in a relational database with
+an SQL <tt>select</tt> statement via JDBC.
+<i>name</i> contains the SQL query to execute.
+For each fetched record, field values are assigned to variables
+with the name of the fields.
+<p>
+Some databases convert all field names to upper case, or to lowercase.
+Use a field name alias for fields that are the result of an expression.
+<p>
+Extras:
+<p>
+<tt>driver=<i>string</i></tt>
+<br>
+The name of the Java class containing a JDBC 1.0 (or higher)
+driver for connecting to the database.
+This class name is required if not given in the
+<a href="#startupvariables">jdbc.drivers</a> startup variable.
+The JAR file containing the class must be set in the <tt>CLASSPATH</tt>
+environment variable before starting Mapyrus.
+<p>
+<tt>url=<i>string</i></tt>
+<br>
+URL containing the database name, host and other information for identifying
+the database to connect to.
+The format of this string is database dependent.
+The database remains connected after use and the connection is reused in later
+<a href="#dataset">dataset</a> commands with the same <tt>URL</tt> value.
+When Mapyrus is run using the
+<a href="#httpserver">HTTP Server</a> option,
+threads using with the same <tt>URL</tt> value share a
+single database connection.
+<p>
+<tt>user=<i>string</i></tt>
+<br>
+Username for connecting to the database.
+<p>
+<tt>password=<i>string</i></tt>
+<br>
+Password for connecting to the database.
+<p>
+<tt>wktfields=<i>field1</i>,<i>field2</i>,...</tt>
+<br>
+Comma-separated list of
+fieldnames that contain OGC Well Known Text geometry strings.
+These fields are read as geometry values suitable for the
+<a href="#addpath">addpath</a> command.
+See the
+<a href="http://www.opengis.org">
+OpenGIS Simple Features Specification For SQL
+</a>
+for a description of geometry strings.
+
+<tr>
+<td>
+<tt>shapefile</tt>
+<td>
+for accessing data in ESRI Shape file format.
+The geometry for each fetched record is assigned to a variable named
+<tt>GEOMETRY</tt>, attribute field values are assigned to
+variables with attribute field names.
+<p>
+Extras:
+<p>
+<tt>dbffields=<i>field1</i>,<i>field2</i>,...</tt>
+<br>
+Comma-separated list of
+attribute fields to read from the DBF database file accompanying the
+Shape file.  By default, all fields are read.  Reading fewer attribute
+fields improves performance.
+
+<tr>
+<td>
 <tt>textfile</tt>
 <td>
 for accessing data from a delimited text file, with one
@@ -962,24 +1037,6 @@ is to be ignored.  Default value is a hash character (<tt>#</tt>).
 <br>
 Characters separating fields in the text file.  Default value
 is all whitespace characters.
-
-<tr>
-<td>
-<tt>shapefile</tt>
-<td>
-for accessing data in ESRI Shape file format.
-The geometry for each fetched record is assigned to a variable named
-<tt>GEOMETRY</tt>, attribute field values are assigned to
-variables with attribute field names.
-<p>
-Extras:
-<p>
-<tt>dbffields=<i>field1</i>,<i>field2</i>,...</tt>
-<br>
-Comma-separated list of
-attribute fields to read from the DBF database file accompanying the
-Shape file.  By default, all fields are read.  Reading fewer attribute
-fields improves performance.
 
 </table>
 include hr.doc
@@ -1324,7 +1381,7 @@ All later coordinates given in
 <a href="#move">move</a>,
 <a href="#draw">draw</a>,
 <a href="#arc">arc</a> and
-<a href="#arc">addpath</a>
+<a href="#addpath">addpath</a>
 commands are rotated by this angle.
 
 include hr.doc
