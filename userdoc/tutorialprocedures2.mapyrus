@@ -12,12 +12,10 @@ begin waypoint
 end
 
 newpage "eps", "tutorialprocedures2.eps", 60, 30, 96
-
 clearpath
 move 7, 5
 move 16, 22
 move 22, 11
 move 34, 17
 move 44, 9
-
 waypoint
