@@ -35,10 +35,11 @@ public class Statement
 	public static final int ROTATE = 21;
 	public static final int WORLDS = 22;
 	public static final int PROJECT = 23;
-	public static final int IMPORT = 24;
-	public static final int FETCH = 25;
-	public static final int NEWPAGE = 26;
-	public static final int PRINT = 27;
+	public static final int DATASET = 24;
+	public static final int IMPORT = 25;
+	public static final int FETCH = 26;
+	public static final int NEWPAGE = 27;
+	public static final int PRINT = 28;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -104,6 +105,7 @@ public class Statement
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
 		mStatementTypeLookup.put("project", new Integer(PROJECT));
+		mStatementTypeLookup.put("dataset", new Integer(DATASET));
 		mStatementTypeLookup.put("import", new Integer(IMPORT));
 		mStatementTypeLookup.put("fetch", new Integer(FETCH));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
