@@ -45,7 +45,7 @@ public class Mapyrus
 		{
 			
 			"Usage:",
-			"java [-Dvariable=value] ... -jar " + Constants.PROGRAM_NAME.toLowerCase() + ".jar [-httpserver port] filename ...",
+			"java [-Dvariable=value] ... -jar " + Constants.PROGRAM_NAME.toLowerCase() + ".jar [-s port] filename ...",
 			"",
 			Constants.PROGRAM_NAME + " reads each file or URL in turn.",
 			"If filename is '-' then standard input is read.",
@@ -53,7 +53,7 @@ public class Mapyrus
 			"Variables and configuration are passed to " + Constants.PROGRAM_NAME + " using the",
 			"Java -D option.",
 			"",
-			"-httpserver option starts " + Constants.PROGRAM_NAME + " as a stand-alone HTTP server",
+			"-s option starts " + Constants.PROGRAM_NAME + " as a stand-alone HTTP server",
 			"on the given port.  Refer to manual for detailed instructions."
 		};
 
@@ -80,6 +80,10 @@ public class Mapyrus
 		{
 			System.out.println(license[i]);
 		}
+		
+		System.out.println("");
+		System.out.println("Report bugs to <" + Constants.PROGRAM_NAME.toLowerCase() +
+			"@chenery.id.au>.");
 		System.exit(1);
 	}
 	
@@ -263,15 +267,22 @@ public class Mapyrus
 		 * to read commands from.
 		 */
 		if (args.length == 0 || (args.length == 1 && (args[0].equals("-h") ||
-			args[0].equals("-help") || args[0].equals("-?") ||
-			args[0].equals("-v") || args[0].equals("-version"))))
+			args[0].equals("--help") || args[0].equals("-?"))))
 		{
 			/*
 			 * Show usage message and quit.
 			 */
 			printUsageAndExit();
 		}
-		else if (args[0].equals("-httpserver"))
+		else if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version")))
+		{
+			/*
+			 * Show version number and quit.
+			 */
+			System.out.println(Constants.PROGRAM_NAME + " " + Constants.getVersion());
+			System.exit(1);
+		}
+		else if (args[0].equals("-s"))
 		{
 			if (args.length < 2)
 			{
