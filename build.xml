@@ -66,7 +66,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Generate all examples, doing tutorial examples separately so
 it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
-<arg line="contact.mpy turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
+<arg line="contact.mpy turtle1.mpy turtle2.mpy turtle3.mpy turtle4.mpy turtle5.mpy turtle6.mpy mapview1.mpy mapview2.mpy mapview3.mpy mapview4.mpy"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="doc">
 <arg line="tutorialfirst1.mpy"/>
