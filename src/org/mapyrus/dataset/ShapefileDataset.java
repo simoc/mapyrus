@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -144,7 +145,7 @@ public class ShapefileDataset implements GeographicDataset
 		String shapeFilename, dbfFilename, prjFilename;
 		StringTokenizer st, st2;
 		String token;
-		Hashtable extrasDBFFields;
+		HashSet extrasDBFFields;
 
 		/*
 		 * Set default options.  Then see if user wants to override any of them.
@@ -161,12 +162,12 @@ public class ShapefileDataset implements GeographicDataset
 				 * Parse list of comma separated field names that user wants
 				 * to fetch.
 				 */
-				extrasDBFFields = new Hashtable();
+				extrasDBFFields = new HashSet();
 				st2 = new StringTokenizer(token.substring(10), ",");
 				while (st2.hasMoreTokens())
 				{
 					token = st2.nextToken();
-					extrasDBFFields.put(token, token);
+					extrasDBFFields.add(token);
 				}
 			}
 		}
@@ -197,8 +198,18 @@ public class ShapefileDataset implements GeographicDataset
 		}
 			
 		mShapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
-		mDBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
-		
+		try
+		{
+			mDBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
+		}
+		catch (FileNotFoundException e)
+		{
+			/*
+			 * If .dbf file does not exist then just continue without it.
+			 */
+			mDBFStream = null;
+		}
+
 		/*
 		 * If there is an accompanying .prj file with the projection then read it.
 		 */
@@ -386,7 +397,7 @@ public class ShapefileDataset implements GeographicDataset
 	/*
 	 * Read header from DBF database file
 	 */
-	private void readDBFHeader(String []geometryFieldNames, Hashtable dbfFieldnameTable)
+	private void readDBFHeader(String []geometryFieldNames, HashSet dbfFieldnameList)
 		throws IOException
 	{
 		int headerLength, nTotalFields;
@@ -398,44 +409,48 @@ public class ShapefileDataset implements GeographicDataset
 		int nBytesRead;
 		boolean fetchStatus;
 
-		mDBFStream.skipBytes(4);
-		readLittleEndianInt(mDBFStream);	/* number of DBF records */
-		headerLength = readLittleEndianShort(mDBFStream);
-		mDBFRecordLength = readLittleEndianShort(mDBFStream);
-		mDBFStream.skipBytes(20);
-		nBytesRead = 32;
-
-		/*
-		 * Read record describing each field.
-		 */
-		nTotalFields = mNDBFFieldsToFetch = 0;
+		nTotalFields = mNDBFFieldsToFetch = headerLength = nBytesRead = 0;
 		mDBFFieldsToFetch = new ArrayList();
-		do
+
+		if (mDBFStream != null)
 		{
-			dbfField = new byte[32];
-			dbfField[0] = (byte)(mDBFStream.read());
-			nBytesRead++;
-			if (dbfField[0] != DBF_HEADER_SENTINEL)
+			mDBFStream.skipBytes(4);
+			readLittleEndianInt(mDBFStream);	/* number of DBF records */
+			headerLength = readLittleEndianShort(mDBFStream);
+			mDBFRecordLength = readLittleEndianShort(mDBFStream);
+			mDBFStream.skipBytes(20);
+			nBytesRead = 32;
+
+			/*
+			 * Read record describing each field.
+			 */
+			do
 			{
-				mDBFStream.read(dbfField, 1, dbfField.length - 1);
-				fieldName = unpackString(dbfField, 0, 11);
-
-				/*
-				 * Build list of flags indicating which fields we'll
-				 * be fetching for the user.
-				 */
-				fetchStatus = (dbfFieldnameTable == null ||
-					dbfFieldnameTable.get(fieldName) != null);
-				mDBFFieldsToFetch.add(new Boolean(fetchStatus));
-				if (fetchStatus)
-					mNDBFFieldsToFetch++;
-
-				nBytesRead += dbfField.length - 1;
-				dbfFields.add(dbfField);
-				nTotalFields++;
+				dbfField = new byte[32];
+				dbfField[0] = (byte)(mDBFStream.read());
+				nBytesRead++;
+				if (dbfField[0] != DBF_HEADER_SENTINEL)
+				{
+					mDBFStream.read(dbfField, 1, dbfField.length - 1);
+					fieldName = unpackString(dbfField, 0, 11);
+	
+					/*
+					 * Build list of flags indicating which fields we'll
+					 * be fetching for the user.
+					 */
+					fetchStatus = (dbfFieldnameList == null ||
+						dbfFieldnameList.contains(fieldName));
+					mDBFFieldsToFetch.add(new Boolean(fetchStatus));
+					if (fetchStatus)
+						mNDBFFieldsToFetch++;
+	
+					nBytesRead += dbfField.length - 1;
+					dbfFields.add(dbfField);
+					nTotalFields++;
+				}
 			}
+			while (dbfField[0] != DBF_HEADER_SENTINEL);
 		}
-		while (dbfField[0] != DBF_HEADER_SENTINEL);
 
 		/*
 		 * Add one extra field to end of field list for the geometry.
