@@ -32,10 +32,10 @@ import org.mapyrus.io.WildcardFile;
 
 /**
  * Function returning list of files matching a pattern.
- * For example, listfiles("/etc/p*") returns an array containing /etc/passwd,
+ * For example, dir("/etc/p*") returns an array containing /etc/passwd,
  * /etc/pam.conf, etc.
  */
-public class Listfiles extends Function
+public class Dir extends Function
 {
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
@@ -86,6 +86,6 @@ public class Listfiles extends Function
 	 */
 	public String getName()
 	{
-		return("listfiles");
+		return("dir");
 	}
 }

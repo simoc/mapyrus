@@ -50,6 +50,9 @@ public class FunctionTable
 		f = new Cos();
 		mFunctions.put(f.getName(), f);
 
+		f = new Dir();
+		mFunctions.put(f.getName(), f);
+
 		f = new Floor();
 		mFunctions.put(f.getName(), f);
 
@@ -57,9 +60,6 @@ public class FunctionTable
 		mFunctions.put(f.getName(), f);
 
 		f = new Length();
-		mFunctions.put(f.getName(), f);
-
-		f = new Listfiles();
 		mFunctions.put(f.getName(), f);
 
 		f = new Lower();
