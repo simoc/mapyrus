@@ -745,6 +745,33 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.HEXAGON:
+				if (nExpressions == 3)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					double radius = mExecuteArgs[2].getNumericValue();
+					double sin60radius = 0.8660254 * radius;
+					double cos60radius = 0.5 * radius;
+					if (radius > 0)
+					{
+							/*
+							 * Add six points defining hexagon.
+							 */
+							context.moveTo(x1 - cos60radius, y1 - sin60radius);
+							context.lineTo(x1 + cos60radius, y1 - sin60radius);
+							context.lineTo(x1 + radius, y1);
+							context.lineTo(x1 + cos60radius, y1 + sin60radius);
+							context.lineTo(x1 - cos60radius, y1 + sin60radius);
+							context.lineTo(x1 - radius, y1);
+							context.closePath();
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HEXAGON));
+				}
+				break;
 
 			case Statement.BOX:
 			case Statement.GUILLOTINE:
