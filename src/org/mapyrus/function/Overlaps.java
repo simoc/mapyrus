@@ -25,7 +25,6 @@ package org.mapyrus.function;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
-import org.mapyrus.MapyrusMessages;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
@@ -46,14 +45,6 @@ public class Overlaps extends Function
 	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
 		throws MapyrusException
 	{
-		if (arg1.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg1.toString());
-
-		if (arg2.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg2.toString());
-
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
 
