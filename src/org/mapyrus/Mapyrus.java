@@ -82,13 +82,15 @@ public class Mapyrus
 	 * Read, parse and execute commands.
 	 * Can be called repeatedly to interpret many files.
 	 * Graphics state and variables are retained between calls.
-	 * An interpreter cannot be used again if it throws an exception.
+	 * An interpreter cannot be used again after throwing an exception.
 	 * @param commands lines of commands to interpret.
+	 * @param stdin standard input stream for interpreter.
 	 * @param stdout stream to write stdout of interpreter into.
 	 * @throws IOException if reading or writing files fails.
 	 * @throws MapyrusException if there is an error interpreting commands.
 	 */
-	public void interpret(String []commands, PrintStream stdout)
+	public void interpret(String []commands, InputStream stdin,
+		PrintStream stdout)
 		throws IOException, MapyrusException
 	{
 		/*
@@ -99,7 +101,7 @@ public class Mapyrus
 		FileOrURL f = new FileOrURL(sr, "commands");
 
 		ColorDatabase.load();
-		mInterpreter.interpret(mContext, f, stdout);
+		mInterpreter.interpret(mContext, f, stdin, stdout);
 	}
 
 	/**
@@ -212,7 +214,7 @@ public class Mapyrus
 	{
 		try
 		{
-			interpreter.interpret(context, f, System.out);
+			interpreter.interpret(context, f, System.in, System.out);
 			if (closeFile)
 				f.getReader().close();
 		}
