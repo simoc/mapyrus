@@ -149,7 +149,8 @@ public class Interpreter
 				 */
 				try
 				{
-					c = new Color(Integer.parseInt(color.substring(1), 16));
+					int rgb = Integer.parseInt(color.substring(1), 16);
+					c = new Color(rgb);
 				}
 				catch (NumberFormatException e)
 				{
@@ -176,7 +177,20 @@ public class Interpreter
 			float c1 = (float)args[1].getNumericValue();
 			float c2 = (float)args[2].getNumericValue();
 			float c3 = (float)args[3].getNumericValue();
-			
+
+			/*
+			 * Constraint color to valid range.
+			 */
+			if (c2 < 0.0f)
+				c2 = 0.0f;
+			else if (c2 > 1.0f)
+				c2 = 1.0f;
+
+			if (c3 < 0.0f)
+				c3 = 0.0f;
+			else if (c3 > 1.0f)
+				c3 = 1.0f;
+
 			if (colorType.equalsIgnoreCase("hsb"))
 			{
 				/*
@@ -186,7 +200,12 @@ public class Interpreter
 				context.setColor(new Color(rgb));
 			}
 			else if (colorType.equalsIgnoreCase("rgb"))
-			{		
+			{
+				if (c1 < 0.0f)
+					c1 = 0.0f;
+				else if (c1 > 1.0f)
+					c1 = 1.0f;
+
 				/*
 				 * Set RGB color.
 				 */
