@@ -7,18 +7,15 @@ Mapyrus is software for creating plots of points, lines, polygons and labels
 to PostScript (high resolution, up to A0 paper size),
 Portable Document Format (PDF) and web image output formats.
 Mapyrus is an Open Source project and is implemented entirely in Java.
-%ENDHTML
 
-%BEGINHTML
-The software combines the following three components.
-%ENDHTML
+The software combines the following three features.
 
 \begin{enumerate}
 \item
 
-%BEGINHTML
 A Logo or turtle graphics program.
 %ENDHTML
+
 An imaginary pen is moved around a page,
 creating shapes that are drawn into an image file.
 Reusable routines are built up using a BASIC-like language.
@@ -36,9 +33,9 @@ to be be defined.  See Figure \ref{turtle}.
 \label{turtle}
 \end{figure}
 
+%BEGINHTML
 \item
 
-%BEGINHTML
 Reading and displaying of geographic information
 systems (GIS) datasets, text files, or tables held in a relational database
 (including spatial databases such as PostGIS and Oracle Spatial).
@@ -78,14 +75,14 @@ See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
 \label{mapview4}
 \end{figure}
 
-\item
 %BEGINHTML
-Mapyrus runs in one of three modes:
+\item
+Flexibility.  Running in one of three modes.
 
 \begin{enumerate}
 \item
 As a stand-alone program for integration into
-scripts and batch tasks  (this is suitable for generating a one-off
+scripts and batch tasks  (suitable for generating a one-off
 map or a series of similar maps from a template
 showing different areas, or using different criteria for each map)
 
@@ -97,22 +94,21 @@ graph images and text reports to a web-based application.
 As a Java API embedded in a Java application.
 \end{enumerate}
 
-%ENDHTML
 
 \end{enumerate}
+%ENDHTML
 
 Please note that:
 
 \begin{itemize}
 \item
-Mapyrus is written in Java so as to be operating system independent
+Mapyrus is written in Java so as to be platform independent
 and take advantage of Java multi-threading, security,
 Java2D and JDBC capabilities.
 
 \item
 Mapyrus has no graphical user interface.
-Commands are typed into the terminal window in which the software is running,
-or read from a text file prepared by the user.
+Commands are read from a text file prepared by the user.
 
 \item
 Mapyrus cannot display three dimensional data and has nothing to do
