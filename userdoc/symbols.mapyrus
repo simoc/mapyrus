@@ -277,6 +277,62 @@ begin parking
 	label "P"
 end
 
+begin coveredparking
+	key "point", "Covered Parking"
+	color "dodgerblue"
+	box -2, -2, 2, 3
+	fill
+	clearpath
+	move -0.1, 0.5
+	color "white"
+	font "Helvetica-Bold", 4
+	justify "center, middle"
+	label "P"
+	clearpath
+	linestyle 0.4
+	move -1.7, 1.7
+	draw 0, 2.6, 1.7, 1.7
+	stroke
+end
+
+begin cave
+	key "point", "Cave"
+	color "darkgray"
+	move -2, 0
+	draw -1.2, 0, -1.2, 2
+	arc 1, 0, 2, 1.2, 2
+	draw 1.2, 0, 1.4, 0
+	stroke
+	clearpath
+	box -1.2, 0, -0.7, 2.5
+	fill
+end
+
+begin flag
+	key "point", "Flag"
+	color "red"
+	box 0, 1.5, 2, 3
+	fill
+	clearpath
+	linestyle 0.2
+	move 0, 0
+	draw 0, 3
+	stroke
+end
+
+begin pennant
+	key "point", "Pennant"
+	color "limegreen"
+	move 0, 1.5
+	draw 2, 2.25, 0, 3
+	fill
+	clearpath
+	linestyle 0.2
+	move 0, 0
+	draw 0, 3
+	stroke
+end
+
 begin tree
 	key "point", "Tree"
 	color "forestgreen"
@@ -384,6 +440,15 @@ begin fairground
 	stroke
 end
 
+begin factory
+	key "point", "Factory"
+	color "black"
+	move 0, 0
+	draw 2, 0, 2, 1.5, 1.2, 1.5, 0, 3, 0, 1.5, -1.2, 3, -1.2, 0
+	closepath
+	fill
+end
+
 begin school
 	key "point", "School"
 	color "white"
@@ -410,7 +475,7 @@ begin postoffice
 	fill
 	color "darkgrey"
 	move -2, 2
-	draw 0, 1, 2, 2
+	draw 0, 0.8, 2, 2
 	stroke
 end
 
@@ -461,6 +526,20 @@ begin cemetary
 	fill
 end
 
+begin waypoint
+	key "point", "Waypoint"
+	color "white"
+	box -2, -2, 2, 2
+	fill
+	linestyle 0.1
+	color "orange"
+	stroke
+	clearpath
+	move -2, 2
+	draw 2, -2, 2, 2
+	fill
+end
+
 #u-bahn
 #camping
 #vehicle
@@ -477,7 +556,7 @@ end
 
 print 'timer=', Mapyrus.timer
 
-if 0 #allSymbolsLegend = 1
+if 1 #allSymbolsLegend = 1
 then
 	move 0, 0
 	circle1
@@ -509,6 +588,12 @@ then
 	fairground
 	postoffice
 	police
+	waypoint
+	coveredparking
+	cave
+	flag
+	pennant
+	factory
 
 	newpage "eps", "allsymbols.eps", 210, 297
 	#newpage "png", "allsymbols.png", 210, 297
