@@ -1,0 +1,31 @@
+begin caption message, width
+  local numLines, topY
+
+  # Word wrap message then count number of lines in wrapped message.
+  #
+  font 'Helvetica-Narrow', 4
+  let message = wordwrap(message, width)
+  let numLines = length(split(message, "\n"))
+
+  # Draw a box behind label, leaving a 1mm gap around the text.
+  # Then draw label inside box.
+  #
+  color "Light Yellow"
+  let topY = 4 * numLines + 1
+  box -width / 2 - 1, 0, width / 2 + 1, topY
+  fill
+  color "Black"
+  stroke
+
+  clearpath
+  move -width / 2, topY - 4
+  label message
+end
+
+newpage "eps", "tutorialwordwrap1.eps", 95, 40
+move 30, 15
+caption "SYDNEY: Fine with a late southerly change.", 40
+
+clearpath
+move 70, 9
+caption "BRISBANE: Overcast with afternoon thunderstorms likely", 30
