@@ -51,12 +51,6 @@ public interface GeographicDataset
 	public String []getFieldNames();
 	
 	/**
-	 * Return list of types of fields in this dataset.
-	 * @return list of field types.
-	 */
-	public int []getFieldTypes();
-
-	/**
 	 * Return indexes of geometry fields in list of field names.
 	 * @return list of field indexes.
 	 */
