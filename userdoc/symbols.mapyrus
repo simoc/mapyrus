@@ -650,6 +650,188 @@ end
 begin railway2
 end
 
+# FILLPATTERNS
+
+begin hatch1
+	key "box", "Hatch 1"
+	color "red"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	stripepath 2, 45
+	stroke
+end
+
+begin hatch2
+	key "box", "Hatch 2"
+	color "blue"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	stripepath 2, -45
+	stroke
+end
+
+begin hatch3
+	key "box", "Hatch 3"
+	color "forestgreen"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	stripepath 2, 0
+	stroke
+end
+
+begin hatch4
+	key "box", "Hatch 4"
+	color "black"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	stripepath 2, 90
+	stroke
+end
+
+begin crosshatch_lines angle
+	# Makes stripes through polygon.  Used for cross-hatching
+	# so that original path is saved in calling function
+	# and can be re-used for second set of hatch lines.
+	#
+	stripepath 2, angle
+	stroke
+end
+
+begin crosshatch1
+	key "box", "Crosshatch 1"
+	color "orange"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	stroke
+	crosshatch_lines 45
+	crosshatch_lines -45
+end
+
+begin crosshatch2
+	key "box", "Crosshatch 2"
+	color "darkgray"
+	linestyle 0.1
+	stroke
+	clip "inside"
+	stroke
+	crosshatch_lines 0
+	crosshatch_lines 90
+end
+
+begin stripes
+	key "box", "Stripes"
+	color "blue"
+	fill
+	clip "inside"
+	color "yellow"
+	linestyle 1
+	stripepath 2, 45
+	stroke
+end
+
+begin halffill_box c1, c2, c3, c4
+	# Draw a square with the 4 quadrants in different colors.
+	#
+	box -1, -1, 0, 0
+	color c1
+	fill
+
+	clearpath
+	box -1, 0, 0, 1
+	color c2
+	fill
+
+	clearpath
+	box 0, -1, 1, 0
+	color c3
+	fill
+
+	clearpath
+	box 0, 0, 1, 1
+	color c4
+	fill
+end
+
+begin halffill
+	key "box", "Half Fill"
+	clip "inside"
+	stripepath 2, 0
+	samplepath 2, 0
+	halffill_box "beige", "brown", "brown", "beige"
+end
+
+begin quiltfill
+	key "box", "Quilt Fill"
+	clip "inside"
+	stripepath 2, 0
+	samplepath 2, 0
+	halffill_box "red", "yellow", "purple", "orange"
+end
+
+begin repeaticon hexdigits, iconsize
+	# Repeats an icon all through a polygon in
+	# a tiling pattern.
+	#
+	clip "inside"
+	stripepath iconsize, 0
+	samplepath iconsize, 0
+	icon hexdigits, iconsize
+end
+
+begin chessboard
+	key "box", "Chessboard Pattern"
+	color "black"
+	repeaticon "0xaa55aa55aa55aa55", 5
+end
+
+begin walltiling
+	key "box", "Wall Tiling"
+	color "navy"
+	repeaticon "0xf888a888f8000000", 5
+end
+
+begin dotpattern
+	key "box", "Dot Pattern"
+	color "crimson"
+	repeaticon "0xaa00aa00aa00aa00", 6
+end
+
+begin halftone
+	key "box", "Halftone"
+	color "black"
+	repeaticon "0x56a9a659659a6a95", 5
+end
+
+begin stipple
+	key "box", "Stipple"
+	color "blue"
+	repeaticon "0xaa44aa00aa44aa00", 5
+end
+
+begin aggregate_triangle
+	# Draw a triangle at a random angle at a random position.
+	#
+	move random(4) - 2, random(4) - 2
+	rotate random(360)
+	triangle1
+end
+
+begin aggregate
+	key "box", "Aggregate"
+	linestyle 0.1
+	color "slateblue"
+	stroke
+	clip "inside"
+	stripepath 4, 0
+	samplepath 4, 0
+	aggregate_triangle
+end
+
 print 'timer=', Mapyrus.timer
 
 if 1 #allSymbolsLegend = 1
@@ -695,6 +877,22 @@ then
 	town "Ely"
 	emphasisedname "Ely"
 
+	hatch1
+	hatch2
+	hatch3
+	hatch4
+	crosshatch1
+	crosshatch2
+	stripes
+	chessboard
+	walltiling
+	dotpattern
+	halftone
+	stipple
+	halffill
+	quiltfill
+	aggregate
+
 	newpage "eps", "allsymbols.eps", 210, 297
 	#newpage "png", "allsymbols.png", 210, 297
 	color "white"
@@ -707,7 +905,7 @@ then
 	do
 		clearpath
 		move x, y
-		legend 10
+		legend 8
 		let y = y - 10
 		if y < 10
 		then
