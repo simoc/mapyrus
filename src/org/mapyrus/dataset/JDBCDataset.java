@@ -342,15 +342,29 @@ public class JDBCDataset implements GeographicDataset
 						mFieldTypes[i] == Types.LONGVARBINARY)
 					{
 						byte []b = mResultSet.getBytes(i + 1);
-						double []geometry = WKBGeometryParser.parse(b);
-						arg = new Argument((int)geometry[0], geometry);
+						if (b == null)
+						{
+							arg = Argument.emptyGeometry;
+						}
+						else
+						{
+							double []geometry = WKBGeometryParser.parse(b);
+							arg = new Argument((int)geometry[0], geometry);
+						}
 					}
 					else if (mFieldTypes[i] == Types.BLOB)
 					{
 						Blob blob = mResultSet.getBlob(i + 1);
-						byte []b = blob.getBytes(0, (int)blob.length());
-						double []geometry = WKBGeometryParser.parse(b);
-						arg = new Argument((int)geometry[0], geometry);
+						if (blob == null)
+						{
+							arg = Argument.emptyGeometry;
+						}
+						else
+						{
+							byte []b = blob.getBytes(0, (int)blob.length());
+							double []geometry = WKBGeometryParser.parse(b);
+							arg = new Argument((int)geometry[0], geometry);
+						}
 					}
 					else if (mFieldTypes[i] == Types.DATE ||
 						mFieldTypes[i] == Types.TIME ||
