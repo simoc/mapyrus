@@ -360,6 +360,20 @@ describes the syntax of regular expressions.
 
 <tr>
 <td>
+<a name="max"></a>
+<tt>max(<i>a</i>, <i>b</i>)<tt>
+<td>
+Returns the larger of values <i>a</i> and <i>b</i>.
+
+<tr>
+<td>
+<a name="min"></a>
+<tt>min(<i>a</i>, <i>b</i>)<tt>
+<td>
+Returns the smaller of values <i>a</i> and <i>b</i>.
+
+<tr>
+<td>
 <a name="pow"></a>
 <tt>pow(<i>a</i>, <i>b</i>)<tt>
 <td>
@@ -929,7 +943,10 @@ include hr.doc
 <a name="dataset"></a>
 <tt>dataset</tt> <i>type</i>, <i>name</i>, <i>extras</i>
 <p>
-Defines a dataset to read geographic data from.
+Defines a dataset to read from.  A dataset contains geographic data,
+geometry, attributes, a lookup table, data to write to standard
+output, or a combination of these.
+<p>
 <i>dataset</i> is the filename of the dataset to read.
 <i>type</i> is the type of dataset and
 <i>extras</i> defines further options for accessing the dataset, given
@@ -1002,6 +1019,8 @@ See the
 OpenGIS Simple Features Specification For SQL
 </a>
 for a description of geometry strings.
+<p>
+Other values are set as properties for the JDBC driver.
 
 <tr>
 <td>
