@@ -9,7 +9,6 @@ end
 
 newpage "eps", "tutoriallines1.eps", 60, 30, 300
 color "orange"
-
 clearpath
 move 5, 5
 draw 45, 5
