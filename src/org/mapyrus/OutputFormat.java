@@ -389,11 +389,9 @@ public class OutputFormat
 	 */	
 	private void writePostScriptShape(Shape shape)
 	{
-
 		PathIterator pi = shape.getPathIterator(null);
 		float coords[] = new float[6];
 		int segmentType;
-
 		
 		while (!pi.isDone())
 		{
@@ -435,8 +433,11 @@ public class OutputFormat
 	{
 		if (mOutputType == POSTSCRIPT)
 		{
-			writePostScriptShape(shape);
-			writePostScriptLine("s");
+			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			{
+				writePostScriptShape(shape);
+				writePostScriptLine("s");
+			}
 		}
 		else
 		{
@@ -454,8 +455,11 @@ public class OutputFormat
 	{
 		if (mOutputType == POSTSCRIPT)
 		{
-			writePostScriptShape(shape);
-			writePostScriptLine("f");
+			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			{
+				writePostScriptShape(shape);
+				writePostScriptLine("f");
+			}
 		}
 		else
 		{
@@ -471,7 +475,8 @@ public class OutputFormat
 	 */
 	public void clip(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT)
+		if (mOutputType == POSTSCRIPT &&
+			shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 		{
 			/*
 			 * Set clip path now, then it stays in effect until previous
