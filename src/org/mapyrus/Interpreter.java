@@ -663,6 +663,7 @@ public class Interpreter
 				break;
 
 			case Statement.BOX:
+			case Statement.GUILLOTINE:
 				if (nExpressions == 4)
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
@@ -670,7 +671,7 @@ public class Interpreter
 					x2 = mExecuteArgs[2].getNumericValue();
 					y2 = mExecuteArgs[3].getNumericValue();
 					double xMin, xMax, yMin, yMax;
-					
+
 					if (x1 < x2)
 					{
 						xMin = x1;
@@ -692,11 +693,18 @@ public class Interpreter
 						yMax = y1;
 					}
 
-					context.moveTo(xMin, yMin);
-					context.lineTo(xMin, yMax);
-					context.lineTo(xMax, yMax);
-					context.lineTo(xMax, yMin);
-					context.lineTo(xMin, yMin);
+					if (type == Statement.BOX)
+					{
+						context.moveTo(xMin, yMin);
+						context.lineTo(xMin, yMax);
+						context.lineTo(xMax, yMax);
+						context.lineTo(xMax, yMin);
+						context.closePath();
+					}
+					else
+					{
+						context.guillotine(xMin, yMin, xMax, yMax);
+					}
 				}
 				else
 				{
@@ -1082,7 +1090,7 @@ public class Interpreter
 
 		/*
 		 * A statement or procedure name begins with a keyword
-		 * which must begin with a letter or dollar sign.
+		 * which must begin with a letter.
 		 */
 		if (!(Character.isLetter((char)c) || c == '$'))
 		{
