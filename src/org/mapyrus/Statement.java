@@ -27,15 +27,14 @@ import java.util.HashMap;
 
 /**
  * A parsed statement.
- * Can be one of several types.  An assignment statement, a conditional
- * statement, a block of statements making a procedure or just a plain command.
+ * Can be one of several types.  A conditional statement, 
+ * a block of statements making a procedure or just a plain command.
  */
 public class Statement
 {
 	/*
 	 * Possible types of statements.
 	 */
-	public static final int ASSIGN = 1;
 	public static final int CONDITIONAL = 2;
 	public static final int LOOP = 3;
 	public static final int BLOCK = 4;
@@ -66,6 +65,7 @@ public class Statement
 	public static final int NEWPAGE = 33;
 	public static final int PRINT = 34;
 	public static final int LOCAL = 35;
+	public static final int LET = 36;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -94,11 +94,6 @@ public class Statement
 	private ArrayList mStatementBlock;
 	private ArrayList mParameters;
 	
-	/*
-	 * Name of variable in assignment.
-	 */
-	private String mAssignedVariable;
-
 	private Expression []mExpressions;
 	
 	/*
@@ -143,6 +138,7 @@ public class Statement
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 		mStatementTypeLookup.put("local", new Integer(LOCAL));
+		mStatementTypeLookup.put("let", new Integer(LET));
 	}
 	
 	/**
@@ -175,19 +171,6 @@ public class Statement
 		if (mType == CALL)
 			mBlockName = keyword;
 		mExpressions = expressions;
-	}
-
-	/**
-	 * Create an assignment statement.
-	 * @param variableName is the name of the variable being assigned.
-	 * @param value is the value being assigned to this variable.
-	 */
-	public Statement(String variableName, Expression value)
-	{
-		mType = ASSIGN;
-		mAssignedVariable = variableName;
-		mExpressions = new Expression[1];
-		mExpressions[0] = value;
 	}
 
 	/**
@@ -276,11 +259,6 @@ public class Statement
 	public Expression []getExpressions()
 	{
 		return(mExpressions);
-	}
-
-	public String getAssignedVariable()
-	{
-		return(mAssignedVariable);
 	}
 
 	/**
