@@ -2280,7 +2280,8 @@ number used is written to the log file or to standard output.
 The HTTP server is multi-threaded to enable several requests to be handled
 simultaneously.  If the HTTP server receives an HTTP request for a file with a
 suffix matching a well-known MIME type (\texttt{html}, \texttt{txt},
-\texttt{ps}, \texttt{pdf}, \texttt{zip} or a web image format), then the
+\texttt{ps}, \texttt{pdf}, \texttt{svg}, \texttt{zip}
+or a web image format), then the
 contents of that file are returned by the HTTP server to the HTTP client.
 Requests for files with no suffix, or with unknown file suffix
 such as \texttt{.mapyrus} are interpreted
