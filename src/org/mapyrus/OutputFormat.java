@@ -31,6 +31,12 @@ public class OutputFormat
 	private static final int POSTSCRIPT = 3;
 
 	/*
+	 * Number of points and millimetres per inch.
+	 */
+	private static final int POINTS_PER_INCH = 72;
+	private static final double MM_PER_INCH = 25.4;
+	
+	/*
 	 * File or image that drawing commands are
 	 * writing to.
 	 */
@@ -41,6 +47,73 @@ public class OutputFormat
 	private PrintWriter mWriter;
 	private Graphics2D mGraphics2D;
 	
+	/*
+	 * Write PostScript file header.
+	 */
+	private void writePostScriptHeader(int width, int height)
+	{
+		mWriter.println("%!PS-Adobe-3.0");
+		mWriter.println("%%BoundingBox: 0 0 " + width + " " + height);
+		mWriter.println("%%DocumentData: Clean7Bit");
+		mWriter.println("%%Creator: " + Mapyrus.PROGRAM_NAME);
+		mWriter.println("%%EndComments");
+		mWriter.println("");
+		
+		/*
+		 * Set plotting units to millimetres.
+		 */
+		mWriter.println((MM_PER_INCH / POINTS_PER_INCH) + " dup scale");
+		
+		/*
+		 * Define shorter names for most commonly used operations.
+		 */
+		mWriter.println("/m { moveto } def /l { lineto } def");
+	}
+
+	/*
+	 * Sets correct background, rendering hints and transformation
+	 * for buffered image we will plot to.
+	 */
+	private void setupBufferedImage()
+	{
+		int resolution;
+		double scale;
+		
+		mGraphics2D.setColor(Color.WHITE);
+		mGraphics2D.fillRect(0, 0, mImage.getWidth(), mImage.getHeight());
+		
+		/*
+		 * If a display resolution is given as a property then use that,
+		 * otherwise assume 72 DPI.
+		 */
+		try
+		{
+			String property = System.getProperty(Mapyrus.PROGRAM_NAME + ".resolution");
+			if (property != null)
+				resolution = Integer.parseInt(property);
+			else
+				resolution = POINTS_PER_INCH;
+			
+		}
+		catch (SecurityException e)
+		{
+			resolution = POINTS_PER_INCH;
+		}
+		catch (NumberFormatException e)
+		{
+			resolution = POINTS_PER_INCH;
+		}
+
+		scale = resolution / MM_PER_INCH;
+		
+		/*
+		 * Set transform with origin in lower-left corner and
+		 * Y axis increasing upwards.
+		 */
+		mGraphics2D.translate(0, mImage.getHeight());
+		mGraphics2D.scale(scale, -scale);
+	}
+
 	/**
 	 * Creates new graphics file, ready for drawing to.
 	 * @param filename name of image file output will be saved to
@@ -109,6 +182,7 @@ public class OutputFormat
 			mImage = new BufferedImage(width, height,
 				BufferedImage.TYPE_3BYTE_BGR);
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
+			setupBufferedImage();
 		}
 		mOutputFile = new File(filename);
 	}
@@ -123,6 +197,7 @@ public class OutputFormat
 		mOutputType = BUFFERED_IMAGE;
 		mImage = image;
 		mGraphics2D = (Graphics2D)(mImage.getGraphics());
+		setupBufferedImage();
 	}
 	 
 	/**
@@ -159,18 +234,6 @@ public class OutputFormat
 		}
 	}
 	
-	/*
-	 * Write PostScript file header.
-	 */
-	private void writePostScriptHeader(int width, int height)
-	{
-		mWriter.println("%!PS-Adobe-3.0");
-		mWriter.println("%%BoundingBox: 0 0 " + width + " " + height);
-		mWriter.println("%%DocumentData: Clean7Bit");
-		mWriter.println("%%Creator: " + Mapyrus.PROGRAM_NAME);
-		mWriter.println("%%EndComments");
-	}
-	
 	/**
 	 * Set graphics attributes.
 	 * @param color is color to draw in.
@@ -191,7 +254,38 @@ public class OutputFormat
 			mGraphics2D.setStroke(new BasicStroke((float)lineWidth));
 		}
 	}
-	
+
+	/*
+	 * Walk through path, converting it to PostScript.
+	 */	
+	private void writePostScriptShape(Shape shape)
+	{
+
+		PathIterator pi = shape.getPathIterator(null);
+		float coords[] = new float[6];
+		int segmentType;
+		
+		while (!pi.isDone())
+		{
+			segmentType = pi.currentSegment(coords);
+			switch (segmentType)
+			{
+				case PathIterator.SEG_MOVETO:
+					mWriter.println(coords[0] + " " + coords[1] + " m");
+					break;
+					
+				case PathIterator.SEG_LINETO:
+					mWriter.println(coords[0] + " " + coords[1] + " l");
+					break;
+				
+				case PathIterator.SEG_CLOSE:
+					mWriter.println("closepath");
+					break;
+			}
+			pi.next();			
+		}
+	}
+		
 	/**
 	 * Draw currently defined path to output page.
 	 */
@@ -199,32 +293,7 @@ public class OutputFormat
 	{
 		if (mOutputType == POSTSCRIPT)
 		{
-			/*
-			 * Walk through path, converting it to PostScript.
-			 */
-			PathIterator pi = shape.getPathIterator(null);
-			float coords[] = new float[6];
-			int segmentType;
-			
-			while (!pi.isDone())
-			{
-				segmentType = pi.currentSegment(coords);
-				switch (segmentType)
-				{
-					case PathIterator.SEG_MOVETO:
-						mWriter.println(coords[0] + " " + coords[1] + " moveto");
-						break;
-						
-					case PathIterator.SEG_LINETO:
-						mWriter.println(coords[0] + " " + coords[1] + " lineto");
-						break;
-					
-					case PathIterator.SEG_CLOSE:
-						mWriter.println("closepath");
-						break;
-				}
-				pi.next();			
-			}
+			writePostScriptShape(shape);
 			mWriter.println("stroke");
 		}
 		else
@@ -234,5 +303,24 @@ public class OutputFormat
 			 */
 			mGraphics2D.draw(shape);
 		}
-	}	
+	}
+	
+	/**
+	 * Fill currently defined path on output page.
+	 */
+	public void fill(Shape shape)
+	{
+		if (mOutputType == POSTSCRIPT)
+		{
+			writePostScriptShape(shape);
+			mWriter.println("fill");
+		}
+		else
+		{
+			/*
+			 * Fill path in image.
+			 */
+			mGraphics2D.fill(shape);
+		}
+	}
 }
