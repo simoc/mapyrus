@@ -21,6 +21,6 @@ while Mapyrus.fetch.more
 do
   clearpath
   fetch
-  addpath parsewkt(geom)
+  addpath geom
   stroke
 done

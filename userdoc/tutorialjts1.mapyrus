@@ -6,14 +6,13 @@ worlds 5000, 1000, 6000, 2000
 # from a dataset.
 #
 let wkt = 'LINESTRING (5200 1200, 5337 1664, 5798 1643, 5347 1120)'
-let G1 = parsewkt(wkt)
-addpath G1
+addpath wkt
 linestyle 3
 color "orange"
 stroke
 
 clearpath
-addpath buffer(G1, 100, "round")
+addpath buffer(wkt, 100, "round")
 linestyle 0.1
 color "red"
 stroke
