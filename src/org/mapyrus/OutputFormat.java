@@ -6,6 +6,7 @@ package au.id.chenery.mapyrus;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import javax.imageio.*;
 
@@ -475,14 +476,24 @@ public class OutputFormat
 	 */
 	public void clip(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT &&
-			shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+		if (mOutputType == POSTSCRIPT)
 		{
 			/*
 			 * Set clip path now, then it stays in effect until previous
 			 * state is restored.
 			 */
-			writePostScriptShape(shape);
+			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			{
+				writePostScriptShape(shape);
+			}
+			else
+			{
+				/*
+				 * Clip region is outside page.  Clip to simple rectangle
+				 * outisde page instead so that nothing is shown.
+				 */
+				writePostScriptShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f));
+			}
 			writePostScriptLine("clip newpath");
 		}
 	}
