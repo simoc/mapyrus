@@ -1,7 +1,7 @@
 # @(#) $Id$
 include symbols.mapyrus
 
-newpage "eps", "mapview1.eps", 80, 80, "isolatinfonts=Helvetica-Bold"
+newpage "eps", "mapview1.eps", 80, 80, "isolatinfonts=Helvetica-Bold background=white"
 clearpath
 
 # Import coastline of Australia.

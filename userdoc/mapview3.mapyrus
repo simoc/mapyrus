@@ -101,7 +101,7 @@ begin branchline side
 	done
 end
 
-newpage "eps", "mapview3.eps", 90, 80
+newpage "eps", "mapview3.eps", 90, 80, "background=white"
 clearpath
 move 2, Mapyrus.page.height / 2
 

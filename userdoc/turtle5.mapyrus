@@ -42,7 +42,7 @@ begin colorRange h1, s1, b1, h2, s2, b2, nColors
   done
 end
 
-newpage "eps", "turtle5.eps", 40, 30
+newpage "eps", "turtle5.eps", 40, 30, "background=white"
 clearpath
 move 20, 20
 colorRange 0, 0.95, 0.95, 0.25, 0.95, 0.95, 100

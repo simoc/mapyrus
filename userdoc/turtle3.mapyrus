@@ -27,7 +27,7 @@ begin shield
   linestyle 0.1
   stroke
 end
-newpage "eps", "turtle3.eps", 30, 30
+newpage "eps", "turtle3.eps", 30, 30, "background=white"
 clearpath
 move 15, 20
 shield

@@ -26,7 +26,7 @@ begin cutHere
   scissors
 end
 
-newpage "eps", "turtle4.eps", 30, 30
+newpage "eps", "turtle4.eps", 30, 30, "background=white"
 move 5, 5
 draw 20, 5
 arc -1, 20, 13, 12, 13

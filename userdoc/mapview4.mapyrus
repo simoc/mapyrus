@@ -48,14 +48,7 @@ begin warehouse name, inventory
 	highlightlabel name
 end
 
-newpage "eps", "mapview4.eps", 60, 60
-
-# Use light background.
-#
-color "rgb", 1, 0.9, 0.9
-move 0, 0
-draw 0, Mapyrus.page.height, Mapyrus.page.width, Mapyrus.page.height, Mapyrus.page.width, 0
-fill
+newpage "eps", "mapview4.eps", 60, 60, "background=lightpink"
 
 # Import freight rail line network in Munich
 #
