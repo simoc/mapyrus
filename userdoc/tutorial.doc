@@ -167,7 +167,7 @@ line style.
 Open a terminal window and enter the following command:
 
 <pre>
-java -jar <i>install-path</i>/mapyrus.jar first.txt
+java -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus first.txt
 </pre>
 
 where <i>install-path</i> is the directory in which Mapyrus is installed.
@@ -451,7 +451,7 @@ Use the
 <a href="reference.html#protect">protect</a>
 command instead of
 <a href="reference.html#clip">clip</a>
-to display a border around the outside of the polygon.
+to display a border around the outside of a polygon.
 
 include beginex.doc
 include tutorialpolygons4.mpy
@@ -619,7 +619,7 @@ lines and polygons.
 <p>
 The following example demonstrates setting a world coordinate
 system and then reading and displaying a
-<a href="http://www.genaware.com">GenaMap</a> format export file
+<a href="http://www.genaware.com">GenaMap</a> ZF19 format export file
 containing line features.
 
 include beginex.doc
@@ -839,7 +839,7 @@ Mapyrus as an HTTP server on port 8410 with
 the following command.
 
 include beginex.doc
-java -jar <i>install-path</i>/mapyrus.jar -s 8410
+java -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus -s 8410
 include endex.doc
 
 where <i>install-path</i> is the directory in which Mapyrus is installed.
@@ -1001,11 +1001,11 @@ output to other formats.
 The following examples demonstrate these methods.
 
 include beginex.doc
-java -DDATADIR=$DATADIR -DNameidx=Q7B80L -jar mapyrus.jar mycommands.txt | pngtopnm | ppmtopgm | pgmtopbm | pbmtoascii -2x4
+java -DDATADIR=$DATADIR -DNameidx=Q7B80L -classpath mapyrus.jar au.id.chenery.mapyrus.Mapyrus mycommands.txt | pngtopnm | ppmtopgm | pgmtopbm | pbmtoascii -2x4
 include endex.doc
 
 include beginex.doc
-java -jar mapyrus.jar $HOME/common.txt mycommands.txt > myfile.ps
+java -classpath mapyrus.jar au.id.chenery.mapyrus.Mapyrus $HOME/common.txt mycommands.txt > myfile.ps
 gs -sDEVICE=faxg3 -sOutputFile=myfile.fax -TextAlphaBits=4 myfile.ps
 include endex.doc
 
@@ -1013,7 +1013,7 @@ A Java Virtual Machine takes more than one second to start on many computers.
 For applications that must start Mapyrus many times to perform short tasks,
 start Mapyrus as an HTTP server and make HTTP requests instead so that
 startup time is eliminated.
-Most languages include method of making HTTP requests.
+Most programming languages include a method of making HTTP requests.
 From Perl use the
 <a href="http://www.cpan.org">libwww-perl</a> modules.
 From Java use the

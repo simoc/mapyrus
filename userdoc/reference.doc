@@ -127,10 +127,12 @@ given then they are read in turn.
 <p>
 
 Variables passed to Mapyrus using the Java <tt>-D</tt> option
-are available in the Mapyrus interpreter.
+are available in the Mapyrus interpreter.  Other JAR files
+to be used in combination with Mapyrus are included in the
+<tt>-classpath</tt> option.
 
 include beginex.doc
-java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-path</i>/mapyrus.jar au.id.chenery.mapyrus.Mapyrus <i>filename</i>
+java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-path</i>/mapyrus.jar:<i>jarfile</i> au.id.chenery.mapyrus.Mapyrus <i>filename</i>
 include endex.doc
 
 Mapyrus runs as an 
@@ -191,14 +193,14 @@ Default logging writes only errors to error output.
 <td>
 Defines class containing JDBC 1.0 (or higher) driver to load at startup.
 A JDBC driver is required for connecting to a relational database and
-is provided along with a relational database.
+is provided as part of a relational database.
 See the
 <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/sql/DriverManager.html">
 Java JDBC DriverManager API documentation
 </a>
 for details.
-The JAR file containing the class must be set in the <tt>CLASSPATH</tt>
-environment variable before starting Mapyrus.
+The JAR file containing the class must be included in the <tt>-classpath</tt>
+option when starting Mapyrus.
 </tr>
 </table>
 
@@ -611,7 +613,9 @@ point each time.
 Therefore, coordinates in the called procedure are relative to
 the move point.
 This enables drawing commands in the called procedure to be
-given in millimetres, relative to the origin.
+given in millimetres, relative to each
+<a href="#move">move</a>
+point.
 <p>
 
 include hr.doc
@@ -962,8 +966,8 @@ The name of the Java class containing a JDBC 1.0 (or higher)
 driver for connecting to the database.
 This class name is required if not given in the
 <a href="#startupvariables">jdbc.drivers</a> startup variable.
-The JAR file containing the class must be set in the <tt>CLASSPATH</tt>
-environment variable before starting Mapyrus.
+The JAR file containing the class must be included in the <tt>-classpath</tt>
+option when starting Mapyrus.
 <p>
 <tt>url=<i>string</i></tt>
 <br>
