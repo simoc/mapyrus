@@ -41,6 +41,7 @@ import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
+import org.mapyrus.image.GradientFillFactory;
 
 /**
  * Maintains state information during interpretation inside a single procedure block.
