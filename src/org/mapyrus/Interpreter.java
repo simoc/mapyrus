@@ -87,6 +87,7 @@ public class Interpreter
 		int nExpressions;
 		int type;
 		Argument []args = null;
+		double degrees;
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -235,7 +236,21 @@ public class Interpreter
 						st.getFilenameAndLineNumber());
 				}
 				break;
-						
+				
+			case Statement.STRIPEPATH:
+				if (nExpressions == 2 && args[0].getType() == Argument.NUMERIC &&
+					args[1].getType() == Argument.NUMERIC)
+				{
+					degrees = args[1].getNumericValue();
+					context.stripePath(args[0].getNumericValue(), Math.toRadians(degrees));
+				}
+				else
+				{
+					throw new MapyrusException("Invalid path stripe values at " +
+						st.getFilenameAndLineNumber());
+				}
+				break;
+
 			case Statement.STROKE:
 				if (nExpressions > 0)
 				{
@@ -265,6 +280,19 @@ public class Interpreter
 				else
 				{
 					throw new MapyrusException("Invalid scaling values at " +
+						st.getFilenameAndLineNumber());
+				}
+				break;
+
+			case Statement.ROTATE:
+				if (nExpressions == 1 && args[0].getType() == Argument.NUMERIC)
+				{
+					degrees = args[0].getNumericValue();
+					context.setRotation(Math.toRadians(degrees));
+				}
+				else
+				{
+					throw new MapyrusException("Invalid rotation value at " +
 						st.getFilenameAndLineNumber());
 				}
 				break;
