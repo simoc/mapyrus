@@ -593,6 +593,17 @@ public class ContextStack
 	}
 
 	/**
+	 * Replace path with selected parts of path.
+	 * @param offsets offset along original path to select.
+	 * @param lengths length of original path to select at each offset.
+	 */
+	public void selectPath(double []offsets, double []lengths)
+		throws MapyrusException
+	{
+		getCurrentContext().selectPath(offsets, lengths);
+	}
+
+	/**
 	 * Replace path defining polygon with a sinkhole point.
 	 */
 	public void createSinkhole()
