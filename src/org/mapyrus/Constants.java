@@ -120,6 +120,28 @@ public class Constants
 		int resolution = Toolkit.getDefaultToolkit().getScreenResolution();
 		return(resolution);
 	}
+	
+	/**
+	 * Get screen width, in millimetres.
+	 * @return screen width.
+	 */
+	public static final double getScreenWidth()
+	{
+		int resolution = getScreenResolution();
+		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+		return(width / (double)resolution * MM_PER_INCH);
+	}
+
+	/**
+	 * Get screen height, in millimetres.
+	 * @return screen width.
+	 */
+	public static final double getScreenHeight()
+	{
+		int resolution = getScreenResolution();
+		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+		return(height / (double)resolution * MM_PER_INCH);
+	}
 
 	/*
 	 * Line separator in text files.
