@@ -77,7 +77,7 @@ class Preprocessor
 	 * Create new user input producer from a file.
 	 * @param filename is a file to open and read from.
 	 */
-	public Preprocessor(String filename) throws FileNotFoundException, MapyrusException
+	public Preprocessor(String filename) throws IOException, MapyrusException
 	{
 		FileOrURL f = new FileOrURL(filename);
 		initFileStack(f);
