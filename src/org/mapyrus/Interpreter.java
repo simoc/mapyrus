@@ -6,11 +6,11 @@ package au.id.chenery.mapyrus;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Reader;
+import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-import net.sourceforge.mapyrus.Context;
 
 /**
  * Language interpreter.  Parse and executes commands read from file, or
@@ -234,7 +234,7 @@ public class Interpreter
 				}
 				break;
 				
-			case Statement.CLEAR:
+			case Statement.CLEARPATH:
 				if (nExpressions > 0)
 				{
 					throw new MapyrusException("Unexpected arguments at " +
@@ -388,7 +388,85 @@ public class Interpreter
 						st.getFilenameAndLineNumber());
 				}
 				break;
-				
+
+			case Statement.IMPORT:
+				if (nExpressions > 3)
+				{
+					/*
+					 * All arguments are strings.
+					 */
+					for (int i = 0; i < nExpressions; i++)
+					{
+						if (args[i].getType() != Argument.STRING)
+							throw new MapyrusException("Invalid dataset at " +
+								st.getFilenameAndLineNumber());
+					}
+
+					/*
+					 * Build array of geometry field names.
+					 */					
+					String []geometryFieldNames = new String[nExpressions - 3];
+					for (int i = 0; i < geometryFieldNames.length; i++)
+						geometryFieldNames[i] = args[i + 3].getStringValue();
+
+					/*
+					 * Open the dataset.
+					 */						
+					context.setDataset(args[0].getStringValue(), args[1].getStringValue(),
+						args[2].getStringValue(), geometryFieldNames);
+				}
+				else
+				{
+					throw new MapyrusException("Invalid dataset at " +
+						st.getFilenameAndLineNumber());
+				}
+				break;
+
+			case Statement.FETCH:
+				/*
+				 * Add next row from dataset to path.
+				 */
+				Row row = context.fetchRow();
+				int index = 0;
+				int []geometryFieldIndexes = context.getDatasetGeometryFieldIndexes();
+				String []fieldNames = context.getDatasetFieldNames();
+				double x = 0.0;
+				for (int i = 0; i < row.size(); i++)
+				{
+					Argument field = (Argument)row.elementAt(i);
+					if (index < geometryFieldIndexes.length &&
+						i == geometryFieldIndexes[index])
+					{
+						if (field.getType() == Argument.GEOMETRY)
+						{
+							// XXX need to decide on format of multi-lines in double []
+						}
+						else
+						{
+							/*
+							 * First pair of geometry fields contain moveTo coordinates.
+							 * Successive pairs define lineTo coordinates.
+							 */
+							if (index == 1)
+								context.moveTo(x, field.getNumericValue());
+							else if (index % 2 == 0)
+								x = field.getNumericValue();
+							else
+								context.lineTo(x, field.getNumericValue());
+						}
+						index++;
+					}
+
+					if (field.getType() != Argument.GEOMETRY)
+					{
+						/*
+						 * Define attributes in non-geometry fields as variables.
+						 */
+						context.defineVariable(fieldNames[i], field);
+					}
+				}
+				break;
+
 			case Statement.NEWPAGE:
 				if (nExpressions == 4 &&
 					args[0].getType() == Argument.STRING &&
@@ -420,7 +498,19 @@ public class Interpreter
 					}
 					else
 					{
-						System.out.print(args[i].getNumericValue());
+						DecimalFormat format;
+						double d = args[i].getNumericValue();
+						double absoluteD = (d >= 0) ? d : -d;
+
+						/*
+						 * Print large or small numbers in scientific notation
+						 * to give more significant digits.
+						 */				
+						if (absoluteD != 0 && (absoluteD < 0.01 || absoluteD > 1000000.0))
+							format = new DecimalFormat("#.################E0");
+						else
+							format = new DecimalFormat("#.################");
+						System.out.print(format.format(d));
 					}
 				}
 				System.out.println("");
