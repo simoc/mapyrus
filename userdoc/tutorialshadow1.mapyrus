@@ -4,12 +4,10 @@ begin shadowed2
   color '#cccc00'
   linestyle 0.1
   clip "outside"
-  let i = 0
-  while i < 7
+  repeat 7
   do
     shiftpath 0.1, -0.1
     stroke
-    let i = i + 1
   done
 end
 begin shadowed
