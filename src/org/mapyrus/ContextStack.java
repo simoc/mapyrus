@@ -272,10 +272,12 @@ public class ContextStack
 	 * Sets font for labelling with.
 	 * @param name is name of font.
 	 * @param size is size for labelling in millimetres.
+	 * @param outlineWidth if non-zero, gives line width to use for drawing
+	 * outline of each character of labels.
 	 */
-	public void setFont(String name, double size)
+	public void setFont(String name, double size, double outlineWidth)
 	{
-		getCurrentContext().setFont(name, size);
+		getCurrentContext().setFont(name, size, outlineWidth);
 	}
 
 	/**
