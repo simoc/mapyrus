@@ -298,47 +298,57 @@ The \texttt{if}, \texttt{while} and \texttt{for}
 flow control structures
 found in other languages are available:
 
-\texttt{if} \textit{condition} \texttt{then}
-\textit{then-commands} ...
-\texttt{else}
-\textit{else-commands} ...
-\texttt{endif}
+\begin{alltt}
+if \textit{condition} then
+  \textit{then-commands} ...
+else
+  \textit{else-commands} ...
+endif
+\end{alltt}
 
 Executes \textit{then-commands} if \textit{condition} evaluates to
 a non-zero value, otherwise \textit{else-commands} are executed.
 The \texttt{else} part is optional.
 Compound tests are built using the \texttt{elif} keyword:
 
-\texttt{if} \textit{condition} \texttt{then}
-  \textit{commands} ...
-\texttt{elif} \textit{condition} \texttt{then}
-  \textit{commands} ...
-\texttt{endif}
+\begin{alltt}
+if \textit{condition} then
+  \textit{commands} \dots
+elif \textit{condition} then
+  \textit{commands} \dots
+endif
+\end{alltt}
 
 The \texttt{while} keyword defines a loop in which
 \textit{commands} will be executed for as long
 as \textit{condition} continues to evaluate to a non-zero value:
 
-\texttt{while} \textit{condition} \texttt{do}
-  \textit{commands} ...
-\texttt{done}
+\begin{alltt}
+while \textit{condition} do
+  \textit{commands} \dots
+done
+\end{alltt}
 
-The \texttt{for} ... \texttt{in} keywords define a loop in which
+The \texttt{for} \dots \texttt{in} keywords define a loop in which
 each element of \textit{array} is assigned to variable \textit{var}
 and \textit{commands} are executed.
 Elements in \textit{array} are accessed in no particular order:
 
-\texttt{for} \textit{var} \texttt{in} \textit{array} \texttt{do}
-  \textit{commands} ...
-\texttt{done}
+\begin{alltt}
+for \textit{var} in \textit{array} do
+  \textit{commands} \dots
+done
+\end{alltt}
 
 Procedures group frequently used commands together, save
 graphics state when they begin and restore it when they end,
 isolating the calling procedure from any changes:
 
-\texttt{begin} \textit{name} [\textit{arg1}, ...]
-  \textit{commands} ...
-\texttt{end}
+\begin{alltt}
+begin \textit{name} [\textit{arg1}, \dots]
+  \textit{commands} \dots
+end
+\end{alltt}
 
 A procedure is defined to take a fixed number of arguments.
 All procedure names are global and following the same naming
@@ -407,12 +417,20 @@ are defined as variables in Mapyrus.
 
 Mapyrus maintains the internal variables shown in Table \ref{internalvariables}.
 
-\begin{table}[h]
-\begin{tabular}{|p{6cm}|p{7cm}|}
+\begin{longtable}{|p{5cm}|p{7cm}|}
 \hline
 Variable Name & Description \\
 \hline
 \hline
+\endfirsthead
+\hline
+\endfoot
+
+\hline
+Variable Name & Description \\
+\hline
+\hline
+\endhead
 
 \texttt{Mapyrus.dataset.fieldnames} &
 An array containing the names of fields being imported from
@@ -550,12 +568,11 @@ The bounding rectangle of world coordinates set with the
 \texttt{Mapyrus.worlds.scale} &
 The real-world scale factor, determined by
 dividing of the X axis world coordinate range
-by the page width.
+by the page width. \\
 
-\end{tabular}
-\caption{Internal Variables}
 \label{internalvariables}
-\end{table}
+\end{longtable}
+%\caption{Internal Variables}
 
 \subsection{Commands}
 
@@ -660,7 +677,7 @@ The following dataset types and options are available:
 
 
 \begin{table}[h]
-\begin{tabular}{|p{3cm}|p{10cm}|}
+\begin{tabular}{|p{2cm}|p{10cm}|}
 \hline
 Dataset Type & Description and Extras \\
 \hline
@@ -736,6 +753,8 @@ Comma-separated list of
 attribute fields to read from the DBF database file accompanying the
 Shape file.  By default, all fields are read.  Reading fewer attribute
 fields improves performance. \\
+
+\hline
 
 \texttt{textfile} &
 for accessing data from a delimited text file, with one
@@ -1021,7 +1040,7 @@ required.
 \textit{variable=value} values, separated by whitespace.
 
 \begin{table}[h]
-\begin{tabular}{|p{4cm}|p{9cm}|}
+\begin{tabular}{|p{3cm}|p{9cm}|}
 \hline
 File Format & Extras \\
 \hline
