@@ -196,7 +196,7 @@ public class Mapyrus
 		}
 		
 		System.out.println("");
-		System.out.println("Report bugs to <simoc@sourceforge.net>.");
+		System.out.println("Report bugs to <simoc@users.sourceforge.net>.");
 		System.exit(1);
 	}
 
