@@ -42,6 +42,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -100,11 +101,17 @@ public class OutputFormat
 	private FontCache mFontCache;
 
 	/*
-	 * List of fonts used in PostScript file to add at end of PostScript
-	 * file as required resources.
+	 * List of font definitions included in this PostScript file and list of fonts
+	 * used in this file but not defined.
 	 */
-	private HashSet mFontResources;
+	private HashSet mSuppliedFontResources;
+	private HashSet mNeededFontResources;
 	
+	/*
+	 * List of TrueType fonts to load using Java Font.createFont() method.
+	 */
+	private HashMap mTTFFonts;
+
 	/*
 	 * Page dimensions and resolution.
 	 */
@@ -131,10 +138,14 @@ public class OutputFormat
 	private double mFontRotation;
 	private Font mBaseFont;
 	
-	/*
+	/**
 	 * Write PostScript file header, including document structuring conventions (DSC).
+	 * @param width width of page in mm.
+	 * @param height height of page in mm.
+	 * @param fontList list of PostScript fonts to include in header.
 	 */
-	private void writePostScriptHeader(double width, double height)
+	private void writePostScriptHeader(double width, double height, ArrayList fontList)
+		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
 			Constants.POINTS_PER_INCH);
@@ -150,9 +161,41 @@ public class OutputFormat
 		mWriter.println("%%DocumentData: Clean7Bit");
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: " + Constants.PROGRAM_NAME);
+		
+		/*
+		 * List fonts included in this PostScript file.
+		 */
 		mWriter.println("%%DocumentRequiredResources: (atend)");
+		if (fontList.size() > 0)
+		{
+			mWriter.print("%%DocumentSuppliedResources: font");
+			Iterator it = fontList.iterator();
+			while (it.hasNext())
+			{
+				PostScriptFont psFont = (PostScriptFont)(it.next());
+				mWriter.print(" " + psFont.getName());
+				mSuppliedFontResources.add(psFont.getName());
+			}
+			mWriter.println("");
+		}
 		mWriter.println("%%EndComments");
 		mWriter.println("");
+
+		/*
+		 * Inline font definitions.
+		 */
+		mWriter.println("%%BeginSetup");
+		Iterator it = fontList.iterator();
+		while (it.hasNext())
+		{
+			PostScriptFont psFont = (PostScriptFont)(it.next());
+
+			mWriter.println("%%BeginResource: font " + psFont.getName());
+			String fontDefinition = psFont.getFontDefinition();
+			mWriter.println(fontDefinition);
+			mWriter.println("%%EndResource");			
+		}
+		mWriter.println("%%EndSetup");
 
 		/*
 		 * Prevent anything being displayed outside bounding box we've just defined.
@@ -172,12 +215,13 @@ public class OutputFormat
 		 */
 		mWriter.println("/m { moveto } bind def /l { lineto } bind def");
 		mWriter.println("/s { stroke } bind def /f { fill } bind def");
-		
+		mWriter.println("/j { /fjy exch def /fjx exch def } bind def");
+
 		/*
 		 * Define font and dictionary entries for font size and justification.
 		 * Don't bind these as font loading operators may be overridden in interpreter.
 		 */
-		mWriter.println("/font { /fjy exch def /fjx exch def /frot exch radtodeg def");
+		mWriter.println("/font { /frot exch radtodeg def");
 		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
 		mWriter.println("/radtodeg { 180 mul 3.1415629 div } bind def");
 
@@ -319,9 +363,32 @@ public class OutputFormat
 			mColorFormat = new DecimalFormat("#.###");
 			mRotationFormat = new DecimalFormat("#.####");
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
-			writePostScriptHeader(width, height);
+			
+			mSuppliedFontResources = new HashSet();
+			ArrayList fontList = new ArrayList();
+			StringTokenizer st = new StringTokenizer(extras);
+			while (st.hasMoreTokens())
+			{
+				String token = st.nextToken();
+				if (token.startsWith("pfafiles="))
+				{
+					/*
+					 * Build list of font filenames user wants
+					 * to include in this PostScript file.
+					 */
+					StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
+					while (st2.hasMoreTokens())
+					{
+						String pfaFilename = st2.nextToken();
+						if (pfaFilename.length() > 0)
+							fontList.add(new PostScriptFont(pfaFilename));
+					}
+				}
+			}
+			writePostScriptHeader(width, height, fontList);
+
 			mPostScriptIndent = 0;
-			mFontResources = new HashSet();
+			mNeededFontResources = new HashSet();
 		}
 		else
 		{
@@ -335,6 +402,30 @@ public class OutputFormat
 				BufferedImage.TYPE_3BYTE_BGR);
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution);
+			
+			mTTFFonts = new HashMap();
+			StringTokenizer st = new StringTokenizer(extras);
+			while (st.hasMoreTokens())
+			{
+				String token = st.nextToken();
+				if (token.startsWith("ttffiles="))
+				{
+					/*
+					 * Build list of TrueType font filenames user wants
+					 * to open with Java methods.
+					 */
+					StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
+					while (st2.hasMoreTokens())
+					{
+						String ttfFilename = st2.nextToken();
+						if (ttfFilename.length() > 0)
+						{
+							TrueTypeFont ttf = new TrueTypeFont(ttfFilename);
+							mTTFFonts.put(ttf.getName(), ttf);
+						}
+					}
+				}
+			}
 		}
 		mFilename = filename;
 		mPageWidth = width;
@@ -438,7 +529,7 @@ public class OutputFormat
 		}
 		return(retval);
 	}
- 
+
 	/**
 	 * Writes trailing and buffered information, then closes output file.
 	 */
@@ -457,13 +548,22 @@ public class OutputFormat
 				mWriter.println("showpage");
 			}
 
-			mWriter.println("%%Trailer");	
-			mWriter.println("%%DocumentNeededResources:");
-			Iterator it = mFontResources.iterator();
-			while (it.hasNext())
-				mWriter.println("%%+ font " + (String)(it.next()));
-			mWriter.println("%%EOF");
+			mWriter.println("%%Trailer");
 			
+			/*
+			 * Included list of fonts we used in this file but did
+			 * not include in the header.
+			 */	
+			mWriter.println("%%DocumentNeededResources:");
+			Iterator it = mNeededFontResources.iterator();
+			while (it.hasNext())
+			{
+				String fontName = (String)(it.next());
+				if (!mSuppliedFontResources.contains(fontName))
+					mWriter.println("%%+ font " + fontName);
+			}
+			mWriter.println("%%EOF");
+
 			if (mIsStandardOutput)
 				mWriter.flush();
 			else
@@ -514,26 +614,117 @@ public class OutputFormat
 			}
 		}
 	}
-	
+
 	/**
-	 * Set graphics attributes.
-	 * @param color is color to draw in.
-	 * @param linestyle is Java2D line width, cap and join style, dash pattern.
-	 * @param justify is label justification value, combination of JUSTIFY_* bit flags.
+	 * Set font for labelling in output format.
 	 * @param fontName is name of font as defined in java.awt.Font class.
-	 * @param fontStyle is a style as defined in java.awt.Font class.
 	 * @param fontSize is size for labelling in millimetres.
 	 * @param fontRotation is rotation angle for font, in degrees,
 	 * measured counter-clockwise.
-	 * @param clipPaths are polygons to clip against, or null if there are no clip polygons.
 	 */
-	public void setAttributes(Color color, BasicStroke linestyle, int justify,
-		String fontName, int fontStyle, double fontSize, double fontRotation,
-		ArrayList clipPaths)
+	public void setFontAttribute(String fontName, double fontSize, double fontRotation)
+		throws IOException, MapyrusException
 	{
-		int cap, join;
-		String styleName;
+		if (mOutputType == POSTSCRIPT)
+		{
+			/*
+			 * Set font and size for labelling.
+			 */
+			writePostScriptLine("/" + fontName + " " +
+				mLinearFormat.format(fontSize) + " " +
+				mRotationFormat.format(fontRotation) + " font");
+			mNeededFontResources.add(fontName);
+		}
+		else
+		{
+			/*
+			 * Split font name into font and style.
+			 */
+			int style = Font.PLAIN;
 
+			if (fontName.endsWith("-Bold"))
+			{
+				style = Font.BOLD;
+				fontName = fontName.substring(0, fontName.length() - 5);
+			}
+			else if (fontName.endsWith("-Italic"))
+			{
+				style = Font.ITALIC;
+				fontName = fontName.substring(0, fontName.length() - 7);
+			}
+			else if (fontName.endsWith("-BoldItalic"))
+			{
+				style = Font.BOLD|Font.ITALIC;
+				fontName = fontName.substring(0, fontName.length() - 11);
+			}
+
+			/*
+			 * Continually opening and deriving fonts is probably expensive.
+			 * Check that new font is actually different to current font
+			 * before defining it.
+			 */
+			Font currentFont = mGraphics2D.getFont();
+			int newSize = (int)Math.round(fontSize);
+			if (newSize != currentFont.getSize() ||
+				style != currentFont.getStyle() ||
+				(!fontName.equals(currentFont.getFontName())) ||
+				fontRotation != mFontRotation)
+			{
+				/*
+				 * We need a base font that is not rotated for calculating
+				 * string widths for justifying text.
+				 * Get base font from cache, or create it if we don't find it there.
+				 */
+				mBaseFont = mFontCache.get(fontName, style, newSize, 0);
+				if (mBaseFont == null)
+				{
+					/*
+					 * If this is a font for which user provided a TTF file then
+					 * use that, else expect the operating system to be able to
+					 * open the font.
+					 */
+					TrueTypeFont ttf = (TrueTypeFont)mTTFFonts.get(fontName);
+					if (ttf != null)
+						mBaseFont = ttf.getFont().deriveFont(style, (float)newSize);
+					else
+						mBaseFont = new Font(fontName, style, newSize);
+					mFontCache.put(fontName, style, newSize, 0, mBaseFont);
+				}
+
+				/*
+				 * The real font used for labelling must be mirrored in Y axis
+				 * (to reverse the transform we use on Graphics2D objects) and
+				 * rotated to the angle the user wants.
+				 * 
+				 * Look it up in cache too.
+				 */
+				Font font = mFontCache.get(fontName, style, -newSize, fontRotation);
+				if (font == null)
+				{
+					AffineTransform fontTransform;
+					fontTransform = AffineTransform.getRotateInstance(fontRotation);
+					fontTransform.scale(1, -1);
+					font = mBaseFont.deriveFont(fontTransform);
+					mFontCache.put(fontName, style, -newSize, fontRotation, font);
+				}
+
+				mGraphics2D.setFont(font);
+			}
+		}
+
+		/*
+		 * Font rotation not easily held in a Graphics2D object so keep
+		 * track of it's current value ourselves.
+		 */
+		mFontRotation = fontRotation;
+	}
+	
+	/**
+	 * Set label justification in output format.
+	 * @param justify is label justification value, combination of JUSTIFY_* bit flags.
+	 */
+	public void setJustifyAttribute(int justify)
+	{
 		/*
 		 * Calculate fraction of string height and width to move text to get required
 		 * justification.
@@ -555,9 +746,44 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT)
 		{
 			/*
+			 * Define dictionary entries for justification settings for PostScript
+			 * procedure to use for aligning text correctly itself.
+			 */
+			writePostScriptLine(mJustificationShiftX + " " + mJustificationShiftY + " j");
+		}
+	}
+
+	/**
+	 * Set color in output format.
+	 * @param color is color to draw in.
+	 */
+	public void setColorAttribute(Color color)
+	{
+		if (mOutputType == POSTSCRIPT)
+		{
+			float c[] = color.getRGBColorComponents(null);
+			writePostScriptLine(mColorFormat.format(c[0]) + " " +
+				mColorFormat.format(c[1]) + " " +
+				mColorFormat.format(c[2]) + " rgb");
+		}
+		else
+		{
+			mGraphics2D.setColor(color);
+		}
+	}
+
+	/**
+	 * Set linestyle in output format.
+	 * @param linestyle is Java2D line width, cap and join style, dash pattern.
+	 */
+	public void setLinestyleAttribute(BasicStroke linestyle)
+	{
+		if (mOutputType == POSTSCRIPT)
+		{
+			/*
 			 * Convert BasicStroke end cap and line join values to PostScript.
 			 */
-			cap = linestyle.getEndCap();
+			int cap = linestyle.getEndCap();
 			if (cap == BasicStroke.CAP_BUTT)
 				cap = 0;
 			else if (cap == BasicStroke.CAP_ROUND)
@@ -565,7 +791,7 @@ public class OutputFormat
 			else /* SQUARE */
 				cap = 2;
 
-			join = linestyle.getLineJoin();
+			int join = linestyle.getLineJoin();
 			if (join == BasicStroke.JOIN_MITER)
 				join = 0;
 			else if (join == BasicStroke.JOIN_ROUND)
@@ -602,89 +828,21 @@ public class OutputFormat
 				 */
 				writePostScriptLine("[] 0 setdash");
 			}
-
-			/*
-			 * Set colour.
-			 */
-			float c[] = color.getRGBColorComponents(null);
-			writePostScriptLine(mColorFormat.format(c[0]) + " " +
-				mColorFormat.format(c[1]) + " " +
-				mColorFormat.format(c[2]) + " rgb");
-				
-			/*
-			 * Set font for labelling.  Define dictionary entries for justification
-			 * settings for PostScript procedure to use for aligning text correctly
-			 * itself.
-			 */
-			if (fontStyle == Font.BOLD)
-				styleName = "Bold";
-			else if (fontStyle == Font.ITALIC)
-				styleName = "Italic";
-			else if (fontStyle == (Font.BOLD | Font.ITALIC))
-				styleName = "BoldItalic";
-			else
-				styleName = "";
-
-			String psFontName = "/" + fontName + styleName;
-			writePostScriptLine(psFontName + " " +
-				mLinearFormat.format(fontSize) + " " +
-				mRotationFormat.format(fontRotation) + " " +
-				mJustificationShiftX + " " + mJustificationShiftY + " font");
-			mFontResources.add(psFontName);
 		}
 		else
 		{
-			/*
-			 * Continually opening and deriving fonts is probably expensive.
-			 * Check that new font is actually different to current font
-			 * before defining it.
-			 */
-			Font currentFont = mGraphics2D.getFont();
-			int newSize = (int)Math.round(fontSize);
-			if (newSize != currentFont.getSize() ||
-				(!fontName.equals(currentFont.getFontName())) ||
-				fontStyle != currentFont.getStyle() ||
-				fontRotation != mFontRotation)
-			{
-				/*
-				 * We need a base font that is not rotated for calculating
-				 * string widths for justifying text.
-				 * Get base font from cache, or create it if we don't find it there.
-				 */
-				mBaseFont = mFontCache.get(fontName, fontStyle, newSize, 0);
-				if (mBaseFont == null)
-				{
-					mBaseFont = new Font(fontName, fontStyle, newSize);
-					mFontCache.put(fontName, fontStyle, newSize, 0, mBaseFont);
-				}
-				
-				/*
-				 * The real font used for labelling must be mirrored in Y axis
-				 * (to reverse the transform we use on Graphics2D objects) and
-				 * rotated to the angle the user wants.
-				 * 
-				 * Look it up in cache too.
-				 */
-				Font font = mFontCache.get(fontName, fontStyle, -newSize, fontRotation);
-				if (font == null)
-				{
-					AffineTransform fontTransform;
-					fontTransform = AffineTransform.getRotateInstance(fontRotation);
-					fontTransform.scale(1, -1);
-					font = mBaseFont.deriveFont(fontTransform);
-					mFontCache.put(fontName, fontStyle, -newSize, fontRotation, font);
-				}
-
-				mGraphics2D.setFont(font);
-			}
-
-			/*
-			 * Set color, linestyle and clip path for graphics context.
-			 */
-			mGraphics2D.setColor(color);
 			mGraphics2D.setStroke(linestyle);
-			
+		}
+	}
 
+	/**
+	 * Set clip path for output format.
+	 * @param clipPaths are polygons to clip against, or null if there are no clip polygons.
+	 */
+	public void setClipAttribute(ArrayList clipPaths)
+	{
+		if (mOutputType != POSTSCRIPT)
+		{
 			mGraphics2D.setClip(null);
 			if (clipPaths != null)
 			{
@@ -695,12 +853,6 @@ public class OutputFormat
 				}
 			}
 		}
-
-		/*
-		 * Font rotation not easily held in a Graphics2D object so keep
-		 * track of it's current value ourselves.
-		 */
-		mFontRotation = fontRotation;
 	}
 
 	/*
