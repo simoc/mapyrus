@@ -223,6 +223,11 @@ public class ColorDatabase
 			mColors.put("gray" + i, grey);
 		}
 
+		mColors.put("pastelblue", new Color(161, 178, 227));
+		mColors.put("pastelpink", new Color(216, 161, 227));
+		mColors.put("pastelgreen", new Color(161, 227, 186));
+		mColors.put("pastelbrown", new Color(227, 213, 161));
+
 		/*
 		 * If user gave name of color file as property then use that.
 		 */
