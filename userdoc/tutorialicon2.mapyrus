@@ -1,7 +1,14 @@
 begin singleIcon
   move 0, 0
   color "firebrick"
-  icon "0xf0 90 90 f0 00 00 00 00", 6
+  icon "11111000
+        10011000
+        10011000
+        11111000
+        11111000
+        00000000
+        00000000
+        00000000", 6
 end
 
 # Fill polygon with tiled icon image pattern.
