@@ -112,17 +112,17 @@ public class ContextStack
 			/*
 			 * Finish off current context, remove it from stack.
 			 */
-			boolean attributesSet = getCurrentContext().closeContext();
+			int attributesSet = getCurrentContext().closeContext();
 			mStack.removeLast();
 			i--;
-			
+
 			/*
 			 * If graphics attributes were set in context then set them changed
 			 * in the context that is now current so they are set again
 			 * here before being used.
 			 */
-			if (i > 0 && attributesSet)
-				getCurrentContext().setAttributesChanged();
+			if (i > 0 && attributesSet != 0)
+				getCurrentContext().setAttributesChanged(attributesSet);
 		}
 		return(i);
 	}
