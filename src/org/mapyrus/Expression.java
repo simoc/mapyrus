@@ -3,7 +3,6 @@
  */
 package au.id.chenery.mapyrus;
 
-import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -49,22 +48,21 @@ public class Expression
 	private static final String mLineSeparator = System.getProperty("line.separator");
 
 	/*
-	 * Static table of frequently used regular expressions.  They
-	 * are thread-safe so can be reused by everyone and this saves
-	 * the effort of compiling them again and again.
+	 * Static table of frequently used regular expressions.
 	 */
-	private static Hashtable mRegexHashtable = new Hashtable();
-	
+	private static LRUCache mRegexCache = new LRUCache(MAX_COMPILED_REGEX);
+
 	/**
 	 * Compile a regular expression string into a Pattern that can be used for matching.
 	 * Patterns are cached to avoid recomputing them again and again.
+	 * Synchronized because LRUCache is not thread-safe.
 	 * @param regex is regular expression to compile.
 	 * @return compiled pattern
 	 */
-	private Pattern compileRegex(String regex) throws MapyrusException
+	private static synchronized Pattern compileRegex(String regex) throws MapyrusException
 	{
-		Pattern retval = (Pattern)(mRegexHashtable.get(regex));
-		
+		Pattern retval = (Pattern)(mRegexCache.get(regex));
+
 		if (retval == null)
 		{
 			try
@@ -77,11 +75,9 @@ public class Expression
 			}
 
 			/*
-			 * Cache newly compiled regular expression if we've not
-			 * already cached a large number of them.
+			 * Cache newly compiled regular expression.
 			 */
-			if (mRegexHashtable.size() < MAX_COMPILED_REGEX)
-				mRegexHashtable.put(regex, retval);
+			mRegexCache.put(regex, retval);
 		}
 		return(retval);
 	}
