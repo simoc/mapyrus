@@ -3,7 +3,7 @@
 \section{Tutorial and Cookbook}
 
 The folllowing examples demonstrate how to use Mapyrus.  Each example is also
-included as a file in the \texttt{doc} subdirectory.  All example files
+included as a file in the \texttt{userdoc} subdirectory.  All example files
 have file suffix \texttt{.mapyrus}.  This suffix is not required but makes
 identification of files that are to be interpreted by Mapyrus easier.
 
@@ -634,7 +634,7 @@ following example creates two PostScript files using the internal variable
 \texttt{Mapyrus.worlds.scale} to add a scale bar to the lower-left corner
 of each map display.
 
-The included file \texttt{scalebar.mapyrus} (available in the \texttt{doc}
+The included file \texttt{scalebar.mapyrus} (available in the \texttt{userdoc}
 subdirectory) defines a procedure named \texttt{scalebar}.  This procedure
 performs the task of displaying the scalebar.  Include this file and call the
 \texttt{scalebar} procedure whenever a scalebar is required for a map display.
@@ -662,7 +662,7 @@ following example demonstrates this using fixed data values
 In a real application this information is read from a
 database or GIS dataset.
 
-The included file \texttt{piechart.mapyrus} (available in the \texttt{doc}
+The included file \texttt{piechart.mapyrus} (available in the \texttt{userdoc}
 subdirectory) defines a procedure named \texttt{piechart}.  This procedure
 performs the task of displaying a piechart.  Include this file and call the
 \texttt{piechart} procedure whenever piecharts are to be displayed.
@@ -899,7 +899,8 @@ Enter the following lines into a text file named
 
 \verbatiminput{tutorialhttpserver1.mapyrus}
 
-Copy the file \texttt{coastline.shp} from the \texttt{doc} subdirectory in the
+Copy the file \texttt{coastline.shp} from the \texttt{userdoc}
+subdirectory in the
 Mapyrus installation into the same directory as the file
 \texttt{tutorialhttpserver1.mapyrus}.  In a terminal window, change to the
 directory containing the two files and start Mapyrus as an HTTP server on port
@@ -930,7 +931,8 @@ Enter the following lines into a text file named
 
 \verbatiminput{tutorialhttpserver1.mapyrus}
 
-Copy the file \texttt{coastline.shp} from the \texttt{doc} subdirectory in the
+Copy the file \texttt{coastline.shp} from the \texttt{userdoc}
+subdirectory in the
 Mapyrus installation into the same directory as the file
 \texttt{tutorialhttpserver1.mapyrus}.  In a terminal window, change to the
 directory containing the two files and start Mapyrus as an HTTP server on port
@@ -981,7 +983,7 @@ and text file
 \texttt{aust\_temperatures.dat}
 and using an HTML form to allow
 the user to change the map display.
-These three files are stored in the \texttt{doc} subdirectory
+These three files are stored in the \texttt{userdoc} subdirectory
 in a Mapyrus installation.
 In a terminal window change to this directory and
 start Mapyrus with the HTTP Server option, as described in section
@@ -1003,7 +1005,7 @@ replaced by real values using the
 function.  The Mapyrus commands in the file \texttt{tutorialhtmlpage2.mapyrus}
 and the template HTML file \texttt{tutorialhtmlpage2.txt}
 demonstrate this.  Both files are found in the
-\texttt{doc} subdirectory.
+\texttt{userdoc} subdirectory.
 
 \subsection{Returning Additional Information From Mapyrus HTTP Server}
 
@@ -1116,7 +1118,7 @@ ant -v
 \end{verbatim}
 
 The build process also generates the PDF manual and manual examples in the
-\texttt{doc} subdirectory from source files using \LaTeX.
+\texttt{userdoc} subdirectory from source files using \LaTeX.
 
 All source code is in Java and contains javadoc style comments.  To view and
 edit the source code, use a Java development environment such as Eclipse and
