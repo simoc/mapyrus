@@ -66,6 +66,7 @@ public class MapyrusMessages
 	public static final String INVALID_DISTANCE = "invaliddistance";
 	public static final String INVALID_ELLIPSE = "invalidellipse";
 	public static final String INVALID_END_CAP = "invalidendcap";
+	public static final String INVALID_EPS = "invalideps";
 	public static final String INVALID_EVAL = "invalideval";
 	public static final String INVALID_EXPRESSION = "invalidexpression";
 	public static final String INVALID_FIELD_NAME = "invalidfieldname";

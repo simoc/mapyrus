@@ -75,20 +75,21 @@ public class Statement
 	public static final int LABEL = 41;
 	public static final int FLOWLABEL = 42;
 	public static final int ICON = 43;
-	public static final int SCALE = 44;
-	public static final int ROTATE = 45;
-	public static final int WORLDS = 46;
-	public static final int PROJECT = 47;
-	public static final int DATASET = 48;
-	public static final int FETCH = 49;
-	public static final int NEWPAGE = 50;
-	public static final int PRINT = 51;
-	public static final int LOCAL = 52;
-	public static final int LET = 53;
-	public static final int EVAL = 54;
-	public static final int KEY = 55;
-	public static final int LEGEND = 56;
-	public static final int MIMETYPE = 57;
+	public static final int EPS = 44;
+	public static final int SCALE = 45;
+	public static final int ROTATE = 46;
+	public static final int WORLDS = 47;
+	public static final int PROJECT = 48;
+	public static final int DATASET = 49;
+	public static final int FETCH = 50;
+	public static final int NEWPAGE = 51;
+	public static final int PRINT = 52;
+	public static final int LOCAL = 53;
+	public static final int LET = 54;
+	public static final int EVAL = 55;
+	public static final int KEY = 56;
+	public static final int LEGEND = 57;
+	public static final int MIMETYPE = 58;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -175,6 +176,7 @@ public class Statement
 		mStatementTypeLookup.put("label", new Integer(LABEL));
 		mStatementTypeLookup.put("flowlabel", new Integer(FLOWLABEL));
 		mStatementTypeLookup.put("icon", new Integer(ICON));
+		mStatementTypeLookup.put("eps", new Integer(EPS));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));

@@ -1252,7 +1252,28 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ICON));
 				}
 				break;
-							
+
+			case Statement.EPS:
+				if (nExpressions == 1 || nExpressions == 2)
+				{
+					double size;
+					if (nExpressions == 2)
+					{
+						size = mExecuteArgs[1].getNumericValue();
+					}
+					else
+					{
+						size = 0;
+					}
+
+					context.drawEPS(mExecuteArgs[0].getStringValue(), size);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_EPS));
+				}
+				break;
+		
 			case Statement.SCALE:
 				if (nExpressions == 1)
 				{
