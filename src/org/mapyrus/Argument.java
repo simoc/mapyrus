@@ -25,19 +25,22 @@ package au.id.chenery.mapyrus;
 
 import java.awt.geom.PathIterator;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
- * An argument is a literal value or variable name.
+ * An argument is a literal value, array of literal values, or a variable name.
  * Each field read from a dataset is an argument.
  * Several arguments can be combined with operators to make an expression
- * For example, '2 * a + 7' contains three arguments.
+ * For example, '2 * a + 7' and 'prefix["DE"] . "11823"' both contain three arguments.
  */
 public class Argument
 {
 	public static final int NUMERIC = 0;
 	public static final int STRING = 1;
-	public static final int VARIABLE = 2;
-	public static final int GEOMETRY = 3;
+	public static final int HASHMAP = 2;
+	public static final int VARIABLE = 3;
+	public static final int GEOMETRY = 4;
 
 	public static final int GEOMETRY_POINT = 1000;
 	public static final int GEOMETRY_LINESTRING = 1001;
@@ -75,7 +78,8 @@ public class Argument
 	private String mStringValue;
 	private String mVarname;
 	private double []mGeometryValue;
-	
+	private HashMap mHashMap;
+
 	/**
 	 * Create a new numeric argument.
 	 * @param d is value for this argument.
@@ -85,11 +89,12 @@ public class Argument
 		mType = NUMERIC;
 		mNumericValue = d;
 	}
-	
+
 	/**
-	 * Create a new string argument or variable name.
+	 * Create a new string argument, or variable name.
 	 * @param type is STRING to create a string argument, or VARIABLE to create
 	 * a reference to a variable.
+	 * @param s is string, or variable name.
 	 */
 	public Argument(int type, String s)
 	{
@@ -99,11 +104,21 @@ public class Argument
 			mStringValue = s;
 		else
 			mVarname = s;
-			
+
 		/*
 		 * We don't know the numeric value of this argument.
 		 */
 		mNumericValue = Double.NaN;
+	}
+
+	/**
+	 * Create new, empty hashmap argument.
+	 * Use addHashMapEntry() method to add values to the hash map.
+	 */
+	public Argument()
+	{
+		mType = HASHMAP;
+		mHashMap = new HashMap();	
 	}
 
 	/**
@@ -137,7 +152,7 @@ public class Argument
 	 */	
 	public int getType()
 	{
-		if (mType == NUMERIC || mType == STRING || mType == VARIABLE)
+		if (mType == NUMERIC || mType == STRING || mType == VARIABLE || mType == HASHMAP)
 			return(mType);
 		else
 			return(GEOMETRY);
@@ -169,9 +184,13 @@ public class Argument
 				}
 			}
 		}
+		else if (mType == HASHMAP)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.HASHMAP_NOT_NUMERIC));
+		}
 		else if (mType != NUMERIC)
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_NUMERIC_VALUE));
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.GEOMETRY_NOT_NUMERIC));
 		}
 		return(mNumericValue);
 	}
@@ -204,6 +223,30 @@ public class Argument
 	}
 	
 	/**
+	 * Returns value of one entry in a hashmap.
+	 * @param key is key to lookup.
+	 * @return value associated with this key, or empty string argument
+	 * if this key is not in hashmap.
+	 */	
+	public Argument getHashMapEntry(String key)
+	{
+		Argument retval = (Argument)mHashMap.get(key);
+		if (retval == null)
+			retval = emptyString;
+		return(retval);
+	}
+	
+	/**
+	 * Add new key-value pair to a hash map.
+	 * @param key key to add to hash map.
+	 * @param value value to add for this key.
+	 */
+	public void addHashMapEntry(String key, Argument value)
+	{
+		mHashMap.put(key, value);
+	}
+
+	/**
 	 * Return string representation of this argument.
 	 * @return string representation of argument value.
 	 */
@@ -230,7 +273,28 @@ public class Argument
 			else
 				format = new DecimalFormat("#.################");
 
+// TODO hold value in mStringValue after conversion to string.
 			retval = format.format(mNumericValue);
+		}
+		else if (mType == HASHMAP)
+		{
+			/*
+			 * Build string of all key, value pairs in the hash map.
+			 */
+			s = new StringBuffer();
+			Iterator it = mHashMap.keySet().iterator();
+			while (it.hasNext())
+			{
+				if (s.length() > 0)
+					s.append(' ');
+
+				String key = (String)it.next();
+				s.append(key);
+				s.append(' ');
+				Argument value = (Argument)mHashMap.get(key);
+				s.append(value.getStringValue());
+			}
+			retval = s.toString();
 		}
 		else if (mGeometryValue[0] == 0)
 		{
