@@ -1219,6 +1219,29 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
+\subsubsection{eps}
+
+\begin{alltt}
+eps \textit{filename}, [, \textit{size}]
+\end{alltt}
+
+Displays an Encapsulated PostScript file at each \texttt{move} point in
+the current path.  The file is centered at each point.
+
+Encapsulated PostScript files can only be displayed when creating
+PostScript or Encapsulated PostScript output.  For other formats,
+a grey box is drawn showing where the Encapsulated PostScript file
+would be drawn.
+
+\textit{filename} is the name of an Encapsulated PostScript file.
+
+\textit{size} is the optional size for the Encapsulated PostScript
+in millimeters.  If no size
+is given or size is zero then the file is displayed at its natural size,
+as defined in the Encapsulated PostScript file.
+The file is scaled and rotated according to the current \texttt{scale}
+and \texttt{rotate} settings.
+
 \subsubsection{eval}
 
 \begin{alltt}
