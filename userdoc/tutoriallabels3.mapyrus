@@ -25,20 +25,20 @@ label h1
 font "Palatino-Roman", 6
 clearpath
 color "red"
-move 40, 10
+move 40, 4
 label h1
 color "blue"
 shiftpath stringwidth(h1), 0
 font "Palatino-Italic", 8
 label h2
 
-# Draw black label with pink outline to highlight it.
+# Draw yellow label with red outline to highlight it.
 #
 clearpath
-move 40, 23
-color "pink"
-font "Helvetica", 8, "outlinewidth=2"
+move 35, 16
+color "red"
+font "Helvetica", 12, "outlinewidth=2"
 label h1
-color "black"
-font "Helvetica", 8
+color "yellow"
+font "Helvetica", 12
 label h1
