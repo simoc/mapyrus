@@ -149,9 +149,7 @@ public class Context
 	 * Dataset currently being read from, the next row to provide to caller
 	 * and the number of rows already fetched from it.
 	 */
-	private GeographicDataset mDataset;
-	private Row mDatasetRow;
-	private int mDatasetRowCount;
+	private Dataset mDataset;
 
 	/**
 	 * Create a new context with reasonable default values.
@@ -181,8 +179,6 @@ public class Context
 		mAttributesChanged = true;
 		mAttributesSet = false;
 		mDataset = null;
-		mDatasetRow = null;
-		mDatasetRowCount = 0;
 	}
 
 	/**
@@ -206,9 +202,7 @@ public class Context
 		mYScaling = existing.mYScaling;
 		mScalingMagnitude = existing.mScalingMagnitude;
 		mRotation = existing.mRotation;
-		mDataset = null;
-		mDatasetRow = null;
-		mDatasetRowCount = 0;
+		mDataset = existing.mDataset;
 
 		/*
 		 * Only create variable lookup tables when some values are
@@ -392,7 +386,7 @@ public class Context
 		if (mOutputFormat != null && !mOutputDefined)
 		{
 			/*
-			 * If state could be restored then no need for caller set
+			 * If state could be restored then no need for caller to set
 			 * graphical attributes back to their old values again.
 			 */
 			restoredState = mOutputFormat.restoreState();
@@ -410,6 +404,7 @@ public class Context
 		mClippingPaths = null;
 		mVars = null;
 		mLocalVars = null;
+		mDataset = null;
 		return(mAttributesSet);
 	}
 					
@@ -599,9 +594,7 @@ public class Context
 	 */
 	public void setDataset(GeographicDataset dataset) throws MapyrusException
 	{
-		mDataset = dataset;
-		mDatasetRow = null;
-		mDatasetRowCount = 0;
+		mDataset = new Dataset(dataset);
 	}
 
 	/**
@@ -761,10 +754,10 @@ public class Context
 	}
 						
 	/**
-	 * Get current dataset being used for queries.
-	 * @return current dataset, or null if none is set.
+	 * Get dataset currently being queried.
+	 * @return dataset being queried, or null if not dataset is being queried.
 	 */
-	public GeographicDataset getDataset() throws MapyrusException
+	public Dataset getDataset()
 	{
 		return(mDataset);
 	}
@@ -1226,61 +1219,6 @@ public class Context
 		return(bounds);
 	}
 
-	/**
-	 * Returns true if dataset being read has another row available.
-	 * @return true if another row available.
-	 */
-	public boolean datasetHasMoreRows() throws MapyrusException
-	{
-		return(mDataset != null && mDatasetRow != null);
-	}
-	
-	/**
-	 * Return next row from dataset.
-	 * @return field values for next row.
-	 */
-	public Row fetchDatasetRow() throws MapyrusException
-	{
-		if (mDataset == null)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
-
-		if (mDatasetRow == null)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ROWS));
-
-		/*
-		 * Return row we've already fetched.
-		 */		
-		Row retval = mDatasetRow;
-		mDatasetRow = mDataset.fetch();
-		mDatasetRowCount++;
-		return(retval);
-	}
-	
-	/**
-	 * Begin query on current dataset.  Geometry inside the current world extents
-	 * is fetched. 
-	 */
-	public void queryDataset() throws MapyrusException
-	{
-		if (mDataset == null)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
-		mDataset.query(getUnprojectedExtents(), 1.0);
-
-		/*
-		 * Fetch first row so we know if there are any more records available.
-		 */
-		mDatasetRow = mDataset.fetch();
-	}
-
-	/**
-	 * Return the number of rows already fetched from dataset for current query.
-	 * @return count of rows fetched.
-	 */
-	public int getDatasetQueryCount()
-	{
-		return(mDatasetRowCount);
-	}
-		
 	/**
 	 * Returns value of a variable.
 	 * @param variable name to lookup.

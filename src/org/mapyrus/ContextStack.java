@@ -267,7 +267,10 @@ public class ContextStack
 	 */
 	public void queryDataset() throws MapyrusException
 	{
-		getCurrentContext().queryDataset();
+		Dataset dataset = getCurrentContext().getDataset();
+		if (dataset == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
+		dataset.query(getCurrentContext().getUnprojectedExtents(), 1.0);
 	}
 
 	/**
@@ -418,16 +421,10 @@ public class ContextStack
 	 */
 	public Row fetchRow() throws MapyrusException
 	{
-		return(getCurrentContext().fetchDatasetRow());
-	}
-
-	/**
-	 * Return indexes of fields in a row in current dataset that contain geometry.
-	 * @return indexes of geometry fields.
-	 */
-	public int []getDatasetGeometryFieldIndexes() throws MapyrusException
-	{
-		return(getCurrentContext().getDataset().getGeometryFieldIndexes());
+		Dataset dataset = getCurrentContext().getDataset();
+		if (dataset == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
+		return(dataset.fetchRow());
 	}
 
 	/**
@@ -436,7 +433,11 @@ public class ContextStack
 	 */
 	public String []getDatasetFieldNames() throws MapyrusException
 	{
-		return(getCurrentContext().getDataset().getFieldNames());
+		Dataset dataset = getCurrentContext().getDataset();
+		if (dataset == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
+		String []retval = dataset.getFieldNames();
+		return(retval);
 	}
 
 	/**
@@ -531,14 +532,19 @@ public class ContextStack
 			}
 			else if (sub.equals("import.moreRows"))
 			{
-				if (getCurrentContext().datasetHasMoreRows())
+				Dataset dataset = getCurrentContext().getDataset();
+				if (dataset != null && dataset.hasMoreRows())
 					retval = Argument.numericOne;
 				else
 					retval = Argument.numericZero;
 			}
 			else if (sub.equals("import.count"))
 			{
-				retval = new Argument(getCurrentContext().getDatasetQueryCount());
+				Dataset dataset = getCurrentContext().getDataset();
+				if (dataset == null)
+					retval = Argument.numericZero;
+				else
+					retval = new Argument(dataset.getFetchCount());
 			}
 			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
 			{
@@ -578,96 +584,149 @@ public class ContextStack
 			}
 			else if (sub.startsWith(DATASET_VARIABLE + "."))
 			{
-				GeographicDataset dataset = getCurrentContext().getDataset();
+				Dataset dataset = getCurrentContext().getDataset();
 				if (dataset == null)
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
-
-				sub = sub.substring(DATASET_VARIABLE.length() + 1);
-				if (sub.equals("projection"))
-					retval = new Argument(Argument.STRING, dataset.getProjection());
-				else if (sub.equals("fieldnames"))
 				{
-					String []fieldNames = dataset.getFieldNames();
-					StringBuffer s = new StringBuffer();
-					
-					for (i = 0; i < fieldNames.length; i++)
-					{
-						if (i > 0)
-							s.append(" ");
-						s.append(fieldNames[i]);
-					}
-					retval = new Argument(Argument.STRING, s.toString());
+					/*
+					 * None of these variables are meaningful if there is
+					 * no dataset defined.
+					 */
+					retval = Argument.emptyString;
 				}
 				else
 				{
-					retval = getBoundingBoxVariable(sub, dataset.getWorlds());
+					sub = sub.substring(DATASET_VARIABLE.length() + 1);
+					if (sub.equals("projection"))
+					{
+						String projection = dataset.getProjection();
+						if (projection == null)
+							retval = Argument.emptyString;
+						else
+							retval = new Argument(Argument.STRING, projection);
+					}
+					else if (sub.equals("fieldnames"))
+					{
+						String []fieldNames = dataset.getFieldNames();
+
+						if (fieldNames == null)
+						{
+							/*
+							 * No fieldnames defined for this dataset.
+							 */
+							retval = Argument.emptyString;
+						}
+						else
+						{
+							StringBuffer s = new StringBuffer();
+							
+							for (i = 0; i < fieldNames.length; i++)
+							{
+								if (i > 0)
+									s.append(" ");
+								s.append(fieldNames[i]);
+							}
+							retval = new Argument(Argument.STRING, s.toString());
+						}
+					}
+					else
+					{
+						Rectangle2D.Double worlds;
+						worlds = dataset.getWorlds();
+						retval = getBoundingBoxVariable(sub, worlds);
+					}
 				}
 			}
 		}
 		else
 		{
-			/*
-			 * Search back through stack for a context defining
-			 * this variable.
-			 */
-			i = mStack.size() - 1;
-			Context context;
-			
-			while (i >= 0 && retval == null)
+			Context context = (Context)(mStack.getLast());
+			if (mStack.size() > 1 && context.hasLocalScope(varName))
 			{
-				context = (Context)mStack.get(i);
-				i--;
+				/*
+				 * Lookup local variable in current context.
+				 */
 				retval = context.getVariableValue(varName);
 			}
-			
-			String property = null;
-			try
+			else	
 			{
-				if (retval == null)
+				/*
+				 * Variable not defined in current context, is
+				 * it set as a global in the first context instead?
+				 */
+				context = (Context)(mStack.getFirst());
+				retval = context.getVariableValue(varName);
+			
+				String property = null;
+				try
 				{
-					/*
-					 * Variable not defined by user.  Is it set
-					 * as a system property?
-					 */
-					property = System.getProperty(varName);
-					if (property != null)
+					if (retval == null)
 					{
 						/*
-						 * Try to convert it to a number.
+						 * Variable not defined by user.  Is it set
+						 * as a system property?
 						 */
-						d = Double.parseDouble(property);
-						retval = new Argument(d);
+						property = System.getProperty(varName);
+						if (property != null)
+						{
+							/*
+							 * Try to convert it to a number.
+							 */
+							d = Double.parseDouble(property);
+							retval = new Argument(d);
+						}
 					}
 				}
-			}
-			catch (SecurityException e)
-			{
-				/*
-				 * We cannot access variable as a property so
-				 * consider it to be undefined.
-				 */
-			}
-			catch (NumberFormatException e)
-			{
-				/*
-				 * System property was found but it is a
-				 * string, not a number.
-				 */
-				retval = new Argument(Argument.STRING, property);
+				catch (SecurityException e)
+				{
+					/*
+					 * We cannot access variable as a property so
+					 * consider it to be undefined.
+					 */
+				}
+				catch (NumberFormatException e)
+				{
+					/*
+					 * System property was found but it is a
+					 * string, not a number.
+					 */
+					retval = new Argument(Argument.STRING, property);
+				}
 			}
 		}
 		return(retval);
 	}
 
 	/**
-	 * Define a variable in current context, replacing any existing
-	 * variable of the same name.
+	 * Indicates that a variable in the current context is to have local scope,
+	 * defined in current context only and not accessible by any other context.
+	 * @param varName name of variable to be treated as global
+	 */
+	public void setLocalScope(String varName) throws MapyrusException
+	{
+		getCurrentContext().setLocalScope(varName);
+	}
+	
+	/**
+	 * Define a variable in context,
+	 * replacing any existing variable of the same name.
 	 * @param varName name of variable to define.
 	 * @param value is value for this variable
 	 */
 	public void defineVariable(String varName, Argument value)
 	{
-		getCurrentContext().defineVariable(varName, value);
+		Context currentContext = getCurrentContext();
+		Context c;
+
+		/*
+		 * Define variable in first (global) context
+		 * unless defined local.
+		 */
+		if (currentContext.hasLocalScope(varName))
+			c = currentContext;
+		else
+			c = (Context)(mStack.getFirst());
+
+		c.defineVariable(varName, value);
 	}
 
 	/**
