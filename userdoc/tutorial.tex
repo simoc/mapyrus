@@ -1025,8 +1025,14 @@ String []commands1 =
   "stroke"
 };
 Mapyrus m1 = new Mapyrus();
-m1.interpret(commands1, System.out);
-m1.close();
+try
+{
+  m1.interpret(commands1, System.out);
+}
+finally
+{
+  m1.close();
+}
 
 String []commands2 =
 {
@@ -1043,8 +1049,15 @@ String []commands2 =
 };
 BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 Mapyrus m2 = new Mapyrus();
-m2.setPage(bi, "");
-m2.interpret(commands2, System.out);
+try
+{
+  m2.setPage(bi, "");
+  m2.interpret(commands2, System.out);
+}
+finally
+{
+  m2.close();
+}
 // Copy buffered image to screen.
 g.drawImage(bi, 0, 0, null);
 \end{verbatim}
