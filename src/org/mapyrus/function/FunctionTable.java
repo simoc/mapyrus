@@ -56,6 +56,9 @@ public class FunctionTable
 		f = new Length();
 		mFunctions.put(f.getName(), f);
 
+		f = new Listfiles();
+		mFunctions.put(f.getName(), f);
+
 		f = new Lower();
 		mFunctions.put(f.getName(), f);
 
