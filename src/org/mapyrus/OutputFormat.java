@@ -1539,9 +1539,11 @@ public class OutputFormat
 		PathIterator pi = shape.getPathIterator(null);
 		float coords[] = new float[6];
 		float lastX = 0.0f, lastY = 0.0f;
+		float x = 0.0f, y = 0.0f;
 		float distSquared;
 		float resolutionSquared = (float)(mResolution * mResolution);
 		int segmentType;
+		boolean skippedLastSegment = false;
 
 		while (!pi.isDone())
 		{
@@ -1552,25 +1554,36 @@ public class OutputFormat
 					lastX = coords[0];
 					lastY = coords[1];
 					writePostScriptLine(lastX + " " + lastY + " m");
+					skippedLastSegment = false;
 					break;
 
 				case PathIterator.SEG_LINETO:
-					distSquared = (lastX - coords[0]) * (lastX - coords[0]) + (lastY - coords[1]) * (lastY - coords[1]);
+					x = coords[0];
+					y = coords[1];
+					distSquared = (lastX - x) * (lastX - x) + (lastY - y) * (lastY - y);
 					if (distSquared >= resolutionSquared)
+					{
+						lastX = x;
+						lastY = y;
+						writePostScriptLine(lastX + " " + lastY + " l");
+						skippedLastSegment = false;
+					}
+					else
 					{
 						/*
 						 * Skip segments that are less than one unit of resolution in length.
 						 */
-						lastX = coords[0];
-						lastY = coords[1];
-						writePostScriptLine(lastX + " " + lastY + " l");
+						skippedLastSegment = true;
 					}
 					break;
-				
+
 				case PathIterator.SEG_CLOSE:
+					if (skippedLastSegment)
+						writePostScriptLine(x + " " + y + " l");
 					writePostScriptLine("closepath");
+					skippedLastSegment = false;
 					break;
-					
+
 				case PathIterator.SEG_CUBICTO:
 					writePostScriptLine(coords[0] + " " +
 						coords[1] + " " +
@@ -1581,9 +1594,19 @@ public class OutputFormat
 						"curveto");
 					lastX = coords[4];
 					lastY = coords[5];
+					skippedLastSegment = false;
 					break;
 			}
 			pi.next();			
+		}
+
+		if (skippedLastSegment)
+		{
+			/*
+			 * Always include last point in lines and polygons,
+			 * never skip it.
+			 */
+			writePostScriptLine(x + " " + y + " l");
 		}
 	}
 
