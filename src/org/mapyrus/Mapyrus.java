@@ -45,7 +45,7 @@ public class Mapyrus
 		{
 			
 			"Usage:",
-			"java [-Dvar=val] ... -jar " + Constants.PROGRAM_NAME.toLowerCase() + ".jar [-httpserver port] filename ...",
+			"java [-Dvariable=value] ... -jar " + Constants.PROGRAM_NAME.toLowerCase() + ".jar [-httpserver port] filename ...",
 			"",
 			Constants.PROGRAM_NAME + " reads each file or URL in turn.",
 			"If filename is '-' then standard input is read.",
