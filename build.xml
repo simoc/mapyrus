@@ -166,7 +166,7 @@ Mapyrus is released under the GNU Lesser General Public License (LGPL).
 <delete>
 <fileset dir="." includes="${ant.project.name}.jar, manifest, README"/>
 <fileset dir="." includes="${ant.project.name}*.zip"/>
-<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.out,${ant.project.name}.pdf"/>
+<fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out,${ant.project.name}.pdf"/>
 </delete>
 </target>
 
