@@ -836,11 +836,6 @@ public class Interpreter
 			case Statement.ADDPATH:
 				for (int i = 0; i < nExpressions; i++)
 				{
-					if (mExecuteArgs[i].getType() != Argument.GEOMETRY)
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY));
-				}
-				for (int i = 0; i < nExpressions; i++)
-				{
 					double coords[] = mExecuteArgs[i].getGeometryValue();
 					addGeometryToPath(context, coords, 0);
 				}
