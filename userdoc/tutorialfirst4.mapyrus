@@ -1,23 +1,23 @@
-# Set page size to 50x50 screen pixels and set scale
+# Set page size to 100x50 screen pixels and set scale
 # so we can work with pixel coordinate values too.
 #
 newpage "eps", "tutorialfirst4.eps", \
-  50 * Mapyrus.screen.resolution.mm, \
+  100 * Mapyrus.screen.resolution.mm, \
   50 * Mapyrus.screen.resolution.mm
 scale Mapyrus.screen.resolution.mm
 
 clearpath
-color "Forest Green"
-linestyle 2
-circle 25, 25, 22
-stroke
-
-clearpath
 color "Firebrick"
-hexagon 25, 25, 15
+hexagon 25, 25, 22
 fill
 
 clearpath
 color "orange"
-triangle 25, 25, 8, 0
+triangle 25, 25, 15, 0
 fill
+
+clearpath
+color "Forest Green"
+circle 75, 25, 22
+star 75, 25, 22, 5
+stroke
