@@ -103,45 +103,51 @@ public class Expression
 	private static final int CEIL_FUNCTION = 7;	/* ceil(9.7) = 10 */
 	private static final String CEIL_FUNCTION_NAME = "ceil";
 
-	private static final int SIN_FUNCTION = 8;	/* sin(90) = 1 */
+	private static final int MIN_FUNCTION = 8;	/* min(1, 3) = 1 */
+	private static final String MIN_FUNCTION_NAME = "min";
+
+	private static final int MAX_FUNCTION = 9;	/* max(1, 3) = 3 */
+	private static final String MAX_FUNCTION_NAME = "max";
+
+	private static final int SIN_FUNCTION = 10;	/* sin(90) = 1 */
 	private static final String SIN_FUNCTION_NAME = "sin";
 
-	private static final int COS_FUNCTION = 9;	/* cos(0) = 1 */
+	private static final int COS_FUNCTION = 11;	/* cos(0) = 1 */
 	private static final String COS_FUNCTION_NAME = "cos";
 
-	private static final int TAN_FUNCTION = 10;	/* tan(45) = 1 */
+	private static final int TAN_FUNCTION = 12;	/* tan(45) = 1 */
 	private static final String TAN_FUNCTION_NAME = "tan";
 	
-	private static final int LENGTH_FUNCTION = 11;	/* length("foo") = 3 */
+	private static final int LENGTH_FUNCTION = 13;	/* length("foo") = 3 */
 	private static final String LENGTH_FUNCTION_NAME = "length";
 	
-	private static final int MATCH_FUNCTION = 12;	/* match('foobar', 'ob') = 3 */
+	private static final int MATCH_FUNCTION = 14;	/* match('foobar', 'ob') = 3 */
 	private static final String MATCH_FUNCTION_NAME = "match";
 	
-	private static final int REPLACE_FUNCTION = 13;	/* replace('foobar', 'o*', '_') =  'f_bar' */
+	private static final int REPLACE_FUNCTION = 15;	/* replace('foobar', 'o*', '_') =  'f_bar' */
 	private static final String REPLACE_FUNCTION_NAME = "replace";
 	
-	private static final int TEMPNAME_FUNCTION = 14;	/* tempname('.jpg') =  'tmpABC123.jpg' */
+	private static final int TEMPNAME_FUNCTION = 16;	/* tempname('.jpg') =  'tmpABC123.jpg' */
 	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
 
-	private static final int SPLIT_FUNCTION = 15;	/* split("foo:bar", ":") = [1] -> "foo", [2]->"bar" */
+	private static final int SPLIT_FUNCTION = 17;	/* split("foo:bar", ":") = [1] -> "foo", [2]->"bar" */
 	private static final String SPLIT_FUNCTION_NAME = "split";
 	
-	private static final int SUBSTR_FUNCTION = 16;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final int SUBSTR_FUNCTION = 18;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
 	/*
 	 * Constant for calculating base 10 logarithms.
 	 */
 	private static final double LOG_OF_10 = Math.log(10.0);
-	
+
 	/*
 	 * Lookup tables of functions and the number of
 	 * arguments that they each take.
 	 */
 	private static final HashMap mFunctionTypeLookup;
 	private static final byte[] mFunctionArgumentCount;
-	
+
 	static
 	{
 		mFunctionTypeLookup = new HashMap();
@@ -152,6 +158,8 @@ public class Expression
 		mFunctionTypeLookup.put(SQRT_FUNCTION_NAME, new Integer(SQRT_FUNCTION));
 		mFunctionTypeLookup.put(FLOOR_FUNCTION_NAME, new Integer(FLOOR_FUNCTION));
 		mFunctionTypeLookup.put(CEIL_FUNCTION_NAME, new Integer(CEIL_FUNCTION));
+		mFunctionTypeLookup.put(MIN_FUNCTION_NAME, new Integer(MIN_FUNCTION));
+		mFunctionTypeLookup.put(MAX_FUNCTION_NAME, new Integer(MAX_FUNCTION));
 		mFunctionTypeLookup.put(SIN_FUNCTION_NAME, new Integer(SIN_FUNCTION));
 		mFunctionTypeLookup.put(COS_FUNCTION_NAME, new Integer(COS_FUNCTION));
 		mFunctionTypeLookup.put(TAN_FUNCTION_NAME, new Integer(TAN_FUNCTION));
@@ -170,6 +178,8 @@ public class Expression
 		mFunctionArgumentCount[SQRT_FUNCTION] = 1;
 		mFunctionArgumentCount[FLOOR_FUNCTION] = 1;
 		mFunctionArgumentCount[CEIL_FUNCTION] = 1;
+		mFunctionArgumentCount[MIN_FUNCTION] = 2;
+		mFunctionArgumentCount[MAX_FUNCTION] = 2;
 		mFunctionArgumentCount[SIN_FUNCTION] = 1;
 		mFunctionArgumentCount[COS_FUNCTION] = 1;
 		mFunctionArgumentCount[TAN_FUNCTION] = 1;
@@ -370,19 +380,32 @@ public class Expression
 				}
 				retval = new Argument(d);
 			}
-			else if (mFunction == POW_FUNCTION)
+			else if (mFunction == POW_FUNCTION ||
+				mFunction == MIN_FUNCTION ||
+				mFunction == MAX_FUNCTION)
 			{
 				leftValue = traverse(mLeftBranch, context, interpreterFilename);
 				l = leftValue.getNumericValue();
 				rightValue = traverse(mRightBranch, context, interpreterFilename);
 				r = rightValue.getNumericValue();
 
-				d = Math.pow(l, r);
-				if (Double.isNaN(d) || Double.isInfinite(d))
+				if (mFunction == POW_FUNCTION)
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));	
+					d = Math.pow(l, r);
+					if (Double.isNaN(d) || Double.isInfinite(d))
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));	
+					}
+					retval = new Argument(d);
 				}
-				retval = new Argument(d);
+				else if (mFunction == MIN_FUNCTION)
+				{
+					retval = (l < r) ? leftValue : rightValue;
+				}
+				else /* MAX_FUNCTION */
+				{
+					retval = (l > r) ? leftValue : rightValue;
+				}
 			}
 			else if (mFunction == LENGTH_FUNCTION)
 			{
