@@ -57,6 +57,16 @@ Mapyrus runs as an HTTP Server when started with the
   org.mapyrus.Mapyrus -s \textit{port} \textit{filename} \dots}
 \end{alltt}
 
+\label{morememory}
+Use the
+\texttt{-Xmx} Java option
+to make more memory available when running Mapyrus.
+To increase available memory to 256Mb, use the following command:
+
+\begin{alltt}
+\texttt{java -Xmx256m -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
+\end{alltt}
+
 \subsubsection{Startup Configuration}
 
 The variables available for configuring Mapyrus at startup are
@@ -962,8 +972,12 @@ underlying colors.  An alpha value of 0 is completely transparent and the color
 is not visible.  Intermediate values are partially transparent and the color is
 blended with colors of underlying shapes on the page.
 
-Colors are opaque if an alpha value is not given.  Transparency is not
-available for PostScript output and all colors are opaque.
+Colors are opaque if an alpha value is not given.
+
+PostScript is a language for defining the layout of shapes on a page.
+The PostScript language does not contain any functions for setting
+transparency.
+All colors in a PostScript file will be opaque.
 
 The spelling \texttt{colour} is also accepted for this command.
 
@@ -1303,7 +1317,12 @@ and \texttt{rotate} settings.
 
 In PostScript files, icons with more than one color
 are displayed with an opaque white background.  This is a limitation
-of PostScript.
+of PostScript output.
+
+Icon images are loaded into memory.
+Loading very large images will use a large amount of memory.
+Page \pageref{morememory} describes how to make more memory available
+for Mapyrus.
 
 \subsubsection{justify}
 
