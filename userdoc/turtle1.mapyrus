@@ -1,6 +1,6 @@
 # @(#) $Id$
 begin sunray
-	colour "yellow"
+	color "yellow"
 	move 0, 3
 	draw 3, 0, 0, -3, 0, 3
 	fill
@@ -9,7 +9,7 @@ begin sun
 	# Draw orange circle for sun
 	move -8, 0
 	arc 1, 0, 0, -8, 0
-	colour "rgb", 1, 0.6, 0
+	color "rgb", 1, 0.6, 0
 	fill
 	# Draw 8 rays pointing out from perimeter of circle
 	i = 0
@@ -46,8 +46,8 @@ begin fernbranch length
 	endif
 end
 begin fern
-	colour "rgb", 0, 0.7, 0
-	linewidth 0.1
+	color "rgb", 0, 0.7, 0
+	linestyle 0.1
 	# Draw stem, then call recursive procedure to draw all branches
 	move 0, 0
 	draw 0, 4
@@ -56,9 +56,67 @@ begin fern
 	move 0, 4
 	fernbranch 6
 end
+
+begin diamond
+	move 0, -2
+	draw -4, 0, 0, 2, 4, 0, 0, -2
+	fill
+end
+begin shield_interior
+	color "white"
+	fill
+	clip
+	# fill shield with diamond pattern.
+	stripepath 4, -45
+	samplepath 8, 0
+	color "rgb", 0.2, 0.9, 0.9
+	diamond
+end
+begin shield
+	# Define outline of shield, shade interior pattern, then draw outline.
+	move -10, 5
+	draw 10, 5, 10, -10
+	arc 1, 0, -10, -10, -10
+	draw -10, 5
+	shield_interior
+	color "black"
+	linestyle 0.1
+	stroke
+end
+
+begin scissors
+	color "black"
+	linestyle 0.1
+	move 1, 0
+	arc 1, 1, 1, 1, 0
+	arc 1, 1, -1, 1, 0
+	stroke
+	clearpath
+	move 0, 1
+	draw -3, -1
+	move 0, -1
+	draw -3, 1
+	stroke
+end
+begin cuthere
+	color "rgb", 0.9, 0.9, 0.9
+	linestyle 1, "butt", "bevel", 3, 1, 1
+	stroke
+	samplepath 10, 5
+	scissors
+end
+
 newpage "png", "doc/turtle.png", 160, 30, 96
-move 30, 15
+move 20, 15
 sun
 clearpath
-move 80, 4
+move 60, 4
 fern
+clearpath
+move 100, 22
+shield
+
+move 140, 5
+draw 150, 5, 150, 25, 160, 25
+cuthere
+
