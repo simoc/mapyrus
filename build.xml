@@ -1,0 +1,49 @@
+<!-- $Id$ -->
+<project name="mapyrus" default="dist" basedir=".">
+
+
+<!-- Name of class for preprocessing documentation -->
+<property name="preprocessor" value="au.id.chenery.mapyrus.Preprocessor"/>
+
+
+<target name="compile" description="Compile java source code">
+<javac srcdir="src" destdir="build/classes"/>
+</target>
+
+
+<target name="jar" depends="compile" description="Build jar file from classes">
+<jar jarfile="lib/${ant.project.name}.jar" basedir="build/classes"/>
+</target>
+
+<target name="jni" depends="compile" description="Build JNI shared libraries">
+</target>
+
+<target name="doc" depends="jar" description="Build documentation and examples">
+<!-- Use preprocessor inside Mapyrus which expands macros in -->
+<!-- documentation to generate final HTML files -->
+<delete>
+<fileset dir="doc" includes="**/*.html"/>
+</delete>
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes">
+<arg line="doc/mapyrus.doc doc/mapyrus.html"/>
+</java>
+<java classname="${preprocessor}" classpath="lib/${ant.project.name}.jar" fork="yes">
+<arg line="doc/intro.doc doc/intro.html"/>
+</java>
+</target>
+
+
+<target name="dist" depends="jar, doc, jni" description="Build package for distribution">
+</target>
+
+
+<target name="clean" description="Remove everything we have built">
+<delete dir="build/classes"/>
+<delete file="lib/${ant.project.name}.jar"/>
+<delete>
+<fileset dir="doc" includes="**/*.html"/>
+</delete>
+</target>
+
+</project>
+
