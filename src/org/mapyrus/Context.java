@@ -159,8 +159,8 @@ public class Context
 	 */		
 	public Context()
 	{
-		mColor = Color.GRAY;
-		mLinestyle = new BasicStroke();
+		mColor = Color.BLACK;
+		mLinestyle = new BasicStroke(0.1f);
 		mJustify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
 		mFontName = "SansSerif";
 		mFontStyle = Font.PLAIN;
