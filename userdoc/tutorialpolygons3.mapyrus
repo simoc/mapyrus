@@ -1,23 +1,20 @@
-begin plus
-  # Draws a plus symbol, like '+'.
+begin star6
+  # Draws a 6 pointed star.
   #
-  move 0, -0.78
-  draw 0, 0.78
-  move -0.78, 0
-  draw 0.78, 0
-  stroke
+  star 0, 0, 1.5, 6
+  fill
 end
-begin plusfill
-  color "#804040"
+begin starfill
+  color "navy blue"
   stroke
   clip "inside"
 
   # Replace path with sample points covering the whole polygon.
   #
-  stripepath 3, 0
-  samplepath 3, 0
-  color "#C0A0A0"
-  plus
+  stripepath 4, 0
+  samplepath 4, 0
+  color "goldenrod"
+  star6
 end
 
 newpage "eps", "tutorialpolygons3.eps", 60, 30
@@ -28,4 +25,4 @@ draw 45, 5
 arc -1, 45, 15, 45, 25
 draw 35, 25, 35, 10, 25, 10, 30, 25, 10, 25, 15, 10
 draw 5, 10, 5, 5
-plusfill
+starfill
