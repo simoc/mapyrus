@@ -135,25 +135,25 @@ class Preprocessor
 	 * Create new user input producer from a URL.
 	 * @param url is a URL to open and read from.
 	 */
-	public Preprocessor(URL url) throws IOException, GfException
-	{
-		LineNumberReader in;
-
-		if (!url.openConnection().getContentType().startsWith("text/plain"))
-		{
-			throw new GfException("URL " + url.toString() + " is not a text file");
-		}
-
-		InputStream urlStream = url.openStream();
-		in = new LineNumberReader(new InputStreamReader(urlStream));
-		FileInfo f = new FileInfo(in, url.toString(), url);
-		initFileStack(f);
-	}
+	//public Preprocessor(URL url) throws IOException, MapyrusException
+	//{
+	//	LineNumberReader in;
+//
+//		if (!url.openConnection().getContentType().startsWith("text/plain"))
+//		{
+//			throw new MapyrusException("URL " + url.toString() + " is not a text file");
+//		}
+//
+//		InputStream urlStream = url.openStream();
+//		in = new LineNumberReader(new InputStreamReader(urlStream));
+//		FileInfo f = new FileInfo(in, url.toString(), url);
+//		initFileStack(f);
+//	}
 
 	/*
 	 * Open new file to read from and push it on stack of files being read.
 	 */
-	private void openIncludedFile(String filename) throws FileNotFoundException, MalformedURLException, IOException, GfException
+	private void openIncludedFile(String filename) throws FileNotFoundException, MalformedURLException, IOException, MapyrusException
 	{
 		LineNumberReader in;
 		InputStream urlStream;
@@ -169,7 +169,7 @@ class Preprocessor
 			URL url = new URL(filename);
 			if (!url.openConnection().getContentType().startsWith("text/plain"))
 			{
-				throw new GfException("Not a plain text file");
+				throw new MapyrusException("Not a plain text file");
 			}
 
 			urlStream = url.openStream();
@@ -189,7 +189,7 @@ class Preprocessor
 				URL url = new URL(lastURL, filename);
 				if (!url.openConnection().getContentType().startsWith("text/plain"))
 				{
-					throw new GfException("Not a plain text file");
+					throw new MapyrusException("Not a plain text file");
 				}
 
 				urlStream = url.openStream();
@@ -213,7 +213,7 @@ class Preprocessor
 	 * Reads next character that is not a space.
 	 * @return next non-space character.
 	 */
-	public int readNonSpace() throws IOException, GfException
+	public int readNonSpace() throws IOException, MapyrusException
 	{
 		int c;
 
@@ -231,7 +231,7 @@ class Preprocessor
 	 * @return next character from wherever user input is coming from, or -1
 	 * if at EOF.
 	 */
-	public int read() throws IOException, GfException
+	public int read() throws IOException, MapyrusException
 	{
 		int c;
 		LineNumberReader in;
@@ -296,7 +296,7 @@ class Preprocessor
 					}
 					catch (Exception e)
 					{
-						throw new GfException("Cannot include " + filename + " from " + getCurrentFilenameAndLine() + ": " + e.getMessage());
+						throw new MapyrusException("Cannot include " + filename + " from " + getCurrentFilenameAndLine() + ": " + e.getMessage());
 					}
 
 					mCurrentLine = null;
@@ -304,7 +304,7 @@ class Preprocessor
 				}
 				else
 				{
-					throw new GfException("Missing include filename at " + getCurrentFilenameAndLine());
+					throw new MapyrusException("Missing include filename at " + getCurrentFilenameAndLine());
 				}
 			}
 		}
@@ -374,7 +374,7 @@ class Preprocessor
 		return(s);
 	}
 
-	public static void main(String []args) throws IOException, GfException
+	public static void main(String []args) throws IOException, MapyrusException
 	{
 		BufferedReader in;
 		int c;
