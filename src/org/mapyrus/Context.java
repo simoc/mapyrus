@@ -57,6 +57,7 @@ public class Context
 	private String mFontName;
 	private int mFontStyle;
 	private double mFontSize;
+	private double mFontRotation;
 
 	/*
 	 * Have graphical attributes been set in this context?
@@ -140,6 +141,7 @@ public class Context
 		mFontName = "SansSerif";
 		mFontStyle = Font.PLAIN;
 		mFontSize = 5;
+		mFontRotation = 0;
 	
 		mCtm = new AffineTransform();
 		mProjectionTransform = null;
@@ -170,6 +172,7 @@ public class Context
 		mFontName = existing.mFontName;
 		mFontStyle = existing.mFontStyle;
 		mFontSize = existing.mFontSize;
+		mFontRotation = existing.mFontRotation;
 
 		mCtm = new AffineTransform(existing.mCtm);
 		mProjectionTransform = null;
@@ -183,7 +186,8 @@ public class Context
 		mDatasetRowCount = 0;
 
 		/*
-		 * Only create variable lookup table when values defined locally.
+		 * Only create variable lookup table when some values are
+		 * defined locally.
 		 */
 		mVars = null;
 
@@ -299,7 +303,7 @@ public class Context
 				clip = null;
 				
 			mOutputFormat.setAttributes(mColor, mLinestyle, mJustify,
-				mFontName, mFontStyle, mFontSize, mRotation, clip);
+				mFontName, mFontStyle, mFontSize, mFontRotation, clip);
 			mAttributesChanged = false;
 		}
 	}
@@ -416,6 +420,7 @@ public class Context
 		mFontName = fontName;
 		mFontStyle = fontStyle;
 		mFontSize = fontSize * mScalingMagnitude;
+		mFontRotation = mRotation;
 		mAttributesChanged = mAttributesSet = true;
 	}
 
@@ -456,12 +461,13 @@ public class Context
 	
 	/**
 	 * Sets rotation for subsequent coordinates.
-	 * @param angle is rotation angle in radians, going anti-clockwise.
+	 * @param angle is rotation angle in radians, measured counter-clockwise.
 	 */
 	public void setRotation(double angle)
 	{
 		mCtm.rotate(angle);
 		mRotation += angle;
+		mRotation = Math.IEEEremainder(mRotation, Math.PI * 2);
 		mAttributesChanged = mAttributesSet = true;
 	}
 
@@ -568,8 +574,8 @@ public class Context
 	}
 
 	/**
-	 * Returns X scaling value in current transformation.
-	 * @return rotation.
+	 * Returns rotation angle in current transformation.
+	 * @return rotation in radians.
 	 */
 	public double getRotation()
 	{
