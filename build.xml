@@ -108,7 +108,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <pathelement path="${ant.project.name}.jar"/>
 <pathelement path="${jts.jar}"/>
 </classpath>
-<arg line="tutorialjts1.mapyrus tutorialjts2.mapyrus"/>
+<arg line="tutorialjts1.mapyrus tutorialjts2.mapyrus tutorialjts3.mapyrus"/>
 </java>
 
 <!-- Create PostScript file showing legend for all sample symbols -->
