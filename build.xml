@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <!-- Current software version, this value is updated -->
 <!-- manually for each new release. -->
-<property name="version" value="0.51"/>
+<property name="version" value="0.52"/>
 
 <!-- 'Java Topology Suite' JAR file required for building some Java classes -->
 <property name="jts.jar" value="jts-1.4.0.jar"/>
@@ -165,7 +165,7 @@ See file named userdoc/COPYING for details.
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
 <fileset dir="." includes="build/**, build.xml, userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, src/**, NEWS.txt, README.txt" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc"/>
-<fileset dir="userdoc" includes="flag.eps"/>
+<fileset dir="." includes="userdoc/flag.eps"/>
 </zip>
 </target>
 
