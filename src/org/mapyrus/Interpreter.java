@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
-import java.util.Vector;
-import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.awt.geom.PathIterator;
 
 /**
@@ -388,7 +387,7 @@ public class Interpreter
 						st.getFilenameAndLineNumber());
 				}
 				break;
-
+				
 			case Statement.IMPORT:
 				if (nExpressions >= 3)
 				{
@@ -398,7 +397,7 @@ public class Interpreter
 					for (int i = 0; i < nExpressions; i++)
 					{
 						if (args[i].getType() != Argument.STRING)
-							throw new MapyrusException("Invalid dataset at " +
+							throw new MapyrusException("Invalid dataset to import at " +
 								st.getFilenameAndLineNumber());
 					}
 
@@ -409,19 +408,17 @@ public class Interpreter
 					for (int i = 0; i < geometryFieldNames.length; i++)
 						geometryFieldNames[i] = args[i + 3].getStringValue();
 
-					/*
-					 * Open the dataset.
-					 */						
-					context.setDataset(args[0].getStringValue(), args[1].getStringValue(),
-						args[2].getStringValue(), geometryFieldNames);
+					context.setDataset(args[0].getStringValue(),
+						args[1].getStringValue(), args[2].getStringValue(),
+						geometryFieldNames);
 				}
 				else
 				{
-					throw new MapyrusException("Invalid dataset at " +
+					throw new MapyrusException("Invalid dataset to import at " +
 						st.getFilenameAndLineNumber());
 				}
 				break;
-
+	
 			case Statement.FETCH:
 				/*
 				 * Add next row from dataset to path.
@@ -433,7 +430,7 @@ public class Interpreter
 				double x = 0.0;
 				for (int i = 0; i < row.size(); i++)
 				{
-					Argument field = (Argument)row.elementAt(i);
+					Argument field = (Argument)row.get(i);
 					if (index < geometryFieldIndexes.length &&
 						i == geometryFieldIndexes[index])
 					{
@@ -625,7 +622,7 @@ public class Interpreter
 		throws MapyrusException, IOException
 	{
 		int state;
-		Vector expressions = new Vector();
+		ArrayList expressions = new ArrayList();
 		Expression expr;
 		Statement retval = null;
 		boolean isAssignmentStatement = false;
@@ -724,7 +721,7 @@ public class Interpreter
 					preprocessor.getCurrentFilenameAndLineNumber());
 			}
 
-			retval = new Statement(keyword, (Expression)expressions.elementAt(0));
+			retval = new Statement(keyword, (Expression)expressions.get(0));
 
 			retval.setFilenameAndLineNumber(preprocessor.getCurrentFilename(),
 					preprocessor.getCurrentLineNumber());
@@ -735,7 +732,7 @@ public class Interpreter
 
 			for (int i = 0; i < a.length; i++)
 			{
-				a[i] = (Expression)expressions.elementAt(i);
+				a[i] = (Expression)expressions.get(i);
 			}
 			retval = new Statement(keyword, a);
 
@@ -752,11 +749,11 @@ public class Interpreter
 	 * @param preprocessor is source to read from.
 	 * @return list of parameter names.
 	 */
-	private Vector parseParameters(Preprocessor preprocessor)
+	private ArrayList parseParameters(Preprocessor preprocessor)
 		throws IOException, MapyrusException
 	{
 		int c;
-		Vector parameters = new Vector();
+		ArrayList parameters = new ArrayList();
 		int state;
 
 		/*
@@ -809,8 +806,8 @@ public class Interpreter
 		throws IOException, MapyrusException
 	{
 		String blockName;
-		Vector parameters;
-		Vector procedureStatements = new Vector();
+		ArrayList parameters;
+		ArrayList procedureStatements = new ArrayList();
 		ParsedStatement st;
 		Statement retval;
 		boolean parsedEndKeyword = false;
@@ -889,7 +886,7 @@ public class Interpreter
 	{
 		ParsedStatement st;
 		Expression test;
-		Vector loopStatements = new Vector();
+		ArrayList loopStatements = new ArrayList();
 		Statement statement;
 		
 		test = new Expression(preprocessor);
@@ -966,8 +963,8 @@ public class Interpreter
 	{
 		ParsedStatement st;
 		Expression test;
-		Vector thenStatements = new Vector();
-		Vector elseStatements = new Vector();
+		ArrayList thenStatements = new ArrayList();
+		ArrayList elseStatements = new ArrayList();
 		Statement statement;
 		boolean checkForEndif = true;	/* do we need to check for "endif" keyword at end of statement? */
 
@@ -1117,7 +1114,7 @@ public class Interpreter
 		int c;
 		ParsedStatement retval = null;
 		Statement statement;
-		Vector procedureStatements = null;
+		ArrayList procedureStatements = null;
 		int state;
 		boolean finishedStatement = false;
 
@@ -1236,23 +1233,23 @@ public class Interpreter
 		}
 	}
 
-	private void makeCall(Statement block, Vector parameters, Argument []args)
+	private void makeCall(Statement block, ArrayList parameters, Argument []args)
 		throws IOException, MapyrusException
 	{
 		Statement statement;
 
 		for (int i = 0; i < args.length; i++)
 		{
-			mContext.defineVariable((String)parameters.elementAt(i), args[i]);
+			mContext.defineVariable((String)parameters.get(i), args[i]);
 		}
 
 		/*
 		 * Execute each of the statements in the procedure block.
 		 */
-		Vector v = block.getStatementBlock();
+		ArrayList v = block.getStatementBlock();
 		for (int i = 0; i < v.size(); i++)
 		{
-			statement = (Statement)v.elementAt(i);
+			statement = (Statement)v.get(i);
 			executeStatement(statement);
 		}
 	}
@@ -1281,7 +1278,7 @@ public class Interpreter
 			 */
 			Expression []expr = statement.getExpressions();
 			Argument test = expr[0].evaluate(mContext);
-			Vector v;
+			ArrayList v;
 			
 			if (test.getType() != Argument.NUMERIC)
 			{
@@ -1301,7 +1298,7 @@ public class Interpreter
 				 */	
 				for (int i = 0; i < v.size(); i++)
 				{
-					statement = (Statement)v.elementAt(i);
+					statement = (Statement)v.get(i);
 					executeStatement(statement);
 				}
 			}
@@ -1313,7 +1310,7 @@ public class Interpreter
 			 */
 			Expression []expr = statement.getExpressions();
 			
-			Vector v = statement.getLoopStatements();
+			ArrayList v = statement.getLoopStatements();
 			Argument test = expr[0].evaluate(mContext);
 			
 			if (test.getType() != Argument.NUMERIC)
@@ -1332,7 +1329,7 @@ public class Interpreter
 				 */	
 				for (int i = 0; i < v.size(); i++)
 				{
-					statement = (Statement)v.elementAt(i);
+					statement = (Statement)v.get(i);
 					executeStatement(statement);
 				}
 				
@@ -1361,7 +1358,7 @@ public class Interpreter
 			/*
 			 * Check that correct number of parameters are being passed.
 			 */
-			Vector formalParameters = block.getBlockParameters();
+			ArrayList formalParameters = block.getBlockParameters();
 			Expression []actualParameters = statement.getExpressions();
 			if (actualParameters.length != formalParameters.size())
 			{
@@ -1402,12 +1399,12 @@ public class Interpreter
 				 * point and then calling procedure block.
 				 */
 				float coords[];
-				Vector moveTos = mContext.getMoveTos();
+				ArrayList moveTos = mContext.getMoveTos();
 				
 				for (int i = 0; i < moveToCount; i++)
 				{
 					mContext.saveState();
-					coords = (float [])moveTos.elementAt(i);
+					coords = (float [])moveTos.get(i);
 					mContext.setTranslation(coords[0], coords[1]);
 					mContext.setRotation(coords[2]);
 					makeCall(block, formalParameters, args);
