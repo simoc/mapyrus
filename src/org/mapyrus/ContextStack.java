@@ -646,25 +646,12 @@ public class ContextStack
 					else if (sub.equals("fieldnames"))
 					{
 						String []fieldNames = dataset.getFieldNames();
+						retval = new Argument();
 
-						if (fieldNames == null)
+						for (i = 0; i < fieldNames.length; i++)
 						{
-							/*
-							 * No fieldnames defined for this dataset.
-							 */
-							retval = Argument.emptyString;
-						}
-						else
-						{
-							StringBuffer s = new StringBuffer();
-							
-							for (i = 0; i < fieldNames.length; i++)
-							{
-								if (i > 0)
-									s.append(" ");
-								s.append(fieldNames[i]);
-							}
-							retval = new Argument(Argument.STRING, s.toString());
+							retval.addHashMapEntry(String.valueOf(i + 1),
+								new Argument(Argument.STRING, fieldNames[i]));
 						}
 					}
 					else
