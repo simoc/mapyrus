@@ -41,7 +41,8 @@ to be be defined.  For example,
 </li>
 <li>
 Reading and displaying of geographic information
-systems (GIS) datasets, text files, or tables held in a relational database.
+systems (GIS) datasets, text files, or tables held in a relational database
+(including spatial databases such as PostGIS and Oracle Spatial).
 Drawing routines are applied to geographic data to produce annotated and
 symbolized maps and graphs.  Attributes of the geographic data control
 the color, size, annotation and other characteristics of the
@@ -92,7 +93,7 @@ Inventory Levels at Warehouses
 <li>
 Mapyrus runs as a stand-alone program suitable for integration into
 scripts and batch tasks,
-or as a self-contained HTTP server providing HTML pages, map and
+or as a self-contained web server providing HTML pages, map and
 graph images and text reports to a web-based application.
 </li>
 </ol>
@@ -105,8 +106,7 @@ Please note that:
 <li>
 Mapyrus is written in Java so as to be operating system independent
 and take advantage of Java multi-threading, security,
-Java2D and JDBC capabilities.  The disadvantages of using Java are
-slower startup time and higher memory usage than other languages.
+Java2D and JDBC capabilities.
 </li>
 
 <li>
