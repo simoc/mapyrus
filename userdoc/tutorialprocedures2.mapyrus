@@ -10,7 +10,7 @@ begin waypoint
   fill
 end
 
-newpage "eps", "tutorialprocedures2.eps", 60, 30, 96
+newpage "eps", "tutorialprocedures2.eps", 60, 30
 clearpath
 move 7, 5
 move 16, 22

@@ -32,7 +32,7 @@ end
 
 # Display points showing pollution levels in different colors.
 #
-newpage "eps", "tutorialattribute1.eps", 60, 30, 96
+newpage "eps", "tutorialattribute1.eps", 60, 30
 
 clearpath
 move 10, 10
@@ -55,7 +55,7 @@ pollution 95
 
 # Draw legend for pollution readings in a separate PostScript file.
 #
-newpage "eps", "tutorialattribute1legend.eps", 40, 50, 300
+newpage "eps", "tutorialattribute1legend.eps", 40, 50
 clearpath
 color "black"
 move 5, 5, 5, 10, 5, 15, 5, 20, 5,25, 5, 30, 5, 35, 5, 40, 5, 45

@@ -121,7 +121,7 @@ begin scalebar scale, units
   label unitLabel
 end
 
-newpage "eps", "tutorialscalebar1.eps", 60, 60, 96
+newpage "eps", "tutorialscalebar1.eps", 60, 60
 
 # Display entire Australian continent.
 #
@@ -147,7 +147,7 @@ scalebar Mapyrus.worlds.scale, "m"
 
 # Begin a new page.
 #
-newpage "eps", "tutorialscalebar2.eps", 60, 60, 96
+newpage "eps", "tutorialscalebar2.eps", 60, 60
 
 # Display only northern part of Northern Territory.
 #

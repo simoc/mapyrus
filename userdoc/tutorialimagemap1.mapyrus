@@ -1,7 +1,7 @@
 # Setup for generating a temporary 300x300 pixel image
 #
 let tmpPNGFile = tempname("png")
-newpage "png", tmpPNGFile, 100, 100, 96
+newpage "png", tmpPNGFile, 100, 100
 let imageSizeInPixels = Mapyrus.page.width / Mapyrus.page.resolution.mm
 
 # The first time this URL is accessed the area to view is not given.

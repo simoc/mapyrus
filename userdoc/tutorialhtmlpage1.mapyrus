@@ -18,7 +18,7 @@ endif
 # Create temporary PNG file containing map display for this HTTP request.
 #
 let imageFile = tempname("PNG")
-newpage "png", imageFile, 100, 100, 96
+newpage "png", imageFile, 100, 100
 
 # Display part of dataset, zooming in on centre based on zoom level.
 #

@@ -20,7 +20,7 @@ begin plusfill
   plus
 end
 
-newpage "eps", "tutorialpolygons3.eps", 60, 30, 300
+newpage "eps", "tutorialpolygons3.eps", 60, 30
 
 clearpath
 move 5, 5

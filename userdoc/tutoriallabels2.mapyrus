@@ -39,7 +39,7 @@ begin spinning_top
   done
 end
 
-newpage "eps", "tutoriallabels2.eps", 60, 30, 300
+newpage "eps", "tutoriallabels2.eps", 60, 30
 color "red"
 clearpath
 move 15, 15

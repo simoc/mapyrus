@@ -29,7 +29,7 @@ begin labelQuarters pathLen
   quarterLabel
 end
 
-newpage "eps", "tutoriallines5.eps", 60, 30, 300
+newpage "eps", "tutoriallines5.eps", 60, 30
 clearpath
 move 5, 5
 draw 45, 5

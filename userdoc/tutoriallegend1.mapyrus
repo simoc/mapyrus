@@ -41,7 +41,7 @@ begin church
   stroke
 end
 
-newpage "eps", "tutoriallegend1.eps", 50, 30, 300
+newpage "eps", "tutoriallegend1.eps", 50, 30
 
 clearpath
 move 5, 5
@@ -62,9 +62,9 @@ move 40, 16
 church
 
 # Draw legend for map in a separate PostScript file, giving plenty
-# of move points for legend entries.
+# of move points for the legend entries.
 #
-newpage "eps", "tutoriallegend1legend.eps", 40, 40, 300
+newpage "eps", "tutoriallegend1legend.eps", 40, 40
 clearpath
 color "black"
 move 5, 5, 5, 12, 5, 19, 5, 26, 5, 33

@@ -16,7 +16,7 @@ begin highway name
   label name
 end
 
-newpage "eps", "tutoriallines3.eps", 60, 30, 96
+newpage "eps", "tutoriallines3.eps", 60, 30
 clearpath
 move 5, 5
 draw 45, 5

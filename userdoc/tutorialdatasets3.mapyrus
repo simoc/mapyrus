@@ -27,7 +27,7 @@ end
 
 # Display the ESRI Shape file hotel.shp in a PNG file.
 #
-newpage "eps", "tutorialdatasets3.eps", 65, 50, 96
+newpage "eps", "tutorialdatasets3.eps", 65, 50
 dataset "shapefile", "hotel.shp", ""
 # Expand bounding box to the right so labels don't run off edge of page.
 #

@@ -27,7 +27,7 @@ end
 # Display the geographic data in text file tutorialdatasets1.txt
 # in an Encapsulated PostScript file.
 #
-newpage "eps", "tutorialdatasets1.eps", 85, 85, 96
+newpage "eps", "tutorialdatasets1.eps", 85, 85
 
 # Draw black outline around edge of image.
 #

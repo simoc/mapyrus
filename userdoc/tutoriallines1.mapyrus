@@ -7,7 +7,7 @@ begin arrow
   fill
 end
 
-newpage "eps", "tutoriallines1.eps", 60, 30, 300
+newpage "eps", "tutoriallines1.eps", 60, 30
 color "orange"
 clearpath
 move 5, 5

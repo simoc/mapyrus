@@ -75,7 +75,7 @@ begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
   done
 end
 
-newpage "eps", "tutorialpiechart1.eps", 90, 40, 300
+newpage "eps", "tutorialpiechart1.eps", 90, 40
 
 # Set fixed colors and labels for all pies.
 #

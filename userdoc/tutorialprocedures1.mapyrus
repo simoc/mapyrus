@@ -19,7 +19,7 @@ begin trail grade
   stroke
 end
 
-newpage "eps", "tutorialprocedures1.eps", 60, 30, 96
+newpage "eps", "tutorialprocedures1.eps", 60, 30
 
 # Draw trails of differing grades.  In a real application this
 # data would be read from a Geographic Information System (GIS).

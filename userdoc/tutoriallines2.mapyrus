@@ -1,4 +1,4 @@
-newpage "eps", "tutoriallines2.eps", 60, 30, 96
+newpage "eps", "tutoriallines2.eps", 60, 30
 
 # Demonstrate combination of solid and dashed linestyles.
 #

@@ -1,4 +1,4 @@
-newpage "eps", "tutorialvar1.eps", 50, 50, 96
+newpage "eps", "tutorialvar1.eps", 50, 50
 color "green"
 let c1 = 1
 while c1 < Mapyrus.page.width

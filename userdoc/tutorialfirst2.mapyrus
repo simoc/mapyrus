@@ -1,6 +1,6 @@
 # Another simple example.
 #
-newpage "eps", "tutorialfirst2.eps", 30, 30, 96
+newpage "eps", "tutorialfirst2.eps", 30, 30
 color "#bb0000"	        # dark red
 box 5, 5, 25, 25
 fill

@@ -1,7 +1,7 @@
 # This file is tutorialprocedures4.mpy
 include tutorialprocedures3.mpy
 
-newpage "eps", "tutorialprocedures4.eps", 60, 30, 96
+newpage "eps", "tutorialprocedures4.eps", 60, 30
 clearpath
 move 7, 5
 move 16, 22

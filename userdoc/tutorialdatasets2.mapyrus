@@ -15,7 +15,7 @@ end
 
 # Draw the GenaMap export file streets.EE into a PNG file.
 #
-newpage "eps", "tutorialdatasets2.eps", 60, 60, 300
+newpage "eps", "tutorialdatasets2.eps", 60, 60
 dataset "textfile", "streets.EE", ""
 worlds 324846, 1257086, 325300, 1257476
 import

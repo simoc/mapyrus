@@ -20,7 +20,7 @@ begin tree
   done
 end
 
-newpage "eps", "tutorialrand1.eps", 40, 40, 300
+newpage "eps", "tutorialrand1.eps", 40, 40
 move 8, 8
 move 24, 10
 move 7, 31

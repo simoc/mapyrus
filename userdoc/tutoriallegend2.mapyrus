@@ -52,7 +52,7 @@ begin church name, ruined
   stroke
 end
 
-newpage "eps", "tutoriallegend2.eps", 50, 30, 96
+newpage "eps", "tutoriallegend2.eps", 50, 30
 clearpath
 move 5, 5
 monument
@@ -74,7 +74,7 @@ while Mapyrus.key.count > 0
 do
   let counter = counter + 1
   let f = "tutoriallegend2legend" . counter . ".eps"
-  newpage "eps", f, 50, 8, 96
+  newpage "eps", f, 50, 8
   clearpath
   move 1, 1
   color "black"

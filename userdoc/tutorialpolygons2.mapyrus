@@ -16,7 +16,7 @@ begin crosshatch
   hatchMinus45
 end
 
-newpage "eps", "tutorialpolygons2.eps", 60, 30, 300
+newpage "eps", "tutorialpolygons2.eps", 60, 30
 clearpath
 move 5, 5
 draw 45, 5, 45, 25, 30, 25, 30, 20, 35, 20, 35, 10

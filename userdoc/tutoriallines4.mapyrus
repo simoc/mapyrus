@@ -19,7 +19,7 @@ begin arrowend
   samplepath -99999, 0
   arrowhead 180
 end
-newpage "eps", "tutoriallines4.eps", 60, 30, 96
+newpage "eps", "tutoriallines4.eps", 60, 30
 clearpath
 move 5, 5
 draw 45, 5
@@ -28,7 +28,7 @@ draw 55, 25
 linestyle 0.1
 color '#a020f0'
 stroke
-# Demonstrate drawing a line with an arrow at either end like <---->
+# Demonstrate drawing a line with arrows at both ends like <---->
 #
 arrowstart
 arrowend

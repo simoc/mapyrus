@@ -1,5 +1,5 @@
 # @(#) $Id$
-newpage "eps", "mapview1.eps", 80, 80, 300
+newpage "eps", "mapview1.eps", 80, 80
 clearpath
 
 # Import coastline of Australia.

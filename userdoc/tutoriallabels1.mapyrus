@@ -1,4 +1,4 @@
-newpage "eps", "tutoriallabels1.eps", 125, 30, 96, \
+newpage "eps", "tutoriallabels1.eps", 125, 30, \
   "isolatinfonts=Times-Roman"
 
 # Draw a label containing o with umlaut and degree symbol.

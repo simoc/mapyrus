@@ -33,7 +33,7 @@ begin fern
   fernbranch 6
 end
 #
-newpage "eps", "turtle2.eps", 30, 30, 300
+newpage "eps", "turtle2.eps", 30, 30
 clearpath
 move 15, 4
 fern

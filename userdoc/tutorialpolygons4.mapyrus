@@ -15,7 +15,7 @@ end
 
 # Display adjacent polygons, each with a thick interior border.
 #
-newpage "eps", "tutorialpolygons4.eps", 65, 55, 96
+newpage "eps", "tutorialpolygons4.eps", 65, 55
 clearpath
 move 10, 10
 draw 7, 31, 34, 47, 30, 25, 42, 10, 10, 10

@@ -15,7 +15,7 @@ begin cobblestone
   stroke
 end
 
-newpage "eps", "tutorialrand2.eps", 40, 40, 300
+newpage "eps", "tutorialrand2.eps", 40, 40
 clearpath
 move 4, 8
 draw 36, 8, 36, 32, 12, 32, 12, 24, 4, 24

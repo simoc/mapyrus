@@ -7,7 +7,7 @@ end
 
 # Display the geographic data held in RDBMS table in a PNG file.
 #
-newpage "png", "tutorialdatasets4.png", 60, 60, 96
+newpage "png", "tutorialdatasets4.png", 60, 60
 
 let x1 = 151.03, y1 = -31.25, x2 = 151.04, y2 = -31.24
 

@@ -27,7 +27,7 @@ begin fillx
   randomx
 end
 
-newpage "eps", "tutorialrand3.eps", 40, 40, 300
+newpage "eps", "tutorialrand3.eps", 40, 40
 clearpath
 move 5, 5
 draw 7, 32, 31, 29, 27, 8, 5, 5

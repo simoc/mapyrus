@@ -1,7 +1,7 @@
 # Display the geographic data held in a PostGIS database
 # in a PostScript file.
 #
-newpage "eps", "tutorialdatasets5.eps", 85, 85, 96
+newpage "eps", "tutorialdatasets5.eps", 85, 85
 
 let x1 = 191232, y1 = 243117, x2 = 191234, y2 = 243119
 
