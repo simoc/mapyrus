@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -407,7 +408,10 @@ public class HTTPRequest extends Thread
 
 				try
 				{
-					mInterpreter.interpret(context, f, printStream);
+					byte []emptyBuffer = new byte[0];
+					ByteArrayInputStream emptyStdin = new ByteArrayInputStream(emptyBuffer);
+					mInterpreter.interpret(context, f, emptyStdin,
+						printStream);
 					interpreterMimeType = context.getMimeType();
 					context.closeContextStack();
 					context = null;
