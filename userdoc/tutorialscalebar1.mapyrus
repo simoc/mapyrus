@@ -125,7 +125,7 @@ end
 
 newpage "png", "tutorialscalebar1.png", 60, 60, 96
 
-# Display Australian continent.
+# Display entire Australian continent.
 #
 dataset "shapefile", "coastline.shp", ""
 worlds -3000000, 5500000, 2600000, 8500000
@@ -144,5 +144,31 @@ do
 done
 
 # Add a scalebar.
+#
+scalebar Mapyrus.worlds.scale, "m"
+
+# Begin a new page.
+#
+newpage "png", "tutorialscalebar2.png", 60, 60, 96
+
+# Display only northern part of Northern Territory.
+#
+dataset "shapefile", "coastline.shp", ""
+worlds -1300000, 7700000, 300000, 8900000
+
+import
+while Mapyrus.import.moreRecords
+do
+	fetch
+	clearpath
+	addpath GEOMETRY
+	color '#669900'
+	fill
+	color '#333333'
+	linestyle 0.1
+	stroke
+done
+
+# Add a scalebar to this map display too.
 #
 scalebar Mapyrus.worlds.scale, "m"
