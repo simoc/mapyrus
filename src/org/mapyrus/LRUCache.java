@@ -37,13 +37,17 @@ public class LRUCache extends LinkedHashMap
 	 * The maximum number of elements to hold in the cache.
 	 */
 	private int mMaximumSize;
-	
+
 	/**
 	 * Create a new least recently used (LRU) cache.
 	 * @param size is maximum number of objects to hold in cache.
 	 */
 	public LRUCache(int size)
 	{
+		/*
+		 * Create cache with initial capacity no greater than 16 elements.
+		 * It can grow larger if necessary.
+		 */
 		super(Math.min(16, size), 0.75f, true);
 		mMaximumSize = size;
 	}
