@@ -92,15 +92,19 @@ public class Expression
 	private static final String POW_FUNCTION_NAME = "pow";
 	private static final int SQRT_FUNCTION = 5;	/* sqrt(9) = 3 */
 	private static final String SQRT_FUNCTION_NAME = "sqrt";
-	private static final int LENGTH_FUNCTION = 6;	/* length("foo") = 3 */
+	private static final int FLOOR_FUNCTION = 6;	/* floor(9.7) = 9 */
+	private static final String FLOOR_FUNCTION_NAME = "floor";
+	private static final int CEIL_FUNCTION = 7;	/* ceil(9.7) = 10 */
+	private static final String CEIL_FUNCTION_NAME = "ceil";
+	private static final int LENGTH_FUNCTION = 8;	/* length("foo") = 3 */
 	private static final String LENGTH_FUNCTION_NAME = "length";
-	private static final int MATCH_FUNCTION = 7;	/* match('foobar', 'ob') = 3 */
+	private static final int MATCH_FUNCTION = 9;	/* match('foobar', 'ob') = 3 */
 	private static final String MATCH_FUNCTION_NAME = "match";
-	private static final int REPLACE_FUNCTION = 8;	/* replace('foobar', 'o*', '_') =  'f_bar' */
+	private static final int REPLACE_FUNCTION = 10;	/* replace('foobar', 'o*', '_') =  'f_bar' */
 	private static final String REPLACE_FUNCTION_NAME = "replace";
-	private static final int TEMPNAME_FUNCTION = 9;	/* tempname('.jpg') =  'tmpABC123.jpg' */
+	private static final int TEMPNAME_FUNCTION = 11;	/* tempname('.jpg') =  'tmpABC123.jpg' */
 	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
-	private static final int SUBSTR_FUNCTION = 10;	/* substr('foobar', 2, 3) = 'oob' */
+	private static final int SUBSTR_FUNCTION = 12;	/* substr('foobar', 2, 3) = 'oob' */
 	private static final String SUBSTR_FUNCTION_NAME = "substr";
 
 	/*
@@ -123,6 +127,8 @@ public class Expression
 		mFunctionTypeLookup.put(LOG10_FUNCTION_NAME, new Integer(LOG10_FUNCTION));
 		mFunctionTypeLookup.put(POW_FUNCTION_NAME, new Integer(POW_FUNCTION));
 		mFunctionTypeLookup.put(SQRT_FUNCTION_NAME, new Integer(SQRT_FUNCTION));
+		mFunctionTypeLookup.put(FLOOR_FUNCTION_NAME, new Integer(FLOOR_FUNCTION));
+		mFunctionTypeLookup.put(CEIL_FUNCTION_NAME, new Integer(CEIL_FUNCTION));
 		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
 		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
 		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
@@ -135,6 +141,8 @@ public class Expression
 		mFunctionArgumentCount[LOG10_FUNCTION] = 1;
 		mFunctionArgumentCount[POW_FUNCTION] = 2;
 		mFunctionArgumentCount[SQRT_FUNCTION] = 1;
+		mFunctionArgumentCount[FLOOR_FUNCTION] = 1;
+		mFunctionArgumentCount[CEIL_FUNCTION] = 1;
 		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
 		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
 		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
@@ -278,7 +286,8 @@ public class Expression
 			 * Evaluate function.
 			 */
 			if (mFunction == ROUND_FUNCTION || mFunction == RANDOM_FUNCTION ||
-				mFunction == LOG10_FUNCTION || mFunction == SQRT_FUNCTION)
+				mFunction == LOG10_FUNCTION || mFunction == SQRT_FUNCTION ||
+				mFunction == FLOOR_FUNCTION || mFunction == CEIL_FUNCTION)
 			{
 				leftValue = traverse(mLeftBranch, context, interpreterFilename);
 				l = leftValue.getNumericValue();
@@ -294,12 +303,20 @@ public class Expression
 	
 					d = Math.log(l) / LOG_OF_10;
 				}
-				else
+				else if (mFunction == SQRT_FUNCTION)
 				{
 					if (l < 0.0)
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
 	
 					d = Math.sqrt(l);
+				}
+				else if (mFunction == FLOOR_FUNCTION)
+				{
+					d = Math.floor(l);
+				}
+				else
+				{
+					d = Math.ceil(l);
 				}
 				retval = new Argument(d);
 			}
