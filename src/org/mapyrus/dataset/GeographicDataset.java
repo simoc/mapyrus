@@ -82,4 +82,9 @@ public interface GeographicDataset
 	 * @return row returns next row result, or null if there is no row available.
 	 */
 	public Row fetch() throws MapyrusException;
+	
+	/**
+	 * Close dataset, closing any files, database connections and other resources.
+	 */
+	public void close() throws MapyrusException;
 }
