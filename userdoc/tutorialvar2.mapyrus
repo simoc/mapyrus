@@ -1,0 +1,24 @@
+newpage "png", "tutorialvar2.png", 40, 40, 96
+
+# Set colors for rings
+#
+let ringColors = "black,#ffffcf,red,#ffffcf,blue,#ffffcf"
+let ringSize = 3
+
+let a = split(ringColors, ",")
+let i = length(a)
+
+# Draw circles, starting with outermost ring and progressing inwards.
+#
+while i > 0
+do
+	color a[i]
+
+	clearpath
+	move 20 + i * ringSize, 20
+	arc 1, 20, 20, 20 + i * ringSize, 20
+	fill
+
+	let i = i - 1
+done
+
