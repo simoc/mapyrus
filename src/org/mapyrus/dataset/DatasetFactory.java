@@ -23,6 +23,7 @@ package au.id.chenery.mapyrus.dataset;
 
 import java.io.IOException;
 
+import au.id.chenery.mapyrus.Constants;
 import au.id.chenery.mapyrus.MapyrusException;
 import au.id.chenery.mapyrus.MapyrusMessages;
 
@@ -75,7 +76,7 @@ public class DatasetFactory
 				errorMessage = "";
 
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.OPEN_DATASET_ERROR) +
-				": " + name + System.getProperty("line.separator") + errorMessage);
+				": " + name + Constants.LINE_SEPARATOR + errorMessage);
 		}
 		return(retval);
 	}
