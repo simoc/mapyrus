@@ -1590,7 +1590,7 @@ public class Expression
 			 */
 			buf.append((char)c);
 			c = p.read();
-			while (c != -1 && (c == '.' || c == '_' ||
+			while (c != -1 && (c == '.' || c == '_' || c == ':' ||
 				Character.isLetterOrDigit((char)c)))
 			{
 				buf.append((char)c);
