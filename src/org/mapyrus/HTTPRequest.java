@@ -189,6 +189,7 @@ public class HTTPRequest extends Thread
 				/*
 				 * Add Mapyrus command to set variable.
 				 */
+				retval.append("let ");
 				retval.append(var);
 				retval.append("='");
 						
