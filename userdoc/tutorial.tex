@@ -10,7 +10,7 @@ identification of files that are to be interpreted by Mapyrus easier.
 If the Ghostscript program or a printer is not available, then change the
 \texttt{eps} arguments in \texttt{newpage} commands in examples to \texttt{png}
 to create the output files in PNG image format and view the output files in a
-web browser.
+web browser instead.
 
 \subsection{First Step}
 
@@ -18,20 +18,14 @@ Enter the following lines into a text file named \texttt{first.mapyrus}.
 
 \verbatiminput{tutorialfirst1.mapyrus}
 
-Each line in the file is a command for Mapyrus.  The first line sets output to
+Each line in the file is a command for Mapyrus.  First, output is set to
 a 30mm square Encapsulated PostScript format file named
-\texttt{tutorialfirst1.eps} with the \texttt{newpage} command.  The second and
-third lines set the color for drawing to indigo, with lines drawn 4 millimeters
-wide with rounded ends and corners.  The fourth and fifth lines define a path
-on the page giving coordinates in millimeters.  The sixth line is a
-\texttt{stroke} command to draw the path just defined onto the page using the
-current color and line style.
+\texttt{tutorialfirst1.eps} with the \texttt{newpage} command, then a
+line is drawn with the given color and linestyle.
 
 Open a terminal window (known as an "MSDOS Window" in MicroSoft Windows)
 and run Mapyrus using following command to execute the
 commands in the file \texttt{first.mapyrus}.
-% (\textit{install-dir} is the directory
-% in which Mapyrus is installed).
 
 \begin{alltt}
 java -classpath \textit{mapyrus-dir}/mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
@@ -78,7 +72,7 @@ a rectangle is defined with the \texttt{box} command
 and the \texttt{fill} command is used to
 flood fill it.
 The characters on lines following a hash (\texttt{\#}) character that
-is not part of a string literal are ignored by Mapyrus.
+is not enclosed in quotes are ignored by Mapyrus.
 Figure \ref{tutorialfirst2} shows the output of these commands.
 
 \begin{figure}[htb]
@@ -139,7 +133,6 @@ The output of these commands is shown in Figure \ref{tutorialfirst4}.
 
 Use variables and conditional tests to vary the appearance
 of the display.
-Use loops to display similar symbols repeatedly.
 Variables named \texttt{c1} and \texttt{c2} are used in the
 following example.  The variable
 \texttt{Mapyrus.page.width}
@@ -464,7 +457,7 @@ position in each half.
 The simplest source of data is a text file, with one record per line.  The
 filename and type of dataset to read is given in a \texttt{dataset} command.
 Then a \texttt{fetch} command is used in a loop to read each record
-and assign a variable with a value of each field.
+and split it into fields.
 Fields are assigned to variables
 \texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots and the whole record is
 assigned to variable \texttt{\$0}.
@@ -488,7 +481,7 @@ commands are converted from world coordinate to page coordinates
 through this transformation.
 
 The following example demonstrates
-setting a world coordinate system and then
+setting a world coordinate system,
 reading the text file shown in Figure
 \ref{tutorialdatasets1txt} and displaying the
 geographic data that it contains.  The output of this example is shown in
@@ -517,7 +510,7 @@ are used to read all coordinates for each line and polygon.
 The following example demonstrates
 reading and displaying the GenaMap GIS ZF19 format export file shown in Figure
 \ref{streetsEE} containing line
-features.  The tag of each line is used as a street name label.
+features.
 The output is shown in Figure \ref{tutorialdatasets2}.
 
 \begin{figure}[htb]
@@ -598,8 +591,7 @@ java -classpath mapyrus.jar:/usr/share/pgsql/pg73b1jdbc1.jar \textbackslash
   org.mapyrus.Mapyrus tutorialdataset5.mapyrus
 \end{alltt}
 
-The JDBC driver for PostgreSQL is available for other platforms from
-\newline
+The JDBC driver for PostgreSQL is available from
 \texttt{http://jdbc.postgresql.org}.
 
 A JDBC driver for MySQL is available from
