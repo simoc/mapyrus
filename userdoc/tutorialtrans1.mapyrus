@@ -1,4 +1,4 @@
-newpage "eps", "tutorialtrans1.eps", 60, 50, "background=white image=true"
+newpage "epsimage", "tutorialtrans1.eps", 60, 50, "background=white"
 
 color "lightgray"
 clearpath
