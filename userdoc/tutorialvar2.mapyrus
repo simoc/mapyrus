@@ -1,23 +1,22 @@
-newpage "eps", "tutorialvar2.eps", 40, 40, 300
+newpage "eps", "tutorialvar2.eps", 60, 20, 96
+color "black"
 
-# Set colors for rings
+# Set binary sequence
 #
-let ringColors = "black,#ffffcf,red,#ffffcf,blue,#ffffcf"
-let ringSize = 3
+let seq = "10110010011"
+let seqlen = length(seq)
 
-let a = split(ringColors, ",")
-let i = length(a)
-
-# Draw circles, starting with outermost ring and progressing inwards.
+# Draw sequence, showing black bars for bits
+# that have the value '1'.
 #
-while i > 0
+let i = 1
+while i <= seqlen
 do
-  color a[i]
-
-  clearpath
-  move 20 + i * ringSize, 20
-  arc 1, 20, 20, 20 + i * ringSize, 20
-  fill
-
-  let i = i - 1
+  if (substr(seq, i, 1) eq "1")
+  then
+    clearpath
+    box i * 4, 5, i * 4 + 3, 15
+    fill
+  endif
+  let i = i + 1
 done
