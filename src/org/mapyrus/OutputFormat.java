@@ -327,8 +327,11 @@ public class OutputFormat
 	 * for buffered image we will plot to.
 	 * @param resolution resolution for page in DPI.
 	 * @param backgroundColor background color for page, or null if no background.
+	 * @param lineAliasing flag true if lines should be drawn with anti-aliasing.
+	 * @param labelAliasing flag true if labels should be drawn with anti-aliasing.
 	 */
-	private void setupBufferedImage(double resolution, Color backgroundColor)
+	private void setupBufferedImage(double resolution, Color backgroundColor,
+		boolean lineAntiAliasing, boolean labelAntiAliasing)
 	{
 		double scale;
 
@@ -351,6 +354,31 @@ public class OutputFormat
 		 */
 		mGraphics2D.translate(0, mImage.getHeight());
 		mGraphics2D.scale(scale, -scale);
+		
+		/*
+		 * Set anti-aliasing for labels and lines if the user wants it.
+		 */
+		if (lineAntiAliasing)
+		{
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON));
+		}
+		else
+		{
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_OFF));
+		}
+
+		if (labelAntiAliasing)
+		{
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+		}
+		else
+		{
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF));
+		}
 	}
 
 	/**
@@ -405,6 +433,8 @@ public class OutputFormat
 		int resolution;
 		boolean turnPage = false;
 		Color backgroundColor = null;
+		boolean labelAntiAliasing = true;
+		boolean lineAntiAliasing = false;
 
 		if (mOutputType == POSTSCRIPT)
 			resolution = 300;
@@ -527,6 +557,16 @@ public class OutputFormat
 				String flag = token.substring(9);
 				turnPage = flag.equalsIgnoreCase("true");
 			}
+			else if (token.startsWith("labelantialiasing="))
+			{
+				String flag = token.substring(18);
+				labelAntiAliasing = flag.equalsIgnoreCase("true");
+			}
+			else if (token.startsWith("lineantialiasing="))
+			{
+				String flag = token.substring(17);
+				lineAntiAliasing = flag.equalsIgnoreCase("true");
+			}
 			else if (token.startsWith("background="))
 			{
 				String colorName = token.substring(11);
@@ -588,13 +628,7 @@ public class OutputFormat
 				height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
 			}
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
-			setupBufferedImage(resolution, backgroundColor);
-
-			/*
-			 * Fonts look so much better with anti-aliasing so always use it.
-			 */
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+			setupBufferedImage(resolution, backgroundColor, lineAntiAliasing, labelAntiAliasing);
 		}
 		mFilename = filename;
 		mPageWidth = width;
