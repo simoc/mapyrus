@@ -1,4 +1,16 @@
 begin pollution reading
+	# Define legend entries for various reading values.
+	#
+	key "point", "pollution 10 ppm", 10
+	key "point", "pollution 20 ppm", 20
+	key "point", "pollution 30 ppm", 30
+	key "point", "pollution 40 ppm", 40
+	key "point", "pollution 50 ppm", 50
+	key "point", "pollution 60 ppm", 60
+	key "point", "pollution 70 ppm", 70
+	key "point", "pollution 80 ppm", 80
+	key "point", "pollution 90 ppm", 90
+
 	# Set HSB colors for minimum and maximum readings.
 	#
 	let hueMin = 0.53, satMin = 0.75, brightMin = 0.90
@@ -17,15 +29,6 @@ begin pollution reading
 	move -1, -1
 	draw -1, 1, 1, 1, 1, -1
 	fill
-
-	# Add label with reading to help demonstrate coloring.
-	#
-	font "Helvetica", 2.5
-	justify "top,center"
-	color "black"
-	clearpath
-	move 0, -1
-	label "(" . reading . ")"
 end
 
 # Display points showing pollution levels in different colors.
@@ -55,3 +58,13 @@ pollution 87
 clearpath
 move 53, 14
 pollution 95
+
+# Draw legend for pollution readings in a separate image file.
+#
+newpage "png", "tutorialattribute1legend.png", 40, 50, 96
+clearpath
+color "black"
+move 5, 5, 5, 10, 5, 15, 5, 20, 5,25, 5, 30, 5, 35, 5, 40, 5, 45
+font "Helvetica", 2.5
+legend 4
+
