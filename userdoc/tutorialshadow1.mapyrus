@@ -2,7 +2,7 @@
 # is space for highlight around all polygons.
 #
 dataset "shapefile", "coastline.shp", "dbffields="
-newpage "png", "tutorialshadow1.png", 60, 60, 96
+newpage "eps", "tutorialshadow1.eps", 60, 60, 300
 let x1 = Mapyrus.dataset.min.x, y1 = Mapyrus.dataset.min.y
 let x2 = Mapyrus.dataset.max.x, y2 = Mapyrus.dataset.max.y
 let xRange = x2 - x1, yRange = y2 - y1
@@ -11,27 +11,27 @@ let x2 = x2 + xRange / 10, y2 = y2 + yRange / 10
 worlds x1, y1, x2, y2
 
 begin shadowed2
-	# Protect polygon interiors and draw shadow offset from polygon.
-	#
-	color '#cccc00'
-	linestyle 0.1
-	protect
-	let i = 0
-	while i < 7
-	do
-		shiftpath 0.1, -0.1
-		stroke
-		let i = i + 1
-	done
+  # Protect polygon interiors and draw shadow offset from polygon.
+  #
+  color '#cccc00'
+  linestyle 0.1
+  protect
+  let i = 0
+  while i < 7
+  do
+    shiftpath 0.1, -0.1
+    stroke
+    let i = i + 1
+  done
 end
 
 # Display a polygon with shadow to the bottom-left.
 #
 begin shadowed
-	shadowed2
-	linestyle 0.1
-	color 'black'
-	stroke
+  shadowed2
+  linestyle 0.1
+  color 'black'
+  stroke
 end
 
 # Fetch all polygons into current path.
@@ -40,8 +40,8 @@ clearpath
 import
 while Mapyrus.import.more
 do
-	fetch
-	addpath GEOMETRY
+  fetch
+  addpath GEOMETRY
 done
 
 # Draw all polygons with shadows together so that shadow from one
