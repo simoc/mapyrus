@@ -386,14 +386,17 @@ public class OutputFormat
 	private void writeSVGHeader(double width, double height, Color backgroundColor)
 	{
 		mWriter.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
-		mWriter.println("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"");
-		mWriter.println("  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
+
 		Date now = new Date();
 		mWriter.println("<!-- Created by " + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + " on " + now.toString() + " -->");
 
-		mWriter.println("<svg width=\"" + width + "mm\"");
-		mWriter.println("  height=\"" + height + "mm\"");
+		double pxPerMM = Constants.getScreenResolution() / Constants.MM_PER_INCH;
+
+		mWriter.println("<svg width=\"" +
+			mCoordinateDecimal.format(width * pxPerMM) + "\"");
+		mWriter.println("  height=\"" +
+			mCoordinateDecimal.format(height * pxPerMM) + "\"");
 		mWriter.println("  version=\"1.1\"");
 		mWriter.println("  xmlns=\"http://www.w3.org/2000/svg\">");
 
@@ -410,7 +413,6 @@ public class OutputFormat
 		 * Set reasonable default values for rarely used settings that are
 		 * not given each time a shape is displayed.
 		 */
-		double pxPerMM = Constants.getScreenResolution() / Constants.MM_PER_INCH;
 		mWriter.println("<g transform=\"scale(" + pxPerMM + ")\"");
 		mWriter.println("  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
 		mWriter.println("  clip-rule=\"nonzero\">");
@@ -1954,7 +1956,7 @@ public class OutputFormat
 				}
 			}
 		}
-		else
+		else if (mOutputType != SVG)
 		{
 			for (i = 0; i < pointList.size(); i++)
 			{
@@ -2450,7 +2452,7 @@ public class OutputFormat
 					if (mJustificationShiftX == -1)
 						anchor = "end";
 					else if (mJustificationShiftX == 0)
-						anchor = "left";
+						anchor = "start";
 					else
 						anchor = "middle";
 
@@ -2463,12 +2465,6 @@ public class OutputFormat
 						extras.append(" font-weight=\"bold\" ");
 					if (font.isItalic())
 						extras.append(" font-style=\"italic\" ");
-					if (mFontRotation != 0)
-					{
-						extras.append(" rotate=\"");
-						extras.append(Math.toDegrees(mFontRotation));
-						extras.append("\" ");
-					}
 					if (mFontOutlineWidth > 0)
 					{
 						extras.append(" stroke=\"");
@@ -2504,15 +2500,49 @@ public class OutputFormat
 						extras.append(")\" ");
 					}
 
+					double px, py;
+
+					if (mFontRotation != 0)
+					{
+						/*
+						 * Rotate text around origin point.
+						 * Rotation is negative sense because Y axis
+						 * decreases downwards.
+						 */
+						writeLine("<g transform=\"translate(" +
+							mCoordinateDecimal.format(x) + ", " +
+							mCoordinateDecimal.format(mPageHeight - y) +
+							") rotate(" +
+							mCoordinateDecimal.format(Math.toDegrees(-mFontRotation)) +
+							")\">");
+						px = py = 0;
+					}
+					else
+					{
+						px = x;
+						py = mPageHeight - (y - yInc);
+					}
+
 					writeLine("<text xml:space=\"preserve\" x=\"" +
-						mCoordinateDecimal.format(x) + "\" y=\"" +
-						mCoordinateDecimal.format(mPageHeight - (y - yInc)) +
+						mCoordinateDecimal.format(px) + "\" y=\"" +
+						mCoordinateDecimal.format(py) +
 						"\" text-anchor=\"" + anchor + "\"");
-					writeLine("  font-family=\"" + font.getFamily() + "\" " +
+					String family = font.getFamily();
+					writeLine("  font-family=\"" + family + "\" " +
 						"font-size=\"" + font.getSize2D() + "\" " +
-						extras.toString() + ">");
-					writeLine("<![CDATA[" + nextLine + "]]>");
-					writeLine("</text>");
+						extras.toString());
+
+					/*
+					 * Make text string XML safe.
+					 */
+					nextLine = nextLine.replaceAll("&", "&amp;");
+					nextLine = nextLine.replaceAll("<", "&lt;");
+					nextLine = nextLine.replaceAll(">", "&gt;");
+					nextLine = nextLine.replaceAll("\"", "&quot;");
+					writeLine(">" + nextLine + "</text>");
+
+					if (mFontRotation != 0)
+						writeLine("</g>");
 				}
 				else
 				{
