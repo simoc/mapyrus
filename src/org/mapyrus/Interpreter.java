@@ -843,7 +843,7 @@ public class Interpreter
 				{
 					double size;
 					if (nExpressions == 2)
-						size = mExecuteArgs[0].getNumericValue();
+						size = mExecuteArgs[1].getNumericValue();
 					else
 						size = 0;
 
