@@ -347,6 +347,16 @@ public class Context
 		int width, int height, int resolution, String extras)
 		throws IOException, MapyrusException
 	{
+		if (mOutputDefined && mOutputFormat != null)
+		{
+			/*
+			 * Finish any previous page before beginning a new one.
+			 */
+			mOutputFormat.closeOutputFormat();
+			mOutputFormat = null;
+			mOutputDefined = false;
+		}
+
 		mOutputFormat = new OutputFormat(filename, format,
 			width, height, resolution, extras);
 		mAttributesChanged = true;
@@ -381,8 +391,7 @@ public class Context
 			mOutputFormat = null;
 			mOutputDefined = false;
 		}
-		mPath = null;
-		mClippingPath = null;
+		mPath = mExistingPath = mClippingPath = null;
 		mVars = null;
 		return(mAttributesSet);
 	}
