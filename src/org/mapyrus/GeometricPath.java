@@ -28,9 +28,15 @@ public class GeometricPath
 	static AffineTransform mIdentityMatrix = new AffineTransform();
 
 	/*
-	 * Coordinates of path and moveto points with rotation angles.
+	 * Coordinates of path.
 	 */
 	private GeneralPath mPath;
+	
+	/*
+	 * Coordinates and rotation angle at each moveTo point.  GeneralPath
+	 * ignores successive moveTo points so we _must_ save them ourselves.
+	 */
+	private ArrayList mRotations;
 	private ArrayList mMoveTos;
 
 	/*
@@ -44,6 +50,7 @@ public class GeometricPath
 	public GeometricPath()
 	{
 		mPath = new GeneralPath();
+		mRotations = new ArrayList();
 		mMoveTos = new ArrayList();
 		mNLineTos = 0;
 	}
@@ -54,32 +61,41 @@ public class GeometricPath
 	 */
 	public GeometricPath(GeometricPath path)
 	{
+		int i;
+
 		mPath = (GeneralPath)(path.mPath.clone());	
 		mNLineTos = path.mNLineTos;
-		mMoveTos = (ArrayList)path.mMoveTos.clone();
+
+		/*
+		 * Clone the list of moveTo points and rotations.
+		 */
+		mMoveTos = (ArrayList)(path.mMoveTos.clone());
+		mRotations = (ArrayList)(path.mRotations.clone());
 	}
 
 	/**
 	 * Add point to path.
-	 * @param coords three element array containing x and y coordinates
-	 * and rotation angle to use for a symbol at this point.
+	 * @param x X coordinate to move to
+	 * @param y Y coordinate to move to
+	 * @param rotation angle to use for a symbol at this point.
 	 */
-	public void moveTo(float []coords)
+	public void moveTo(float x, float y, double rotation)
 	{
-		mPath.moveTo(coords[0], coords[1]);
-		mMoveTos.add(coords);
+		mPath.moveTo(x, y);
+		mMoveTos.add(new Point2D.Float(x, y));
+		mRotations.add(new Double(rotation));
 	}
-	
+
 	/**
 	 * Add point to path with straight line segment from last point.
 	 * @param coords two element array containing x and y coordinates of point.
 	 */	
-	public void lineTo(float []coords)
+	public void lineTo(float x, float y)
 	{
-		mPath.lineTo(coords[0], coords[1]);
+		mPath.lineTo(x, y);
 		mNLineTos++;
 	}
-	
+
 	/**
 	 * Closes path back to the last point created with moveTo method.
 	 */
@@ -109,12 +125,20 @@ public class GeometricPath
 
 	/**
 	 * Returns moveTo points in current path.
-	 * @return list of three element float arrays containing moveTo points
-	 * in path.
+	 * @return list of Point2D.Float objects of moveTo points in path.
 	 */
 	public ArrayList getMoveTos()
 	{
 		return(mMoveTos);
+	}
+
+	/**
+	 * Returns rotation angle at each moveTo point in current path.
+	 * @return list containing rotation at each moveTo point.
+	 */
+	public ArrayList getMoveToRotations()
+	{
+		return(mRotations);
 	}
 
 	/**
@@ -157,6 +181,7 @@ public class GeometricPath
 	public void reset()
 	{
 		mPath.reset();
+		mRotations.clear();
 		mMoveTos.clear();
 		mNLineTos = 0;
 	}
@@ -315,7 +340,6 @@ public class GeometricPath
 		PathIterator pi;
 
 		float coords[] = new float[6];
-		float nextPoint[];
 		int segmentType;
 		double nextOffset = 0.0, segmentLength, segmentAngle;
 		float xStart = 0.0f, yStart = 0.0f;
@@ -398,12 +422,10 @@ public class GeometricPath
 				 */
 				while (nextOffset < segmentLength)
 				{
-					nextPoint = new float[3];
-					nextPoint[0] = (float)(xStart + nextOffset * cosAngle);
-					nextPoint[1] = (float)(yStart + nextOffset * sinAngle);
-					nextPoint[2] = (float)segmentAngle;
+					x = (float)(xStart + nextOffset * cosAngle);
+					y = (float)(yStart + nextOffset * sinAngle);
 
-					newPath.moveTo(nextPoint);
+					newPath.moveTo(x, y, segmentAngle);
 
 					nextOffset += spacing;
 				}
@@ -415,17 +437,18 @@ public class GeometricPath
 				xStart = xEnd;
 				yStart = yEnd;
 			}
-			pi.next();			
+			pi.next();
 		}
 
 		/*
 		 * Replace path with the new path containing points that we have just calculated.
 		 */		
-		mPath = (GeneralPath)newPath.getShape();	
+		mPath = (GeneralPath)newPath.getShape();
 		mNLineTos = newPath.getLineToCount();
-		mMoveTos = newPath.getMoveTos();
+		mMoveTos = newPath.getMoveTos();	
+		mRotations = newPath.getMoveToRotations();
 	}
-	
+
 	/**
 	 * Replace path defining a polygon with striped lines covering
 	 * the polygon.
@@ -441,8 +464,6 @@ public class GeometricPath
 		AffineTransform rotateTransform = new AffineTransform();
 		AffineTransform inverseRotateTransform = new AffineTransform();
 		double xMin, yMin, xMax, yMax, y;
-		float startCoords[];
-		float endCoords[] = new float[2];
 
 		/*
 		 * Create bounding box of polygon at origin, rotated so that
@@ -494,16 +515,8 @@ public class GeometricPath
 			 */
 			rotateTransform.transform(pts, 0, pts, 0, 2);
 
-			startCoords = new float[3];
-			startCoords[0] = (float)(pts[0]);
-			startCoords[1] = (float)(pts[1]);
-			startCoords[2] = 0.0f;
-
-			endCoords[0] = (float)(pts[2]);
-			endCoords[1] = (float)(pts[3]);
-
-			newPath.moveTo(startCoords);
-			newPath.lineTo(endCoords);
+			newPath.moveTo((float)(pts[0]), (float)(pts[1]), 0.0f);
+			newPath.lineTo((float)(pts[2]), (float)(pts[3]));
 
 			y += spacing;
 		}
@@ -515,5 +528,6 @@ public class GeometricPath
 		mPath = (GeneralPath)newPath.getShape();	
 		mNLineTos = newPath.getLineToCount();
 		mMoveTos = newPath.getMoveTos();
+		mRotations = newPath.getMoveToRotations();
 	}
 }
