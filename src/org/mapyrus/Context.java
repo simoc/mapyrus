@@ -1,4 +1,22 @@
 /*
+ * This file is part of Mapyrus.
+ *
+ * Mapyrus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Mapyrus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mapyrus; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
+/*
  * @(#) $Id$
  */
 package au.id.chenery.mapyrus;
@@ -195,8 +213,8 @@ public class Context
 		 * Don't copy path -- it can be large.
 		 * Just keep reference to existing path.
 		 * 
-		 * Create path locally when needed.  If it is referenced without
-		 * being created then take path from existing context instead.
+		 * Create path locally when needed.  If path is referenced without
+		 * being created then we can reuse path from existing context instead.
 		 * 
 		 * This saves unnecessary copying of paths when contexts are created.
 		 */
@@ -853,9 +871,13 @@ public class Context
 	{
 		/*
 		 * If a path was defined then clear it.
+		 * If no path then clear any path we are using from another
+		 * context too.
 		 */
 		if (mPath != null)
 			mPath.reset();
+		else
+			mExistingPath = null;
 	}
 
 	/**
