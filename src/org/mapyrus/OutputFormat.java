@@ -158,9 +158,11 @@ public class OutputFormat
 	 * Write PostScript file header, including document structuring conventions (DSC).
 	 * @param width width of page in mm.
 	 * @param height height of page in mm.
+	 * @param resolution resolution of page in DPI.
 	 * @param fontList list of PostScript fonts to include in header.
 	 */
-	private void writePostScriptHeader(double width, double height, ArrayList fontList)
+	private void writePostScriptHeader(double width, double height,
+		int resolution, ArrayList fontList)
 		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
@@ -178,7 +180,7 @@ public class OutputFormat
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
-		mWriter.println("%%OperatorMessage: (Map plotting...)");
+		mWriter.println("%%OperatorMessage: (Printing map...)");
 		Date now = new Date();
 		mWriter.println("%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
@@ -203,6 +205,7 @@ public class OutputFormat
 		}
 		mWriter.println("%%EndComments");
 		mWriter.println("");
+		mWriter.println("% Resolution " + resolution + " DPI");
 
 		/*
 		 * Inline font definitions.
@@ -475,7 +478,7 @@ public class OutputFormat
 				
 			mSuppliedFontResources = new HashSet();
 	
-			writePostScriptHeader(width, height, fontList);
+			writePostScriptHeader(width, height, resolution, fontList);
 	
 			mPostScriptIndent = 0;
 			mNeededFontResources = new HashSet();
@@ -1098,20 +1101,33 @@ public class OutputFormat
 	{
 		PathIterator pi = shape.getPathIterator(null);
 		float coords[] = new float[6];
+		float lastX = 0.0f, lastY = 0.0f;
+		float distSquared;
+		float resolutionSquared = (float)(mResolution * mResolution);
 		int segmentType;
-		
+
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);
 			switch (segmentType)
 			{
 				case PathIterator.SEG_MOVETO:
-					writePostScriptLine(coords[0] + " " + coords[1] + " m");
+					lastX = coords[0];
+					lastY = coords[1];
+					writePostScriptLine(lastX + " " + lastY + " m");
 					break;
-					
+
 				case PathIterator.SEG_LINETO:
-					writePostScriptLine(coords[0] + " " +
-						coords[1] + " l");
+					distSquared = (lastX - coords[0]) * (lastX - coords[0]) + (lastY - coords[1]) * (lastY - coords[1]);
+					if (distSquared >= resolutionSquared)
+					{
+						/*
+						 * Skip segments that are less than one unit of resolution in length.
+						 */
+						lastX = coords[0];
+						lastY = coords[1];
+						writePostScriptLine(lastX + " " + lastY + " l");
+					}
 					break;
 				
 				case PathIterator.SEG_CLOSE:
@@ -1126,6 +1142,8 @@ public class OutputFormat
 						coords[4] + " " +
 						coords[5] + " " +
 						"curveto");
+					lastX = coords[4];
+					lastY = coords[5];
 					break;
 			}
 			pi.next();			
