@@ -48,7 +48,7 @@ public interface GeographicDataset
 	 * Return world coordinate extents of this dataset in projection of dataset.
 	 * @return extents.
 	 */
-	public Rectangle2D getWorlds();
+	public Rectangle2D.Double getWorlds();
 	
 	/**
 	 * Query the dataset.  Finds all data inside or crossing the area of interest
