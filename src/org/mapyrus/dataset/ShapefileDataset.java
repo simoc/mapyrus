@@ -548,14 +548,6 @@ public class ShapefileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getGeometryFieldIndexes()
-	 */
-	public int[] getGeometryFieldIndexes() 
-	{
-		return(mGeometryField);
-	}
-
-	/**
 	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getWorlds()
 	 */
 	public Rectangle2D.Double getWorlds()

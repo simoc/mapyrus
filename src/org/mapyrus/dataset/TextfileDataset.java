@@ -162,15 +162,6 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * Return null, no geometry fields in text file.
-	 * @return null.
-	 */
-	public int[] getGeometryFieldIndexes()
-	{
-		return(null);
-	}
-	
-	/**
 	 * Return extents of text file.  We do not know this.
 	 * @return degree values covering the whole world
 	 */

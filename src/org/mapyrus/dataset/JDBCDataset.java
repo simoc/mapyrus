@@ -178,12 +178,11 @@ public class JDBCDataset implements GeographicDataset
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getProjection()
+	/** 
+	 * Projection of database data not known.
 	 */
 	public String getProjection()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -203,15 +202,6 @@ public class JDBCDataset implements GeographicDataset
 	public String[] getFieldNames()
 	{
 		return mFieldNames;
-	}
-
-	/* (non-Javadoc)
-	 * @see au.id.chenery.mapyrus.dataset.GeographicDataset#getGeometryFieldIndexes()
-	 */
-	public int[] getGeometryFieldIndexes()
-	{
-		// TODO remove this method from all dataset types.
-		return null;
 	}
 
 	/**

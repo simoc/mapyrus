@@ -52,12 +52,6 @@ public interface GeographicDataset
 	public String []getFieldNames();
 	
 	/**
-	 * Return indexes of geometry fields in list of field names.
-	 * @return list of field indexes.
-	 */
-	public int[] getGeometryFieldIndexes();
-
-	/**
 	 * Return world coordinate extents of this dataset in projection of dataset.
 	 * @return extents.
 	 */
