@@ -313,9 +313,10 @@ Returns the largest integer value that is not larger than <i>n</i>.
 <tr>
 <td>
 <a name="length"></a>
-<tt>length(<i>str</i>)<tt>
+<tt>length(<i>v</i>)<tt>
 <td>
-Returns the length of the string <i>str</i>.
+If <i>v</i> is an array, then the number of elements in the
+array is returned.  Otherwise the string length of <i>v</i> is returned.
 
 <tr>
 <td>
@@ -377,7 +378,7 @@ Returns the sine of angle <i>n</i>, given in degrees.
 <tr>
 <td>
 <a name="split"></a>
-<tt>split(<i>regex</i>, <i>str</i>)<tt>
+<tt>split(<i>str</i>, <i>regex</i>)<tt>
 <td>
 Splits the string <i>str</i> into an array of strings, delimited by the
 regular expression <i>regex</i>.
