@@ -193,7 +193,7 @@ public class OutputFormat
 		mWriter.println("%%LanguageLevel: 2");
 		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
-		mWriter.println("%%OperatorMessage: (Printing map...)");
+		mWriter.println("%%OperatorMessage: (Mapyrus Output...)");
 		Date now = new Date();
 		mWriter.println("%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
@@ -598,12 +598,22 @@ public class OutputFormat
 		/*
 		 * Check that Java can write this image format to a file.
 		 */				
-		if (mFormatName.equals("ps") || mFormatName.equals("eps"))
+		if (mFormatName.equals("ps") ||
+			mFormatName.equals("postscript") ||
+			mFormatName.equals("application/postscript"))
+		{
+			mFormatName = "ps";
+			mOutputType = POSTSCRIPT;
+		}
+		else if (mFormatName.equals("eps"))
 		{
 			mOutputType = POSTSCRIPT;
-		}	
+		}
 		else
 		{
+			if (mFormatName.startsWith("image/"))
+				mFormatName = mFormatName.substring(6);
+
 			if (!isSupportedImageFormat(mFormatName))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OUTPUT) +
