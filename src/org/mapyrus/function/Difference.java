@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.awt.geom.Rectangle2D;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -45,6 +47,20 @@ public class Difference extends Function
 		throws MapyrusException
 	{
 		Argument retval;
+
+		/*
+		 * If bounding rectangles of geometries do not overlap
+		 * then difference of arg1 and arg2 must be arg1.
+		 */
+		Rectangle2D.Double rect1 = arg1.getGeometryBoundingBox();
+		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
+		if (rect1 == null || rect2 == null)
+			return(arg1);
+		if (rect2.getMaxX() < rect1.getMinX() || rect2.getMinX() > rect1.getMaxX() ||
+			rect2.getMaxY() < rect1.getMinY() || rect2.getMinY() > rect1.getMaxY())
+		{
+			return(arg1);
+		}
 
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
