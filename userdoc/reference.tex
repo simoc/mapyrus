@@ -1100,25 +1100,31 @@ aligned with the X and Y axes of the page, regardless of any rotation angle.
 \subsubsection{icon}
 
 \begin{alltt}
-icon \textit{filename}
-icon \textit{filename}, \textit{size}
+icon \textit{filename}, [, \textit{size}]
+icon "0x\textit{hexdigits}" [, \textit{size}]
 \end{alltt}
 
 Displays an image icon at each \texttt{move} point in
 the current path.  The icon is centered at each point.
+
 \textit{filename} is a the name of a file or URL containing the icon.
 The icon must be either \texttt{PNG}, \texttt{GIF} or \texttt{JPEG}
 image format.
 
-\textit{size} is the size for the icon in millimetres.  If no size
+\textit{hexdigits} are 4, 16 or 64 hexadecimal digits defining
+a square single color bitmap image of size 4x4, 8x8 or 16x16 pixels.
+Any non-hexadecimal digit characters in the string are ignored.
+
+\textit{size} is the optional size for the icon in millimetres.  If no size
 is given or size is zero then the icon is displayed at its natural size,
 as it would appear in an image viewer with one image pixel per display
 pixel.
 The image is scaled and rotated according to the current \texttt{scale}
 and \texttt{rotate} settings.
 
-In PostScript files, transparent icons are displayed with an opaque
-white background.
+In PostScript files, icons with more than one color
+are displayed with an opaque white background.  This is a limitation
+of PostScript.
 
 \subsubsection{justify}
 
