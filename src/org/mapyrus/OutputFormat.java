@@ -1231,7 +1231,6 @@ public class OutputFormat
 		Color singleColor = Color.BLACK;
 		boolean foundDifferentColors = false;
 		boolean foundFirstColor = false;
-		int pixelRGB = 0;
 		int i = 0;
 
 		/*

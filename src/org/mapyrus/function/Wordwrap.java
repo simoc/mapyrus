@@ -85,14 +85,14 @@ public class Wordwrap extends Function
 				int i = 1;
 				String lastPartToken = null;
 				String partToken = "";
-				double lastWordWidth = 0.0;
+
 				wordWidth = 0;
 
 				while (i < tokenLength && lineWidth + wordWidth <= maxWidth)
 				{
 					lastPartToken = partToken;
 					partToken = token.substring(0, i);
-					lastWordWidth = wordWidth;
+
 					dim = context.getStringDimension(partToken + "-");
 					wordWidth = dim.getWidth();
 					i++;
