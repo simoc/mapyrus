@@ -682,7 +682,7 @@ public class Interpreter
 				if (c != ARGUMENT_SEPARATOR)
 				{
 					throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
-						": Expecting: " + ARGUMENT_SEPARATOR);
+						": Expected: " + ARGUMENT_SEPARATOR);
 				}
 				c = readSkipComments(preprocessor);
 				state = AT_ARG;
@@ -697,7 +697,7 @@ public class Interpreter
 					expressions.add(expr);
 
 					state = AT_ARG_SEPARATOR;
-					c = preprocessor.read();
+					c = readSkipComments(preprocessor);
 			}
 			else
 			{
