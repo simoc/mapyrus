@@ -12,20 +12,29 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.lang.*;
+import java.util.Vector;
 
 public class GeometricPath
 {
 	/*
-	 * Coordinates of path.
+	 * Coordinates of path and moveto points with rotation angles.
 	 */
 	private GeneralPath mPath;
-	
+	private Vector mMoveTos;
+
+	/*
+	 * Count of number of lineTos in path.
+	 */
+	private int mNLineTos;
+
 	/**
 	 * Create new, empty geometric path.
 	 */
 	public GeometricPath()
 	{
 		mPath = new GeneralPath();
+		mMoveTos = new Vector();
+		mNLineTos = 0;
 	}
 
 	/**
@@ -37,23 +46,36 @@ public class GeometricPath
 		try
 		{
 			mPath = (GeneralPath)path.clone();	
+			mNLineTos = path.mNLineTos;
+			mMoveTos = (Vector)path.mMoveTos.clone();
 		}
 		catch (CloneNotSupportedException e)
 		{
 			/*
-			 * Clone _is_ supported for GeneralPath class.
+			 * Clone _is_ supported for GeneralPath and Vector classes.
 			 */
 		}
 	}
-		
-	public void moveTo(float x, float y)
+
+	/**
+	 * Add point to path.
+	 * @param coords three element array containing x and y coordinates
+	 * and rotation angle to use for a symbol at this point.
+	 */
+	public void moveTo(float []coords)
 	{
-		mPath.moveTo(x, y);
+		mPath.moveTo(coords[0], coords[1]);
+		mMoveTos.add(coords);
 	}
 	
-	public void lineTo(float x, float y)
+	/**
+	 * Add point to path with straight line segment from last point.
+	 * @param coords two element array containing x and y coordinates of point.
+	 */	
+	public void lineTo(float []coords)
 	{
-		mPath.lineTo(x, y);
+		mPath.lineTo(coords[0], coords[1]);
+		mNLineTos++;
 	}
 	
 	/**
@@ -62,6 +84,35 @@ public class GeometricPath
 	public void closePath()
 	{
 		mPath.closePath();
+		mNLineTos++;
+	}
+
+	/**
+	 * Returns the number of moveTo's in this path.
+	 * @return count of moveTo calls made for this path.
+	 */
+	public int getMoveToCount()
+	{
+		return(mMoveTos.size());
+	}
+
+	/**
+	 * Returns the number of lineTo's in this path.
+	 * @return count of lineTo calls made for this path.
+	 */
+	public int getLineToCount()
+	{
+		return(mNLineTos);
+	}
+
+	/**
+	 * Returns moveTo points in current path.
+	 * @return list of three element float arrays containing moveTo points
+	 * in path.
+	 */
+	public Vector getMoveTos()
+	{
+		return(mMoveTos);
 	}
 
 	/**
@@ -97,13 +148,15 @@ public class GeometricPath
 	{
 		return(mPath);
 	}
-	
+
 	/**
 	 * Clear path, removing all coordinates.
 	 */
 	public void reset()
 	{
 		mPath.reset();
+		mMoveTos.clear();
+		mNLineTos = 0;
 	}
 
 	/**
