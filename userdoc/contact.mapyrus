@@ -5,7 +5,7 @@
 #
 newpage "png", "contact.png", 42, 4, 96
 font 'Monospaced', Mapyrus.page.resolution.mm * 12
-color '#AF2F5F'
+color '#A03060'
 justify 'left'
 clearpath
 move 1, 1
