@@ -40,6 +40,7 @@ public class MapyrusMessages
 	public static final String EXPECTED = "expected";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
+	public static final String FIELD_NOT_OGC_TEXT = "fieldnotogctext";
 	public static final String GEOMETRY_NOT_NUMERIC = "geometrynotnumeric";
 	public static final String HASHMAP_NOT_NUMERIC = "hashmapnotnumeric";
 	public static final String HTTP_HEADER = "httpheader";
@@ -70,6 +71,7 @@ public class MapyrusMessages
 	public static final String INVALID_LINE_WIDTH = "invalidlinewidth";
 	public static final String INVALID_LINESTYLE = "invalidlinestyle";
 	public static final String INVALID_NUMBER = "invalidnumber";
+	public static final String INVALID_OGC_WKT = "invalidogcwkt";
 	public static final String INVALID_OUTPUT = "invalidoutput";
 	public static final String INVALID_PAGE = "invalidpage";
 	public static final String INVALID_PAGE_SIZE = "invalidpagesize";
@@ -89,7 +91,6 @@ public class MapyrusMessages
 	public static final String MISSING_FILENAME = "missingfilename";
 	public static final String MISSING_HTTP_POST = "missinghttppost";
 	public static final String NESTED_PROC = "nestedproc";
-	public static final String NO_OUTPUT = "nooutput";
 	public static final String NOT_A_PFA_FILE = "notapfafile";
 	public static final String NOT_A_TTF_FILE = "notattffile";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
@@ -100,7 +101,9 @@ public class MapyrusMessages
 	public static final String NO_DATASET = "nodataset";
 	public static final String NO_EXPRESSION = "noexpression";
 	public static final String NO_GEOMETRY_FIELD = "nogeometryfield";
+	public static final String NO_JDBC_CLASS = "nojdbcclass";
 	public static final String NO_MOVETO = "nomoveto";
+	public static final String NO_OUTPUT = "nooutput";
 	public static final String NO_ROWS = "norows";
 	public static final String NUMERIC_FUNCTION = "numericfunction";
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
