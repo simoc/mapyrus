@@ -1112,6 +1112,22 @@ and \texttt{rotate} values.
 The path is always cut against a rectangle
 aligned with the X and Y axes of the page, regardless of any rotation angle.
 
+\subsubsection{hexagon}
+
+\begin{alltt}
+hexagon \textit{xCenter}, \textit{yCenter}, \textit{radius}
+\end{alltt}
+
+Adds a hexagon shape to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and distance
+\textit{radius}
+from the center point to each vertex.
+
+The center point and radius are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
 \subsubsection{icon}
 
 \begin{alltt}
