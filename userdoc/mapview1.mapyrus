@@ -62,7 +62,7 @@ begin temperatureHistogram name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a
 	stroke
 	clearpath
 
-	font 'Helvetica', 2
+	font 'Helvetica-Bold', 2
 	justify "left"
 	move 6, 1
 	label "10"
@@ -71,7 +71,7 @@ begin temperatureHistogram name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a
 	label "20"
 	clearpath
 	move 6, 5
-	label "30"
+	label "300\260C"
 
 	# Label city below the place where the graph goes.
 	#
