@@ -13,6 +13,10 @@ or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4 or higher.
 The Ghostscript PostScript interpreter from 
 \texttt{http://www.ghostscript.com}
 if creation of PDF files is required.
+\item
+The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com},
+if geometric functions are required
+(see Figure \ref{functions} on page \pageref{functions}).
 \end{itemize}
 
 \subsection{Usage}
@@ -169,20 +173,49 @@ Logical and, or, not \\
 \end{table}
 
 
-\begin{table}[htb]
-\begin{tabular}{|l|p{7cm}|}
+\begin{longtable}{|p{5cm}|p{7cm}|}
+\hline
+\label{functions}
+Function Name & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Functions} \\
+\endfoot
+
 \hline
 Function Name & Description \\
 \hline
 \hline
+\endhead
 
 \texttt{abs(\textit{n})} &
 Returns the absolute value of \textit{n}. \\
 
 \hline
 
+\texttt{buffer(\textit{g}, \textit{dist}, \textit{cap})} &
+Returns a geometry containing a buffer calculated at
+a distance \textit{dist} around the perimeter of geometry \textit{g}.
+The value of \textit{cap} defines
+the method of closing buffers at line endpoints, either
+\texttt{butt}, \texttt{round} or \texttt{square}.
+This function requires the \textit{Java Topology Suite}. \\
+
+\hline
+
 \texttt{ceil(\textit{n})} &
 Returns the smallest integer value that is not less than \textit{n}. \\
+
+\hline
+
+\texttt{contains(\textit{g1}, \textit{x}, \textit{y})}
+\texttt{contains(\textit{g1}, \textit{g2})} &
+If point (\textit{x}, \textit{y}) or geometry \textit{g2}
+is contained inside \textit{g1} then
+1 is returned.  Otherwise 0 is returned.
+This function requires the \textit{Java Topology Suite}. \\
 
 \hline
 
@@ -193,6 +226,13 @@ Returns the cosine of angle \textit{n}, given in degrees. \\
 
 \texttt{floor(\textit{n})} &
 Returns the largest integer value that is not larger than \textit{n}. \\
+
+\hline
+
+\texttt{intersection(\textit{g1}, \textit{g2})} &
+Returns a geometry containing the intersection
+of geometry \textit{g1} and geometry \textit{g2}.
+This function requires the \textit{Java Topology Suite}. \\
 
 \hline
 
@@ -228,10 +268,18 @@ Returns the smaller of values \textit{a} and \textit{b}. \\
 
 \hline
 
+\texttt{overlaps(\textit{g1}, \textit{g2})} &
+If geometry \textit{g1} and geometry \textit{g2} overlap then
+1 is returned.  Otherwise 0 is returned.
+This function requires the \textit{Java Topology Suite}. \\
+
+\hline
+
 \texttt{parsewkt(\textit{str})} &
 Parses OGC WKT geometry string from \textit{str}
 into geometry suitable for use
-in \texttt{addpath} command.  See
+in \texttt{addpath} command and functions performing geometric calculations.
+See
 \textit{OpenGIS Simple Features Specification For SQL}
 for definition of geometry strings. \\
 
@@ -302,10 +350,14 @@ Temporary files returned by this function
 are automatically deleted after 5 minutes. \\
 
 \hline
-\end{tabular}
-\caption{Functions}
-\label{functions}
-\end{table}
+
+\texttt{union(\textit{g1}, \textit{g2})} &
+Returns a geometry containing the union of 
+of geometry \textit{g1} and geometry \textit{g2}.
+This function requires the \textit{Java Topology Suite}. \\
+
+\hline
+\end{longtable}
 
 An argument or expression is assigned to a named variable using the
 \texttt{let} command and an equals sign (\texttt{=}).  A variable name begins
