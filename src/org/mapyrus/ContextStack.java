@@ -97,6 +97,11 @@ public class ContextStack
 	 */
 	private Point mImagemapPoint;
 
+	/*
+	 * MIME type of content being returned to HTTP client.
+	 */
+	private String mMimeType;
+
 	/**
 	 * Create new stack of contexts to manage state as procedure blocks
 	 * are called.
@@ -109,6 +114,7 @@ public class ContextStack
 		mImagemapPoint = null;
 		mLegendEntries = new LegendEntryList();
 		mIconCache = new LRUCache(Constants.ICON_CACHE_SIZE);
+		mMimeType = MimeTypes.get("html");
 	}
 
 	/**
@@ -1242,6 +1248,24 @@ public class ContextStack
 	public LegendEntryList getLegendEntries()
 	{
 		return(mLegendEntries);
+	}
+
+	/**
+	 * Set MIME type for content being returned from HTTP request.
+	 * @param mimeType MIME type for content.
+	 */
+	public void setMimeType(String mimeType)
+	{
+		mMimeType = mimeType;
+	}
+
+	/**
+	 * Get MIME type for content being returned from HTTP request.
+	 * @param mimeType MIME type for content.
+	 */
+	public String getMimeType()
+	{
+		return(mMimeType);
 	}
 
 	/**
