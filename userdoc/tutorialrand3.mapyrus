@@ -9,14 +9,12 @@ begin x
   draw 0.7, -0.7
   stroke
 end
-
 begin randomx
   # Set random position, then draw 'x' symbol there.
   #
   move random(3), random(3)
   x
 end
-
 begin fillx
   # Draw outline polygon, then symbols covering the polygon.
   #
