@@ -1,7 +1,19 @@
-newpage "png", "tutorialfirst3.png", 30, 30, 96
+newpage "png", "tutorialfirst3.png", 70, 30, 96
 linestyle 0.1
-color "rgb", 0.2, 0.8, 0.3
+color "rgb", 0.4, 0.8, 0.5
 move 5, 15
 arc 1, 15, 15, 15, 5
 arc 0, 5, 5, 5, 15
+fill
+color "rgb", 0, 0.33, 0
 stroke
+
+# Clear path so we can begin a new shape.
+#
+clearpath
+color "rgb", 0, 0, 0.7
+move 30, 5
+draw 30, 25, 60, 25, 60, 5, 30, 5
+move 40, 8
+draw 50, 8, 45, 22, 40, 8
+fill
