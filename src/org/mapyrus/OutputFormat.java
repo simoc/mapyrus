@@ -35,6 +35,8 @@ import java.awt.Shape;
 import javax.imageio.*;
 import javax.swing.ImageIcon;
 
+import org.mapyrus.font.PostScriptFont;
+import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.io.ASCII85OutputStream;
 
 import java.io.ByteArrayOutputStream;
