@@ -25,11 +25,13 @@ public class Statement
 	public static final int MOVE = 12;
 	public static final int DRAW = 13;
 	public static final int CLEAR = 14;
-	public static final int STROKE = 15;
-	public static final int FILL = 16;
-	public static final int SCALE = 17;
-	public static final int NEWPAGE = 18;
-	public static final int PRINT = 19;
+	public static final int SLICEPATH = 15;
+	public static final int STROKE = 16;
+	public static final int FILL = 17;
+	public static final int SCALE = 18;
+	public static final int NEWPAGE = 19;
+	public static final int PRINT = 20;
+
 	
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -86,6 +88,7 @@ public class Statement
 		mStatementTypeLookup.put("move", new Integer(MOVE));
 		mStatementTypeLookup.put("draw", new Integer(DRAW));
 		mStatementTypeLookup.put("clear", new Integer(CLEAR));
+		mStatementTypeLookup.put("slicepath", new Integer(SLICEPATH));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
