@@ -16,7 +16,7 @@ public class Mapyrus
 {
 	private static final String PROGRAM_NAME = "Mapyrus";
 	private static final int DEFAULT_PORT = 23177;
-	private static final String VERSION = "$State$";
+	private static final String RCS_STATE = "$State$";
 	
 	/*
 	 * Show software version number and usage message.
@@ -40,7 +40,7 @@ public class Mapyrus
 			"on the given TCP/IP port.",
 		};
 		
-		System.out.println(PROGRAM_NAME + " version " + VERSION.substring(2));
+		System.out.println(PROGRAM_NAME + " version " + RCS_STATE.substring(8));
 		System.out.println("");
 		
 		for (int i = 0; i < messages.length; i++)
@@ -57,9 +57,13 @@ public class Mapyrus
 	{
 		Interpreter interpreter;
 		interpreter = new Interpreter(f, context);
-		
+
 		try
 		{
+			/*
+			 * Run interpreter, wait for it to finish and then see whether it
+			 * succeeded or not.
+			 */
 			interpreter.start();
 			interpreter.join();
 			if (interpreter.getReturnStatus() == false)
@@ -83,6 +87,9 @@ public class Mapyrus
 	{
 		BufferedReader f;
 		Context context;
+		
+		args = new String[1];
+		args[0] = "/home/simonc/expr.txt";
 		
 		/*
 		 * Parse command line arguments -- these are the files and URLs to read commands from.
