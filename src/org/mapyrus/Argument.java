@@ -4,7 +4,7 @@
 
 package au.id.chenery.mapyrus;
 
-import java.lang.String;
+import java.text.DecimalFormat;
 
 /**
  * An argument is a literal value or variable name.
@@ -120,5 +120,41 @@ public class Argument
 	public double []getGeometryValue()
 	{
 		return(mGeometryValue);
+	}
+	
+	/**
+	 * Return string representation of this argument.
+	 * @return string representation of argument value.
+	 */
+	public String toString()
+	{
+		String retval = null;
+
+		if (mType == STRING)
+			retval = mStringValue;
+		else if (mType == VARIABLE)
+			retval = mVarname;
+		else if (mType == NUMERIC)
+		{
+			double absValue = (mNumericValue >= 0) ? mNumericValue : -mNumericValue;
+			DecimalFormat format;
+
+			/*
+			 * Print large or small numbers in scientific notation
+			 * to give more significant digits.
+			 */				
+			if (absValue != 0 && (absValue < 0.01 || absValue > 10000000.0))
+				format = new DecimalFormat("#.################E0");
+			else
+				format = new DecimalFormat("#.################");
+
+			retval = format.format(mNumericValue);
+		}
+		else if (mType == GEOMETRY)
+		{
+			// XXX return GEOMTERY in OGC well known text format.
+			retval = "POINT ( 10 10 )";
+		}
+		return(retval);
 	}
 }

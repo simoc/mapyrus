@@ -7,7 +7,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.awt.geom.PathIterator;
@@ -89,11 +88,6 @@ public class Interpreter
 	 */
 	private Hashtable mStatementBlocks;
 
-	/*
-	 * Formats for printing numbers in statements.
-	 */	
-	private DecimalFormat mDoubleformat, mExponentialFormat;
-	
 	/*
 	 * Static world coordinate system units lookup table.
 	 */
@@ -308,9 +302,10 @@ public class Interpreter
 					 */
 					for (i = 0; i < nExpressions; i++)
 					{
-						if (args[0].getType() != Argument.NUMERIC)
+						if (args[i].getType() != Argument.NUMERIC)
 						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE));
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE) +
+								": " + args[i].toString());
 						}
 					}
 					
@@ -525,7 +520,7 @@ public class Interpreter
 				}
 				else
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COORDINATE));
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET));
 				}
 				break;
 
@@ -616,27 +611,7 @@ public class Interpreter
 				 */
 				for (i = 0; i <nExpressions; i++)
 				{
-					if (args[i].getType() == Argument.STRING)
-					{
-						System.out.print(args[i].getStringValue());
-					}
-					else
-					{
-						DecimalFormat format;
-						double d = args[i].getNumericValue();
-						double absoluteD = (d >= 0) ? d : -d;
-
-						/*
-						 * Print large or small numbers in scientific notation
-						 * to give more significant digits.
-						 */				
-						if (absoluteD != 0 && (absoluteD < 0.01 || absoluteD > 10000000.0))
-							format = mExponentialFormat;
-						else
-							format = mDoubleformat;
-
-						System.out.print(format.format(d));
-					}
+					System.out.print(args[i].toString());
 				}
 				System.out.println("");
 				break;
@@ -1577,8 +1552,5 @@ public class Interpreter
 	{
 		mContext = context;
 		mStatementBlocks = new Hashtable();
-
-		mDoubleformat = new DecimalFormat("#.################");
-		mExponentialFormat = new DecimalFormat("#.################E0");
 	}
 }
