@@ -8,6 +8,7 @@
  * $Id$
  */
 import java.util.Vector;
+import java.util.Hashtable;
 
 public class Statement
 {
@@ -58,6 +59,27 @@ public class Statement
 
 	Expression []mExpressions;
 
+	/*
+	 * Static statement type lookup table for fast lookup.
+	 */
+	static Hashtable mStatementTypeLookup;
+	
+	static
+	{
+		mStatementTypeLookup = new Hashtable();
+		mStatementTypeLookup.put("color", new Integer(COLOR));
+		mStatementTypeLookup.put("colour", new Integer(COLOR));
+		mStatementTypeLookup.put("linewidth", new Integer(LINEWIDTH));
+		mStatementTypeLookup.put("move", new Integer(MOVE));
+		mStatementTypeLookup.put("draw", new Integer(DRAW));
+		mStatementTypeLookup.put("clear", new Integer(CLEAR));
+		mStatementTypeLookup.put("stroke", new Integer(STROKE));
+		mStatementTypeLookup.put("fill", new Integer(FILL));
+		mStatementTypeLookup.put("scale", new Integer(SCALE));
+		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
+		mStatementTypeLookup.put("print", new Integer(PRINT));
+	}
+	
 	/**
 	 * Looks up identifier for a statement name.
 	 * @param s is the name of the statement.
@@ -66,45 +88,13 @@ public class Statement
 	 */
 	private int getStatementType(String s)
 	{
-		int retval = CALL;
-		String sLower = s.toLowerCase();
-
-		if (sLower.equals("color") || sLower.equals("colour"))
-		{
-			retval = COLOR;
-		}
-		else if (sLower.equals("linewidth"))
-		{
-			retval = LINEWIDTH;
-		}
-		else if (sLower.equals("move"))
-		{
-			retval = MOVE;
-		}
-		else if (sLower.equals("draw"))
-		{
-			retval = DRAW;
-		}
-		else if (sLower.equals("stroke"))
-		{
-			retval = STROKE;
-		}
-		else if (sLower.equals("fill"))
-		{
-			retval = FILL;
-		}
-		else if (sLower.equals("scale"))
-		{
-			retval = SCALE;
-		}
-		else if (sLower.equals("newpage"))
-		{
-			retval = NEWPAGE;
-		}
-		else if (sLower.equals("print"))
-		{
-			retval = PRINT;
-		}
+		int retval;
+		Integer i = (Integer)mStatementTypeLookup.get(s.toLowerCase());
+		
+		if (i == null)
+			retval = CALL;
+		else
+			retval = i.intValue();
 		return(retval);
 	}
 	
