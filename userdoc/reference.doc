@@ -22,7 +22,19 @@ Reference
 
 <tr>
 <td>
-<a href="#language"/>Language And Commands</a>
+<a href="#language"/>Language</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#internalvars"/>Internal Variables</a>
+</td>
+</tr>
+
+<tr>
+<td>
+<a href="#commands"/>Commands</a>
 <font size=-1>
 <br>
 &nbsp;
@@ -82,7 +94,8 @@ include hr.doc
 Mapyrus requires:
 <ol>
 <li>
-Java Runtime Environment (JRE) 1.4, or higher.
+Java 2 Runtime Environment (JRE) 1.4 or higher,
+or Java 2 Software Developers Kit (SDK) 1.4 or higher.
 </li>
 <li>
 The Ghostscript PostScript interpreter from 
@@ -111,7 +124,8 @@ given then they are read in turn.
 
 <p>
 
-Pass variables to Mapyrus using the Java <tt>-D</tt> option.
+Variables passed to Mapyrus using the Java <tt>-D</tt> option
+are available in the Mapyrus interpreter.
 
 include beginex.doc
 java -D<i>variable</i>=<i>value</i> ... -jar <i>install-path</i>/mapyrus.jar <i>filename</i>
@@ -122,14 +136,14 @@ Mapyrus runs as an
 <tt>-s</tt> option.
 
 include beginex.doc
-java -jar <i>install-path</i>/mapyrus.jar -s <i>port</i>
+java -jar <i>install-path</i>/mapyrus.jar -s <i>port</i> <i>filename</i> ...
 include endex.doc
 
 <a name="startupvariables"></a>
 The following variables configure Mapyrus at startup.
 <p>
 
-<table border=1 width=700>
+<table border=1 width="100%">
 <tr>
 
 <td>
@@ -166,26 +180,14 @@ and
 Java LogManager API documentation
 </a>
 for format of the file defining logging properties.
+Default logging writes only errors to error output.
 </tr>
 </table>
-
-path
-origin (0, 0) is bottom left corner of page.
-
-dataset
-fetch each record
-<a href="#fetch">fetch</a>
-tests control display
-
-worlds
-Coordinate values in a dataset are given in a coordinate system.
-such as Universal Transverse Mercator (UTM)
-projected onto the page
 
 include hr.doc
 
 <a name="language"></a>
-<h3>Language And Commands</h3>
+<h3>Language</h3>
 
 Mapyrus interprets commands read from one or more plain text files.
 Each command begins on a separate line.
@@ -202,11 +204,11 @@ An argument is a number, a string literal in single quotes (<tt>'</tt>)
 or double quotes (<tt>"</tt>), a variable name, or an expression.
 <p>
 An expression contains arguments and operators and functions
-on those arguments, just like in BASIC, C, or Python.
+on those arguments, like in BASIC, C, or Python.
 The following operators and functions are provided:
 <p>
 
-<table border=1 width=400>
+<table border=1 width="100%">
 <tr>
 
 <td>
@@ -235,7 +237,7 @@ parentheses
 </td>
 <td>
 numeric multiplication, numeric division, modulo (works
-with real numbers too), string repetition
+with non-integer values too), string repetition
 </td>
 
 </tr>
@@ -285,7 +287,7 @@ Logical or
 </table>
 
 <p>
-<table border=1 width=600>
+<table border=1 width="100%">
 <tr>
 <td>
 <b>Function Name</b>
@@ -415,10 +417,11 @@ as <i>condition</i> continues to evaluate to a non-zero value:
 &nbsp;&nbsp;<i>commands</i> ...
 <br>
 <tt>done</tt>
-
 <p>
 
-Procedures group frequently used commands together:
+Procedures group frequently used commands together, save
+graphics state when they begin and restore it when they end,
+isolating the calling procedure from any changes:
 
 <p>
 <tt>begin</tt> <i>name</i> [<i>arg1</i>, ...]
@@ -428,24 +431,37 @@ Procedures group frequently used commands together:
 <tt>end</tt>
 <p>
 
-A procedure is defined to take
+A procedure is defined to take a fixed number of arguments.
+All procedure names are global and following the same naming
+rules as variables.
+Procedure definitions within a procedure are not allowed.
+<p>
+A procedure is called from any place where a command is accepted
+and the number of arguments passed must match the number 
+in the procedure definition.
 
-All procedure names are global.
-Nested procedure definitions are not allowed.
+<a name="gstate"></a>
+<p>
 
-The graphics state (
+Before commands in the procedure are executed
+the graphics state is saved.
+The graphics state is restored when the procedure finishes.
+The graphics state contains:
 <ul>
 <li>
-path defined with,
+The path defined with
 <a href="#move">move</a>,
 <a href="#draw">draw</a>,
 <a href="#arc">arc</a> and
-<a href="#addpath">addpath</a>.
+<a href="#addpath">addpath</a>
+commands.
 </li>
 
 <li>
-<a href="#clip">clip</a>,
-<a href="#protect">protect</a>,
+The clip path defined with
+<a href="#clip">clip</a> and
+<a href="#protect">protect</a>
+commands.
 </li>
 
 <li>
@@ -457,37 +473,48 @@ Current drawing settings set by
 </li>
 
 <li>
-<a href="#rotate">rotate</a>,
-<a href="#scale">scale</a>,
+Transformations 
+set by
+<a href="#rotate">rotate</a>
+and
+<a href="#scale">scale</a> commands.
 </li>
 
 </ul>
 
-worlds, dataset
-
-linestyle, font, justify, clip path
-save state
-special moveto
-If the path contains only one or more
+Any dataset being imported is global.  It is not saved and not restored.
+<p>
+Any world coordinate system set with the
+<a href="#worlds">worlds</a>
+command is cleared before the commands in the procedure are
+executed.
+This enables the calling procedure to work in a world coordinate system
+and the called procedure to draw at these world coordinate
+positions using measurements in millimetres.
+<p>
+If the current path contains only
 <a href="#move">move</a>
-and no draw
-Save context
-variables
-graphics state, path, clip path
-restored at <tt>end</tt>
-special moveto behaviour
-must be called with correct number of arguments.
+points and no straight line or arc segments
+when a procedure is called
+then the procedure is called repeatedly, one time for
+each move point, with the origin (0, 0) translated to the
+<a href="#move">move</a>
+point each time.
+Therefore, coordinates in the called procedure are relative to
+the move point.
+This enables drawing commands in the called procedure to be
+given in millimetres, relative to the origin.
+<p>
 
-datasets
-world coordinates
-
-Precedence from highest to lowest
+include hr.doc
 
 <a name="internalvars"></a>
-Mapyrus maintains the following internal variables:
+<h3>Internal Variables</h3>
+
+Mapyrus maintains the following internal variables.
 
 <p>
-<table border=1>
+<table border=1 width="100%">
 
 <tr>
 <td>
@@ -525,12 +552,6 @@ The bounding rectangle of all data in the current dataset.
 
 <tr>
 <td>
-<tt>Mapyrus.elapsedtime</tt>
-<td>
-The elapsed processing time, measured in seconds.
-
-<tr>
-<td>
 <tt>Mapyrus.filename</tt>
 <td>
 The name of the file or URL being interpreted.
@@ -561,7 +582,7 @@ and the bounding rectangle of the current path.
 <tr>
 <td>
 <tt>Mapyrus.imagemap.x</tt>,
-<tt>Mapyrus.imagemap.y</tt>,
+<tt>Mapyrus.imagemap.y</tt>
 <td>
 The pixel position of the point clicked in an HTML imagemap and
 passed to Mapyrus, for use when running as an HTTP server.
@@ -575,7 +596,7 @@ The number of records already fetched from the current dataset.
 
 <tr>
 <td>
-<tt>Mapyrus.import.moreRecords</tt>
+<tt>Mapyrus.import.more</tt>
 <td>
 Flag value set to 1 if another record is available
 for <a href="#fetch">fetch</a>
@@ -597,7 +618,8 @@ The file format, page height, page width
 and resolution that were passed to the
 <a href="#newpage">newpage</a> command.  File format is in lowercase.
 Height and width are in millimetres.  Resolution is available
-as either a dots-per-inch value, or a distance in millimetres.
+as either a dots-per-inch value, or a distance in millimetres between
+dots.
 
 <tr>
 <td>
@@ -628,6 +650,12 @@ The current rotation angle in degrees set by
 <td>
 The current scale factor set by 
 <a href="#scale">scale</a> command.
+
+<tr>
+<td>
+<tt>Mapyrus.timer</tt>
+<td>
+The elapsed processing time, measured in seconds.
 
 <tr>
 <td>
@@ -672,6 +700,81 @@ by the page width.
 
 include hr.doc
 
+<a name="commands"></a>
+<h3>Commands</h3>
+
+Commands are listed alphabetically.
+Some commands accept arguments in several ways.
+For these commands, each combination of arguments is listed.
+
+<p>
+<a name="addpath"></a>
+<tt>addpath</tt> <i>geometry-field</i> [, <i>geometry-field</i> ...]
+<p>
+Adds geometry in each <i>geometry-field</i> to current path.
+A <i>geometry-field</i> is geometry fetched from a dataset
+with a
+<a href="#fetch"/>fetch</a> command.
+<p>
+Coordinates are transformed through any
+transformation set with a <a href="#worlds">worlds</a> command,
+then scaled and rotated by <a href="#scale"/>scale</a>
+and
+<a href="#rotate"/>rotate</a>
+values.
+
+include hr.doc
+
+<p>
+<a name="arc"></a>
+<tt>arc</tt> <i>direction</i>, <i>xCenter</i>, <i>yCenter</i>,
+<i>xEnd</i>, <i>yEnd</i>
+<p>
+Adds a circular arc to the current path.  The arc begins at
+the last point added to the path and ends at (<i>xEnd</i>, <i>yEnd</i>)
+with center at (<i>xCenter</i>, <i>yCenter</i>).
+If <i>direction</i> is a positive number, the arc travels clockwise,
+otherwise the arc travels in an anti-clockwise direction.
+If the begin and end points are the same then the arc is a complete circle.
+A straight line segment is first added to the path if
+the distance from the beginning point to the center is different
+to the distance from the center to the end point.
+<p>
+Points are transformed through any
+transformation set with a <a href="#worlds">worlds</a> command,
+then scaled and rotated by <a href="#scale"/>scale</a>
+and
+<a href="#rotate"/>rotate</a>
+values.
+
+include hr.doc
+
+<p>
+<a name="clearpath"></a>
+<tt>clearpath</tt>
+<p>
+Removes all points from the current path.
+
+include hr.doc
+
+<p>
+<a name="clip"></a>
+<tt>clip</tt>
+<p>
+Sets a clip path containing the area covered by the current path.
+Opposite of the
+<a href="#protect"/>protect</a>
+command.
+Later drawing commands are limited to draw only inside this area.
+If the path is clipped in a procedure, then the area remains
+clipped until the procedure is complete.  Otherwise, the area
+remains permanently clipped for the page.
+When more than one path is clipped, drawing is limited to
+areas inside all clip paths.
+The current path is not modified by this command.
+
+include hr.doc
+
 <p>
 <a name="color"></a>
 <tt>color</tt> <i>name</i>
@@ -691,6 +794,173 @@ as used in HTML pages.
 Values for RGB and HSB colors are given as intensities
 in the range 0-1.
 The spelling <tt>colour</tt> is also accepted for this command.
+
+include hr.doc
+
+<p>
+<a name="dataset"></a>
+<tt>dataset</tt> <i>type</i>, <i>name</i>, <i>extras</i>
+<p>
+Defines a dataset to read geographic data from.
+<i>dataset</i> is the filename of the dataset to read.
+<i>type</i> is the type of dataset and
+<i>extras</i> defines further options for accessing the dataset, given
+as <i>variable=value</i> values, separated by whitespace.
+The following dataset types and options are available:
+
+<p>
+
+<table border=1 width="100%">
+<tr>
+<td>
+<b>Dataset Type</b>
+<td>
+<b>Description and Extras</b>
+
+<tr>
+<td>
+<tt>textfile</tt>
+<td>
+for accessing data from a delimited text file, with one
+record per line.  Fields in fetched record
+are assigned to variables
+<tt>$1</tt>, <tt>$2</tt>, <tt>$3</tt>, ...
+and the whole record is assigned to variable
+<tt>$0</tt>.
+<p>
+Extras:
+<p>
+<tt>comment=<i>string</i></tt>
+<br>
+Character string at start of a line marking a comment line that
+is to be ignored.  Default value is a hash character (<tt>#</tt>).
+<p>
+<tt>delimeters=<i>string</i></tt>
+<br>
+Characters separating fields in the text file.  Default value
+is all whitespace characters.
+
+<tr>
+<td>
+<tt>shapefile</tt>
+<td>
+for accessing data in ESRI Shape file format.
+The geometry for each fetched record is assigned to a variable named
+<tt>GEOMETRY</tt>, attribute field values are assigned to
+variables with attribute field names.
+<p>
+Extras:
+<p>
+<tt>dbffields=<i>field1</i>,<i>field2</i>,...</tt>
+<br>
+Comma-separated list of
+attribute fields to read from the DBF database file accompanying the
+Shape file.  By default, all fields are read.  Reading fewer attribute
+fields improves performance.
+
+</table>
+include hr.doc
+
+<p>
+<a name="draw"></a>
+<tt>draw</tt> <i>x</i>, <i>y</i>, ...
+<p>
+Adds one or more straight line segments to the current path.
+A straight line segment is added from the previously defined point
+to (<i>x</i>, <i>y</i>) and then to each further point given.
+Points are first transformed through any world coordinate
+transformation set with a <a href="#worlds">worlds</a> command
+then scaled and rotated by <a href="#scale"/>scale</a>
+and
+<a href="#rotate"/>rotate</a>
+values.
+
+include hr.doc
+
+<p>
+<a name="fetch"></a>
+<tt>fetch</tt>
+<p>
+Fetches next record from current dataset.
+For each field in the record, a variable is defined with the name
+of the field and the value of the field for the next record.
+Before fetching a record, check the variable
+<tt>Mapyrus.import.more</tt>
+to ensure that another record is available from the dataset.
+
+
+include hr.doc
+
+<p>
+<a name="fill"></a>
+<tt>fill</tt>
+<p>
+Flood fills the current path with the current color.
+The winding rule is used for determining the inside and outside
+regions of polygons containing islands.
+The current path is not modified by this command.
+
+include hr.doc
+
+<p>
+<a name="font"></a>
+<tt>font</tt> <i>name</i>, <i>style</i>, <i>size</i>
+<p>
+Sets font for labelling with the <a href="#label">label</a> command.
+Font <i>name</i> is the name of the font family,
+<i>style</i> is either <tt>plain</tt>, <tt>bold</tt>,
+<tt>italic</tt> or <tt>bolditalic</tt>.
+Font <i>size</i> is given in millimetres.
+
+include hr.doc
+
+<p>
+<a name="import"></a>
+<tt>import</tt> [<i>xMin</i>, <i>yMin</i>, <i>xMax</i>, <i>yMax</i>]
+<p>
+Begin importing records from the dataset set with the
+<a href="#dataset">dataset</a> command.
+After beginning an import,
+each record is fetched in turn with a
+<a href="#fetch">fetch</a> command.
+If a bounding rectangle is given and the current
+dataset contains geographic fields then only records
+where the geographic field is
+inside or crossing the bounding rectangle are imported.
+If no bounding rectangle is given then all records in the dataset
+are imported.
+
+
+include hr.doc
+
+<p>
+<a name="justify"></a>
+justify <i>justification</i>
+<p>
+Sets justification for labelling with the <a href="#label">label</a> command.
+<i>justification</i> is a string containing either
+<tt>left</tt>, <tt>right</tt>, <tt>center</tt> for justifying labels
+horizontally and/or
+<tt>top</tt>, <tt>middle</tt>, <tt>bottom</tt> for justifying labels
+vertically.
+
+include hr.doc
+
+<p>
+<a name="label"></a>
+<tt>label</tt> <i>string</i> [, <i>string</i> ...]
+<p>
+Draws a label at each point in the path
+set with the <a href="#move">move</a> command, using the
+font, justification and rotation set with the
+<a href="#font"/>font</a>,
+<a href="#justify"/>justify</a> and
+<a href="#rotate"/>rotate</a>
+commands.
+<i>string</i> values are separated by spaces.
+If <i>string</i> contains newline characters (<tt>\n</tt>) then
+labels are displayed as multiple lines, one below the other,
+with each line justified independently.
 
 include hr.doc
 
@@ -719,31 +989,6 @@ at which to begin.
 include hr.doc
 
 <p>
-<a name="font"></a>
-<tt>font</tt> <i>name</i>, <i>style</i>, <i>size</i>
-<p>
-Sets font for labelling with the <a href="#label">label</a> command.
-Font <i>name</i> is the name of the font family,
-<i>style</i> is either <tt>plain</tt>, <tt>bold</tt>,
-<tt>italic</tt> or <tt>bolditalic</tt>.
-Font <i>size</i> is given in millimetres.
-
-include hr.doc
-
-<p>
-<a name="justify"></a>
-justify <i>justification</i>
-<p>
-Sets justification for labelling with the <a href="#label">label</a> command.
-<i>justification</i> is a string containing either
-<tt>left</tt>, <tt>right</tt>, <tt>center</tt> for justifying labels
-horizontally and/or
-<tt>top</tt>, <tt>middle</tt>, <tt>bottom</tt> for justifying labels
-vertically.
-
-include hr.doc
-
-<p>
 <a name="local"></a>
 <tt>local</tt> <i>name</i>, [<i>name</i> ...]
 <p>
@@ -759,300 +1004,11 @@ include hr.doc
 <p>
 Adds the point (<i>x</i>, <i>y</i>) to the current path.  The
 point is first transformed through any world coordinate
-transformation set with a <a href="#worlds">worlds</a> command
-and then scaled
-
-include hr.doc
-
-<p>
-<a name="draw"></a>
-<tt>draw</tt> <i>x</i>, <i>y</i>, ...
-<p>
-Adds one or more straight line segments to the current path.
-A straight line segment is added from the previously defined point
-to (<i>x</i>, <i>y</i>) and proceeding on through
-Points are first transformed through any world coordinate
-transformation set with a <a href="#worlds">worlds</a> command.
-
-include hr.doc
-
-<p>
-<a name="arc"></a>
-<tt>arc</tt> <i>direction</i>, <i>xCenter</i>, <i>yCenter</i>,
-<i>xEnd</i>, <i>yEnd</i>
-<p>
-Adds a circular arc to the current path.  The arc begins at
-the last point added to the path and ends at (<i>xEnd</i>, <i>yEnd</i>)
-with center at (<i>xCenter</i>, <i>yCenter</i>).
-If <i>direction</i> is a positive number, the arc travels clockwise,
-otherwise the arc travels in an anti-clockwise direction.
-If the begin and end points are the same then the arc is a complete circle.
-A straight line segment is first added to the path if
-the distance from the beginning point to the center is different
-to the distance from the center to the end point.
-
-include hr.doc
-
-<p>
-<a name="addpath"></a>
-<tt>addpath</tt> <i>geometry-string</i> [, <i>geometry-string</i> ...]
-<p>
-Adds geometry in each string <i>geometry-string</i> to current path.
-
-include hr.doc
-
-<p>
-<a name="clearpath"></a>
-<tt>clearpath</tt>
-<p>
-Removes all points from the current path.
-
-include hr.doc
-
-<p>
-<a name="samplepath"></a>
-<tt>samplepath</tt> <i>spacing</i>, <i>offset</i>
-<p>
-Replaces current path with equally spaced points along the path.
-<i>offset</i> is the distance along the path at which to place first point,
-given in millimetres.
-<i>spacing</i> is the distance between points, given in millimetres.
-The sign of <i>spacing</i>
-controls the direction in which the path is travelled.
-If <i>spacing</i> is a positive value, the path is travelled from the
-beginning towards the end.
-If <i>spacing</i> is a negative value, then the absolute value of
-<i>spacing</i> is used and the path is travelled from the end towards
-the beginning.
-Using a very large postive or negative value for <i>spacing</i> results
-in current path being replaced by a single point at the beginning or
-end of the path.
-
-include hr.doc
-
-<p>
-<a name="stripepath"></a>
-<tt>stripepath</tt> <i>spacing</i>, <i>angle</i>
-<p>
-Replaces current path with equally spaced parallel lines that completely
-cover the path.
-<i>spacing</i> is the distance between lines, measured in millimetres.
-<i>angle</i> is angle of each line, measured in counter-clockwise in
-degrees, with zero being horizontal.
-Follow this command with a <a href="#clip">clip</a> command to
-produce a hatched fill pattern.
-
-<p>
-<a name="stroke"></a>
-<tt>stroke</tt>
-<p>
-Draws the current path using the current color and linestyle.
-The current path is not modified by this command.
-
-<p>
-<a name="fill"></a>
-<tt>fill</tt>
-<p>
-Flood fills the current path with the current color.
-The winding rule is used for determining the inside and outside
-regions of polygons containing islands.
-The current path is not modified by this command.
-
-include hr.doc
-
-<p>
-<a name="protect"></a>
-<tt>protect</tt>
-<p>
-Defines a clip path to
-protect the area of the page covered by the current path and
-prevent it from being overwritten by later drawing commands.
-Opposite of the
-<a href="#clip"/>clip</a>
-command.
-If the path is protected in a procedure, then the area remains
-protected until the procedure is complete.  Otherwise, the area
-remains permanently protected for the page.
-When more than one area is protected, the union of all areas
-is protected.
-The current path is not modified by this command.
-
-include hr.doc
-
-<p>
-<a name="clip"></a>
-<tt>clip</tt>
-<p>
-Sets a clip path containing the area covered by the current path.
-Opposite of the
-<a href="#protect"/>protect</a>
-command.
-Later drawing commands are limited to draw only inside this area.
-If the path is clipped in a procedure, then the area remains
-clipped until the procedure is complete.  Otherwise, the area
-remains permanently clipped for the page.
-When more than one path is clipped, drawing is limited to
-areas inside all clip paths.
-The current path is not modified by this command.
-
-include hr.doc
-
-<p>
-<a name="label"></a>
-<tt>label</tt> <i>string</i> [, <i>string</i> ...]
-<p>
-Draws a label at each point in the path
-set with the <a href="#move">move</a> command, using the
-font, justification and rotation set with the
-<a href="#font"/>font</a>,
-<a href="#justify"/>justify</a> and
+transformation set with a <a href="#worlds">worlds</a> command,
+then scaled and rotated by <a href="#scale"/>scale</a>
+and
 <a href="#rotate"/>rotate</a>
-commands.
-<i>string</i> values are separated by spaces.
-If <i>string</i> contains newline characters (<tt>\n</tt>) then
-labels are displayed as multiple lines, one below the other,
-with each line justified independently.
-
-include hr.doc
-
-<p>
-<a name="scale"></a>
-<tt>scale</tt> <i>x</i>, <i>y</i>
-<p>
-Scales the coordinate system, adding to any existing scaling.
-<i>x</i> and <i>y</i> are scale factors in X and Y axes.
-All later coordinates given in
-<a href="#move">move</a>,
-<a href="#draw">draw</a>,
-<a href="#arc">arc</a> and
-<a href="#arc">addpath</a>
-commands are scaled by these factors.
-
-include hr.doc
-
-<p>
-<a name="rotate"></a>
-<tt>rotate</tt> <i>angle</i>
-<p>
-Rotates the coordinate system, adding to any existing rotation.
-<i>angle</i> is given in degrees, measured counter-clockwise.
-All later coordinates given in
-<a href="#move">move</a>,
-<a href="#draw">draw</a>,
-<a href="#arc">arc</a> and
-<a href="#arc">addpath</a>
-commands are rotated by this angle.
-
-
-include hr.doc
-
-<p>
-<a name="worlds"></a>
-<tt>worlds</tt> <i>x1</i>, <i>y1</i>, <i>x2</i>, <i>y2</i> [, <i>units</i>]
-<p>
-Defines a world coordinate system, replacing any existing
-world coordinate system.
-The world coordinate range is expanded in the X or Y axis,
-if necessary, to maintain uniform scaling.
-
-<i>units</i> define the units of the world coordinates,
-either <tt>metres</tt>, <tt>meters</tt> or <tt>feet</tt>.
-If not given, units are assumed to be metres.
-
-<!--
-<p>
-<a name="project"></a>
-<tt>project</tt> <i>from</i>, <i>to</i>
-Coordinate system transformation.
--->
-
-include hr.doc
-
-<p>
-<a name="dataset"></a>
-<tt>dataset</tt> <i>type</i>, <i>name</i>, <i>extras</i>,
-[<i>geometryfield</i>, ... ]
-<p>
-Defines a dataset to read geographic data from.
-<i>dataset</i> is the filename of the dataset to read, or
-an SQL query statement when accessing an RDBMS.
-<i>type</i> is the type of dataset and
-<i>extras</i> defines further options for accessing the dataset, given
-as <i>variable=value</i> values, separated by whitespace.
-The following dataset types and options are available:
-
-<p>
-
-<table border=1 width=400>
-<tr>
-<td>
-<b>Dataset Type</b>
-<td>
-<b>Description and Extras</b>
-
-<tr>
-<td>
-<tt>textfile</tt>
-<td>
-for accessing data from a delimited text file, with one
-record per line.
-<p>
-Extras:
-<p>
-<tt>comment=<i>string</i></tt>
-<br>
-Character string at start of a line marking a comment line that
-is to be ignored.  Default value is a hash character (<tt>#</tt>).
-<p>
-<tt>delimeters=<i>string</i></tt>
-<br>
-Characters separating fields in the text file.  Default value
-is all whitespace characters.
-
-<tr>
-<td>
-<tt>shapefile</tt>
-<td>
-for accessing data in ESRI Shape file format.
-<p>
-Extras:
-<p>
-<tt>dbffields=<i>field1</i>,<i>field2</i>,...</tt>
-<br>
-Comma-separated list of
-attribute fields to read from the DBF database file accompanying the
-Shape file.  By default, all fields are read.  Reading fewer attribute
-fields improves performance.
-
-</table>
-
-
-
-<i>geometryfield</i>
-defines which columns are to be interpreted as geometry
-
-include hr.doc
-
-<p>
-<a name="import"></a>
-<tt>import</tt>
-Begins new query of dataset defined with
-<a href="#dataset">dataset</a>
-command.
-Only data contained
-
-include hr.doc
-
-<p>
-<a name="fetch"></a>
-<tt>fetch</tt>
-<p>
-Fetches next record from current dataset.
-For each field in the record, a variable is defined with the name
-of the field and the value of the field for the next record.
-Before fetching a record, check the variable
-<tt>Mapyrus.import.moreRecords</tt>
-to ensure that another record is available from the dataset.
+values.
 
 include hr.doc
 
@@ -1063,7 +1019,8 @@ include hr.doc
 <p>
 Begins output of a new page to a file.  Any previous output is closed.
 The path, clipping path and world coordinates are cleared.
-The new page has a white background.
+The new page has a white background, with origin in the lower-left
+corner.
 <i>format</i> is the file format to use for output, one of:
 <ul>
 <li>
@@ -1114,6 +1071,121 @@ separated by spaces.
 A newline is added after the final <i>string</i>.
 <p>
 
+<!--
+<p>
+<a name="project"></a>
+<tt>project</tt> <i>from</i>, <i>to</i>
+Coordinate system transformation.
+-->
+
+include hr.doc
+
+<p>
+<a name="protect"></a>
+<tt>protect</tt>
+<p>
+Defines a clip path to
+protect the area of the page covered by the current path and
+prevent it from being overwritten by later drawing commands.
+Opposite of the
+<a href="#clip"/>clip</a>
+command.
+If the path is protected in a procedure, then the area remains
+protected until the procedure is complete.  Otherwise, the area
+remains permanently protected for the page.
+When more than one area is protected, the union of all areas
+is protected.
+The current path is not modified by this command.
+
+include hr.doc
+
+<p>
+<a name="rotate"></a>
+<tt>rotate</tt> <i>angle</i>
+<p>
+Rotates the coordinate system, adding to any existing rotation.
+<i>angle</i> is given in degrees, measured counter-clockwise.
+All later coordinates given in
+<a href="#move">move</a>,
+<a href="#draw">draw</a>,
+<a href="#arc">arc</a> and
+<a href="#arc">addpath</a>
+commands are rotated by this angle.
+
+include hr.doc
+
+<p>
+<a name="samplepath"></a>
+<tt>samplepath</tt> <i>spacing</i>, <i>offset</i>
+<p>
+Replaces current path with equally spaced points along the path.
+<i>offset</i> is the distance along the path at which to place first point,
+given in millimetres.
+<i>spacing</i> is the distance between points, given in millimetres.
+The sign of <i>spacing</i>
+controls the direction in which the path is travelled.
+If <i>spacing</i> is a positive value, the path is travelled from the
+beginning towards the end.
+If <i>spacing</i> is a negative value, then the absolute value of
+<i>spacing</i> is used and the path is travelled from the end towards
+the beginning.
+Using a very large postive or negative value for <i>spacing</i> results
+in current path being replaced by a single point at the beginning or
+end of the path.
+include hr.doc
+
+<p>
+<a name="scale"></a>
+<tt>scale</tt> <i>x</i>, <i>y</i>
+<p>
+Scales the coordinate system, adding to any existing scaling.
+<i>x</i> and <i>y</i> are scale factors in X and Y axes.
+All later coordinates given in
+<a href="#move">move</a>,
+<a href="#draw">draw</a>,
+<a href="#arc">arc</a> and
+<a href="#arc">addpath</a>
+commands are scaled by these factors.
+
+include hr.doc
+
+<p>
+<a name="stripepath"></a>
+<tt>stripepath</tt> <i>spacing</i>, <i>angle</i>
+<p>
+Replaces current path with equally spaced parallel lines that completely
+cover the path.
+<i>spacing</i> is the distance between lines, measured in millimetres.
+<i>angle</i> is angle of each line, measured in counter-clockwise in
+degrees, with zero being horizontal.
+Follow this command with a <a href="#clip">clip</a> command to
+produce a hatched fill pattern.
+
+include hr.doc
+<p>
+<a name="stroke"></a>
+<tt>stroke</tt>
+<p>
+Draws the current path using the current color and linestyle.
+The current path is not modified by this command.
+
+include hr.doc
+
+<p>
+<a name="worlds"></a>
+<tt>worlds</tt> <i>x1</i>, <i>y1</i>, <i>x2</i>, <i>y2</i> [, <i>units</i>]
+<p>
+Defines a world coordinate system for the page with
+(<i>x1</i>, <i>y1</i>) in the lower-left corner of the page and
+(<i>x2</i>, <i>y2</i>) in the upper-right corner, replacing any existing
+world coordinate system.
+The world coordinate range is expanded in the X or Y axis,
+if necessary, to maintain uniform scaling.
+
+<i>units</i> define the units of the world coordinates,
+either <tt>metres</tt>, <tt>meters</tt> or <tt>feet</tt>.
+If not given, units are assumed to be metres.
+
 include hr.doc
 
 <a name="errors"></a>
@@ -1145,7 +1217,8 @@ If port number is 0 then any free port number is used.  The port
 number used is written to the log file or to standard output.
 <p>
 The HTTP server is multi-threaded to enable several requests to
-be handled at the same time.  If an HTTP request is for a file with a suffix
+be handled simultaneously.  If the HTTP server
+receives an HTTP request for a file with a suffix
 matching a well-known MIME type (<tt>html</tt>, <tt>txt</tt>, <tt>ps</tt>,
 <tt>pdf</tt>, <tt>zip</tt> or a web image format),
 then the contents of that file are returned by the HTTP server to the
@@ -1176,8 +1249,9 @@ The HTTP server runs forever and
 is stateless.  Each HTTP request is independent and
 variables and graphics state are not shared between
 requests.  Cookies are not used.
-Any files or URLs given on the command line are interpreted
-before accepting HTTP requests.  Procedures defined in these files
+Any files or URLs given on the command line when Mapyrus is started
+are interpreted before accepting HTTP requests.
+Procedures defined in these files
 are available when interpreting HTTP requests.  This enables
 common procedures to be loaded only once at startup and not with every
 HTTP request.
