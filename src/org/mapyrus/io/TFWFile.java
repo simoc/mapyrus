@@ -105,10 +105,17 @@ public class TFWFile
 				}
 				nValuesRead++;
 			}
-			double xMin = values[4];
-			double yMax = values[5];
+			
 			double pixelWidth = values[0];
 			double pixelHeight = -values[3];
+
+			/*
+			 * TFW file contains position of centre of pixel at top-left corner of image.
+			 * Shift position half a pixel so we have top-left corner of image.
+			 */
+			double xMin = values[4] - pixelWidth / 2;
+			double yMax = values[5] + pixelHeight / 2;
+
 			int imageWidth = image.getWidth();
 			int imageHeight = image.getHeight();
 			mBounds = new Rectangle2D.Double(xMin, yMax - imageHeight * pixelHeight,
