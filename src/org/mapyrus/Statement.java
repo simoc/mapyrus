@@ -53,24 +53,25 @@ public class Statement
 	public static final int SAMPLEPATH = 20;
 	public static final int STRIPEPATH = 21;
 	public static final int SHIFTPATH = 22;
-	public static final int STROKE = 23;
-	public static final int FILL = 24;
-	public static final int PROTECT = 25;
-	public static final int CLIP = 26;
-	public static final int LABEL = 27;
-	public static final int ICON = 28;
-	public static final int SCALE = 29;
-	public static final int ROTATE = 30;
-	public static final int WORLDS = 31;
-	public static final int PROJECT = 32;
-	public static final int DATASET = 33;
-	public static final int FETCH = 34;
-	public static final int NEWPAGE = 35;
-	public static final int PRINT = 36;
-	public static final int LOCAL = 37;
-	public static final int LET = 38;
-	public static final int KEY = 39;
-	public static final int LEGEND = 40;
+	public static final int SINKHOLE = 23;
+	public static final int STROKE = 24;
+	public static final int FILL = 25;
+	public static final int PROTECT = 26;
+	public static final int CLIP = 27;
+	public static final int LABEL = 28;
+	public static final int ICON = 29;
+	public static final int SCALE = 30;
+	public static final int ROTATE = 31;
+	public static final int WORLDS = 32;
+	public static final int PROJECT = 33;
+	public static final int DATASET = 34;
+	public static final int FETCH = 35;
+	public static final int NEWPAGE = 36;
+	public static final int PRINT = 37;
+	public static final int LOCAL = 38;
+	public static final int LET = 39;
+	public static final int KEY = 40;
+	public static final int LEGEND = 41;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -135,6 +136,7 @@ public class Statement
 		mStatementTypeLookup.put("samplepath", new Integer(SAMPLEPATH));
 		mStatementTypeLookup.put("stripepath", new Integer(STRIPEPATH));
 		mStatementTypeLookup.put("shiftpath", new Integer(SHIFTPATH));
+		mStatementTypeLookup.put("sinkhole", new Integer(SINKHOLE));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
 		mStatementTypeLookup.put("protect", new Integer(PROTECT));
