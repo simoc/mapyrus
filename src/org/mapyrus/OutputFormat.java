@@ -50,6 +50,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -188,6 +189,19 @@ public class OutputFormat
 	 * Mask containing protected areas of the page.
 	 */
 	private PageMask mPageMask;
+
+	/*
+	 * Counts clip paths set for SVG output so each clip path
+	 * can be given a unique id.
+	 */
+	private int mClipPathCounter;
+	private boolean mIsClipPathActive;
+
+	/*
+	 * Format for writing coordinate values.
+	 */
+	private DecimalFormat mCoordinateDecimal = new DecimalFormat("#.###",
+			Constants.US_DECIMAL_FORMAT_SYMBOLS);
 
 	/**
 	 * Write PostScript file header, including document structuring conventions (DSC).
@@ -371,7 +385,7 @@ public class OutputFormat
 	 */
 	private void writeSVGHeader(double width, double height, Color backgroundColor)
 	{
-		mWriter.println("<?xml version=\"1.0\" standalone=\"no\"?>");
+		mWriter.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
 		mWriter.println("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"");
 		mWriter.println("  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
 		Date now = new Date();
@@ -398,7 +412,8 @@ public class OutputFormat
 		 */
 		double pxPerMM = Constants.getScreenResolution() / Constants.MM_PER_INCH;
 		mWriter.println("<g transform=\"scale(" + pxPerMM + ")\"");
-		mWriter.println("  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none\">");
+		mWriter.println("  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
+		mWriter.println("  clip-rule=\"nonzero\">");
 	}
 
 	/**
@@ -1632,7 +1647,7 @@ public class OutputFormat
 				{
 					if (i > 0)
 						s.append(" ");
-					s.append(dashes[i]);
+					s.append(mCoordinateDecimal.format(dashes[i]));
 				}
 				s.append("] ");
 				s.append(linestyle.getDashPhase());
@@ -1655,20 +1670,40 @@ public class OutputFormat
 
 	/**
 	 * Set clip path for output format.
-	 * @param clipPaths are polygons to clip against, or null if there are no clip polygons.
+	 * @param clipPaths are polygons to clip against, or null if
+	 * there are no clip polygons.
 	 */
 	public void setClipAttribute(ArrayList clipPaths)
 	{
 		if (mOutputType != POSTSCRIPT_GEOMETRY)
 		{
 			mGraphics2D.setClip(null);
-			if (clipPaths != null)
+			mIsClipPathActive = (clipPaths != null && clipPaths.size() > 0);
+			if (mIsClipPathActive)
 			{
+				if (mOutputType == SVG)
+				{
+					mClipPathCounter++;
+					writeLine("<clipPath id=\"clip" + mClipPathCounter + "\">");
+				}
+
 				for (int i = 0; i < clipPaths.size(); i++)
 				{
 					GeometricPath clipPath = (GeometricPath)(clipPaths.get(i));
-					mGraphics2D.clip(clipPath.getShape());
+					if (mOutputType == SVG)
+					{
+						writeLine("<path d=\"");
+						writeShape(clipPath.getShape());
+						writeLine("\"/>");
+					}
+					else
+					{
+						mGraphics2D.clip(clipPath.getShape());
+					}
 				}
+
+				if (mOutputType == SVG)
+					writeLine("</clipPath>");
 			}
 		}
 	}
@@ -1696,9 +1731,15 @@ public class OutputFormat
 					lastX = coords[0];
 					lastY = coords[1];
 					if (mOutputType == SVG)
-						writeLine("M " + lastX + " " + (mPageHeight - lastY));
+					{
+						writeLine("M " + mCoordinateDecimal.format(lastX) +
+							" " + mCoordinateDecimal.format(mPageHeight - lastY));
+					}
 					else
-						writeLine(lastX + " " + lastY + " m");
+					{
+						writeLine(mCoordinateDecimal.format(lastX) +
+							" " + mCoordinateDecimal.format(lastY) + " m");
+					}
 					skippedLastSegment = false;
 					break;
 
@@ -1711,9 +1752,15 @@ public class OutputFormat
 						lastX = x;
 						lastY = y;
 						if (mOutputType == SVG)
-							writeLine("L " + lastX + " " + (mPageHeight - lastY));
+						{
+							writeLine("L " + mCoordinateDecimal.format(lastX) +
+								" " + mCoordinateDecimal.format(mPageHeight - lastY));
+						}
 						else
-							writeLine(lastX + " " + lastY + " l");
+						{
+							writeLine(mCoordinateDecimal.format(lastX) +
+								" " + mCoordinateDecimal.format(lastY) + " l");
+						}
 						skippedLastSegment = false;
 					}
 					else
@@ -1729,9 +1776,15 @@ public class OutputFormat
 					if (skippedLastSegment)
 					{
 						if (mOutputType == SVG)
-							writeLine("L " + x + " " + (mPageHeight - y));
+						{
+							writeLine("L " + mCoordinateDecimal.format(x) +
+								" " + mCoordinateDecimal.format(mPageHeight - y));
+						}
 						else
-							writeLine(x + " " + y + " l");
+						{
+							writeLine(mCoordinateDecimal.format(x) + " " +
+								mCoordinateDecimal.format(y) + " l");
+						}
 					}
 					if (mOutputType == SVG)
 						writeLine("z");
@@ -1743,21 +1796,21 @@ public class OutputFormat
 				case PathIterator.SEG_CUBICTO:
 					if (mOutputType == SVG)
 					{
-						writeLine("C " + coords[0] + " " +
-							(mPageHeight - coords[1]) + " " +
-							coords[2] + " " +
-							(mPageHeight - coords[3]) + " " +
-							coords[4] + " " +
-							(mPageHeight - coords[5]));
+						writeLine("C " + mCoordinateDecimal.format(coords[0]) + " " +
+							mCoordinateDecimal.format(mPageHeight - coords[1]) + " " +
+							mCoordinateDecimal.format(coords[2]) + " " +
+							mCoordinateDecimal.format(mPageHeight - coords[3]) + " " +
+							mCoordinateDecimal.format(coords[4]) + " " +
+							mCoordinateDecimal.format(mPageHeight - coords[5]));
 					}
 					else
 					{
-						writeLine(coords[0] + " " +
-							coords[1] + " " +
-							coords[2] + " " +
-							coords[3] + " " +
-							coords[4] + " " +
-							coords[5] + " " +
+						writeLine(mCoordinateDecimal.format(coords[0]) + " " +
+							mCoordinateDecimal.format(coords[1]) + " " +
+							mCoordinateDecimal.format(coords[2]) + " " +
+							mCoordinateDecimal.format(coords[3]) + " " +
+							mCoordinateDecimal.format(coords[4]) + " " +
+							mCoordinateDecimal.format(coords[5]) + " " +
 							"curveto");
 					}
 					lastX = coords[4];
@@ -1775,9 +1828,15 @@ public class OutputFormat
 			 * never skip it.
 			 */
 			if (mOutputType == SVG)
-				writeLine("L " + x + " " + (mPageHeight - y));
+			{
+				writeLine("L " + mCoordinateDecimal.format(x) + " " +
+					mCoordinateDecimal.format(mPageHeight - y));
+			}
 			else
-				writeLine(x + " " + y + " l");
+			{
+				writeLine(mCoordinateDecimal.format(x) +
+					" " + mCoordinateDecimal.format(y) + " l");
+			}
 		}
 	}
 
@@ -2124,6 +2183,7 @@ public class OutputFormat
 				{
 					writeLine("<path d=\"");
 					writeShape(shape);
+					writeLine("\"");
 					Color color = mGraphics2D.getColor();
 					BasicStroke stroke = (BasicStroke)mGraphics2D.getStroke();
 					float width = stroke.getLineWidth();
@@ -2147,7 +2207,11 @@ public class OutputFormat
 					else
 						joinString = "round";
 
-					writeLine("\" style=\"stroke:" + ColorDatabase.toHexString(color) +
+					if (mIsClipPathActive)
+					{
+						writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
+					}
+					writeLine("  style=\"stroke:" + ColorDatabase.toHexString(color) +
 						";stroke-width:" + width +
 						";stroke-linecap:" + capString +
 						";stroke-linejoin:" + joinString);
@@ -2158,7 +2222,7 @@ public class OutputFormat
 						{
 							if (i > 0)
 								dashes.append(",");
-							dashes.append(dashArray[i]);
+							dashes.append(mCoordinateDecimal.format(dashArray[i]));
 						}
 						writeLine(dashes.toString());
 						writeLine(";stroke-dashoffset:" + dashPhase);
@@ -2168,6 +2232,7 @@ public class OutputFormat
 					{
 						writeLine(";stroke-opacity:" + (alpha / 255.0f));
 					}
+
 					writeLine(";fill:none\"/>");
 				}
 				else
@@ -2199,10 +2264,15 @@ public class OutputFormat
 				{
 					writeLine("<path d=\"");
 					writeShape(shape);
+					writeLine("\"");
 					Color color = mGraphics2D.getColor();
 					int alpha = color.getAlpha();
 
-					mWriter.print("\" style=\"fill:" + ColorDatabase.toHexString(color));
+					if (mIsClipPathActive)
+					{
+						writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
+					}
+					mWriter.print("  style=\"fill:" + ColorDatabase.toHexString(color));
 					if (alpha != 255)
 					{
 						mWriter.print(";fill-opacity:" + (alpha / 255.0f));
@@ -2355,7 +2425,8 @@ public class OutputFormat
 
 				if (mOutputType == POSTSCRIPT_GEOMETRY)
 				{
-					writeLine(x + " " + y + " m");
+					writeLine(mCoordinateDecimal.format(x) + " " +
+						mCoordinateDecimal.format(y) + " m");
 
 					/*
 					 * Pass counter and line to PostScript procedure for
@@ -2364,6 +2435,84 @@ public class OutputFormat
 					writeLine(Integer.toString(lineNumber));
 					writePostScriptString(nextLine);
 					writeLine("t");
+				}
+				else if (mOutputType == SVG)
+				{
+					double yInc = 0;
+
+					if (lineNumber > 0)
+					{
+						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
+						yInc = bounds.getHeight() * lineNumber;
+					}
+
+					String anchor;
+					if (mJustificationShiftX == -1)
+						anchor = "end";
+					else if (mJustificationShiftX == 0)
+						anchor = "left";
+					else
+						anchor = "middle";
+
+					Color color = mGraphics2D.getColor();
+					int alpha = color.getAlpha();
+					Font font = mGraphics2D.getFont();
+
+					StringBuffer extras = new StringBuffer();
+					if (font.isBold())
+						extras.append(" font-weight=\"bold\" ");
+					if (font.isItalic())
+						extras.append(" font-style=\"italic\" ");
+					if (mFontRotation != 0)
+					{
+						extras.append(" rotate=\"");
+						extras.append(Math.toDegrees(mFontRotation));
+						extras.append("\" ");
+					}
+					if (mFontOutlineWidth > 0)
+					{
+						extras.append(" stroke=\"");
+						extras.append(ColorDatabase.toHexString(color));
+						extras.append("\" stroke-width=\"");
+						extras.append(mFontOutlineWidth);
+						extras.append("\" ");
+
+						if (alpha != 255)
+						{
+							extras.append(" stroke-opacity=\"");
+							extras.append(alpha / 255.0f);
+							extras.append("\" ");
+						}
+					}
+					else
+					{
+						extras.append(" fill=\"");
+						extras.append(ColorDatabase.toHexString(color));
+						extras.append("\" ");
+
+						if (alpha != 255)
+						{
+							extras.append(" fill-opacity=\"");
+							extras.append(alpha / 255.0f);
+							extras.append("\" ");
+						}
+					}
+					if (mIsClipPathActive)
+					{
+						extras.append(" clip-path=\"url(#clip");
+						extras.append(mClipPathCounter);
+						extras.append(")\" ");
+					}
+
+					writeLine("<text xml:space=\"preserve\" x=\"" +
+						mCoordinateDecimal.format(x) + "\" y=\"" +
+						mCoordinateDecimal.format(mPageHeight - (y - yInc)) +
+						"\" text-anchor=\"" + anchor + "\"");
+					writeLine("  font-family=\"" + font.getFamily() + "\" " +
+						"font-size=\"" + font.getSize2D() + "\" " +
+						extras.toString() + ">");
+					writeLine("<![CDATA[" + nextLine + "]]>");
+					writeLine("</text>");
 				}
 				else
 				{
