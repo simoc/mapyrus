@@ -26,6 +26,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
 import java.io.IOException;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
+import org.mapyrus.Constants;
 
 /**
  * A PostScript Type 1 font, read from a .pfa font definition file.

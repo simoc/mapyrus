@@ -26,6 +26,8 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 
 /**
  * A TrueType font, read from a .ttf font definition file.
