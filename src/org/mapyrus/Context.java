@@ -9,8 +9,10 @@
  */
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 import java.util.Hashtable;
 import java.io.IOException;
+import java.util.Vector;
 
 public class Context
 {
@@ -87,7 +89,7 @@ public class Context
 		mColor = existing.mColor;
 		mLineWidth = existing.mLineWidth;
 		mCtm = new AffineTransform(existing.mCtm);
-		
+
 		/*
 		 * Only create variable lookup table when values defined locally.
 		 */
@@ -114,7 +116,7 @@ public class Context
 		mAttributesChanged = existing.mAttributesChanged;
 		mAttributesSet = false;
 	}
-			
+
 	/**
 	 * Set graphics attributes (color, line width, etc.) if they
 	 * have changed since the last time we drew something.
@@ -201,7 +203,28 @@ public class Context
 		mCtm.scale(x, y);
 		mAttributesChanged = mAttributesSet = true;
 	}
-
+	
+	/**
+	 * Sets translation for subsequent coordinates.
+	 * @param x is new point for origin on X axis.
+	 * @param y is new point for origin on Y axis.
+	 */
+	public void setTranslation(double x, double y)
+	{
+		mCtm.translate(x, y);
+		mAttributesChanged = mAttributesSet = true;
+	}
+	
+	/**
+	 * Sets rotation for subsequent coordinates.
+	 * @param angle is rotation angle in degrees, going anti-clockwise.
+	 */
+	public void setRotation(double angle)
+	{
+		mCtm.rotate(angle);
+		mAttributesChanged = mAttributesSet = true;
+	}
+			
 	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
@@ -210,7 +233,7 @@ public class Context
 	public void moveTo(double x, double y)
 	{
 		double srcPts[] = {x, y};
-		float dstPts[] = new float[2];
+		float dstPts[] = new float[3];
 		
 		/*
 		 * Transform point to millimetre position on page.
@@ -218,7 +241,13 @@ public class Context
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
-		mPath.moveTo(dstPts[0], dstPts[1]);
+			
+		/*
+		 * Set no rotation for point.
+		 */
+		dstPts[2] = 0.0f;
+		
+		mPath.moveTo(dstPts);
 	}
 
 	/**
@@ -237,7 +266,7 @@ public class Context
 		mCtm.transform(srcPts, 0, dstPts, 0, 1);
 		if (mPath == null)
 			mPath = new GeometricPath();
-		mPath.lineTo(dstPts[0], dstPts[1]);
+		mPath.lineTo(dstPts);
 	}
 
 	/**
@@ -250,14 +279,14 @@ public class Context
 		else
 			mPath.reset();
 	}
-		
+
 	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke()
 	{
 		GeometricPath path;
-		
+
 		/*
 		 * If path defined in this context then use that,
 		 * else use context defined in previous context.
@@ -296,6 +325,46 @@ public class Context
 			mOutputFormat.fill(path.getShape());
 		}
 	}
+
+	/**
+	 * Returns the number of moveTo's in path defined in this context.
+	 * @return count of moveTo calls made.
+	 */
+	public int getMoveToCount()
+	{
+		int retval;
+
+		if (mPath == null)
+			retval = 0;
+		else
+			retval = mPath.getMoveToCount();
+		return(retval);
+	}
+
+	/**
+	 * Returns the number of lineTo's in path defined in this context.
+	 * @return count of lineTo calls made for this path.
+	 */
+	public int getLineToCount()
+	{
+		int retval;
+
+		if (mPath == null)
+			retval = 0;
+		else
+			retval = mPath.getLineToCount();
+		return(retval);
+	}
+
+	/**
+	 * Returns coordinates and rotation angle for each each moveTo point in current path
+	 * @returns list of three element float arrays containing x, y coordinates and
+	 * rotation angles. 
+	 */
+	public Vector getMoveTos()
+	{
+		return(mPath.getMoveTos());
+	}
 	
 	/**
 	 * Returns value of a variable.
@@ -333,3 +402,4 @@ public class Context
 		mVars.put(varName, value);
 	}
 }
+

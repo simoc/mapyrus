@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.awt.Shape;
 import java.util.LinkedList;
 import java.util.Date;
+import java.util.Vector;
+import java.awt.geom.PathIterator;
+import java.awt.geom.AffineTransform;
 
 public class ContextStack
 {
@@ -53,7 +56,7 @@ public class ContextStack
 	private int popContext() throws IOException, MapyrusException
 	{
 		int i = mStack.size();
-		
+
 		if (i > 0)
 		{
 			/*
@@ -65,7 +68,8 @@ public class ContextStack
 			
 			/*
 			 * If graphics attributes were set in context then set them changed
-			 * in the context that is now current.
+			 * in the context that is now current so they are set again
+			 * here before being used.
 			 */
 			if (i > 0 && attributesSet)
 				getCurrentContext().setAttributesChanged();
@@ -129,6 +133,25 @@ public class ContextStack
 	}
 
 	/**
+	 * Sets translation for subsequent coordinates.
+	 * @param x is new point for origin on X axis.
+	 * @param y is new point for origin on Y axis.
+	 */
+	public void setTranslation(double x, double y)
+	{
+		getCurrentContext().setTranslation(x, y);
+	}
+	
+	/**
+	 * Sets rotation for subsequent coordinates.
+	 * @param angle is rotation angle in degrees, going anti-clockwise.
+	 */
+	public void setRotation(double angle)
+	{
+		getCurrentContext().setRotation(angle);
+	}
+
+	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
@@ -171,7 +194,37 @@ public class ContextStack
 	{
 		getCurrentContext().fill();
 	}	
-		
+
+	/**
+	 * Returns the number of moveTo's in path defined in current context.
+	 * @return count of moveTo calls made.
+	 */
+	public int getMoveToCount()
+	{
+		int retval = getCurrentContext().getMoveToCount();
+		return(retval);
+	}
+
+	/**
+	 * Returns the number of lineTo's in path defined in current context.
+	 * @return count of lineTo calls made for this path.
+	 */
+	public int getLineToCount()
+	{
+		int retval = getCurrentContext().getLineToCount();
+		return(retval);
+	}
+	
+	/**
+	 * Returns coordinates and rotation angle for each each moveTo point in current path
+	 * @returns list of three element float arrays containing x, y coordinates and
+	 * rotation angles. 
+	 */	
+	public Vector getMoveTos()
+	{
+		return(getCurrentContext().getMoveTos());
+	}
+
 	/**
 	 * Returns value of a variable.
 	 * @param variable name to lookup.
@@ -249,7 +302,7 @@ public class ContextStack
 	{
 		getCurrentContext().defineVariable(varName, value);
 	}
-	
+
 	/**
 	 * Save current context so that it can be restored later with restoreState.
 	 */
@@ -257,7 +310,7 @@ public class ContextStack
 	{
 		pushContext();
 	}
-	
+
 	/**
 	 * Restore context to state before saveState was called.
 	 */
@@ -265,7 +318,7 @@ public class ContextStack
 	{
 		popContext();
 	}
-	
+
 	/**
 	 * Pops all contexts from stack that were pushed with saveState.
 	 * A ContextStack cannot be used again after this call.
