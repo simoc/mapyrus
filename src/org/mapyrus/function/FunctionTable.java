@@ -122,6 +122,9 @@ public class FunctionTable
 		f = new Tempname();
 		mFunctions.put(f.getName(), f);
 
+		f = new Trim();
+		mFunctions.put(f.getName(), f);
+
 		f = new Upper();
 		mFunctions.put(f.getName(), f);
 
