@@ -97,6 +97,7 @@ public class ASCII85Writer
 		if ((!isFinalSet) && l == 0)
 		{
 			mWriter.write('z');
+			mNCharsOnLine++;
 		}
 		else
 		{
@@ -122,15 +123,16 @@ public class ASCII85Writer
 				mWriter.write(mEncodedChars);
 				mNCharsOnLine += mEncodedChars.length;
 
-				/*
-				 * Break lines so that they don't become too long.
-				 */
-				if (mNCharsOnLine > 72)
-				{
-					mWriter.write(Constants.LINE_SEPARATOR + " ");
-					mNCharsOnLine = 0;
-				}
 			}
+		}
+
+		/*
+		 * Break lines so that they don't become too long.
+		 */
+		if (mNCharsOnLine > 72)
+		{
+			mWriter.write(Constants.LINE_SEPARATOR + " ");
+			mNCharsOnLine = 0;
 		}
 	}
 
