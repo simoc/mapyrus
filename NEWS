@@ -1,7 +1,7 @@
 Mapyrus Major Change History
 Copyright (C) 2003 Simon Chenery.
 
-0.42, April 2004
+0.42, March 2004
 
 * Add Java API and change licensing to LGPL.
 * Added stringwidth function.
