@@ -67,26 +67,27 @@ public class Statement
 	public static final int GUILLOTINE = 34;
 	public static final int STROKE = 35;
 	public static final int FILL = 36;
-	public static final int PROTECT = 37;
-	public static final int UNPROTECT = 38;
-	public static final int CLIP = 39;
-	public static final int LABEL = 40;
-	public static final int FLOWLABEL = 41;
-	public static final int ICON = 42;
-	public static final int SCALE = 43;
-	public static final int ROTATE = 44;
-	public static final int WORLDS = 45;
-	public static final int PROJECT = 46;
-	public static final int DATASET = 47;
-	public static final int FETCH = 48;
-	public static final int NEWPAGE = 49;
-	public static final int PRINT = 50;
-	public static final int LOCAL = 51;
-	public static final int LET = 52;
-	public static final int EVAL = 53;
-	public static final int KEY = 54;
-	public static final int LEGEND = 55;
-	public static final int MIMETYPE = 56;
+	public static final int GRADIENTFILL = 37;
+	public static final int PROTECT = 38;
+	public static final int UNPROTECT = 39;
+	public static final int CLIP = 40;
+	public static final int LABEL = 41;
+	public static final int FLOWLABEL = 42;
+	public static final int ICON = 43;
+	public static final int SCALE = 44;
+	public static final int ROTATE = 45;
+	public static final int WORLDS = 46;
+	public static final int PROJECT = 47;
+	public static final int DATASET = 48;
+	public static final int FETCH = 49;
+	public static final int NEWPAGE = 50;
+	public static final int PRINT = 51;
+	public static final int LOCAL = 52;
+	public static final int LET = 53;
+	public static final int EVAL = 54;
+	public static final int KEY = 55;
+	public static final int LEGEND = 56;
+	public static final int MIMETYPE = 57;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -166,6 +167,7 @@ public class Statement
 		mStatementTypeLookup.put("guillotine", new Integer(GUILLOTINE));
 		mStatementTypeLookup.put("stroke", new Integer(STROKE));
 		mStatementTypeLookup.put("fill", new Integer(FILL));
+		mStatementTypeLookup.put("gradientfill", new Integer(GRADIENTFILL));
 		mStatementTypeLookup.put("protect", new Integer(PROTECT));
 		mStatementTypeLookup.put("unprotect", new Integer(UNPROTECT));
 		mStatementTypeLookup.put("clip", new Integer(CLIP));
