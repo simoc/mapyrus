@@ -586,9 +586,12 @@ public class GeometricPath
 					xEnd = coords[0];
 					yEnd = coords[1];
 				}
-				LineEquation eq = new LineEquation(xStart, yStart, xEnd, yEnd);
-				lineEquations.add(eq);
-				
+
+				if (xStart != xEnd || yStart != yEnd)
+				{
+					LineEquation eq = new LineEquation(xStart, yStart, xEnd, yEnd);
+					lineEquations.add(eq);
+				}
 				xStart = xEnd;
 				yStart = yEnd;
 			}
