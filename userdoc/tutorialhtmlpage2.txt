@@ -1,0 +1,46 @@
+<html><head></head>
+<body bgcolor="#ffffff">
+
+<h1>
+Display of
+@placeholder_title@
+</h1>
+
+Geographic Position
+@placeholder_coordinates@
+<p>
+
+<table bgcolor="#ffcfff">
+<tr align="center">
+
+<td>&nbsp;</td>
+
+<td><a href="@placeholder_up_url@">Up</a></td>
+
+<td>&nbsp;</td>
+
+</tr>
+<tr align="center">
+
+<td><a href="@placeholder_left_url@">Left</a></td>
+
+<td><img src="@placeholder_image@"></td>
+
+<td><a href="@placeholder_right_url@">Right</a></td>
+
+</tr>
+<tr align="center">
+
+<td>&nbsp;</td>
+
+<td><a href="@placeholder_down_url@">Down</a></td>
+
+<td>&nbsp;</td>
+
+</table>
+
+<a href="@placeholder_zoom_in_url@">Zoom In</a>
+|
+<a href="@placeholder_zoom_out_url@">Zoom Out</a>
+</body>
+</html>
