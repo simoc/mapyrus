@@ -58,18 +58,19 @@ public class Statement
 	public static final int PROTECT = 25;
 	public static final int CLIP = 26;
 	public static final int LABEL = 27;
-	public static final int SCALE = 28;
-	public static final int ROTATE = 29;
-	public static final int WORLDS = 30;
-	public static final int PROJECT = 31;
-	public static final int DATASET = 32;
-	public static final int FETCH = 33;
-	public static final int NEWPAGE = 34;
-	public static final int PRINT = 35;
-	public static final int LOCAL = 36;
-	public static final int LET = 37;
-	public static final int KEY = 38;
-	public static final int LEGEND = 39;
+	public static final int ICON = 28;
+	public static final int SCALE = 29;
+	public static final int ROTATE = 30;
+	public static final int WORLDS = 31;
+	public static final int PROJECT = 32;
+	public static final int DATASET = 33;
+	public static final int FETCH = 34;
+	public static final int NEWPAGE = 35;
+	public static final int PRINT = 36;
+	public static final int LOCAL = 37;
+	public static final int LET = 38;
+	public static final int KEY = 39;
+	public static final int LEGEND = 40;
 
 	/*
 	 * Statement type for call to user defined procedure block.
@@ -139,6 +140,7 @@ public class Statement
 		mStatementTypeLookup.put("protect", new Integer(PROTECT));
 		mStatementTypeLookup.put("clip", new Integer(CLIP));
 		mStatementTypeLookup.put("label", new Integer(LABEL));
+		mStatementTypeLookup.put("icon", new Integer(ICON));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
@@ -152,7 +154,7 @@ public class Statement
 		mStatementTypeLookup.put("key", new Integer(KEY));
 		mStatementTypeLookup.put("legend", new Integer(LEGEND));
 	}
-	
+
 	/**
 	 * Looks up identifier for a statement name.
 	 * @param s is the name of the statement.
