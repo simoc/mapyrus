@@ -385,4 +385,37 @@ public class Argument
 
 		return(retval);
 	}
+
+	/**
+	 * Clones an Argument object.
+	 * @return clone of this argument.
+	 */	
+	public Object clone()
+	{
+		Argument retval;
+		
+		/*
+		 * Create new argument that is a copy of existing one.
+		 */
+		if (mType == STRING || mType == VARIABLE)
+			retval = new Argument(mType, mStringValue);
+		else if (mType == NUMERIC)
+			retval = new Argument(mNumericValue);
+		else if (mType == HASHMAP)
+		{
+			retval = new Argument();
+			
+			/*
+			 * Make a copy of the list of entries in the hash map --
+			 * we do not want changes in the hashmap copy appearing
+			 * in the original hashmap.
+			 */
+			retval.mHashMap = (HashMap)mHashMap.clone();
+		}
+		else
+		{
+			retval = new Argument(mType, mGeometryValue);
+		}
+		return((Object)retval);
+	}
 }
