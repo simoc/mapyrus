@@ -1132,6 +1132,25 @@ begin Lfence
 	fence_tick
 end
 
+begin bowtie
+	linestyle 0.1
+	move -1, -0.5
+	draw 1, 0.5, 1, -0.5, -1, 0.5
+	closepath
+	stroke
+end
+
+begin Lbowtie
+	# Display line with bow-tie like symbols.
+	#
+	key "line", "Bow Ties"
+	color "black"
+	linestyle 0.1, "round", "round", 0, 4, 4
+	stroke
+	samplepath 8, 6
+	bowtie
+end
+
 begin motorway_label routeNumber
 	local w
 
@@ -1897,6 +1916,7 @@ then
 	Lleftticks
 	Lcenterline
 	Lfence
+	Lbowtie
 	Lmotorway ""
 	Lborder
 	Lrailway
