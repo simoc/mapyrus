@@ -876,6 +876,32 @@ output shown in Figure \ref{tutorialrand3}.
 \label{tutorialrand3}
 \end{figure}
 
+\subsection{Using Transparency}
+
+To set a partially transparent color in Mapyrus, give a
+transparency value (also known as an alpha value) for the color.
+The background will be partly visible behind shapes and labels
+drawn with transparent colors.
+
+The following example demonstrates using transparent colors, with
+output shown in Figure \ref{tutorialtrans1}.
+
+Transparent colors cannot be set in PostScript files using
+\texttt{eps} or \texttt{ps}
+format output.
+Transparent colors are only available in a Encapsulated PostScript file
+containing an image created using
+\texttt{epsimage}
+format output.
+
+\verbatiminput{tutorialtrans1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialtrans1.eps}
+\caption{Transparent Colors}
+\label{tutorialtrans1}
+\end{figure}
+
 \subsection{Shadow Effects}
 \label{tutorialshadow}
 
