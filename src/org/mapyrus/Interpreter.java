@@ -659,7 +659,49 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_ARC));
 				}
 				break;
-			
+
+			case Statement.BOX:
+				if (nExpressions == 4)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					x2 = mExecuteArgs[2].getNumericValue();
+					y2 = mExecuteArgs[3].getNumericValue();
+					double xMin, xMax, yMin, yMax;
+					
+					if (x1 < x2)
+					{
+						xMin = x1;
+						xMax = x2;
+					}
+					else
+					{
+						xMin = x2;
+						xMax = x1;
+					}
+					if (y1 < y2)
+					{
+						yMin = y1;
+						yMax = y2;
+					}
+					else
+					{
+						yMin = y2;
+						yMax = y1;
+					}
+
+					context.moveTo(xMin, yMin);
+					context.lineTo(xMin, yMax);
+					context.lineTo(xMax, yMax);
+					context.lineTo(xMax, yMin);
+					context.lineTo(xMin, yMin);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_BOX));
+				}
+				break;
+
 			case Statement.ADDPATH:
 				for (int i = 0; i < nExpressions; i++)
 				{
