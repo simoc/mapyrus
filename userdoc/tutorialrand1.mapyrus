@@ -1,21 +1,30 @@
-begin tree
-  # Draw a clump of 15 randomly sized and randomly colored
-  # circles representing a tree viewed from above.
+begin flower
+  # Draw flower with randomly colored petals.
   #
-  let i = 0
-  while i < 15
+  let angle = 0
+  while angle < 360
   do
     clearpath
-    color "hsb", 0.3, 1.0, 0.3 + random(0.4)
-    let radius = random(1) + 2
-    let x = 0
-    circle x + radius, 0, radius
+    box 2, -1, 6, 1
+
+    let r = random(3)
+    if r < 1
+    then
+      color "pastelblue"
+    elif r < 2
+    then
+      color "pastelpink"
+    else
+      color "pastelgreen"
+    endif
     fill
+
     color "black"
     linestyle 0.1
     stroke
-    rotate 360 / 5
-    let i = i + 1
+
+    rotate 30
+    let angle = angle + 30
   done
 end
 
@@ -24,4 +33,4 @@ move 8, 8
 move 24, 10
 move 7, 31
 move 25, 28
-tree
+flower
