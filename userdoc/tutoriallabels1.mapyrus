@@ -1,0 +1,27 @@
+newpage "png", "tutoriallabels1.png", 60, 30, 96
+
+# Draw a simple label.
+#
+color "black"
+font 'Helvetica', 'bold', 3
+clearpath
+move 5, 25
+label 'Köln 17°C'
+
+# Draw a two line centered label.
+#
+clearpath
+move 25, 15
+color "#40D0C0"
+justify 'center'
+label 'Gordon International\nPrimary School'
+
+# Draw the same label at several points.
+#
+clearpath
+justify 'left'
+color "Orange"
+move 5, 5
+move 25, 5
+move 45, 5
+label 'READY'
