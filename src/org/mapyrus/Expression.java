@@ -139,6 +139,9 @@ public class Expression
 	private static final int STRINGWIDTH_FUNCTION = 19;	/* stringwidth('foo') = 26 */
 	private static final String STRINGWIDTH_FUNCTION_NAME = "stringwidth";
 
+	private static final int ABS_FUNCTION = 20;	/* abs(-26) = 26 */
+	private static final String ABS_FUNCTION_NAME = "abs";
+
 	/*
 	 * Constant for calculating base 10 logarithms.
 	 */
@@ -173,8 +176,9 @@ public class Expression
 		mFunctionTypeLookup.put(SPLIT_FUNCTION_NAME, new Integer(SPLIT_FUNCTION));
 		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
 		mFunctionTypeLookup.put(STRINGWIDTH_FUNCTION_NAME, new Integer(STRINGWIDTH_FUNCTION));
+		mFunctionTypeLookup.put(ABS_FUNCTION_NAME, new Integer(ABS_FUNCTION));
 		
-		mFunctionArgumentCount = new byte[STRINGWIDTH_FUNCTION + 1];
+		mFunctionArgumentCount = new byte[ABS_FUNCTION + 1];
 		mFunctionArgumentCount[ROUND_FUNCTION] = 1;
 		mFunctionArgumentCount[RANDOM_FUNCTION] = 1;
 		mFunctionArgumentCount[LOG10_FUNCTION] = 1;
@@ -194,6 +198,7 @@ public class Expression
 		mFunctionArgumentCount[SPLIT_FUNCTION] = 2;
 		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
 		mFunctionArgumentCount[STRINGWIDTH_FUNCTION] = 1;
+		mFunctionArgumentCount[ABS_FUNCTION] = 1;
 	}
 
 	/*
@@ -379,11 +384,20 @@ public class Expression
 				{
 					d = Math.cos(Math.toRadians(l));
 				}
-				else
+				else /* TAN_FUNCTION */
 				{
 					d = Math.tan(Math.toRadians(l));
 				}
 				retval = new Argument(d);
+			}
+			else if (mFunction == ABS_FUNCTION)
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				l = leftValue.getNumericValue();
+				if (leftValue.getType() == Argument.NUMERIC)
+					retval = (l >= 0) ? leftValue : new Argument(-l);
+				else
+					retval = Argument.numericZero;
 			}
 			else if (mFunction == POW_FUNCTION ||
 				mFunction == MIN_FUNCTION ||
