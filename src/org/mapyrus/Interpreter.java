@@ -108,11 +108,6 @@ public class Interpreter
 	private HashMap mStatementBlocks;
 	
 	/*
-	 * Line separator, for convenience.
-	 */
-	private static final String mLineSeparator = System.getProperty("line.separator");
-
-	/*
 	 * Static world coordinate system units lookup table.
 	 */
 	private static HashMap mWorldUnitsLookup;
@@ -538,7 +533,7 @@ public class Interpreter
 					for (int i = 0; i < nExpressions; i++)
 					{
 						if (i > 0)
-							s.append(mLineSeparator);
+							s.append(Constants.LINE_SEPARATOR);
 						s.append(args[i].toString());
 					}
 					label = s.toString();

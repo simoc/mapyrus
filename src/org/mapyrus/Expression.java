@@ -108,11 +108,6 @@ public class Expression
 	private static final int MAX_COMPILED_REGEX = 100;
 	
 	/*
-	 * Line separator replaces '\n' sequences in expressions.
-	 */
-	private static final String mLineSeparator = System.getProperty("line.separator");
-
-	/*
 	 * Static table of frequently used regular expressions.
 	 */
 	private static LRUCache mRegexCache = new LRUCache(MAX_COMPILED_REGEX);
@@ -753,7 +748,7 @@ public class Expression
 					 * of other characters is ignored.
 					 */
 					if (c == 'n')
-						buf.append(mLineSeparator);
+						buf.append(Constants.LINE_SEPARATOR);
 					else
 						buf.append((char)c);
 				}
