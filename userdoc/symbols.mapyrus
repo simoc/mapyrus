@@ -15,18 +15,21 @@
 # If this is too long, copy only the definitions being used to a separate
 # file and interpret that file instead.
 #
-print 'timer=', Mapyrus.timer
 
-begin circle1
-	key "point", "circle1"
+begin circleoutline
+	# Displays circle outline.
+	#
+	key "point", "Circle Outline"
 	linestyle 0.1
 	circle 0, 0, 2
 	closepath
 	stroke
 end
 
-begin triangle1
-	key "point", "triangle1"
+begin equitriangle
+	# Displays equilateral triangle outline.
+	#
+	key "point", "Equi. Triangle"
 	linestyle 0.1
 	move -1, -0.866
 	draw 0, 0.866, 1, -0.866
@@ -34,23 +37,29 @@ begin triangle1
 	stroke
 end
 
-begin square1
-	key "point", "square1"
+begin squareoutline
+	# Displays square outline.
+	#
+	key "point", "Square Outline"
 	linestyle 0.1
 	box -1, -1, 1, 1
 	stroke
 end
 
-begin square2
-	key "point", "square2"
+begin filledsquare
+	# Displays filled square.
+	#
+	key "point", "Filled Square"
 	linestyle 0.1
 	box -1, -1, 1, 1
 	fill
 end
 
-begin pentagon1
+begin filledpentagon
+	# Displays filled 5-sided shape.
+	#
 	key "point", "pentagon1"
-	linestyle 0.1
+	color "brown"
 	move -1, -1.376
 	local i
 	let i = 0
@@ -61,18 +70,23 @@ begin pentagon1
 		let i = i + 1
 	done
 	closepath
-	stroke
+	fill
 end
 
-begin hexagon1
-	key "point", "hexagon1"
+begin filledhexagon
+	# Displays filled hexagon.
+	#
+	key "point", "Filled Hexagon"
 	linestyle 0.1
+	color "red"
 	hexagon 0, 0, 3
-	stroke
+	fill
 end
 
-begin octagon1 
-	key "point", "octagon1"
+begin octagonoutline
+	# Displays octagon outline.
+	#
+	key "point", "Octagon Outline"
 	linestyle 0.1
 	move -0.848, -0.848
 	local i
@@ -110,16 +124,86 @@ begin plus1
 	stroke
 end
 
-begin sixpointstar1
+begin sixpointstar
+	# Displays filled 6-pointed star.
+	#
+	key "point", "6 Point Star"
+	color "gold"
+	move -2, -1.732
+	draw 0, 1.732, 2, -1.732
+	closepath
+	fill
+
+	clearpath
+	move -2, 0.866
+	draw 2, 0.866, 0, -2.598
+	closepath
+	fill
 end
 
-begin eightpointstar1
+begin fivepointstar
+	# Displays filled 5-pointed star.
+	#
+	key "point", "5 Point Star"
+	local i
+	let i = 0
+	color "red"
+	while i < 360
+	do
+		clearpath
+		move -0.8, 0
+		draw 0, 3, 0.8, 0
+		fill
+		rotate 72
+		let i = i + 72
+	done
+end
+
+begin arrowupoutline
+	# Displays outlined arrow pointing upwards.
+	#
+	key "point", "Arrow Up"
+	move -2, 0
+	draw 0, 2, 2, 0, 1, 0, 1, -2, -1, -2, -1, 0
+	closepath
+	color "grey90"
+	fill
+	color "blue"
+	linestyle 0.2
+	stroke
+end
+
+begin arrowdownoutline
+	key "point", "Arrow Down"
+	rotate 180
+	arrowupoutline
+end
+
+begin arrowleftoutline
+	key "point", "Arrow Left"
+	rotate 90
+	arrowupoutline
+end
+
+begin arrowrightoutline
+	key "point", "Arrow Right"
+	rotate -90
+	arrowupoutline
+end
+
+begin arrowupleftoutline
+	key "point", "Arrow Up Left"
+	rotate 45
+	arrowupoutline
 end
 
 begin shipwreck
 	key "point", "Shipwreck"
 	color "black"
 	linestyle 0.1
+
+	# Draw cross.
+	#
 	move 0, 0
 	draw -0.7, 1.4
 
@@ -130,6 +214,8 @@ begin shipwreck
 	rdraw -0.8, -1.385
 	stroke
 
+	# Draw sunk ship.
+	#
 	clearpath
 	move -2, -1
 	draw 2, 1, 2, -1
@@ -144,6 +230,8 @@ begin viewpoint
 	let i = 0
 	while i < 12
 	do
+		# Draw rays out from center point.
+		#
 		clearpath
 		move 0.5, 0
 		draw 2, 0.15, 2.05, 0, 2, -0.15
@@ -187,10 +275,8 @@ begin witchshat
 	fill
 end
 
-#windmill
-
-begin newmoon
-	key "point", "New Moon"
+begin oldmoon
+	key "point", "Old Moon"
 	circle 0, 0, 2
 	closepath
 	color "cyan"
@@ -204,7 +290,25 @@ begin newmoon
 	fill
 end
 
+begin newmoon
+	key "point", "New Moon"
+	circle 0, 0, 2
+	closepath
+	color "navyblue"
+	fill
+
+	clearpath
+	move 0, -2
+	arc -1, 0, 0, 0, 2
+	arc 1, -2, 0, 0, -2
+	color "cyan"
+	fill
+end
+
 begin trafficlights c
+	# Draw traffic lights, with either red, amber or green light
+	# showing.
+	#
 	key "point", "Traffic Lights", "green"
 	local y
 	color "black"
@@ -243,22 +347,9 @@ begin trafficlights c
 	fill
 end
 
-begin oldmoon
-	key "point", "Old Moon"
-	circle 0, 0, 2
-	closepath
-	color "navyblue"
-	fill
-
-	clearpath
-	move 0, -2
-	arc -1, 0, 0, 0, 2
-	arc 1, -2, 0, 0, -2
-	color "cyan"
-	fill
-end
-
 begin speechbubble message
+	# Draw a speech bubble containing a message at a point.
+	#
 	key "point", "Speech Bubble", "speech\nbubble"
 	local lines, nLines, i, maxWidth, halfWidth
 	let lines = split(message, "\n")
@@ -267,7 +358,7 @@ begin speechbubble message
 	font "Helvetica-Narrow", 3
 	justify "left, bottom"
 
-	# Find the longest line
+	# Find the longest line in message.
 	#
 	let i = 1
 	let maxWidth = 0
@@ -311,7 +402,8 @@ begin speechbubble message
 end
 
 begin northarrow
-	key "point", "North Arrow"
+	# Displays simple north arrow.
+	#
 	linestyle 0.2, "round", "round"
 	color "black"
 	move 0, -4
@@ -330,6 +422,8 @@ begin northarrow
 end
 
 begin nsew_arrow dir
+	# One direction of north arrow.
+	#
 	color "black"
 	move 0, 0
 	draw 1.5, 1.5, 0, 6
@@ -354,7 +448,8 @@ begin nsew_arrow dir
 end
 
 begin nsew
-	key "point", "NSEW"
+	# Displays fancy north arrow with labelled directions.
+	#
 	linestyle 0.1
 	move 0, 0
 	nsew_arrow "N"
@@ -376,6 +471,18 @@ begin bordercrossing
 	color "pink"
 	move -1.5, 0
 	draw 1.5, 0
+	stroke
+end
+
+begin crosshair
+	key "point", "Crosshair"
+	color "black"
+	linestyle 0.1
+	circle 0, 0, 2
+	move 0, -3
+	draw 0, 3
+	move -3, 0
+	draw 3, 0
 	stroke
 end
 
@@ -818,6 +925,40 @@ begin emphasisedname name
 	endif
 end
 
+begin streetname name
+	local w
+	key "point", "Street Name", "Sesame St"
+	font "Helvetica-Narrow-Bold", 3
+	let w = stringwidth(name) + 1
+
+	# Do not draw labels that overlap existing labels.
+	#
+	if not protected(-w / 2, 0, w / 2, 4)
+	then
+		# Draw street name inside a box.
+		#
+		clearpath
+		color "forestgreen"
+		circle 0, 3, 1
+		fill
+
+		clearpath
+		box -w / 2, 0, w / 2, 3.3
+		color "yellow"
+		fill
+		color "forestgreen"
+		stroke
+
+		clearpath
+		move 0, 0.5
+		justify "center"
+		color "black"
+		label name
+		protect -w / 2, 0, w / 2, 4
+
+	endif
+end
+
 #u-bahn
 #camping
 #vehicle
@@ -1048,7 +1189,9 @@ end
 begin brickfill
 	key "box", "Brick Fill"
 	color "firebrick"
-	repeaticon "0xff808080ff080808", 4
+	fill
+	color "sandybrown"
+	repeaticon "0xff808080ff080808", 3
 end
 
 begin weavefill_box
@@ -1147,7 +1290,7 @@ begin aggregate_triangle
 	#
 	move random(4) - 2, random(4) - 2
 	rotate random(360)
-	triangle1
+	equitriangle
 end
 
 begin aggregate
@@ -1181,20 +1324,27 @@ begin restrictedarea
 	stroke
 end
 
-
-print 'timer=', Mapyrus.timer
-
-if 1 #allSymbolsLegend = 1
+let show_symbols_legend = 1
+if show_symbols_legend == 1
 then
 	move 0, 0
-	circle1
-	triangle1
-	square1
-	pentagon1
-	octagon1
-	hexagon1
+	circleoutline
+	equitriangle
+	squareoutline
+	filledsquare
+	filledpentagon
+	octagonoutline
+	filledhexagon
 	x1
+	sixpointstar
+	fivepointstar
 	plus1
+	arrowupoutline
+	arrowdownoutline
+	arrowleftoutline
+	arrowrightoutline
+	arrowupleftoutline
+
 	shipwreck
 	lighthouse
 	trigstation
@@ -1203,8 +1353,6 @@ then
 	oldmoon
 	trafficlights ""
 	speechbubble ""
-	northarrow
-	nsew
 	viewpoint
 	sbahn
 	ubahn
@@ -1217,6 +1365,7 @@ then
 	hut
 	church
 	bordercrossing
+	crosshair
 	information
 	library
 	school
@@ -1233,6 +1382,7 @@ then
 	city "Ely"
 	town "Ely"
 	emphasisedname "Ely"
+	streetname ""
 
 	hatch1
 	hatch2
@@ -1261,13 +1411,26 @@ then
 	hashfill
 
 	newpage "eps", "allsymbols.eps", 210, 297
-	#newpage "png", "allsymbols.png", 210, 297
-	color "white"
-	box 0, 0, Mapyrus.page.width, Mapyrus.page.height
-	fill
+
+	let x = 10, y = Mapyrus.page.height - 10
 	color "black"
 	font "Helvetica", 3
-	let x = 10, y = Mapyrus.page.height - 10
+
+	# Draw north arrows specially.  They have no legend entry
+	# as we never want them appearing in a real legend!
+	#
+	clearpath
+	move x + 5, y
+	northarrow
+	label "        northarrow"
+
+	clearpath
+	move x + 5, y - 15
+	nsew
+	label "        nsew"
+
+	let y = y - 30
+
 	while Mapyrus.key.count > 0
 	do
 		clearpath
