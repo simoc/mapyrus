@@ -1,0 +1,30 @@
+# Open existing file 'tutorialexisting1.eps' for update.
+# New page size is ignored, the page size of existing file is used.
+#
+newpage "eps", "tutorialexisting1.eps", 1, 1, "update=true"
+worlds 150, -45, 180, -5
+
+# Draw vertical grid lines.
+#
+color "grey"
+let x = floor(Mapyrus.worlds.min.x / 5) * 5
+while x < Mapyrus.worlds.max.x
+do
+  clearpath
+  move x, Mapyrus.worlds.min.y
+  draw x, Mapyrus.worlds.max.y
+  stroke
+  let x = x + 5
+done
+
+# Draw horizontal grid lines.
+#
+let y = floor(Mapyrus.worlds.min.y / 5) * 5
+while y < Mapyrus.worlds.max.y
+do
+  clearpath
+  move Mapyrus.worlds.min.x, y
+  draw Mapyrus.worlds.max.x, y
+  stroke
+  let y = y + 5
+done
