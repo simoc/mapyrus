@@ -919,26 +919,6 @@ public class Interpreter
 				}
 				break;
 
-			case Statement.IMPORT:
-				if (nExpressions == 0)
-				{
-					x1 = y1 = -Float.MAX_VALUE;
-					x2 = y2 = Float.MAX_VALUE;
-				}
-				else if (nExpressions == 4)
-				{
-					x1 = mExecuteArgs[0].getNumericValue();
-					y1 = mExecuteArgs[1].getNumericValue();
-					x2 = mExecuteArgs[2].getNumericValue();
-					y2 = mExecuteArgs[3].getNumericValue();
-				}
-				else
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_IMPORT));
-				}
-				context.queryDataset(x1, y1, x2, y2);
-				break;
-
 			case Statement.FETCH:
 				/*
 				 * Fetch next row from dataset.
