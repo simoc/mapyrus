@@ -208,6 +208,22 @@ public class ColorDatabase
 		mColors.put("yellowgreen", new Color(154, 205, 50));
 
 		/*
+		 * Additional color names that are useful.
+		 */
+		mColors.put("amber", new Color(255, 140, 0));
+		for (int i = 0; i <= 100; i += 10)
+		{
+			/*
+			 * Add grey0 as black, through to grey100 as white.
+			 */
+			int greyLevel = (int)Math.round(i / 100.0 * 255.0);
+			Color grey = new Color(greyLevel,
+				greyLevel, greyLevel);
+			mColors.put("grey" + i, grey);
+			mColors.put("gray" + i, grey);
+		}
+
+		/*
 		 * If user gave name of color file as property then use that.
 		 */
 		try
