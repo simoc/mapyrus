@@ -111,7 +111,7 @@ public class ASCII85OutputStream extends FilterOutputStream
 
 			/*
 			 * Length of final set of encoded bytes is one byte
-			 * more than number of unencoded bytes. 
+			 * more than number of unencoded bytes.
 			 */
 			if (isFinalSet)
 				out.write(mEncodedBytes, 0, mNUnencodedBytes + 1);

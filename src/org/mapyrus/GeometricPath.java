@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 package org.mapyrus;
- 
+
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.ArrayList;
@@ -115,7 +115,7 @@ public class GeometricPath
 
 	/**
 	 * Add circular arc to path from last point to a new point, given centre and direction.
-	 * @param direction positive for clockwise, negative for anti-clockwise. 
+	 * @param direction positive for clockwise, negative for anti-clockwise.
 	 * @param xCentre X coordinate of centre point of arc.
 	 * @param yCentre Y coordinate of centre point of arc.
 	 * @param xEnd X coordinate of end point of arc.
@@ -135,7 +135,7 @@ public class GeometricPath
 		/*
 		 * If arc end point is very close to arc start point then make them
 		 * the same point to force a full circle.  New arc coordinates are passed
-		 * as double precision numbers but coordinates already in path are only 
+		 * as double precision numbers but coordinates already in path are only
 		 * stored with floating precision so some round-off can occur.
 		 */
 		if (NumericalAnalysis.equals(lastX, xEnd) &&
@@ -342,7 +342,7 @@ public class GeometricPath
 		if (attributeToCalculate == CALCULATE_CENTROID)
 			nEls = 2;
 		else
-			nEls = getMoveToCount(); 
+			nEls = getMoveToCount();
 
 		centroid = partAreas = partLengths = new double[nEls];
 		for (int i = 0; i < partLengths.length; i++)
@@ -419,7 +419,7 @@ public class GeometricPath
 		GeometricPath retval = new GeometricPath();
 
 		/*
-		 * Create translated copy of path. 
+		 * Create translated copy of path.
 		 */
 		retval.mPath = (GeneralPath)(mPath.clone());
 		AffineTransform translateTransform =

@@ -29,7 +29,7 @@ import java.util.LinkedList;
  * Manages a pool (or 'bag') of objects of the same type for use in
  * connection pooling.  When an object is requested, one of the objects
  * in the pool is returned, with the request blocking until an object
- * becomes available if the pool is currently empty. 
+ * becomes available if the pool is currently empty.
  */
 public class Pool
 {

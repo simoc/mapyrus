@@ -241,7 +241,7 @@ public class JDBCDataset implements GeographicDataset
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FIELD_NOT_OGC_TEXT) + ": " + mFieldNames[i]);
 					}
 					mIsWKTField[i] = true;
-				} 
+				}
 			}
 		}
 		catch (SQLException e)
@@ -251,7 +251,7 @@ public class JDBCDataset implements GeographicDataset
 		}
 	}
 
-	/** 
+	/**
 	 * Projection of database data not known.
 	 */
 	public String getProjection()
@@ -301,7 +301,7 @@ public class JDBCDataset implements GeographicDataset
 			if (mResultSet.next())
 			{
 				/*
-				 * Convert row returned by JDBC to row expected by Mapyrus.  
+				 * Convert row returned by JDBC to row expected by Mapyrus.
 				 */
 				retval = new Row();
 				for (int i = 0; i < mFieldTypes.length; i++)
@@ -316,7 +316,7 @@ public class JDBCDataset implements GeographicDataset
 						arg = new Argument(mResultSet.getLong(i + 1));
 					else if (mFieldTypes[i] == Types.REAL)
 						arg = new Argument(mResultSet.getFloat(i + 1));
-					else if (mFieldTypes[i] == Types.FLOAT || 
+					else if (mFieldTypes[i] == Types.FLOAT ||
 						mFieldTypes[i] == Types.DOUBLE)
 					{
 						arg = new Argument(mResultSet.getDouble(i + 1));

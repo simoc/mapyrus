@@ -41,8 +41,8 @@ import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.geom.Sinkhole;
 
 /**
- * Maintains state information during interpretation inside a single procedure block. 
- * Holds the graphics attributes (color, line styles, transformations, etc.), the 
+ * Maintains state information during interpretation inside a single procedure block.
+ * Holds the graphics attributes (color, line styles, transformations, etc.), the
  * variables set by the user and connections to external data sources.
  */
 public class Context
@@ -168,7 +168,7 @@ public class Context
 	private Dataset mDataset;
 
 	/*
-	 * Name of procedure block that this context is executing in. 
+	 * Name of procedure block that this context is executing in.
 	 */
 	private String mBlockName;
 
@@ -251,10 +251,10 @@ public class Context
 		/*
 		 * Don't copy path -- it can be large.
 		 * Just keep reference to existing path.
-		 * 
+		 *
 		 * Create path locally when needed.  If path is referenced without
 		 * being created then we can reuse path from existing context instead.
-		 * 
+		 *
 		 * This saves unnecessary copying of paths when contexts are created.
 		 */
 		mPath = null;
@@ -429,7 +429,7 @@ public class Context
 		}
 
 		/*
-		 * Clear graphics context before beginning new page.  
+		 * Clear graphics context before beginning new page.
 		 */
 		initialiseContext(this);
 
@@ -455,7 +455,7 @@ public class Context
 		}
 
 		/*
-		 * Clear graphics context before beginning new page.  
+		 * Clear graphics context before beginning new page.
 		 */
 		initialiseContext(this);
 
@@ -637,7 +637,7 @@ public class Context
 			/*
 			 * World coordinate range is taller than page coordinate
 			 * system.  Expand X axis range to compensate:
-			 * 
+			 *
 			 *  PAGE    WORLDS    EXPANDED WORLDS
 			 *  +---+   +---+     +-+---+-+
 			 *  |   |   |   |     |<|   |>|
@@ -745,7 +745,7 @@ public class Context
 	/**
 	 * Return scale of world coordinates.  The world coordinate range divided
 	 * by the page size.
-	 * @return scale, (1:2000) is returned as value 2000. 
+	 * @return scale, (1:2000) is returned as value 2000.
 	 */
 	public double getWorldScale()
 	{
@@ -944,7 +944,7 @@ public class Context
 
 	/**
 	 * Add circular arc to path from last point to a new point, given centre and direction.
-	 * @param direction positive for clockwise, negative for anti-clockwise. 
+	 * @param direction positive for clockwise, negative for anti-clockwise.
 	 * @param xCentre X coordinate of centre point of arc.
 	 * @param yCentre Y coordinate of centre point of arc.
 	 * @param xEnd X coordinate of end point of arc.
@@ -1151,7 +1151,7 @@ public class Context
 			 * Add a rectangle around the edge of the page as the new polygon
 			 * perimeter.  The path becomes an island in the polygon (with
 			 * opposite direction so winding rule works) and only
-			 * the area outside the path is then visible.  
+			 * the area outside the path is then visible.
 			 */
 			float width = (float)(mOutputFormat.getPageWidth());
 			float height = (float)(mOutputFormat.getPageHeight());
@@ -1315,8 +1315,8 @@ public class Context
 
 	/**
 	 * Returns rotation angle for each each moveTo point in current path
-	 * @return array of rotation angles relative to rotation in current 
-	 * transformation matrix. 
+	 * @return array of rotation angles relative to rotation in current
+	 * transformation matrix.
 	 */
 	public ArrayList getMoveToRotations()
 	{

@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 package org.mapyrus.font;
- 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
@@ -48,7 +48,7 @@ public class PostScriptFont
 	private StringBuffer mFileContents;
 
 	/**
-	 * Create PostScript Type 1 font from a .pfa file. 
+	 * Create PostScript Type 1 font from a .pfa file.
 	 * @param filename name of .pfa file.
 	 */
 	public PostScriptFont(String filename) throws IOException, MapyrusException
@@ -95,7 +95,7 @@ public class PostScriptFont
 			mFileContents.append(line);
 			mFileContents.append(Constants.LINE_SEPARATOR);
 		}
-		bufferedReader.close();		 
+		bufferedReader.close();		
 	}
 
 	/**

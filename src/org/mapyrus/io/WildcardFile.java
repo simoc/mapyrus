@@ -36,7 +36,7 @@ import org.mapyrus.MapyrusMessages;
  * Finds files matching a file wildcard pattern containing asterisks.
  * Typically used for exanding patterns like "/usr/local/fonts/*.afm".
  */
-public class WildcardFile 
+public class WildcardFile
 {
 	/*
 	 * Directory contains files being matched.
@@ -45,7 +45,7 @@ public class WildcardFile
 	
 	/*
 	 * Filename being matched, split into parts delimited by asterisks.
-	 * For example "h*.afm" is split into "h" and ".afm". 
+	 * For example "h*.afm" is split into "h" and ".afm".
 	 */
 	private ArrayList mFilenameParts;
 
@@ -99,7 +99,7 @@ public class WildcardFile
 	}
 
 	/**
-	 * Returns files matching wildcard pattern in enclosing class. 
+	 * Returns files matching wildcard pattern in enclosing class.
 	 */
 	private class WildcardFilter implements FilenameFilter
 	{
@@ -120,7 +120,7 @@ public class WildcardFile
 					/*
 					 * Find where next part of pattern matches in the string.
 					 * First part of pattern must match exactly at start of
-					 * filename. 
+					 * filename.
 					 */
 					int index = name.indexOf(part);
 					if ((i == 0 && index == 0) || (i > 0 && index >= 0))

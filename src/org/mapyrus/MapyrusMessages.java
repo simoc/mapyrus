@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 /**
  * Wrapper around a java resource file containing messages for various
  * languages.  Provides single function to get a message for the current
- * locale, given the message key identifier.  
+ * locale, given the message key identifier.
  */
 public class MapyrusMessages
 {

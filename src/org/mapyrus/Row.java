@@ -20,7 +20,7 @@
 /*
  * @(#) $Id$
  */
- 
+
 /**
  * A row read from a geographic dataset containing one geometrical object plus
  * its attributes.
@@ -30,6 +30,6 @@ package org.mapyrus;
 
 import java.util.ArrayList;
 
-public class Row extends ArrayList 
+public class Row extends ArrayList
 {
 }

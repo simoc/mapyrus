@@ -322,7 +322,7 @@ public class Mapyrus
 				request.start();
 
 				/*
-				 * Join any threads we started that have now finished. 
+				 * Join any threads we started that have now finished.
 				 */
 				Iterator iterator = activeThreads.iterator();
 				while (iterator.hasNext())

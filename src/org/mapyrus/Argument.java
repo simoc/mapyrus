@@ -129,7 +129,7 @@ public class Argument
 	 * or polygon(s).
 	 * @param coords is array containing (X, Y) coordinates of point(s),
 	 * line(s), polygon(s).
-	 * 
+	 *
 	 * Array is of the form:
 	 * <pre>
 	 * +--------+-------+---+---+-------+---+---+
@@ -137,7 +137,7 @@ public class Argument
 	 * |        | line  |   |   | line  |   |   |
 	 * +--------+-------+---+---+-------+---+---+
 	 * </pre>
-	 * 
+	 *
 	 * where length is the number of slots used in the array,
 	 * a moveto point is flagged as PathIterator.SEG_MOVETO,
 	 * a lineto point is PathIterator.SEG_LINETO.
@@ -233,7 +233,7 @@ public class Argument
 				else if (c == ',' && foundY)
 				{
 					/*
-					 * Found comma separating coordinate pairs 
+					 * Found comma separating coordinate pairs
 					 */
 					foundX = foundY = false;
 				}
@@ -418,7 +418,7 @@ public class Argument
 					
 					/*
 					 * Nested geometries changed geometry type.  Set it back to a
-					 * collection here. 
+					 * collection here.
 					 */
 					mType = GEOMETRY_COLLECTION;
 				}

@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 package org.mapyrus;
- 
+
 import java.util.Hashtable;
 import java.awt.Color;
 import java.io.LineNumberReader;
@@ -98,7 +98,7 @@ public class ColorDatabase
 		catch (FileNotFoundException e)
 		{
 			/*
-			 * No color name database available.  Just define 
+			 * No color name database available.  Just define
 			 * minimal set of colors available in Java.
 			 */
 			colors.put("black", Color.BLACK);

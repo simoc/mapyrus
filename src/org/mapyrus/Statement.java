@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 /**
  * A parsed statement.
- * Can be one of several types.  A conditional statement, 
+ * Can be one of several types.  A conditional statement,
  * a block of statements making a procedure or just a plain command.
  */
 public class Statement
@@ -109,7 +109,7 @@ public class Statement
 	private Expression mForHashMapExpression;
 
 	/*
-	 * Filename and line number within file that this 
+	 * Filename and line number within file that this
 	 * statement was read from.
 	 */
 	private String mFilename;

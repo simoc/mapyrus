@@ -71,7 +71,7 @@ public class NumericalAnalysis
 
 		/*
 		 * Floating point numbers are accurate to 7 significant digits.
-		 * 
+		 *
 		 * Values are considered equal if first five significant
 		 * digits are the same.
 		 */

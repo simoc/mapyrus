@@ -48,7 +48,7 @@ public class FontCache extends LRUCache
 	 * @param style is a style as defined in java.awt.Font class.
 	 * @param size is size for labelling.
 	 * @param rotation is rotation angle for text in radians.
-	 * @return desired font, or a default if font could not be found. 
+	 * @return desired font, or a default if font could not be found.
 	 */
 	private String hash(String name, int style, int pointSize, double rotation)
 	{

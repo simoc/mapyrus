@@ -43,7 +43,7 @@ import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
 
 /**
- * Contexts for interpretation that are pushed and popped as procedure 
+ * Contexts for interpretation that are pushed and popped as procedure
  * blocks are called and return so that changes in a procedure block
  * are local to that block.
  */
@@ -337,7 +337,7 @@ public class ContextStack
 
 	/**
 	 * Add circular arc to path from last point to a new point, given centre and direction.
-	 * @param direction positive for clockwise, negative for anti-clockwise. 
+	 * @param direction positive for clockwise, negative for anti-clockwise.
 	 * @param xCentre X coordinate of centre point of arc.
 	 * @param yCentre Y coordinate of centre point of arc.
 	 * @param xEnd X coordinate of end point of arc.
@@ -511,7 +511,7 @@ public class ContextStack
 	
 	/**
 	 * Returns rotation angle for each moveTo point in current path.
-	 * @return list of rotation angles. 
+	 * @return list of rotation angles.
 	 */	
 	public ArrayList getMoveToRotations()
 	{

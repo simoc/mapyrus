@@ -124,7 +124,7 @@ public class HTTPRequest extends Thread
 	/**
 	 * Parse variables given in HTML form format: var1=val&va2=val.
 	 * @param form HTML form to parse.
-	 * @return string containing Mapyrus commands to set each variable. 
+	 * @return string containing Mapyrus commands to set each variable.
 	 */
 	private StringBuffer parseForm(String form) throws MapyrusException, IOException
 	{
@@ -214,7 +214,7 @@ public class HTTPRequest extends Thread
 
 	/**
 	 * Return filename and options read from header of HTTP request.
-	 * @param reader opened socket from which HTTP header is to be read. 
+	 * @param reader opened socket from which HTTP header is to be read.
 	 * @return filename requested in HTTP header.
 	 */
 	private void parseRequest(BufferedReader reader)
@@ -569,7 +569,7 @@ public class HTTPRequest extends Thread
 	}
 
 	/**
-	 * Returns error message describing why processing the HTTP request failed.  
+	 * Returns error message describing why processing the HTTP request failed.
 	 * @return error message.
 	 */
 	public String getErrorMessage()

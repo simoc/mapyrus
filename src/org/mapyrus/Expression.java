@@ -30,7 +30,7 @@ import java.io.*;
 
 /**
  * An expression tree.  Parser for numeric or string expression that builds
- * a binary tree holding the expression.  The expression can be later 
+ * a binary tree holding the expression.  The expression can be later
  * be evaluated and the tree is evaluated to a single value.
  *
  * For example, the expression '(a * 2) + 7' is represented by the tree:
@@ -531,7 +531,7 @@ public class Expression
 				{
 					/*
 					 * Substring is totally to the left or right of
-					 * the string.  So substring is empty. 
+					 * the string.  So substring is empty.
 					 */
 					retval = Argument.emptyString;
 				}
@@ -1263,7 +1263,7 @@ public class Expression
 				int opType;
 				if (op == '+')
 					opType = PLUS_OPERATION;
-				else if (op == '-') 
+				else if (op == '-')
 					opType = MINUS_OPERATION;
 				else
 					opType = CONCAT_OPERATION;
@@ -1711,7 +1711,7 @@ public class Expression
 
 	/**
 	 * Returns name of variable in an expression that is only a variable name.
-	 * @return variable name, or null if expression is not simply a variable name. 
+	 * @return variable name, or null if expression is not simply a variable name.
 	 */
 	public String getVariableName()
 	{

@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 package org.mapyrus;
- 
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
@@ -113,12 +113,12 @@ public class OutputFormat
 	/*
 	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
 	 * This is normally done so that extended symbols (such as degree symbol)
-	 * can be used. 
+	 * can be used.
 	 */
 	private HashSet mEncodeAsISOLatin1;
 
 	/*
-	 * Adobe Font Metrics files containing character width information for all fonts. 
+	 * Adobe Font Metrics files containing character width information for all fonts.
 	 */
 	private AdobeFontMetricsManager mAdobeFontMetrics;
 	private ArrayList mAfmFiles;
@@ -222,7 +222,7 @@ public class OutputFormat
 		/*
 		 * Set color and linestyle to reasonable default values.
 		 * Taken from 'initgraphics' operator example in PostScript Language
-		 * Reference Manual. 
+		 * Reference Manual.
 		 */
 		mWriter.println("1 setlinewidth 0 setlinecap 0 setlinejoin");
 		mWriter.println("[] 0 setdash 0 setgray 10 setmiterlimit");
@@ -260,7 +260,7 @@ public class OutputFormat
 		 * justifying it horizontally and vertically for current font size
 		 * and shifting it down a number of lines if it is part of a multi-line
 		 * string.
-		 * 
+		 *
 		 * Line number (starting at 0) and string to show are passed to this procedure.
 		 */
 		mWriter.println("/t { gsave currentpoint translate frot rotate");
@@ -300,7 +300,7 @@ public class OutputFormat
 	}
 
 	/**
-	 * Indicates whether an image format is supported or not. 
+	 * Indicates whether an image format is supported or not.
 	 * @param formatName
 	 * @return true if creation of images in given format is supported.
 	 */
@@ -932,7 +932,7 @@ public class OutputFormat
 				 * The real font used for labelling must be mirrored in Y axis
 				 * (to reverse the transform we use on Graphics2D objects) and
 				 * rotated to the angle the user wants.
-				 * 
+				 *
 				 * Look it up in cache too.
 				 */
 				Font font = mFontCache.get(fontName, style, -newSize, fontRotation);
@@ -1425,7 +1425,7 @@ public class OutputFormat
 			else
 			{
 				buffer.append(c);
-			} 
+			}
 		}
 		buffer.append(")");
 		mWriter.println(buffer.toString());

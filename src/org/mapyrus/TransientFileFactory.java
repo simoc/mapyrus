@@ -31,7 +31,7 @@ import java.util.ListIterator;
  * Files expire after a given length of time and are automatically
  * deleted.
  */
-public class TransientFileFactory 
+public class TransientFileFactory
 {
 	/*
 	 * Sequence number used in each unique filename.

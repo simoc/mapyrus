@@ -34,7 +34,7 @@ import java.awt.geom.Point2D;
 /**
  * Language interpreter.  Parse and executes commands read from file, or
  * typed by user.
- * 
+ *
  * May be called repeatedly to interpret several files in the same context.
  */
 public class Interpreter
@@ -423,7 +423,7 @@ public class Interpreter
 
 	/**
 	 * Draw legend for procedures used at moveto points in current path.
-	 * @param st legend statement being executed. 
+	 * @param st legend statement being executed.
 	 * @param context contains path and output page.
 	 * @param legendEntrySize size of entry in legend.
 	 */
@@ -442,7 +442,7 @@ public class Interpreter
 		/*
 		 * Draw only as many legend entries as there are moveto points.
 		 */
-		long nEntries = Math.min(legendList.size(), moveTos.size()); 
+		long nEntries = Math.min(legendList.size(), moveTos.size());
 		for (int i = 0; i < nEntries; i++)
 		{
 			LegendEntry entry = legendList.pop();
@@ -1450,7 +1450,7 @@ public class Interpreter
 
 		statement = new Statement(test, loopStatements);
 		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
-		return(new ParsedStatement(statement));		 
+		return(new ParsedStatement(statement));		
 	}
 
 	/**
@@ -1553,7 +1553,7 @@ public class Interpreter
 
 		statement = new Statement(var, arrayExpr, loopStatements);
 		statement.setFilenameAndLineNumber(currentFilename, currentLineNumber);
-		return(new ParsedStatement(statement));		 
+		return(new ParsedStatement(statement));		
 	}
 	
 	/**

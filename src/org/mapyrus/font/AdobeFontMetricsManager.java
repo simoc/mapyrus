@@ -36,7 +36,7 @@ import org.mapyrus.MapyrusException;
 
 /*
  * Font metrics for all PostScript fonts, read from Adobe Font Metrics (AFM) files.
- * Provides methods to find the exact displayed length of a string for any known font. 
+ * Provides methods to find the exact displayed length of a string for any known font.
  */
 public class AdobeFontMetricsManager
 {
@@ -141,7 +141,7 @@ public class AdobeFontMetricsManager
 	 * @param fontName font for display.
 	 * @param pointSize point size in which string is displayed.
 	 * @param s string to calculate width for.
-	 * @return width of string in points. 
+	 * @return width of string in points.
 	 */
 	public int getStringWidth(String fontName, int pointSize, String s)
 	{

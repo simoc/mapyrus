@@ -177,7 +177,7 @@ public class AdobeFontMetrics
 		StringTokenizer st;
 		boolean convertToISOLatin1 = false;
 
-		// TODO handle fonts with more than 256 characters. 
+		// TODO handle fonts with more than 256 characters.
 		mCharWidths = new short[256];
 		mIsFixedPitch = false;
 
@@ -280,7 +280,7 @@ public class AdobeFontMetrics
 	 * Calculate the width of string displayed using this font.
 	 * @param s string to calculate width for.
 	 * @param pointSize point size in which string is displayed.
-	 * @return width of string in points. 
+	 * @return width of string in points.
 	 */
 	public int getStringWidth(String s, int pointSize)
 	{

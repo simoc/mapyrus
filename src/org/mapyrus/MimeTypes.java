@@ -33,7 +33,7 @@ public class MimeTypes
 	/**
 	 * Returns the MIME type for a given file extension.
 	 * @param extension is filename suffix to lookup MIME type for.
-	 * @return MIME type for extension, or null if it is not known. 
+	 * @return MIME type for extension, or null if it is not known.
 	 */
 	public static String get(String extension)
 	{

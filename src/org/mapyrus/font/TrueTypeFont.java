@@ -21,7 +21,7 @@
  * @(#) $Id$
  */
 package org.mapyrus.font;
- 
+
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.FileInputStream;
@@ -46,7 +46,7 @@ public class TrueTypeFont
 	private String mFilename;
 
 	/**
-	 * Create TrueType 1 font from a .ttf file. 
+	 * Create TrueType 1 font from a .ttf file.
 	 * @param filename name of .ttf file.
 	 */
 	public TrueTypeFont(String filename) throws IOException, MapyrusException
