@@ -24,6 +24,7 @@ package au.id.chenery.mapyrus;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Date;
@@ -135,13 +136,15 @@ public class ContextStack
 	 * @param height is the page height (in mm).
 	 * @param resolution is resolution for output in dots per inch (DPI)
 	 * @param extras contains extra settings for this output.
+	 * @param stdoutStream standard output stream for program.
 	 */
 	public void setOutputFormat(String format, String filename,
-		int width, int height, int resolution, String extras)
+		int width, int height, int resolution, String extras,
+		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
 		getCurrentContext().setOutputFormat(format, filename,
-			width, height, resolution, extras);
+			width, height, resolution, extras, stdoutStream);
 	}
 
 	/**
