@@ -13,7 +13,6 @@ import java.util.Vector;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import net.sourceforge.mapyrus.*;
 
 /**
  * Contexts for interpretation that are pushed and popped as procedure 
@@ -191,6 +190,20 @@ public class ContextStack
 	{
 		getCurrentContext().setReprojection(sourceSystem, destinationSystem);
 	}
+	
+	/**
+	 * Sets dataset to read geometry from.
+	 * @param type is format of dataset, for example, "text".
+	 * @param name is name of dataset to open.
+	 * @param extras are special options for this dataset type such as database connection
+	 * information, or instructions for interpreting data.
+	 * @param geometryFieldNames is list of names of fields containing geometry.
+	 */
+	public void setDataset(String type, String name,
+		String extras, String []geometryFieldNames) throws MapyrusException
+	{
+		getCurrentContext().setDataset(type, name, extras, geometryFieldNames);
+	}
 
 	/**
 	 * Add point to path.
@@ -296,6 +309,33 @@ public class ContextStack
 	}
 
 	/**
+	 * Return next row from dataset.
+	 * @return field values for next row.
+	 */
+	public Row fetchRow() throws MapyrusException
+	{
+		return(getCurrentContext().fetchDatasetRow());
+	}
+
+	/**
+	 * Return indexes of fields in a row in current dataset that contain geometry.
+	 * @return indexes of geometry fields.
+	 */
+	public int []getDatasetGeometryFieldIndexes() throws MapyrusException
+	{
+		return(getCurrentContext().getDatasetGeometryFieldIndexes());
+	}
+
+	/**
+	 * Return names of fields in current dataset.
+	 * @return names of fields.
+	 */
+	public String []getDatasetFieldNames() throws MapyrusException
+	{
+		return(getCurrentContext().getDatasetFieldNames());
+	}
+
+	/**
 	 * Returns one component of a bounding box.
 	 * @param part the information to be taken from the bounding box, "min.x", "width", etc.
 	 * @param bounds the bounding box to be queried
@@ -367,6 +407,17 @@ public class ContextStack
 			{
 				retval = new Argument(getCurrentContext().getScalingY());
 			}
+			else if (sub.equals("import.moreRows"))
+			{
+				if (getCurrentContext().datasetHasMoreRows())
+					retval = new Argument(1.0);
+				else
+					retval = new Argument(0.0);
+			}
+			else if (sub.equals("import.count"))
+			{
+				retval = new Argument(getCurrentContext().getDatasetFetchedCount());
+			}
 			else if (sub.startsWith(GEOMETRY_VARIABLE + "."))
 			{
 				sub = sub.substring(GEOMETRY_VARIABLE.length() + 1);
@@ -399,7 +450,7 @@ public class ContextStack
 			}
 			else if (sub.startsWith(UNPROJECTED_VARIABLE + "."))
 			{
-				bounds = getCurrentContext().getProjectedExtents();
+				bounds = getCurrentContext().getUnprojectedExtents();
 				sub = sub.substring(UNPROJECTED_VARIABLE.length() + 1);
 				retval = getBoundingBoxVariable(sub, bounds);
 			}
