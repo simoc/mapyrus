@@ -1939,6 +1939,7 @@ public class Interpreter
 	 * @param context is the context to use during interpretation.
 	 * @param f is open file or URL to read from.
 	 * @param stdout is stream to use for standard output by this intepreter.
+	 * File f is closed by this method when reading is completed.
 	 */
 	public void interpret(ContextStack context, FileOrURL f, PrintStream stdout)
 		throws IOException, MapyrusException
