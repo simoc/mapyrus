@@ -12,7 +12,7 @@ stroke
 # Draw box, then label inside it.
 #
 clearpath
-box 5, 20 - 2, 5 + stringwidth(h1), 26
+roundedbox 5, 20 - 2, 5 + stringwidth(h1), 26
 fill
 clearpath
 move 5, 20
