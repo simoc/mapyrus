@@ -129,12 +129,28 @@ public class GeometricPath
 		Point2D lastPt = mPath.getCurrentPoint();
 		if (lastPt == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ARC_START));
-		
+
+		float lastX = (float)(lastPt.getX());
+		float lastY = (float)(lastPt.getY());
+	
+		/*
+		 * If arc end point is very close to arc start point then make them
+		 * the same point to force a full circle.  New arc coordinates are passed
+		 * as double precision numbers but coordinates already in path are only 
+		 * stored with floating precision so some round-off can occur.
+		 */
+		if (NumericalAnalysis.equals(lastX, xEnd) &&
+			NumericalAnalysis.equals(lastY, yEnd))
+		{
+			xEnd = lastX;
+			yEnd = lastY;
+		}
+
 		radius = Point2D.distance(xCentre, yCentre, xEnd, yEnd);
 
 		Arc2D.Float arc = new Arc2D.Float();
 		arc.setArcByCenter(xCentre, yCentre, radius, 0.0, 1.0, Arc2D.OPEN);
-		arc.setAngles(lastPt.getX(), lastPt.getY(), xEnd, yEnd);
+		arc.setAngles(lastX, lastY, xEnd, yEnd);
 		if (direction < 0.0)
 		{
 			/*
