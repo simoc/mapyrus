@@ -28,32 +28,43 @@ public class Interpreter
 	private static final String END_KEYWORD = "end";
 
 	/*
-	 * Keyword for if ... then ... else ... endif block.
+	 * Keywords for if ... then ... else ... endif block.
 	 */
 	private static final String IF_KEYWORD = "if";
 	private static final String THEN_KEYWORD = "then";
 	private static final String ELSE_KEYWORD = "else";
 	private static final String ELSIF_KEYWORD = "elsif";
 	private static final String ENDIF_KEYWORD = "endif";
+	
+	/*
+	 * Keywords for while ... do ... done block.
+	 */
+	private static final String WHILE_KEYWORD = "while";
+	private static final String DO_KEYWORD = "do";
+	private static final String DONE_KEYWORD = "done";
 
 	/*
 	 * States during parsing statements.
 	 */
 	private static final int AT_STATEMENT = 1;		/* at start of a statement */
-	private static final int AT_ARG = 3;		/* at argument to a statement */
-	private static final int AT_ARG_SEPARATOR = 4;	/* at separator between arguments */
+	private static final int AT_ARG = 2;		/* at argument to a statement */
+	private static final int AT_ARG_SEPARATOR = 3;	/* at separator between arguments */
 
-	private static final int AT_PARAM = 7;	/* at parameter to a procedure block */
-	private static final int AT_PARAM_SEPARATOR = 8;	/* at separator between parameters */
+	private static final int AT_PARAM = 4;	/* at parameter to a procedure block */
+	private static final int AT_PARAM_SEPARATOR = 5;	/* at separator between parameters */
 
 
 	private static final int AT_BLOCK_NAME = 6;	/* expecting procedure block name */
 	private static final int AT_BLOCK_PARAM = 7;
 	
-	private static final int AT_IF_TEST = 9;	/* at expression to test in if ... then block */
-	private static final int AT_THEN_KEYWORD = 10;	/* at "then" keyword in if ... then block */
-	private static final int AT_ELSE_KEYWORD = 11;	/* at "else" keyword in if ... then block */
-	private static final int AT_ENDIF_KEYWORD = 12;	/* at "endif" keyword in if ... then block */
+	private static final int AT_IF_TEST = 8;	/* at expression to test in if ... then block */
+	private static final int AT_THEN_KEYWORD = 9;	/* at "then" keyword in if ... then block */
+	private static final int AT_ELSE_KEYWORD = 10;	/* at "else" keyword in if ... then block */
+	private static final int AT_ENDIF_KEYWORD = 11;	/* at "endif" keyword in if ... then block */
+
+	private static final int AT_WHILE_TEST = 8;	/* at expression to test in while loop block */
+	private static final int AT_DO_KEYWORD = 9;	/* at "do" keyword in while loop block */
+	private static final int AT_DONE_KEYWORD = 10;	/* at "done" keyword in while loop block */
 
 	private ContextStack mContext;
 	
@@ -344,17 +355,25 @@ public class Interpreter
 		{
 			if (c == COMMENT_CHAR)
 			{
+				/*
+				 * Start of comment, skip characters until the end of the line.
+				 */
 				mInComment = true;
 				c = preprocessor.read();
 			}
-			else if (c == '\n')
+			else if (c == '\n' || c == -1)
 			{
+				/*
+				 * End of file or end of line is end of comment.
+				 */
 				mInComment = false;
-				c = preprocessor.read();
 			}
-			else if (c == -1)
+			else
 			{
-				mInComment = false;
+				/*
+				 * Skip character in comment.
+				 */
+				c = preprocessor.read();
 			}
 		}
 		return(c);
@@ -621,7 +640,83 @@ public class Interpreter
 		retval = new Statement(blockName, parameters, procedureStatements);
 		return(new ParsedStatement(retval));
 	}
+	
+	/**
+	 * Reads and parses while loop statement.
+	 * Parses test expression, "do" keyword, some
+	 * statements, and then "done" keyword.
+	 * @param preprocessor is source to read from.
+	 * @return parsed loop as single statement.
+	 */
+	private ParsedStatement parseWhileStatement(Preprocessor preprocessor,
+		boolean inProcedureDefn)
+		throws IOException, MapyrusException
+	{
+		ParsedStatement st;
+		Expression test;
+		Vector loopStatements = new Vector();
+		Statement statement;
+		
+		test = new Expression(preprocessor);
+		
+		/*
+		 * Expect to parse "do" keyword.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside while loop.
+			 */
+			throw new MapyrusException("Unexpected end of file at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		else if (st.isStatement() ||
+			st.getKeywordType() != ParsedStatement.PARSED_DO)
+		{
+			throw new MapyrusException("Expected '" + DO_KEYWORD +
+				"' at " + preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		
+		/*
+		 * Now we want some statements to execute each time through the loop.
+		 */
+		st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+		if (st == null)
+		{
+			/*
+			 * Should not reach end of file inside loop.
+			 */
+			throw new MapyrusException("Unexpected end of file at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
+		while (st.isStatement())
+		{
+			loopStatements.add(st.getStatement());
+			st = parseStatementOrKeyword(preprocessor, inProcedureDefn);
+			if (st == null)
+			{
+				/*
+			 	* Should not reach end of file inside loop
+			 	*/
+				throw new MapyrusException("Unexpected end of file at " +
+					preprocessor.getCurrentFilenameAndLineNumber());
+			}
+		}
+		
+		/*
+		 * Expect "done" after statements.
+		 */
+		if (st.getKeywordType() != ParsedStatement.PARSED_DONE)
+		{
+			throw new MapyrusException("Expected '" + DONE_KEYWORD + "' at " +
+				preprocessor.getCurrentFilenameAndLineNumber());
+		}
 
+		statement = new Statement(test, loopStatements);
+		return(new ParsedStatement(statement));		 
+	}
+	
 	/**
 	 * Reads and parses conditional statement.
 	 * Parses test expression, "then" keyword, some
@@ -766,6 +861,10 @@ public class Interpreter
 			new ParsedStatement(ParsedStatement.PARSED_ELSIF));
 		mKeywordLookup.put(ENDIF_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ENDIF));
+		mKeywordLookup.put(DO_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_DO));
+		mKeywordLookup.put(DONE_KEYWORD,
+			new ParsedStatement(ParsedStatement.PARSED_DONE));						
 	}
 
 	/**
@@ -831,6 +930,10 @@ public class Interpreter
 				else if (lower.equals(IF_KEYWORD))
 				{
 					retval = parseIfStatement(preprocessor, inProcedureDefn);
+				}
+				else if (lower.equals(WHILE_KEYWORD))
+				{
+					retval = parseWhileStatement(preprocessor, inProcedureDefn);
 				}
 				else
 				{
@@ -933,14 +1036,53 @@ public class Interpreter
 				v = statement.getThenStatements();
 			else
 				v = statement.getElseStatements();
+
+			if (v != null)
+			{			
+				/*
+				 * Execute each of the statements.
+				 */	
+				for (int i = 0; i < v.size(); i++)
+				{
+					statement = (Statement)v.elementAt(i);
+					executeStatement(statement);
+				}
+			}
+		}
+		else if (statement.getType() == Statement.LOOP)
+		{
+			/*
+			 * Find expression to test and loop statements to execute.
+			 */
+			Expression []expr = statement.getExpressions();
+			
+			Vector v = statement.getLoopStatements();
+			Argument test = expr[0].evaluate(mContext);
+			
+			if (test.getType() != Argument.NUMERIC)
+			{
+				throw new MapyrusException("Invalid expression at " + statement.getFilenameAndLineNumber());
+			}
 			
 			/*
-			 * Execute each of the statements.
-			 */	
-			for (int i = 0; i < v.size(); i++)
+			 * Execute loop while expression remains true.
+			 */			
+			while (test.getNumericValue() != 0.0)
 			{
-				statement = (Statement)v.elementAt(i);
-				executeStatement(statement);
+				/*
+				 * Execute each of the statements.
+				 */	
+				for (int i = 0; i < v.size(); i++)
+				{
+					statement = (Statement)v.elementAt(i);
+					executeStatement(statement);
+				}
+				
+				test = expr[0].evaluate(mContext);
+				if (test.getType() != Argument.NUMERIC)
+				{
+					throw new MapyrusException("Invalid expression at " + statement.getFilenameAndLineNumber());
+				}
 			}
 		}
 		else if (statement.getType() == Statement.CALL)
