@@ -22,11 +22,10 @@
  */
 package org.mapyrus;
 
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.io.*;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+
+import org.mapyrus.function.*;
 
 /**
  * An expression tree.  Parser for numeric or string expression that builds
@@ -80,174 +79,6 @@ public class Expression
 	private static final int HASHMAP_REFERENCE = 500;		/* a[77] */
 
 	/*
-	 * Names and types of functions we allow on numbers and strings.
-	 */
-	private static final int ROUND_FUNCTION = 1;	/* round(3.14) = 3 */
-	private static final String ROUND_FUNCTION_NAME = "round";
-	
-	private static final int RANDOM_FUNCTION = 2;	/* random(3) = [0, 3) */
-	private static final String RANDOM_FUNCTION_NAME = "random";
-	
-	private static final int LOG10_FUNCTION = 3;	/* log10(1000) = 3 */
-	private static final String LOG10_FUNCTION_NAME = "log10";
-	
-	private static final int POW_FUNCTION = 4;	/* pow(3,2) = 9 */
-	private static final String POW_FUNCTION_NAME = "pow";
-	
-	private static final int SQRT_FUNCTION = 5;	/* sqrt(9) = 3 */
-	private static final String SQRT_FUNCTION_NAME = "sqrt";
-	
-	private static final int FLOOR_FUNCTION = 6;	/* floor(9.7) = 9 */
-	private static final String FLOOR_FUNCTION_NAME = "floor";
-	
-	private static final int CEIL_FUNCTION = 7;	/* ceil(9.7) = 10 */
-	private static final String CEIL_FUNCTION_NAME = "ceil";
-
-	private static final int MIN_FUNCTION = 8;	/* min(1, 3) = 1 */
-	private static final String MIN_FUNCTION_NAME = "min";
-
-	private static final int MAX_FUNCTION = 9;	/* max(1, 3) = 3 */
-	private static final String MAX_FUNCTION_NAME = "max";
-
-	private static final int SIN_FUNCTION = 10;	/* sin(90) = 1 */
-	private static final String SIN_FUNCTION_NAME = "sin";
-
-	private static final int COS_FUNCTION = 11;	/* cos(0) = 1 */
-	private static final String COS_FUNCTION_NAME = "cos";
-
-	private static final int TAN_FUNCTION = 12;	/* tan(45) = 1 */
-	private static final String TAN_FUNCTION_NAME = "tan";
-	
-	private static final int LENGTH_FUNCTION = 13;	/* length("foo") = 3 */
-	private static final String LENGTH_FUNCTION_NAME = "length";
-	
-	private static final int MATCH_FUNCTION = 14;	/* match('foobar', 'ob') = 3 */
-	private static final String MATCH_FUNCTION_NAME = "match";
-	
-	private static final int REPLACE_FUNCTION = 15;	/* replace('foobar', 'o*', '_') =  'f_bar' */
-	private static final String REPLACE_FUNCTION_NAME = "replace";
-	
-	private static final int TEMPNAME_FUNCTION = 16;	/* tempname('.jpg') =  'tmpABC123.jpg' */
-	private static final String TEMPNAME_FUNCTION_NAME = "tempname";
-
-	private static final int SPLIT_FUNCTION = 17;	/* split("foo:bar", ":") = [1] -> "foo", [2]->"bar" */
-	private static final String SPLIT_FUNCTION_NAME = "split";
-	
-	private static final int SUBSTR_FUNCTION = 18;	/* substr('foobar', 2, 3) = 'oob' */
-	private static final String SUBSTR_FUNCTION_NAME = "substr";
-	
-	private static final int STRINGWIDTH_FUNCTION = 19;	/* stringwidth('foo') = 26 */
-	private static final String STRINGWIDTH_FUNCTION_NAME = "stringwidth";
-
-	private static final int ABS_FUNCTION = 20;	/* abs(-26) = 26 */
-	private static final String ABS_FUNCTION_NAME = "abs";
-
-	/*
-	 * Constant for calculating base 10 logarithms.
-	 */
-	private static final double LOG_OF_10 = Math.log(10.0);
-
-	/*
-	 * Lookup tables of functions and the number of
-	 * arguments that they each take.
-	 */
-	private static final HashMap mFunctionTypeLookup;
-	private static final byte[] mFunctionArgumentCount;
-
-	static
-	{
-		mFunctionTypeLookup = new HashMap();
-		mFunctionTypeLookup.put(ROUND_FUNCTION_NAME, new Integer(ROUND_FUNCTION));
-		mFunctionTypeLookup.put(RANDOM_FUNCTION_NAME, new Integer(RANDOM_FUNCTION));
-		mFunctionTypeLookup.put(LOG10_FUNCTION_NAME, new Integer(LOG10_FUNCTION));
-		mFunctionTypeLookup.put(POW_FUNCTION_NAME, new Integer(POW_FUNCTION));
-		mFunctionTypeLookup.put(SQRT_FUNCTION_NAME, new Integer(SQRT_FUNCTION));
-		mFunctionTypeLookup.put(FLOOR_FUNCTION_NAME, new Integer(FLOOR_FUNCTION));
-		mFunctionTypeLookup.put(CEIL_FUNCTION_NAME, new Integer(CEIL_FUNCTION));
-		mFunctionTypeLookup.put(MIN_FUNCTION_NAME, new Integer(MIN_FUNCTION));
-		mFunctionTypeLookup.put(MAX_FUNCTION_NAME, new Integer(MAX_FUNCTION));
-		mFunctionTypeLookup.put(SIN_FUNCTION_NAME, new Integer(SIN_FUNCTION));
-		mFunctionTypeLookup.put(COS_FUNCTION_NAME, new Integer(COS_FUNCTION));
-		mFunctionTypeLookup.put(TAN_FUNCTION_NAME, new Integer(TAN_FUNCTION));
-		mFunctionTypeLookup.put(LENGTH_FUNCTION_NAME, new Integer(LENGTH_FUNCTION));
-		mFunctionTypeLookup.put(MATCH_FUNCTION_NAME, new Integer(MATCH_FUNCTION));
-		mFunctionTypeLookup.put(REPLACE_FUNCTION_NAME, new Integer(REPLACE_FUNCTION));
-		mFunctionTypeLookup.put(TEMPNAME_FUNCTION_NAME, new Integer(TEMPNAME_FUNCTION));
-		mFunctionTypeLookup.put(SPLIT_FUNCTION_NAME, new Integer(SPLIT_FUNCTION));
-		mFunctionTypeLookup.put(SUBSTR_FUNCTION_NAME, new Integer(SUBSTR_FUNCTION));
-		mFunctionTypeLookup.put(STRINGWIDTH_FUNCTION_NAME, new Integer(STRINGWIDTH_FUNCTION));
-		mFunctionTypeLookup.put(ABS_FUNCTION_NAME, new Integer(ABS_FUNCTION));
-		
-		mFunctionArgumentCount = new byte[ABS_FUNCTION + 1];
-		mFunctionArgumentCount[ROUND_FUNCTION] = 1;
-		mFunctionArgumentCount[RANDOM_FUNCTION] = 1;
-		mFunctionArgumentCount[LOG10_FUNCTION] = 1;
-		mFunctionArgumentCount[POW_FUNCTION] = 2;
-		mFunctionArgumentCount[SQRT_FUNCTION] = 1;
-		mFunctionArgumentCount[FLOOR_FUNCTION] = 1;
-		mFunctionArgumentCount[CEIL_FUNCTION] = 1;
-		mFunctionArgumentCount[MIN_FUNCTION] = 2;
-		mFunctionArgumentCount[MAX_FUNCTION] = 2;
-		mFunctionArgumentCount[SIN_FUNCTION] = 1;
-		mFunctionArgumentCount[COS_FUNCTION] = 1;
-		mFunctionArgumentCount[TAN_FUNCTION] = 1;
-		mFunctionArgumentCount[LENGTH_FUNCTION] = 1;
-		mFunctionArgumentCount[MATCH_FUNCTION] = 2;
-		mFunctionArgumentCount[REPLACE_FUNCTION] = 3;
-		mFunctionArgumentCount[TEMPNAME_FUNCTION] = 1;
-		mFunctionArgumentCount[SPLIT_FUNCTION] = 2;
-		mFunctionArgumentCount[SUBSTR_FUNCTION] = 3;
-		mFunctionArgumentCount[STRINGWIDTH_FUNCTION] = 1;
-		mFunctionArgumentCount[ABS_FUNCTION] = 1;
-	}
-
-	/*
-	 * Pre-defined hashmap keys for split function.
-	 */
-	private static String mSplitIndexes[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-
-	/*
-	 * Maximum number of compiled regular expressions we'll cache.
-	 */
-	private static final int MAX_COMPILED_REGEX = 100;
-	
-	/*
-	 * Static table of frequently used regular expressions.
-	 */
-	private static LRUCache mRegexCache = new LRUCache(MAX_COMPILED_REGEX);
-
-	/**
-	 * Compile a regular expression string into a Pattern that can be used for matching.
-	 * Patterns are cached to avoid recomputing them again and again.
-	 * Synchronized because LRUCache is not thread-safe.
-	 * @param regex is regular expression to compile.
-	 * @return compiled pattern
-	 */
-	private static synchronized Pattern compileRegex(String regex) throws MapyrusException
-	{
-		Pattern retval = (Pattern)(mRegexCache.get(regex));
-
-		if (retval == null)
-		{
-			try
-			{
-				retval = Pattern.compile(regex);
-			}
-			catch (PatternSyntaxException e)
-			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_REGEX) +
-					": " + e.getMessage());
-			}
-
-			/*
-			 * Cache newly compiled regular expression.
-			 */
-			mRegexCache.put(regex, retval);
-		}
-		return(retval);
-	}
-
-	/*
 	 * Nodes in binary tree describing an arithmetic expression.
 	 */
 	private class ExpressionTreeNode
@@ -259,7 +90,7 @@ public class Expression
 		ExpressionTreeNode mLeftBranch, mRightBranch;
 
 		boolean mIsFunction;
-		int mFunction;
+		Function mFunction;
 		ExpressionTreeNode mThirdFunctionExpression;
 
 		/**
@@ -300,12 +131,12 @@ public class Expression
 		 * @param arg3 is third argument to function (or null for functions
 		 * with less than 3 arguments)
 		 */
-		public ExpressionTreeNode(int functionType, ExpressionTreeNode arg1,
+		public ExpressionTreeNode(Function func, ExpressionTreeNode arg1,
 			ExpressionTreeNode arg2, ExpressionTreeNode arg3)
 		{
 			mIsLeaf = false;
 			mIsFunction = true;
-			mFunction = functionType;
+			mFunction = func;
 			mLeftBranch = arg1;
 			mRightBranch = arg2;
 			mThirdFunctionExpression = arg3;
@@ -333,224 +164,48 @@ public class Expression
 			String interpreterFilename)
 			throws MapyrusException
 		{
-			Argument leftValue, rightValue, thirdValue;
+			Argument leftValue = null;
+			Argument rightValue = null;
+			Argument thirdValue = null;
 			Argument retval;
-			String s;
-			double l, r, d = 0.0;
+			int nArgs = 0;
+
+			/*
+			 * Evaluate each of the arguments being passed to the function.
+			 */
+			if (mLeftBranch != null)
+			{
+				leftValue = traverse(mLeftBranch, context, interpreterFilename);
+				nArgs = 1;
+			}
+			if (mRightBranch != null)
+			{
+				rightValue = traverse(mRightBranch, context, interpreterFilename);
+				nArgs = 2;
+			}
+			if (mThirdFunctionExpression != null)
+			{
+				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
+				nArgs = 3;
+			}
 
 			/*
 			 * Evaluate function.
 			 */
-			if (mFunction == ROUND_FUNCTION || mFunction == RANDOM_FUNCTION ||
-				mFunction == LOG10_FUNCTION || mFunction == SQRT_FUNCTION ||
-				mFunction == FLOOR_FUNCTION || mFunction == CEIL_FUNCTION ||
-				mFunction == SIN_FUNCTION || mFunction == COS_FUNCTION ||
-				mFunction == TAN_FUNCTION)
+			if (nArgs == 0)
+				retval = mFunction.evaluate(context);
+			else if (nArgs == 1)
+				retval = mFunction.evaluate(context, leftValue);
+			else if (nArgs == 2)
+				retval = mFunction.evaluate(context, leftValue, rightValue);
+			else if (nArgs == 3)
+				retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue);
+			else
 			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				l = leftValue.getNumericValue();
-						
-				if (mFunction == ROUND_FUNCTION)
-					d = Math.round(l);
-				else if (mFunction == RANDOM_FUNCTION)
-					d = Math.random() * l;
-				else if (mFunction == LOG10_FUNCTION)
-				{
-					if (l <= 0.0)
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
-	
-					d = Math.log(l) / LOG_OF_10;
-				}
-				else if (mFunction == SQRT_FUNCTION)
-				{
-					if (l < 0.0)
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));
-	
-					d = Math.sqrt(l);
-				}
-				else if (mFunction == FLOOR_FUNCTION)
-				{
-					d = Math.floor(l);
-				}
-				else if (mFunction == CEIL_FUNCTION)
-				{
-					d = Math.ceil(l);
-				}
-				else if (mFunction == SIN_FUNCTION)
-				{
-					d = Math.sin(Math.toRadians(l));
-				}
-				else if (mFunction == COS_FUNCTION)
-				{
-					d = Math.cos(Math.toRadians(l));
-				}
-				else /* TAN_FUNCTION */
-				{
-					d = Math.tan(Math.toRadians(l));
-				}
-				retval = new Argument(d);
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION) +
+					": " + mFunction.getName());
 			}
-			else if (mFunction == ABS_FUNCTION)
-			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				l = leftValue.getNumericValue();
-				if (leftValue.getType() == Argument.NUMERIC)
-					retval = (l >= 0) ? leftValue : new Argument(-l);
-				else
-					retval = Argument.numericZero;
-			}
-			else if (mFunction == POW_FUNCTION ||
-				mFunction == MIN_FUNCTION ||
-				mFunction == MAX_FUNCTION)
-			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				l = leftValue.getNumericValue();
-				rightValue = traverse(mRightBranch, context, interpreterFilename);
-				r = rightValue.getNumericValue();
 
-				if (mFunction == POW_FUNCTION)
-				{
-					d = Math.pow(l, r);
-					if (Double.isNaN(d) || Double.isInfinite(d))
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));	
-					}
-					retval = new Argument(d);
-				}
-				else if (mFunction == MIN_FUNCTION)
-				{
-					retval = (l < r) ? leftValue : rightValue;
-				}
-				else /* MAX_FUNCTION */
-				{
-					retval = (l > r) ? leftValue : rightValue;
-				}
-			}
-			else if (mFunction == LENGTH_FUNCTION)
-			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				if (leftValue.getType() == Argument.HASHMAP)
-					retval = new Argument(leftValue.getHashMapSize());
-				else
-					retval = new Argument(leftValue.toString().length());
-			}
-			else if (mFunction == MATCH_FUNCTION)
-			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				rightValue = traverse(mRightBranch, context, interpreterFilename);
-	
-				/*
-				 * Find index of start of regular expression in string.
-				 */
-				Pattern pattern = compileRegex(rightValue.toString());
-				Matcher matcher = pattern.matcher(leftValue.toString());
-				if (matcher.find())
-					retval = new Argument(matcher.start() + 1);
-				else
-					retval = Argument.numericZero;
-			}
-			else if (mFunction == REPLACE_FUNCTION)
-			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				rightValue = traverse(mRightBranch, context, interpreterFilename);
-				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
-	
-				/*
-				 * Replace all occurrences of pattern given in second string
-				 * with the third string.
-				 */
-				Pattern pattern = compileRegex(rightValue.toString());
-				Matcher matcher = pattern.matcher(leftValue.toString());
-				if (matcher.find())
-				{
-					/*
-					 * Replace all matching patterns.
-					 */
-					retval = new Argument(Argument.STRING, matcher.replaceAll(thirdValue.toString()));
-				}
-				else
-				{
-					/*
-					 * No match so return original string.
-					 */
-					retval = leftValue;
-				}
-			}
-			else if (mFunction == TEMPNAME_FUNCTION)
-			{
-				/*
-				 * Generate temporary file with given suffix.
-				 */
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				retval = new Argument(Argument.STRING,
-					TransientFileFactory.generate(leftValue.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
-			}
-			else if (mFunction == SPLIT_FUNCTION)
-			{
-				/*
-				 * Split string on regular expression and assign as hashmap entries
-				 * with keys, "1", "2", "3", ...
-				 */
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				rightValue = traverse(mRightBranch, context, interpreterFilename);
-				String []split = leftValue.toString().split(rightValue.toString());
-				String key;
-				retval = new Argument();
-				for (int i = 0; i < split.length; i++)
-				{
-					/*
-					 * Use pre-allocated strings to reduce object creation.
-					 */
-					if (i < mSplitIndexes.length)
-						key = mSplitIndexes[i];
-					else
-						key = String.valueOf(i + 1);
-					retval.addHashMapEntry(key, new Argument(Argument.STRING, split[i]));
-				}
-			}
-			else if (mFunction == SUBSTR_FUNCTION)
-			{
-				int startIndex, extractLen, len;
-	
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				s = leftValue.toString();
-				rightValue = traverse(mRightBranch, context, interpreterFilename);
-				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
-	
-				/*
-				 * Convert to zero-based indexing used by java.
-				 */
-				startIndex = (int)(Math.floor(rightValue.getNumericValue()));
-				startIndex--;
-				if (startIndex < 0)
-					startIndex = 0;
-				extractLen = (int)(Math.floor(thirdValue.getNumericValue()));
-						
-				len = s.length();
-				if (extractLen < 1 || startIndex >= len)
-				{
-					/*
-					 * Substring is totally to the left or right of
-					 * the string.  So substring is empty.
-					 */
-					retval = Argument.emptyString;
-				}
-				else
-				{
-					if (startIndex + extractLen > len)
-						extractLen = len - startIndex;
-	
-					retval = new Argument(Argument.STRING,
-						s.substring(startIndex, startIndex + extractLen));
-				}
-			}
-			else	/* STRINGWIDTH_FUNCTION */
-			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				s = leftValue.toString();
-				d = context.getStringWidth(s);
-				retval = new Argument(d);
-			}
 			return(retval);
 		}
 
@@ -1600,8 +1255,8 @@ public class Expression
 			/*
 			 * Is this a function call like "round(3.14)"?
 			 */
-			Integer functionType = (Integer)(mFunctionTypeLookup.get(buf.toString()));
-			if (functionType != null)
+			Function f = FunctionTable.getFunction(buf.toString());
+			if (f != null)
 			{
 				/*
 				 * Parse opening '(', arguments for this function, then closing ')'.
@@ -1614,32 +1269,45 @@ public class Expression
 						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": '('");
 				}
 
-				int nArgs = mFunctionArgumentCount[functionType.intValue()];
-				ExpressionTreeNode functionExpressions[] = new ExpressionTreeNode[Math.max(nArgs, 3)];
+				int minArgs = f.getMinArgumentCount();
+				int maxArgs = f.getMaxArgumentCount();
 
 				/*
 				 * Parse expression for each function argument.
 				 */
+				ExpressionTreeNode functionExpressions[] = new ExpressionTreeNode[3];
 				for (int i = 0; i < functionExpressions.length; i++)
 					functionExpressions[i] = null;
-				for (int i = 0; i < nArgs; i++)
+
+				if (minArgs >= 0)
 				{
-					if (i > 0)
+					functionExpressions[0] = parseOrBoolean(p);
+				}
+
+				for (int i = 1; i < maxArgs; i++)
+				{
+					/*
+					 * Parse comma before next value, or closing bracket.
+					 */
+					c = p.readNonSpace();
+					if (i >= minArgs && c == ')')
 					{
-						/*
-						 * Parse comma before next value.
-						 */
-						c = p.readNonSpace();
-						if (c != ',')
-						{
-							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-								": " + MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES) +
-								": " + buf.toString());
-						}
+						p.unread(c);
+						break;
 					}
+					else if (c != ',')
+					{
+						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+							": " + MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES) +
+							": " + buf.toString());
+					}
+
 					functionExpressions[i] = parseOrBoolean(p);
 				}
 
+				/*
+				 * Read closing bracket.
+				 */
 				c = p.readNonSpace();
 				if (c != ')')
 				{
@@ -1648,8 +1316,8 @@ public class Expression
 						": " + buf.toString());
 				}
 
-				expr = new ExpressionTreeNode(functionType.intValue(),
-					functionExpressions[0], functionExpressions[1], functionExpressions[2]);
+				expr = new ExpressionTreeNode(f, functionExpressions[0],
+					functionExpressions[1], functionExpressions[2]);
 			}
 			else
 			{
