@@ -300,8 +300,9 @@ command to limit the area displayed to inside the polygon
 and then draw the outline with a thick linestyle.
 The following example demonstrates this, with the output shown
 in Figure \ref{tutorialpolygons4}.
-Use the \texttt{protect} command instead of \texttt{clip}
-to display a border around the outside of a polygon.
+Give the argument \texttt{outside}
+to the \texttt{clip} command
+to display a border around the outside of a polygon instead.
 
 \verbatiminput{tutorialpolygons4.mapyrus}
 
@@ -717,7 +718,8 @@ output shown in Figure \ref{tutorialrand3}.
 \subsection{Shadow Effects}
 
 To highlight polygons with a shadow, draw the outline of the polygon, use a
-\texttt{protect} command to prevent the interior of the polygon being drawn,
+\texttt{clip "outside"}
+command to prevent the interior of the polygon being drawn,
 then repeatedly use the \texttt{shiftpath} command to move the polygon a small
 distance from its original position, drawing it each time.  This is
 demonstrated in the following example, with output shown in Figure
