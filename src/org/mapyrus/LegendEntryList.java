@@ -22,9 +22,10 @@
  */
 package org.mapyrus;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.HashSet;
+import java.util.HashMap;
 
 /**
  * All entries for a legend accumulated during plotting, with duplicates removed.
@@ -35,11 +36,9 @@ import java.util.HashSet;
 public class LegendEntryList
 {
 	/*
-	 * List of entries in legend.  A set is used to
-	 * efficiently avoid adding duplicate entries to list.
+	 * All legend entries.
 	 */
-	private LinkedList mLegendList;
-	private HashSet mLegendSet;
+	private HashMap mLegendHashMap;
 
 	/*
 	 * Flag true when further additions to list are accepted.
@@ -51,8 +50,7 @@ public class LegendEntryList
 	 */
 	public LegendEntryList()
 	{
-		mLegendSet = new HashSet();
-		mLegendList = new LinkedList();
+		mLegendHashMap = new HashMap();
 		mAcceptAdditions = true;
 	}
 
@@ -98,16 +96,21 @@ public class LegendEntryList
 		if (mAcceptAdditions)
 		{
 			/*
-			 * Skip legend entries that we've already saved.
+			 * If we've already added this legend entry then increment the reference count,
+			 * otherwise make a new legend entry.
 			 */
 			String hashValue = hash(blockName, description);
-			if (!mLegendSet.contains(hashValue))
+			LegendEntry entry = (LegendEntry)mLegendHashMap.get(hashValue);
+			if (entry != null)
+			{
+				entry.addReference();
+			}
+			else
 			{
 				Argument args[] = new Argument[nBlockArgs];
 				for (int i = 0; i < nBlockArgs; i++)
 					args[i] = blockArgs[blockArgIndex + i];
-				mLegendList.add(new LegendEntry(blockName, args, type, description));
-				mLegendSet.add(hashValue);
+				mLegendHashMap.put(hashValue, new LegendEntry(blockName, args, type, description));
 			}
 		}
 	}
@@ -118,7 +121,7 @@ public class LegendEntryList
 	 */
 	public int size()
 	{
-		return(mLegendList.size());
+		return(mLegendHashMap.size());
 	}
 
 	/**
@@ -132,12 +135,14 @@ public class LegendEntryList
 		/*
 		 * Ensure that entries are returned in alphabetical order.
 		 */
-		if (mLegendList.size() > 0)
+		if (mLegendHashMap.size() > 0)
 		{
-			Collections.sort(mLegendList);
+			Collection values = mLegendHashMap.values();
+			ArrayList list = new ArrayList(values);
+			Collections.sort(list);
 
-			retval = (LegendEntry)mLegendList.removeFirst();
-			mLegendSet.remove(hash(retval.getBlockName(), retval.getDescription()));
+			retval = (LegendEntry)list.get(0);
+			mLegendHashMap.remove(hash(retval.getBlockName(), retval.getDescription()));
 		}
 		return(retval);
 	}
@@ -153,10 +158,12 @@ public class LegendEntryList
 		/*
 		 * Ensure that entries are returned in alphabetical order.
 		 */
-		if (mLegendList.size() > 0)
+		if (mLegendHashMap.size() > 0)
 		{
-			Collections.sort(mLegendList);
-			retval = (LegendEntry)mLegendList.getFirst();
+			Collection values = mLegendHashMap.values();
+			ArrayList list = new ArrayList(values);
+			Collections.sort(list);
+			retval = (LegendEntry)list.get(0);
 		}
 		return(retval);
 	}
