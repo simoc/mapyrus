@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 import org.mapyrus.dataset.GeographicDataset;
+import org.mapyrus.font.StringDimension;
 import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
 
@@ -1750,13 +1751,13 @@ public class Context
 	}
 
 	/**
-	 * Returns width of a string, drawn to current page with current font.
-	 * @param s string to calculate width for.
-	 * @return width of string in millimetres.
+	 * Returns dimensions of a string, drawn to current page with current font.
+	 * @param s string to calculate height and width for.
+	 * @return height and width of string in millimetres.
 	 */	
-	public double getStringWidth(String s) throws IOException, MapyrusException
+	public StringDimension getStringDimension(String s) throws IOException, MapyrusException
 	{
-		double retval;
+		StringDimension retval;
 
 		if (mOutputFormat != null)
 		{
@@ -1766,15 +1767,16 @@ public class Context
 			 * the font and then forget it.
 			 */
 			setGraphicsAttributes(ATTRIBUTE_FONT);
-			retval = mOutputFormat.getStringWidth(s, mFontName, mFontSize);
+			retval = mOutputFormat.getStringDimension(s, mFontName, mFontSize);
+			retval.setSize(retval.getWidth() / mScaling, retval.getHeight() / mScaling);
 		}
 		else
 		{
 			/*
 			 * Not possible to accurately calculate width if no page defined.
 			 */
-			retval = 0.0;
+			retval = new StringDimension();
 		}
-		return(retval / mScaling);
+		return(retval);
 	}	
 }
