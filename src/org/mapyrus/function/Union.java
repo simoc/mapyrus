@@ -46,29 +46,43 @@ public class Union extends Function
 	{
 		Argument retval;
 
-		if (arg1.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg1.toString());
-
-		if (arg2.getType() != Argument.GEOMETRY)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
-				": " + arg2.toString());
-
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
 
-		try
+		/*
+		 * If one of the geometries is nothing, then just return the other
+		 * value (provided it is a geeomtry).
+		 */
+		if (wkt1.length() == 0 && arg2.getType() == Argument.GEOMETRY)
 		{
-			Geometry g1 = new WKTReader().read(wkt1);
-			Geometry g2 = new WKTReader().read(wkt2);
-			Geometry union = g1.union(g2);
-			retval = new Argument(union.toText());
+			retval = arg2;
 		}
-		catch (ParseException e)
+		else if (wkt2.length() == 0 && arg1.getType() == Argument.GEOMETRY)
 		{
-			throw new MapyrusException(e.getMessage());
+			retval = arg1;
 		}
+		else
+		{
+			if (arg1.getType() != Argument.GEOMETRY)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
+					": " + arg1.toString());
 
+			if (arg2.getType() != Argument.GEOMETRY)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY) +
+					": " + arg2.toString());
+
+			try
+			{
+				Geometry g1 = new WKTReader().read(wkt1);
+				Geometry g2 = new WKTReader().read(wkt2);
+				Geometry union = g1.union(g2);
+				retval = new Argument(union.toText());
+			}
+			catch (ParseException e)
+			{
+				throw new MapyrusException(e.getMessage());
+			}
+		}
 		return(retval);
 	}
 
@@ -77,7 +91,7 @@ public class Union extends Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(2);
+			return(2);
 	}
 
 	/**
