@@ -605,10 +605,9 @@ public class Interpreter
 				break;
 						
 			case Statement.SCALE:
-				if (nExpressions == 2)
+				if (nExpressions == 1)
 				{
-					context.setScaling(mExecuteArgs[0].getNumericValue(),
-						mExecuteArgs[1].getNumericValue());
+					context.setScaling(mExecuteArgs[0].getNumericValue());
 				}
 				else
 				{
