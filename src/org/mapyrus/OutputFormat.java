@@ -2533,7 +2533,7 @@ public class OutputFormat
 					 * Change default Java font name to something sensible.
 					 */
 					if (fontName.equalsIgnoreCase("sansserif"))
-							fontName = "Helvetica";
+							fontName = "Courier";
 
 					writeLine("  font-family=\"" + fontName + "\" " +
 						"font-size=\"" + font.getSize2D() + "\" " +
