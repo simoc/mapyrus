@@ -572,7 +572,7 @@ symbols.
 
 \subsection{Displaying Data Stored In MIF files}
 
-Reading data from a MIF file format follows the same pattern as reading
+Reading data from a MapInfo MIF format file follows the same pattern as reading
 from a text file or ESRI Shape file.
 
 MIF files commonly include colors, line and fill styles for the data.
@@ -696,6 +696,30 @@ Displaying from many ESRI Shape files is demonstrated in the following
 example.
 
 \verbatiminput{tutorialdatasets7.mapyrus}
+
+\subsection{Updating Existing Output Files}
+
+To edit or draw over an existing image file or PostScript file use
+the \texttt{update=true} option to the \texttt{newpage} command.
+This allows further data to be drawn over a base map, or a watermark
+or logo to be added to a map.
+
+Updating works for both files created by Mapyrus and files created
+by other software.
+
+This is demonstrated in the following example, drawing a grid over
+the output file \texttt{tutorialexisting1.eps} (a copy of the output file
+from Figure \ref{tutorialdatasets1} from Page \pageref{tutorialdatasets1}).
+The output of this example is shown in figure
+Figure \ref{tutorialexisting1}.
+
+\verbatiminput{tutorialexisting1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialexisting1.eps}
+\caption{Updating Ann Existing Output File}
+\label{tutorialexisting1}
+\end{figure}
 
 \subsection{Display Performance}
 
