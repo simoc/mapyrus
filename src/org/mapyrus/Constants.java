@@ -31,4 +31,9 @@ public class Constants
 	 */
 	public static final int POINTS_PER_INCH = 72;
 	public static final double MM_PER_INCH = 25.4;
+
+	/*
+	 * Line separator in text files.
+	 */
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 }
