@@ -29,10 +29,17 @@ public class Constants
 {
 	public static final String PROGRAM_NAME = "Mapyrus";
 	
-	/*
-	 * Current software version number set by ant Replace task during build.
+	/**
+	 * Return version number of software.
+	 * @return version number.
 	 */
-	public static final String VERSION = "@software_version_token@";
+	public static String getVersion()
+	{
+		/*
+		 * Current software version number set by ant Replace task during build.
+		 */
+		return("@software_version_token@");
+	}
 
 	/*
 	 * Maximum number of threads to run simultaneously handling HTTP requests.
