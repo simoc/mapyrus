@@ -1,8 +1,8 @@
-# Display the file roads.shp in a PNG file that is sent to standard output.
+# Display the file coastline.shp in a PNG file that is sent to standard output.
 #
 newpage "png", "-", 100, 100, 96
 
-dataset "shapefile", "/tmp/roads.shp", "dbffields="
+dataset "shapefile", "coastline.shp", ""
 worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, Mapyrus.dataset.max.x, Mapyrus.dataset.max.y
 import
 while Mapyrus.import.more
