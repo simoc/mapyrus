@@ -733,6 +733,14 @@ public class Interpreter
 				context.clearPath();
 				break;
 
+			case Statement.CLOSEPATH:
+				if (nExpressions > 0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+				}
+				context.closePath();
+				break;
+
 			case Statement.SAMPLEPATH:
 				if (nExpressions == 2)
 				{
@@ -769,6 +777,10 @@ public class Interpreter
 				break;
 
 			case Statement.SINKHOLE:
+				if (nExpressions > 0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+				}
 				context.createSinkhole();
 				break;
 

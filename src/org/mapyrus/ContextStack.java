@@ -358,6 +358,14 @@ public class ContextStack
 	}
 
 	/**
+	 * Closes path back to last moveTo point.
+	 */
+	public void closePath()
+	{
+		getCurrentContext().closePath();
+	}
+
+	/**
 	 * Draws icon on page.
 	 * @param filename file containing icon.
 	 * @param size size for icon on page in millimetres.

@@ -1009,6 +1009,16 @@ public class Context
 	}
 
 	/**
+	 * Closes path back to last moveTo point.
+	 */
+	public void closePath()
+	{
+		GeometricPath path = getDefinedPath();
+		if (path != null)
+			path.closePath();
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
