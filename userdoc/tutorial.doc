@@ -160,7 +160,7 @@ In this example, color is set as a hex value instead of a name and
 the <a href="reference.html#fill">fill</a> command is used to
 flood fill the path that has been defined.
 The characters on lines following a hash (<tt>#</tt>) character that
-is not inside a quoted string are ignored by Mapyrus.
+is not part of a string literal are ignored by Mapyrus.
 The output file
 <tt>tutorialfirst2.png</tt> contains the following image.
 
@@ -833,7 +833,7 @@ languages without the ability to make HTTP requests.
 For example,
 
 include beginex.doc
-lynx -dump http://localhost:8410/wsrv.mpy?landkreis=Erding&zoomlevel=3 > myfile.png
+w3m -dump_source http://localhost:8410/wsrv.mpy?landkreis=Erding&zoomlevel=3 > myfile.png
 include endex.doc
 
 include footer.doc
