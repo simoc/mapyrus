@@ -88,18 +88,29 @@ public class FileOrURL
 		 * Is the file or URL compressed?  If so, we need to add a filter to
 		 * uncompress it.
 		 */
-		boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
-		boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
-		
-		if (isGzipped)
-			mInputStream = new BufferedInputStream(new GZIPInputStream(in));
-		else if (isZipped)
-			mInputStream = new BufferedInputStream(new ZipInputStream(in));
-		else
-			mInputStream = new BufferedInputStream(in);
-
-		mReader = new LineNumberReader(new InputStreamReader(mInputStream));
-		mName = name;
+		try
+		{
+			boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
+			boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
+			
+			if (isGzipped)
+				mInputStream = new BufferedInputStream(new GZIPInputStream(in));
+			else if (isZipped)
+				mInputStream = new BufferedInputStream(new ZipInputStream(in));
+			else
+				mInputStream = new BufferedInputStream(in);
+	
+			mReader = new LineNumberReader(new InputStreamReader(mInputStream));
+			mName = name;
+		}
+		catch (IOException e)
+		{
+			/*
+			 * Ensure any file we opened is closed on error.
+			 */
+			in.close();
+			throw e;
+		}
 	}
 
 	/**
@@ -150,25 +161,36 @@ public class FileOrURL
 			mIsURL = false;
 			mName = name;
 		}
-		
-		/*
-		 * Is the file or URL compressed?  If so, we need to add a filter to
-		 * uncompress it.
-		 */
-		boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
-		boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
 
-		/*
-		 * Create buffered stream and reader from this input stream.
-		 */
-		if (isGzipped)
-			mInputStream = new BufferedInputStream(new GZIPInputStream(in));
-		else if (isZipped)
-			mInputStream = new BufferedInputStream(new ZipInputStream(in));
-		else
-			mInputStream = new BufferedInputStream(in);
+		try
+		{
+			/*
+			 * Is the file or URL compressed?  If so, we need to add a filter to
+			 * uncompress it.
+			 */
+			boolean isGzipped = name.endsWith(".gz") || name.endsWith(".GZ");
+			boolean isZipped = name.endsWith(".zip") || name.endsWith(".ZIP");
 
-		mReader = new LineNumberReader(new InputStreamReader(mInputStream));
+			/*
+			 * Create buffered stream and reader from this input stream.
+			 */
+			if (isGzipped)
+				mInputStream = new BufferedInputStream(new GZIPInputStream(in));
+			else if (isZipped)
+				mInputStream = new BufferedInputStream(new ZipInputStream(in));
+			else
+				mInputStream = new BufferedInputStream(in);
+	
+			mReader = new LineNumberReader(new InputStreamReader(mInputStream));
+		}
+		catch (IOException e)
+		{
+			/*
+			 * Ensure any file we opened is closed on error.
+			 */
+			in.close();
+			throw e;
+		}
 	}
 
 	/**
