@@ -794,18 +794,17 @@ include hr.doc
 <p>
 
 Enter the following lines into a text file named
-<tt>tutorialhttpserver1.mpy</tt>, replacing the filename
-<tt>/tmp/roads.shp</tt>
-with the filename of an available ESRI Shape file containing
-lines or polygons.
+<tt>tutorialhttpserver1.mpy</tt>.
 
 include beginex.doc
 include tutorialhttpserver1.mpy
 include endex.doc
 
+Copy the file <tt>coastline.shp</tt> from the <tt>doc</tt>
+subdirectory in the Mapyrus installation into the same directory
+as the file <tt>tutorialhttpserver1.mpy</tt>.
 In a terminal window, change to the directory containing the
-file
-<tt>tutorialhttpserver1.mpy</tt>, and start
+two files and start
 Mapyrus as an HTTP server on port 8410 with
 the following command.
 
@@ -867,10 +866,10 @@ unique filenames using the
 function and return references to the images in the HTML.
 <p>
 
-The following example demonstrates this, displaying ESRI Shape files
-<tt>/tmp/rds_l.shp</tt>
-and
-<tt>/tmp/txt_p.shp</tt>
+The following example demonstrates this, displaying ESRI Shape file
+<tt>coastline.shp</tt>
+and text file
+<tt>aust_temperatures.dat</tt>
 and using an HTML form to allow
 the user to change the map display.
 Enter the following lines into a text file named
@@ -880,11 +879,17 @@ include beginex.doc
 include tutorialhtmlpage1.mpy
 include endex.doc
 
-Start Mapyrus with the
+Copy the files
+<tt>coastline.shp</tt>
+and 
+<tt>aust_temperatures.dat</tt>
+into the same directory as <tt>tutorialhtmlpage1.mpy</tt>.
+Then start Mapyrus with the
 <a href="#httpserver">
 HTTP Server
 </a>
-option and enter the following URL in a web browser.
+option in the same directory as these two files
+and enter the following URL in a web browser.
 
 <pre>
 http://localhost:8410/tutorialhtmlpage1.mpy
@@ -1032,7 +1037,7 @@ javadoc
 style comments.
 <p>
 To view and edit the source code, use a 
-development environment such as
+Java development environment such as
 <a href="http://www.eclipse.org/">Eclipse</a>
 and import the source code into a new project.
 
