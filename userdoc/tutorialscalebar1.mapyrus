@@ -22,6 +22,7 @@ done
 
 # Add a scalebar.
 #
+clearpath
 scalebar Mapyrus.worlds.scale, "m"
 
 # Begin a new page.
@@ -46,4 +47,5 @@ done
 
 # Add a scalebar to this map display too.
 #
+clearpath
 scalebar Mapyrus.worlds.scale, "m"
