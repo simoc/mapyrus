@@ -1,4 +1,4 @@
-let allFiles = listfiles("H:\\data\\shape\\*\\*.shp")
+let allFiles = dir("H:\\data\\shape\\*\\*.shp")
 
 newpage "eps", "tutorialdatasets7.eps", 180, 260
 worlds 1600000, 610000, 1770000, 710000
