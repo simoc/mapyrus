@@ -1717,11 +1717,11 @@ Ghostscript\footnote{Available from http://www.ghostscript.com} to post-process
 image output and convert images and PostScript output to other formats.
 
 The following three examples demonstrate these methods.
-The first example creates a PNG image file and then converts it to ASCII art.
+The first example creates a PPM image file and then converts it to ASCII art.
 
 \begin{verbatim}
 java -DDATADIR=$DATADIR -DNameidx=Q7B80L -classpath mapyrus.jar \
-  org.mapyrus.Mapyrus mycommands.mapyrus | pngtopnm | ppmtopgm | \
+  org.mapyrus.Mapyrus mycommands.mapyrus | ppmtopgm | \
   pgmtopbm | pbmtoascii -2x4
 \end{verbatim}
 
