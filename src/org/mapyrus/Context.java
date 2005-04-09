@@ -42,14 +42,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
 import org.mapyrus.image.GradientFillFactory;
 import org.mapyrus.image.ImageFilter;
+import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.GeoImageBoundingBox;
 import org.mapyrus.io.ImageClippingFile;
 import org.mapyrus.io.TFWFile;
@@ -1626,7 +1625,7 @@ public class Context
 		{
 			try
 			{
-				image = ImageIO.read(url);
+				image = ImageIOWrapper.read(url);
 			}
 			catch (IOException e)
 			{
@@ -1636,7 +1635,7 @@ public class Context
 		}
 		else
 		{
-			image = ImageIO.read(new File(filename));
+			image = ImageIOWrapper.read(new File(filename));
 		}
 
 		if (image == null)
