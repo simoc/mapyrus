@@ -38,12 +38,11 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 
-import javax.imageio.ImageIO;
-
 import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.image.Bitmap;
+import org.mapyrus.image.ImageIOWrapper;
 
 /**
  * Contexts for interpretation that are pushed and popped as procedure
@@ -537,11 +536,11 @@ public class ContextStack
 					{
 						url = new URL(filename);
 					}
-					icon = ImageIO.read(url);
+					icon = ImageIOWrapper.read(url);
 				}
 				catch (MalformedURLException e)
 				{
-					icon = ImageIO.read(new File(filename));
+					icon = ImageIOWrapper.read(new File(filename));
 				}
 
 				if (icon == null)
