@@ -711,7 +711,14 @@ public class OutputFormat
 			if (mIsPipedOutput)
 			{
 				String pipeCommand = filename.substring(1).trim();
-				mOutputProcess = Runtime.getRuntime().exec(pipeCommand);
+				String []cmdArray;
+				String osname = System.getProperty("os.name");
+				boolean isWindows = (osname != null && osname.toUpperCase().indexOf("WIN") >= 0);
+				if (isWindows)
+					cmdArray = new String[]{pipeCommand};
+				else
+					cmdArray = new String[]{"sh", "-c", pipeCommand};
+				mOutputProcess = Runtime.getRuntime().exec(cmdArray);
 				mOutputStream = mOutputProcess.getOutputStream();
 			}
 			else
