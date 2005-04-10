@@ -265,13 +265,8 @@ public class ColorDatabase
 			if (filename == null)
 			{
 				filename = "/usr/lib/X11/rgb.txt";
-				String osname = System.getProperty("os.name");
-				if (osname != null)
-				{
-					osname = osname.toLowerCase();
-					if (osname.indexOf("sunos") > 0)
-						filename = "/usr/openwin/lib/X11/rgb.txt";
-				}
+				if (Constants.getOSName().indexOf("SUNOS") >= 0)
+					filename = "/usr/openwin/lib/X11/rgb.txt";
 				reader = new LineNumberReader(new FileReader(filename));
 			}
 		}
