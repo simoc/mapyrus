@@ -150,6 +150,20 @@ public class Constants
 		return(height / (double)resolution * MM_PER_INCH);
 	}
 
+	/**
+	 * Get name of operating system being used.
+	 * @return name of operating system, or empty string if not available.
+	 */
+	public static String getOSName()
+	{
+		String retval = System.getProperty("os.name");
+		if (retval == null)
+			retval = "";
+		else
+			retval = retval.toUpperCase();
+		return(retval);
+	}
+
 	/*
 	 * Line separator in text files.
 	 */
