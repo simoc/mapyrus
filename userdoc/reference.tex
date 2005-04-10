@@ -1032,7 +1032,7 @@ blended with colors of underlying shapes on the page.
 
 Colors are opaque if an alpha value is not given.
 
-Transparent colors are only available for JPEG, PNG, SVG
+Transparent colors are only available for JPEG, PNG, PPM, SVG
 and Encapsulated PostScript format image (\texttt{epsimage}) output.
 
 The PostScript language does not contain any functions for setting
@@ -1402,7 +1402,7 @@ Displays a geo-referenced image.
 
 \textit{filename} or
 \textit{url}
-is the name of a GIF, JPEG or PNG format image file.
+is the name of a GIF, JPEG, PNG or PPM format image file.
 An associated "worlds" file with suffix \texttt{.tfw} must exist,
 defining the world coordinate range covered by the image.
 
@@ -1536,8 +1536,8 @@ the current path.  The icon is centered at each point.
 
 \textit{filename} is a the name of a file, URL or Java resource
 containing the icon.
-The icon must be either \texttt{PNG}, \texttt{GIF} or \texttt{JPEG}
-image format.
+The icon must be either \texttt{GIF}, \texttt{JPEG},
+\texttt{PNG} or \texttt{PPM} image format.
 
 \textit{binarydigits} are 16, 64 or 256 binary digits (all 0's and 1's)
 defining a square single color bitmap of size 4x4, 8x8 or 16x16 pixels.
@@ -1754,6 +1754,8 @@ with shapes and labels defined geometrically.
 \item
 \texttt{png} or \texttt{image/png} for PNG image output.
 \item
+\texttt{ppm} or \texttt{image/x-portable-pixmap} for Netpbm PPM image output.
+\item
 \texttt{epsimage} for Encapsulated PostScript image output.
 Output contains
 a single image in which all shapes and labels have been drawn.
@@ -1885,7 +1887,7 @@ default value of screen resolution. \\
 
 \hline
 
-PNG, JPEG images, output to a window on screen
+JPEG, PNG, PPM images, output to a window on screen
 and Encapsulated PostScript images &
 
 \texttt{background=\textit{color}}
