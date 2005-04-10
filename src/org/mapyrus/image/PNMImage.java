@@ -71,14 +71,21 @@ public class PNMImage
 			int magic1 = stream.read();
 			int magic2 = stream.read();
 			boolean isGreyscale;
+			boolean isBitmap;
 			
 			if (magic1 == 'P' && magic2 == '6')
 			{
-				isGreyscale = false;
+				isGreyscale = isBitmap = false;
 			}
 			else if (magic1 == 'P' && magic2 == '5')
 			{
 				isGreyscale = true;
+				isBitmap = false;
+			}
+			else if (magic1 == 'P' && magic2 == '4')
+			{
+				isBitmap = true;
+				isGreyscale = false;
 			}
 			else
 			{
@@ -91,8 +98,10 @@ public class PNMImage
 			 */
 			int width = readNumber(stream);
 			int height = readNumber(stream);
-			int maxValue = readNumber(stream);
-			
+			int maxValue = 1;
+			if (!isBitmap)
+				maxValue = readNumber(stream);
+
 			int nBytes = (maxValue < 256) ? 1 : 2;
 
 			/*
@@ -100,14 +109,29 @@ public class PNMImage
 			 */
 			mImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
+			int nextByte = 0;
 			for (int y = 0; y < height; y++)
 			{
+				int bitMask = 0;
 				for (int x = 0; x < width; x++)
 				{
 					int r, g, b, pixel;
 					if (nBytes == 1)
 					{
-						if (isGreyscale)
+						if (isBitmap)
+						{
+							/*
+							 * Extract pixel from next bit.
+							 */
+							if (bitMask == 0)
+							{
+								nextByte = stream.read();
+								bitMask = 128;
+							}
+							r = g = b = (((nextByte & bitMask) != 0) ? 0 : 255);
+							bitMask >>= 1;
+						}
+						else if (isGreyscale)
 						{
 							r = g = b = stream.read();
 						}
