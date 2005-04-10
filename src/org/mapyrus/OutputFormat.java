@@ -59,12 +59,11 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
-import javax.imageio.ImageIO;
-
 import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
+import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
 import org.mapyrus.ps.PostScriptFile;
@@ -489,7 +488,7 @@ public class OutputFormat
 	private boolean isSupportedImageFormat(String formatName)
 	{
 		boolean found = false;
-		String knownFormats[] = ImageIO.getWriterFormatNames();
+		String knownFormats[] = ImageIOWrapper.getWriterFormatNames();
 		for (int i = 0; i < knownFormats.length && found == false; i++)
 		{
 			if (formatName.equalsIgnoreCase(knownFormats[i]))
@@ -844,7 +843,7 @@ public class OutputFormat
 					 * Read existing image for editing.
 					 * Set page width and height to size of existing image.
 					 */
-					mImage = ImageIO.read(f);
+					mImage = ImageIOWrapper.read(f);
 					if (mImage == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) + ": " + filename);
@@ -865,9 +864,9 @@ public class OutputFormat
 
 					/*
 					 * Create images with transparency for all formats except
-					 * JPEG (which does not support it).
+					 * JPEG and PPM (which do not support it).
 					 */
-					if (mFormatName.equals("jpg") || mFormatName.equals("jpeg"))
+					if (mFormatName.equals("jpg") || mFormatName.equals("jpeg") || mFormatName.equals("ppm"))
 						imageType = BufferedImage.TYPE_3BYTE_BGR;
 					else
 						imageType = BufferedImage.TYPE_INT_ARGB;
@@ -956,7 +955,9 @@ public class OutputFormat
 		}
 		else
 		{
-			if (mFormatName.startsWith("image/"))
+			if (mFormatName.equals("image/x-portable-pixmap"))
+				mFormatName = "ppm";
+			else if (mFormatName.startsWith("image/"))
 				mFormatName = mFormatName.substring(6);
 
 			if (!isSupportedImageFormat(mFormatName))
@@ -1404,7 +1405,7 @@ public class OutputFormat
 			/*
 			 * Write image buffer to file.
 			 */
-			ImageIO.write(mImage, mFormatName, mOutputStream);
+			ImageIOWrapper.write(mImage, mFormatName, mOutputStream);
 
 			if (mIsStandardOutput)
 				mOutputStream.flush();
