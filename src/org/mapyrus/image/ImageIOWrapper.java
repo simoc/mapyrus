@@ -50,7 +50,7 @@ public class ImageIOWrapper
 		BufferedImage retval;
 
 		String filename = f.getName().toLowerCase();
-		if (filename.endsWith(".ppm") || filename.endsWith(".pgm"))
+		if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
 			retval = new PNMImage(f.toString()).getBufferedImage();
 		else
 			retval = ImageIO.read(f);
@@ -67,7 +67,7 @@ public class ImageIOWrapper
 		BufferedImage retval;
 
 		String filename = url.getPath().toLowerCase();
-		if (filename.endsWith(".ppm") || filename.endsWith(".pgm"))
+		if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
 			retval = new PNMImage(url).getBufferedImage();
 		else
 			retval = ImageIO.read(url);
