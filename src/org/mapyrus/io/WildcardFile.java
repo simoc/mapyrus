@@ -30,6 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.mapyrus.Constants;
+
 /**
  * Finds files matching a file wildcard pattern containing asterisks.
  * Typically used for exanding patterns like "/usr/local/fonts/*.afm".
@@ -44,8 +46,7 @@ public class WildcardFile
 		 * If running on Windows then filenames are case insensitive.
 		 * So the pattern "*.txt" will match filenames "foo.txt" and "BAR.TXT".
 		 */
-		String osname = System.getProperty("os.name");
-		mFilenamesCaseInsensitive = (osname != null && osname.toUpperCase().indexOf("WIN") >= 0);
+		mFilenamesCaseInsensitive = (Constants.getOSName().indexOf("WIN") >= 0);
 	}
 
 	/*
