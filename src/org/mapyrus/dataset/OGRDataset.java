@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
+import org.mapyrus.Constants;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 import org.mapyrus.Row;
@@ -135,7 +136,12 @@ public class OGRDataset implements GeographicDataset
 		else if (filename.endsWith("|"))
 		{
 			String command = filename.substring(0, filename.length() - 1).trim();
-			mProcess = Runtime.getRuntime().exec(command);
+			String []cmdArray;
+			if (Constants.getOSName().indexOf("WIN") >= 0)
+				cmdArray = new String[]{command};
+			else
+				cmdArray = new String[]{"sh", "-c", command};
+			mProcess = Runtime.getRuntime().exec(cmdArray);
 			mReader = new LineNumberReader(new InputStreamReader(mProcess.getInputStream()));
 		}
 		else
