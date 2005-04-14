@@ -61,6 +61,17 @@ public class PNMImage
 		init(stream, filename);
 	}
 	
+	/**
+	 * Read Netpbm PNM image from open stream.
+	 * @param stream open stream to read from.
+	 * @param filename name of file.
+	 */
+	public PNMImage(InputStream stream, String filename) throws MapyrusException, IOException
+	{
+		DataInputStream stream2 = new DataInputStream(new BufferedInputStream(stream));
+		init(stream2, filename);
+	}
+	
 	private void init(DataInputStream stream, String filename) throws MapyrusException, IOException
 	{
 		try
