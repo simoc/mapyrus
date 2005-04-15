@@ -1,15 +1,17 @@
 newpage "eps", "tutorialgeoimage3.eps", 85, 85
 
-let x1 = 150, y1 = -45, x2 = 180, y2 = -5
+let x1 = 393381, y1 = 5207990, x2 = 495758, y2 = 5305370
 worlds x1, y1, x2, y2
 
 # Build URL to fetch area covered by page from a Web Mapping Service.
 #
-let url = "http://localhost/wms.cgi?VERSION=1.1.1&REQUEST=GetMap&"
-let url = url . "LAYERS=cities&STYLES=&SRS=EPSG:4326&FORMAT=image/png&"
+let url = "http://tardis/cgi-bin/mapserv?map=demo.map&"
+let url = url . "SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&"
+let url = url . "LAYERS=dlgstln2,cities&STYLES=&SRS=EPSG:26915&"
+let url = url . "FORMAT=image/jpeg&"
 let url = url . "BBOX=" . x1 . "," . y1 . "," . x2 . "," . y2 . "&"
-let url = url . "WIDTH=" . (round(x2 - x1) * 10) . "&"
-let url = url . "HEIGHT=" . (round(y2 - y1) * 10)
+let url = url . "WIDTH=" . round((x2 - x1) / 100) . "&"
+let url = url . "HEIGHT=" . round((y2 - y1) / 100)
 
 # Fetch and display image.
 #
