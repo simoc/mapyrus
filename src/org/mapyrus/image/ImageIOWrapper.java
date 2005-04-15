@@ -24,15 +24,21 @@ package org.mapyrus.image;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.imageio.ImageIO;
 
+import org.mapyrus.Constants;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 
 /**
  * Wrapper around javax.imageio.ImageIO class to provide reading and
@@ -56,7 +62,7 @@ public class ImageIOWrapper
 			retval = ImageIO.read(f);
 		return(retval);
 	}
-	
+
 	/**
 	 * Read an image from URL. 
 	 * @param url URL to read image from.
@@ -65,12 +71,65 @@ public class ImageIOWrapper
 	public static BufferedImage read(URL url) throws IOException, MapyrusException
 	{
 		BufferedImage retval;
+		InputStream stream = null;
 
-		String filename = url.getPath().toLowerCase();
-		if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
-			retval = new PNMImage(url).getBufferedImage();
-		else
-			retval = ImageIO.read(url);
+		try
+		{
+			/*
+			 * Check that URL really is an image before trying to load it.
+			 */
+			String filename = url.getPath().toLowerCase();
+			URLConnection urlConnection = url.openConnection();
+			String contentType = urlConnection.getContentType();
+			stream = urlConnection.getInputStream();
+			if (contentType.startsWith("text/") ||
+				contentType.startsWith("application/vnd.ogc."))
+			{
+				/*
+				 * Read textual content from URL and include it in our
+				 * error message as it may be helpful in understanding the
+				 * problem.
+				 */
+				StringBuffer sb = new StringBuffer();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+				int c;
+				while ((c = reader.read()) != -1)
+				{
+					sb.append((char)c);
+					if (sb.length() >= 80 * 17)
+					{
+						sb.append("...");
+						break;
+					}
+				}
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.URL_RETURNED) +
+					": " + contentType + Constants.LINE_SEPARATOR +
+					url.toString() + Constants.LINE_SEPARATOR + sb);
+			}
+
+			if (contentType.equals("image/x-portable-pixmap") ||
+				contentType.equals("image/x-portable-bitmap") ||
+				contentType.equals("image/x-portable-graymap"))
+			{
+				retval = new PNMImage(stream, filename).getBufferedImage();
+			}
+			else
+			{
+				retval = ImageIO.read(stream);
+			}
+		}
+		finally
+		{
+			try
+			{
+				if (stream != null)
+					stream.close();
+			}
+			catch (IOException ignore)
+			{
+				
+			}
+		}
 		return(retval);
 	}
 	
