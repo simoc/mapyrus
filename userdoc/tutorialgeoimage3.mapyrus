@@ -8,7 +8,7 @@ worlds x1, y1, x2, y2
 let url = "http://tardis/cgi-bin/mapserv?map=demo.map&"
 let url = url . "SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&"
 let url = url . "LAYERS=dlgstln2,cities&STYLES=&SRS=EPSG:26915&"
-let url = url . "FORMAT=image/jpeg&"
+let url = url . "FORMAT=image/png&"
 let url = url . "BBOX=" . x1 . "," . y1 . "," . x2 . "," . y2 . "&"
 let url = url . "WIDTH=" . round((x2 - x1) / 100) . "&"
 let url = url . "HEIGHT=" . round((y2 - y1) / 100)
