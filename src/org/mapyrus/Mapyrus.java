@@ -169,11 +169,13 @@ public class Mapyrus
 			"Variables and configuration are passed to " + Constants.PROGRAM_NAME + " using the Java -D option.",
 			"",
 			"Options:",
+			"  -e <commands> runs given commands instead of reading commands from a file",
+			"  -h            print this message",
+			"  -l <level>    sets logging level for HTTP server.  One of ",
+			"                FINEST, FINER, FINE, CONFIG, INFO, WARNING, SEVERE.",
 			"  -s <port>     starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server on the",
 			"                given port.  Refer to manual for detailed instructions.",
-			"  -e <commands> runs given commands instead of reading commands from a file",
 			"  -v            print version information and exit",
-			"  -h            print this message"
 		};
 
 		String []license =
@@ -267,10 +269,12 @@ public class Mapyrus
 	 * Listen on a server socket, accepting and processing HTTP requests.
 	 * @param interpreter interpreter to use for
 	 * @param port port on which to create socket and listen on.
+	 * @param logLevel logging level for server, or null for default level.
 	 * This function normally runs forever and will only return if server
 	 * cannot be started.
 	 */
-	private static void serveHttp(Interpreter interpreter, int port)
+	private static void serveHttp(Interpreter interpreter,
+		int port, Level logLevel)
 	{
 		ServerSocket serverSocket = null;
 		Pool interpreterPool;
@@ -298,6 +302,11 @@ public class Mapyrus
 		Logger logger = Logger.getLogger(className);
 		ConsoleHandler consoleHandler = new ConsoleHandler();
 		consoleHandler.setFormatter(new SingleLineFormatter());
+		if (logLevel != null)
+		{
+			logger.setLevel(logLevel);
+			consoleHandler.setLevel(logLevel);
+		}
 		logger.addHandler(consoleHandler);
 		logger.setUseParentHandlers(false);
 
@@ -460,6 +469,7 @@ public class Mapyrus
 		boolean isHttpServer = false;
 		int argIndex = 0;
 		int port = 0;
+		Level logLevel = null;
 		StringBuffer commandsToExecute = new StringBuffer();
 
 		if (args.length == 0)
@@ -520,6 +530,25 @@ public class Mapyrus
 				 */
 				commandsToExecute.append(args[argIndex + 1]);
 				commandsToExecute.append(Constants.LINE_SEPARATOR);
+				argIndex += 2;
+			}
+			else if (arg.equals("-l"))
+			{
+				/*
+				 * Set logging level.
+				 */
+				if (argIndex + 1 == args.length)
+					printUsageAndExit();
+
+				try
+				{
+					logLevel = Level.parse(args[argIndex + 1]);
+				}
+				catch (IllegalArgumentException e)
+				{
+					System.err.println(e.getMessage());
+					System.exit(1);
+				}
 				argIndex += 2;
 			}
 			else if (arg.equals("--"))
@@ -620,7 +649,7 @@ public class Mapyrus
 		 */
 		if (isHttpServer)
 		{
-			serveHttp(interpreter, port);
+			serveHttp(interpreter, port, logLevel);
 			System.exit(1);
 		}
 		System.exit(0);
