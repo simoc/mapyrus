@@ -106,21 +106,6 @@ for the
 
 \hline
 
-\texttt{java.util.logging.config.file=\textit{filename}} &
-Defines file controlling logging for the
-HTTP Server option.
-See the Java Logging Overview
-\footnote{Available from 
-\texttt{http://java.sun.com/j2se/1.4/docs/guide/util/logging/overview.html}}
-and Java java.util.LogManager API documentation
-\footnote{Available from
-\texttt{http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/LogManager.html}}
-for format of the file defining logging properties.
-Logger for Mapyrus is named \texttt{org.mapyrus.Mapyrus}.
-Default logging writes only errors to error output. \\
-
-\hline
-
 \texttt{jdbc.drivers=\textit{class}} &
 Defines class containing JDBC 1.0 (or higher) driver to load at startup.
 A JDBC driver is required for connecting to a relational database and
@@ -2306,7 +2291,7 @@ by Mapyrus using the following steps.
 \item
 Set any parameters passed in the URL (following the \texttt{?} character in
 the URL or passed in an HTML form) as variables in Mapyrus.
-Uppercase variable names are used.
+Variable names are converted to uppercase.
 \item
 Read and execute the commands from the filename given in the URL.
 \item
@@ -2345,7 +2330,4 @@ If communication between HTTP client and Mapyrus is blocked for longer than
 When all threads in the HTTP server are busy handling requests,
 further requests are queued.
 
-Logging of HTTP requests is controlled by setting a startup variable (see Table
-\ref{startupvariables} on page \pageref{startupvariables}) defining a logging
-configuration file.
-
+Logging of HTTP requests is controlled by the \texttt{-l} command line option.
