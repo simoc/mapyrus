@@ -814,9 +814,12 @@ geo-referenced images.
 To fetch a geo-referenced image from a WMS and display it
 on the page use the \texttt{geoimage} command.
 
-The following example demonstrates building a URL for a WMS request,
+The following example demonstrates building a URL for a WMS request
+from a UMN Mapserver,
 defining the layers to be fetched and world coordinate range
 of the area of interest.
+The UMN Mapserver must be configured to return 24 bit PNG images
+as Mapyrus cannot read the default PNG format returned by Mapserver.
 
 \verbatiminput{tutorialgeoimage3.mapyrus}
 
