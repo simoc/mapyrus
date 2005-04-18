@@ -1,0 +1,32 @@
+let size = 7000000, i = 0
+let centerx = 1445863, centery = 6206249
+repeat 60
+do
+  if i < 10
+  then
+    let f = "frame0" . i . ".gif"
+  else
+    let f = "frame" . i . ".gif"
+  endif
+  newpage "ppm", "| ppmtogif > " . f, 60, 60, "background=pastelblue"
+  worlds centerx - size / 2, centery - size / 2, \
+    centerx + size / 2, centery + size / 2
+
+  dataset "shapefile", "coastline.shp", ""
+  while Mapyrus.fetch.more
+  do
+    fetch
+    clearpath
+    addpath GEOMETRY
+    color '#669900'
+    fill
+    color '#333333'
+    linestyle 0.1
+    stroke
+  done
+
+  # Reduce area shown in next frame of the animation.
+  #
+  let size = size * 0.9
+  let i = i + 1
+done
