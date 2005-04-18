@@ -1759,6 +1759,23 @@ do
 done' > ls.png
 \end{verbatim}
 
+\subsection{Creating Animations Using Mapyrus}
+
+To create an animated GIF image, create each frame as a separate
+GIF image using Mapyrus and the Netpbm program \texttt{ppmtogif}.
+The following example demonstrates this, creating frames that slowly
+zoom in.
+
+\verbatiminput{tutorialanimate1.mapyrus}
+
+Then combine all frames using the freely available program
+Gifsicle\footnote{Available from http://www.lcdf.org/gifsicle}.
+The following command makes an animated GIF file from all frames.
+
+\begin{verbatim}
+gifsicle frame*.gif > anim.gif
+\end{verbatim}
+
 \subsection{Building Mapyrus From Source}
 
 To build Mapyrus from source code, the following development tools
