@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -48,10 +49,15 @@ import java.util.logging.Logger;
 public class HTTPRequest extends Thread
 {
 	/*
-	 * Keywords received and sent in HTTP headers.
+	 * Keywords and codes received and sent in HTTP headers.
 	 */
 	private static final String HTTP_OK_KEYWORD = "HTTP/1.0 200 OK";
 	private static final String HTTP_BAD_KEYWORD = "HTTP/1.0 400 Bad Request";
+	private static final String HTTP_NOT_FOUND_KEYWORD = "HTTP/1.0 404 Not Found";
+	private static final int HTTP_OK_CODE = 200;
+	private static final int HTTP_BAD_CODE = 400;
+	private static final int HTTP_NOT_FOUND_CODE = 404;
+
 	private static final String CONTENT_TYPE_KEYWORD = "Content-Type";
 	private static final String CONTENT_LENGTH_KEYWORD = "Content-Length";
 	private static final String GET_REQUEST_KEYWORD = "GET";
@@ -75,7 +81,7 @@ public class HTTPRequest extends Thread
 	/*
 	 * Holds return status and any error message from running this thread.
 	 */
-	private boolean mReturnStatus;
+	private int mReturnStatus;
 	private String mErrorMessage;
 
 	/*
@@ -99,7 +105,7 @@ public class HTTPRequest extends Thread
 		mInterpreter = interpreter;
 		mPool = interpreterPool;
 		mImagemapPoint = null;
-		mReturnStatus = true;
+		mReturnStatus = HTTP_OK_CODE;
 		mLogger = logger;
 	}
 
@@ -230,6 +236,8 @@ public class HTTPRequest extends Thread
 		 * Read line and see whether it is a GET or POST request.
 		 */
 		String firstLine = reader.readLine();
+		if (firstLine == null)
+			firstLine = "";
 		if (mLogger.isLoggable(Level.INFO))
 		{
 			String logMessage = getName() + ": " +
@@ -287,8 +295,8 @@ public class HTTPRequest extends Thread
 		if(mFilename.indexOf(File.separatorChar) >= 0 || mFilename.indexOf('/') >= 0 ||
 			mFilename.indexOf('\\') >= 0 || (!f.exists()))
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
-							": " + mFilename);
+			throw new FileNotFoundException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
+				": " + mFilename);
 		}
 
 		/*
@@ -319,7 +327,7 @@ public class HTTPRequest extends Thread
 		 * Read rest of HTTP header.
 		 */
 		String nextLine = reader.readLine();
-		while (nextLine.length() > 0)
+		while (nextLine != null && nextLine.length() > 0)
 		{
 			if (mLogger.isLoggable(Level.FINER))
 			{
@@ -417,9 +425,25 @@ public class HTTPRequest extends Thread
 		try
 		{
 			inReader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-			parseRequest(inReader);
+			try
+			{
+				parseRequest(inReader);
+			}
+			catch (FileNotFoundException e)
+			{
+				/*
+				 * User asked for a file that does not exist, or is
+				 * outside directories being served.
+				 */
+				mReturnStatus = HTTP_NOT_FOUND_CODE;
+				mErrorMessage = e.getMessage();
+			}
 
-			if (mMimeType == null)
+			if (mReturnStatus == HTTP_NOT_FOUND_CODE)
+			{
+
+			}
+			else if (mMimeType == null)
 			{
 				/*
 				 * Send commands to Mapyrus to interpret and capture their output.
@@ -472,12 +496,12 @@ public class HTTPRequest extends Thread
 		}
 		catch (IOException e)
 		{
-			mReturnStatus = false;
+			mReturnStatus = HTTP_BAD_CODE;
 			mErrorMessage = e.getMessage();
 		}
 		catch (MapyrusException e)
 		{
-			mReturnStatus = false;
+			mReturnStatus = HTTP_BAD_CODE;
 			mErrorMessage = e.getMessage();
 		}
 		catch (Exception e)
@@ -487,7 +511,7 @@ public class HTTPRequest extends Thread
 			 * indicates a bug.  Return all information to client so
 			 * problem can be pinpointed.
 			 */
-			mReturnStatus = false;
+			mReturnStatus = HTTP_BAD_CODE;
 			mErrorMessage = exceptionToString(e);
 		}
 
@@ -498,7 +522,7 @@ public class HTTPRequest extends Thread
 			 * explaining why it could be completed) to the HTTP client.
 			 */
 			outStream = new BufferedOutputStream(mSocket.getOutputStream());
-			if (mReturnStatus)
+			if (mReturnStatus == HTTP_OK_CODE)
 			{
 				String contentType;
 				
@@ -564,16 +588,17 @@ public class HTTPRequest extends Thread
 			{
 				String contentType = MimeTypes.get("txt");
 
+				String result = (mReturnStatus == HTTP_NOT_FOUND_CODE) ? HTTP_NOT_FOUND_KEYWORD : HTTP_BAD_KEYWORD;
 				if (mLogger.isLoggable(Level.FINE))
 				{
 					mLogger.fine(getName() + ": " +
-						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + HTTP_BAD_KEYWORD);
+						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + result);
 					mLogger.fine(getName() + ": " +
 						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " +
 						CONTENT_TYPE_KEYWORD + ": " + contentType);
 				}
 
-				reply = HTTP_BAD_KEYWORD + Constants.LINE_SEPARATOR +
+				reply = result + Constants.LINE_SEPARATOR +
 					CONTENT_TYPE_KEYWORD + ": " + contentType + Constants.LINE_SEPARATOR +
 					Constants.LINE_SEPARATOR +
 					mErrorMessage + Constants.LINE_SEPARATOR;
@@ -583,9 +608,9 @@ public class HTTPRequest extends Thread
 		}
 		catch (IOException e)
 		{
-			if (mReturnStatus)
+			if (mReturnStatus == HTTP_OK_CODE)
 			{
-				mReturnStatus = false;
+				mReturnStatus = HTTP_BAD_CODE;
 				mErrorMessage = e.toString();
 			}
 		}
@@ -647,7 +672,7 @@ public class HTTPRequest extends Thread
 	 */
 	public boolean getStatus()
 	{
-		return(mReturnStatus);
+		return(mReturnStatus == HTTP_OK_CODE);
 	}
 
 	/**
