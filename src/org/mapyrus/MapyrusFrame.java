@@ -125,9 +125,9 @@ public class MapyrusFrame
 			}
 		});
 
-		JMenu editMenu = new JMenu("Edit");
+		JMenu editMenu = new JMenu(MapyrusMessages.get(MapyrusMessages.EDIT));
 		editMenu.setMnemonic(KeyEvent.VK_E);
-		JMenuItem copyItem = new JMenuItem("Copy");
+		JMenuItem copyItem = new JMenuItem(MapyrusMessages.get(MapyrusMessages.COPY));
 		copyItem.setMnemonic(KeyEvent.VK_C);
 		copyItem.addActionListener(new ActionListener()
 		{
