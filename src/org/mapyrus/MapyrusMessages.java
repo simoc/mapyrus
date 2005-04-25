@@ -57,6 +57,7 @@ public class MapyrusMessages
 	public static final String HTTP_RETURN = "httpreturn";
 	public static final String HTTP_THREADED_SERVER = "httpthreadedserver";
 	public static final String HTTP_TIMEOUT = "httptimeout";
+	public static final String IDLE = "idle";
 	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INVALID_ARC = "invalidarc";
 	public static final String INVALID_BEZIER = "invalidbezier";
