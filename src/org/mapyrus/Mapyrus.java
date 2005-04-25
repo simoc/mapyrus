@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
@@ -266,6 +267,30 @@ public class Mapyrus
 	}
 
 	/**
+	 * Wait for a client connection on HTTP server socket.
+	 * @param serverSocket socket listening for HTTP requests.
+	 * @param logger logger.
+	 * @return HTTP client socket connection.
+	 */
+	private static Socket acceptConnection(ServerSocket serverSocket,
+		Logger logger) throws IOException
+	{
+		Socket clientSocket = null;
+		while (clientSocket == null)
+		{
+			try
+			{
+				clientSocket = serverSocket.accept();
+			}
+			catch (SocketTimeoutException e)
+			{
+				logger.info(MapyrusMessages.get(MapyrusMessages.IDLE));
+			}
+		}
+		return(clientSocket);
+	}
+
+	/**
 	 * Listen on a server socket, accepting and processing HTTP requests.
 	 * @param interpreter interpreter to use for
 	 * @param port port on which to create socket and listen on.
@@ -352,7 +377,7 @@ public class Mapyrus
 				/*
 				 * Listen on socket for next client connection.
 				 */
-				socket = serverSocket.accept();
+				socket = acceptConnection(serverSocket, logger);
 				socket.setSoTimeout(Constants.HTTP_SOCKET_TIMEOUT);
 
 				/*
