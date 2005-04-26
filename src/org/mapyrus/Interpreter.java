@@ -637,6 +637,13 @@ public class Interpreter
 		double legendSize;
 		String extras;
 
+		/*
+		 * If this thread was interrupted by another thread then
+		 * stop execution.
+		 */
+		if (Thread.interrupted())
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INTERRUPTED));
+
 		expr = st.getExpressions();
 		nExpressions = expr.length;
 
