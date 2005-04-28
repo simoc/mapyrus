@@ -94,6 +94,13 @@ public class Constants
 	 */
 	public static final int HTTP_SOCKET_TIMEOUT = 30 * 1000;
 
+ 	/*
+  	 * Maximum amount of time an HTTP request may take to complete.
+  	 * Requests will be stopped and return a failure if they run
+ 	 * for longer than this time.
+  	 */
+  	public static final int MAX_HTTP_REQUEST_TIME = 600 * 1000;
+
 	/*
 	 * Timeout in seconds for connecting to RDBMS and for executing
 	 * SQL queries.
