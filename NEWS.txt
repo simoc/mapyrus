@@ -1,6 +1,13 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery.
 
+0.54, April 2005
+
+* Enable display of images fetched from an OGC Web Mapping Server (WMS).
+* Add Reading and writing of Netpbm PPM format images for better integration
+  with Netpbm programs.
+* Improve error handling when running as HTTP server.
+
 0.53, March 2005
 
 * Fix bugs in SVG output in saving state, text alignment.
