@@ -89,6 +89,11 @@ public class HTTPRequest extends Thread
 	 */
 	private Logger mLogger;
 
+	/*
+	 * Timestamp at which this thread was created.
+	 */
+	private long mCreationTimeMillis;
+
 	/**
 	 * Create new HTTP request.
 	 * @param socket HTTP connection from client.
@@ -107,6 +112,7 @@ public class HTTPRequest extends Thread
 		mImagemapPoint = null;
 		mReturnStatus = HTTP_OK_CODE;
 		mLogger = logger;
+		mCreationTimeMillis = System.currentTimeMillis();
 	}
 
 	/**
@@ -682,5 +688,15 @@ public class HTTPRequest extends Thread
 	public String getErrorMessage()
 	{
 		return(mErrorMessage);
+	}
+
+
+	/**
+	 * Return timestamp at which thread was created.
+	 * @return time stamp in milliseconds.
+	 */
+	public long getCreationTime()
+	{
+		return(mCreationTimeMillis);
 	}
 }
