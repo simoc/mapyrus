@@ -415,7 +415,8 @@ public class Mapyrus
 					if (!active.isAlive())
 					{
 						/*
-						 * Wait for thread to complete, then check if it succeeded.
+						 * Wait for thread to complete,
+						 * then check if it succeeded.
 						 */
 						active.join();
 						logger.fine(MapyrusMessages.get(MapyrusMessages.JOINED_THREAD) +
@@ -423,6 +424,18 @@ public class Mapyrus
 						if (!active.getStatus())
 							logger.severe(active.getName() + ": " + active.getErrorMessage());
 						iterator.remove();
+					}
+					else
+					{
+						/*
+						 * Interrupt any requests that have run for too long.
+						 */
+						long now = System.currentTimeMillis();
+						long age = now - active.getCreationTime();
+						if (age > Constants.MAX_HTTP_REQUEST_TIME)
+						{
+							active.interrupt();
+						}
 					}
 				}
 			}
