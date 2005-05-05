@@ -47,6 +47,13 @@ public class MimeTypes
 			 */
 			retval = "image/svg+xml";
 		}
+		else if (extension.equalsIgnoreCase("bmp"))
+		{
+			/*
+			 * BMP image format also not in my MIME type database.
+			 */
+			retval = "image/bmp";
+		}
 		else if (extension.equalsIgnoreCase("tfw"))
 		{
 			/*
