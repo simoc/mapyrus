@@ -60,6 +60,8 @@ public class ImageIOWrapper
 			retval = new PNMImage(f.toString()).getBufferedImage();
 		else if (filename.endsWith(".bmp"))
 			retval = new BMPImage(f.toString()).getBufferedImage();
+		else if (filename.endsWith(".pat"))
+			retval = new PATImage(f.toString()).getBufferedImage();
 		else
 			retval = ImageIO.read(f);
 		return(retval);
