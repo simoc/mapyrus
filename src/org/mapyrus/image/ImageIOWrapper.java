@@ -58,6 +58,8 @@ public class ImageIOWrapper
 		String filename = f.getName().toLowerCase();
 		if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
 			retval = new PNMImage(f.toString()).getBufferedImage();
+		else if (filename.endsWith(".bmp"))
+			retval = new BMPImage(f.toString()).getBufferedImage();
 		else
 			retval = ImageIO.read(f);
 		return(retval);
@@ -113,6 +115,10 @@ public class ImageIOWrapper
 			{
 				retval = new PNMImage(stream, filename).getBufferedImage();
 			}
+			else if (contentType.equals("image/bmp"))
+			{
+				retval = new BMPImage(stream, filename).getBufferedImage();
+			}
 			else
 			{
 				retval = ImageIO.read(stream);
@@ -166,6 +172,8 @@ public class ImageIOWrapper
 	{
 		if (format.equalsIgnoreCase("ppm"))
 			PNMImage.write(image, stream);
+		else if (format.equalsIgnoreCase("bmp"))
+			BMPImage.write(image, stream);
 		else
 			ImageIO.write(image, format, stream);
 	}
@@ -177,9 +185,10 @@ public class ImageIOWrapper
 	public static String []getWriterFormatNames()
 	{
 		String []names = ImageIO.getWriterFormatNames();
-		String []retval = new String[names.length + 1];
+		String []retval = new String[names.length + 2];
 		System.arraycopy(names, 0, retval, 0, names.length);
 		retval[names.length] = "ppm";
+		retval[names.length + 1] = "bmp";
 		return(retval);
 	}
 }
