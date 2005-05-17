@@ -82,7 +82,7 @@ public class PATImage
 			stream.readInt();
 			int width = stream.readInt();
 			int height = stream.readInt();
-			stream.readInt();
+			int bytesPerPixel = stream.readInt();
 			byte []magicBuf = new byte[4];
 			stream.read(magicBuf);
 			
@@ -110,9 +110,23 @@ public class PATImage
 			{
 				for (int x = 0; x < width; x++)
 				{
-					int red = stream.read();
-					int green = stream.read();
-					int blue = stream.read();
+					int red, green, blue;
+					if (bytesPerPixel == 1)
+					{
+						/*
+						 * Grayscale pixel values.
+						 */
+						red = green = blue = stream.read();
+					}
+					else
+					{
+						/*
+						 * RGB pixel values.
+						 */
+						red = stream.read();
+						green = stream.read();
+						blue = stream.read();
+					}
 					int pixel = (red << 16) | (green << 8) | blue;
 					mImage.setRGB(x, y, pixel);
 				}
