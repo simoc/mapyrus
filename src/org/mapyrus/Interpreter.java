@@ -1279,6 +1279,33 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.TABLE:
+				if (nExpressions >= 2)
+				{
+					extras = mExecuteArgs[0].getStringValue();
+					ArrayList columns = new ArrayList(nExpressions - 1);
+					for (int i = 1; i < nExpressions; i++)
+					{
+						Argument arg;
+						if (mExecuteArgs[i].getType() == Argument.HASHMAP)
+						{
+							arg = mExecuteArgs[i];
+						}
+						else
+						{
+							arg = new Argument();
+							arg.addHashMapEntry("1", mExecuteArgs[i]);
+						}
+						columns.add(arg);
+					}
+					context.drawTable(extras, columns);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TABLE));
+				}
+				break;
+
 			case Statement.ICON:
 				if (nExpressions == 1 || nExpressions == 2)
 				{
