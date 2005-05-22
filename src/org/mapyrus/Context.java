@@ -31,6 +31,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -2177,6 +2178,141 @@ public class Context
 
 				addFontRotation(-angle);
 				setJustify(previousJustify);
+			}
+		}
+	}
+
+	/**
+	 * Draw a table (a grid with a value in each cell) at current path position.
+	 * @param extras options for table.
+	 * @param list of arrays giving values in each column.
+	 */
+	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
+	{
+		/*
+		 * Calculate width needed for each column and height needed for each row.
+		 */
+		double columnWidths[] = new double[columns.size()];
+		double rowHeights[] = null;
+		double minRowHeight = getStringDimension("X").getHeight();
+		double yPadding = minRowHeight / 4;
+		double xPadding;
+		Object primaryKeys[] = null;
+
+		for (int i = 0; i < columnWidths.length; i++)
+		{
+			columnWidths[i] = 0;
+			Argument arg = (Argument)columns.get(i);
+
+			if (i == 0)
+			{
+				primaryKeys = arg.getHashMapKeys();
+				rowHeights = new double[primaryKeys.length];
+				Arrays.fill(rowHeights, minRowHeight);
+			}
+			for (int j = 0; j < primaryKeys.length; j++)
+			{
+				String s = arg.getHashMapEntry(primaryKeys[j].toString()).toString();
+				StringDimension dim = getStringDimension(s);
+				if (dim.getWidth() > columnWidths[i])
+					columnWidths[i] = dim.getWidth();
+				if (dim.getHeight() > rowHeights[j])
+					rowHeights[j] = dim.getHeight();
+			}
+		}
+
+		Color bgColor = null;
+		boolean drawBorders = true;
+
+		/*
+		 * Override default settings for table with options given by user.
+		 */
+		StringTokenizer st = new StringTokenizer(extras);
+		while (st.hasMoreTokens())
+		{
+			String token = st.nextToken();
+			if (token.startsWith("background="))
+			{
+				String colorName = token.substring(11);
+				bgColor = ColorDatabase.getColor(colorName, 255);
+				if (bgColor == null)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+						": " + colorName);
+				}
+			}
+			else if (token.startsWith("borders="))
+			{
+				String flag = token.substring(8);
+				drawBorders = flag.equalsIgnoreCase("true");
+			}
+		}
+
+		GeometricPath path = getDefinedPath();
+		if (path != null && mOutputFormat != null)
+		{
+			mOutputFormat.setJustifyAttribute(OutputFormat.JUSTIFY_LEFT|OutputFormat.JUSTIFY_BOTTOM);
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE);
+
+			ArrayList moveTos = path.getMoveTos();
+			for (int i = 0; i < moveTos.size(); i++)
+			{
+				Point2D.Float pt = (Point2D.Float)moveTos.get(i);
+				Point2D.Float ptCopy = (Point2D.Float)pt.clone();
+
+				for (int j = 0; j < columns.size(); j++)
+				{
+					ptCopy.y = pt.y;
+
+					xPadding = columnWidths[j] / 10;
+					if (xPadding < 1)
+						xPadding = 1;
+					if (xPadding > 20)
+						xPadding = 20;
+
+					Argument arg = (Argument)columns.get(j);
+					for (int k = 0; k < primaryKeys.length; k++)
+					{
+						/*
+						 * Draw box around each entry in the table.
+						 */
+						GeometricPath box = new GeometricPath();
+						float x1 = (float)(ptCopy.x);
+						float y1 = (float)(ptCopy.y - yPadding - rowHeights[k] - yPadding);
+						float x2 = (float)(x1 + xPadding + columnWidths[j] + xPadding);
+						float y2 = (float)(ptCopy.y); 
+						box.moveTo(x1, y1, 0);
+						box.lineTo(x1, y2);
+						box.lineTo(x2, y2);
+						box.lineTo(x2, y1);
+						box.closePath();
+
+						if (bgColor != null)
+						{
+							mOutputFormat.saveState();
+							mOutputFormat.setColorAttribute(bgColor);
+							mOutputFormat.fill(box.getShape());
+							mOutputFormat.restoreState();
+							mAttributesChanged |= ATTRIBUTE_COLOR;
+							mAttributesPending |= ATTRIBUTE_COLOR;
+							setGraphicsAttributes(ATTRIBUTE_COLOR);
+						}
+						if (drawBorders)
+							mOutputFormat.stroke(box.getShape());
+
+						String s = arg.getHashMapEntry(primaryKeys[k].toString()).toString();
+						Point2D.Float labelPt = new Point2D.Float();
+						labelPt.x = (float)(ptCopy.x + xPadding);
+						labelPt.y = (float)(ptCopy.y - yPadding - minRowHeight);
+
+						ArrayList ptList = new ArrayList();
+						ptList.add(labelPt);
+						mOutputFormat.label(ptList, s);
+
+						ptCopy.y -= (yPadding + rowHeights[k] + yPadding); 
+					}
+					ptCopy.x += (xPadding + columnWidths[j] + xPadding);
+				}
 			}
 		}
 	}
