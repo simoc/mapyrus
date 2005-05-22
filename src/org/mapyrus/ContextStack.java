@@ -768,6 +768,16 @@ public class ContextStack
 	}
 
 	/**
+	 * Draw a table (a grid with a value in each cell) at current path position.
+	 * @param extras options for table.
+	 * @param list of arrays giving values in each column.
+	 */
+	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
+	{
+		getCurrentContext().drawTable(extras, columns);
+	}
+
+	/**
 	 * Returns the number of moveTo's in path defined in current context.
 	 * @return count of moveTo calls made.
 	 */
