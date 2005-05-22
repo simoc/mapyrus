@@ -67,4 +67,13 @@ public class StringDimension
 	{
 		return(mWidth);
 	}
+
+	/**
+	 * Get dimension as a string.
+	 * @return dimension string.
+	 */
+	public String toString()
+	{
+		return(mWidth + " x " + mHeight);
+	}
 }
