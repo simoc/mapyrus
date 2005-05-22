@@ -7,7 +7,7 @@ begin locpt name
   label name
 end
 
-let polygonColorList = split("red:blue:green:orange", ":")
+let polygonColorList = split("red blue green orange")
 
 # Draw all polygons in different colors and also save them into a list.
 #
