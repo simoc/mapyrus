@@ -1207,6 +1207,40 @@ polygon.
 \label{tutorialshadow1}
 \end{figure}
 
+\subsection{Displaying Tables}
+
+Attribute information read from a dataset is often best
+displayed in a table.
+
+Tables are displayed in Mapyrus by creating arrays containing
+the row and column values and then using the \texttt{table} command.
+
+The following example shows the positions of several vehicles,
+giving information about each vehicle as a table at the vehicle
+position.  The output of this example is shown in Figure \ref{tutorialtable1}.
+
+\verbatiminput{tutorialtable1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialtable1.eps}
+\caption{Displaying Tables In A Map}
+\label{tutorialtable1}
+\end{figure}
+
+Other uses of tables are to show a summary of the data 
+displayed on the page and to show a title block for a page.
+
+The following example demonstrates both types of tables.
+The output of this example is shown in Figure \ref{tutorialtable2}.
+
+\verbatiminput{tutorialtable2.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialtable2.eps}
+\caption{Displaying Map And Tables Separately}
+\label{tutorialtable2}
+\end{figure}
+
 \subsection{Wordwrapped Labels}
 
 To split a long sentence into several lines for display as a label, use
@@ -1215,7 +1249,8 @@ This function breaks lines at word boundaries like a word-processor
 and is useful for displaying speech bubbles, or tooltip type
 labels on the page.
 The following example shows sentences being word-wrapped and
-displayed inside a box.  The output of this example
+displayed inside a box using the \texttt{table} command.
+The output of this example
 is shown in Figure \ref{tutorialwordwrap1}.
 
 \verbatiminput{tutorialwordwrap1.mapyrus}
@@ -1246,7 +1281,7 @@ Output is shown in Figure \ref{tutorialprotect1}.
 
 \begin{figure}[htb]
 \includegraphics{tutorialprotect1.eps}
-\caption{Label positioning}
+\caption{Label Positioning}
 \label{tutorialprotect1}
 \end{figure}
 
