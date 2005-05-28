@@ -1,0 +1,42 @@
+begin hotelref counter
+  box -1, -1, 1, 1
+  stroke
+  clearpath
+  move 1.5, 0
+  label counter
+end
+
+newpage "eps", "tutorialtable2.eps", 100, 50
+color "black"
+font 'Helvetica-Narrow-Bold', 3
+
+# Display the ESRI Shape file hotel.shp on left side of page.
+#
+dataset "shapefile", "hotel.shp", ""
+worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
+  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y, 0, 0, 60, 50
+let n = 1
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  hotelref n
+
+  # Save attribute information for each hotel in arrays for display in a table.
+  #
+  let ref[n] = n
+  let name[n] = HOTELNAME
+  let rating[n] = "*" x STARRATING 
+  let n = n + 1
+done
+
+# Display reference table for map and title block on right side of page.
+#
+worlds 0, 0, 100, 50
+clearpath
+move 60, 45
+table "background=grey90", ref, name, rating
+clearpath
+move 60, 20
+table "background=grey90", split("Title Block,Author,Date", ",")
