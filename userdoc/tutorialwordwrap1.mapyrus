@@ -1,31 +1,21 @@
 begin caption message, width
-  local height
+  local t
 
-  # Word wrap message then find width and height of wrapped message.
+  # Word wrap message then display it as a table with only one entry.
   #
   font 'Helvetica-Narrow', 3
-  let message = wordwrap(message, width)
-  let width = stringwidth(message)
-  let height = stringheight(message)
-
-  # Draw a box behind label, leaving a 0.5mm gap around the text.
-  # Then draw label inside box.
-  #
-  color "Light Yellow"
-  box -width / 2 - 0.5, -0.5, width / 2 + 0.5, height + 0.5
-  fill
+  let t[1] = wordwrap(message, width)
   color "Black"
-  stroke
-
+  linestyle 0.1
   clearpath
-  move -width / 2, height - 3
-  label message
+  move 0, 0
+  table "background=LightYellow", t
 end
 
 newpage "eps", "tutorialwordwrap1.eps", 95, 30
-move 30, 15
+move 20, 9
 caption "SYDNEY: Fine with a late southerly change.", 30
 
 clearpath
-move 70, 9
+move 30, 29
 caption "BRISBANE: Overcast with afternoon thunderstorms likely.", 30
