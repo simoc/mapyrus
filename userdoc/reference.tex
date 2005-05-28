@@ -2135,6 +2135,55 @@ stroke
 Draws the current path using the current color and linestyle.
 The current path is not.
 
+\subsubsection{table}
+
+\begin{alltt}
+table \textit{extras}, \textit{column1}, \textit{column2} \dots
+\end{alltt}
+
+Draws a table at each point in the path set with the \texttt{move} command,
+One or more arrays are given defining values for each column of the table.
+Values in each column array are displayed as one column in the table.
+
+Labels in the table are drawn using the current color and font settings.
+
+\textit{extras} defines further options for the table, given as
+\textit{variable=value} values, separated by whitespace.
+See Table \ref{tableextras}
+for available options.
+
+\begin{longtable}{|l|p{7cm}|}
+\hline
+\label{tableextras}
+Extra & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Table Extras} \\
+\endfoot
+
+\hline
+Extra & Description \\
+\hline
+\hline
+\endhead
+
+\texttt{background=\textit{color}} &
+
+Background color for table, as a named color or as hex digits.
+By default the background is not displayed. \\
+
+\texttt{borders=\textit{flag}} &
+
+If \textit{flag} is \texttt{true} then a border is drawn around
+each entry in the table using the current linestyle and color.
+By default borders are drawn. \\
+
+\hline
+\end{longtable}
+
+
 \subsubsection{triangle}
 
 \begin{alltt}
