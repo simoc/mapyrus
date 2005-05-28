@@ -1,0 +1,22 @@
+begin vehiclebox reg, cargo, driver, time
+  local a, b
+  let a[1] = reg, a[2] = cargo, b[1] = driver, b[2] = time
+
+  # Draw vehicle info as two column table with arrow pointing left
+  #
+  font 'Helvetica-Narrow', 3
+  color "Black"
+  clearpath
+  move 2, 4
+  table "background=orange", a, b
+  draw 2, -4, 0, 0, 2, 4
+  fill
+end
+
+newpage "eps", "tutorialtable1.eps", 95, 30
+move 22, 20
+vehiclebox "MAC-259", "FROZEN", "Smith", "Bris 9:20"
+
+clearpath
+move 65, 14
+vehiclebox "MTT-257", "FRESH", "Jones", "Syd 2:10"
