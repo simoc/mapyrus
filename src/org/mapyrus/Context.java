@@ -2189,9 +2189,6 @@ public class Context
 	 */
 	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
 	{
-		/*
-		 * Calculate width needed for each column and height needed for each row.
-		 */
 		double columnWidths[] = new double[columns.size()];
 		double rowHeights[] = null;
 		double minRowHeight = getStringDimension("X").getHeight();
@@ -2199,6 +2196,9 @@ public class Context
 		double xPadding;
 		Object primaryKeys[] = null;
 
+		/*
+		 * Calculate width needed for each column and height needed for each row.
+		 */
 		for (int i = 0; i < columnWidths.length; i++)
 		{
 			columnWidths[i] = 0;
@@ -2251,7 +2251,11 @@ public class Context
 		GeometricPath path = getDefinedPath();
 		if (path != null && mOutputFormat != null)
 		{
-			mOutputFormat.setJustifyAttribute(OutputFormat.JUSTIFY_LEFT|OutputFormat.JUSTIFY_BOTTOM);
+			/*
+			 * Save state so we can temporarily change label justification.
+			 */
+			mOutputFormat.saveState();
+			int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM);
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE);
 
 			ArrayList moveTos = path.getMoveTos();
@@ -2264,7 +2268,7 @@ public class Context
 				{
 					ptCopy.y = pt.y;
 
-					xPadding = columnWidths[j] / 10;
+					xPadding = columnWidths[j] / 20;
 					if (xPadding < 1)
 						xPadding = 1;
 					if (xPadding > 20)
@@ -2314,6 +2318,9 @@ public class Context
 					ptCopy.x += (xPadding + columnWidths[j] + xPadding);
 				}
 			}
+
+			if (!mOutputFormat.restoreState())
+				setJustify(oldJustify);
 		}
 	}
 
