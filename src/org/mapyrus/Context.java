@@ -1922,7 +1922,7 @@ public class Context
 				ArrayList copy = (ArrayList)mClippingPaths.clone();
 				clipInside();
 				setGraphicsAttributes(ATTRIBUTE_CLIP);
-	
+
 				/*
 				 * Draw gradiated image pattern covering complete current path.
 				 */
@@ -2189,6 +2189,10 @@ public class Context
 	 */
 	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
 	{
+		GeometricPath path = getDefinedPath();
+		if (path == null || mOutputFormat == null)
+			return;
+
 		double columnWidths[] = new double[columns.size()];
 		double rowHeights[] = null;
 		double minRowHeight = getStringDimension("X").getHeight();
@@ -2196,33 +2200,10 @@ public class Context
 		double xPadding;
 		Object primaryKeys[] = null;
 
-		/*
-		 * Calculate width needed for each column and height needed for each row.
-		 */
-		for (int i = 0; i < columnWidths.length; i++)
-		{
-			columnWidths[i] = 0;
-			Argument arg = (Argument)columns.get(i);
-
-			if (i == 0)
-			{
-				primaryKeys = arg.getHashMapKeys();
-				rowHeights = new double[primaryKeys.length];
-				Arrays.fill(rowHeights, minRowHeight);
-			}
-			for (int j = 0; j < primaryKeys.length; j++)
-			{
-				String s = arg.getHashMapEntry(primaryKeys[j].toString()).toString();
-				StringDimension dim = getStringDimension(s);
-				if (dim.getWidth() > columnWidths[i])
-					columnWidths[i] = dim.getWidth();
-				if (dim.getHeight() > rowHeights[j])
-					rowHeights[j] = dim.getHeight();
-			}
-		}
-
 		Color bgColor = null;
 		boolean drawBorders = true;
+		int sortColumn = -1;
+		int sortOrder = 1;
 
 		/*
 		 * Override default settings for table with options given by user.
@@ -2246,82 +2227,149 @@ public class Context
 				String flag = token.substring(8);
 				drawBorders = flag.equalsIgnoreCase("true");
 			}
-		}
-
-		GeometricPath path = getDefinedPath();
-		if (path != null && mOutputFormat != null)
-		{
-			/*
-			 * Save state so we can temporarily change label justification.
-			 */
-			mOutputFormat.saveState();
-			int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM);
-			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE);
-
-			ArrayList moveTos = path.getMoveTos();
-			for (int i = 0; i < moveTos.size(); i++)
+			else if (token.startsWith("sortcolumn="))
 			{
-				Point2D.Float pt = (Point2D.Float)moveTos.get(i);
-				Point2D.Float ptCopy = (Point2D.Float)pt.clone();
-
-				for (int j = 0; j < columns.size(); j++)
+				String column = token.substring(11);
+				try
 				{
-					ptCopy.y = pt.y;
-
-					xPadding = columnWidths[j] / 20;
-					if (xPadding < 1)
-						xPadding = 1;
-					if (xPadding > 20)
-						xPadding = 20;
-
-					Argument arg = (Argument)columns.get(j);
-					for (int k = 0; k < primaryKeys.length; k++)
-					{
-						/*
-						 * Draw box around each entry in the table.
-						 */
-						GeometricPath box = new GeometricPath();
-						float x1 = (float)(ptCopy.x);
-						float y1 = (float)(ptCopy.y - yPadding - rowHeights[k] - yPadding);
-						float x2 = (float)(x1 + xPadding + columnWidths[j] + xPadding);
-						float y2 = (float)(ptCopy.y); 
-						box.moveTo(x1, y1, 0);
-						box.lineTo(x1, y2);
-						box.lineTo(x2, y2);
-						box.lineTo(x2, y1);
-						box.closePath();
-
-						if (bgColor != null)
-						{
-							mOutputFormat.saveState();
-							mOutputFormat.setColorAttribute(bgColor);
-							mOutputFormat.fill(box.getShape());
-							mOutputFormat.restoreState();
-							mAttributesChanged |= ATTRIBUTE_COLOR;
-							mAttributesPending |= ATTRIBUTE_COLOR;
-							setGraphicsAttributes(ATTRIBUTE_COLOR);
-						}
-						if (drawBorders)
-							mOutputFormat.stroke(box.getShape());
-
-						String s = arg.getHashMapEntry(primaryKeys[k].toString()).toString();
-						Point2D.Float labelPt = new Point2D.Float();
-						labelPt.x = (float)(ptCopy.x + xPadding);
-						labelPt.y = (float)(ptCopy.y - yPadding - minRowHeight);
-
-						ArrayList ptList = new ArrayList();
-						ptList.add(labelPt);
-						mOutputFormat.label(ptList, s);
-
-						ptCopy.y -= (yPadding + rowHeights[k] + yPadding); 
-					}
-					ptCopy.x += (xPadding + columnWidths[j] + xPadding);
+					sortColumn = Integer.parseInt(column);
 				}
-			}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLUMN) +
+						": " + column);
+				}
+				if (sortColumn < 1 || sortColumn > columns.size())
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLUMN) +
+						": " + column);
+				}
 
-			if (!mOutputFormat.restoreState())
-				setJustify(oldJustify);
+			}
+			else if (token.startsWith("sortorder="))
+			{
+				token = token.substring(10);
+				if (token.startsWith("desc"))
+					sortOrder = -1;
+			}
 		}
+
+		if (sortColumn < 0)
+		{
+			primaryKeys = ((Argument)columns.get(0)).getHashMapKeys();
+		}
+		else
+		{
+			Argument arg = (Argument)columns.get(sortColumn - 1);
+			primaryKeys = arg.getHashMapKeysSortedByValue();
+			if (sortOrder < 0)
+			{
+				/*
+				 * Reverse array order.
+				 */
+				Object reversed[] = new Object[primaryKeys.length];
+				for (int i = 0; i < primaryKeys.length; i++)
+				{
+					reversed[i] = primaryKeys[primaryKeys.length - i - 1];
+				}
+				primaryKeys = reversed;
+			}
+		}
+		rowHeights = new double[primaryKeys.length];
+		Arrays.fill(rowHeights, minRowHeight);
+
+		/*
+		 * Calculate width needed for each column and height needed for each row.
+		 */
+		for (int i = 0; i < columnWidths.length; i++)
+		{
+			columnWidths[i] = 0;
+			Argument arg = (Argument)columns.get(i);
+
+			for (int j = 0; j < primaryKeys.length; j++)
+			{
+				String s = arg.getHashMapEntry(primaryKeys[j].toString()).toString();
+				StringDimension dim = getStringDimension(s);
+				if (dim.getWidth() > columnWidths[i])
+					columnWidths[i] = dim.getWidth();
+				if (dim.getHeight() > rowHeights[j])
+					rowHeights[j] = dim.getHeight();
+			}
+		}
+
+		/*
+		 * Save state so we can temporarily change label justification.
+		 */
+		mOutputFormat.saveState();
+		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM);
+		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
+		setGraphicsAttributes(attributeMask);
+
+		ArrayList moveTos = path.getMoveTos();
+		for (int i = 0; i < moveTos.size(); i++)
+		{
+			Point2D.Float pt = (Point2D.Float)moveTos.get(i);
+			Point2D.Float ptCopy = (Point2D.Float)pt.clone();
+
+			for (int j = 0; j < columns.size(); j++)
+			{
+				ptCopy.y = pt.y;
+
+				xPadding = columnWidths[j] / 20;
+				if (xPadding < 1)
+					xPadding = 1;
+				if (xPadding > 20)
+					xPadding = 20;
+
+				Argument arg = (Argument)columns.get(j);
+				for (int k = 0; k < primaryKeys.length; k++)
+				{
+					/*
+					 * Draw box around each entry in the table.
+					 */
+					GeometricPath box = new GeometricPath();
+					float x1 = (float)(ptCopy.x);
+					float y1 = (float)(ptCopy.y - yPadding - rowHeights[k] - yPadding);
+					float x2 = (float)(x1 + xPadding + columnWidths[j] + xPadding);
+					float y2 = (float)(ptCopy.y); 
+					box.moveTo(x1, y1, 0);
+					box.lineTo(x1, y2);
+					box.lineTo(x2, y2);
+					box.lineTo(x2, y1);
+					box.closePath();
+
+					if (bgColor != null)
+					{
+						mOutputFormat.saveState();
+						mOutputFormat.setColorAttribute(bgColor);
+						mOutputFormat.fill(box.getShape());
+						mOutputFormat.restoreState();
+						mAttributesChanged |= ATTRIBUTE_COLOR;
+						mAttributesPending |= ATTRIBUTE_COLOR;
+						setGraphicsAttributes(ATTRIBUTE_COLOR);
+					}
+					if (drawBorders)
+						mOutputFormat.stroke(box.getShape());
+
+					String s = arg.getHashMapEntry(primaryKeys[k].toString()).toString();
+					Point2D.Float labelPt = new Point2D.Float();
+					labelPt.x = (float)(ptCopy.x + xPadding);
+					labelPt.y = (float)(ptCopy.y - yPadding - minRowHeight);
+
+					ArrayList ptList = new ArrayList();
+					ptList.add(labelPt);
+					mOutputFormat.label(ptList, s);
+
+					ptCopy.y -= (yPadding + rowHeights[k] + yPadding); 
+				}
+				ptCopy.x += (xPadding + columnWidths[j] + xPadding);
+			}
+		}
+
+		mOutputFormat.restoreState();
+		setJustify(oldJustify);
+		mAttributesChanged |= attributeMask;
+		mAttributesPending |= attributeMask;
 	}
 
 	/**
