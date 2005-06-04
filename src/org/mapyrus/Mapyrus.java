@@ -548,10 +548,12 @@ public class Mapyrus
 
 				try
 				{
-					port = Integer.parseInt(args[1]);
+					port = Integer.parseInt(args[argIndex + 1]);
 				}
 				catch (NumberFormatException e)
 				{
+					System.err.println(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+						": " + args[argIndex + 1]);
 					printUsageAndExit();
 				}
 
