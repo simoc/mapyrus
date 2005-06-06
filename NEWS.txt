@@ -1,6 +1,12 @@
 Mapyrus Major Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery.
 
+0.55, June 2005
+
+* Add reading and writing of BMP format images.
+* Add reading of GIMP pattern (.pat) image files for use in polygon fills.
+* Add table command to draw labels on page in rows and columns.
+
 0.54, April 2005
 
 * Enable display of images fetched from an OGC Web Mapping Server (WMS).
