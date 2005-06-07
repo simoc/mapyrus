@@ -54,6 +54,13 @@ public class MimeTypes
 			 */
 			retval = "image/bmp";
 		}
+		else if (extension.equalsIgnoreCase("ico"))
+		{
+			/*
+			 * ICO image format also not in my MIME type database.
+			 */
+			retval = "image/x-icon";
+		}
 		else if (extension.equalsIgnoreCase("tfw"))
 		{
 			/*
