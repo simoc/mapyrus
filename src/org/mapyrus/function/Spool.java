@@ -22,11 +22,11 @@
  */
 package org.mapyrus.function;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.LineNumberReader;
+import java.io.InputStream;
 
 import org.mapyrus.Argument;
-import org.mapyrus.Constants;
 import org.mapyrus.ContextStack;
 import org.mapyrus.FileOrURL;
 import org.mapyrus.MapyrusException;
@@ -44,9 +44,9 @@ public class Spool extends Function
 		throws MapyrusException
 	{
 		String filename = arg1.getStringValue();
-		StringBuffer sb = new StringBuffer();
-		String nextLine;
-		LineNumberReader reader = null;
+		ByteArrayOutputStream buf = new ByteArrayOutputStream(8 * 1024);
+		InputStream stream = null;
+		int nBytes;
 
 		try
 		{
@@ -54,11 +54,11 @@ public class Spool extends Function
 			 * Read complete file into memory and return it as a single string.
 			 */
 			FileOrURL f = new FileOrURL(filename);
-			reader = f.getReader();
-			while ((nextLine = reader.readLine()) != null)
+			stream = f.getInputStream();
+			byte b[] = new byte[1024];
+			while ((nBytes = stream.read(b)) > 0)
 			{
-				sb.append(nextLine);
-				sb.append(Constants.LINE_SEPARATOR);
+				buf.write(b, 0, nBytes);
 			}
 		}
 		catch (IOException e)
@@ -69,14 +69,14 @@ public class Spool extends Function
 		{
 			try
 			{
-				if (reader != null)
-					reader.close();
+				if (stream != null)
+					stream.close();
 			}
 			catch (IOException e)
 			{
 			}
 		}
-		Argument retval = new Argument(Argument.STRING, sb.toString());
+		Argument retval = new Argument(Argument.STRING, new String(buf.toByteArray()));
 		return(retval);
 	}
 
