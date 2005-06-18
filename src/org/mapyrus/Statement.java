@@ -87,13 +87,14 @@ public class Statement
 	public static final int DATASET = 53;
 	public static final int FETCH = 54;
 	public static final int NEWPAGE = 55;
-	public static final int PRINT = 56;
-	public static final int LOCAL = 57;
-	public static final int LET = 58;
-	public static final int EVAL = 59;
-	public static final int KEY = 60;
-	public static final int LEGEND = 61;
-	public static final int MIMETYPE = 62;
+	public static final int ENDPAGE = 56;
+	public static final int PRINT = 57;
+	public static final int LOCAL = 58;
+	public static final int LET = 59;
+	public static final int EVAL = 60;
+	public static final int KEY = 61;
+	public static final int LEGEND = 62;
+	public static final int MIMETYPE = 63;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -192,6 +193,7 @@ public class Statement
 		mStatementTypeLookup.put("dataset", new Integer(DATASET));
 		mStatementTypeLookup.put("fetch", new Integer(FETCH));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));
+		mStatementTypeLookup.put("endpage", new Integer(ENDPAGE));
 		mStatementTypeLookup.put("print", new Integer(PRINT));
 		mStatementTypeLookup.put("local", new Integer(LOCAL));
 		mStatementTypeLookup.put("let", new Integer(LET));
