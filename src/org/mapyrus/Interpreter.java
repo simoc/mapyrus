@@ -1534,6 +1534,10 @@ public class Interpreter
 				}
 				break;	
 
+			case Statement.ENDPAGE:
+				context.closeOutputFormat();
+				break;
+
 			case Statement.LOCAL:
 				break;
 
