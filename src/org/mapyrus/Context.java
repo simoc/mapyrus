@@ -445,13 +445,7 @@ public class Context
 		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
-		if (mOutputDefined && mOutputFormat != null)
-		{
-			/*
-			 * Finish any previous page before beginning a new one.
-			 */
-			mOutputFormat.closeOutputFormat();
-		}
+		closeOutputFormat();
 
 		/*
 		 * Clear graphics context before beginning new page.
@@ -471,13 +465,7 @@ public class Context
 	public void setOutputFormat(BufferedImage image, String extras)
 		throws IOException, MapyrusException
 	{
-		if (mOutputDefined && mOutputFormat != null)
-		{
-			/*
-			 * Finish any previous page before beginning a new one.
-			 */
-			mOutputFormat.closeOutputFormat();
-		}
+		closeOutputFormat();
 
 		/*
 		 * Clear graphics context before beginning new page.
@@ -489,23 +477,17 @@ public class Context
 	}
 
 	/**
-	 * Closes a context.  Any output started in this context is completed,
-	 * memory used for context is released.
-	 * A context cannot be used again after this call.
-	 * @return bit flag of graphical attributes that were changed in this context
-	 * and cannot be restored.
+	 * Close any open output file being created.
 	 */
-	public int closeContext() throws IOException, MapyrusException
+	public void closeOutputFormat() throws IOException, MapyrusException
 	{
-		boolean restoredState;
-
 		if (mOutputFormat != null && !mOutputDefined)
 		{
 			/*
 			 * If state could be restored then no need for caller to set
 			 * graphical attributes back to their old values again.
 			 */
-			restoredState = mOutputFormat.restoreState();
+			boolean restoredState = mOutputFormat.restoreState();
 			if (restoredState)
 				mAttributesChanged = 0;
 		}
@@ -515,7 +497,19 @@ public class Context
 			mOutputFormat.closeOutputFormat();
 			mOutputFormat = null;
 			mOutputDefined = false;
-		}
+		}		
+	}
+
+	/**
+	 * Closes a context.  Any output started in this context is completed,
+	 * memory used for context is released.
+	 * A context cannot be used again after this call.
+	 * @return bit flag of graphical attributes that were changed in this context
+	 * and cannot be restored.
+	 */
+	public int closeContext() throws IOException, MapyrusException
+	{
+		closeOutputFormat();
 
 		/*
 		 * Close any dataset we opened in this context.
