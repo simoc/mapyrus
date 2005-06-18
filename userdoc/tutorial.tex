@@ -1587,7 +1587,7 @@ limit the use of fonts to commonly used fonts such as \texttt{Courier}
 and \texttt{Arial}, or fonts that are known to be available in the
 software to be used to display the SVG output files.
 
-\subsection{Setting Up Mapyrus As An HTTP Server}
+\subsection{Running Mapyrus As An HTTP Server}
 \label{tutorialhttpserver}
 
 Enter the following lines into a text file named
@@ -1611,6 +1611,16 @@ Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver1.mapyrus} in
 web browser.  Mapyrus receives the request, executes the commands in the file
 \texttt{tutorialhttpserver1.mapyrus} and returns the PNG image that is written to
 standard output to the web browser.
+
+To return a PDF file instead of a PNG image,
+enter the following lines into a text file named
+\texttt{tutorialhttpserver2.mapyrus}.
+
+\verbatiminput{tutorialhttpserver2.mapyrus}
+
+Then enter the URL \texttt{http://localhost:8410/tutorialhttpserver2.mapyrus}
+in a web browser.  Mapyrus generates a PDF file instead of a PNG image and
+returns it to the web browser.
 
 \subsection{Passing Variables To Mapyrus HTTP Server Through URLs}
 \label{urlvariables}
