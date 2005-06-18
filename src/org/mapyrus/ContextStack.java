@@ -209,6 +209,14 @@ public class ContextStack
 	}
 
 	/**
+	 * Close any open output file being created.
+	 */
+	public void closeOutputFormat() throws IOException, MapyrusException
+	{
+		getCurrentContext().closeOutputFormat();
+	}
+
+	/**
 	 * Sets linestyle.
 	 * @param width is width for lines in millimetres.
 	 * @param cap is a BasicStroke end cap value.
