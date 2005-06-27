@@ -1,0 +1,43 @@
+begin zigzag_start
+  selectpath 0, 5
+  stroke
+end
+begin zigzag_end
+  selectpath 5 + numzigs * ziglen, 999999
+  stroke
+end
+begin zigzag_middle
+  # Draw whole number of zigzag pattern in middle part of path.
+  #
+  selectpath 5, numzigs * ziglen
+  samplepath ziglen, 2
+  zig
+end
+begin zig
+  # Draw zigzag symbol: /\/
+  #
+  move -ziglen / 2, 0
+  draw -ziglen / 4, 2, ziglen / 4, -2, ziglen / 2, 0
+  color "orange"
+  stroke
+end
+
+begin zigzag_line
+  linestyle 0.4, "round", "round"
+  color "dodger blue"
+  let ziglen = 4
+  let numzigs = floor((Mapyrus.path.length - 5 - 5) / ziglen)
+  zigzag_start
+  zigzag_middle
+  zigzag_end
+end
+
+newpage "eps", "tutoriallines9.eps", 60, 30
+move 5, 25
+draw 35, 25
+zigzag_line
+
+clearpath
+move 7, 7
+draw 47, 7, 47, 25
+zigzag_line
