@@ -317,17 +317,30 @@ the path and displaying them in different colors to indicate
 the polarity of the connection between two points.
 The output of this example is shown in Figure \ref{tutoriallines8}.
 
-This command is also useful for displaying lines that stop
-short of the start and end points of the path, and for displaying
-lines that have thicker and thinner sections in the middle, or
-at the ends of the lines.
-
 \verbatiminput{tutoriallines8.mapyrus}
 
 \begin{figure}[htb]
 \includegraphics{tutoriallines8.eps}
 \caption{Selecting Parts Of Path}
 \label{tutoriallines8}
+\end{figure}
+
+The \texttt{selectpath} command is also useful for displaying lines that stop
+short of the start and end points of the path, and for displaying
+lines that have thicker and thinner sections in the middle, or
+at the ends of the lines.
+
+The next example demonstrates combining the \texttt{selectpath}
+and \texttt{samplepath} commands to display a different linestyle
+in the middle of each line.
+The output of this example is shown in Figure \ref{tutoriallines9}.
+
+\verbatiminput{tutoriallines9.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutoriallines9.eps}
+\caption{Selecting and Sampling Path}
+\label{tutoriallines9}
 \end{figure}
 
 \subsection{Displaying Polygons}
