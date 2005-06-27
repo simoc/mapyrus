@@ -1236,6 +1236,14 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
+\subsubsection{endpage}
+
+\begin{alltt}
+endpage
+\end{alltt}
+
+Closes output file created with \texttt{newpage} command.
+
 \subsubsection{eps}
 
 \begin{alltt}
@@ -1770,13 +1778,6 @@ of \textit{filename} is interpreted as an operating system
 command.  The operating system command is executed and Mapyrus
 writes the page to the standard input of the executing
 operating system command.
-Mapyrus executes the operating command directly.  Set \textit{filename} to
-\texttt{"| sh myscript.sh"}
-or
-\texttt{"| cmd myscript.bat"}
-to execute the command in a sub-shell if 
-environment variables, file redirection or other shell features are
-required.
 
 \textit{extras} defines further options for the new page, given as
 \textit{variable=value} values, separated by whitespace.
