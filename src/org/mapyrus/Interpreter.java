@@ -976,18 +976,20 @@ public class Interpreter
 
 			case Statement.BOX:
 			case Statement.ROUNDEDBOX:
+			case Statement.BOX3D:
 			case Statement.GUILLOTINE:
 			case Statement.PROTECT:
 			case Statement.UNPROTECT:
-				if (nExpressions == 4 || (type == Statement.ROUNDEDBOX && nExpressions == 5))
+				if (nExpressions == 4 || ((type == Statement.ROUNDEDBOX ||
+					type == Statement.BOX3D) && nExpressions == 5))
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
 					x2 = mExecuteArgs[2].getNumericValue();
 					y2 = mExecuteArgs[3].getNumericValue();
 					
-					double xMin, xMax, yMin, yMax;
-
+					double xMin, xMax, yMin, yMax, depth = 0;
+ 
 					if (x1 < x2)
 					{
 						xMin = x1;
@@ -1034,14 +1036,51 @@ public class Interpreter
 						if (radius <= 0)
 							type = Statement.BOX;
 					}
+					else if (type == Statement.BOX3D)
+					{
+						depth = Math.min(xMax - xMin, yMax - yMin);
+						if (nExpressions == 5)
+						{
+							depth = mExecuteArgs[4].getNumericValue();
+						}
+					}
 
-					if (type == Statement.BOX)
+					if (type == Statement.BOX || type == Statement.BOX3D)
 					{
 						context.moveTo(xMin, yMin);
 						context.lineTo(xMin, yMax);
 						context.lineTo(xMax, yMax);
 						context.lineTo(xMax, yMin);
 						context.closePath();
+
+						if (type == Statement.BOX3D)
+						{
+
+							double cos30 = Math.cos(Math.toRadians(30));
+							double sin30 = Math.sin(Math.toRadians(30));
+
+							/*
+							 * Draw slanted right side of 3D box.
+							 */
+							x1 = xMax + depth * cos30;
+							y1 = yMax + depth * sin30;
+							context.moveTo(xMax, yMax);
+							context.lineTo(x1, y1);
+							context.lineTo(x1, y1 - (yMax - yMin));
+							context.lineTo(xMax, yMin);
+							context.closePath();
+
+							/*
+							 * Draw slanted top side of 3D box.
+							 */
+							x1 = xMin + depth * cos30;
+							y1 = yMax + depth * sin30;
+							context.moveTo(xMin, yMax);
+							context.lineTo(x1, y1);
+							context.lineTo(x1 + (xMax - xMin), y1);
+							context.lineTo(xMax, yMax);
+							context.closePath();
+						}
 					}
 					else if (type == Statement.ROUNDEDBOX)
 					{
