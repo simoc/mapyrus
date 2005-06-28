@@ -277,32 +277,6 @@ begin trigstation
 	fill
 end
 
-begin box3d
-	# Display a cube, viewed from the side and above.
-	#
-	key "point", "Box 3D"
-	linestyle 0.1
-
-	# Draw top side of box
-	#
-	move -1, 1
-	draw -2.73, 0, -0.73, 0, 1, 1, -1, 1
-
-	# Draw right side of box
-	#
-	move 1, 1
-	draw 1, -1, -0.73, -2, -0.73, 0
-
-	# Draw front side of box
-	#
-	box -2.73, -2, -0.73, 0
-
-	color "yellow"
-	fill
-	color "black"
-	stroke
-end
-
 begin witchshat
 	key "point", "Witch's Hat"
 	color "orangered"
@@ -2033,7 +2007,6 @@ then
 	viewpoint
 	surveymarker
 	trigstation
-	box3d
 	witchshat
 	oldmoon
 	newmoon
