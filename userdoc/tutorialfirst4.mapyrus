@@ -1,8 +1,8 @@
-# Set page size to 350x50 screen pixels and set scale
+# Set page size to 400x50 screen pixels and set scale
 # so we can work with pixel coordinate values too.
 #
 newpage "eps", "tutorialfirst4.eps", \
-  350 * Mapyrus.screen.resolution.mm, \
+  400 * Mapyrus.screen.resolution.mm, \
   50 * Mapyrus.screen.resolution.mm
 scale Mapyrus.screen.resolution.mm
 
@@ -44,3 +44,11 @@ clearpath
 color "SlateGray"
 roundedbox 300, 10, 340, 40, 10
 fill
+
+clearpath
+box3d 360, 10, 380, 30
+color "yellow"
+fill
+color "black"
+linestyle 0.01
+stroke
