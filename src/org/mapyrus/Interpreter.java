@@ -1541,15 +1541,30 @@ public class Interpreter
 				break;
 
 			case Statement.NEWPAGE:
-				if (nExpressions >= 4 && nExpressions <= 5)
+				if (nExpressions >= 3 && nExpressions <= 5)
 				{
 					String format = mExecuteArgs[0].getStringValue();
 					String filename = mExecuteArgs[1].getStringValue();
-					double width = mExecuteArgs[2].getNumericValue();
-					double height = mExecuteArgs[3].getNumericValue();
+					double width, height;
+					int extrasIndex;
 
-					if (nExpressions == 5)
-						extras = mExecuteArgs[4].getStringValue();
+					if (nExpressions == 3 || mExecuteArgs[2].getType() == Argument.STRING)
+					{
+						String paperName = mExecuteArgs[2].getStringValue();
+						PageSize p = new PageSize(paperName);
+						width = p.getDimension().getX();
+						height = p.getDimension().getY();
+						extrasIndex = 3;
+					}
+					else
+					{
+						width = mExecuteArgs[2].getNumericValue();
+						height = mExecuteArgs[3].getNumericValue();
+						extrasIndex = 4;
+					}
+
+					if (extrasIndex < nExpressions)
+						extras = mExecuteArgs[extrasIndex].getStringValue();
 					else
 						extras = "";
 
