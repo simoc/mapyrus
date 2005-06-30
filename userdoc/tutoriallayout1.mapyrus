@@ -6,7 +6,7 @@ include scalebar.mapyrus
 let title = "My Title"
 let map = "coastline.shp"
 
-newpage "eps", "tutoriallayout1.eps", 108, 147, "background=lightgrey"
+newpage "eps", "tutoriallayout1.eps", "A6", "background=lightgrey"
 
 # Draw the title and logo.
 #
