@@ -84,7 +84,17 @@ public class TransientFileFactory
 		 * make it unpredictable.
 		 */
 		random += (now % 397);
-		retval = "tmp" + mCounter + "a" + random + "." + suffix;
+		StringBuffer sb = new StringBuffer("tmp");
+		sb.append(mCounter);
+		sb.append("a");
+		sb.append(random);
+		if (suffix.length() > 0)
+		{
+			if (!suffix.startsWith("."))
+				sb.append(".");
+			sb.append(suffix);
+		}
+		retval = sb.toString();
 		mCounter++;
 
 		/*
