@@ -1,5 +1,5 @@
-# Display the file coastline.shp in a SVG file that
-# is sent to standard output.
+# Display the file coastline.shp in an uncompressed SVG
+# file that is sent to standard output.
 #
 newpage "svg", "-", 100, 100
 mimetype "image/svg+xml"  # Content type being returned to browser.
