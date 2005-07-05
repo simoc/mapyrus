@@ -844,6 +844,16 @@ public class ContextStack
 	}
 
 	/**
+	 * Get resolution of page.
+	 * @return page resolution in millimetres.
+	 */
+	public double getResolution() throws MapyrusException
+	{
+		double retval = getCurrentContext().getResolution();
+		return(retval);
+	}
+
+	/**
 	 * Return next row from dataset.
 	 * @return field values for next row.
 	 */
