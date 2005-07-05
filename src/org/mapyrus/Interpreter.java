@@ -847,6 +847,46 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.SPIRAL:
+				if (nExpressions == 5)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
+					double revs = mExecuteArgs[3].getNumericValue();
+					double angle = mExecuteArgs[4].getNumericValue();
+					angle = Math.toRadians(angle);
+					if (radius > 0 && revs > 0)
+					{
+						double resolution = context.getResolution();
+						double angleStep = Math.acos((radius - resolution) / radius);
+						double tStep = angleStep / (Math.PI * 2);
+						tStep /= revs;
+	
+						double t = 1;
+						int i = 0;
+						while (t > 0)
+						{
+							x2 = radius * t * Math.cos(Math.PI * 2 * revs * t + angle) + x1;
+							y2 = radius * t * Math.sin(Math.PI * 2 * revs * t + angle) + y1;
+	
+							if (i == 0)
+								context.moveTo(x2, y2);
+							else
+								context.lineTo(x2, y2);
+	
+							i++;
+							t = 1 - (i * tStep);
+						}
+						context.lineTo(x1, y1);
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SPIRAL));
+				}
+				break;
+
 			case Statement.HEXAGON:
 				if (nExpressions == 3)
 				{
