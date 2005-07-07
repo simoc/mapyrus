@@ -1,8 +1,8 @@
-# Set page size to 400x50 screen pixels and set scale
+# Set page size to 500x50 screen pixels and set scale
 # so we can work with pixel coordinate values too.
 #
 newpage "eps", "tutorialfirst4.eps", \
-  400 * Mapyrus.screen.resolution.mm, \
+  500 * Mapyrus.screen.resolution.mm, \
   50 * Mapyrus.screen.resolution.mm
 scale Mapyrus.screen.resolution.mm
 
@@ -51,4 +51,14 @@ color "yellow"
 fill
 color "black"
 linestyle 0.01
+stroke
+
+clearpath
+pentagon 430, 25, 20
+color "orange"
+fill
+
+clearpath
+color "Steel Blue"
+spiral 480, 25, 20, 5, 0
 stroke
