@@ -856,12 +856,12 @@ public class Interpreter
 					double revs = mExecuteArgs[3].getNumericValue();
 					double angle = mExecuteArgs[4].getNumericValue();
 					angle = Math.toRadians(angle);
-					if (radius > 0 && revs > 0)
+					if (radius > 0 && revs != 0)
 					{
 						double resolution = context.getResolution();
 						double angleStep = Math.acos((radius - resolution) / radius);
 						double tStep = angleStep / (Math.PI * 2);
-						tStep /= revs;
+						tStep /= Math.abs(revs);
 	
 						double t = 1;
 						int i = 0;
@@ -912,6 +912,35 @@ public class Interpreter
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HEXAGON));
+				}
+				break;
+
+			case Statement.PENTAGON:
+				if (nExpressions == 3)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
+					double sin54radius = 0.809017 * radius;
+					double cos54radius = 0.59778525 * radius;
+					double sin18radius = 0.309017 * radius;
+					double cos18radius = 0.95105652 * radius;
+					if (radius > 0)
+					{
+						/*
+						 * Add five points defining pentagon.
+						 */
+						context.moveTo(x1 - cos54radius, y1 - sin54radius);
+						context.lineTo(x1 + cos54radius, y1 - sin54radius);
+						context.lineTo(x1 + cos18radius, y1 + sin18radius);
+						context.lineTo(x1, y1 + radius);
+						context.lineTo(x1 - cos18radius, y1 + sin18radius);
+						context.closePath();
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PENTAGON));
 				}
 				break;
 
