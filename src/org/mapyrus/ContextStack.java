@@ -278,6 +278,40 @@ public class ContextStack
 	}
 
 	/**
+	 * Set color brighter than the current color.
+	 * @param alpha alpha value for new color.
+	 */
+	public void setBrighterColor(int alpha)
+	{
+		Color currentColor = getCurrentContext().getColor();
+		int currentAlpha = currentColor.getAlpha();
+		Color brighter = currentColor.brighter();
+		if (alpha != currentAlpha)
+		{
+			brighter = new Color(brighter.getRed(), brighter.getGreen(),
+				brighter.getBlue(), alpha);
+		}
+		getCurrentContext().setColor(brighter);
+	}
+
+	/**
+	 * Set color darker than the current color.
+	 * @param alpha alpha value for new color.
+	 */
+	public void setDarkerColor(int alpha)
+	{
+		Color currentColor = getCurrentContext().getColor();
+		int currentAlpha = currentColor.getAlpha();
+		Color darker = currentColor.darker();
+		if (alpha != currentAlpha)
+		{
+			darker = new Color(darker.getRed(), darker.getGreen(),
+				darker.getBlue(), alpha);
+		}
+		getCurrentContext().setColor(darker);
+	}
+
+	/**
 	 * Sets font for labelling with.
 	 * @param name is name of font.
 	 * @param size is size for labelling in millimetres.
