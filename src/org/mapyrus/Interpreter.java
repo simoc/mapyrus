@@ -175,6 +175,16 @@ public class Interpreter
 				context.contrastColor(alpha);
 				return;
 			}
+			else if (color.equals("brighter"))
+			{
+				context.setBrighterColor(alpha);
+				return;
+			}
+			else if (color.equals("darker"))
+			{
+				context.setDarkerColor(alpha);
+				return;
+			}
 
 			/*
 			 * Find named color of hex value in color database.
