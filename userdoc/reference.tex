@@ -604,6 +604,8 @@ The path defined with
 \texttt{circle},
 \texttt{ellipse},
 \texttt{hexagon},
+\texttt{pentagon},
+\texttt{spiral},
 \texttt{star},
 \texttt{triangle},
 \texttt{wedge}
@@ -1007,6 +1009,8 @@ back to the last point added with a \texttt{move} command.
 \begin{alltt}
 color \textit{name} [, \textit{alpha}]
 color "contrast" [, \textit{alpha}]
+color "brighter" [, \textit{alpha}]
+color "darker" [, \textit{alpha}]
 color "\#\textit{hexdigits}" [, \textit{alpha}]
 color "0x\textit{hexdigits}" [, \textit{alpha}]
 color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
@@ -1020,6 +1024,12 @@ Color names are case-insensitive.
 
 If color name is \texttt{contrast} then color is set to either black or white,
 whichever constrasts more with the current color.
+
+If color name is \texttt{brighter} then color is set a brighter
+version of the current color.
+
+If color name is \texttt{darker} then color is set a darker
+version of the current color.
 
 \textit{hexdigits} is a 6 digit hexadecimal
 value defining RGB values, as used in HTML pages.
@@ -1970,6 +1980,22 @@ negative then path is created to the left of the current path.
 When used on complex paths with sharp angles, this command creates
 paths that self-intersect.
 
+\subsubsection{pentagon}
+
+\begin{alltt}
+pentagon \textit{xCenter}, \textit{yCenter}, \textit{radius}
+\end{alltt}
+
+Adds a pentagon shape to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and distance
+\textit{radius}
+from the center point to each vertex.
+
+The center point and radius are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
 \subsubsection{print}
 
 \begin{alltt}
@@ -2118,6 +2144,29 @@ sinkhole
 
 Replaces the current path containing a polygon with a single point in the
 middle of the polygon, farthest from the polygon perimeter.
+
+\subsubsection{spiral}
+
+\begin{alltt}
+spiral \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{revolutions}, \textit{startAngle}
+\end{alltt}
+
+Adds a spiral to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and given radius.
+
+\textit{revolutions} defines the number of loops of the spiral.
+If \textit{revolutions}
+is a positive number then the spiral is drawn in a clockwise direction.
+If \textit{revolutions} is a negative number then the spiral
+is drawn in an anti-clockwise direction.
+
+\textit{startAngle} defines the
+angle at which the outer revolution of the spiral starts.
+
+The center point, radius and start angle are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{star}
 
