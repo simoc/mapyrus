@@ -26,26 +26,41 @@ begin land
   stroke
 end
 
-# Set world coordinates in center of page, then draw map.
+begin sea
+  key "box", "Sea"
+  color "seablue"
+  fill
+end
+
+begin drawMap
+  # Set world coordinates in center of page, then draw map.
+  #
+  clearpath
+  box 4, 20, 78, 115
+  stroke
+  dataset "shapefile", map, ""
+  worlds -1300000, 7000000, 300000, 8900000, 10, 25, 75, 110
+
+  clearpath
+  box -1300000, 7000000, 300000, 8900000
+  clip "inside"
+  sea
+
+  while Mapyrus.fetch.more
+  do
+    fetch
+    clearpath
+    addpath GEOMETRY
+    land
+  done
+  let mapScale = Mapyrus.worlds.scale
+end
+
+# Draw map in procedure so world coordinates and clip
+# rectangle are restored when procedure finishes.
 #
 clearpath
-box 4, 20, 78, 115
-stroke
-dataset "shapefile", map, ""
-worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
-  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y, 10, 25, 75, 110
-while Mapyrus.fetch.more
-do
-  fetch
-  clearpath
-  addpath GEOMETRY
-  land
-done
-let mapScale = Mapyrus.worlds.scale
-
-# Next set world coordinates back to be the same as page coordinates.
-#
-worlds 0, 0, Mapyrus.page.width, Mapyrus.page.height
+drawMap
 
 # Now draw the legend to the right of the map.
 #
