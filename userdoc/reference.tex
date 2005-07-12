@@ -602,6 +602,7 @@ The path defined with
 \texttt{arc},
 \texttt{bezier},
 \texttt{circle},
+\texttt{cylinder},
 \texttt{ellipse},
 \texttt{hexagon},
 \texttt{pentagon},
@@ -1056,6 +1057,20 @@ All colors in PostScript and Encapsulated PostScript
 files will be opaque.
 
 The spelling \texttt{colour} is also accepted for this command.
+
+\subsubsection{cylinder}
+
+\begin{alltt}
+cylinder \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{height}
+\end{alltt}
+
+Adds a cylindrical shape to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and given radius and height.
+
+The center point, radius and height are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{dataset}
 
