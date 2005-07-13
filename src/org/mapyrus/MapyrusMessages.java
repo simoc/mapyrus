@@ -69,6 +69,7 @@ public class MapyrusMessages
 	public static final String INVALID_COLUMN = "invalidcolumn";
 	public static final String INVALID_CONDITIONAL = "invalidconditional";
 	public static final String INVALID_COORDINATE = "invalidcoordinate";
+	public static final String INVALID_CYLINDER = "invalidcylinder";
 	public static final String INVALID_DASH_PHASE = "invaliddashphase";
 	public static final String INVALID_DASH_PATTERN = "invaliddashpattern";
 	public static final String INVALID_DATASET = "invaliddataset";
