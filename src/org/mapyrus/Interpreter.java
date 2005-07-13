@@ -806,6 +806,45 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.CYLINDER:
+				if (nExpressions == 4)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					radius = mExecuteArgs[2].getNumericValue();
+					double height = mExecuteArgs[3].getNumericValue();
+
+					if (radius > 0 && height > 0)
+					{
+						double xc = radius * 0.552285;
+						double yc = xc / 2;
+
+						context.moveTo(x1 - radius, y1);
+						context.curveTo(x1 - radius, y1 - yc,
+							x1 - xc, y1 - radius / 2,
+							x1, y1 - radius / 2);
+						context.curveTo(x1 + xc, y1 - radius / 2,
+							x1 + radius, y1 - yc,
+							x1 + radius, y1);
+						context.lineTo(x1 + radius, y1 + height);
+						context.curveTo(x1 + radius, y1 + height - yc,
+							x1 + xc, y1 + height - radius / 2,
+							x1, y1 + height - radius / 2);
+						context.curveTo(x1 - xc, y1 + height - radius / 2,
+							x1 - radius, y1 + height - yc,
+							x1 - radius, y1 + height);
+						context.closePath();
+
+						context.ellipseTo(x1 - radius, y1 + height - radius / 2,
+							x1 + radius, y1 + height + radius / 2);
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CYLINDER));
+				}
+				break;
+
 			case Statement.BEZIER:
 				if (nExpressions == 6)
 				{
