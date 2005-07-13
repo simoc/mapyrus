@@ -118,6 +118,7 @@ public class MapyrusMessages
 	public static final String INVALID_PATH_STRIPE = "invalidpathstripe";
 	public static final String INVALID_PENTAGON = "invalidpentagon";
 	public static final String INVALID_RADIUS = "invalidradius";
+	public static final String INVALID_RAINDROP = "invalidraindrop";
 	public static final String INVALID_REGEX = "invalidregex";
 	public static final String INVALID_ROTATION = "invalidrotation";
 	public static final String INVALID_SCALING = "invalidscaling";
