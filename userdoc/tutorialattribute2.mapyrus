@@ -1,4 +1,4 @@
-begin cylinder name, pop
+begin populationCylinder name, pop
   # Define legend entries for various populations.
   #
   key "point", " 200000 people", "", 200000
@@ -10,32 +10,8 @@ begin cylinder name, pop
   # it to a height for the cylinder in the range 2mm-8mm.
   #
   let height = interpolate("200000 2 5000000 8", pop)
-  ellipse 0, 0, 4, 2
-  color "lightorange"
-  fill
-  color "black"
-  stroke
 
-  # Draw cylinder bottom, sides and top, with city name underneath.
-  #
-  clearpath
-  box -4, 0, 4, height
-  color "lightorange"
-  fill
-
-  clearpath
-  move -4, 0
-  draw -4, height
-  color "black"
-  stroke
-
-  clearpath
-  move 4, 0
-  draw 4, height
-  stroke
-
-  clearpath
-  ellipse 0, height, 4, 2
+  cylinder 0, 0, 4, height
   color "lightorange"
   fill
   color "black"
@@ -76,7 +52,7 @@ do
   move x, y
   fetch      # skip lines containing temperature data.
   fetch
-  cylinder city, population
+  populationCylinder city, population
 done
 
 # Draw legend in separate PostScript file.
