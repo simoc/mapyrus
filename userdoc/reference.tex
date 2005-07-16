@@ -2044,6 +2044,21 @@ and \texttt{rotate} values.
 The rectangular region protected is always aligned with the X
 and Y axes of the page, regardless of any rotation angle.
 
+\subsubsection{raindrop}
+
+\begin{alltt}
+raindrop \textit{xCenter}, \textit{yCenter}, \textit{radius}
+\end{alltt}
+
+Adds a raindrop shape to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}) and radius
+\textit{radius}.
+
+The center point and radius are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
 \subsubsection{rotate}
 
 \begin{alltt}
