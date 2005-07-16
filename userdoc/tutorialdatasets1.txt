@@ -1,8 +1,8 @@
 # @(#) $Id$
 # Latitude/Longitude positions of South Pacific capital cities.
-148.04|-33.83|Canberra|Australia
-174.91|-41.08|Wellington|New Zealand
-166.50|-22.13|Noumea|New Caledonia
-168.41|-17.69|Vila|Fiji
-159.90|-9.48|Honiara|Solomon Islands
-147.29|-9.37|Port Moresby|Papua New Guinea
+33.83S 148.04E Canberra/Australia
+41.08S 174.91E Wellington/New Zealand
+22.13S 166.50E Noumea/New Caledonia
+17.69S 168.41E Vila/Fiji
+ 9.48S 159.90E Honiara/Solomon Islands
+ 9.37S 147.29E Port Moresby/Papua New Guinea
