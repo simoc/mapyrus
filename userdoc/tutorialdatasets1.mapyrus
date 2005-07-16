@@ -17,7 +17,7 @@ end
 #
 newpage "eps", "tutorialdatasets1.eps", 85, 85
 
-dataset "textfile", "tutorialdatasets1.txt", "comment=# delimiter=|"
+dataset "textfile", "tutorialdatasets1.txt", "comment=#"
 worlds 150, -45, 180, -5
 while Mapyrus.fetch.more
 do
@@ -26,7 +26,7 @@ do
   fetch
   print "DEBUG:", $0
   clearpath
-  move $1, $2
-  let cityAndCountryName = $3 . '\n(' . $4 . ')'
-  capitalCity cityAndCountryName
+  move parsegeo($2), parsegeo($1)
+  let cityAndCountryArray = split(substr($0, 16), "/")
+  capitalCity cityAndCountryArray[1] . "\n(" . cityAndCountryArray[2] . ")"
 done
