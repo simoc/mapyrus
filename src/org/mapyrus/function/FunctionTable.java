@@ -80,6 +80,9 @@ public class FunctionTable
 		f = new Min();
 		mFunctions.put(f.getName(), f);
 
+		f = new Parsegeo();
+		mFunctions.put(f.getName(), f);
+
 		f = new Pow();
 		mFunctions.put(f.getName(), f);
 
