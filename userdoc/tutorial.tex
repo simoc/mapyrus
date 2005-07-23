@@ -557,9 +557,10 @@ through this transformation.
 
 The following example demonstrates
 setting a world coordinate system,
-reading the text file shown in Figure
-\ref{tutorialdatasets1txt} and displaying the
-geographic data that it contains.  The output of this example is shown in
+reading geographic positions from text file shown in Figure
+\ref{tutorialdatasets1txt}, converting the positions to decimal
+values using the \texttt{parsegeo} function and displaying them.
+The output of this example is shown in
 Figure \ref{tutorialdatasets1}.
 
 \begin{figure}[htb]
@@ -576,7 +577,7 @@ Figure \ref{tutorialdatasets1}.
 \label{tutorialdatasets1}
 \end{figure}
 
-Gazeteer files, GPS measurement files and export files of GIS datasets
+Gazeteer files, GPS waypoint files and export files of GIS datasets
 are also read as text files.
 
 For files containing lines and polygons, a loop and counter
