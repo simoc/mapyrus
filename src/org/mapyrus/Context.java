@@ -1620,7 +1620,7 @@ public class Context
 		{
 			try
 			{
-				image = ImageIOWrapper.read(url);
+				image = ImageIOWrapper.read(url, getColor());
 			}
 			catch (IOException e)
 			{
@@ -1630,7 +1630,7 @@ public class Context
 		}
 		else
 		{
-			image = ImageIOWrapper.read(new File(filename));
+			image = ImageIOWrapper.read(new File(filename), getColor());
 		}
 
 		if (image == null)

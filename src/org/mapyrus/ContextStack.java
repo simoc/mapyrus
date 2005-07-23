@@ -578,11 +578,11 @@ public class ContextStack
 					{
 						url = new URL(filename);
 					}
-					icon = ImageIOWrapper.read(url);
+					icon = ImageIOWrapper.read(url, getCurrentContext().getColor());
 				}
 				catch (MalformedURLException e)
 				{
-					icon = ImageIOWrapper.read(new File(filename));
+					icon = ImageIOWrapper.read(new File(filename), getCurrentContext().getColor());
 				}
 
 				if (icon == null)
