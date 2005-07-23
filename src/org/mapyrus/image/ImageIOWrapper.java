@@ -22,6 +22,7 @@
  */
 package org.mapyrus.image;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -49,9 +50,10 @@ public class ImageIOWrapper
 	/**
 	 * Read an image from a file. 
 	 * @param file file to read image from.
+	 * @param color color for monochrome images.
 	 * @return image read from file.
 	 */
-	public static BufferedImage read(File f) throws IOException, MapyrusException
+	public static BufferedImage read(File f, Color color) throws IOException, MapyrusException
 	{
 		BufferedImage retval;
 
@@ -62,6 +64,8 @@ public class ImageIOWrapper
 			retval = new BMPImage(f.toString()).getBufferedImage();
 		else if (filename.endsWith(".pat"))
 			retval = new PATImage(f.toString()).getBufferedImage();
+		else if (filename.endsWith(".xbm"))
+			retval = new XBMImage(f.toString(), color.getRGB()).getBufferedImage();
 		else
 			retval = ImageIO.read(f);
 		return(retval);
@@ -70,9 +74,10 @@ public class ImageIOWrapper
 	/**
 	 * Read an image from URL. 
 	 * @param url URL to read image from.
+	 * @param color color for monochrome images.
 	 * @return image read from URL.
 	 */
-	public static BufferedImage read(URL url) throws IOException, MapyrusException
+	public static BufferedImage read(URL url, Color color) throws IOException, MapyrusException
 	{
 		BufferedImage retval;
 		InputStream stream = null;
@@ -120,6 +125,10 @@ public class ImageIOWrapper
 			else if (contentType.equals("image/bmp"))
 			{
 				retval = new BMPImage(stream, filename).getBufferedImage();
+			}
+			else if (contentType.equals("image/x-xbm"))
+			{
+				retval = new XBMImage(stream, filename, color.getRGB()).getBufferedImage();
 			}
 			else
 			{
