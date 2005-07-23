@@ -36,7 +36,6 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PostScriptFile
 {
-	private boolean mIsEPSFile;
 	private int mNPages;
 	Rectangle mBoundingBox;
 
@@ -63,8 +62,6 @@ public class PostScriptFile
 			line = reader.readLine();
 			if (line == null || (!line.startsWith("%!")))
 				throw e;
-
-			mIsEPSFile = (line.indexOf("EPSF") > 0);
 
 			/*
 			 * Parse bounding box and number of pages from file header.
