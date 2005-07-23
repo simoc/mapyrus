@@ -119,12 +119,12 @@ public class BMPImage
 			int nInfoBytes = infoHeader.getInt();
 			int width = infoHeader.getInt();
 			int height = infoHeader.getInt();
-			int planes = infoHeader.getShort();
+			infoHeader.getShort(); /* planes */
 			int bitDepth = infoHeader.getShort();
 			int compression = infoHeader.getInt();
-			int sizeImage = infoHeader.getInt();
-			int xPixelsPerMeter = infoHeader.getInt();
-			int yPixelsPerMeter = infoHeader.getInt();
+			infoHeader.getInt(); /* size image */
+			infoHeader.getInt(); /* x pixels per meter */
+			infoHeader.getInt(); /* y pixels per meter */
 			int nColorsUsed = infoHeader.getInt();
 
 			/*
