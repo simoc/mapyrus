@@ -848,7 +848,7 @@ public class OutputFormat
 					 * Read existing image for editing.
 					 * Set page width and height to size of existing image.
 					 */
-					mImage = ImageIOWrapper.read(f);
+					mImage = ImageIOWrapper.read(f, Color.BLACK);
 					if (mImage == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) + ": " + filename);
