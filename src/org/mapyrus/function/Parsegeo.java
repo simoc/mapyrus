@@ -41,11 +41,25 @@ public class Parsegeo extends Function
 		throws MapyrusException
 	{
 		Argument retval;
-		double degrees, minutes = 0, seconds = 0;
+		double degrees = 0, minutes = 0, seconds = 0;
+		int sign = 1;
 		String geo = arg1.toString().toLowerCase().trim();
 
 		try
 		{
+			/*
+			 * Parse any leading N, S, E, W letter.
+			 */
+			if (geo.startsWith("n") || geo.startsWith("e"))
+			{
+				geo = geo.substring(1);
+			}
+			else if (geo.startsWith("s") || geo.startsWith("w"))
+			{
+				geo = geo.substring(1);
+				sign = -1;
+			}
+
 			/*
 			 * Search for end of degree value.
 			 */
@@ -54,7 +68,7 @@ public class Parsegeo extends Function
 				dIndex = geo.indexOf('°');
 			if (dIndex < 0)
 				dIndex = geo.indexOf('\ufffd');
-			if (dIndex > 0)
+			if (dIndex >= 0)
 			{
 				String geo2 = geo.substring(0, dIndex).trim();
 				degrees = Double.parseDouble(geo2);
@@ -84,27 +98,39 @@ public class Parsegeo extends Function
 						if (geo4.startsWith("in"))
 							geo4 = geo4.substring(2);
 						seconds = Double.parseDouble(geo4.trim());
+
+						/*
+						 * Parsed seconds value, with an 's'.
+						 * Remove parts of string we've parsed to avoid
+						 * interpreting it as meaning south.
+						 */
+						geo = geo.substring(sIndex + 1).trim();
 					}
 				}
 			}
-			else if (geo.endsWith("n") || geo.endsWith("s") ||
-				geo.endsWith("e") || geo.endsWith("w"))
+
+			/*
+			 * Parse any trailing N, S, E, W letter.
+			 */
+			if (geo.endsWith("n") || geo.endsWith("e"))
 			{
-				/*
-				 * Parse geographic position from string like "151.5E".
-				 */
-				String geo2 = geo.substring(0, geo.length() - 1).trim();
-				degrees = Double.parseDouble(geo2);
-				if (geo.endsWith("s") || geo.endsWith("w"))
-					degrees = -degrees;
+				geo = geo.substring(0, geo.length() - 1);
 			}
-			else
+			else if (geo.endsWith("s") || geo.endsWith("w"))
+			{
+				geo = geo.substring(0, geo.length() - 1);
+				sign = -1;
+			}
+
+			if (dIndex < 0)
 			{
 				/*
-				 * Try it as a plain number.
+				 * Parse degrees as a plain number.
 				 */
 				degrees = Double.parseDouble(geo);
 			}
+
+			degrees *= sign;
 
 			if (degrees >= 0)
 				degrees = degrees + (minutes / 60) + (seconds / 3600);
