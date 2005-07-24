@@ -55,7 +55,7 @@ public class TransientFileFactory
 	public static synchronized String generate(String suffix, int lifespan)
 	{
 		String retval;
-		int random = (int)(Math.random() * 100000);
+		long random = (Double.doubleToLongBits(Math.random()) % 0xfffffff);
 		long now = System.currentTimeMillis();
 		long expiry = now + lifespan;
 
@@ -87,7 +87,7 @@ public class TransientFileFactory
 		StringBuffer sb = new StringBuffer("tmp");
 		sb.append(mCounter);
 		sb.append("a");
-		sb.append(random);
+		sb.append(Long.toString(random, Character.MAX_RADIX));
 		if (suffix.length() > 0)
 		{
 			if (!suffix.startsWith("."))
