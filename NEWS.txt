@@ -1,5 +1,15 @@
-Mapyrus Major Change History
-Copyright (C) 2003, 2004, 2005 Simon Chenery.
+Mapyrus Change History
+Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
+
+0.56, July 2005
+
+* Add endpage command to simplify creation of PDF output when
+  running as HTTP server.
+* Allow named paper sizes to be used.  For example, "A4" and "Letter".
+* Added box3d command to draw boxes with 3 dimensional appearance.
+* Add spiral, pentagon, cylinder, raindrop commands to draw new shapes.
+* Add parsgeo() function to parse various degree-minutes-seconds formats,
+  such as 42.196597N or 42° 11' 47.75"
 
 0.55, June 2005
 
