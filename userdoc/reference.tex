@@ -273,11 +273,12 @@ Returns the largest integer value that is not larger than \textit{n}. \\
 
 \texttt{format(\textit{str}, \textit{n})} &
 Returns the number \textit{n} formatted using format string \textit{str}.
-Format string is given using hash characters and an optional decimal point,
-for example
-\texttt{\#\#\#\#\#\#}
+Format string is given using hash characters and zeroes for digits
+and an optional decimal point.
+For example,
+\texttt{00000} for a five digit number with leading zeroes,
 or
-\texttt{\#\#.\#\#\#}.  \\
+\texttt{\#\#.\#\#\#} for a number rounded to three decimal places.  \\
 
 \hline
 
