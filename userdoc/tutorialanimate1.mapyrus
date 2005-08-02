@@ -2,7 +2,7 @@ let size = 7000000, i = 0
 let centerx = 1445863, centery = 6206249
 repeat 60
 do
-  let f = "frame" . format("00", i) . ".gif"
+  let f = "frame" . format("000", i) . ".gif"
   newpage "ppm", "| ppmtogif > " . f, 60, 60, "background=pastelblue"
   worlds centerx - size / 2, centery - size / 2, \
     centerx + size / 2, centery + size / 2
