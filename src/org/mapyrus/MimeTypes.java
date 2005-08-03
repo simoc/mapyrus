@@ -68,6 +68,10 @@ public class MimeTypes
 			 */
 			retval = "text/plain";
 		}
+		else if (extension.equalsIgnoreCase("js"))
+		{
+			retval = "application/x-javascript";
+		}
 		else
 		{
 			retval = URLConnection.guessContentTypeFromName("x." + extension);
