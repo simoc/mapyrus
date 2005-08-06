@@ -1937,6 +1937,20 @@ public class Context
 	}
 
 	/**
+	 * Set event script for currently defined path.
+	 * @param script commands to run for currently defined path.
+	 */
+	public void setEventScript(String script) throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+		
+		if (path != null && mOutputFormat != null)
+		{	
+			mOutputFormat.setEventScript(path.getShape(), script);
+		}
+	}
+
+	/**
 	 * Clip to show only area outside currently defined path,
 	 * protecting what is inside path.
 	 */
