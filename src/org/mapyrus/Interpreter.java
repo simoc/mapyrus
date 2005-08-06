@@ -1390,6 +1390,18 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.EVENTSCRIPT:
+				if (nExpressions == 1)
+				{
+					String script = mExecuteArgs[0].toString();
+					context.setEventScript(script);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SCRIPT));
+				}
+				break;
+
 			case Statement.CLIP:
 				if (nExpressions != 1)
 				{
