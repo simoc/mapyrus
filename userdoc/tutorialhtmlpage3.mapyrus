@@ -1,0 +1,32 @@
+mimetype "text/html"
+
+# Create image of Australia and imagemap to show tooltip when mouse
+# moved over Australia.
+let mapFilename = tempname(".html"), pngFilename = tempname(".png")
+newpage "png", pngFilename, 90, 90, "imagemap=" . mapFilename
+color "forestgreen"
+
+dataset "shapefile", "coastline.shp", "dbffields="
+worlds -2800000, 4800000, 2150000, 9190000
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  eventscript "onMouseOver=\"return overlib('Australia');\" \
+    onMouseOut=\"return nd();\" href=\"http://www.abc.net.au\""
+  fill
+done
+endpage
+
+# Return HTML page containing image and imagemap we created, using
+# overlib.js JavaScript library from http://www.bosrup.com/web/overlib/
+# to provide tooltips over the image.
+print '<html><head>'
+print '<script type="text/javascript" src="overlib.js"></script>'
+print '</head><body>'
+print '<div id="overDiv" style="position:absolute; visibility:hidden;'
+print 'z-index:1000;"></div>'
+print '<map name="m1">' . spool(mapFilename) . '</map>'
+print '<img src="' . pngFilename . '" usemap="#m1" border="0">'
+print '</body></html>'
