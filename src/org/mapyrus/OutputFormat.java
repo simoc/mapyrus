@@ -44,6 +44,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -100,6 +101,11 @@ public class OutputFormat
 	private static final int SVG = 6;
 
 	/*
+	 * HTML image map being created in combination with an image.
+	 */
+	private static final int IMAGEMAP = 7;
+
+	/*
 	 * Type of justification for labels on page, as used
 	 * in a word processor and in HTML tags.
 	 */
@@ -126,6 +132,7 @@ public class OutputFormat
 	private boolean mIsUpdatingFile;
 	private Process mOutputProcess;
 	private File mTempFile;
+	private PrintWriter mImageMapWriter;
 	
 	/*
 	 * Frequently used fonts.
@@ -680,6 +687,10 @@ public class OutputFormat
 				String flag = token.substring(9);
 				compressOutput = flag.equalsIgnoreCase("true");
 			}
+			else if (token.startsWith("imagemap=") && mOutputType == IMAGE_FILE)
+			{
+				mImageMapWriter = new PrintWriter(new FileWriter(token.substring(9)));
+			}
 			else if (token.startsWith("background="))
 			{
 				String colorName = token.substring(11);
@@ -892,6 +903,17 @@ public class OutputFormat
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
 			setupBufferedImage(resolution, backgroundColor, lineAntiAliasing, labelAntiAliasing);
 		}
+
+		if (mImageMapWriter != null)
+		{
+			/*
+		 	 * Create image map.
+		 	 */
+			mImageMapWriter.println("<!-- HTML Imagemap created by Mapyrus -->");
+			mImageMapWriter.println("<!-- Surround contents of this file with <map name=\"foo\"> ... </map> and -->");
+			mImageMapWriter.println("<!-- combine it with an image using HTML like <img src=\"bar.png\" usemap=\"#foo\"> -->");
+		}
+
 		mFilename = filename;
 		mPageWidth = width;
 		mPageHeight = height;
@@ -1457,6 +1479,11 @@ public class OutputFormat
 				}
 			}
 		}
+
+		if (mImageMapWriter != null)
+		{
+			mImageMapWriter.close();
+		}
 	}
 
 	/**
@@ -1716,7 +1743,7 @@ public class OutputFormat
 					if (mOutputType == SVG)
 					{
 						writeLine("<path d=\"");
-						writeShape(clipPath.getShape());
+						writeShape(clipPath.getShape(), mOutputType, null);
 						writeLine("\"/>");
 					}
 					else
@@ -1734,15 +1761,25 @@ public class OutputFormat
 	/*
 	 * Walk through path, converting it to output format.
 	 */	
-	private void writeShape(Shape shape)
+	private void writeShape(Shape shape, int outputType, String scriptCommands)
 	{
-		PathIterator pi = shape.getPathIterator(null);
+		PathIterator pi;
+
+		if (outputType == IMAGEMAP)
+		{
+			pi = shape.getPathIterator(null, mResolution);
+		}
+		else
+		{
+			pi = shape.getPathIterator(null);
+		}
+
 		float coords[] = new float[6];
 		float lastX = 0.0f, lastY = 0.0f;
 		float x = 0.0f, y = 0.0f;
 		float distSquared;
 		float resolutionSquared = (float)(mResolution * mResolution);
-		int segmentType;
+		int segmentType = PathIterator.SEG_CLOSE;
 		boolean skippedLastSegment = false;
 
 		while (!pi.isDone())
@@ -1753,10 +1790,16 @@ public class OutputFormat
 				case PathIterator.SEG_MOVETO:
 					lastX = coords[0];
 					lastY = coords[1];
-					if (mOutputType == SVG)
+					if (outputType == SVG)
 					{
 						writeLine("M " + mCoordinateDecimal.format(lastX) +
 							" " + mCoordinateDecimal.format(mPageHeight - lastY));
+					}
+					else if (outputType == IMAGEMAP)
+					{
+						mImageMapWriter.println("<area shape=\"polygon\" coords=\"" +
+							Math.round(lastX / mResolution) + "," +
+							Math.round((mPageHeight - lastY) / mResolution));
 					}
 					else
 					{
@@ -1772,7 +1815,7 @@ public class OutputFormat
 					distSquared = (lastX - x) * (lastX - x) + (lastY - y) * (lastY - y);
 					if (distSquared >= resolutionSquared)
 					{
-						if (mOutputType == SVG)
+						if (outputType == SVG)
 						{
 							String sx = mCoordinateDecimal.format(x);
 							String sy = mCoordinateDecimal.format(mPageHeight - y);
@@ -1787,6 +1830,11 @@ public class OutputFormat
 								writeLine("H " + sx);
 							else
 								writeLine("L " + sx + " " + sy);
+						}
+						else if (outputType == IMAGEMAP)
+						{
+							mImageMapWriter.println("," + Math.round(x / mResolution) +
+								"," + Math.round((mPageHeight - y) / mResolution));
 						}
 						else
 						{
@@ -1809,10 +1857,15 @@ public class OutputFormat
 				case PathIterator.SEG_CLOSE:
 					if (skippedLastSegment)
 					{
-						if (mOutputType == SVG)
+						if (outputType == SVG)
 						{
 							writeLine("L " + mCoordinateDecimal.format(x) +
 								" " + mCoordinateDecimal.format(mPageHeight - y));
+						}
+						else if (outputType == IMAGEMAP)
+						{
+							mImageMapWriter.println("," + Math.round(x / mResolution) +
+								"," + Math.round((mPageHeight - y) / mResolution));
 						}
 						else
 						{
@@ -1820,15 +1873,17 @@ public class OutputFormat
 								mCoordinateDecimal.format(y) + " l");
 						}
 					}
-					if (mOutputType == SVG)
+					if (outputType == SVG)
 						writeLine("z");
+					else if (outputType == IMAGEMAP)
+						mImageMapWriter.println("\" " + scriptCommands + " >");
 					else
 						writeLine("closepath");
 					skippedLastSegment = false;
 					break;
 
 				case PathIterator.SEG_CUBICTO:
-					if (mOutputType == SVG)
+					if (outputType == SVG)
 					{
 						writeLine("C " + mCoordinateDecimal.format(coords[0]) + " " +
 							mCoordinateDecimal.format(mPageHeight - coords[1]) + " " +
@@ -1861,16 +1916,29 @@ public class OutputFormat
 			 * Always include last point in lines and polygons,
 			 * never skip it.
 			 */
-			if (mOutputType == SVG)
+			if (outputType == SVG)
 			{
 				writeLine("L " + mCoordinateDecimal.format(x) + " " +
 					mCoordinateDecimal.format(mPageHeight - y));
+			}
+			else if (outputType == IMAGEMAP)
+			{
+				mImageMapWriter.println("," + Math.round(x / mResolution) +
+					"," + Math.round((mPageHeight - y) / mResolution));
 			}
 			else
 			{
 				writeLine(mCoordinateDecimal.format(x) +
 					" " + mCoordinateDecimal.format(y) + " l");
 			}
+		}
+
+		/*
+		 * Complete any imagemap being created.
+		 */
+		if (outputType == IMAGEMAP && segmentType != PathIterator.SEG_CLOSE)
+		{
+			mImageMapWriter.println("\" " + scriptCommands + ">");
 		}
 	}
 
@@ -2216,7 +2284,7 @@ public class OutputFormat
 				if (mOutputType == SVG)
 				{
 					writeLine("<path d=\"");
-					writeShape(shape);
+					writeShape(shape, mOutputType, null);
 					writeLine("\"");
 					Color color = mGraphics2D.getColor();
 					BasicStroke stroke = (BasicStroke)mGraphics2D.getStroke();
@@ -2271,7 +2339,7 @@ public class OutputFormat
 				}
 				else
 				{
-					writeShape(shape);
+					writeShape(shape, mOutputType, null);
 					writeLine("s");
 				}
 			}
@@ -2287,6 +2355,8 @@ public class OutputFormat
 
 	/**
 	 * Fill currently defined path on output page.
+	 * @param shape shape to fill on page.
+	 * run when this shape is clicked.
 	 */
 	public void fill(Shape shape)
 	{
@@ -2297,7 +2367,7 @@ public class OutputFormat
 				if (mOutputType == SVG)
 				{
 					writeLine("<path d=\"");
-					writeShape(shape);
+					writeShape(shape, mOutputType, null);
 					writeLine("\"");
 					Color color = mGraphics2D.getColor();
 					int alpha = color.getAlpha();
@@ -2315,7 +2385,7 @@ public class OutputFormat
 				}
 				else
 				{
-					writeShape(shape);
+					writeShape(shape, mOutputType, null);
 					writeLine("f");
 				}
 			}
@@ -2327,6 +2397,21 @@ public class OutputFormat
 			 */
 			mGraphics2D.fill(shape);
 		}
+	}
+
+	/**
+	 * Set script commands for path on output page.
+	 * @param shape shape to fill on page.
+	 * @param scriptCommands script language commands to
+	 * run when this shape is clicked.
+	 */
+	public void setEventScript(Shape shape, String scriptCommands)
+	{
+		/*
+		 * Write shape to image map.
+		 */
+		if (mImageMapWriter != null)
+			writeShape(shape, IMAGEMAP, scriptCommands);
 	}
 
 	/**
@@ -2362,7 +2447,7 @@ public class OutputFormat
 				writeLine("</linearGradient>");
 				writeLine("</defs>");
 				writeLine("<path d=\"");
-				writeShape(shape);
+				writeShape(shape, mOutputType, null);
 				writeLine("\"");
 
 				if (mIsClipPathActive)
@@ -2387,7 +2472,7 @@ public class OutputFormat
 			 */
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
-				writeShape(shape);
+				writeShape(shape, mOutputType, null);
 			}
 			else
 			{
@@ -2395,7 +2480,8 @@ public class OutputFormat
 				 * Clip region is outside page.  Clip to simple rectangle
 				 * outside page instead so that nothing is shown.
 				 */
-				writeShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f));
+				writeShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f),
+					mOutputType, null);
 			}
 			writeLine("clip newpath");
 		}
