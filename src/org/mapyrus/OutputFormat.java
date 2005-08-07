@@ -1781,6 +1781,7 @@ public class OutputFormat
 		float resolutionSquared = (float)(mResolution * mResolution);
 		int segmentType = PathIterator.SEG_CLOSE;
 		boolean skippedLastSegment = false;
+		String imageMapString = null;
 
 		while (!pi.isDone())
 		{
@@ -1797,9 +1798,14 @@ public class OutputFormat
 					}
 					else if (outputType == IMAGEMAP)
 					{
+						if (imageMapString != null)
+							mImageMapWriter.println(imageMapString);
+
 						mImageMapWriter.println("<area shape=\"polygon\" coords=\"" +
 							Math.round(lastX / mResolution) + "," +
 							Math.round((mPageHeight - lastY) / mResolution));
+
+						imageMapString = "\" " + scriptCommands + " >";
 					}
 					else
 					{
@@ -1873,12 +1879,23 @@ public class OutputFormat
 								mCoordinateDecimal.format(y) + " l");
 						}
 					}
+
 					if (outputType == SVG)
+					{
 						writeLine("z");
+					}
 					else if (outputType == IMAGEMAP)
-						mImageMapWriter.println("\" " + scriptCommands + " >");
+					{
+						if (imageMapString != null)
+						{
+							mImageMapWriter.println(imageMapString);
+							imageMapString = null;
+						}
+					}
 					else
+					{
 						writeLine("closepath");
+					}
 					skippedLastSegment = false;
 					break;
 
@@ -1936,9 +1953,9 @@ public class OutputFormat
 		/*
 		 * Complete any imagemap being created.
 		 */
-		if (outputType == IMAGEMAP && segmentType != PathIterator.SEG_CLOSE)
+		if (outputType == IMAGEMAP && imageMapString != null)
 		{
-			mImageMapWriter.println("\" " + scriptCommands + ">");
+			mImageMapWriter.println(imageMapString);
 		}
 	}
 
