@@ -54,7 +54,7 @@ to be used in combination with Mapyrus are included in the
 
 \begin{alltt}
 \texttt{java -D\textit{variable}=\textit{value} \dots\ \textbackslash
-  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.4.0.jar:\textit{other-jarfile} \textbackslash
+  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.5.jar:\textit{other-jarfile} \textbackslash
   org.mapyrus.Mapyrus \textit{filename}}
 \end{alltt}
 
@@ -1345,6 +1345,35 @@ This command is identical to the \texttt{eval} command found in
 UNIX scripting and Perl and
 enables commands to be built and executed while Mapyrus runs.
 
+\subsubsection{eventscript}
+
+\begin{alltt}
+eventscript \textit{html-tags}
+\end{alltt}
+
+This command is used in combination with the \texttt{imagemap}
+option of the \texttt{newpage} command to create an HTML imagemap.
+
+This command creates an entry in the imagemap with the given HTML tags
+for the area covered by the current path.
+Useful HTML tags include hyperlinks and callbacks for mouse events.
+Examples are:
+
+\begin{verbatim}
+href="foo.html"
+onMouseClicked="return alert('Message!');"
+\end{verbatim}
+
+To create an imagemap entry for a single point, first use the \texttt{box}
+command to define a box a few pixels in size around the point.
+
+To create an imagemap entry for a line, first create a polygon
+around the line using the \texttt{buffer} function.
+
+See section
+\ref{tutorialjavascript}
+for an example displaying tooltips as the mouse is moved over an image.
+
 \subsubsection{fetch}
 
 \begin{alltt}
@@ -1953,6 +1982,17 @@ and Encapsulated PostScript images &
 \texttt{background=\textit{color}}
 
 Background color for image, as a named color or as hex digits.
+
+\vspace{10pt}
+\texttt{imagemap=\textit{filename}}
+
+Creates a file containing an HTML imagemap for the image.
+An HTML imagemap contains hyperlinks to jump to and JavaScript
+functions to execute when the mouse is moved or clicked over the image.
+Entries in the imagemap are defined using the \texttt{eventscript} command.
+
+A completed imagemap file is surrounded by an HTML \texttt{<map>} tag
+and included in an HTML file.
 
 \vspace{10pt}
 \texttt{labelantialiasing=\textit{flag}}
