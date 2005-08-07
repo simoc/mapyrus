@@ -1,7 +1,7 @@
 mimetype "text/html"
 
-# Create image of Australia and imagemap to show tooltip when mouse
-# moved over Australia.
+# Create image of Australia and imagemap to show a tooltip when
+# mouse moved over Australia.
 let mapFilename = tempname(".html"), pngFilename = tempname(".png")
 newpage "png", pngFilename, 90, 90, "imagemap=" . mapFilename
 color "forestgreen"
@@ -13,9 +13,11 @@ do
   fetch
   clearpath
   addpath GEOMETRY
+  fill
+
+  # Define event for area covered by current path.
   eventscript "onMouseOver=\"return overlib('Australia');\" \
     onMouseOut=\"return nd();\" href=\"http://www.abc.net.au\""
-  fill
 done
 endpage
 
