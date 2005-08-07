@@ -909,9 +909,9 @@ public class OutputFormat
 			/*
 		 	 * Create image map.
 		 	 */
-			mImageMapWriter.println("<!-- HTML Imagemap created by Mapyrus -->");
+			mImageMapWriter.println("<!-- HTML Imagemap created by Mapyrus for image " + filename + " -->");
 			mImageMapWriter.println("<!-- Surround contents of this file with <map name=\"foo\"> ... </map> and -->");
-			mImageMapWriter.println("<!-- combine it with an image using HTML like <img src=\"bar.png\" usemap=\"#foo\"> -->");
+			mImageMapWriter.println("<!-- combine it with the image using HTML like <img src=\"" + filename + "\" usemap=\"#foo\"> -->");
 		}
 
 		mFilename = filename;
