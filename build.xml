@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <property name="version" value="0.57"/>
 
 <!-- 'Java Topology Suite' JAR file required for building some Java classes -->
-<property name="jts.jar" value="jts-1.4.0.jar"/>
+<property name="jts.jar" value="jts-1.5.jar"/>
 <available file="${jts.jar}" property="jts.jar.isAvailable"/>
 <fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
 
