@@ -657,7 +657,10 @@ public class OutputFormat
 						{
 							String s = (String)it.next();
 							TrueTypeFont ttf = new TrueTypeFont(s);
-							mTTFFonts.put(ttf.getName(), ttf);
+							String fontName = ttf.getName();
+							mTTFFonts.put(fontName, ttf);
+							mTTFFonts.put(fontName.toLowerCase(), ttf);
+							mTTFFonts.put(fontName.toUpperCase(), ttf);
 						}
 					}
 				}
@@ -1548,10 +1551,12 @@ public class OutputFormat
 			 * before defining it.
 			 */
 			Font currentFont = mGraphics2D.getFont();
-			int newSize = (int)Math.round(fontSize);
-			if (newSize != currentFont.getSize() ||
+			float newSize = (float)fontSize;
+			float currentSize = currentFont.getSize2D();
+			String currentFontName = currentFont.getName();
+			if (newSize != currentSize ||
 				style != currentFont.getStyle() ||
-				(!fontName.equals(currentFont.getFontName())) ||
+				(!fontName.equals(currentFontName)) ||
 				fontRotation != mFontRotation)
 			{
 				/*
@@ -1569,9 +1574,9 @@ public class OutputFormat
 					 */
 					TrueTypeFont ttf = (TrueTypeFont)mTTFFonts.get(fontName);
 					if (ttf != null)
-						mBaseFont = ttf.getFont().deriveFont(style, (float)newSize);
+						mBaseFont = ttf.getFont().deriveFont(style, newSize);
 					else
-						mBaseFont = new Font(fontName, style, newSize);
+						mBaseFont = new Font(fontName, style, (int)newSize).deriveFont(newSize);
 					mFontCache.put(fontName, style, newSize, 0, mBaseFont);
 				}
 
@@ -1603,7 +1608,7 @@ public class OutputFormat
 		mFontRotation = fontRotation;
 		mFontOutlineWidth = outlineWidth;
 	}
-	
+
 	/**
 	 * Set label justification in output format.
 	 * @param justify is label justification value, combination of JUSTIFY_* bit flags.
