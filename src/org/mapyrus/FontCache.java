@@ -50,9 +50,9 @@ public class FontCache extends LRUCache
 	 * @param rotation is rotation angle for text in radians.
 	 * @return desired font, or a default if font could not be found.
 	 */
-	private String hash(String name, int style, int pointSize, double rotation)
+	private String hash(String name, int style, float pointSize, double rotation)
 	{
-		String retval = name + "," + style + "," + pointSize + "," +
+		String retval = name + "," + style + "," + Math.round(pointSize * 1000) + "," +
 			Math.round(rotation * 1000.0);
 		return(retval);
 	}
@@ -66,7 +66,7 @@ public class FontCache extends LRUCache
 	 * @param rotation is rotation angle for text in radians.
 	 * @return font from cache, or null if font is not in cache.
 	 */
-	public Font get(String name, int style, int size, double rotation)
+	public Font get(String name, int style, float size, double rotation)
 	{
 		String key = hash(name, style, size, rotation);
 		Font retval = (Font)get(key);
@@ -84,7 +84,7 @@ public class FontCache extends LRUCache
 	 * @param rotation is rotation angle for text in radians.
 	 * @param font is font store in cache.
 	 */	
-	public void put(String name, int style, int size, double rotation, Font font)
+	public void put(String name, int style, float size, double rotation, Font font)
 	{
 		String key = hash(name, style, size, rotation);
 		put(key, font);
