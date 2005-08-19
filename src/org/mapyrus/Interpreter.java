@@ -1391,10 +1391,16 @@ public class Interpreter
 				break;
 
 			case Statement.EVENTSCRIPT:
-				if (nExpressions == 1)
+				if (nExpressions >= 1)
 				{
-					String script = mExecuteArgs[0].toString();
-					context.setEventScript(script);
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < nExpressions; i++)
+					{
+							if (i > 0)
+								sb.append(Constants.LINE_SEPARATOR);
+							sb.append(mExecuteArgs[i].toString());
+					}
+					context.setEventScript(sb.toString());
 				}
 				else
 				{
