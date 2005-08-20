@@ -1348,7 +1348,7 @@ enables commands to be built and executed while Mapyrus runs.
 \subsubsection{eventscript}
 
 \begin{alltt}
-eventscript \textit{html-tags}
+eventscript \textit{tags} \ldots
 \end{alltt}
 
 This command is used in combination with the \texttt{imagemap}
@@ -1357,10 +1357,10 @@ option of the \texttt{newpage} command to create an HTML imagemap.
 This command creates an entry in the imagemap with the given HTML tags
 for the area covered by the current path.
 Useful HTML tags include hyperlinks and callbacks for mouse events.
-Examples are:
+Examples HTML tags are:
 
 \begin{verbatim}
-href="foo.html"
+href="australia.html"
 onMouseClicked="return alert('Message!');"
 \end{verbatim}
 
