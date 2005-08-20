@@ -6,7 +6,7 @@ Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 * Add format() function to format numbers.
 * Add creation of HTML imagemaps for images.
 * Add eventscript command to allow hyperlinks and Javascript functions to be
-  included in SVG output and HTML imagemaps so that objects in images are
+  included in HTML imagemaps so that objects in images are
   clickable and interactive.
 * Upgrade to Java Topology Suite version 1.5.
 
