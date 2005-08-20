@@ -2429,11 +2429,24 @@ public class OutputFormat
 	 */
 	public void setEventScript(Shape shape, String scriptCommands)
 	{
-		/*
-		 * Write shape to image map.
-		 */
 		if (mImageMapWriter != null)
+		{
+			/*
+			 * Write shape to image map together with script commands.
+			 */
 			writeShape(shape, IMAGEMAP, scriptCommands);
+		}
+		else if (mOutputType == SVG)
+		{
+			/*
+			 * Embed script commands in SVG file.
+			 */
+			writeLine("<path d=\"");
+			writeShape(shape, mOutputType, scriptCommands);
+			writeLine("\"");
+			writeLine(scriptCommands);
+			writeLine("/>");
+		}
 	}
 
 	/**
