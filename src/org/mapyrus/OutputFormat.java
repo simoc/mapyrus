@@ -1875,8 +1875,11 @@ public class OutputFormat
 						}
 						else if (outputType == IMAGEMAP)
 						{
-							mImageMapWriter.println("," + Math.round(x / mResolution) +
-								"," + Math.round((mPageHeight - y) / mResolution));
+							if (imageMapString != null)
+							{
+								mImageMapWriter.println("," + Math.round(x / mResolution) +
+									"," + Math.round((mPageHeight - y) / mResolution));
+							}
 						}
 						else
 						{
@@ -1945,8 +1948,11 @@ public class OutputFormat
 			}
 			else if (outputType == IMAGEMAP)
 			{
-				mImageMapWriter.println("," + Math.round(x / mResolution) +
-					"," + Math.round((mPageHeight - y) / mResolution));
+				if (imageMapString != null)
+				{
+					mImageMapWriter.println("," + Math.round(x / mResolution) +
+						"," + Math.round((mPageHeight - y) / mResolution));
+				}
 			}
 			else
 			{
