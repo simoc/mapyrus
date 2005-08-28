@@ -236,6 +236,11 @@ public class SutherlandHodgman
 						}
 					}
 
+					if (xEnd == xMoveTo && yEnd == yMoveTo && (!isFirstSegment))
+					{
+						s2.closePath();
+					}
+
 					xStart = xEnd;
 					yStart = yEnd;
 				}
