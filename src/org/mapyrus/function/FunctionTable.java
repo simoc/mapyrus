@@ -89,6 +89,9 @@ public class FunctionTable
 		f = new Pow();
 		mFunctions.put(f.getName(), f);
 
+		f = new Project();
+		mFunctions.put(f.getName(), f);
+
 		f = new Protected();
 		mFunctions.put(f.getName(), f);
 
