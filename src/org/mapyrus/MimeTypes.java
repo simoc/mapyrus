@@ -72,6 +72,10 @@ public class MimeTypes
 		{
 			retval = "application/x-javascript";
 		}
+		else if (extension.equalsIgnoreCase("css"))
+		{
+			retval = "text/css";
+		}
 		else
 		{
 			retval = URLConnection.guessContentTypeFromName("x." + extension);
