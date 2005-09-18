@@ -416,6 +416,16 @@ public class ContextStack
 	}
 
 	/**
+	 * Sets file for writing standard output to.
+	 * File will automatically be closed when this context is closed.
+	 * @param stdout stream to write to.
+	 */
+	public void setStdout(PrintStream stdout) throws IOException
+	{
+		getCurrentContext().setStdout(stdout);
+	}
+
+	/**
 	 * Add point to path.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
@@ -919,6 +929,15 @@ public class ContextStack
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_DATASET));
 		String []retval = dataset.getFieldNames();
 		return(retval);
+	}
+
+	/**
+	 * Get stream that standard output is currently being sent to.
+	 * @return standard output stream.
+	 */
+	public PrintStream getStdout()
+	{
+		return(getCurrentContext().getStdout());
 	}
 
 	/**
