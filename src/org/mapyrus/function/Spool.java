@@ -51,6 +51,13 @@ public class Spool extends Function
 		try
 		{
 			/*
+			 * Flush any file we are writing to so that we get all
+			 * of the file if it happens to be the same file that
+			 * we are to read from.
+			 */
+			context.getStdout().flush();
+
+			/*
 			 * Read complete file into memory and return it as a single string.
 			 */
 			FileOrURL f = new FileOrURL(filename);
