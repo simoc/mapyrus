@@ -83,8 +83,8 @@ public class Contains extends Function
 		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
 		if (rect1 == null || rect2 == null)
 			return(Argument.numericZero);
-		if (rect2.getMinX() <= rect1.getMinX() || rect2.getMaxX() >= rect1.getMaxX() ||
-			rect2.getMinY() <= rect1.getMinY() || rect2.getMaxY() >= rect1.getMaxY())
+		if (rect2.getMaxX() < rect1.getMinX() || rect2.getMinX() > rect1.getMaxX() ||
+			rect2.getMaxY() < rect1.getMinY() || rect2.getMinY() > rect1.getMaxY())
 		{
 			return(Argument.numericZero);
 		}
