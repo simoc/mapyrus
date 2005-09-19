@@ -24,15 +24,17 @@ package org.mapyrus;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
@@ -103,8 +105,8 @@ public class Interpreter
 	public static final String JOIN_ROUND_STRING = "round";
 
 	private ContextStack mContext;
-	private PrintStream mStdoutStream;
 	private InputStream mStdinStream;
+	private PrintStream mStdoutStream;
 
 	/*
 	 * Evaluted arguments for statement currently being executed.
@@ -1420,6 +1422,46 @@ public class Interpreter
 					context.clipOutside();
 				break;	
 
+			case Statement.SETOUTPUT:
+				if (nExpressions == 1)
+				{
+					PrintStream stdout;
+					String filename = mExecuteArgs[0].getStringValue();
+					if (filename.equals("-"))
+					{
+						/*
+						 * Return output to original standard output.
+						 */
+						stdout = mStdoutStream;
+					}
+					else if (filename.startsWith("|"))
+					{
+						/*
+						 * Pipe standard output through an external command.
+						 */
+						String pipeCommand = filename.substring(1).trim();
+						String []cmdArray;
+						if (Constants.getOSName().indexOf("WIN") >= 0)
+							cmdArray = new String[]{pipeCommand};
+						else
+							cmdArray = new String[]{"sh", "-c", pipeCommand};
+						Process p = Runtime.getRuntime().exec(cmdArray);
+						OutputStream stream = p.getOutputStream();
+						stdout = new PrintStream(stream);
+					}
+					else
+					{
+						OutputStream stream = new FileOutputStream(filename);
+						stdout = new PrintStream(stream);
+					}
+					context.setStdout(stdout);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SETOUTPUT));
+				}
+				break;
+
 			case Statement.LABEL:
 			case Statement.PRINT:
 			case Statement.FLOWLABEL:
@@ -1469,7 +1511,7 @@ public class Interpreter
 
 				if (type == Statement.PRINT)
 				{
-					mStdoutStream.println(label);
+					context.getStdout().println(label);
 				}
 				else if (nChars > 0)
 				{
@@ -1742,7 +1784,7 @@ public class Interpreter
 					}
 
 					context.setOutputFormat(format, filename, width, height,
-						extras, mStdoutStream);
+						extras, context.getStdout());
 				}
 				else
 				{
@@ -1770,7 +1812,7 @@ public class Interpreter
 					FileOrURL f = new FileOrURL(stringReader, filename);
 					byte []emptyBuffer = new byte[0];
 					interpret(context, f, new ByteArrayInputStream(emptyBuffer),
-						mStdoutStream);
+						context.getStdout());
 				}
 				else
 				{
@@ -2614,6 +2656,7 @@ public class Interpreter
 		mStdinStream = stdin;
 		mStdoutStream = stdout;
 		mContext = context;
+		context.setStdout(stdout);
 
 		try
 		{
@@ -2998,8 +3041,8 @@ public class Interpreter
 		retval.mContext = null;
 		retval.mInComment = false;
 		retval.mStatementBlocks = (HashMap)(this.mStatementBlocks.clone());
-		retval.mStdoutStream = null;
 		retval.mStdinStream = null;
+		retval.mStdoutStream = null;
 		return((Object)retval);
 	}
 }
