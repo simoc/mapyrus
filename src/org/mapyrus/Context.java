@@ -184,6 +184,12 @@ public class Context
 	private Dataset mDataset;
 
 	/*
+	 * Stream that standard output is writing to.
+	 */
+	private PrintStream mStdoutStream;
+	private boolean mStdoutStreamDefined;
+	
+	/*
 	 * Name of procedure block that this context is executing in.
 	 */
 	private String mBlockName;
@@ -235,7 +241,9 @@ public class Context
 		mOutputDefined = false;
 		mDatasetDefined = false;
 		mDataset = null;
-		
+		mStdoutStream = null;
+		mStdoutStreamDefined = false;
+
 		/*
 		 * First context is outside of any procedure block.
 		 */
@@ -308,6 +316,9 @@ public class Context
 			mOutputFormat.saveState();
 		}
 		mDatasetDefined = false;
+
+		mStdoutStream = existing.mStdoutStream;
+		mStdoutStreamDefined = false;
 
 		mAttributesPending = existing.mAttributesPending;
 		mAttributesChanged = 0;
@@ -520,6 +531,19 @@ public class Context
 		}
 
 		mDataset = null;
+
+		/*
+		 * Close any file we opened for standard output in this context.
+		 */
+		if (mStdoutStreamDefined)
+		{
+			if (mStdoutStream == System.out)
+				mStdoutStream.flush();
+			else
+				mStdoutStream.close();
+			mStdoutStreamDefined = false;
+			mStdoutStream = null;
+		}
 		mPath = mExistingPath = null;
 		mClippingPaths = null;
 		mVars = null;
@@ -787,6 +811,27 @@ public class Context
 	}
 
 	/**
+	 * Sets file for writing standard output to.
+	 * File will automatically be closed when this context is closed.
+	 * @param stdout stream to write to.
+	 */
+	public void setStdout(PrintStream stdout) throws IOException
+	{
+		/*
+		 * Close any existing standard output opened in this context.
+		 */
+		if (mStdoutStream != null && mStdoutStreamDefined)
+		{
+			if (mStdoutStream == System.out)
+				mStdoutStream.flush();
+			else
+				mStdoutStream.close();
+		}
+		mStdoutStream = stdout;
+		mStdoutStreamDefined = true;
+	}
+
+	/**
 	 * Returns scaling factor in current transformation.
 	 * @return scale value.
 	 */
@@ -942,6 +987,15 @@ public class Context
 	public Dataset getDataset()
 	{
 		return(mDataset);
+	}
+
+	/**
+	 * Get stream that standard output is currently being sent to.
+	 * @return standard output stream.
+	 */
+	public PrintStream getStdout()
+	{
+		return(mStdoutStream);
 	}
 
 	/**
