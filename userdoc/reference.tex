@@ -1097,7 +1097,7 @@ and \textit{rotate} values.
 \subsubsection{dataset}
 
 \begin{alltt}
-dataset \textit{type}, \textit{name}, \textit{extras}
+dataset \textit{format}, \textit{name}, \textit{extras}
 \end{alltt}
 
 Defines a dataset to read from.  A dataset contains geographic data,
@@ -1105,25 +1105,25 @@ geometry, attributes, a lookup table, data to write to standard
 output, or a combination of these.
 
 \textit{dataset} is the filename of the dataset to read.
-\textit{type} is the type of dataset and
+\textit{format} is the format of the dataset and
 \textit{extras} defines further options for accessing the dataset, given
 as \textit{variable=value} values, separated by whitespace.
-Dataset types and options are shown in Table \ref{datasettypes}.
+Data formats and options are shown in Table \ref{datasettypes}.
 
 
 \begin{longtable}{|p{3cm}|p{10cm}|}
 \hline
 \label{datasettypes}
-Dataset Type & Description and Extras \\
+Dataset Format & Description and Extras \\
 \hline
 \hline
 \endfirsthead
 \hline
-\caption{Dataset Types} \\
+\caption{Dataset Formats} \\
 \endfoot
 
 \hline
-Dataset Type & Description and Extras \\
+Dataset Format & Description and Extras \\
 \hline
 \hline
 \endhead
@@ -2085,6 +2085,9 @@ Prints each \textit{string} to standard output,
 separated by spaces.
 A newline is added after the final \textit{string}.
 
+Standard output is redirected to a different file
+or destination using the \texttt{setoutput} command.
+
 \subsubsection{protect}
 
 \begin{alltt}
@@ -2213,6 +2216,16 @@ in millimeters.
 
 Offsets and lengths are scaled by \texttt{scale} values but are independent of
 any world coordinate transformation.
+
+\subsubsection{setoutput}
+
+\begin{alltt}
+setoutput \textit{filename}
+\end{alltt}
+
+Sets file that all \texttt{print} commands will be written to.
+\textit{filename} is the name of a file to write to, overwriting any
+existing file with this name.
 
 \subsubsection{shiftpath}
 
@@ -2509,7 +2522,7 @@ number used is written to the log file or to standard output.
 
 The HTTP server is multi-threaded to enable several requests to be handled
 simultaneously.  If the HTTP server receives an HTTP request for a file with a
-suffix matching a well-known MIME type (\texttt{html}, \texttt{txt},
+suffix matching a well-known MIME type (such as \texttt{html}, \texttt{txt},
 \texttt{ps}, \texttt{pdf}, \texttt{svg}, \texttt{zip}
 or a web image format), then the
 contents of that file are returned by the HTTP server to the HTTP client.
