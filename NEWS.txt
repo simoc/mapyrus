@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 
+0.58, September 2005
+
+* Add setoutput command to send output of print command to a file.
+
 0.57, August 2005
 
 * Add format() function to format numbers.
