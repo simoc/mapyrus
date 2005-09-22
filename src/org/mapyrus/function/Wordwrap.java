@@ -71,7 +71,13 @@ public class Wordwrap extends Function
 			if (lineWidth > 0 && lineWidth + wordWidth > maxWidth)
 			{
 				sb.append(Constants.LINE_SEPARATOR);
+				
+				/*
+				 * Trim any leading space we added before starting new line.
+				 */
 				token = token.trim();
+				dim = context.getStringDimension(token);
+				wordWidth = dim.getWidth();
 				lineWidth = 0;
 			}
 
