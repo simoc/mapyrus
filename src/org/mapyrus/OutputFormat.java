@@ -330,7 +330,8 @@ public class OutputFormat
 		 * PostScript Language Reference Manual).
 		 */
 		mWriter.println("/m { moveto } bind def /l { lineto } bind def");
-		mWriter.println("/s { stroke } bind def /f { fill } bind def");
+		mWriter.println("/c { curveto } bind def /h { closepath } bind def");
+		mWriter.println("/S { stroke } bind def /f { fill } bind def");
 		mWriter.println("/j { /fjy exch def /fjx exch def } bind def");
 
 		/*
@@ -1902,7 +1903,7 @@ public class OutputFormat
 					}
 					else
 					{
-						writeLine("closepath");
+						writeLine("h");
 					}
 					skippedLastSegment = false;
 					break;
@@ -1925,7 +1926,7 @@ public class OutputFormat
 							mCoordinateDecimal.format(coords[3]) + " " +
 							mCoordinateDecimal.format(coords[4]) + " " +
 							mCoordinateDecimal.format(coords[5]) + " " +
-							"curveto");
+							"c");
 					}
 					lastX = coords[4];
 					lastY = coords[5];
@@ -2368,7 +2369,7 @@ public class OutputFormat
 				else
 				{
 					writeShape(shape, mOutputType, null);
-					writeLine("s");
+					writeLine("S");
 				}
 			}
 		}
