@@ -103,6 +103,13 @@ public class Wordwrap extends Function
 					wordWidth = dim.getWidth();
 					i++;
 				}
+				
+				/*
+				 * Ensure that there is at least one letter on each line,
+				 * regardless of whether it fits or not.
+				 */
+				if (lastPartToken.length() == 0)
+					lastPartToken = token.substring(0, 1);
 
 				sb.append(lastPartToken);
 				sb.append("-");
