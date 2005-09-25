@@ -886,7 +886,7 @@ public class ContextStack
 		StringDimension retval;
 		try
 		{
-			retval = getCurrentContext().getStringDimension(s);
+			retval = getCurrentContext().getStringDimension(s, true);
 		}
 		catch (IOException e)
 		{

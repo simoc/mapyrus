@@ -2131,7 +2131,7 @@ public class Context
 					totalStringWidth += spacing;
 
 				letters[i] = new String(label.substring(i, i + 1));
-				stringWidths[i] = getStringDimension(letters[i]).getWidth();
+				stringWidths[i] = getStringDimension(letters[i], false).getWidth();
 				totalStringWidth += stringWidths[i];
 			}
 
@@ -2257,7 +2257,7 @@ public class Context
 
 		double columnWidths[] = new double[columns.size()];
 		double rowHeights[] = null;
-		double minRowHeight = getStringDimension("X").getHeight();
+		double minRowHeight = getStringDimension("X", false).getHeight();
 		double yPadding = minRowHeight / 4;
 		double xPadding;
 		Object primaryKeys[] = null;
@@ -2351,7 +2351,7 @@ public class Context
 			for (int j = 0; j < primaryKeys.length; j++)
 			{
 				String s = arg.getHashMapEntry(primaryKeys[j].toString()).toString();
-				StringDimension dim = getStringDimension(s);
+				StringDimension dim = getStringDimension(s, false);
 				if (dim.getWidth() > columnWidths[i])
 					columnWidths[i] = dim.getWidth();
 				if (dim.getHeight() > rowHeights[j])
@@ -2698,9 +2698,11 @@ public class Context
 	/**
 	 * Returns dimensions of a string, drawn to current page with current font.
 	 * @param s string to calculate height and width for.
+	 * @param scaleToWorlds scale dimension to world coordinates, if true.
 	 * @return height and width of string in millimetres.
 	 */	
-	public StringDimension getStringDimension(String s) throws IOException, MapyrusException
+	public StringDimension getStringDimension(String s, boolean scaleToWorlds)
+		throws IOException, MapyrusException
 	{
 		StringDimension retval;
 
@@ -2713,7 +2715,17 @@ public class Context
 			 */
 			setGraphicsAttributes(ATTRIBUTE_FONT);
 			retval = mOutputFormat.getStringDimension(s, mFontName, mFontSize);
-			retval.setSize(retval.getWidth() / mScaling, retval.getHeight() / mScaling);
+			double w = retval.getWidth();
+			double h = retval.getHeight();
+
+			if (mWorldExtents != null && scaleToWorlds)
+			{
+				w = w / mOutputFormat.getPageWidth() * mWorldExtents.getWidth();
+				h = h / mOutputFormat.getPageHeight() * mWorldExtents.getHeight();
+			}
+			w = w / mScaling;
+			h = h / mScaling;
+			retval.setSize(w, h);
 		}
 		else
 		{
