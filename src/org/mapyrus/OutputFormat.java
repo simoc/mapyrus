@@ -126,6 +126,7 @@ public class OutputFormat
 	private String mFilename;
 	private PrintWriter mWriter;
 	private OutputStream mOutputStream;
+	private int mNCharsWritten;
 	private Graphics2D mGraphics2D;
 	private boolean mIsPipedOutput;	
 	private boolean mIsStandardOutput;
@@ -229,73 +230,73 @@ public class OutputFormat
 		long heightInPoints = Math.round(height / Constants.MM_PER_INCH *
 			Constants.POINTS_PER_INCH);
 
-		mWriter.print("%!PS-Adobe-3.0");
+		StringBuffer sb = new StringBuffer("%!PS-Adobe-3.0");
 		if (mFormatName.equals("eps") || mFormatName.equals("epsimage"))
-			mWriter.print(" EPSF-3.0");
-		mWriter.println("");
+			sb.append(" EPSF-3.0");
+		writeLine(sb.toString());
 
 		if (turnPage)
-			mWriter.println("%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
+			writeLine("%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
 		else
-			mWriter.println("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
+			writeLine("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 
 		if ((!mFormatName.equals("eps")) && (!mFormatName.equals("epsimage")))
-			mWriter.println("%%Pages: 1");
+			writeLine("%%Pages: 1");
 
-		mWriter.println("%%DocumentData: Clean7Bit");
-		mWriter.println("%%LanguageLevel: 2");
-		mWriter.println("%%Creator: (" + Constants.PROGRAM_NAME +
+		writeLine("%%DocumentData: Clean7Bit");
+		writeLine("%%LanguageLevel: 2");
+		writeLine("%%Creator: (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
-		mWriter.println("%%OperatorMessage: (Mapyrus Output...)");
+		writeLine("%%OperatorMessage: (Mapyrus Output...)");
 		Date now = new Date();
-		mWriter.println("%%CreationDate: (" + now.toString() + ")");
+		writeLine("%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
 		if (username != null)
-			mWriter.println("%%For: (" + username + ")");
+			writeLine("%%For: (" + username + ")");
 
 		/*
 		 * List fonts included in this PostScript file.
 		 */
-		mWriter.println("%%DocumentRequiredResources: (atend)");
+		writeLine("%%DocumentRequiredResources: (atend)");
 		if (fontList.size() > 0)
 		{
-			mWriter.print("%%DocumentSuppliedResources: font");
+			sb = new StringBuffer("%%DocumentSuppliedResources: font");
 			Iterator it = fontList.iterator();
 			while (it.hasNext())
 			{
 				PostScriptFont psFont = (PostScriptFont)(it.next());
-				mWriter.print(" " + psFont.getName());
+				sb.append(" ").append(psFont.getName());
 				mSuppliedFontResources.add(psFont.getName());
 			}
-			mWriter.println("");
+			writeLine(sb.toString());
 		}
-		mWriter.println("%%EndComments");
-		mWriter.println("");
-		mWriter.println("% Resolution " + resolution + " DPI");
+		writeLine("%%EndComments");
+		writeLine("");
+		writeLine("% Resolution " + resolution + " DPI");
 
 		/*
 		 * Inline font definitions.
 		 */
-		mWriter.println("%%BeginSetup");
+		writeLine("%%BeginSetup");
 		Iterator it = fontList.iterator();
 		while (it.hasNext())
 		{
 			PostScriptFont psFont = (PostScriptFont)(it.next());
 
-			mWriter.println("%%BeginResource: font " + psFont.getName());
+			writeLine("%%BeginResource: font " + psFont.getName());
 			String fontDefinition = psFont.getFontDefinition();
-			mWriter.println(fontDefinition);
-			mWriter.println("%%EndResource");			
+			writeLine(fontDefinition);
+			writeLine("%%EndResource");			
 		}
-		mWriter.println("%%EndSetup");
+		writeLine("%%EndSetup");
 
 		/*
 		 * Set color and linestyle to reasonable default values.
 		 * Taken from 'initgraphics' operator example in PostScript Language
 		 * Reference Manual.
 		 */
-		mWriter.println("1 setlinewidth 0 setlinecap 0 setlinejoin");
-		mWriter.println("[] 0 setdash 0 setgray 10 setmiterlimit");
+		writeLine("1 setlinewidth 0 setlinecap 0 setlinejoin");
+		writeLine("[] 0 setdash 0 setgray 10 setmiterlimit");
 
 		if (turnPage)
 		{
@@ -303,14 +304,14 @@ public class OutputFormat
 			 * Turn page 90 degrees so that a landscape orientation page appears
 			 * on a portrait page.
 			 */
-			mWriter.println("% Turn page 90 degrees.");
-			mWriter.println("90 rotate 0 " + heightInPoints + " neg translate");
+			writeLine("% Turn page 90 degrees.");
+			writeLine("90 rotate 0 " + heightInPoints + " neg translate");
 		}
 
 		/* 
 		 * Prevent anything being displayed outside bounding box we've just defined.
 		 */
-		mWriter.println("0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
+		writeLine("0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
 
 		/*
 		 * Set background color for page.
@@ -318,10 +319,10 @@ public class OutputFormat
 		if (backgroundColor != null)
 		{
 			float c[] = backgroundColor.getRGBColorComponents(null);
-			mWriter.println("gsave");
-			mWriter.println(c[0] + " " + c[1] + " " + c[2] + " setrgbcolor");
-			mWriter.println("0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
-			mWriter.println("grestore");
+			writeLine("gsave");
+			writeLine(c[0] + " " + c[1] + " " + c[2] + " setrgbcolor");
+			writeLine("0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
+			writeLine("grestore");
 		}
 
 		/*
@@ -329,20 +330,20 @@ public class OutputFormat
 		 * Bind all operators names to improve performance (see 3.11 of
 		 * PostScript Language Reference Manual).
 		 */
-		mWriter.println("/m { moveto } bind def /l { lineto } bind def");
-		mWriter.println("/c { curveto } bind def /h { closepath } bind def");
-		mWriter.println("/S { stroke } bind def /f { fill } bind def");
-		mWriter.println("/j { /fjy exch def /fjx exch def } bind def");
+		writeLine("/m { moveto } bind def /l { lineto } bind def");
+		writeLine("/c { curveto } bind def /h { closepath } bind def");
+		writeLine("/S { stroke } bind def /f { fill } bind def");
+		writeLine("/j { /fjy exch def /fjx exch def } bind def");
 
 		/*
 		 * Define font and dictionary entries for font size and justification.
 		 * Don't bind these as font loading operators may be overridden in interpreter.
 		 */
-		mWriter.println("/font {");
-		mWriter.println("/foutline exch def");
-		mWriter.println("/frot exch radtodeg def");
-		mWriter.println("/fsize exch def findfont fsize scalefont setfont } def");
-		mWriter.println("/radtodeg { 180 mul 3.1415629 div } bind def");
+		writeLine("/font {");
+		writeLine("/foutline exch def");
+		writeLine("/frot exch radtodeg def");
+		writeLine("/fsize exch def findfont fsize scalefont setfont } def");
+		writeLine("/radtodeg { 180 mul 3.1415629 div } bind def");
 
 		/*
 		 * Draw text string, after setting correct position, rotation,
@@ -352,24 +353,24 @@ public class OutputFormat
 		 *
 		 * Line number (starting at 0) and string to show are passed to this procedure.
 		 */
-		mWriter.println("/t { gsave currentpoint translate frot rotate");
-		mWriter.println("dup stringwidth pop fjx mul");
-		mWriter.println("3 -1 roll neg fjy add fsize mul");
-		mWriter.println("rmoveto foutline 0 gt");
-		mWriter.println("{false charpath foutline 0 0 2 sl stroke} {show} ifelse");
-		mWriter.println("grestore newpath } bind def");
+		writeLine("/t { gsave currentpoint translate frot rotate");
+		writeLine("dup stringwidth pop fjx mul");
+		writeLine("3 -1 roll neg fjy add fsize mul");
+		writeLine("rmoveto foutline 0 gt");
+		writeLine("{false charpath foutline 0 0 2 sl stroke} {show} ifelse");
+		writeLine("grestore newpath } bind def");
 
-		mWriter.println("/rgb { setrgbcolor } bind def");
-		mWriter.println("/sl { setmiterlimit setlinejoin setlinecap");
-		mWriter.println("setlinewidth } bind def");
+		writeLine("/rgb { setrgbcolor } bind def");
+		writeLine("/sl { setmiterlimit setlinejoin setlinecap");
+		writeLine("setlinewidth } bind def");
 
 		/*
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
 		 */
-		mWriter.println("/gs { gsave 4 dict begin } bind def");
-		mWriter.println("/gr { end grestore } bind def");
-		mWriter.println("");
+		writeLine("/gs { gsave 4 dict begin } bind def");
+		writeLine("/gr { end grestore } bind def");
+		writeLine("");
 	}
 
 	/*
@@ -381,8 +382,8 @@ public class OutputFormat
 		/*
 		 * Set plotting units to millimetres.
 		 */
-		mWriter.println("% Set scaling so that (x, y) coordinates are given in millimetres");
-		mWriter.println(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
+		writeLine("% Set scaling so that (x, y) coordinates are given in millimetres");
+		writeLine(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
 			" div dup scale");
 	}
 
@@ -394,28 +395,28 @@ public class OutputFormat
 	 */
 	private void writeSVGHeader(double width, double height, Color backgroundColor)
 	{
-		mWriter.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
+		writeLine("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
 
 		Date now = new Date();
-		mWriter.println("<!-- Created by " + Constants.PROGRAM_NAME +
+		writeLine("<!-- Created by " + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + " on " + now.toString() + " -->");
 
 		double pxPerMM = Constants.getScreenResolution() / Constants.MM_PER_INCH;
 
-		mWriter.println("<svg width=\"" +
+		writeLine("<svg width=\"" +
 			mCoordinateDecimal.format(width * pxPerMM) + "\"");
-		mWriter.println("  height=\"" +
+		writeLine("  height=\"" +
 			mCoordinateDecimal.format(height * pxPerMM) + "\"");
-		mWriter.println("  version=\"1.1\"");
-		mWriter.println("  overflow=\"hidden\"");
-		mWriter.println("  xml:space=\"preserve\"");
-		mWriter.println("  xmlns=\"http://www.w3.org/2000/svg\">");
+		writeLine("  version=\"1.1\"");
+		writeLine("  overflow=\"hidden\"");
+		writeLine("  xml:space=\"preserve\"");
+		writeLine("  xmlns=\"http://www.w3.org/2000/svg\">");
 
 		if (backgroundColor != null)
 		{
-			mWriter.println("<rect x=\"0\" y=\"0\" width=\"100%\"");
-			mWriter.println("  height=\"100%\" stroke=\"none\"");
-			mWriter.println("  fill=\"" +
+			writeLine("<rect x=\"0\" y=\"0\" width=\"100%\"");
+			writeLine("  height=\"100%\" stroke=\"none\"");
+			writeLine("  fill=\"" +
 				ColorDatabase.toHexString(backgroundColor) + "\" fill-opacity=\"1\"/>");
 		}
 
@@ -424,9 +425,9 @@ public class OutputFormat
 		 * Set reasonable default values for rarely used settings that are
 		 * not given each time a shape is displayed.
 		 */
-		mWriter.println("<g transform=\"scale(" + pxPerMM + ")\"");
-		mWriter.println("  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
-		mWriter.println("  clip-rule=\"nonzero\">");
+		writeLine("<g transform=\"scale(" + pxPerMM + ")\"");
+		writeLine("  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
+		writeLine("  clip-rule=\"nonzero\">");
 	}
 
 	/**
@@ -1124,11 +1125,13 @@ public class OutputFormat
 	}
 
 	/*
-	 * Write a line to PostScript or SVG file.
+	 * Write a line to PostScript, PDF or SVG file.
 	 */
 	private void writeLine(String line)
 	{
-		mWriter.println(line);
+		mWriter.write(line);
+		mWriter.write("\r\n");
+		mNCharsWritten += line.length() + 2;
 	}
 
 	/**
@@ -1366,24 +1369,24 @@ public class OutputFormat
 				/*
 				 * showpage is not included in Encapsulated PostScript files.
 				 */
-				mWriter.println("showpage");
+				writeLine("showpage");
 			}
 
-			mWriter.println("%%Trailer");
+			writeLine("%%Trailer");
 			
 			/*
 			 * Included list of fonts we used in this file but did
 			 * not include in the header.
 			 */	
-			mWriter.println("%%DocumentNeededResources:");
+			writeLine("%%DocumentNeededResources:");
 			Iterator it = mNeededFontResources.iterator();
 			while (it.hasNext())
 			{
 				String fontName = (String)(it.next());
 				if (!mSuppliedFontResources.contains(fontName))
-					mWriter.println("%%+ font " + fontName);
+					writeLine("%%+ font " + fontName);
 			}
-			mWriter.println("%%EOF");
+			writeLine("%%EOF");
 
 			if (mIsStandardOutput)
 				mWriter.flush();
@@ -1411,8 +1414,8 @@ public class OutputFormat
 		}
 		else if (mOutputType == SVG)
 		{
-			mWriter.println("</g>");
-			mWriter.println("</svg>");
+			writeLine("</g>");
+			writeLine("</svg>");
 
 			if (mIsStandardOutput)
 				mWriter.flush();
@@ -2405,12 +2408,14 @@ public class OutputFormat
 					{
 						writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
 					}
-					mWriter.print("  style=\"fill:" + ColorDatabase.toHexString(color));
+					StringBuffer sb = new StringBuffer("  style=\"fill:");
+					sb.append(ColorDatabase.toHexString(color));
 					if (alpha != 255)
 					{
-						mWriter.print(";fill-opacity:" + (alpha / 255.0f));
+						sb.append(";fill-opacity:" + (alpha / 255.0f));
 					}
-					mWriter.println(";stroke:none\"/>");
+					sb.append(";stroke:none\"/>");
+					writeLine(sb.toString());
 				}
 				else
 				{
@@ -2546,7 +2551,7 @@ public class OutputFormat
 			if (buffer.length() > 72)
 			{
 				buffer.append('\\');
-				mWriter.println(buffer.toString());
+				writeLine(buffer.toString());
 				buffer.setLength(0);
 			}
 
@@ -2577,7 +2582,7 @@ public class OutputFormat
 			}
 		}
 		buffer.append(")");
-		mWriter.println(buffer.toString());
+		writeLine(buffer.toString());
 	}
 
 	/**
