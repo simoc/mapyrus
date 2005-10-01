@@ -320,7 +320,9 @@ public class OutputFormat
 		{
 			float c[] = backgroundColor.getRGBColorComponents(null);
 			writeLine("gsave");
-			writeLine(c[0] + " " + c[1] + " " + c[2] + " setrgbcolor");
+			writeLine(mCoordinateDecimal.format(c[0]) + " " +
+				mCoordinateDecimal.format(c[1]) + " " +
+				mCoordinateDecimal.format(c[2]) + " setrgbcolor");
 			writeLine("0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
 			writeLine("grestore");
 		}
@@ -1213,7 +1215,9 @@ public class OutputFormat
 		if (singleColor != null)
 		{
 			float []c = singleColor.getColorComponents(null);
-			writeLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
+			writeLine(mCoordinateDecimal.format(c[0]) + " " +
+				mCoordinateDecimal.format(c[1]) + " " +
+				mCoordinateDecimal.format(c[2]) + " rgb");
 		}
 
 		writeLine("% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
@@ -1656,7 +1660,9 @@ public class OutputFormat
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
 			float c[] = color.getRGBColorComponents(null);
-			writeLine(c[0] + " " + c[1] + " " + c[2] + " rgb");
+			writeLine(mCoordinateDecimal.format(c[0]) + " " +
+				mCoordinateDecimal.format(c[1]) + " " +
+				mCoordinateDecimal.format(c[2]) + " rgb");
 		}
 		else
 		{
