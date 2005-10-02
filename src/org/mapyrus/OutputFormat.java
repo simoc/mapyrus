@@ -443,7 +443,12 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "4 0 obj");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Page");
-		nChars += writeLine(mWriter, "/MediaBox [0 0 " + widthInPoints + " " + heightInPoints + "]");
+		String mediaBox;
+		if (turnPage)
+			mediaBox = "/MediaBox [0 0 " + heightInPoints + " " + widthInPoints + "]";
+		else
+			mediaBox = "/MediaBox [0 0 " + widthInPoints + " " + heightInPoints + "]";
+		nChars += writeLine(mWriter, mediaBox);
 		nChars += writeLine(mWriter, "/Contents 5 0 R");
 		nChars += writeLine(mWriter, "/Resources 6 0 R");
 		nChars += writeLine(mWriter, ">>");
@@ -462,7 +467,7 @@ public class OutputFormat
 			 * on a portrait page.
 			 */
 			writeLine(mPDFGeometryWriter, "0 1 -1 0 0 0 cm");
-			writeLine(mPDFGeometryWriter, "1 0 0 1 " + (-heightInPoints) + " 0 cm");
+			writeLine(mPDFGeometryWriter, "1 0 0 1 0 " + (-heightInPoints) + " cm");
 		}
 
 		if (backgroundColor != null)
