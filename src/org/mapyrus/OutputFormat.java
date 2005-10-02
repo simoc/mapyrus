@@ -350,6 +350,7 @@ public class OutputFormat
 		writeLine(mWriter, "/m { moveto } bind def /l { lineto } bind def");
 		writeLine(mWriter, "/c { curveto } bind def /h { closepath } bind def");
 		writeLine(mWriter, "/S { stroke } bind def /f { fill } bind def");
+		writeLine(mWriter, "/W { clip } bind def /n { newpath } bind def");
 		writeLine(mWriter, "/ju { /fjy exch def /fjx exch def } bind def");
 
 		/*
@@ -387,8 +388,8 @@ public class OutputFormat
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
 		 */
-		writeLine(mWriter, "/gs { gsave 4 dict begin } bind def");
-		writeLine(mWriter, "/gr { end grestore } bind def");
+		writeLine(mWriter, "/q { gsave 4 dict begin } bind def");
+		writeLine(mWriter, "/Q { end grestore } bind def");
 		writeLine(mWriter, "");
 	}
 
@@ -1321,7 +1322,7 @@ public class OutputFormat
 		 * Taken from Adobe PostScript Language Reference Manual
 		 * (2nd Edition), p. 234.
 		 */
-		writeLine(mWriter, "gs");
+		writeLine(mWriter, "q");
 		writeLine(mWriter, "/DeviceRGB setcolorspace");
 
 		writeLine(mWriter, x + " " + y + " translate");
@@ -1426,7 +1427,7 @@ public class OutputFormat
 		 * Write ASCII85 end-of-data marker.
 		 */
 		writeLine(mWriter, "~>");
-		writeLine(mWriter, "gr");
+		writeLine(mWriter, "Q");
 	}
 
 	/**
@@ -1436,13 +1437,11 @@ public class OutputFormat
 	public void saveState()
 	{
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
-		{
-			writeLine(mWriter, "gs");
-		}
+			writeLine(mWriter, "q");
+		else if (mOutputType == PDF)
+			writeLine(mPDFGeometryWriter, "q");
 		else if (mOutputType == SVG)
-		{
 			writeLine(mWriter, "<g>");
-		}
 	}
 
 	/**
@@ -1457,7 +1456,12 @@ public class OutputFormat
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
-			writeLine(mWriter, "gr");
+			writeLine(mWriter, "Q");
+			retval = true;
+		}
+		else if (mOutputType == PDF)
+		{
+			writeLine(mPDFGeometryWriter, "Q");
 			retval = true;
 		}
 		else 
@@ -2766,7 +2770,7 @@ public class OutputFormat
 				writeShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f),
 					mOutputType, pw, null);
 			}
-			writeLine(pw, "clip newpath");
+			writeLine(pw, "W n");
 		}
 	}
 
