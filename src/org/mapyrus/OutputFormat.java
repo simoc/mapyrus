@@ -51,6 +51,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -96,14 +97,19 @@ public class OutputFormat
 	private static final int POSTSCRIPT_IMAGE = 5;
 
 	/*
+	 * Portable Documnet Format output.
+	 */
+	private static final int PDF = 6;
+
+	/*
 	 * Scalable Vector Graphics (SVG) output.
 	 */
-	private static final int SVG = 6;
+	private static final int SVG = 7;
 
 	/*
 	 * HTML image map being created in combination with an image.
 	 */
-	private static final int IMAGEMAP = 7;
+	private static final int IMAGEMAP = 8;
 
 	/*
 	 * Type of justification for labels on page, as used
@@ -126,7 +132,6 @@ public class OutputFormat
 	private String mFilename;
 	private PrintWriter mWriter;
 	private OutputStream mOutputStream;
-	private int mNCharsWritten;
 	private Graphics2D mGraphics2D;
 	private boolean mIsPipedOutput;	
 	private boolean mIsStandardOutput;
@@ -207,6 +212,15 @@ public class OutputFormat
 	private int mGradientCounter;
 
 	/*
+	 * File offset of each object in PDF file and buffers containing
+	 * all geometry and images to be included in PDF file. 
+	 */
+	private ArrayList mPDFFileOffsets;
+	private StringWriter mPDFGeometryStringWriter;
+	private PrintWriter mPDFGeometryWriter;
+	private ArrayList mPDFImageObjects;
+
+	/*
 	 * Format for writing coordinate values.
 	 */
 	private DecimalFormat mCoordinateDecimal = new DecimalFormat("#.###",
@@ -233,31 +247,31 @@ public class OutputFormat
 		StringBuffer sb = new StringBuffer("%!PS-Adobe-3.0");
 		if (mFormatName.equals("eps") || mFormatName.equals("epsimage"))
 			sb.append(" EPSF-3.0");
-		writeLine(sb.toString());
+		writeLine(mWriter, sb.toString());
 
 		if (turnPage)
-			writeLine("%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
+			writeLine(mWriter, "%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
 		else
-			writeLine("%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
+			writeLine(mWriter, "%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 
 		if ((!mFormatName.equals("eps")) && (!mFormatName.equals("epsimage")))
-			writeLine("%%Pages: 1");
+			writeLine(mWriter, "%%Pages: 1");
 
-		writeLine("%%DocumentData: Clean7Bit");
-		writeLine("%%LanguageLevel: 2");
-		writeLine("%%Creator: (" + Constants.PROGRAM_NAME +
+		writeLine(mWriter, "%%DocumentData: Clean7Bit");
+		writeLine(mWriter, "%%LanguageLevel: 2");
+		writeLine(mWriter, "%%Creator: (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
-		writeLine("%%OperatorMessage: (Mapyrus Output...)");
+		writeLine(mWriter, "%%OperatorMessage: (Mapyrus Output...)");
 		Date now = new Date();
-		writeLine("%%CreationDate: (" + now.toString() + ")");
+		writeLine(mWriter, "%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
 		if (username != null)
-			writeLine("%%For: (" + username + ")");
+			writeLine(mWriter, "%%For: (" + username + ")");
 
 		/*
 		 * List fonts included in this PostScript file.
 		 */
-		writeLine("%%DocumentRequiredResources: (atend)");
+		writeLine(mWriter, "%%DocumentRequiredResources: (atend)");
 		if (fontList.size() > 0)
 		{
 			sb = new StringBuffer("%%DocumentSuppliedResources: font");
@@ -268,35 +282,35 @@ public class OutputFormat
 				sb.append(" ").append(psFont.getName());
 				mSuppliedFontResources.add(psFont.getName());
 			}
-			writeLine(sb.toString());
+			writeLine(mWriter, sb.toString());
 		}
-		writeLine("%%EndComments");
-		writeLine("");
-		writeLine("% Resolution " + resolution + " DPI");
+		writeLine(mWriter, "%%EndComments");
+		writeLine(mWriter, "");
+		writeLine(mWriter, "% Resolution " + resolution + " DPI");
 
 		/*
 		 * Inline font definitions.
 		 */
-		writeLine("%%BeginSetup");
+		writeLine(mWriter, "%%BeginSetup");
 		Iterator it = fontList.iterator();
 		while (it.hasNext())
 		{
 			PostScriptFont psFont = (PostScriptFont)(it.next());
 
-			writeLine("%%BeginResource: font " + psFont.getName());
+			writeLine(mWriter, "%%BeginResource: font " + psFont.getName());
 			String fontDefinition = psFont.getFontDefinition();
-			writeLine(fontDefinition);
-			writeLine("%%EndResource");			
+			writeLine(mWriter, fontDefinition);
+			writeLine(mWriter, "%%EndResource");			
 		}
-		writeLine("%%EndSetup");
+		writeLine(mWriter, "%%EndSetup");
 
 		/*
 		 * Set color and linestyle to reasonable default values.
 		 * Taken from 'initgraphics' operator example in PostScript Language
 		 * Reference Manual.
 		 */
-		writeLine("1 setlinewidth 0 setlinecap 0 setlinejoin");
-		writeLine("[] 0 setdash 0 setgray 10 setmiterlimit");
+		writeLine(mWriter, "1 setlinewidth 0 setlinecap 0 setlinejoin");
+		writeLine(mWriter, "[] 0 setdash 0 setgray 10 setmiterlimit");
 
 		if (turnPage)
 		{
@@ -304,27 +318,28 @@ public class OutputFormat
 			 * Turn page 90 degrees so that a landscape orientation page appears
 			 * on a portrait page.
 			 */
-			writeLine("% Turn page 90 degrees.");
-			writeLine("90 rotate 0 " + heightInPoints + " neg translate");
+			writeLine(mWriter, "% Turn page 90 degrees.");
+			writeLine(mWriter, "90 rotate 0 " + heightInPoints + " neg translate");
 		}
 
 		/* 
 		 * Prevent anything being displayed outside bounding box we've just defined.
 		 */
-		writeLine("0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
+		writeLine(mWriter, "0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
 
 		/*
 		 * Set background color for page.
 		 */
+		writeLine(mWriter, "/RG { setrgbcolor } bind def");
 		if (backgroundColor != null)
 		{
 			float c[] = backgroundColor.getRGBColorComponents(null);
-			writeLine("gsave");
-			writeLine(mCoordinateDecimal.format(c[0]) + " " +
+			writeLine(mWriter, "gsave");
+			writeLine(mWriter, mCoordinateDecimal.format(c[0]) + " " +
 				mCoordinateDecimal.format(c[1]) + " " +
-				mCoordinateDecimal.format(c[2]) + " setrgbcolor");
-			writeLine("0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
-			writeLine("grestore");
+				mCoordinateDecimal.format(c[2]) + " RG");
+			writeLine(mWriter, "0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
+			writeLine(mWriter, "grestore");
 		}
 
 		/*
@@ -332,20 +347,20 @@ public class OutputFormat
 		 * Bind all operators names to improve performance (see 3.11 of
 		 * PostScript Language Reference Manual).
 		 */
-		writeLine("/m { moveto } bind def /l { lineto } bind def");
-		writeLine("/c { curveto } bind def /h { closepath } bind def");
-		writeLine("/S { stroke } bind def /f { fill } bind def");
-		writeLine("/j { /fjy exch def /fjx exch def } bind def");
+		writeLine(mWriter, "/m { moveto } bind def /l { lineto } bind def");
+		writeLine(mWriter, "/c { curveto } bind def /h { closepath } bind def");
+		writeLine(mWriter, "/S { stroke } bind def /f { fill } bind def");
+		writeLine(mWriter, "/ju { /fjy exch def /fjx exch def } bind def");
 
 		/*
 		 * Define font and dictionary entries for font size and justification.
 		 * Don't bind these as font loading operators may be overridden in interpreter.
 		 */
-		writeLine("/font {");
-		writeLine("/foutline exch def");
-		writeLine("/frot exch radtodeg def");
-		writeLine("/fsize exch def findfont fsize scalefont setfont } def");
-		writeLine("/radtodeg { 180 mul 3.1415629 div } bind def");
+		writeLine(mWriter, "/font {");
+		writeLine(mWriter, "/foutline exch def");
+		writeLine(mWriter, "/frot exch radtodeg def");
+		writeLine(mWriter, "/fsize exch def findfont fsize scalefont setfont } def");
+		writeLine(mWriter, "/radtodeg { 180 mul 3.1415629 div } bind def");
 
 		/*
 		 * Draw text string, after setting correct position, rotation,
@@ -355,24 +370,119 @@ public class OutputFormat
 		 *
 		 * Line number (starting at 0) and string to show are passed to this procedure.
 		 */
-		writeLine("/t { gsave currentpoint translate frot rotate");
-		writeLine("dup stringwidth pop fjx mul");
-		writeLine("3 -1 roll neg fjy add fsize mul");
-		writeLine("rmoveto foutline 0 gt");
-		writeLine("{false charpath foutline 0 0 2 sl stroke} {show} ifelse");
-		writeLine("grestore newpath } bind def");
+		writeLine(mWriter, "/t { gsave currentpoint translate frot rotate");
+		writeLine(mWriter, "dup stringwidth pop fjx mul");
+		writeLine(mWriter, "3 -1 roll neg fjy add fsize mul");
+		writeLine(mWriter, "rmoveto foutline 0 gt");
+		writeLine(mWriter, "{false charpath foutline w 0 j 0 J 2 M stroke} {show} ifelse");
+		writeLine(mWriter, "grestore newpath } bind def");
 
-		writeLine("/rgb { setrgbcolor } bind def");
-		writeLine("/sl { setmiterlimit setlinejoin setlinecap");
-		writeLine("setlinewidth } bind def");
+		writeLine(mWriter, "/w { setlinewidth } bind def");
+		writeLine(mWriter, "/J { setlinecap } bind def");
+		writeLine(mWriter, "/j { setlinejoin } bind def");
+		writeLine(mWriter, "/M { setmiterlimit } bind def");
+		writeLine(mWriter, "/d { setdash } bind def");
 
 		/*
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
 		 */
-		writeLine("/gs { gsave 4 dict begin } bind def");
-		writeLine("/gr { end grestore } bind def");
-		writeLine("");
+		writeLine(mWriter, "/gs { gsave 4 dict begin } bind def");
+		writeLine(mWriter, "/gr { end grestore } bind def");
+		writeLine(mWriter, "");
+	}
+
+	/**
+	 * Write PDF file header.
+	 * @param width width of page in mm.
+	 * @param height height of page in mm.
+	 * @param resolution resolution of page in DPI.
+	 * @param turnPage flag true when page is to be rotated 90 degrees.
+	 * @param fontList list of PostScript fonts to include in header.
+	 * @param backgroundColor background color for page, or null if no background.
+	 */
+	private void writePDFHeader(double width, double height,
+		int resolution, boolean turnPage, ArrayList fontList, Color backgroundColor)
+		throws IOException, MapyrusException
+	{
+		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *	Constants.POINTS_PER_INCH);
+		long heightInPoints = Math.round(height / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH);
+
+		mPDFFileOffsets = new ArrayList();
+
+		int nChars = writeLine(mWriter, "%PDF-1.4");
+
+		mPDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(mWriter, "1 0 obj");
+		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, "/Type /Catalog");
+		nChars += writeLine(mWriter, "/Outlines 2 0 R");
+		nChars += writeLine(mWriter, "/Pages 3 0 R");
+		nChars += writeLine(mWriter, ">>");
+		nChars += writeLine(mWriter, "endobj");
+
+		mPDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(mWriter, "2 0 obj");
+		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, "/Type /Outlines");
+		nChars += writeLine(mWriter, "/Count 0");
+		nChars += writeLine(mWriter, ">>");
+		nChars += writeLine(mWriter, "endobj");
+		mWriter.flush();
+
+		mPDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(mWriter, "3 0 obj");
+		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, "/Type /Pages");
+		nChars += writeLine(mWriter, "/Kids [4 0 R]");
+		nChars += writeLine(mWriter, "/Count 1");
+		nChars += writeLine(mWriter, ">>");
+		nChars += writeLine(mWriter, "endobj");
+
+		mPDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(mWriter, "4 0 obj");
+		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, "/Type /Page");
+		nChars += writeLine(mWriter, "/MediaBox [0 0 " + widthInPoints + " " + heightInPoints + "]");
+		nChars += writeLine(mWriter, "/Contents 5 0 R");
+		nChars += writeLine(mWriter, "/Resources 6 0 R");
+		nChars += writeLine(mWriter, ">>");
+		nChars += writeLine(mWriter, "endobj");
+
+		mPDFFileOffsets.add(new Integer(nChars));
+
+		mPDFImageObjects = new ArrayList();
+		mPDFGeometryStringWriter = new StringWriter();
+		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
+
+		if (turnPage)
+		{
+			/*
+			 * Turn page 90 degrees so that a landscape orientation page appears
+			 * on a portrait page.
+			 */
+			writeLine(mPDFGeometryWriter, "0 1 -1 0 0 0 cm");
+			writeLine(mPDFGeometryWriter, "1 0 0 1 " + (-heightInPoints) + " 0 cm");
+		}
+
+		if (backgroundColor != null)
+		{
+			/*
+			 * Write object to set page background.
+			 */
+			float components[] = backgroundColor.getColorComponents(null);
+			writeLine(mPDFGeometryWriter, "q");
+			writeLine(mPDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
+			for (int i = 0; i < components.length; i++)
+				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(components[i]));
+			writeLine(mPDFGeometryWriter, "rg f Q");
+		}
+
+		/*
+		 * Set scale so that we can give all coordinate positions in millimetres.
+		 */
+		double scale = Constants.POINTS_PER_INCH / Constants.MM_PER_INCH;
+		writeLine(mPDFGeometryWriter, scale + " 0 0 " + scale + " 0 0 cm");
 	}
 
 	/*
@@ -384,8 +494,8 @@ public class OutputFormat
 		/*
 		 * Set plotting units to millimetres.
 		 */
-		writeLine("% Set scaling so that (x, y) coordinates are given in millimetres");
-		writeLine(Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
+		writeLine(mWriter, "% Set scaling so that (x, y) coordinates are given in millimetres");
+		writeLine(mWriter, Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
 			" div dup scale");
 	}
 
@@ -397,28 +507,28 @@ public class OutputFormat
 	 */
 	private void writeSVGHeader(double width, double height, Color backgroundColor)
 	{
-		writeLine("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
+		writeLine(mWriter, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
 
 		Date now = new Date();
-		writeLine("<!-- Created by " + Constants.PROGRAM_NAME +
+		writeLine(mWriter, "<!-- Created by " + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + " on " + now.toString() + " -->");
 
 		double pxPerMM = Constants.getScreenResolution() / Constants.MM_PER_INCH;
 
-		writeLine("<svg width=\"" +
+		writeLine(mWriter, "<svg width=\"" +
 			mCoordinateDecimal.format(width * pxPerMM) + "\"");
-		writeLine("  height=\"" +
+		writeLine(mWriter, "  height=\"" +
 			mCoordinateDecimal.format(height * pxPerMM) + "\"");
-		writeLine("  version=\"1.1\"");
-		writeLine("  overflow=\"hidden\"");
-		writeLine("  xml:space=\"preserve\"");
-		writeLine("  xmlns=\"http://www.w3.org/2000/svg\">");
+		writeLine(mWriter, "  version=\"1.1\"");
+		writeLine(mWriter, "  overflow=\"hidden\"");
+		writeLine(mWriter, "  xml:space=\"preserve\"");
+		writeLine(mWriter, "  xmlns=\"http://www.w3.org/2000/svg\">");
 
 		if (backgroundColor != null)
 		{
-			writeLine("<rect x=\"0\" y=\"0\" width=\"100%\"");
-			writeLine("  height=\"100%\" stroke=\"none\"");
-			writeLine("  fill=\"" +
+			writeLine(mWriter, "<rect x=\"0\" y=\"0\" width=\"100%\"");
+			writeLine(mWriter, "  height=\"100%\" stroke=\"none\"");
+			writeLine(mWriter, "  fill=\"" +
 				ColorDatabase.toHexString(backgroundColor) + "\" fill-opacity=\"1\"/>");
 		}
 
@@ -427,9 +537,9 @@ public class OutputFormat
 		 * Set reasonable default values for rarely used settings that are
 		 * not given each time a shape is displayed.
 		 */
-		writeLine("<g transform=\"scale(" + pxPerMM + ")\"");
-		writeLine("  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
-		writeLine("  clip-rule=\"nonzero\">");
+		writeLine(mWriter, "<g transform=\"scale(" + pxPerMM + ")\"");
+		writeLine(mWriter, "  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
+		writeLine(mWriter, "  clip-rule=\"nonzero\">");
 	}
 
 	/**
@@ -684,7 +794,7 @@ public class OutputFormat
 				String flag = token.substring(17);
 				lineAntiAliasing = flag.equalsIgnoreCase("true");
 			}
-			else if (token.startsWith("update=") && mOutputType != SVG)
+			else if (token.startsWith("update=") && mOutputType != SVG && mOutputType != PDF)
 			{
 				String flag = token.substring(7);
 				mIsUpdatingFile = flag.equalsIgnoreCase("true");
@@ -712,6 +822,7 @@ public class OutputFormat
 
 		if ((mOutputType == POSTSCRIPT_GEOMETRY ||
 			mOutputType == POSTSCRIPT_IMAGE ||
+			mOutputType == PDF ||
 			mOutputType == IMAGE_FILE ||
 			mOutputType == SVG) && (!mIsUpdatingFile))
 		{
@@ -765,11 +876,11 @@ public class OutputFormat
 		 * Setup file we are writing to.
 		 */
 		if (mOutputType == POSTSCRIPT_GEOMETRY ||
-			mOutputType == POSTSCRIPT_IMAGE)
+			mOutputType == POSTSCRIPT_IMAGE ||
+			mOutputType == PDF)
 		{
 			if (mIsUpdatingFile)
 			{
-				
 				PostScriptFile ps = new PostScriptFile(filename);
 				if (ps.getNumberOfPages() > 1)
 				{
@@ -798,7 +909,10 @@ public class OutputFormat
 
 			mSuppliedFontResources = new HashSet();
 
-			writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
+			if (mOutputType == PDF)
+				writePDFHeader(width, height, resolution, turnPage, fontList, backgroundColor);
+			else
+				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
 			mNeededFontResources = new HashSet();
 
@@ -808,9 +922,9 @@ public class OutputFormat
 				 * Append contents of existing file as an included document
 				 * to the new file we are creating.
 				 */
-				writeLine("save");
-				writeLine("/showpage {} def");
-				writeLine("%%BeginDocument: " + filename);
+				writeLine(mWriter, "save");
+				writeLine(mWriter, "/showpage {} def");
+				writeLine(mWriter, "%%BeginDocument: " + filename);
 				BufferedReader r = null;
 
 				try
@@ -819,7 +933,7 @@ public class OutputFormat
 					String line;
 					while ((line = r.readLine()) != null)
 					{
-						writeLine(line);
+						writeLine(mWriter, line);
 					}
 				}
 				finally
@@ -833,10 +947,11 @@ public class OutputFormat
 					{
 					}
 				}
-				writeLine("%%EndDocument");
-				writeLine("restore");
+				writeLine(mWriter, "%%EndDocument");
+				writeLine(mWriter, "restore");
 			}
-			writePostScriptScaling();
+			if (mOutputType != PDF)
+				writePostScriptScaling();
 		}
 		else if (mOutputType == SVG)
 		{
@@ -851,7 +966,7 @@ public class OutputFormat
 			mGraphics2D = (Graphics2D)anyImage.getGraphics();
 		}
 
-		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != SVG)
+		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != SVG && mOutputType != PDF)
 		{
 			/*
 			 * Create image to draw into.
@@ -976,6 +1091,10 @@ public class OutputFormat
 		else if (mFormatName.equals("epsimage"))
 		{
 			mOutputType = POSTSCRIPT_IMAGE;
+		}
+		else if (mFormatName.equals("pdf") || mFormatName.equals("application/pdf"))
+		{
+			mOutputType = PDF;
 		}
 		else if (mFormatName.equals("svg") ||
 			mFormatName.equals("image/svg+xml"))
@@ -1128,12 +1247,13 @@ public class OutputFormat
 
 	/*
 	 * Write a line to PostScript, PDF or SVG file.
+	 * @return number of characters written to file.
 	 */
-	private void writeLine(String line)
+	private int writeLine(PrintWriter writer, String line)
 	{
-		mWriter.write(line);
-		mWriter.write("\r\n");
-		mNCharsWritten += line.length() + 2;
+		writer.write(line);
+		writer.write("\r\n");
+		return(line.length() + 2);
 	}
 
 	/**
@@ -1196,18 +1316,18 @@ public class OutputFormat
 		 * Taken from Adobe PostScript Language Reference Manual
 		 * (2nd Edition), p. 234.
 		 */
-		writeLine("gs");
-		writeLine("/DeviceRGB setcolorspace");
+		writeLine(mWriter, "gs");
+		writeLine(mWriter, "/DeviceRGB setcolorspace");
 
-		writeLine(x + " " + y + " translate");
-		writeLine(rotation + " radtodeg rotate");
-		writeLine(width + " " + height + " scale");
+		writeLine(mWriter, x + " " + y + " translate");
+		writeLine(mWriter, rotation + " radtodeg rotate");
+		writeLine(mWriter, width + " " + height + " scale");
 
 		/*
 		 * Image is centred at each point.
 		 * Shift image left and down half it's size so that it is displayed centred.
 		 */
-		writeLine("-0.5 -0.5 translate");
+		writeLine(mWriter, "-0.5 -0.5 translate");
 
 		/*
 		 * Set color for drawing single color images.
@@ -1215,35 +1335,35 @@ public class OutputFormat
 		if (singleColor != null)
 		{
 			float []c = singleColor.getColorComponents(null);
-			writeLine(mCoordinateDecimal.format(c[0]) + " " +
+			writeLine(mWriter, mCoordinateDecimal.format(c[0]) + " " +
 				mCoordinateDecimal.format(c[1]) + " " +
-				mCoordinateDecimal.format(c[2]) + " rgb");
+				mCoordinateDecimal.format(c[2]) + " RG");
 		}
 
-		writeLine("% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
-		writeLine("<<");
-		writeLine("/ImageType 1");
-		writeLine("/Width " + reducedPixelWidth);
-		writeLine("/Height " + reducedPixelHeight);
+		writeLine(mWriter, "% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
+		writeLine(mWriter, "<<");
+		writeLine(mWriter, "/ImageType 1");
+		writeLine(mWriter, "/Width " + reducedPixelWidth);
+		writeLine(mWriter, "/Height " + reducedPixelHeight);
 		if (singleColor != null)
 		{
-			writeLine("/BitsPerComponent 1");
-			writeLine("/Decode [0 1]");
+			writeLine(mWriter, "/BitsPerComponent 1");
+			writeLine(mWriter, "/Decode [0 1]");
 		}
 		else
 		{
-			writeLine("/BitsPerComponent 8");
-			writeLine("/Decode [0 1 0 1 0 1]");
+			writeLine(mWriter, "/BitsPerComponent 8");
+			writeLine(mWriter, "/Decode [0 1 0 1 0 1]");
 		}
-		writeLine("/ImageMatrix [" + reducedPixelWidth + " 0 0 " +
+		writeLine(mWriter, "/ImageMatrix [" + reducedPixelWidth + " 0 0 " +
 			-reducedPixelHeight + " 0 " + reducedPixelHeight + "]");
-		writeLine("/DataSource currentfile /ASCII85Decode filter");
-		writeLine(">>");
+		writeLine(mWriter, "/DataSource currentfile /ASCII85Decode filter");
+		writeLine(mWriter, ">>");
 
 		if (singleColor != null)
-			writeLine("imagemask");
+			writeLine(mWriter, "imagemask");
 		else
-			writeLine("image");
+			writeLine(mWriter, "image");
 
 		/*
 		 * Write ASCII85 encoded string containing all pixel values.
@@ -1300,8 +1420,8 @@ public class OutputFormat
 		/*
 		 * Write ASCII85 end-of-data marker.
 		 */
-		writeLine("~>");
-		writeLine("gr");
+		writeLine(mWriter, "~>");
+		writeLine(mWriter, "gr");
 	}
 
 	/**
@@ -1312,11 +1432,11 @@ public class OutputFormat
 	{
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
-			writeLine("gs");
+			writeLine(mWriter, "gs");
 		}
 		else if (mOutputType == SVG)
 		{
-			writeLine("<g>");
+			writeLine(mWriter, "<g>");
 		}
 	}
 
@@ -1332,13 +1452,13 @@ public class OutputFormat
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
-			writeLine("gr");
+			writeLine(mWriter, "gr");
 			retval = true;
 		}
 		else 
 		{
 			if (mOutputType == SVG)
-				writeLine("</g>");
+				writeLine(mWriter, "</g>");
 
 			/*
 			 * Can't restore state when drawing to an image or SVG file.  Caller
@@ -1373,24 +1493,24 @@ public class OutputFormat
 				/*
 				 * showpage is not included in Encapsulated PostScript files.
 				 */
-				writeLine("showpage");
+				writeLine(mWriter, "showpage");
 			}
 
-			writeLine("%%Trailer");
+			writeLine(mWriter, "%%Trailer");
 			
 			/*
 			 * Included list of fonts we used in this file but did
 			 * not include in the header.
 			 */	
-			writeLine("%%DocumentNeededResources:");
+			writeLine(mWriter, "%%DocumentNeededResources:");
 			Iterator it = mNeededFontResources.iterator();
 			while (it.hasNext())
 			{
 				String fontName = (String)(it.next());
 				if (!mSuppliedFontResources.contains(fontName))
-					writeLine("%%+ font " + fontName);
+					writeLine(mWriter, "%%+ font " + fontName);
 			}
-			writeLine("%%EOF");
+			writeLine(mWriter, "%%EOF");
 
 			if (mIsStandardOutput)
 				mWriter.flush();
@@ -1416,10 +1536,78 @@ public class OutputFormat
 				}
 			}
 		}
+		else if (mOutputType == PDF)
+		{
+			/*
+			 * Now that we have the complete geometry, we can write it to the PDF file.
+			 */
+			mPDFGeometryWriter.flush();
+			String geometry = mPDFGeometryStringWriter.toString();
+			int nChars = writeLine(mWriter, "5 0 obj");
+			nChars += writeLine(mWriter, "<< /Length " + geometry.length() + " >>");
+			nChars += writeLine(mWriter, "stream");
+			nChars += writeLine(mWriter, geometry);
+			nChars += writeLine(mWriter, "endstream");
+			nChars += writeLine(mWriter, "endobj");
+
+			Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(mWriter, "6 0 obj");
+			nChars += writeLine(mWriter, "[/PDF]");
+			nChars += writeLine(mWriter, "endobj");
+
+			Iterator it = mPDFImageObjects.iterator();
+			while (it.hasNext())
+			{
+				nChars += writeLine(mWriter, "%" + it.next().toString());
+			}
+			
+			/*
+			 * Write cross reference table giving file offset of each
+			 * object in PDF file.
+			 */
+			writeLine(mWriter, "xref");
+			writeLine(mWriter, "0 " + (mPDFFileOffsets.size() + 1));
+			writeLine(mWriter, "0000000000 65535 f");
+			it = mPDFFileOffsets.iterator();
+			while (it.hasNext())
+			{
+				String fileOffset = it.next().toString();
+				int padding = 10 - fileOffset.length();
+				StringBuffer sb = new StringBuffer();
+				while (padding-- > 0)
+					sb.append('0');
+				sb.append(fileOffset);
+				sb.append(" 00000 n");
+				writeLine(mWriter, sb.toString());
+			}
+
+			writeLine(mWriter, "trailer");
+			writeLine(mWriter, "<< /Size " + (mPDFFileOffsets.size() + 1) + " /Root 1 0 R >>");
+
+			/*
+			 * Write file offset of start of cross reference table.
+			 */
+			writeLine(mWriter, "startxref");
+			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			writeLine(mWriter, Integer.toString(offset.intValue() + nChars));
+			writeLine(mWriter, "%%EOF");
+
+			if (mIsStandardOutput)
+				mWriter.flush();
+			else
+				mWriter.close();
+
+			if (mWriter.checkError())
+			{
+				throw new MapyrusException(mFilename +
+					": " + MapyrusMessages.get(MapyrusMessages.ERROR_PS));
+			}
+		}
 		else if (mOutputType == SVG)
 		{
-			writeLine("</g>");
-			writeLine("</svg>");
+			writeLine(mWriter, "</g>");
+			writeLine(mWriter, "</svg>");
 
 			if (mIsStandardOutput)
 				mWriter.flush();
@@ -1517,14 +1705,14 @@ public class OutputFormat
 				 * Re-encode font from StandardEncoding to ISOLatin1Encoding
 				 * before it is used.
 				 */
-				writeLine(isoLatinEncode(fontName));
+				writeLine(mWriter, isoLatinEncode(fontName));
 				mEncodeAsISOLatin1.remove(fontName);
 			}
 
 			/*
 			 * Set font and size for labelling.
 			 */
-			writeLine("/" + fontName + " " +
+			writeLine(mWriter, "/" + fontName + " " +
 				fontSize + " " +
 				fontRotation + " " +
 				outlineWidth + " font");
@@ -1647,7 +1835,7 @@ public class OutputFormat
 			 * Define dictionary entries for justification settings for PostScript
 			 * procedure to use for aligning text correctly itself.
 			 */
-			writeLine(mJustificationShiftX + " " + mJustificationShiftY + " j");
+			writeLine(mWriter, mJustificationShiftX + " " + mJustificationShiftY + " ju");
 		}
 	}
 
@@ -1657,12 +1845,25 @@ public class OutputFormat
 	 */
 	public void setColorAttribute(Color color)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 		{
 			float c[] = color.getRGBColorComponents(null);
-			writeLine(mCoordinateDecimal.format(c[0]) + " " +
-				mCoordinateDecimal.format(c[1]) + " " +
-				mCoordinateDecimal.format(c[2]) + " rgb");
+			PrintWriter pw;
+			
+			if (mOutputType == PDF)
+				pw = mPDFGeometryWriter;
+			else
+				pw = mWriter;
+
+			StringBuffer sb = new StringBuffer();
+			sb.append(mCoordinateDecimal.format(c[0]));
+			sb.append(' ');
+			sb.append(mCoordinateDecimal.format(c[1]));
+			sb.append(' ');
+			sb.append(mCoordinateDecimal.format(c[2]));
+			writeLine(pw, sb.toString() + " RG");
+			if (mOutputType == PDF)
+				writeLine(pw, sb.toString() + " rg");
 		}
 		else
 		{
@@ -1676,8 +1877,14 @@ public class OutputFormat
 	 */
 	public void setLinestyleAttribute(BasicStroke linestyle)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 		{
+			PrintWriter pw;
+			if (mOutputType == PDF)
+				pw = mPDFGeometryWriter;
+			else
+				pw = mWriter;
+
 			/*
 			 * Convert BasicStroke end cap and line join values to PostScript.
 			 */
@@ -1697,9 +1904,9 @@ public class OutputFormat
 			else /* BEVEL */
 				join = 2;
 
-			writeLine(linestyle.getLineWidth() + " " +
-				cap + " " + join + " " +
-				linestyle.getMiterLimit() + " sl");
+			writeLine(pw, mCoordinateDecimal.format(linestyle.getLineWidth()) + " w " +
+				cap + " J " + join + " j " +
+				mCoordinateDecimal.format(linestyle.getMiterLimit()) + " M");
 
 			/*
 			 * If there a dash pattern then set that too.
@@ -1716,15 +1923,15 @@ public class OutputFormat
 				}
 				s.append("] ");
 				s.append(linestyle.getDashPhase());
-				s.append(" setdash");
-				writeLine(s.toString());
+				s.append(" d");
+				writeLine(pw, s.toString());
 			}
 			else
 			{
 				/*
 				 * Remove any dashed line previously defined.
 				 */
-				writeLine("[] 0 setdash");
+				writeLine(pw, "[] 0 d");
 			}
 		}
 		else
@@ -1740,7 +1947,7 @@ public class OutputFormat
 	 */
 	public void setClipAttribute(ArrayList clipPaths)
 	{
-		if (mOutputType != POSTSCRIPT_GEOMETRY)
+		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF)
 		{
 			mGraphics2D.setClip(null);
 			mIsClipPathActive = (clipPaths != null && clipPaths.size() > 0);
@@ -1749,7 +1956,7 @@ public class OutputFormat
 				if (mOutputType == SVG)
 				{
 					mClipPathCounter++;
-					writeLine("<clipPath id=\"clip" + mClipPathCounter + "\">");
+					writeLine(mWriter, "<clipPath id=\"clip" + mClipPathCounter + "\">");
 				}
 
 				for (int i = 0; i < clipPaths.size(); i++)
@@ -1757,9 +1964,9 @@ public class OutputFormat
 					GeometricPath clipPath = (GeometricPath)(clipPaths.get(i));
 					if (mOutputType == SVG)
 					{
-						writeLine("<path d=\"");
-						writeShape(clipPath.getShape(), mOutputType, null);
-						writeLine("\"/>");
+						writeLine(mWriter, "<path d=\"");
+						writeShape(clipPath.getShape(), mOutputType, mWriter, null);
+						writeLine(mWriter, "\"/>");
 					}
 					else
 					{
@@ -1768,7 +1975,7 @@ public class OutputFormat
 				}
 
 				if (mOutputType == SVG)
-					writeLine("</clipPath>");
+					writeLine(mWriter, "</clipPath>");
 			}
 		}
 	}
@@ -1776,7 +1983,7 @@ public class OutputFormat
 	/*
 	 * Walk through path, converting it to output format.
 	 */	
-	private void writeShape(Shape shape, int outputType, String scriptCommands)
+	private void writeShape(Shape shape, int outputType, PrintWriter pw, String scriptCommands)
 	{
 		PathIterator pi;
 
@@ -1808,7 +2015,8 @@ public class OutputFormat
 					lastY = coords[1];
 					if (outputType == SVG)
 					{
-						writeLine("M " + mCoordinateDecimal.format(lastX) +
+						writeLine(pw,
+							"M " + mCoordinateDecimal.format(lastX) +
 							" " + mCoordinateDecimal.format(mPageHeight - lastY));
 					}
 					else if (outputType == IMAGEMAP)
@@ -1824,7 +2032,8 @@ public class OutputFormat
 					}
 					else
 					{
-						writeLine(mCoordinateDecimal.format(lastX) +
+						writeLine(pw,
+							mCoordinateDecimal.format(lastX) +
 							" " + mCoordinateDecimal.format(lastY) + " m");
 					}
 					skippedLastSegment = false;
@@ -1846,11 +2055,11 @@ public class OutputFormat
 							 * and vertical line segments.
 							 */
 							if (x == lastX)
-								writeLine("V " + sy);
+								writeLine(pw, "V " + sy);
 							else if (y == lastY)
-								writeLine("H " + sx);
+								writeLine(pw, "H " + sx);
 							else
-								writeLine("L " + sx + " " + sy);
+								writeLine(pw, "L " + sx + " " + sy);
 						}
 						else if (outputType == IMAGEMAP)
 						{
@@ -1859,7 +2068,7 @@ public class OutputFormat
 						}
 						else
 						{
-							writeLine(mCoordinateDecimal.format(x) +
+							writeLine(pw, mCoordinateDecimal.format(x) +
 								" " + mCoordinateDecimal.format(y) + " l");
 						}
 						lastX = x;
@@ -1880,7 +2089,7 @@ public class OutputFormat
 					{
 						if (outputType == SVG)
 						{
-							writeLine("L " + mCoordinateDecimal.format(x) +
+							writeLine(pw, "L " + mCoordinateDecimal.format(x) +
 								" " + mCoordinateDecimal.format(mPageHeight - y));
 						}
 						else if (outputType == IMAGEMAP)
@@ -1893,14 +2102,14 @@ public class OutputFormat
 						}
 						else
 						{
-							writeLine(mCoordinateDecimal.format(x) + " " +
+							writeLine(pw, mCoordinateDecimal.format(x) + " " +
 								mCoordinateDecimal.format(y) + " l");
 						}
 					}
 
 					if (outputType == SVG)
 					{
-						writeLine("z");
+						writeLine(pw, "z");
 					}
 					else if (outputType == IMAGEMAP)
 					{
@@ -1912,7 +2121,7 @@ public class OutputFormat
 					}
 					else
 					{
-						writeLine("h");
+						writeLine(pw, "h");
 					}
 					skippedLastSegment = false;
 					break;
@@ -1920,7 +2129,7 @@ public class OutputFormat
 				case PathIterator.SEG_CUBICTO:
 					if (outputType == SVG)
 					{
-						writeLine("C " + mCoordinateDecimal.format(coords[0]) + " " +
+						writeLine(pw, "C " + mCoordinateDecimal.format(coords[0]) + " " +
 							mCoordinateDecimal.format(mPageHeight - coords[1]) + " " +
 							mCoordinateDecimal.format(coords[2]) + " " +
 							mCoordinateDecimal.format(mPageHeight - coords[3]) + " " +
@@ -1929,7 +2138,7 @@ public class OutputFormat
 					}
 					else
 					{
-						writeLine(mCoordinateDecimal.format(coords[0]) + " " +
+						writeLine(pw, mCoordinateDecimal.format(coords[0]) + " " +
 							mCoordinateDecimal.format(coords[1]) + " " +
 							mCoordinateDecimal.format(coords[2]) + " " +
 							mCoordinateDecimal.format(coords[3]) + " " +
@@ -1953,7 +2162,7 @@ public class OutputFormat
 			 */
 			if (outputType == SVG)
 			{
-				writeLine("L " + mCoordinateDecimal.format(x) + " " +
+				writeLine(pw, "L " + mCoordinateDecimal.format(x) + " " +
 					mCoordinateDecimal.format(mPageHeight - y));
 			}
 			else if (outputType == IMAGEMAP)
@@ -1966,7 +2175,7 @@ public class OutputFormat
 			}
 			else
 			{
-				writeLine(mCoordinateDecimal.format(x) +
+				writeLine(pw, mCoordinateDecimal.format(x) +
 					" " + mCoordinateDecimal.format(y) + " l");
 			}
 		}
@@ -2219,36 +2428,36 @@ public class OutputFormat
 				if (x + size >= 0 && x - size <= mPageWidth &&
 					y + size >= 0.0 && y - size <= mPageHeight)
 				{
-					writeLine("save");
-					writeLine(x + " " + y + " translate");
-					writeLine(rotation + " radtodeg rotate");
+					writeLine(mWriter, "save");
+					writeLine(mWriter, x + " " + y + " translate");
+					writeLine(mWriter, rotation + " radtodeg rotate");
 
 					/*
 					 * EPS file is centred at each point.
 					 * Shift position left and down half it's size
 					 * so that it is displayed centered.
 					 */
-					writeLine(-(size / 2) + " " + -(size / 2) + " translate");
+					writeLine(mWriter, -(size / 2) + " " + -(size / 2) + " translate");
 
 					double scale = size / Math.max(pointWidth, pointHeight);
-					writeLine(scale + " dup scale");
+					writeLine(mWriter, scale + " dup scale");
 
 					/*
 					 * Shift EPS file so that lower-left corner of EPS file is in
 					 * lower left corner of our box on the page.
 					 */
-					writeLine(-boundingBox.getMinX() + " " + -boundingBox.getMinY() +
+					writeLine(mWriter, -boundingBox.getMinX() + " " + -boundingBox.getMinY() +
 						" translate");
 						
 					/*
 					 * Set graphics attributes to initial values, as described
 					 * on page 728 of PostScript Language Reference Manual.
 					 */
-					writeLine("/showpage {} def");
-					writeLine("0 setgray 0 setlinecap 1 setlinewidth");
-					writeLine("0 setlinejoin 10 setmiterlimit [] 0 setdash newpath");
+					writeLine(mWriter, "/showpage {} def");
+					writeLine(mWriter, "0 setgray 0 setlinecap 1 setlinewidth");
+					writeLine(mWriter, "0 setlinejoin 10 setmiterlimit [] 0 setdash newpath");
 
-					writeLine("%%BeginDocument: (" + filename + ")");
+					writeLine(mWriter, "%%BeginDocument: (" + filename + ")");
 					BufferedReader reader = null;
 					try
 					{
@@ -2257,10 +2466,10 @@ public class OutputFormat
 						String line;
 						while ((line = reader.readLine()) != null)
 						{
-							writeLine(line);
+							writeLine(mWriter, line);
 						}
-						writeLine("%%EndDocument");
-						writeLine("restore");
+						writeLine(mWriter, "%%EndDocument");
+						writeLine(mWriter, "restore");
 					}
 					finally
 					{
@@ -2315,15 +2524,15 @@ public class OutputFormat
 	 */
 	public void stroke(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG || mOutputType == PDF)
 		{
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
 				if (mOutputType == SVG)
 				{
-					writeLine("<path d=\"");
-					writeShape(shape, mOutputType, null);
-					writeLine("\"");
+					writeLine(mWriter, "<path d=\"");
+					writeShape(shape, mOutputType, mWriter, null);
+					writeLine(mWriter, "\"");
 					Color color = mGraphics2D.getColor();
 					BasicStroke stroke = (BasicStroke)mGraphics2D.getStroke();
 					float width = stroke.getLineWidth();
@@ -2349,9 +2558,9 @@ public class OutputFormat
 
 					if (mIsClipPathActive)
 					{
-						writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
+						writeLine(mWriter, "  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
 					}
-					writeLine("  style=\"stroke:" + ColorDatabase.toHexString(color) +
+					writeLine(mWriter, "  style=\"stroke:" + ColorDatabase.toHexString(color) +
 						";stroke-width:" + width +
 						";stroke-linecap:" + capString +
 						";stroke-linejoin:" + joinString);
@@ -2364,21 +2573,26 @@ public class OutputFormat
 								dashes.append(",");
 							dashes.append(mCoordinateDecimal.format(dashArray[i]));
 						}
-						writeLine(dashes.toString());
-						writeLine(";stroke-dashoffset:" + dashPhase);
+						writeLine(mWriter, dashes.toString());
+						writeLine(mWriter, ";stroke-dashoffset:" + dashPhase);
 					}
 					int alpha = color.getAlpha();
 					if (alpha != 255)
 					{
-						writeLine(";stroke-opacity:" + (alpha / 255.0f));
+						writeLine(mWriter, ";stroke-opacity:" + (alpha / 255.0f));
 					}
 
-					writeLine(";fill:none\"/>");
+					writeLine(mWriter, ";fill:none\"/>");
 				}
 				else
 				{
-					writeShape(shape, mOutputType, null);
-					writeLine("S");
+					PrintWriter pw;
+					if (mOutputType == PDF)
+						pw = mPDFGeometryWriter;
+					else
+						pw = mWriter;
+					writeShape(shape, mOutputType, pw, null);
+					writeLine(pw, "S");
 				}
 			}
 		}
@@ -2398,21 +2612,21 @@ public class OutputFormat
 	 */
 	public void fill(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG || mOutputType == PDF)
 		{
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
 				if (mOutputType == SVG)
 				{
-					writeLine("<path d=\"");
-					writeShape(shape, mOutputType, null);
-					writeLine("\"");
+					writeLine(mWriter, "<path d=\"");
+					writeShape(shape, mOutputType, mWriter, null);
+					writeLine(mWriter, "\"");
 					Color color = mGraphics2D.getColor();
 					int alpha = color.getAlpha();
 
 					if (mIsClipPathActive)
 					{
-						writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
+						writeLine(mWriter, "  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
 					}
 					StringBuffer sb = new StringBuffer("  style=\"fill:");
 					sb.append(ColorDatabase.toHexString(color));
@@ -2421,12 +2635,17 @@ public class OutputFormat
 						sb.append(";fill-opacity:" + (alpha / 255.0f));
 					}
 					sb.append(";stroke:none\"/>");
-					writeLine(sb.toString());
+					writeLine(mWriter, sb.toString());
 				}
 				else
 				{
-					writeShape(shape, mOutputType, null);
-					writeLine("f");
+					PrintWriter pw;
+					if (mOutputType == PDF)
+						pw = mPDFGeometryWriter;
+					else
+						pw = mWriter;
+					writeShape(shape, mOutputType, pw, null);
+					writeLine(pw, "f");
 				}
 			}
 		}
@@ -2452,18 +2671,18 @@ public class OutputFormat
 			/*
 			 * Write shape to image map together with script commands.
 			 */
-			writeShape(shape, IMAGEMAP, scriptCommands);
+			writeShape(shape, IMAGEMAP, mWriter, scriptCommands);
 		}
 		else if (mOutputType == SVG)
 		{
 			/*
 			 * Embed script commands in SVG file.
 			 */
-			writeLine("<path d=\"");
-			writeShape(shape, mOutputType, scriptCommands);
-			writeLine("\"");
-			writeLine(scriptCommands);
-			writeLine("/>");
+			writeLine(mWriter, "<path d=\"");
+			writeShape(shape, mOutputType, mWriter, scriptCommands);
+			writeLine(mWriter, "\"");
+			writeLine(mWriter, scriptCommands);
+			writeLine(mWriter, "/>");
 		}
 	}
 
@@ -2482,32 +2701,32 @@ public class OutputFormat
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
 				String uniqueId = "gradient" + mGradientCounter++;
-				writeLine("<defs>");
-				writeLine("<linearGradient id=\"" + uniqueId + "\"");
+				writeLine(mWriter, "<defs>");
+				writeLine(mWriter, "<linearGradient id=\"" + uniqueId + "\"");
 
 				/*
 				 * SVG supports only horizontal gradients (default) or vertical
 				 * gradients.
 				 */
 				if (isVerticalGradient)
-					writeLine("x1=\"0%\" y1=\"100%\" x2=\"0%\" y2=\"0%\"");
+					writeLine(mWriter, "x1=\"0%\" y1=\"100%\" x2=\"0%\" y2=\"0%\"");
 
-				writeLine(">");
-				writeLine("<stop offset=\"0%\" stop-color=\"" +
+				writeLine(mWriter, ">");
+				writeLine(mWriter, "<stop offset=\"0%\" stop-color=\"" +
 					ColorDatabase.toHexString(c1) + "\"/>");
-				writeLine("<stop offset=\"100%\" stop-color=\"" +
+				writeLine(mWriter, "<stop offset=\"100%\" stop-color=\"" +
 						ColorDatabase.toHexString(c2) + "\"/>");
-				writeLine("</linearGradient>");
-				writeLine("</defs>");
-				writeLine("<path d=\"");
-				writeShape(shape, mOutputType, null);
-				writeLine("\"");
+				writeLine(mWriter, "</linearGradient>");
+				writeLine(mWriter, "</defs>");
+				writeLine(mWriter, "<path d=\"");
+				writeShape(shape, mOutputType, mWriter, null);
+				writeLine(mWriter, "\"");
 
 				if (mIsClipPathActive)
 				{
-					writeLine("  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
+					writeLine(mWriter, "  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
 				}
-				writeLine("  fill=\"url(#" + uniqueId + ")\" stroke=\"none\"/>");
+				writeLine(mWriter, "  fill=\"url(#" + uniqueId + ")\" stroke=\"none\"/>");
 			}
 		}
 	}
@@ -2517,15 +2736,21 @@ public class OutputFormat
 	 */
 	public void clip(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 		{
+			PrintWriter pw;
+			if (mOutputType == PDF)
+				pw = mPDFGeometryWriter;
+			else
+				pw = mWriter;
+
 			/*
 			 * Set clip path now, then it stays in effect until previous
 			 * state is restored.
 			 */
 			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
 			{
-				writeShape(shape, mOutputType, null);
+				writeShape(shape, mOutputType, pw, null);
 			}
 			else
 			{
@@ -2534,9 +2759,9 @@ public class OutputFormat
 				 * outside page instead so that nothing is shown.
 				 */
 				writeShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f),
-					mOutputType, null);
+					mOutputType, pw, null);
 			}
-			writeLine("clip newpath");
+			writeLine(pw, "clip newpath");
 		}
 	}
 
@@ -2557,7 +2782,7 @@ public class OutputFormat
 			if (buffer.length() > 72)
 			{
 				buffer.append('\\');
-				writeLine(buffer.toString());
+				writeLine(mWriter, buffer.toString());
 				buffer.setLength(0);
 			}
 
@@ -2588,7 +2813,7 @@ public class OutputFormat
 			}
 		}
 		buffer.append(")");
-		writeLine(buffer.toString());
+		writeLine(mWriter, buffer.toString());
 	}
 
 	/**
@@ -2643,16 +2868,16 @@ public class OutputFormat
 
 				if (mOutputType == POSTSCRIPT_GEOMETRY)
 				{
-					writeLine(mCoordinateDecimal.format(x) + " " +
+					writeLine(mWriter, mCoordinateDecimal.format(x) + " " +
 						mCoordinateDecimal.format(y) + " m");
 
 					/*
 					 * Pass counter and line to PostScript procedure for
 					 * drawing each line of the label.
 					 */
-					writeLine(Integer.toString(lineNumber));
+					writeLine(mWriter, Integer.toString(lineNumber));
 					writePostScriptString(nextLine);
-					writeLine("t");
+					writeLine(mWriter, "t");
 				}
 				else if (mOutputType == SVG)
 				{
@@ -2725,7 +2950,7 @@ public class OutputFormat
 						 * Rotation is negative sense because Y axis
 						 * decreases downwards.
 						 */
-						writeLine("<g transform=\"translate(" +
+						writeLine(mWriter, "<g transform=\"translate(" +
 							mCoordinateDecimal.format(x) + ", " +
 							mCoordinateDecimal.format(mPageHeight - y) +
 							") rotate(" +
@@ -2744,7 +2969,7 @@ public class OutputFormat
 					 */
 					py -= mJustificationShiftY * font.getSize2D();
 					
-					writeLine("<text x=\"" + mCoordinateDecimal.format(px) +
+					writeLine(mWriter, "<text x=\"" + mCoordinateDecimal.format(px) +
 						"\" y=\"" + mCoordinateDecimal.format(py) +
 						"\" text-anchor=\"" + anchor + "\"");
 
@@ -2759,7 +2984,7 @@ public class OutputFormat
 						fontName = "Courier";
 					}
 
-					writeLine("  font-family=\"" + fontName + "\" " +
+					writeLine(mWriter, "  font-family=\"" + fontName + "\" " +
 						"font-size=\"" + font.getSize2D() + "\" " +
 						extras.toString());
 
@@ -2770,10 +2995,10 @@ public class OutputFormat
 					nextLine = nextLine.replaceAll("<", "&lt;");
 					nextLine = nextLine.replaceAll(">", "&gt;");
 					nextLine = nextLine.replaceAll("\"", "&quot;");
-					writeLine(">" + nextLine + "</text>");
+					writeLine(mWriter, ">" + nextLine + "</text>");
 
 					if (mFontRotation != 0)
-						writeLine("</g>");
+						writeLine(mWriter, "</g>");
 				}
 				else
 				{
