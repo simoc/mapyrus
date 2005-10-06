@@ -192,6 +192,12 @@ public class OutputFormat
 	private double mResolution;
 	
 	/*
+	 * Selected font and size.
+	 */
+	private String mFontName;
+	private double mFontSize;
+
+	/*
 	 * Justification for labels as fraction of string height and width
 	 * to move string in X and Y direction to achieve correct justification.
 	 */
@@ -1251,7 +1257,7 @@ public class OutputFormat
 		 */
 		while ((token = stringReader.readLine()) != null)
 		{
-			if (mOutputType == POSTSCRIPT_GEOMETRY)
+			if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 			{
 				/*
 				 * Load Font Metrics information only when it is needed.
@@ -1510,7 +1516,7 @@ public class OutputFormat
 		else if (mOutputType == PDF)
 		{
 			writeLine(mPDFGeometryWriter, "Q");
-			retval = true;
+			retval = false;
 		}
 		else 
 		{
@@ -1778,20 +1784,7 @@ public class OutputFormat
 		}
 		else if (mOutputType == PDF)
 		{
-			int i = 0, index = -1;
-			while (i < PDF_FONTS.length && index < 0)
-			{
-				if (PDF_FONTS[i].equals(fontName))
-					index = i;
-				else
-					i++;
-			}
-			if (index < 0)
-			{
-				index = 0;
-			}
-			writeLine(mPDFGeometryWriter, "/F" + index + " " +
-				mCoordinateDecimal.format(fontSize) + " Tf");
+
 		}
 		else
 		{
@@ -1873,11 +1866,13 @@ public class OutputFormat
 		}
 
 		/*
-		 * Font rotation and outlining not easily held in a Graphics2D
-		 * object so keep track of it's current value ourselves.
+		 * Some Font settings not easily held in a Graphics2D
+		 * or PDF graphics state so keep track of current values ourselves.
 		 */
 		mFontRotation = fontRotation;
 		mFontOutlineWidth = outlineWidth;
+		mFontName = fontName;
+		mFontSize = fontSize;
 	}
 
 	/**
@@ -2897,10 +2892,11 @@ public class OutputFormat
 	 * @param pointList is list of Point2D objects at which to draw label.
 	 * @param label is string to draw on path.
 	 */
-	public void label(ArrayList pointList, String label)
+	public void label(ArrayList pointList, String label) throws IOException, MapyrusException
 	{
 		Point2D pt, startPt;
 		double x, y;
+		double lastX = 0, lastY = 0;
 		String nextLine;
 		StringTokenizer st;
 		int lineNumber;
@@ -2935,9 +2931,44 @@ public class OutputFormat
 
 			if (mOutputType == PDF)
 			{
+				/*
+				 * Set transformation with text rotated and origin
+				 * moved to positions for text.
+				 */
+				lastX = lastY = 0;
+				writeLine(mPDFGeometryWriter, "q");
+				double cos = Math.cos(mFontRotation);
+				double sin = Math.sin(mFontRotation);
+				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(cos) + " " +
+					mCoordinateDecimal.format(sin) + " " +
+					mCoordinateDecimal.format(-sin) + " " +
+					mCoordinateDecimal.format(cos) + " " +
+					mCoordinateDecimal.format(x) + " " +
+					mCoordinateDecimal.format(y) + " cm");
 				writeLine(mPDFGeometryWriter, "BT");
-				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x) + " " +
-					mCoordinateDecimal.format(y) + " Td");
+				int j = 0, index = -1;
+				while (j < PDF_FONTS.length && index < 0)
+				{
+					if (PDF_FONTS[j].equals(mFontName))
+						index = j;
+					else
+						j++;
+				}
+				if (index < 0)
+				{
+					index = 4;
+				}
+				writeLine(mPDFGeometryWriter, "/F" + index + " " +
+					mCoordinateDecimal.format(mFontSize) + " Tf");
+				if (mFontOutlineWidth > 0)
+				{
+					writeLine(mPDFGeometryWriter, "1 Tr " +
+						mCoordinateDecimal.format(mFontOutlineWidth) + " w");
+				}
+				else
+				{
+					writeLine(mPDFGeometryWriter, "0 Tr");
+				}
 			}
 
 			/*
@@ -2964,11 +2995,20 @@ public class OutputFormat
 				}
 				else if (mOutputType == PDF)
 				{
+					StringDimension dim = getStringDimension(nextLine, mFontName, mFontSize);
+					double x2 = dim.getWidth() * mJustificationShiftX;
+					double y2 = dim.getHeight() * mJustificationShiftY;
+					y2 -= lineNumber * mFontSize;
+					writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x2 - lastX) + " " +
+						mCoordinateDecimal.format(y2 - lastY) + " Td");
+					lastX = x2;
+					lastY = y2;
+
 					/*
 					 * Draw each line of the label to PDF file.
 					 */
 					writePostScriptString(mPDFGeometryWriter, nextLine);
-					writeLine(mPDFGeometryWriter, "Tj T*");
+					writeLine(mPDFGeometryWriter, "Tj");
 				}
 				else if (mOutputType == SVG)
 				{
@@ -3136,7 +3176,7 @@ public class OutputFormat
 			}
 			
 			if (mOutputType == PDF)
-				writeLine(mPDFGeometryWriter, "ET");
+				writeLine(mPDFGeometryWriter, "ET Q");
 		}
 
 		if (originalStroke != null)
