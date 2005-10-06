@@ -238,7 +238,7 @@ public class OutputFormat
 	private ArrayList mPDFFileOffsets;
 	private StringWriter mPDFGeometryStringWriter;
 	private PrintWriter mPDFGeometryWriter;
-	private ArrayList mPDFImageObjects;
+	private HashMap mPDFImageObjects;
 
 	/*
 	 * Format for writing coordinate values.
@@ -434,7 +434,7 @@ public class OutputFormat
 		int nChars = writeLine(mWriter, "%PDF-1.4");
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "1 0 obj");
+		nChars += writeLine(mWriter, "1 0 obj % Document Catalog");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Catalog");
 		nChars += writeLine(mWriter, "/Outlines 3 0 R");
@@ -443,7 +443,7 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "2 0 obj");
+		nChars += writeLine(mWriter, "2 0 obj % Document Metadata");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Creator (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
@@ -460,7 +460,7 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "3 0 obj");
+		nChars += writeLine(mWriter, "3 0 obj % Document");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Outlines");
 		nChars += writeLine(mWriter, "/Count 0");
@@ -469,7 +469,7 @@ public class OutputFormat
 		mWriter.flush();
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "4 0 obj");
+		nChars += writeLine(mWriter, "4 0 obj % Page Tree Node");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Pages");
 		nChars += writeLine(mWriter, "/Kids [5 0 R]");
@@ -478,7 +478,7 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "5 0 obj");
+		nChars += writeLine(mWriter, "5 0 obj % Single Page");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Page");
 		nChars += writeLine(mWriter, "/Parent 4 0 R");
@@ -490,7 +490,8 @@ public class OutputFormat
 		nChars += writeLine(mWriter, mediaBox);
 		nChars += writeLine(mWriter, "/Resources");
 		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text]");
+		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text /ImageB]");
+		nChars += writeLine(mWriter, "  /XObject 7 0 R");
 		nChars += writeLine(mWriter, "  /Font");
 		nChars += writeLine(mWriter, "  <<");
 		for (int i = 0; i < PDF_FONTS.length; i++)
@@ -505,13 +506,13 @@ public class OutputFormat
 		}
 		nChars += writeLine(mWriter, "  >>");
 		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "/Contents 6 0 R");
+		nChars += writeLine(mWriter, "/Contents 6 0 R % Page Drawing Stream");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
 
-		mPDFImageObjects = new ArrayList();
+		mPDFImageObjects = new HashMap();
 		mPDFGeometryStringWriter = new StringWriter();
 		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
 
@@ -1607,7 +1608,8 @@ public class OutputFormat
 			mPDFGeometryWriter.flush();
 			String geometry = mPDFGeometryStringWriter.toString();
 			int objIndex = mPDFFileOffsets.size();
-			int nChars = writeLine(mWriter, objIndex + " 0 obj");
+			int nChars = writeLine(mWriter, objIndex + " 0 obj % Geometry Object");
+			objIndex++;
 			nChars += writeLine(mWriter, "<< /Length " + geometry.length() + " >>");
 			nChars += writeLine(mWriter, "stream");
 			nChars += writeLine(mWriter, geometry);
@@ -1615,20 +1617,28 @@ public class OutputFormat
 			nChars += writeLine(mWriter, "endobj");
 
 			Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			//mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(mWriter, objIndex + " 0 obj % Image Dictionary");
+			nChars += writeLine(mWriter, "<<");
 
-			Iterator it = mPDFImageObjects.iterator();
+			Iterator it = mPDFImageObjects.keySet().iterator();
 			while (it.hasNext())
 			{
-				nChars += writeLine(mWriter, "%" + it.next().toString());
+				Object key = it.next();
+				nChars += writeLine(mWriter, "/" + key.toString() +
+					" " + objIndex + " 0 R");
+				objIndex++;
 			}
-			
+			nChars += writeLine(mWriter, ">>");
+			nChars += writeLine(mWriter, "endobj");
+
 			/*
 			 * Write cross reference table giving file offset of each
 			 * object in PDF file.
 			 */
 			writeLine(mWriter, "xref");
-			writeLine(mWriter, "0 " + (mPDFFileOffsets.size() + 1));
+			writeLine(mWriter, "0 " + (objIndex + 1));
+			objIndex++;
 			writeLine(mWriter, "0000000000 65535 f");
 			it = mPDFFileOffsets.iterator();
 			while (it.hasNext())
@@ -1644,7 +1654,7 @@ public class OutputFormat
 			}
 
 			writeLine(mWriter, "trailer");
-			writeLine(mWriter, "<< /Size " + (mPDFFileOffsets.size() + 1));
+			writeLine(mWriter, "<< /Size " + objIndex);
 			writeLine(mWriter, "/Root 1 0 R");
 			writeLine(mWriter, "/Info 2 0 R");
 			writeLine(mWriter, ">>");
