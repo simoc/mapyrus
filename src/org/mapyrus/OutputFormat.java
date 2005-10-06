@@ -53,11 +53,13 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
@@ -121,7 +123,19 @@ public class OutputFormat
 	public static final int JUSTIFY_TOP = 8;
 	public static final int JUSTIFY_MIDDLE = 16;
 	public static final int JUSTIFY_BOTTOM = 32;
-	
+
+	/*
+	 * List of fonts that are always available in PDF file.
+	 */
+	private static final String []PDF_FONTS =
+	{
+		"Courier", "Courier-Bold", "Courier-BoldOblique", "Courier-Oblique",
+		"Helvetica", "Helvetica-Bold", "Helvetica-BoldOblique", "Helvetica-Oblique",
+		"Symbol",
+		"Times-Bold", "Times-BoldItalic", "Times-Italic", "Times-Roman",
+		"ZapfDingbats"
+	};
+
 	/*
 	 * File or image that drawing commands are
 	 * writing to.
@@ -150,7 +164,7 @@ public class OutputFormat
 	 * used in this file but not defined.
 	 */
 	private HashSet mSuppliedFontResources;
-	private HashSet mNeededFontResources;
+	private LinkedList mNeededFontResources;
 
 	/*
 	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
@@ -417,13 +431,30 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "1 0 obj");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Catalog");
-		nChars += writeLine(mWriter, "/Outlines 2 0 R");
-		nChars += writeLine(mWriter, "/Pages 3 0 R");
+		nChars += writeLine(mWriter, "/Outlines 3 0 R");
+		nChars += writeLine(mWriter, "/Pages 4 0 R");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
 		nChars += writeLine(mWriter, "2 0 obj");
+		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, "/Creator (" + Constants.PROGRAM_NAME +
+			" " + Constants.getVersion() + ")");
+		String author = System.getProperty("user.name");
+		if (author != null)
+			nChars += writeLine(mWriter, "/Author (" + author + ")");
+		
+		StringBuffer date = new StringBuffer("D:");
+		date.append(new SimpleDateFormat("yyyyMMddHHmmssZZZZZ").format(new Date()));
+		date.insert(date.length() - 2, '\'');
+		date.append('\'');
+		nChars += writeLine(mWriter, "/CreationDate (" + date.toString() + ")");
+		nChars += writeLine(mWriter, ">>");
+		nChars += writeLine(mWriter, "endobj");
+
+		mPDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(mWriter, "3 0 obj");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Outlines");
 		nChars += writeLine(mWriter, "/Count 0");
@@ -432,26 +463,43 @@ public class OutputFormat
 		mWriter.flush();
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "3 0 obj");
+		nChars += writeLine(mWriter, "4 0 obj");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Pages");
-		nChars += writeLine(mWriter, "/Kids [4 0 R]");
+		nChars += writeLine(mWriter, "/Kids [5 0 R]");
 		nChars += writeLine(mWriter, "/Count 1");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "4 0 obj");
+		nChars += writeLine(mWriter, "5 0 obj");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Page");
+		nChars += writeLine(mWriter, "/Parent 4 0 R");
 		String mediaBox;
 		if (turnPage)
 			mediaBox = "/MediaBox [0 0 " + heightInPoints + " " + widthInPoints + "]";
 		else
 			mediaBox = "/MediaBox [0 0 " + widthInPoints + " " + heightInPoints + "]";
 		nChars += writeLine(mWriter, mediaBox);
-		nChars += writeLine(mWriter, "/Contents 5 0 R");
-		nChars += writeLine(mWriter, "/Resources 6 0 R");
+		nChars += writeLine(mWriter, "/Resources");
+		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text]");
+		nChars += writeLine(mWriter, "  /Font");
+		nChars += writeLine(mWriter, "  <<");
+		for (int i = 0; i < PDF_FONTS.length; i++)
+		{
+			nChars += writeLine(mWriter, "    /F" + i +
+				" << /Type /Font /Subtype /Type1");
+			nChars += writeLine(mWriter, "      /BaseFont /" + PDF_FONTS[i] +
+				" /Name /F" + i);
+			if (!PDF_FONTS[i].equals("ZapfDingbats"))
+				nChars += writeLine(mWriter, "    /Encoding /WinAnsiEncoding");
+			nChars += writeLine(mWriter, "    >>");
+		}
+		nChars += writeLine(mWriter, "  >>");
+		nChars += writeLine(mWriter, ">>");
+		nChars += writeLine(mWriter, "/Contents 6 0 R");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
@@ -920,7 +968,7 @@ public class OutputFormat
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
-			mNeededFontResources = new HashSet();
+			mNeededFontResources = new LinkedList();
 
 			if (mIsUpdatingFile)
 			{
@@ -1552,7 +1600,8 @@ public class OutputFormat
 			 */
 			mPDFGeometryWriter.flush();
 			String geometry = mPDFGeometryStringWriter.toString();
-			int nChars = writeLine(mWriter, "5 0 obj");
+			int objIndex = mPDFFileOffsets.size();
+			int nChars = writeLine(mWriter, objIndex + " 0 obj");
 			nChars += writeLine(mWriter, "<< /Length " + geometry.length() + " >>");
 			nChars += writeLine(mWriter, "stream");
 			nChars += writeLine(mWriter, geometry);
@@ -1560,10 +1609,7 @@ public class OutputFormat
 			nChars += writeLine(mWriter, "endobj");
 
 			Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, "6 0 obj");
-			nChars += writeLine(mWriter, "[/PDF]");
-			nChars += writeLine(mWriter, "endobj");
+			//mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 			Iterator it = mPDFImageObjects.iterator();
 			while (it.hasNext())
@@ -1592,7 +1638,10 @@ public class OutputFormat
 			}
 
 			writeLine(mWriter, "trailer");
-			writeLine(mWriter, "<< /Size " + (mPDFFileOffsets.size() + 1) + " /Root 1 0 R >>");
+			writeLine(mWriter, "<< /Size " + (mPDFFileOffsets.size() + 1));
+			writeLine(mWriter, "/Root 1 0 R");
+			writeLine(mWriter, "/Info 2 0 R");
+			writeLine(mWriter, ">>");
 
 			/*
 			 * Write file offset of start of cross reference table.
@@ -1726,6 +1775,23 @@ public class OutputFormat
 				fontRotation + " " +
 				outlineWidth + " font");
 			mNeededFontResources.add(fontName);
+		}
+		else if (mOutputType == PDF)
+		{
+			int i = 0, index = -1;
+			while (i < PDF_FONTS.length && index < 0)
+			{
+				if (PDF_FONTS[i].equals(fontName))
+					index = i;
+				else
+					i++;
+			}
+			if (index < 0)
+			{
+				index = 0;
+			}
+			writeLine(mPDFGeometryWriter, "/F" + index + " " +
+				mCoordinateDecimal.format(fontSize) + " Tf");
 		}
 		else
 		{
@@ -2777,9 +2843,10 @@ public class OutputFormat
 	/**
 	 * Convert a string to PostScript format, escaping special characters and
 	 * write it to PostScript file.
+	 * @param writer file to write to.
 	 * @param s is string to convert and write.
 	 */
-	private void writePostScriptString(String s)
+	private void writePostScriptString(PrintWriter writer, String s)
 	{
 		char c;
 		StringBuffer buffer = new StringBuffer("(");
@@ -2791,7 +2858,7 @@ public class OutputFormat
 			if (buffer.length() > 72)
 			{
 				buffer.append('\\');
-				writeLine(mWriter, buffer.toString());
+				writeLine(writer, buffer.toString());
 				buffer.setLength(0);
 			}
 
@@ -2822,7 +2889,7 @@ public class OutputFormat
 			}
 		}
 		buffer.append(")");
-		writeLine(mWriter, buffer.toString());
+		writeLine(writer, buffer.toString());
 	}
 
 	/**
@@ -2841,7 +2908,7 @@ public class OutputFormat
 		FontRenderContext frc = null;
 		Stroke originalStroke = null;
 
-		if (mOutputType != POSTSCRIPT_GEOMETRY)
+		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF)
 		{
 			frc = mGraphics2D.getFontRenderContext();
 			
@@ -2866,6 +2933,13 @@ public class OutputFormat
 			x = pt.getX();
 			y = pt.getY();
 
+			if (mOutputType == PDF)
+			{
+				writeLine(mPDFGeometryWriter, "BT");
+				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x) + " " +
+					mCoordinateDecimal.format(y) + " Td");
+			}
+
 			/*
 			 * Draw each line of label below the one above.
 			 */
@@ -2885,8 +2959,16 @@ public class OutputFormat
 					 * drawing each line of the label.
 					 */
 					writeLine(mWriter, Integer.toString(lineNumber));
-					writePostScriptString(nextLine);
+					writePostScriptString(mWriter, nextLine);
 					writeLine(mWriter, "t");
+				}
+				else if (mOutputType == PDF)
+				{
+					/*
+					 * Draw each line of the label to PDF file.
+					 */
+					writePostScriptString(mPDFGeometryWriter, nextLine);
+					writeLine(mPDFGeometryWriter, "Tj T*");
 				}
 				else if (mOutputType == SVG)
 				{
@@ -3052,6 +3134,9 @@ public class OutputFormat
 				}
 				lineNumber++;
 			}
+			
+			if (mOutputType == PDF)
+				writeLine(mPDFGeometryWriter, "ET");
 		}
 
 		if (originalStroke != null)
