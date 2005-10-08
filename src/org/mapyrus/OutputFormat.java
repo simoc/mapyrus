@@ -1333,7 +1333,9 @@ public class OutputFormat
 	{
 		int pixelWidth, pixelHeight;
 		int step;
-		String imageKey = "Im" + mPDFImageObjects.size();
+		String imageKey = null;
+		if (mPDFImageObjects != null)
+			imageKey = "Im" + mPDFImageObjects.size();
 		StringWriter sw = null;
 		PrintWriter pw;
 		if (mOutputType == PDF)
