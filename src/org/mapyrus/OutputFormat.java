@@ -490,7 +490,7 @@ public class OutputFormat
 		nChars += writeLine(mWriter, mediaBox);
 		nChars += writeLine(mWriter, "/Resources");
 		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text /ImageB]");
+		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text /ImageB /ImageC]");
 		nChars += writeLine(mWriter, "  /XObject 7 0 R");
 		nChars += writeLine(mWriter, "  /Font");
 		nChars += writeLine(mWriter, "  <<");
@@ -538,6 +538,7 @@ public class OutputFormat
 				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(components[i]));
 			writeLine(mPDFGeometryWriter, "rg f Q");
 		}
+		writeLine(mPDFGeometryWriter, "0 0 0 RG 0 0 0 rg");
 
 		/*
 		 * Set scale so that we can give all coordinate positions in millimetres.
@@ -1326,12 +1327,19 @@ public class OutputFormat
 	 * @param height height of image in millimetres.
 	 * @param rotation rotation angle for image.
 	 */
-	private void writePostScriptImage(BufferedImage image, double x, double y,
+	private void writePostScriptOrPDFImage(BufferedImage image, double x, double y,
 		double width, double height, double rotation)
 		throws IOException, MapyrusException
 	{
 		int pixelWidth, pixelHeight;
 		int step;
+		String imageKey = "Im" + mPDFImageObjects.size();
+		StringWriter sw = null;
+		PrintWriter pw;
+		if (mOutputType == PDF)
+			pw = new PrintWriter(sw = new StringWriter());
+		else
+			pw = mWriter;
 
 		pixelWidth = image.getWidth();
 		pixelHeight = image.getHeight();
@@ -1377,18 +1385,41 @@ public class OutputFormat
 		 * Taken from Adobe PostScript Language Reference Manual
 		 * (2nd Edition), p. 234.
 		 */
-		writeLine(mWriter, "q");
-		writeLine(mWriter, "/DeviceRGB setcolorspace");
+		if (mOutputType == PDF)
+		{
+			writeLine(mPDFGeometryWriter, "q");
+			writeLine(mPDFGeometryWriter, "1 0 0 1 " +
+				mCoordinateDecimal.format(x) + " " +
+				mCoordinateDecimal.format(y) + " cm % translate");
 
-		writeLine(mWriter, x + " " + y + " translate");
-		writeLine(mWriter, rotation + " radtodeg rotate");
-		writeLine(mWriter, width + " " + height + " scale");
+			double sin = Math.sin(Math.toRadians(rotation));
+			double cos = Math.cos(Math.toRadians(rotation));
+			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(cos) + " " +
+				mCoordinateDecimal.format(sin) + " " +
+				mCoordinateDecimal.format(-sin) + " " +
+				mCoordinateDecimal.format(cos) + " 0 0 cm % rotate " + rotation);
 
-		/*
-		 * Image is centred at each point.
-		 * Shift image left and down half it's size so that it is displayed centred.
-		 */
-		writeLine(mWriter, "-0.5 -0.5 translate");
+			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x) +
+				" 0 0 " + mCoordinateDecimal.format(y) + " 0 0 cm % scale");
+			writeLine(mPDFGeometryWriter, "1 0 0 1 -0.5 -0.5 cm % translate");
+			writeLine(mPDFGeometryWriter, "/" + imageKey + " Do");
+			writeLine(mPDFGeometryWriter, "Q");
+		}
+		else
+		{
+			writeLine(pw, "q");
+			writeLine(pw, "/DeviceRGB setcolorspace");
+
+			writeLine(pw, x + " " + y + " translate");
+			writeLine(pw, rotation + " radtodeg rotate");
+			writeLine(pw, width + " " + height + " scale");
+		
+			/*
+			 * Image is centred at each point.
+			 * Shift image left and down half it's size so that it is displayed centred.
+			 */
+			writeLine(pw, "-0.5 -0.5 translate");
+		}
 
 		/*
 		 * Set color for drawing single color images.
@@ -1396,40 +1427,55 @@ public class OutputFormat
 		if (singleColor != null)
 		{
 			float []c = singleColor.getColorComponents(null);
-			writeLine(mWriter, mCoordinateDecimal.format(c[0]) + " " +
+			PrintWriter pw2 = (mOutputType == PDF) ? mPDFGeometryWriter : mWriter;
+			writeLine(pw2, mCoordinateDecimal.format(c[0]) + " " +
 				mCoordinateDecimal.format(c[1]) + " " +
 				mCoordinateDecimal.format(c[2]) + " RG");
 		}
 
-		writeLine(mWriter, "% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
-		writeLine(mWriter, "<<");
-		writeLine(mWriter, "/ImageType 1");
-		writeLine(mWriter, "/Width " + reducedPixelWidth);
-		writeLine(mWriter, "/Height " + reducedPixelHeight);
+		writeLine(pw, "% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
+		writeLine(pw, "<<");
+		if (mOutputType == PDF)
+			writeLine(pw, "/Type /XObject /Subtype /Image /ColorSpace /DeviceRGB");
+		else
+			writeLine(pw, "/ImageType 1");
+		writeLine(pw, "/Width " + reducedPixelWidth);
+		writeLine(pw, "/Height " + reducedPixelHeight);
 		if (singleColor != null)
 		{
-			writeLine(mWriter, "/BitsPerComponent 1");
-			writeLine(mWriter, "/Decode [0 1]");
+			writeLine(pw, "/BitsPerComponent 1");
+			writeLine(pw, "/Decode [0 1]");
+			if (mOutputType == PDF)
+				writeLine(pw, "/ImageMask true");
 		}
 		else
 		{
-			writeLine(mWriter, "/BitsPerComponent 8");
-			writeLine(mWriter, "/Decode [0 1 0 1 0 1]");
+			writeLine(pw, "/BitsPerComponent 8");
+			writeLine(pw, "/Decode [0 1 0 1 0 1]");
 		}
-		writeLine(mWriter, "/ImageMatrix [" + reducedPixelWidth + " 0 0 " +
-			-reducedPixelHeight + " 0 " + reducedPixelHeight + "]");
-		writeLine(mWriter, "/DataSource currentfile /ASCII85Decode filter");
-		writeLine(mWriter, ">>");
+		if (mOutputType == PDF)
+		{
+			writeLine(pw, "/Filter /ASCII85Decode");
+		}
+		else
+		{
+			writeLine(pw, "/ImageMatrix [" + reducedPixelWidth + " 0 0 " +
+					-reducedPixelHeight + " 0 " + reducedPixelHeight + "]");
+			writeLine(pw, "/DataSource currentfile /ASCII85Decode filter");
+			writeLine(pw, ">>");
 
-		if (singleColor != null)
-			writeLine(mWriter, "imagemask");
-		else
-			writeLine(mWriter, "image");
+			if (singleColor != null)
+				writeLine(pw, "imagemask");
+			else
+				writeLine(pw, "image");
+		}
 
 		/*
 		 * Write ASCII85 encoded string containing all pixel values.
 		 */
-		ASCII85Writer ascii85 = new ASCII85Writer(mWriter);
+		StringWriter ascii85sw = new StringWriter();
+		PrintWriter ascii85pw = (mOutputType == PDF) ? new PrintWriter(ascii85sw) : pw;
+		ASCII85Writer ascii85 = new ASCII85Writer(ascii85pw);
 		int byteValue = 0;
 		int bitCounter = 0;
 		for (int row = 0; row < pixelHeight; row += step)
@@ -1481,8 +1527,23 @@ public class OutputFormat
 		/*
 		 * Write ASCII85 end-of-data marker.
 		 */
-		writeLine(mWriter, "~>");
-		writeLine(mWriter, "Q");
+		writeLine(ascii85pw, "~>");
+		if (mOutputType == PDF)
+		{
+			ascii85pw.flush();
+			String s = ascii85sw.toString();
+			writeLine(pw, "/Length " + (s.length() + 2));
+			writeLine(pw, ">>");
+			writeLine(pw, "stream");
+			writeLine(pw, s);
+			writeLine(pw, "endstream");
+			pw.flush();
+			mPDFImageObjects.put(imageKey, sw);
+		}
+		else
+		{
+			writeLine(pw, "Q");
+		}
 	}
 
 	/**
@@ -1545,7 +1606,7 @@ public class OutputFormat
 				/*
 				 * Write image file containing page.
 				 */
-				writePostScriptImage(mImage, mPageWidth / 2, mPageHeight / 2,
+				writePostScriptOrPDFImage(mImage, mPageWidth / 2, mPageHeight / 2,
 					mPageWidth, mPageHeight, 0);
 			}
 
@@ -1616,29 +1677,49 @@ public class OutputFormat
 			nChars += writeLine(mWriter, "endstream");
 			nChars += writeLine(mWriter, "endobj");
 
+			/*
+			 * Write dictionary containing each image used in file.
+			 */
 			Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 			nChars = writeLine(mWriter, objIndex + " 0 obj % Image Dictionary");
+			objIndex++;
 			nChars += writeLine(mWriter, "<<");
 
 			Iterator it = mPDFImageObjects.keySet().iterator();
+			int counter = 0;
 			while (it.hasNext())
 			{
 				Object key = it.next();
 				nChars += writeLine(mWriter, "/" + key.toString() +
-					" " + objIndex + " 0 R");
-				objIndex++;
+					" " + (objIndex + counter) + " 0 R");
+				counter++;
 			}
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
+
+			/*
+			 * Write each image to file.
+			 */
+			it = mPDFImageObjects.keySet().iterator();
+			while (it.hasNext())
+			{
+				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+
+				Object key = it.next();
+				nChars = writeLine(mWriter, objIndex + " 0 obj");
+				nChars += writeLine(mWriter, mPDFImageObjects.get(key).toString());
+				nChars += writeLine(mWriter, "endobj");
+				objIndex++;
+			}
 
 			/*
 			 * Write cross reference table giving file offset of each
 			 * object in PDF file.
 			 */
 			writeLine(mWriter, "xref");
-			writeLine(mWriter, "0 " + (objIndex + 1));
-			objIndex++;
+			writeLine(mWriter, "0 " + objIndex);
 			writeLine(mWriter, "0000000000 65535 f");
 			it = mPDFFileOffsets.iterator();
 			while (it.hasNext())
@@ -2362,7 +2443,7 @@ public class OutputFormat
 			mmWidth = size * ((double)pixelWidth / pixelHeight);
 		}
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 		{
 			/*
 			 * Draw icon at each position in list.
@@ -2379,7 +2460,7 @@ public class OutputFormat
 				if (x + mmWidth >= 0 && x - mmWidth <= mPageWidth &&
 					y + mmHeight >= 0.0 && y - mmHeight <= mPageHeight)
 				{
-					writePostScriptImage(image, x, y, mmWidth, mmHeight, rotation);
+					writePostScriptOrPDFImage(image, x, y, mmWidth, mmHeight, rotation);
 				}
 			}
 		}
@@ -2443,9 +2524,9 @@ public class OutputFormat
 		double x, double y, double width, double height)
 		throws MapyrusException, IOException
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 		{
-			writePostScriptImage(image, x + width / 2,
+			writePostScriptOrPDFImage(image, x + width / 2,
 				y + height / 2, width, height, 0);
 		}
 		else
