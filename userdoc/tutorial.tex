@@ -1500,21 +1500,7 @@ An alternative page layout method is to create three Encapsulated PostScript
 files for the map, legend and scalebar and to position these Encapsulated
 PostScript files on a page using page layout software such as MicroSoft Word.
 
-\subsection{Generating Portable Document Format (PDF) Output}
-\label{pdf}
-
-
-Portable Document Format (PDF) files are created by converting PostScript
-output from Mapyrus to PDF using the \texttt{ps2pdf} utility program, part of
-the GhostScript\footnote{Available from http://www.ghostscript.com} software.
-
-The pipe option of the \texttt{newpage} command is used to pipe PostScript
-output from Mapyrus through \texttt{ps2pdf} and into a PDF file.  To create
-a PDF file with A4 page size using the following command:
-
-\begin{verbatim}
-newpage "ps", "| ps2pdf - myfile.pdf", 210, 297, 300
-\end{verbatim}
+\subsection{Creating Multiple Page Output}
 
 To create multi-page PDF files, create each page as a separate
 PostScript file in Mapyrus.  Then use the following GhostScript command to
