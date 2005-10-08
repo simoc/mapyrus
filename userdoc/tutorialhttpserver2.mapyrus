@@ -1,7 +1,6 @@
 # Display the file coastline.shp in a PDF file.
 #
-let tempPDF = tempname("pdf")
-newpage "ps", "| ps2pdf - " . tempPDF, 100, 100
+newpage "pdf", "-", 100, 100
 mimetype "application/pdf"  # Content type being returned to browser.
 color "forestgreen"
 dataset "shapefile", "coastline.shp", "dbffields="
@@ -14,9 +13,3 @@ do
   addpath GEOMETRY
   stroke
 done
-
-# Finish PostScript file so that Ghostscript ps2pdf program can convert
-# it to a pdf file.  Then send that PDF file back to web browser.
-#
-endpage
-print spool(tempPDF)
