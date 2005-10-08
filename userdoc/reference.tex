@@ -10,10 +10,6 @@ Mapyrus requires:
 Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4 or higher,
 or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4 or higher.
 \item
-The Ghostscript PostScript interpreter from 
-\texttt{http://www.ghostscript.com}
-if creation of PDF files is required.
-\item
 The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system (when a real X-Windows display
 is not available, use the
@@ -1076,9 +1072,9 @@ Colors are opaque if an alpha value is not given.
 Transparent colors are only available for BMP, JPEG, PNG, PPM, SVG
 and Encapsulated PostScript format image (\texttt{epsimage}) output.
 
-The PostScript language does not contain any functions for setting
+The PostScript and PDF languages do not contain any functions for setting
 transparency.
-All colors in PostScript and Encapsulated PostScript
+All colors in PostScript, Encapsulated PostScript and PDF
 files will be opaque.
 
 The spelling \texttt{colour} is also accepted for this command.
@@ -1654,9 +1650,9 @@ pixel.
 The image is scaled and rotated according to the current \texttt{scale}
 and \texttt{rotate} settings.
 
-In PostScript files, icons with more than one color
+In PostScript and PDF files, icons with more than one color
 are displayed with an opaque white background.  This is a limitation
-of PostScript output.
+of PostScript and PDF output.
 
 Icon images are loaded into memory.
 Loading very large images will use a large amount of memory.
@@ -1844,6 +1840,9 @@ with shapes and labels defined geometrically.
 for PostScript output,
 with shapes and labels defined geometrically.
 \item
+\texttt{pdf} or \texttt{application/pdf} for Portable Document
+Format output.
+\item
 \texttt{screen} to display output in a window on the screen.
 \item
 \texttt{bmp} or \texttt{image/bmp} for BMP image output.
@@ -1861,9 +1860,6 @@ a single image in which all shapes and labels have been drawn.
 \texttt{svg} or \texttt{image/svg+xml} for Scalable Vector Graphics
 (SVG) output.
 \end{itemize}
-
-See section \ref{pdf} for
-information on converting PostScript output to PDF format.
 
 \textit{paper} is a paper size name for the page.
 Alternatively, \textit{width} and \textit{height} are the dimensions of the page
@@ -1903,7 +1899,7 @@ File Format & Extras \\
 \hline
 \endhead
 
-PostScript, Encapsulated PostScript &
+PostScript, Encapsulated PostScript, PDF &
 
 \texttt{background=\textit{color}}
 
