@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 
+0.59, October 2005
+
+* Fix bugs with wordwrap(), stringwidth() functions.
+* Add direct creation of PDF output, without using GhostScript (still
+  problems with displaying images and icons).
+
 0.58, September 2005
 
 * Add setoutput command to send output of print command to a file.
