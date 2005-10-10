@@ -415,6 +415,7 @@ public class OutputFormat
 
 	/**
 	 * Write PDF file header.
+	 * @param filename name of PDF file being created.
 	 * @param width width of page in mm.
 	 * @param height height of page in mm.
 	 * @param resolution resolution of page in DPI.
@@ -422,7 +423,7 @@ public class OutputFormat
 	 * @param fontList list of PostScript fonts to include in header.
 	 * @param backgroundColor background color for page, or null if no background.
 	 */
-	private void writePDFHeader(double width, double height,
+	private void writePDFHeader(String filename, double width, double height,
 		int resolution, boolean turnPage, ArrayList fontList, Color backgroundColor)
 		throws IOException, MapyrusException
 	{
@@ -456,6 +457,7 @@ public class OutputFormat
 		date.insert(date.length() - 2, '\'');
 		date.append('\'');
 		nChars += writeLine(mWriter, "/CreationDate (" + date.toString() + ")");
+		nChars += writePostScriptString(mWriter, "/Title", filename);
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
@@ -972,7 +974,7 @@ public class OutputFormat
 			mSuppliedFontResources = new HashSet();
 
 			if (mOutputType == PDF)
-				writePDFHeader(width, height, resolution, turnPage, fontList, backgroundColor);
+				writePDFHeader(filename, width, height, resolution, turnPage, fontList, backgroundColor);
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
@@ -2932,12 +2934,17 @@ public class OutputFormat
 	 * Convert a string to PostScript format, escaping special characters and
 	 * write it to PostScript file.
 	 * @param writer file to write to.
+	 * @param prefix keyword to write before string, such as "%%Title:".
 	 * @param s is string to convert and write.
 	 */
-	private void writePostScriptString(PrintWriter writer, String s)
+	private int writePostScriptString(PrintWriter writer, String prefix, String s)
 	{
 		char c;
-		StringBuffer buffer = new StringBuffer("(");
+		int nChars = 0;
+		StringBuffer buffer = new StringBuffer();
+		if (prefix != null)
+			buffer.append(prefix).append(' ');
+		buffer.append("(");
 		for (int i = 0; i < s.length(); i++)
 		{
 			/*
@@ -2946,7 +2953,7 @@ public class OutputFormat
 			if (buffer.length() > 72)
 			{
 				buffer.append('\\');
-				writeLine(writer, buffer.toString());
+				nChars += writeLine(writer, buffer.toString());
 				buffer.setLength(0);
 			}
 
@@ -2977,7 +2984,8 @@ public class OutputFormat
 			}
 		}
 		buffer.append(")");
-		writeLine(writer, buffer.toString());
+		nChars += writeLine(writer, buffer.toString());
+		return(nChars);
 	}
 
 	/**
@@ -3083,7 +3091,7 @@ public class OutputFormat
 					 * drawing each line of the label.
 					 */
 					writeLine(mWriter, Integer.toString(lineNumber));
-					writePostScriptString(mWriter, nextLine);
+					writePostScriptString(mWriter, null, nextLine);
 					writeLine(mWriter, "t");
 				}
 				else if (mOutputType == PDF)
@@ -3100,7 +3108,7 @@ public class OutputFormat
 					/*
 					 * Draw each line of the label to PDF file.
 					 */
-					writePostScriptString(mPDFGeometryWriter, nextLine);
+					writePostScriptString(mPDFGeometryWriter, null, nextLine);
 					writeLine(mPDFGeometryWriter, "Tj");
 				}
 				else if (mOutputType == SVG)
