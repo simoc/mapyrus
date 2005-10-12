@@ -1396,15 +1396,16 @@ public class OutputFormat
 				mCoordinateDecimal.format(x) + " " +
 				mCoordinateDecimal.format(y) + " cm % translate");
 
-			double sin = Math.sin(Math.toRadians(rotation));
-			double cos = Math.cos(Math.toRadians(rotation));
+			double sin = Math.sin(rotation);
+			double cos = Math.cos(rotation);
 			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(cos) + " " +
 				mCoordinateDecimal.format(sin) + " " +
 				mCoordinateDecimal.format(-sin) + " " +
 				mCoordinateDecimal.format(cos) + " 0 0 cm % rotate " + rotation);
 
-			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x) +
-				" 0 0 " + mCoordinateDecimal.format(y) + " 0 0 cm % scale");
+			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(width) +
+				" 0 0 " + mCoordinateDecimal.format(height) +
+				" 0 0 cm % scale");
 			writeLine(mPDFGeometryWriter, "1 0 0 1 -0.5 -0.5 cm % translate");
 			writeLine(mPDFGeometryWriter, "/" + imageKey + " Do");
 			writeLine(mPDFGeometryWriter, "Q");
