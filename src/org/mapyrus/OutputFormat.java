@@ -1407,6 +1407,19 @@ public class OutputFormat
 				" 0 0 " + mCoordinateDecimal.format(height) +
 				" 0 0 cm % scale");
 			writeLine(mPDFGeometryWriter, "1 0 0 1 -0.5 -0.5 cm % translate");
+
+			/*
+		 	 * Set color for drawing single color images.
+		 	 */
+			if (singleColor != null)
+			{
+				float []c = singleColor.getColorComponents(null);
+				writeLine(mPDFGeometryWriter,
+					mCoordinateDecimal.format(c[0]) + " " +
+					mCoordinateDecimal.format(c[1]) + " " +
+					mCoordinateDecimal.format(c[2]) + " rg");
+			}
+
 			writeLine(mPDFGeometryWriter, "/" + imageKey + " Do");
 			writeLine(mPDFGeometryWriter, "Q");
 		}
@@ -1424,19 +1437,19 @@ public class OutputFormat
 			 * Shift image left and down half it's size so that it is displayed centred.
 			 */
 			writeLine(pw, "-0.5 -0.5 translate");
+
+			/*
+		 	 * Set color for drawing single color images.
+		 	 */
+			if (singleColor != null)
+			{
+				float []c = singleColor.getColorComponents(null);
+				writeLine(pw, mCoordinateDecimal.format(c[0]) + " " +
+					mCoordinateDecimal.format(c[1]) + " " +
+					mCoordinateDecimal.format(c[2]) + " RG");
+			}
 		}
 
-		/*
-		 * Set color for drawing single color images.
-		 */
-		if (singleColor != null)
-		{
-			float []c = singleColor.getColorComponents(null);
-			PrintWriter pw2 = (mOutputType == PDF) ? mPDFGeometryWriter : mWriter;
-			writeLine(pw2, mCoordinateDecimal.format(c[0]) + " " +
-				mCoordinateDecimal.format(c[1]) + " " +
-				mCoordinateDecimal.format(c[2]) + " RG");
-		}
 
 		writeLine(pw, "% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
 		writeLine(pw, "<<");
