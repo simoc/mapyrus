@@ -1441,9 +1441,15 @@ public class OutputFormat
 		writeLine(pw, "% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
 		writeLine(pw, "<<");
 		if (mOutputType == PDF)
-			writeLine(pw, "/Type /XObject /Subtype /Image /ColorSpace /DeviceRGB");
+		{
+			writeLine(pw, "/Type /XObject /Subtype /Image");
+			if (singleColor == null)
+				writeLine(pw, "/ColorSpace /DeviceRGB");
+		}
 		else
+		{
 			writeLine(pw, "/ImageType 1");
+		}
 		writeLine(pw, "/Width " + reducedPixelWidth);
 		writeLine(pw, "/Height " + reducedPixelHeight);
 		if (singleColor != null)
