@@ -1906,11 +1906,24 @@ PostScript, Encapsulated PostScript, PDF &
 Background color for page, as a named color or as hex digits.
 
 \vspace{10pt}
+\texttt{afmfiles=\textit{filename},\textit{filename2},...}
+
+Comma-separated list of PostScript Type 1 font metrics filenames
+to include in this PostScript file.
+PostScript Type 1 font metrics are defined in a file
+with suffix \texttt{.afm}.  Include
+files for all PostScript fonts to be used in this
+page that are not known by the printer.
+
+See section \ref{psfonts} for
+information on converting TrueType fonts to PostScript Type 1 format.
+
+\vspace{10pt}
 \texttt{pfafiles=\textit{filename},\textit{filename2},...}
 
-Comma-separated list of PostScript Type 1 font filenames
+Comma-separated list of PostScript Type 1 font definition filenames
 to include in this PostScript file.
-A PostScript Type 1 font is defined in a file
+A PostScript Type 1 font definition is defined in a file
 with suffix \texttt{.pfa}.  Include
 files for all PostScript fonts to be used in this
 page that are not known by the printer.
