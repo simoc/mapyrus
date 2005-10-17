@@ -1091,7 +1091,9 @@ The alpha value is optional and defines transparency as a value in the range
 0-1.  An alpha value of 1 is completely opaque and the color overwrites
 underlying colors.  An alpha value of 0 is completely transparent and the color
 is not visible.  Intermediate values are partially transparent and the color is
-blended with colors of underlying shapes on the page.
+blended with colors of underlying shapes on the page.  For PDF output,
+the \texttt{blend} command controls how transparent colors are mixed
+with background colors.
 
 Colors are opaque if an alpha value is not given.
 
