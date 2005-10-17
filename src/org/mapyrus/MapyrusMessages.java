@@ -62,6 +62,7 @@ public class MapyrusMessages
 	public static final String INTERRUPTED = "interrupted";
 	public static final String INVALID_ARC = "invalidarc";
 	public static final String INVALID_BEZIER = "invalidbezier";
+	public static final String INVALID_BLEND = "invalidblend";
 	public static final String INVALID_BOX = "invalidbox";
 	public static final String INVALID_CIRCLE = "invalidcircle";
 	public static final String INVALID_COLOR = "invalidcolor";
