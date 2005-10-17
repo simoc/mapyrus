@@ -933,6 +933,32 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
+\subsubsection{blend}
+
+\begin{alltt}
+blend \textit{mode}
+\end{alltt}
+
+Sets the blend mode for transparent colors when creating PDF
+output.  Transparent colors are mixed differently with background
+colors depending on the blend mode.
+
+Blend mode is one of \texttt{Normal},
+\texttt{Multiply},
+\texttt{Screen},
+\texttt{Overlay},
+\texttt{Darken},
+\texttt{Lighten},
+\texttt{ColorDodge},
+\texttt{ColorBurn},
+\texttt{HardLight},
+\texttt{SoftLight},
+\texttt{Difference} or
+\texttt{Exclusion}.
+
+The effect of each blend mode is described in the PDF Reference Manual,
+available from \texttt{http://www.adobe.com}.
+
 \subsubsection{box}
 
 \begin{alltt}
@@ -1069,12 +1095,12 @@ blended with colors of underlying shapes on the page.
 
 Colors are opaque if an alpha value is not given.
 
-Transparent colors are only available for BMP, JPEG, PNG, PPM, SVG
+Transparent colors are only available for BMP, JPEG, PNG, PPM, SVG, PDF
 and Encapsulated PostScript format image (\texttt{epsimage}) output.
 
-The PostScript and PDF languages do not contain any functions for setting
+The PostScript language does not contain any functions for setting
 transparency.
-All colors in PostScript, Encapsulated PostScript and PDF
+All colors in PostScript and Encapsulated PostScript
 files will be opaque.
 
 The spelling \texttt{colour} is also accepted for this command.
