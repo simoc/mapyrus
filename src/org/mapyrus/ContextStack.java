@@ -240,6 +240,15 @@ public class ContextStack
 	}
 
 	/**
+	 * Sets transparent color blend mode.
+	 * @param blend is blend mode.
+	 */
+	public void setBlend(String blend)
+	{
+		getCurrentContext().setBlend(blend);
+	}
+
+	/**
 	 * Sets color to contrast of current color.
 	 * @param alpha alpha value for new color.
 	 */
