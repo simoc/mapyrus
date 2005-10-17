@@ -41,7 +41,8 @@ public class Statement
 	public static final int FOR_LOOP = 5;
 	public static final int BLOCK = 6;
 
-	public static final int COLOR = 10;
+	public static final int COLOR = 9;
+	public static final int BLEND = 10;
 	public static final int LINESTYLE = 11;
 	public static final int FONT = 12;
 	public static final int JUSTIFY = 13;
@@ -155,6 +156,7 @@ public class Statement
 		mStatementTypeLookup = new HashMap();
 		mStatementTypeLookup.put("color", new Integer(COLOR));
 		mStatementTypeLookup.put("colour", new Integer(COLOR));
+		mStatementTypeLookup.put("blend", new Integer(BLEND));
 		mStatementTypeLookup.put("linestyle", new Integer(LINESTYLE));
 		mStatementTypeLookup.put("font", new Integer(FONT));
 		mStatementTypeLookup.put("justify", new Integer(JUSTIFY));
