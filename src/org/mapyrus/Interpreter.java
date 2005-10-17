@@ -699,6 +699,13 @@ public class Interpreter
 				setColor(context, mExecuteArgs, nExpressions);
 				break;
 
+			case Statement.BLEND:
+				if (nExpressions == 1)
+					context.setBlend(mExecuteArgs[0].getStringValue());
+				else
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_BLEND));
+				break;
+
 			case Statement.LINESTYLE:
 				setLinestyle(context, mExecuteArgs, nExpressions);
 				break;
