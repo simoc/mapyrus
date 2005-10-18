@@ -55,6 +55,7 @@ import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,6 +136,12 @@ public class OutputFormat
 		"Times-Bold", "Times-BoldItalic", "Times-Italic", "Times-Roman",
 		"ZapfDingbats"
 	};
+
+	/*
+	 * Prefixes for PDF objects containing images and graphics states.
+	 */
+	private static final String PDF_IMAGE_PREFIX = "Img";
+	private static final String PDF_GSTATE_PREFIX = "Gstate";
 
 	/*
 	 * File or image that drawing commands are
@@ -233,12 +240,13 @@ public class OutputFormat
 
 	/*
 	 * File offset of each object in PDF file and buffers containing
-	 * all geometry and images to be included in PDF file. 
+	 * all geometry and additional objects (images and graphics
+	 * states) to be included in PDF file. 
 	 */
 	private ArrayList mPDFFileOffsets;
 	private StringWriter mPDFGeometryStringWriter;
 	private PrintWriter mPDFGeometryWriter;
-	private HashMap mPDFImageObjects;
+	private HashMap mPDFObjects;
 
 	/*
 	 * Format for writing coordinate values.
@@ -493,7 +501,8 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "/Resources");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text /ImageB /ImageC]");
-		nChars += writeLine(mWriter, "  /XObject 7 0 R");
+		nChars += writeLine(mWriter, "  /ExtGState 7 0 R");
+		nChars += writeLine(mWriter, "  /XObject 8 0 R");
 		nChars += writeLine(mWriter, "  /Font");
 		nChars += writeLine(mWriter, "  <<");
 		for (int i = 0; i < PDF_FONTS.length; i++)
@@ -514,7 +523,7 @@ public class OutputFormat
 
 		mPDFFileOffsets.add(new Integer(nChars));
 
-		mPDFImageObjects = new HashMap();
+		mPDFObjects = new HashMap();
 		mPDFGeometryStringWriter = new StringWriter();
 		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
 
@@ -1336,8 +1345,8 @@ public class OutputFormat
 		int pixelWidth, pixelHeight;
 		int step;
 		String imageKey = null;
-		if (mPDFImageObjects != null)
-			imageKey = "Im" + mPDFImageObjects.size();
+		if (mPDFObjects != null)
+			imageKey = PDF_IMAGE_PREFIX + mPDFObjects.size();
 		StringWriter sw = null;
 		PrintWriter pw;
 		if (mOutputType == PDF)
@@ -1562,7 +1571,7 @@ public class OutputFormat
 			writeLine(pw, s);
 			writeLine(pw, "endstream");
 			pw.flush();
-			mPDFImageObjects.put(imageKey, sw);
+			mPDFObjects.put(imageKey, sw);
 		}
 		else
 		{
@@ -1691,10 +1700,10 @@ public class OutputFormat
 			 * Now that we have the complete geometry, we can write it to the PDF file.
 			 */
 			mPDFGeometryWriter.flush();
-			String geometry = mPDFGeometryStringWriter.toString();
 			int objIndex = mPDFFileOffsets.size();
 			int nChars = writeLine(mWriter, objIndex + " 0 obj % Geometry Object");
 			objIndex++;
+			String geometry = mPDFGeometryStringWriter.toString();
 			nChars += writeLine(mWriter, "<< /Length " + geometry.length() + " >>");
 			nChars += writeLine(mWriter, "stream");
 			nChars += writeLine(mWriter, geometry);
@@ -1702,38 +1711,64 @@ public class OutputFormat
 			nChars += writeLine(mWriter, "endobj");
 
 			/*
-			 * Write dictionary containing each image used in file.
+			 * Write dictionary containing graphics states defining
+			 * blend modes and alpha values.
 			 */
 			Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, objIndex + " 0 obj % Image Dictionary");
+			nChars = writeLine(mWriter, objIndex + " 0 obj % Graphics States");
 			objIndex++;
 			nChars += writeLine(mWriter, "<<");
 
-			Iterator it = mPDFImageObjects.keySet().iterator();
+			Object []pdfObjs = mPDFObjects.keySet().toArray();
+			Arrays.sort(pdfObjs);
 			int counter = 0;
-			while (it.hasNext())
+			for (int i = 0; i < pdfObjs.length; i++)
 			{
-				Object key = it.next();
-				nChars += writeLine(mWriter, "/" + key.toString() +
-					" " + (objIndex + counter) + " 0 R");
-				counter++;
+				String key = pdfObjs[i].toString();
+				if (key.indexOf(PDF_GSTATE_PREFIX) >= 0)
+				{
+					nChars += writeLine(mWriter, "/" + key +
+						" " + (objIndex + counter + 1) + " 0 R");
+					counter++;
+				}
 			}
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
 
 			/*
-			 * Write each image to file.
+			 * Write dictionary containing each image used in file.
 			 */
-			it = mPDFImageObjects.keySet().iterator();
-			while (it.hasNext())
+			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(mWriter, objIndex + " 0 obj % Image Dictionary");
+			objIndex++;
+			nChars += writeLine(mWriter, "<<");
+
+			for (int i = 0; i < pdfObjs.length; i++)
+			{
+				String key = pdfObjs[i].toString();
+				if (key.indexOf(PDF_IMAGE_PREFIX) >= 0)
+				{
+					nChars += writeLine(mWriter, "/" + key.toString() +
+						" " + (objIndex + counter) + " 0 R");
+					counter++;
+				}
+			}
+			nChars += writeLine(mWriter, ">>");
+			nChars += writeLine(mWriter, "endobj");
+
+			/*
+			 * Write each image and graphics state to file.
+			 */
+			for (int i = 0; i < pdfObjs.length; i++)
 			{
 				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
-				Object key = it.next();
-				nChars = writeLine(mWriter, objIndex + " 0 obj");
-				nChars += writeLine(mWriter, mPDFImageObjects.get(key).toString());
+				Object key = pdfObjs[i];
+				nChars = writeLine(mWriter, objIndex + " 0 obj % " + key);
+				nChars += writeLine(mWriter, mPDFObjects.get(key).toString());
 				nChars += writeLine(mWriter, "endobj");
 				objIndex++;
 			}
@@ -1745,7 +1780,7 @@ public class OutputFormat
 			writeLine(mWriter, "xref");
 			writeLine(mWriter, "0 " + objIndex);
 			writeLine(mWriter, "0000000000 65535 f");
-			it = mPDFFileOffsets.iterator();
+			Iterator it = mPDFFileOffsets.iterator();
 			while (it.hasNext())
 			{
 				String fileOffset = it.next().toString();
@@ -2048,11 +2083,69 @@ public class OutputFormat
 			sb.append(mCoordinateDecimal.format(c[2]));
 			writeLine(pw, sb.toString() + " RG");
 			if (mOutputType == PDF)
+			{
 				writeLine(pw, sb.toString() + " rg");
+
+				/*
+				 * Write graphics state dictionary entry setting
+				 * alpha to desired value.
+				 *
+				 * Alpha value is used in dictionary name so that
+				 * repeated use of the same alpha value results in
+				 * the same dictionary value being used.
+				 */
+				int alpha = color.getAlpha();
+				String as = mCoordinateDecimal.format(alpha / 255.0);
+				String gsKey = PDF_GSTATE_PREFIX + alpha;
+				mPDFObjects.put(gsKey, "<< /Type /ExtGState /CA " +
+					as + " /ca " + as + " >>");
+
+				/*
+				 * Set graphics state in new dictionary entry.
+				 */
+				writeLine(pw, "/" + gsKey + " gs");
+			}
 		}
 		else
 		{
 			mGraphics2D.setColor(color);
+		}
+	}
+
+	/**
+	 * Sets color blending mode.
+	 * @param blend is color blending mode.
+	 */
+	public void setBlendAttribute(String blend)
+	{
+		if (mOutputType == PDF)
+		{
+			/*
+			 * Ensure correct capitalisation of name.
+			 */
+			blend = blend.toLowerCase();
+			if (blend.equals("colordodge"))
+				blend = "ColorDodge";
+			else if (blend.equals("colorburn"))
+				blend = "ColorBurn";
+			else if (blend.equals("hardlight"))
+				blend = "HardLight";
+			else if (blend.equals("softlight"))
+				blend = "SoftLight";
+			else if (blend.length() > 0)
+				blend = Character.toUpperCase(blend.charAt(0)) + blend.substring(1);
+
+			/*
+			 * Write graphics state dictionary entry setting
+			 * blend mode to desired value.
+			 *
+			 * Blend mode is used in dictionary name so that
+			 * repeated use of the same blend results in
+			 * the same dictionary value being used.
+			 */
+			String gsKey = PDF_GSTATE_PREFIX + blend;
+			mPDFObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
+			writeLine(mPDFGeometryWriter, "/" + gsKey + " gs");
 		}
 	}
 
