@@ -1410,7 +1410,9 @@ public class OutputFormat
 			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(cos) + " " +
 				mCoordinateDecimal.format(sin) + " " +
 				mCoordinateDecimal.format(-sin) + " " +
-				mCoordinateDecimal.format(cos) + " 0 0 cm % rotate " + rotation);
+				mCoordinateDecimal.format(cos) +
+				" 0 0 cm % rotate " +
+				mCoordinateDecimal.format(rotation));
 
 			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(width) +
 				" 0 0 " + mCoordinateDecimal.format(height) +
@@ -1794,7 +1796,8 @@ public class OutputFormat
 			}
 
 			writeLine(mWriter, "trailer");
-			writeLine(mWriter, "<< /Size " + objIndex);
+			writeLine(mWriter, "<<");
+			writeLine(mWriter, "/Size " + objIndex);
 			writeLine(mWriter, "/Root 1 0 R");
 			writeLine(mWriter, "/Info 2 0 R");
 			writeLine(mWriter, ">>");
