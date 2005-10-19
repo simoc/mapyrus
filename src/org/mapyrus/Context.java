@@ -76,8 +76,9 @@ public class Context
 	private static final int ATTRIBUTE_FONT = 1;
 	private static final int ATTRIBUTE_JUSTIFY = 2;
 	private static final int ATTRIBUTE_COLOR = 4;
-	private static final int ATTRIBUTE_LINESTYLE = 8;
-	private static final int ATTRIBUTE_CLIP = 16;
+	private static final int ATTRIBUTE_BLEND = 8;
+	private static final int ATTRIBUTE_LINESTYLE = 16;
+	private static final int ATTRIBUTE_CLIP = 32;
 
 	/*
 	 * Projection transformation may results in some strange warping.
@@ -100,6 +101,7 @@ public class Context
 	 * Graphical attributes
 	 */	
 	private Color mColor;
+	private String mBlend;
 	private BasicStroke mLinestyle;
 	private int mJustify;
 	private String mFontName;
@@ -208,6 +210,7 @@ public class Context
 	private void initialiseContext(Context c)
 	{
 		mColor = Color.BLACK;
+		mBlend = "Normal";
 		mLinestyle = new BasicStroke(0.1f);
 		mJustify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
 		mFontName = "SansSerif";
@@ -222,6 +225,7 @@ public class Context
 		mRotation = 0.0;
 
 		mAttributesPending = (ATTRIBUTE_CLIP | ATTRIBUTE_COLOR |
+			ATTRIBUTE_BLEND |
 			ATTRIBUTE_FONT | ATTRIBUTE_JUSTIFY | ATTRIBUTE_LINESTYLE);
 		mAttributesChanged = 0;
 		
@@ -260,6 +264,7 @@ public class Context
 	public Context(Context existing, String blockName)
 	{
 		mColor = existing.mColor;
+		mBlend = existing.mBlend;
 		mLinestyle = existing.mLinestyle;
 		mJustify = existing.mJustify;
 		mFontName = existing.mFontName;
@@ -421,6 +426,8 @@ public class Context
 			mOutputFormat.setJustifyAttribute(mJustify);
 		if ((mAttributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
 			mOutputFormat.setColorAttribute(mColor);
+		if ((mAttributesPending & ATTRIBUTE_BLEND & attributeMask) != 0)
+			mOutputFormat.setBlendAttribute(mBlend);
 		if ((mAttributesPending & ATTRIBUTE_LINESTYLE & attributeMask) != 0)
 			mOutputFormat.setLinestyleAttribute(mLinestyle);
 		if ((mAttributesPending & ATTRIBUTE_CLIP & attributeMask) != 0)
@@ -600,6 +607,17 @@ public class Context
 		mColor = color;
 		mAttributesPending |= ATTRIBUTE_COLOR;
 		mAttributesChanged |= ATTRIBUTE_COLOR;
+	}
+
+	/**
+	 * Sets transparent color blend mode.
+	 * @param blend is blend mode.
+	 */
+	public void setBlend(String blend)
+	{
+		mBlend = blend;
+		mAttributesPending |= ATTRIBUTE_BLEND;
+		mAttributesChanged |= ATTRIBUTE_BLEND;
 	}
 
 	/**
@@ -1914,7 +1932,7 @@ public class Context
 
 		if (path != null && mOutputFormat != null)
 		{
-			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP);
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP);
 			mOutputFormat.stroke(path.getShape());
 		}
 	}
@@ -1928,7 +1946,7 @@ public class Context
 		
 		if (path != null && mOutputFormat != null)
 		{	
-			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_CLIP);
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_CLIP);
 			mOutputFormat.fill(path.getShape());
 		}
 	}
@@ -2093,7 +2111,7 @@ public class Context
 		
 		if (path != null && mOutputFormat != null)
 		{	
-			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
+			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
 			mOutputFormat.label(path.getMoveTos(), label);
 		}
 	}
@@ -2209,7 +2227,7 @@ public class Context
 				 */
 				addFontRotation(angle);
 				int previousJustify = setJustify(justify);
-				setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
+				setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
 
 				/*
 				 * Draw each of the letters that will fit along
@@ -2364,7 +2382,8 @@ public class Context
 		 */
 		mOutputFormat.saveState();
 		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM);
-		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
+		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|
+			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
 		setGraphicsAttributes(attributeMask);
 
 		ArrayList moveTos = path.getMoveTos();
