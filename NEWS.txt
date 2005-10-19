@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 
+0.591, October 2005
+
+* Fix image and icon display in PDF output.
+* Add transparency to PDF output.
+* Add blend command to control transparency in PDF output.
+
 0.59, October 2005
 
 * Fix bugs with wordwrap(), stringwidth() functions.
