@@ -2126,7 +2126,7 @@ public class OutputFormat
 			/*
 			 * Ensure correct capitalisation of name.
 			 */
-			blend = blend.toLowerCase();
+			blend = blend.toLowerCase().trim();
 			if (blend.equals("colordodge"))
 				blend = "ColorDodge";
 			else if (blend.equals("colorburn"))
