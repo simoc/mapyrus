@@ -397,7 +397,7 @@ public class Interpreter
 	private void setFont(ContextStack context, Argument []args, int nArgs)
 		throws MapyrusException
 	{
-		double size, outlineWidth = 0.0;
+		double size, outlineWidth = 0.0, lineSpacing = 1;
 
 		if (nArgs == 2 || nArgs == 3)
 		{
@@ -437,10 +437,27 @@ public class Interpreter
 								": " + outlineWidth);
 						}
 					}
+					else if (token.startsWith("linespacing="))
+					{
+						/*
+						 * Parse line spacing for multi-line labels.
+						 */
+						String spacing = token.substring(12);
+						try
+						{
+							lineSpacing = Double.parseDouble(spacing);
+						}
+						catch (NumberFormatException e)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SPACING) +
+								": " + spacing);
+						}
+					}
 				}
 			}
 
-			context.setFont(args[0].getStringValue(), size, outlineWidth);
+			context.setFont(args[0].getStringValue(), size,
+				outlineWidth, lineSpacing);
 		}
 		else
 		{
