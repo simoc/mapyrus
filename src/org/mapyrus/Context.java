@@ -108,6 +108,7 @@ public class Context
 	private double mFontSize;
 	private double mFontRotation;
 	private double mFontOutlineWidth;
+	private double mFontLineSpacing;
 
 	/*
 	 * Bit flags of graphical attributes that have been changed by caller
@@ -217,6 +218,7 @@ public class Context
 		mFontSize = 5;
 		mFontRotation = 0;
 		mFontOutlineWidth = 0;
+		mFontLineSpacing = 1;
 
 		mPath = mExistingPath = null;
 		mClippingPaths = null;
@@ -271,6 +273,7 @@ public class Context
 		mFontSize = existing.mFontSize;
 		mFontRotation = existing.mFontRotation;
 		mFontOutlineWidth = existing.mFontOutlineWidth;
+		mFontLineSpacing = existing.mFontLineSpacing;
 
 		mCtm = new AffineTransform(existing.mCtm);
 		mProjectionTransform = null;
@@ -421,7 +424,7 @@ public class Context
 		int maskComplement = (~attributeMask);
 
 		if ((mAttributesPending & ATTRIBUTE_FONT & attributeMask) != 0)
-			mOutputFormat.setFontAttribute(mFontName, mFontSize, mFontRotation, mFontOutlineWidth);
+			mOutputFormat.setFontAttribute(mFontName, mFontSize, mFontRotation, mFontOutlineWidth, mFontLineSpacing);
 		if ((mAttributesPending & ATTRIBUTE_JUSTIFY & attributeMask) != 0)
 			mOutputFormat.setJustifyAttribute(mJustify);
 		if ((mAttributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
@@ -626,13 +629,17 @@ public class Context
 	 * @param fontSize is size for labelling in millimetres.
 	 * @param fontOutlineWidth if non-zero, gives line width to use for drawing
 	 * outline of each character of labels.
+	 * @param fontLineSpacing line spacing for multi-line labels, as a
+	 * multiple of the font size.
 	 */
-	public void setFont(String fontName, double fontSize, double fontOutlineWidth)
+	public void setFont(String fontName, double fontSize,
+		double fontOutlineWidth, double fontLineSpacing)
 	{
 		mFontName = fontName;
 		mFontSize = fontSize * mScaling;
 		mFontRotation = mRotation;
 		mFontOutlineWidth = fontOutlineWidth * mScaling;
+		mFontLineSpacing = fontLineSpacing;
 		mAttributesChanged |= ATTRIBUTE_FONT;
 		mAttributesPending |= ATTRIBUTE_FONT;
 	}
@@ -2733,7 +2740,7 @@ public class Context
 			 * the font and then forget it.
 			 */
 			setGraphicsAttributes(ATTRIBUTE_FONT);
-			retval = mOutputFormat.getStringDimension(s, mFontName, mFontSize);
+			retval = mOutputFormat.getStringDimension(s, mFontName, mFontSize, mFontLineSpacing);
 			double w = retval.getWidth();
 			double h = retval.getHeight();
 
