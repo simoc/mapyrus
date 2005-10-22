@@ -12,10 +12,13 @@ begin caption message, width
   table "background=LightYellow", t
 end
 
-newpage "eps", "tutorialwordwrap1.eps", 95, 30
-move 20, 9
-caption "SYDNEY: Fine with a late southerly change.", 30
+newpage "eps", "tutorialwordwrap1.eps", 95, 50
+move 20, 24
+caption "SYDNEY: A cloudy morning followed by a partly cloudy afternoon.
+Mostly fine apart from the chance of a shower early.  Light to moderate
+W/NW winds, turning moderate SW during the day.", 35
 
 clearpath
-move 30, 29
-caption "BRISBANE: Overcast with afternoon thunderstorms likely.", 30
+move 30, 44
+caption "BRISBANE: Rain easing to showers.  Mild to warm with moderate
+to fresh gusty S/SW winds.", 35
