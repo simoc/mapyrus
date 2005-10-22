@@ -126,6 +126,7 @@ public class MapyrusMessages
 	public static final String INVALID_SCALING = "invalidscaling";
 	public static final String INVALID_SCRIPT = "invalidscript";
 	public static final String INVALID_SETOUTPUT = "invalidsetoutput";
+	public static final String INVALID_SPACING = "invalidspacing";
 	public static final String INVALID_SPIRAL = "invalidspiral";
 	public static final String INVALID_STAR = "invalidstar";
 	public static final String INVALID_TABLE = "invalidtable";
