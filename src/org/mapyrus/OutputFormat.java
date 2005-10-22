@@ -223,6 +223,12 @@ public class OutputFormat
 	 */
 	private double mFontOutlineWidth;
 
+	/*
+	 * Spacing between lines in multi-line labels, as a factor
+	 * of the font size.
+	 */
+	private double mFontLineSpacing;
+
 	private Font mBaseFont;
 
 	/*
@@ -1116,6 +1122,7 @@ public class OutputFormat
 		mFontCache = new FontCache();
 		mJustificationShiftX = mJustificationShiftY = 0.0;
 		mFontOutlineWidth = 0.0;
+		mFontLineSpacing = 1;
 
 		/*
 		 * Set impossible current font rotation so first font
@@ -1255,7 +1262,7 @@ public class OutputFormat
 	 * @param fontSize size of characters in millimetres.
 	 * @return height and width of string in millimetres.
 	 */
-	public StringDimension getStringDimension(String s, String fontName, double fontSize)
+	public StringDimension getStringDimension(String s, String fontName, double fontSize, double lineSpacing)
 		throws IOException, MapyrusException
 	{
 		StringDimension retval = new StringDimension();
@@ -1263,6 +1270,7 @@ public class OutputFormat
 		double width = 0, height = 0;
 		String token;
 		double tokenWidth;
+		int lineNumber = 0;
 
 		/*
 		 * Break multi-line strings into separate lines so we
@@ -1283,7 +1291,10 @@ public class OutputFormat
 				tokenWidth = tokenWidth / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
 				if (tokenWidth > width)
 					width = tokenWidth;
-				height += fontSize;
+				if (lineNumber == 0)
+					height += fontSize;
+				else
+					height += fontSize * lineSpacing;
 			}
 			else
 			{
@@ -1296,8 +1307,12 @@ public class OutputFormat
 				tokenWidth = bounds.getWidth();
 				if (tokenWidth > width)
 					width = tokenWidth;
-				height += bounds.getHeight();
+				if (lineNumber == 0)
+					height += bounds.getHeight();
+				else
+					height += bounds.getHeight() * lineSpacing;
 			}
+			lineNumber++;
 		}
 
 		retval.setSize(width, height);
@@ -1910,8 +1925,11 @@ public class OutputFormat
 	 * measured counter-clockwise.
 	 * @param outlineWidth if non-zero, labels will drawn as character outlines
 	 * with this width.
+	 * @param lineSpacing spacing between lines in multi-line labels, as
+	 * a multiple of the font size.
 	 */
-	public void setFontAttribute(String fontName, double fontSize, double fontRotation, double outlineWidth)
+	public void setFontAttribute(String fontName, double fontSize,
+		double fontRotation, double outlineWidth, double lineSpacing)
 		throws IOException, MapyrusException
 	{
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
@@ -2024,6 +2042,7 @@ public class OutputFormat
 		 */
 		mFontRotation = fontRotation;
 		mFontOutlineWidth = outlineWidth;
+		mFontLineSpacing = lineSpacing;
 		mFontName = fontName;
 		mFontSize = fontSize;
 	}
@@ -3116,7 +3135,7 @@ public class OutputFormat
 		double lastX = 0, lastY = 0;
 		String nextLine;
 		StringTokenizer st;
-		int lineNumber;
+		double lineNumber;
 		AffineTransform affine;
 		FontRenderContext frc = null;
 		Stroke originalStroke = null;
@@ -3206,13 +3225,13 @@ public class OutputFormat
 					 * Pass counter and line to PostScript procedure for
 					 * drawing each line of the label.
 					 */
-					writeLine(mWriter, Integer.toString(lineNumber));
+					writeLine(mWriter, mCoordinateDecimal.format(lineNumber));
 					writePostScriptString(mWriter, null, nextLine);
 					writeLine(mWriter, "t");
 				}
 				else if (mOutputType == PDF)
 				{
-					StringDimension dim = getStringDimension(nextLine, mFontName, mFontSize);
+					StringDimension dim = getStringDimension(nextLine, mFontName, mFontSize, 1);
 					double x2 = dim.getWidth() * mJustificationShiftX;
 					double y2 = dim.getHeight() * mJustificationShiftY;
 					y2 -= lineNumber * mFontSize;
@@ -3231,7 +3250,7 @@ public class OutputFormat
 				{
 					double yInc = 0;
 
-					if (lineNumber > 0)
+					if (lineNumber != 0)
 					{
 						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
 						yInc = bounds.getHeight() * lineNumber;
@@ -3353,7 +3372,7 @@ public class OutputFormat
 					/*
 					 * Reposition label from original point so it has correct justification.
 					 */
-					if (mJustificationShiftX != 0.0 || mJustificationShiftY != 0.0 || lineNumber > 0)
+					if (mJustificationShiftX != 0.0 || mJustificationShiftY != 0.0 || lineNumber != 0)
 					{
 						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
 						affine = AffineTransform.getTranslateInstance(x, y);
@@ -3389,7 +3408,7 @@ public class OutputFormat
 						mGraphics2D.drawString(nextLine, fx, fy);
 					}
 				}
-				lineNumber++;
+				lineNumber += mFontLineSpacing;
 			}
 			
 			if (mOutputType == PDF)
