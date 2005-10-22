@@ -326,10 +326,13 @@ public class ContextStack
 	 * @param size is size for labelling in millimetres.
 	 * @param outlineWidth if non-zero, gives line width to use for drawing
 	 * outline of each character of labels.
+	 * @param lineSpacing spacing between lines in multi-line labels, as
+	 * a multiple of the font size.
 	 */
-	public void setFont(String name, double size, double outlineWidth)
+	public void setFont(String name, double size, double outlineWidth,
+		double lineSpacing)
 	{
-		getCurrentContext().setFont(name, size, outlineWidth);
+		getCurrentContext().setFont(name, size, outlineWidth, lineSpacing);
 	}
 
 	/**
