@@ -1523,8 +1523,18 @@ public class OutputFormat
 		/*
 		 * Write ASCII85 encoded string containing all pixel values.
 		 */
-		StringWriter ascii85sw = new StringWriter();
-		PrintWriter ascii85pw = (mOutputType == PDF) ? new PrintWriter(ascii85sw) : pw;
+		StringWriter ascii85sw = null;
+		PrintWriter ascii85pw = null;
+		if (mOutputType == PDF)
+		{
+			int encodedSize = reducedPixelHeight * reducedPixelWidth * 6 / 4;
+			ascii85sw = new StringWriter(encodedSize + 1);
+			ascii85pw = new PrintWriter(ascii85sw);
+		}
+		else
+		{
+			ascii85pw = pw;
+		}
 		ASCII85Writer ascii85 = new ASCII85Writer(ascii85pw);
 		int byteValue = 0;
 		int bitCounter = 0;
