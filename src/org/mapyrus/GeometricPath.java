@@ -44,6 +44,11 @@ public class GeometricPath
 	static final int CALCULATE_PIP = 4;	/* point in polygon */
 
 	/*
+	 * Mathematical constant 1/sqrt(2).
+	 */
+	private static final double ONE_OVER_SQRT_TWO = 0.707106781186547;
+
+	/*
 	 * An identity matrix results in no transformation.
 	 */
 	static AffineTransform mIdentityMatrix = new AffineTransform();
@@ -930,7 +935,7 @@ public class GeometricPath
 		double pts[] = new double[nPts * 2];
 		AffineTransform rotateTransform = new AffineTransform();
 		AffineTransform inverseRotateTransform = new AffineTransform();
-		double xMin, yMin, xMax, yMax, y;
+		double xMin, yMin, xMax, yMax, x, y;
 
 		/*
 		 * Create bounding box of polygon at origin, rotated so that
@@ -963,21 +968,52 @@ public class GeometricPath
 			xMax = Math.max(xMax, pts[i * 2]);
 			yMax = Math.max(yMax, pts[i * 2 + 1]);
 		}
-// TODO align stripes on spacing so neighbouring paths match.
+
+		/*
+		 * Align stripes so that stripes in neighbouring polygons match.
+		 */
+		double cosAngle = Math.cos(angle);
+		double xOrigin = bounds.getMinX();
+		double yOrigin = bounds.getMinY();
+		if (Math.abs(cosAngle) > ONE_OVER_SQRT_TWO)
+		{
+			/*
+			 * Hatch lines are closer to horizontal.
+			 * Move origin of hatch lines up or down so that they will
+			 * pass through (0, 0).
+			 */
+			double verticalSpacing = spacing / cosAngle;
+			y = Math.tan(angle) * bounds.getMinX();
+			long nStripes = Math.round((yOrigin - y) / verticalSpacing);
+			yOrigin = y + nStripes * verticalSpacing;
+		}
+		else
+		{
+			/*
+			 * Hatch lines are closer to vertical.
+			 * Move origin of hatch lines left or right so that they will
+			 * pass through (0, 0).
+			 */
+			double horizontalSpacing = spacing / Math.sin(angle);
+			x = bounds.getMinY() / Math.tan(angle);
+			long nStripes = Math.round((xOrigin - x) / horizontalSpacing);
+			xOrigin = x + nStripes * horizontalSpacing;
+		}
+
 		/*
 		 * Create stripes horizontally through rotated rectangle.
 		 */
-		rotateTransform.translate(bounds.getMinX(), bounds.getMinY());
+		rotateTransform.translate(xOrigin, yOrigin);
 		rotateTransform.rotate(angle);
-		
+
 		/*
 		 * Start stripes just below polyon, continue to above the polygon
 		 * and extend each stripe by half of spacing so that symbols
 		 * drawn along stripes do not stop before the boundary.
 		 */
 		double halfSpacing = spacing / 2;
-		y = yMin - halfSpacing;
-		while (y <= yMax + halfSpacing)
+		y = Math.floor((yMin - spacing) / spacing) * spacing;
+		while (y <= yMax + spacing)
 		{
 			pts[0] = xMin - halfSpacing;
 			pts[1] = pts[3] = y;
