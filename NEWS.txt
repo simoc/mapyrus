@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 
+0.592, November 2005
+
+* Add setting of line spacing in font command for multi-line labels.
+* Change stripepath so that stripes in neighbouring polygons match up.
+
 0.591, October 2005
 
 * Fix image and icon display in PDF output.
