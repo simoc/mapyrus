@@ -49,22 +49,22 @@ public class PostScriptFont
 
 	/**
 	 * Create PostScript Type 1 font from a .pfa file.
-	 * @param filename name of .pfa file.
+	 * @param pfaFilename name of .pfa file.
 	 */
-	public PostScriptFont(String filename) throws IOException, MapyrusException
+	public PostScriptFont(String pfaFilename) throws IOException, MapyrusException
 	{
 		/*
 		 * Only accept filenames with .pfa suffix.
 		 */
-		if (!filename.toLowerCase().endsWith(".pfa"))
+		if (!pfaFilename.toLowerCase().endsWith(".pfa"))
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-				": " + filename);
+				": " + pfaFilename);
 
 		BufferedReader bufferedReader = null;
 		
 		try
 		{
-			bufferedReader = new BufferedReader(new FileReader(filename));
+			bufferedReader = new BufferedReader(new FileReader(pfaFilename));
 	
 			/*
 			 * First line of file contains PostScript keyword, then font name.  For example,
@@ -73,7 +73,7 @@ public class PostScriptFont
 			String firstLine = bufferedReader.readLine();
 			if (firstLine == null)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-					": " + filename);
+					": " + pfaFilename);
 	
 			String magicToken = null;
 			StringTokenizer st = new StringTokenizer(firstLine);
@@ -84,7 +84,7 @@ public class PostScriptFont
 			}
 			if (magicToken == null || (!magicToken.startsWith("%!PS-AdobeFont")))
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-					": " + filename);
+					": " + pfaFilename);
 	
 			/*
 			 * Read entire .pfa file into memory, most files are about 100kb in size.
