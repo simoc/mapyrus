@@ -1,11 +1,11 @@
 begin hatch45
   clip "inside"
-  stripepath 2, 45
+  stripepath 4, 45
   stroke
 end
 begin hatchMinus45
   clip "inside"
-  stripepath 2, -45
+  stripepath 4, -45
   stroke
 end
 begin crosshatch
@@ -18,8 +18,9 @@ end
 
 newpage "eps", "tutorialpolygons2.eps", 60, 30
 clearpath
-move 5, 5
-draw 45, 5, 45, 25, 30, 25, 30, 20, 35, 20, 35, 10
-draw 20, 10, 20, 25, 10, 25
-closepath
+roundedbox 5, 3, 30, 25
+crosshatch
+
+clearpath
+roundedbox 31, 5, 55, 27
 crosshatch
