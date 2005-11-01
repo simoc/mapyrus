@@ -165,10 +165,10 @@ public class AdobeFontMetrics
 	/**
 	 * Create Adobe Font Metrics for a font by reading an AFM file.
 	 * @param r file to read from.
-	 * @param filename filename being read (for any error message).
+	 * @param afmFilename filename being read (for any error message).
 	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
 	 */	
-	public AdobeFontMetrics (BufferedReader r, String filename, HashSet ISOLatin1EncodedFonts)
+	public AdobeFontMetrics (BufferedReader r, String afmFilename, HashSet ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
 		String line;
@@ -187,7 +187,7 @@ public class AdobeFontMetrics
 			if (line == null || (!line.startsWith("StartFontMetrics")))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-					": " + filename);
+					": " + afmFilename);
 			}
 
 			while ((!finishedParsing) && line != null)
@@ -198,7 +198,7 @@ public class AdobeFontMetrics
 					if (st.countTokens() < 2)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-							": " + filename);
+							": " + afmFilename);
 					}
 					st.nextToken();	/* FontName */
 					mFontName = st.nextToken();
@@ -223,7 +223,7 @@ public class AdobeFontMetrics
 					if (st.countTokens() < 6)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-							": " + filename);
+							": " + afmFilename);
 					}
 
 					st.nextToken();	/* "C" */
@@ -254,7 +254,7 @@ public class AdobeFontMetrics
 		catch (NumberFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-				": " + filename + ": " + e.getMessage());
+				": " + afmFilename + ": " + e.getMessage());
 		}
 	}
 
