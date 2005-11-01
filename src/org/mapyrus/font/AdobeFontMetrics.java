@@ -22,6 +22,7 @@
  */
 package org.mapyrus.font;
 
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -47,7 +48,14 @@ public class AdobeFontMetrics
 	private String mFontName;
 
 	private short []mCharWidths;
+	private int mFirstChar, mLastChar;
 	private boolean mIsFixedPitch;
+	private int mItalicAngle;
+	private int mCapHeight;
+	private int mAscender;
+	private int mDescender;
+	private Rectangle mFontBBox;
+	private int mFlags;
 
 	/*
 	 * Lookup table of ISOLatin1 character indexes for named extended characters.
@@ -180,6 +188,9 @@ public class AdobeFontMetrics
 		// TODO handle fonts with more than 256 characters.
 		mCharWidths = new short[256];
 		mIsFixedPitch = false;
+		mFirstChar = Integer.MAX_VALUE;
+		mLastChar = Integer.MIN_VALUE;
+		mFlags = 32; /* Nonsymbolic font for PDF */
 
 		try
 		{
@@ -192,38 +203,13 @@ public class AdobeFontMetrics
 
 			while ((!finishedParsing) && line != null)
 			{
-				if (line.startsWith("FontName"))
-				{
-					st = new StringTokenizer(line);
-					if (st.countTokens() < 2)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-							": " + afmFilename);
-					}
-					st.nextToken();	/* FontName */
-					mFontName = st.nextToken();
-					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(mFontName);
-				}
-				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
-				{
-					mIsFixedPitch = true;
-				}
-				else if (line.startsWith("StartCharMetrics"))
-				{
-					inCharMetrics = true;
-				}
-				else if (line.startsWith("EndCharMetrics"))
-				{
-					inCharMetrics = false;
-					finishedParsing = true;
-				}
-				else if (inCharMetrics && line.startsWith("C"))
+				if (inCharMetrics && line.startsWith("C"))
 				{
 					st = new StringTokenizer(line, " ;");
 					if (st.countTokens() < 6)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-							": " + afmFilename);
+							": " + afmFilename + ": " + line);
 					}
 
 					st.nextToken();	/* "C" */
@@ -246,8 +232,108 @@ public class AdobeFontMetrics
 					if (charIndex >= 0 && charIndex < mCharWidths.length)
 					{
 						mCharWidths[charIndex] = charWidth;
+						if (charIndex < mFirstChar)
+							mFirstChar = charIndex;
+						if (charIndex > mLastChar)
+							mLastChar = charIndex;
 					}
 				}
+				else if (line.startsWith("FontName"))
+				{
+					st = new StringTokenizer(line);
+					if (st.countTokens() < 2)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
+							": " + afmFilename + ": " + line);
+					}
+					st.nextToken();	/* FontName */
+					mFontName = st.nextToken();
+					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(mFontName);
+				}
+				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
+				{
+					mIsFixedPitch = true;
+					mFlags |= 1;
+				}
+				else if (line.startsWith("ItalicAngle"))
+				{
+					st = new StringTokenizer(line);
+					if (st.countTokens() < 2)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
+							": " + afmFilename + ": " + line);
+					}
+					st.nextToken(); /* "ItalicAngle" */
+					mItalicAngle = (int)Math.round(Double.parseDouble(st.nextToken()));
+				}
+				else if (line.startsWith("CapHeight"))
+				{
+					st = new StringTokenizer(line);
+					if (st.countTokens() < 2)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
+							": " + afmFilename + ": " + line);
+					}
+					st.nextToken(); /* "CapHeight" */
+					mCapHeight = Integer.parseInt(st.nextToken());
+				}
+				else if (line.startsWith("Ascender"))
+				{
+					st = new StringTokenizer(line);
+					if (st.countTokens() < 2)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
+							": " + afmFilename + ": " + line);
+					}
+					st.nextToken(); /* "Ascender" */
+					mAscender = Integer.parseInt(st.nextToken());
+				}
+				else if (line.startsWith("Descender"))
+				{
+					st = new StringTokenizer(line);
+					if (st.countTokens() < 2)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
+							": " + afmFilename + ": " + line);
+					}
+					st.nextToken(); /* "Descender" */
+					mDescender = Integer.parseInt(st.nextToken());
+				}
+				else if (line.startsWith("FontBBox"))
+				{
+					st = new StringTokenizer(line);
+					if (st.countTokens() < 5)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
+							": " + afmFilename + ": " + line);
+					}
+					st.nextToken(); /* "FontBBox" */
+					int x1 = Integer.parseInt(st.nextToken());
+					int y1 = Integer.parseInt(st.nextToken());
+					int x2 = Integer.parseInt(st.nextToken());
+					int y2 = Integer.parseInt(st.nextToken());
+					mFontBBox = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+				}
+				else if (line.startsWith("Weight"))
+				{
+					st = new StringTokenizer(line);
+					while(st.hasMoreTokens())
+					{
+						String token = st.nextToken();
+						if (token.equalsIgnoreCase("italic"))
+							mFlags |= 64;
+					}
+				}
+				else if (line.startsWith("StartCharMetrics"))
+				{
+					inCharMetrics = true;
+				}
+				else if (line.startsWith("EndCharMetrics"))
+				{
+					inCharMetrics = false;
+					finishedParsing = true;
+				}
+
 				line = r.readLine();
 			}
 		}
@@ -265,6 +351,88 @@ public class AdobeFontMetrics
 	public String getFontName()
 	{
 		return(mFontName);
+	}
+
+	/**
+	 * Returns index of first character in font.
+	 * @return index.
+	 */
+	public int getFirstChar()
+	{
+		return(mFirstChar);
+	}
+
+	/**
+	 * Returns index of last character in font.
+	 * @return index.
+	 */
+	public int getLastChar()
+	{
+		return(mLastChar);
+	}
+
+	/**
+	 * Get width of character.
+	 * @param index index of character.
+	 * @return width of this character.
+	 */
+	public int getCharWidth(int index)
+	{
+		return(mCharWidths[index]);
+	}
+
+	/**
+	 * Returns italic angle of font.
+	 * @return italic angle.
+	 */
+	public int getItalicAngle()
+	{
+		return(mItalicAngle);
+	}
+
+	/**
+	 * Returns height of capital letters in font.
+	 * @return cap height.
+	 */
+	public int getCapHeight()
+	{
+		return(mCapHeight);
+	}
+
+	/**
+	 * Returns bounding box of font.
+	 * @return font bounding box.
+	 */
+	public Rectangle getFontBBox()
+	{
+		return(mFontBBox);
+	}
+
+	/**
+	 * Returns font type as PDF bit flags.
+	 * @return font bit flags.
+	 */
+	public int getFlags()
+	{
+		return(mFlags);
+	}
+	
+	/**
+	 * Returns maximum height of font above baseline.
+	 * @return ascender height.
+	 */
+	public int getAscender()
+	{
+		return(mAscender);
+	}
+
+	/**
+	 * Returns maximum height of font below baseline.
+	 * @return descender height.
+	 */
+	public int getDescender()
+	{
+		return(mDescender);
 	}
 
 	/**
