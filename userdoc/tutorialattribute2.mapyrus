@@ -20,7 +20,7 @@ begin populationCylinder name, pop
   clearpath
   color "maroon"
   move 0, -6
-  font "Helvetica", 3
+  font "Helvetica-Bold", 3
   justify "center"
   label name
 end
@@ -58,7 +58,7 @@ done
 # Draw legend in separate PostScript file.
 #
 newpage "eps", "tutorialattribute2legend.eps", 40, 50
-font "Helvetica", 3
+font "Helvetica-Bold", 3
 color "black"
 move 5, 5, 5, 15, 5, 25, 5, 35
 legend 4
