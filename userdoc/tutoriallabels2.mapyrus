@@ -7,6 +7,6 @@ do
   color "hsb", r / 360, r / 360, 0.6
   rotate 20
   let r = r + 20
-  font 'Times-Roman', 6
+  font 'Times-Roman', 4 + r / 180
   label 'Spirally'
 done
