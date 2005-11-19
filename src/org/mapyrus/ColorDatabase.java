@@ -32,7 +32,8 @@ import java.io.IOException;
 
 /**
  * Color names and their RGB color components.
- * A name to RGB value lookup table using colors read from a UNIX-style rgb.txt file.
+ * A name to RGB value lookup table using colors read from a UNIX-style
+ * rgb.txt file.
  * Some basic colors are defined if no file can be found to read.
  */
 public class ColorDatabase
