@@ -146,7 +146,7 @@ Examples from user manual are in userdoc directory.
 
 Changes in this version of Mapyrus are described in file NEWS.txt.
 
-Mapyrus runs on any operating system for which Java 1.4 (or later)
+Mapyrus runs on any operating system for which Java 1.4.2 (or later)
 is available.
 
 Start Mapyrus from a terminal window with a command like:
@@ -155,6 +155,10 @@ java -classpath mapyrus.jar org.mapyrus.Mapyrus myfile.mapyrus
 
 Mapyrus is released under the GNU Lesser General Public License (LGPL).
 See file named userdoc/COPYING for details.
+
+Source code for Mapyrus is available via anonymous CVS from SourceForge.
+To checkout the source code use a command like:
+cvs -z3 -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/mapyrus co mapyrus
 </echo>
 
 </target>
@@ -164,7 +168,7 @@ See file named userdoc/COPYING for details.
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-<fileset dir="." includes="build/**, build.xml, userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, src/**, NEWS.txt, README.txt" excludes="**/CVS, build/classes/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc"/>
+<fileset dir="." includes="userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, NEWS.txt, README.txt" excludes="**/CVS userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc"/>
 <fileset dir="." includes="userdoc/flag.eps"/>
 </zip>
 </target>
