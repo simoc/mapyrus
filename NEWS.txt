@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 
+0.593, December 2005
+
+* Add additional color names.
+
 0.592, November 2005
 
 * Add setting of line spacing in font command for multi-line labels.
