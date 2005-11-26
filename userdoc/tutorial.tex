@@ -1887,14 +1887,23 @@ are required:
 
 \begin{itemize}
 \item
+CVS Version Control System.
+\item
 Ant build tool.
 \item
-Java 2 SDK 1.4, or higher.
+Java 2 SDK 1.4.2, or higher.
 \item
-Java Topology Suite 1.4, or higher from \texttt{http://www.vividsolutions.com}.
+Java Topology Suite 1.4.2, or higher from \texttt{http://www.vividsolutions.com}.
 \item
 \LaTeX.
 \end{itemize}
+
+First, checkout the source code from the Mapyrus anonymous CVS server
+using the following command.
+
+\begin{verbatim}
+cvs -z3 -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/mapyrus co mapyrus
+\end{verbatim}
 
 The build process build is defined in the file \texttt{build.xml} in the
 Mapyrus installation directory.  To build the software, documentation and zip

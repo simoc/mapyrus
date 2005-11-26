@@ -7,8 +7,8 @@
 Mapyrus requires:
 \begin{itemize}
 \item
-Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4 or higher,
-or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4 or higher.
+Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4.2 or higher,
+or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4.2 or higher.
 \item
 The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system (when a real X-Windows display
@@ -1933,7 +1933,7 @@ File Format & Extras \\
 \hline
 \endhead
 
-PostScript, Encapsulated PostScript, PDF &
+PostScript, Encapsulated PostScript &
 
 \texttt{background=\textit{color}}
 
@@ -1999,6 +1999,27 @@ a single page.
 Drawing commands will draw over the top of the existing page.
 Page size is set to the size of the existing page,
 \textit{width} and \textit{height} of the new page are ignored.  \\
+
+\hline
+
+PDF &
+
+\texttt{background=\textit{color}}
+
+Background color for page, as a named color or as hex digits.
+
+\vspace{10pt}
+\texttt{resolution=\textit{value}}
+
+Resolution for page, given as a dots-per-inch value.  Replaces
+default value of 72.
+
+\vspace{10pt}
+\texttt{turnpage=\textit{flag}}
+
+If \textit{flag} is \texttt{true} then
+turns a landscape orientation page 90 degrees so that it appears
+as a portrait page. \\
 
 \hline
 
