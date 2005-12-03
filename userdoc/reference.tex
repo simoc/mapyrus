@@ -2484,7 +2484,7 @@ and Y axes of the page, regardless of any rotation angle.
 \subsubsection{wedge}
 
 \begin{alltt}
-wedge \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{angle}, \textit{sweep}
+wedge \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{angle}, \textit{sweep} [, \textit{height} ]
 \end{alltt}
 
 Adds a wedge (pie slice) shape to the current path, with center
@@ -2495,7 +2495,10 @@ counter-clockwise in degrees, with zero being horizontal.
 The wedge is open \textit{sweep} degrees in a counter-clockwise direction.
 If \textit{sweep} is negative then the wedge opens in a clockwise direction.
 
-The center point and radius are transformed through any
+If \textit{height} is given then the wedge is extended downwards
+by this value to produce 3 dimensional effect.
+
+The center point, radius and height are transformed through any
 transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
