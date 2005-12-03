@@ -916,7 +916,7 @@ public class Interpreter
 				break;
 
 			case Statement.WEDGE:
-				if (nExpressions == 5)
+				if (nExpressions == 5 || nExpressions == 6)
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
@@ -924,22 +924,93 @@ public class Interpreter
 					double startAngle = mExecuteArgs[3].getNumericValue();
 					double sweep = mExecuteArgs[4].getNumericValue();
 					double endAngle = startAngle + sweep;
+					double height;
+					if (nExpressions == 6)
+						height = mExecuteArgs[5].getNumericValue();
+					else
+						height = 0;
 					int sign = sweep > 0 ? -1 : 1;
 					startAngle = Math.toRadians(startAngle);
 					endAngle = Math.toRadians(endAngle);
 					if (radius > 0 && sweep != 0)
 					{
+						double cosStartAngle = Math.cos(startAngle);
+						double sinStartAngle = Math.sin(startAngle);
+						double cosEndAngle = Math.cos(endAngle);
+						double sinEndAngle = Math.sin(endAngle);
+						x2 = x1 + cosStartAngle * radius;
+						y2 = y1 + sinStartAngle * radius;
+						double x3 = x1 + cosEndAngle * radius;
+						double y3 = y1 + sinEndAngle * radius;
+
+						/*
+						 * Add straight line segments and arc defining
+						 * wedge (piece slice) shape.
+						 */
+						context.moveTo(x1, y1);
+						context.lineTo(x2, y2);
+						context.arcTo(sign, x1, y1, x3, y3);
+						context.closePath();
+						
+						if (height > 0)
+						{
 							/*
-							 * Add straight line segments and arc defining
-							 * wedge (piece slice) shape.
+							 * Add sections below the wedge to give it a 3D effect
+							 * and make it look like a slice of cake.
+							 * 
+							 * Draw this first so that wedge overwrites it correctly.
 							 */
-							context.moveTo(x1, y1);
-							context.lineTo(x1 + Math.cos(startAngle) * radius,
-								y1 + Math.sin(startAngle) * radius);
-							context.arcTo(sign, x1, y1,
-								x1 + Math.cos(endAngle) * radius,
-								y1 + Math.sin(endAngle) * radius);
-							context.closePath();
+							if ((sign == 1 && cosStartAngle < 0) ||
+								(sign == -1 && cosStartAngle > 0))
+							{
+								/*
+								 * Add rectangular section visible at
+								 * start of wedge.
+								 */
+								context.moveTo(x2, y2);
+								context.lineTo(x2, y2 - height);
+								context.lineTo(x1, y1 - height);
+								context.lineTo(x1, y1);
+								context.closePath();
+							}
+							if ((sign == 1 && cosEndAngle > 0) ||
+								(sign == -1 && cosEndAngle < 0))
+							{
+								/*
+								 * Add rectangular section visible at
+								 * end of wedge.
+								 */
+								context.moveTo(x3, y3);
+								context.lineTo(x3, y3 - height);
+								context.lineTo(x1, y1 - height);
+								context.lineTo(x1, y1);
+								context.closePath();
+							}
+							if (sinStartAngle < 0 || sinEndAngle < 0 || Math.abs(sweep) > 180)
+							{
+								/*
+								 * Draw curved part of edge of wedge that is visible.
+								 */
+								double x4 = x2, y4 = y2;
+								if (sinStartAngle > 0)
+								{
+									x4 = x1 + radius * sign;
+									y4 = y1;
+								}
+								context.moveTo(x4, y4);
+								context.lineTo(x4, y4 - height);
+								double x5 = x3, y5 = y3;
+								if (sinEndAngle > 0)
+								{
+									x5 = x1 - radius * sign;
+									y5 = y1;
+								}
+								context.arcTo(sign, x1, y1 - height, x5, y5 - height);
+								context.lineTo(x5, y5);
+								context.arcTo(-sign, x1, y1, x4, y4);
+								context.closePath();
+							}
+						}
 					}
 				}
 				else
