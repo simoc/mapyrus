@@ -60,7 +60,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
@@ -171,7 +170,7 @@ public class OutputFormat
 	 * used in this file but not defined.
 	 */
 	private HashSet mSuppliedFontResources;
-	private LinkedList mNeededFontResources;
+	private HashSet mNeededFontResources;
 
 	/*
 	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
@@ -993,7 +992,7 @@ public class OutputFormat
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
-			mNeededFontResources = new LinkedList();
+			mNeededFontResources = new HashSet();
 
 			if (mIsUpdatingFile)
 			{
