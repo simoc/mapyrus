@@ -2388,7 +2388,7 @@ public class Context
 		 * Save state so we can temporarily change label justification.
 		 */
 		mOutputFormat.saveState();
-		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM);
+		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_TOP);
 		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|
 			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
 		setGraphicsAttributes(attributeMask);
@@ -2442,7 +2442,7 @@ public class Context
 					String s = arg.getHashMapEntry(primaryKeys[k].toString()).toString();
 					Point2D.Float labelPt = new Point2D.Float();
 					labelPt.x = (float)(ptCopy.x + xPadding);
-					labelPt.y = (float)(ptCopy.y - yPadding - minRowHeight);
+					labelPt.y = (float)(ptCopy.y - yPadding);
 
 					ArrayList ptList = new ArrayList();
 					ptList.add(labelPt);
