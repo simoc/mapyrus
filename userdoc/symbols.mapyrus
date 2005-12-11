@@ -645,7 +645,7 @@ begin speechbubble message
 	# Draw each line of message inside bubble.
 	#
 	clearpath
-	move -halfWidth, height - 3 + 1.5
+	move -halfWidth, 1.5
 	label message
 end
 
