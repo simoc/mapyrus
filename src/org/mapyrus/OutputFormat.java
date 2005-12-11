@@ -204,11 +204,10 @@ public class OutputFormat
 	private double mFontSize;
 
 	/*
-	 * Justification for labels as fraction of string height and width
-	 * to move string in X and Y direction to achieve correct justification.
+	 * Justification for labels in X and Y directions.
 	 */
-	private double mJustificationShiftX;
-	private double mJustificationShiftY;
+	private int mJustificationShiftX;
+	private int mJustificationShiftY;
 
 	/*
 	 * Rotation of current font in radians, with 0 horizontal,
@@ -388,10 +387,12 @@ public class OutputFormat
 
 		/*
 		 * Define font and dictionary entries for font size and justification.
-		 * Don't bind these as font loading operators may be overridden in interpreter.
+		 * Don't bind these as font loading operators may be overridden in
+		 * interpreter.
 		 */
 		writeLine(mWriter, "/font {");
 		writeLine(mWriter, "/foutline exch def");
+		writeLine(mWriter, "/flinespacing exch def");
 		writeLine(mWriter, "/frot exch radtodeg def");
 		writeLine(mWriter, "/fsize exch def findfont fsize scalefont setfont } def");
 		writeLine(mWriter, "/radtodeg { 180 mul 3.1415629 div } bind def");
@@ -399,17 +400,37 @@ public class OutputFormat
 		/*
 		 * Draw text string, after setting correct position, rotation,
 		 * justifying it horizontally and vertically for current font size
-		 * and shifting it down a number of lines if it is part of a multi-line
-		 * string.
+		 * and shifting it down or right to match correct justification.
 		 *
-		 * Line number (starting at 0) and string to show are passed to this procedure.
+		 * Line number (starting at 0) and string to show are passed
+		 * to this procedure.
 		 */
-		writeLine(mWriter, "/t { gsave currentpoint translate frot rotate");
-		writeLine(mWriter, "dup stringwidth pop fjx mul");
-		writeLine(mWriter, "3 -1 roll neg fjy add fsize mul");
-		writeLine(mWriter, "rmoveto foutline 0 gt");
-		writeLine(mWriter, "{false charpath foutline w 0 j 0 J 2 M stroke} {show} ifelse");
-		writeLine(mWriter, "grestore newpath } bind def");
+		writeLine(mWriter, "/t {");
+		writeLine(mWriter, "/str exch def");
+		writeLine(mWriter, "/nlines exch def");
+		writeLine(mWriter, "/linenum exch def");
+		writeLine(mWriter, "gsave currentpoint translate frot rotate");
+
+		writeLine(mWriter, "% Shift label to correct justification");
+		writeLine(mWriter, JUSTIFY_LEFT + " fjx eq {0} if");
+		writeLine(mWriter, JUSTIFY_CENTER + " fjx eq {str stringwidth pop neg 2 div} if");
+		writeLine(mWriter, JUSTIFY_RIGHT + " fjx eq {str stringwidth pop neg} if");
+
+		writeLine(mWriter, JUSTIFY_BOTTOM + " fjy eq {nlines 1 sub fsize mul flinespacing mul} if");
+		writeLine(mWriter, JUSTIFY_MIDDLE + " fjy eq {nlines fsize mul " +
+			"nlines 1 sub fsize mul flinespacing 1 sub mul add 2 div fsize sub} if");
+		writeLine(mWriter, JUSTIFY_TOP + " fjy eq {fsize neg} if");
+
+		writeLine(mWriter, "% Shift multi-line labels down");
+		writeLine(mWriter, "linenum fsize mul flinespacing mul sub");
+		writeLine(mWriter, "rmoveto");
+		writeLine(mWriter, "% Draw label or label outline");
+		writeLine(mWriter, "foutline 0 gt");
+		writeLine(mWriter, "{str false charpath foutline w 0 j 0 J 2 M stroke}");
+		writeLine(mWriter, "{str show}");
+		writeLine(mWriter, "ifelse");
+		writeLine(mWriter, "grestore newpath");
+		writeLine(mWriter, "} bind def");
 
 		writeLine(mWriter, "/w { setlinewidth } bind def");
 		writeLine(mWriter, "/J { setlinecap } bind def");
@@ -421,7 +442,7 @@ public class OutputFormat
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
 		 */
-		writeLine(mWriter, "/q { gsave 4 dict begin } bind def");
+		writeLine(mWriter, "/q { gsave 12 dict begin } bind def");
 		writeLine(mWriter, "/Q { end grestore } bind def");
 		writeLine(mWriter, "");
 	}
@@ -1119,7 +1140,8 @@ public class OutputFormat
 		mPageHeight = height;
 		mResolution = Constants.MM_PER_INCH / resolution;
 		mFontCache = new FontCache();
-		mJustificationShiftX = mJustificationShiftY = 0.0;
+		mJustificationShiftX = JUSTIFY_LEFT;
+		mJustificationShiftY = JUSTIFY_BOTTOM;
 		mFontOutlineWidth = 0.0;
 		mFontLineSpacing = 1;
 
@@ -1959,6 +1981,7 @@ public class OutputFormat
 			writeLine(mWriter, "/" + fontName + " " +
 				fontSize + " " +
 				fontRotation + " " +
+				lineSpacing + " " +
 				outlineWidth + " font");
 			mNeededFontResources.add(fontName);
 		}
@@ -2067,18 +2090,18 @@ public class OutputFormat
 		 * justification.
 		 */
 		if ((justify & JUSTIFY_LEFT) != 0)
-			mJustificationShiftX = 0.0;
+			mJustificationShiftX = JUSTIFY_LEFT;
 		else if ((justify & JUSTIFY_CENTER) != 0)
-			mJustificationShiftX = -0.5;
+			mJustificationShiftX = JUSTIFY_CENTER;
 		else
-			mJustificationShiftX = -1.0;
+			mJustificationShiftX = JUSTIFY_RIGHT;
 
 		if ((justify & JUSTIFY_BOTTOM) != 0)
-			mJustificationShiftY = 0.0;
+			mJustificationShiftY = JUSTIFY_BOTTOM;
 		else if ((justify & JUSTIFY_MIDDLE) != 0)
-			mJustificationShiftY = -0.5;
+			mJustificationShiftY = JUSTIFY_MIDDLE;
 		else
-			mJustificationShiftY = -1.0;
+			mJustificationShiftY = JUSTIFY_TOP;
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 		{
@@ -3148,6 +3171,11 @@ public class OutputFormat
 		AffineTransform affine;
 		FontRenderContext frc = null;
 		Stroke originalStroke = null;
+		ArrayList lines = new ArrayList();
+
+		st = new StringTokenizer(label, Constants.LINE_SEPARATOR);
+		while (st.hasMoreTokens())
+				lines.add(st.nextToken());
 
 		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF)
 		{
@@ -3163,6 +3191,26 @@ public class OutputFormat
 					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2.0f);
 				mGraphics2D.setStroke(outlineStroke);
 			}
+		}
+
+		/*
+		 * Calculate vertical shift to give label correct alignment.
+		 */
+		double yShift = 0;
+		if (mJustificationShiftY == JUSTIFY_TOP)
+		{
+			yShift = -mFontSize;
+		}
+		else if (mJustificationShiftY == JUSTIFY_MIDDLE)
+		{
+			yShift = lines.size() * mFontSize +
+				(lines.size() - 1) * mFontSize *
+				(mFontLineSpacing - 1);
+			yShift = yShift / 2 - mFontSize;
+		}
+		else
+		{
+			yShift = (lines.size() - 1) * mFontSize * mFontLineSpacing;
 		}
 
 		/*
@@ -3219,11 +3267,11 @@ public class OutputFormat
 			/*
 			 * Draw each line of label below the one above.
 			 */
-			st = new StringTokenizer(label, Constants.LINE_SEPARATOR);
+			Iterator it = lines.iterator();
 			lineNumber = 0;
-			while (st.hasMoreTokens())
+			while (it.hasNext())
 			{
-				nextLine = st.nextToken();
+				nextLine = (String)it.next();
 
 				if (mOutputType == POSTSCRIPT_GEOMETRY)
 				{
@@ -3235,15 +3283,20 @@ public class OutputFormat
 					 * drawing each line of the label.
 					 */
 					writeLine(mWriter, mCoordinateDecimal.format(lineNumber));
+					writeLine(mWriter, Integer.toString(lines.size()));
 					writePostScriptString(mWriter, null, nextLine);
 					writeLine(mWriter, "t");
 				}
 				else if (mOutputType == PDF)
 				{
 					StringDimension dim = getStringDimension(nextLine, mFontName, mFontSize, 1);
-					double x2 = dim.getWidth() * mJustificationShiftX;
-					double y2 = dim.getHeight() * mJustificationShiftY;
-					y2 -= lineNumber * mFontSize;
+					double x2 = 0;
+					if (mJustificationShiftX == JUSTIFY_RIGHT)
+						x2 = -dim.getWidth();
+					else if (mJustificationShiftX == JUSTIFY_CENTER)
+						x2 = -dim.getWidth() / 2.0;
+
+					double y2 = yShift - lineNumber * mFontSize * mFontLineSpacing;
 					writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x2 - lastX) + " " +
 						mCoordinateDecimal.format(y2 - lastY) + " Td");
 					lastX = x2;
@@ -3257,18 +3310,10 @@ public class OutputFormat
 				}
 				else if (mOutputType == SVG)
 				{
-					double yInc = 0;
-
-					if (lineNumber != 0)
-					{
-						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
-						yInc = bounds.getHeight() * lineNumber;
-					}
-
 					String anchor;
-					if (mJustificationShiftX == -1)
+					if (mJustificationShiftX == JUSTIFY_RIGHT)
 						anchor = "end";
-					else if (mJustificationShiftX == 0)
+					else if (mJustificationShiftX == JUSTIFY_LEFT)
 						anchor = "start";
 					else
 						anchor = "middle";
@@ -3318,6 +3363,7 @@ public class OutputFormat
 					}
 
 					double px, py;
+					double y2 = y + yShift - lineNumber * mFontSize * mFontLineSpacing;
 
 					if (mFontRotation != 0)
 					{
@@ -3328,7 +3374,7 @@ public class OutputFormat
 						 */
 						writeLine(mWriter, "<g transform=\"translate(" +
 							mCoordinateDecimal.format(x) + ", " +
-							mCoordinateDecimal.format(mPageHeight - y) +
+							mCoordinateDecimal.format(mPageHeight - y2) +
 							") rotate(" +
 							mCoordinateDecimal.format(Math.toDegrees(-mFontRotation)) +
 							")\">");
@@ -3337,14 +3383,9 @@ public class OutputFormat
 					else
 					{
 						px = x;
-						py = mPageHeight - (y - yInc);
+						py = mPageHeight - y2;
 					}
 
-					/*
-					 * Shift text to correct vertical alignment.
-					 */
-					py -= mJustificationShiftY * font.getSize2D();
-					
 					writeLine(mWriter, "<text x=\"" + mCoordinateDecimal.format(px) +
 						"\" y=\"" + mCoordinateDecimal.format(py) +
 						"\" text-anchor=\"" + anchor + "\"");
@@ -3381,14 +3422,21 @@ public class OutputFormat
 					/*
 					 * Reposition label from original point so it has correct justification.
 					 */
-					if (mJustificationShiftX != 0.0 || mJustificationShiftY != 0.0 || lineNumber != 0)
+					if (mJustificationShiftX != JUSTIFY_LEFT ||
+						mJustificationShiftY != JUSTIFY_BOTTOM ||
+						lines.size() > 1 || mFontRotation != 0)
 					{
 						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
 						affine = AffineTransform.getTranslateInstance(x, y);
 						affine.rotate(mFontRotation);
+						double x2 = 0;
+						if (mJustificationShiftX == JUSTIFY_RIGHT)
+							x2 = -bounds.getWidth();
+						else if (mJustificationShiftX == JUSTIFY_CENTER)
+							x2 = -bounds.getWidth() / 2.0;
 
-	   					startPt = new Point2D.Double(bounds.getWidth() * mJustificationShiftX,
-	   						bounds.getHeight() * (mJustificationShiftY - lineNumber));
+	   					startPt = new Point2D.Double(x2, yShift -
+	   						lineNumber * mFontSize * mFontLineSpacing);
 	   					affine.transform(startPt, startPt);
 					}
 					else
@@ -3417,7 +3465,7 @@ public class OutputFormat
 						mGraphics2D.drawString(nextLine, fx, fy);
 					}
 				}
-				lineNumber += mFontLineSpacing;
+				lineNumber++;
 			}
 			
 			if (mOutputType == PDF)
