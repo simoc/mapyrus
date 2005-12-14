@@ -761,6 +761,8 @@ public class OutputFormat
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
+		else if (mOutputType == PDF)
+			resolution = 72;
 		else
 			resolution = Constants.getScreenResolution();
 
