@@ -139,6 +139,7 @@ public class Context
 	 */
 	private AffineTransform mWorldCtm;
 	private Rectangle2D.Double mWorldExtents;
+	private Rectangle2D.Double mPageWorldExtents;
 	private int mWorldUnits;
 
 	/*
@@ -784,6 +785,10 @@ public class Context
 			}
 		}
 
+		mWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
+				Math.min(wy1, wy2),
+				Math.abs(wx2 - wx1), Math.abs(wy2 - wy1));
+
 		/*
 		 * Expand world coordinate range so that it fills whole page.
 		 */
@@ -801,7 +806,7 @@ public class Context
 		mWorldCtm.scale(mOutputFormat.getPageWidth() / (wx2 - wx1),
 			mOutputFormat.getPageHeight() / (wy2 - wy1));
 		mWorldCtm.translate(-wx1, -wy1);
-		mWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
+		mPageWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
 			Math.min(wy1, wy2),
 			Math.abs(wx2 - wx1), Math.abs(wy2 - wy1));
 		mWorldUnits = units;
@@ -911,7 +916,7 @@ public class Context
 
 		if (mOutputFormat != null && mWorldCtm != null)
 		{
-			worldWidthInMM = mWorldExtents.width;
+			worldWidthInMM = mPageWorldExtents.width;
 			if (mWorldUnits == WORLD_UNITS_METRES)
 				worldWidthInMM *= 1000.0;
 			else if (mWorldUnits == WORLD_UNITS_FEET)
@@ -926,83 +931,6 @@ public class Context
 			scale = 1.0;
 		}
 		return(scale);
-	}
-
-	/**
-	 * Returns bounding that when transformed through projection results
-	 * in same bounding box as current world coordinate system.
-	 * @return bounding box.
-	 */
-	public Rectangle2D.Double getUnprojectedExtents() throws MapyrusException
-	{
-		Rectangle2D.Double retval;
-		double xMin, yMin, xMax, yMax;
-		int i, j;
-		double coords[] = new double[2];
-		
-		xMin = yMin = Float.MAX_VALUE;
-		xMax = yMax = Float.MIN_VALUE;
-
-		if (mWorldExtents != null)
-		{
-			if (mProjectionTransform != null)
-			{
-				/*
-				 * Transform points around boundary of world coordinate extents
-				 * backwards through projection transformation.
-				 * Find minimum and maximum values.
-				 */
-				for (i = 0; i <= PROJECTED_GRID_STEPS; i++)
-				{
-					for (j = 0; j <= PROJECTED_GRID_STEPS; j++)
-					{
-						/*
-						 * Only transform points around boundary.
-						 */
-						if ((i == 0 || i == PROJECTED_GRID_STEPS) &&
-							(j == 0 || j == PROJECTED_GRID_STEPS))
-						{
-							coords[0] = mWorldExtents.x +
-								((double)i / PROJECTED_GRID_STEPS) * mWorldExtents.width;
-							coords[1] = mWorldExtents.y +
-								((double)j / PROJECTED_GRID_STEPS) * mWorldExtents.height;	
-						
-							mProjectionTransform.backwardTransform(coords);
-							if (coords[0] < xMin)
-								xMin = coords[0];
-							if (coords[1] < yMin)
-								yMin = coords[1];
-							if (coords[0] > xMax)
-								xMax = coords[0];
-							if (coords[1] > yMax)
-								yMax = coords[1];
-						}
-					}
-				}
-				retval = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
-			}
-			else
-			{
-				/*
-				 * No projection transformation set so just return plain world
-				 * coordinate extents.
-				 */
-				retval = mWorldExtents;
-			}
-		}
-		else if (mOutputFormat != null)
-		{
-			/*
-			 * No world coordinate system set, just return page coordinate.
-			 */
-			retval = new Rectangle2D.Double(0, 0,
-				mOutputFormat.getPageWidth(), mOutputFormat.getPageHeight());
-		}
-		else
-		{
-			retval = new Rectangle2D.Double(0, 0, 1, 1);
-		}
-		return(retval);
 	}
 						
 	/**
@@ -1664,7 +1592,9 @@ public class Context
 		throws IOException, MapyrusException
 	{
 		BufferedImage image;
-		Rectangle2D.Double worldExtents = getWorldExtents();
+		Rectangle2D.Double worldExtents = mPageWorldExtents;
+		if (worldExtents == null)
+			worldExtents = getWorldExtents();
 		GeoImageBoundingBox imageBounds;
 		boolean isWMSRequest = false;
 		URL url = null;
@@ -2744,10 +2674,10 @@ public class Context
 			double w = retval.getWidth();
 			double h = retval.getHeight();
 
-			if (mWorldExtents != null && scaleToWorlds)
+			if (mPageWorldExtents != null && scaleToWorlds)
 			{
-				w = w / mOutputFormat.getPageWidth() * mWorldExtents.getWidth();
-				h = h / mOutputFormat.getPageHeight() * mWorldExtents.getHeight();
+				w = w / mOutputFormat.getPageWidth() * mPageWorldExtents.getWidth();
+				h = h / mOutputFormat.getPageHeight() * mPageWorldExtents.getHeight();
 			}
 			w = w / mScaling;
 			h = h / mScaling;
