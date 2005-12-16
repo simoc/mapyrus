@@ -67,7 +67,6 @@ public class ContextStack
 	 */
 	private static final String PATH_VARIABLE = "path";
 	private static final String WORLDS_VARIABLE = "worlds";
-	private static final String UNPROJECTED_VARIABLE = "project";
 	private static final String DATASET_VARIABLE = "dataset";
 	private static final String PAGE_VARIABLE = "page";
 	private static final String SCREEN_VARIABLE = "screen";
@@ -1204,12 +1203,6 @@ public class ContextStack
 				{
 					retval = getBoundingBoxVariable(sub, bounds);
 				}
-			}
-			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + UNPROJECTED_VARIABLE + "."))
-			{
-				bounds = getCurrentContext().getUnprojectedExtents();
-				sub = varName.substring(INTERNAL_VARIABLE_PREFIX.length() + UNPROJECTED_VARIABLE.length() + 1);
-				retval = getBoundingBoxVariable(sub, bounds);
 			}
 			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + DATASET_VARIABLE + "."))
 			{
