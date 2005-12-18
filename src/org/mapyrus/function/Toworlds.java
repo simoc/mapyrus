@@ -27,7 +27,8 @@ import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
 
 /**
- * Function transforming page 
+ * Function transforming page coordinates to world coordinates,
+ * the inverse of the topage function.
  */
 public class Toworlds extends Function
 {
