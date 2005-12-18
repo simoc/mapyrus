@@ -134,6 +134,9 @@ public class FunctionTable
 		f = new Tempname();
 		mFunctions.put(f.getName(), f);
 
+		f = new Toworlds();
+		mFunctions.put(f.getName(), f);
+
 		f = new Trim();
 		mFunctions.put(f.getName(), f);
 
