@@ -834,24 +834,31 @@ public class Context
 	{
 		AffineTransform affine = null;
 		Argument retval = arg;
-		
+
 		try
 		{
 			if (mWorldCtm != null)
-				affine = mWorldCtm.createInverse();
-			if (!mCtm.isIdentity())
 			{
-				if (affine == null)
-					affine = mCtm.createInverse();
-				else
-					affine.concatenate(mCtm.createInverse());
-			}
-			if (affine != null)
+				affine = mWorldCtm.createInverse();
 				retval = arg.transformGeometry(affine);
+			}
 		}
 		catch (NoninvertibleTransformException e)
 		{
 		}
+		return(retval);
+	}
+
+	/**
+	 * Transform geometry from world coordinates to page coordinates.
+	 * @param arg geometry.
+	 * @return transformed geometry.
+	 */
+	public Argument transformToPage(Argument arg) throws MapyrusException
+	{
+		Argument retval = arg;
+		if (mWorldCtm != null)
+			retval = arg.transformGeometry(mWorldCtm);
 		return(retval);
 	}
 
