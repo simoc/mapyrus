@@ -482,6 +482,22 @@ Temporary files returned by this function
 are automatically deleted after 5 minutes. \\
 
 \hline
+
+\texttt{topage(\textit{x}, \textit{y})}
+\texttt{topage(\textit{g})} &
+Transforms the point (\textit{x}, \textit{y}) or geometry \textit{g}
+from the current world coordinate system to page coordinates. \\
+
+\hline
+
+\texttt{toworlds(\textit{x}, \textit{y})}
+\texttt{toworlds(\textit{g})} &
+Transforms the point (\textit{x}, \textit{y}) or geometry \textit{g}
+from page coordinates to the current world coordinate system.
+This is the inverse of the \texttt{topage} function. \\
+
+\hline
+
 \texttt{trim(\textit{str})} &
 Returns string \textit{str} with whitespace trimmed from start and end. \\
 
