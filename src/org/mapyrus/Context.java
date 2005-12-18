@@ -826,6 +826,36 @@ public class Context
 	}
 
 	/**
+	 * Transform geometry from page coordinates to world coordinates.
+	 * @param arg geometry.
+	 * @return transformed geometry.
+	 */
+	public Argument transformToWorlds(Argument arg) throws MapyrusException
+	{
+		AffineTransform affine = null;
+		Argument retval = arg;
+		
+		try
+		{
+			if (mWorldCtm != null)
+				affine = mWorldCtm.createInverse();
+			if (!mCtm.isIdentity())
+			{
+				if (affine == null)
+					affine = mCtm.createInverse();
+				else
+					affine.concatenate(mCtm.createInverse());
+			}
+			if (affine != null)
+				retval = arg.transformGeometry(affine);
+		}
+		catch (NoninvertibleTransformException e)
+		{
+		}
+		return(retval);
+	}
+
+	/**
 	 * Set current dataset that can be queried and fetched from.
 	 * @param dataset opened dataset for subsequent queries.
 	 */

@@ -411,6 +411,17 @@ public class ContextStack
 	}
 
 	/**
+	 * Transform geometry from page coordinates to world coordinates.
+	 * @param arg geometry.
+	 * @return transformed geometry.
+	 */
+	public Argument transformToWorlds(Argument arg) throws MapyrusException
+	{
+		Argument retval = getCurrentContext().transformToWorlds(arg);
+		return(retval);
+	}
+
+	/**
 	 * Sets dataset to read from.
 	 * @param type is format of dataset, for example, "text".
 	 * @param name is name of dataset to open.
