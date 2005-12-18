@@ -23,6 +23,7 @@
 
 package org.mapyrus;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -765,6 +766,83 @@ public class Argument implements Comparable
 			if (geometry[0] != GEOMETRY_POINT)
 				mGeometryBoundingBox = retval;
 		}
+		return(retval);
+	}
+
+	/**
+	 * Transform coordinates in geometry to new geometry.
+	 * @param affine transform.
+	 * @param srcGeometry coordinates of geometry.
+	 * @param destGeometry array to write transformed coordinates into.
+	 * @param index index in srcGeometry at which to start transforming.
+	 * @return index in srcGeometry after parsed geometry.
+	 */
+	private int transformGeometry(AffineTransform affine,
+		double []srcGeometry, double []destGeometry, int index)
+		throws MapyrusException
+	{
+		int geometryType = (int)srcGeometry[index];
+		int count = (int)srcGeometry[index + 1];
+
+		/*
+		 * Return nothing if geometry is empty.
+		 */
+		if (count == 0)
+		{
+			index += 2;
+		}
+		else
+		{
+			switch (geometryType)
+			{
+				case GEOMETRY_POINT:
+					affine.transform(srcGeometry, index + 3, destGeometry, index + 3, 1);
+					index += 5;
+					break;
+				case GEOMETRY_LINESTRING:
+				case GEOMETRY_POLYGON:
+					int nextIndex = index + 3;
+					for (int j = 0; j < count; j++)
+					{
+						affine.transform(srcGeometry, nextIndex,
+							destGeometry, nextIndex, 1);
+						nextIndex += 3;
+					}
+					index += 2 + count * 3;
+					break;
+				case GEOMETRY_MULTIPOINT:
+				case GEOMETRY_MULTILINESTRING:
+				case GEOMETRY_MULTIPOLYGON:
+				case GEOMETRY_COLLECTION:
+					index += 2;
+					for (int j = 0; j < count; j++)
+					{
+						/*
+						 * Transform each sub-geometry.
+						 */
+						index = transformGeometry(affine,
+							srcGeometry, destGeometry, index);
+					}
+					break;
+			}
+		}
+		return(index);
+	}
+
+	/**
+	 * Transform geometry through affine transformation and
+	 * return new geometry argument.
+	 * @param affine transformation.
+	 * @return transformed geometry.
+	 */
+	public Argument transformGeometry(AffineTransform affine)
+		throws MapyrusException
+	{
+		double []geometry = getGeometryValue();
+		double []copy = new double[geometry.length];
+		System.arraycopy(geometry, 0, copy, 0, geometry.length);
+		transformGeometry(affine, geometry, copy, 0);
+		Argument retval = new Argument((int)copy[0], copy);
 		return(retval);
 	}
 
