@@ -22,9 +22,12 @@
  */
 package org.mapyrus.function;
 
+import java.awt.geom.Rectangle2D;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 
 /**
  * Function returning 1 if a rectangular area on page is protected.
@@ -60,6 +63,42 @@ public class Protected extends Function
 	}
 
 	/**
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 */
+	public Argument evaluate(ContextStack context, Argument arg1)
+		throws MapyrusException
+	{
+		Argument retval = Argument.numericZero;
+		Rectangle2D.Double rect = arg1.getGeometryBoundingBox();
+		if (rect != null && context.isProtected(rect.getMinX(), rect.getMinY(),
+			rect.getMaxX(), rect.getMaxY()))
+		{
+			retval = Argument.numericOne;
+		}
+		return(retval);
+	}
+
+	/**
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
+	 * org.mapyrus.Argument, org.mapyrus.Argument)
+	 */
+	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+		throws MapyrusException
+	{
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
+	}
+
+	/**
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
+	 * org.mapyrus.Argument, org.mapyrus.Argument, org.mapyrus.Argument)
+	 */
+	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2,
+		Argument arg3) throws MapyrusException
+	{
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
+	}
+
+	/**
 	 * @see org.mapyrus.function.Function#getMaxArgumentCount()
 	 */
 	public int getMaxArgumentCount()
@@ -72,7 +111,7 @@ public class Protected extends Function
 	 */
 	public int getMinArgumentCount()
 	{
-		return(4);
+		return(1);
 	}
 
 	/**
