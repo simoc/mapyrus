@@ -26,6 +26,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1346,6 +1347,24 @@ public class Interpreter
 					else /* UNPROTECT */
 					{
 						context.unprotect(xMin, yMin, xMax, yMax);
+					}
+				}
+				else if (nExpressions == 1 &&
+					(type == Statement.PROTECT || type == Statement.UNPROTECT))
+				{
+					Rectangle2D.Double rect = mExecuteArgs[0].getGeometryBoundingBox();
+					if (rect != null)
+					{
+						if (type == Statement.PROTECT)
+						{
+							context.protect(rect.getMinX(), rect.getMinY(),
+								rect.getMaxX(), rect.getMaxY());
+						}
+						else
+						{
+							context.unprotect(rect.getMinX(), rect.getMinY(),
+								rect.getMaxX(), rect.getMaxY());
+						}
 					}
 				}
 				else
