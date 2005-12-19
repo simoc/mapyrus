@@ -5,11 +5,15 @@ Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
 
 * Add more color names.
 * Add drawing of 3 dimensional wedge shapes.
+* Add toworlds(), topage() functions to transform between
+  page and world coordinates.
 * Change alignment of multi-line labels so whole label matches value given
   in justify command, not each line.
 * Fix Mapyrus.worlds. variables to return correct values when world
   coordinate system added for only part of the page.
 * Enable creation of PDF output with no X Windows display set.
+* Allow geometry to be passed to protect, unprotect commands
+  and protected function.
 * Move source code to cvs.sourceforge.net and remove it from released ZIP file.
 
 0.592, November 2005
