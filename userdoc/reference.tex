@@ -374,8 +374,10 @@ Returns \textit{a} to the power \textit{b}. \\
 
 \hline
 
-\texttt{protected(\textit{x1}, \textit{y1}, \textit{x2}, \textit{y2})} &
-Returns 1 if any part of the given rectangular region
+\texttt{protected(\textit{x1}, \textit{y1}, \textit{x2}, \textit{y2})}
+\texttt{protected(\textit{g})} &
+Returns 1 if any part of the given rectangle or
+the bounding box of the geometry
 has been protected using the \texttt{protect}
 command.
 The points
@@ -2175,6 +2177,7 @@ or destination using the \texttt{setoutput} command.
 
 \begin{alltt}
 protect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+protect \textit{geometry}
 \end{alltt}
 
 Marks a rectangular region of the page as protected.
@@ -2184,9 +2187,11 @@ point in this rectangular region.
 The points
 (\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
 any two opposite corners of the rectangle to mark as protected.
+For a \textit{geometry}, the bounding rectangle of the geometry
+is protected.
 
-The four corner points of the rectangle
-are first transformed through any world coordinate
+The rectangle or geometry
+is first transformed through any world coordinate
 transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
@@ -2479,6 +2484,7 @@ and \textit{rotate} values.
 
 \begin{alltt}
 unprotect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
+unprotect \textit{geometry}
 \end{alltt}
 
 Clears all protected regions from the page in a rectangular
@@ -2487,9 +2493,11 @@ area.
 The points
 (\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
 any two opposite corners of the rectangle to clear.
+For a \textit{geometry}, the bounding rectangle of the geometry
+is cleared.
 
-The four corner points of the rectangle
-are first transformed through any world coordinate
+The rectangle or geometry
+is first transformed through any world coordinate
 transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
