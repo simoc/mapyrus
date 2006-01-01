@@ -1,5 +1,5 @@
 Mapyrus Change History
-Copyright (C) 2003, 2004, 2005 Simon Chenery <simoc@users.sourceforge.net>.
+Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
 0.593, December 2005
 
