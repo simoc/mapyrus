@@ -1800,7 +1800,7 @@ public class OutputFormat
 				String key = pdfObjs[i].toString();
 				if (key.indexOf(PDF_IMAGE_PREFIX) >= 0)
 				{
-					nChars += writeLine(mWriter, "/" + key.toString() +
+					nChars += writeLine(mWriter, "/" + key +
 						" " + (objIndex + counter) + " 0 R");
 					counter++;
 				}
