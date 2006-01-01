@@ -90,7 +90,11 @@ public class BMPImage
 		try
 		{
 			byte headerBuf[] = new byte[14];
-			stream.read(headerBuf);
+			if (stream.read(headerBuf) != headerBuf.length)
+			{
+				throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+					": " + filename);
+			}
 			ByteBuffer fileHeader = ByteBuffer.wrap(headerBuf);
 			fileHeader.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -143,7 +147,11 @@ public class BMPImage
 			 */
 			while (currentOffset < headerBuf.length + nInfoBytes)
 			{
-				stream.read();
+				if (stream.read() == -1)
+				{
+					throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+					": " + filename);
+				}
 				currentOffset++;
 			}
 
