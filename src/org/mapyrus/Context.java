@@ -2122,7 +2122,7 @@ public class Context
 				if (i > 0)
 					totalStringWidth += spacing;
 
-				letters[i] = new String(label.substring(i, i + 1));
+				letters[i] = label.substring(i, i + 1);
 				stringWidths[i] = getStringDimension(letters[i], false).getWidth();
 				totalStringWidth += stringWidths[i];
 			}
