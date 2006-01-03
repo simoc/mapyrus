@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.601, January 2006
+
+* Compress images in PDF output.
+
 0.593, December 2005
 
 * Add more color names.
