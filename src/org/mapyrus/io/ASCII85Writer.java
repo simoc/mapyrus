@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.zip.Deflater;
 
 import org.mapyrus.Constants;
 
@@ -57,16 +58,30 @@ public class ASCII85Writer
 	private Writer mWriter;
 	private int mNCharsOnLine;
 
+	/*
+	 * Deflater to ZLIB compress data before converting it to ASCII85 stream.
+	 */
+	private Deflater mDeflater;
+	private byte mDeflateBuffer[];
+	private int mNBytesBuffered;
+
 	/**
 	 * Create new ASCII85 filtered output stream.
-	 * @param outStream stream to build filter on top of.
+	 * @param writer writer to build filter on top of.
+	 * @param deflate if true then stream is ZLIB compressed too.
 	 */
-	public ASCII85Writer(Writer writer) throws IOException
+	public ASCII85Writer(Writer writer, boolean deflate) throws IOException
 	{
 		mUnencodedBytes = new int[4];
 		mNUnencodedBytes = 0;
 		mEncodedChars = new char[5];
 		mWriter = writer;
+		if (deflate)
+		{
+			mDeflater = new Deflater();
+			mDeflateBuffer = new byte[512];
+			mNBytesBuffered = 0;
+		}
 
 		/*
 		 * Begin each line with a space so that PostScript filters which
@@ -137,10 +152,10 @@ public class ASCII85Writer
 	}
 
 	/**
-	 * Write byte to stream.
+	 * Save next byte to ASCII85 buffer.
 	 * @param b byte to write.
 	 */
-	public void write(int b) throws IOException
+	private void save(int b) throws IOException
 	{
 		/*
 		 * Save next byte.  When we've saved 4 bytes then we can convert
@@ -156,10 +171,57 @@ public class ASCII85Writer
 	}
 
 	/**
+	 * Write byte to stream.
+	 * @param b byte to write.
+	 */
+	public void write(int b) throws IOException
+	{
+		if (mDeflater != null)
+		{
+			/*
+			 * Fill buffer with bytes for Deflate compression.
+			 * Compress the buffer when it is full and write the
+			 * compressed bytes to ASCII85 stream. 
+			 */
+			if (b >= 128)
+				b = b - 256;
+			mDeflateBuffer[mNBytesBuffered++] = (byte)b;
+			if (mNBytesBuffered == mDeflateBuffer.length)
+			{
+				mDeflater.setInput(mDeflateBuffer);
+				int nBytes;
+				while ((nBytes = mDeflater.deflate(mDeflateBuffer)) > 0)
+				{
+					for (int i = 0; i < nBytes; i++)
+						save(mDeflateBuffer[i] & 0xff);
+				}
+				mNBytesBuffered = 0;
+			}
+		}
+		else
+		{
+			save(b);
+		}
+	}
+
+	/**
 	 * Flush and close this writer, without closing the underlying writer.
 	 */
 	public void close() throws IOException
 	{
+		if (mDeflater != null)
+		{
+			if (mNBytesBuffered > 0)
+				mDeflater.setInput(mDeflateBuffer, 0, mNBytesBuffered);
+			mDeflater.finish();
+			while (!mDeflater.finished())
+			{
+				int nBytes = mDeflater.deflate(mDeflateBuffer);
+				for (int i = 0; i < nBytes; i++)
+					save(mDeflateBuffer[i] & 0xff);
+			}
+		}
+
 		/*
 		 * Complete any group of 4 bytes we were in the middle of writing.
 		 */
@@ -177,11 +239,12 @@ public class ASCII85Writer
 
 		try
 		{
-			PrintWriter writer = new PrintWriter(new FileWriter("ascii85.txt"));
-			ASCII85Writer ascii85 = new ASCII85Writer(writer);
+			PrintWriter writer = new PrintWriter(new FileWriter("/tmp/ascii85.txt"));
+			ASCII85Writer ascii85 = new ASCII85Writer(writer, false);
 			byte []messageBytes = message.getBytes();
-			for (int i = 0; i < messageBytes.length; i++)
-				ascii85.write(messageBytes[i]);
+			for (int j = 0; j < 100; j++)
+				for (int i = 0; i < messageBytes.length; i++)
+					ascii85.write(messageBytes[i]);
 			ascii85.close();
 			writer.close();
 		}
