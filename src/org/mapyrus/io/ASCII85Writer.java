@@ -189,13 +189,24 @@ public class ASCII85Writer
 			if (mNBytesBuffered == mDeflateBuffer.length)
 			{
 				mDeflater.setInput(mDeflateBuffer);
+
+				/*
+				 * Java Deflate Compression appears to hold reference to array
+				 * of bytes to compress so begin a new buffer to avoid
+				 * overwriting it.
+				 */
+				mDeflateBuffer = new byte[mDeflateBuffer.length];
+				mNBytesBuffered = 0;
+
+				/*
+				 * ASCII85 encode any bytes that have finished being compressed.
+				 */
 				int nBytes;
 				while ((nBytes = mDeflater.deflate(mDeflateBuffer)) > 0)
 				{
 					for (int i = 0; i < nBytes; i++)
 						save(mDeflateBuffer[i] & 0xff);
 				}
-				mNBytesBuffered = 0;
 			}
 		}
 		else
@@ -211,9 +222,14 @@ public class ASCII85Writer
 	{
 		if (mDeflater != null)
 		{
+			/*
+			 * Compress and write out any remaining bytes.
+			 */
 			if (mNBytesBuffered > 0)
 				mDeflater.setInput(mDeflateBuffer, 0, mNBytesBuffered);
 			mDeflater.finish();
+
+			mDeflateBuffer = new byte[mDeflateBuffer.length];
 			while (!mDeflater.finished())
 			{
 				int nBytes = mDeflater.deflate(mDeflateBuffer);
