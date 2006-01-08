@@ -22,26 +22,38 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
 
 /**
- * Function returning minimum of two values.
- * For example, min(1, 3) = 1.
+ * Function returning minimum of two or more values.
+ * For example, min(1, 3, 5) = 1.
  */
-public class Min extends Function
+public class Min implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
-		double d1 = arg1.getNumericValue();
-		double d2 = arg2.getNumericValue();
-		Argument retval = (d1 < d2) ? arg1 : arg2;
-		return(retval);
+		Argument minArg = (Argument)args.get(0);
+		double minValue = minArg.getNumericValue();
+		int nArgs = args.size();
+		for (int i = 1; i < nArgs; i++)
+		{
+			Argument arg = (Argument)args.get(i);
+			double d = arg.getNumericValue();
+			if (d < minValue)
+			{
+				minArg = arg;
+				minValue = arg.getNumericValue();
+			}
+		}
+		return(minArg);
 	}
 
 	/**
@@ -49,7 +61,7 @@ public class Min extends Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(2);
+		return(Integer.MAX_VALUE);
 	}
 
 	/**
@@ -57,7 +69,7 @@ public class Min extends Function
 	 */
 	public int getMinArgumentCount()
 	{
-		return(2);
+		return(1);
 	}
 
 	/**

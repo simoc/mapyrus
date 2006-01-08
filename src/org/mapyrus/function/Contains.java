@@ -23,6 +23,7 @@
 package org.mapyrus.function;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -36,7 +37,7 @@ import com.vividsolutions.jts.io.WKTReader;
  * Function returning a zero or one value depending on whether
  * one geometry contains another. 
  */
-public class Contains extends Function
+public class Contains implements Function
 {
 	/**
 	 * Calculates whether one geometry contains another.
@@ -68,11 +69,7 @@ public class Contains extends Function
 		return(retval);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	private Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
 		throws MapyrusException
 	{
 		/*
@@ -95,12 +92,17 @@ public class Contains extends Function
 	}
 
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
+		if (args.size() == 2)
+			return(evaluate(context, arg1, arg2));
+
+		Argument arg3 = (Argument)args.get(2);
 		double x = arg2.getNumericValue();
 		double y = arg3.getNumericValue();
 

@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -34,17 +36,18 @@ import com.vividsolutions.jts.io.WKTReader;
  * Function returning union of two geometries.
  * For example, the union of two overlapping polygons is a single large polygon. 
  */
-public class Union extends Function
+public class Union implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
 
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
 
@@ -66,8 +69,8 @@ public class Union extends Function
 			{
 				Geometry g1 = new WKTReader().read(wkt1);
 				Geometry g2 = new WKTReader().read(wkt2);
-				Geometry union = g1.union(g2);
-				retval = new Argument(union.toText());
+				Geometry gUnion = g1.union(g2);
+				retval = new Argument(gUnion.toText());
 			}
 			catch (ParseException e)
 			{

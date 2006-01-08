@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,15 +32,16 @@ import org.mapyrus.MapyrusException;
  * Function returning largest integer not larger than given value.
  * For example, abs(-26) = 26.
  */
-public class Abs extends Function
+public class Abs implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
+		Argument arg1 = (Argument)args.get(0);
 		double d = arg1.getNumericValue();
 		if (arg1.getType() == Argument.NUMERIC)
 			retval = (d >= 0) ? arg1 : new Argument(-d);

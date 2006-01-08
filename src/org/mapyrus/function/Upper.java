@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,15 +32,16 @@ import org.mapyrus.MapyrusException;
  * Function returning string converted to upper case.
  * For example, upper('foo') = 'FOO'.
  */
-public class Upper extends Function
+public class Upper implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
+		Argument arg1 = (Argument)args.get(0);
 		retval = new Argument(Argument.STRING, arg1.toString().toUpperCase());
 		return(retval);
 	}

@@ -23,6 +23,7 @@
 package org.mapyrus.function;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -38,19 +39,21 @@ import com.vividsolutions.jts.io.WKTReader;
  * for two geometries of the same type.  If geometry types differ then
  * test always returns zero. 
  */
-public class Overlaps extends Function
+public class Overlaps implements Function
 {
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
+	 * ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		/*
 		 * Geometries cannot possibly overlap if their
 		 * bounding rectangles do not overlap.
 		 */
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		Rectangle2D.Double rect1 = arg1.getGeometryBoundingBox();
 		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
 		if (rect1 == null || rect2 == null)

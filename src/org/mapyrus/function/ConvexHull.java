@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -35,13 +37,12 @@ import com.vividsolutions.jts.io.WKTReader;
  * For example, the convex hull around a group of points is a polygon
  * containing all points. 
  */
-public class ConvexHull extends Function
+public class ConvexHull implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
@@ -51,6 +52,7 @@ public class ConvexHull extends Function
 			/*
 			 * Calculate convex hull for geometry.
 			 */
+			Argument arg1 = (Argument)args.get(0);
 			String wkt1 = arg1.toString();
 			Geometry g1 = new WKTReader().read(wkt1);
 			com.vividsolutions.jts.algorithm.ConvexHull hull = new

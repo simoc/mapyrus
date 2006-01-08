@@ -23,6 +23,7 @@
 package org.mapyrus.function;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -35,15 +36,24 @@ import org.mapyrus.MapyrusMessages;
  * will overwrite an existing label or symbol.
  * For example, protected(12.1, 13.7, 13.33, 14.1) = 1.
  */
-public class Protected extends Function
+public class Protected implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument,
-	 * org.mapyrus.ContextStack, org.mapyrus.ContextStack)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2,
-		Argument arg3, Argument arg4) throws MapyrusException
+	public Argument evaluate(ContextStack context, ArrayList args)
+		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
+		if (args.size() == 1)
+			return(evaluate(context, arg1));
+		if (args.size() != 4)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
+
+		Argument arg2 = (Argument)args.get(1);
+		Argument arg3 = (Argument)args.get(2);
+		Argument arg4 = (Argument)args.get(3);
+
 		Argument retval;
 		double x1 = arg1.getNumericValue();
 		double y1 = arg2.getNumericValue();
@@ -62,10 +72,7 @@ public class Protected extends Function
 		return(retval);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	private Argument evaluate(ContextStack context, Argument arg1)
 		throws MapyrusException
 	{
 		Argument retval = Argument.numericZero;
@@ -76,26 +83,6 @@ public class Protected extends Function
 			retval = Argument.numericOne;
 		}
 		return(retval);
-	}
-
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
-		throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
-	}
-
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2,
-		Argument arg3) throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
 	}
 
 	/**

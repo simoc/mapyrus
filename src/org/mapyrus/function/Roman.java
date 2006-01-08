@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -31,16 +33,17 @@ import org.mapyrus.MapyrusMessages;
  * Function returning number converted to Roman numerals.
  * For example, roman(24) = "XXIV"
  */
-public class Roman extends Function
+public class Roman implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
 		StringBuffer roman = new StringBuffer();
+		Argument arg1 = (Argument)args.get(0);
 		int n = (int)arg1.getNumericValue();
 
 		if (n < 1)

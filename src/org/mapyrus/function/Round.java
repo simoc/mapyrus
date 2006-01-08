@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,14 +32,15 @@ import org.mapyrus.MapyrusException;
  * Function returning value rounded to nearest value.
  * For example, round(3.14) = 3.
  */
-public class Round extends Function
+public class Round implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
 		double d = arg1.getNumericValue();
 		d = Math.round(d);
 		Argument retval = new Argument(d);

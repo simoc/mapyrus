@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -32,17 +34,18 @@ import org.mapyrus.MapyrusMessages;
  * formats and returning a numeric value.
  * For example, parsegeo('151d 30m') = 151.5
  */
-public class Parsegeo extends Function
+public class Parsegeo implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
 		double degrees = 0, minutes = 0, seconds = 0;
 		int sign = 1;
+		Argument arg1 = (Argument)args.get(0);
 		String geo = arg1.toString().toLowerCase().trim();
 
 		try

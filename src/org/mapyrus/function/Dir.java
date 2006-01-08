@@ -22,6 +22,7 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,14 +36,15 @@ import org.mapyrus.io.WildcardFile;
  * For example, dir("/etc/p*") returns an array containing /etc/passwd,
  * /etc/pam.conf, etc.
  */
-public class Dir extends Function
+public class Dir implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
 		String pattern = arg1.toString();
 		Argument retval = new Argument();
 

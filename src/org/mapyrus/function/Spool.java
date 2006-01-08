@@ -25,6 +25,7 @@ package org.mapyrus.function;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -35,14 +36,15 @@ import org.mapyrus.MapyrusException;
  * Function returning contents of a text file.
  * For example, spool("/etc/motd") could return a string containing "Have a lot of fun...". 
  */
-public class Spool extends Function
+public class Spool implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
 		String filename = arg1.getStringValue();
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(8 * 1024);
 		InputStream stream = null;

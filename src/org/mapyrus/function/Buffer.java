@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -36,17 +38,19 @@ import com.vividsolutions.jts.operation.buffer.BufferOp;
  * For example, buffer("POINT ( 10, 10)", 5, "round") returns geometry containing
  * 5 unit buffer around point (5, 5).
  */
-public class Buffer extends Function
+public class Buffer implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
 
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
+		Argument arg3 = (Argument)args.get(2);
 		String wkt = arg1.toString();
 		double distance = arg2.getNumericValue();
 

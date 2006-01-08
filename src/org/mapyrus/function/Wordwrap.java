@@ -22,6 +22,7 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
@@ -35,14 +36,16 @@ import org.mapyrus.font.StringDimension;
  * avoid string exceeding a given line length.
  * For example, wordwrap('the quick brown fox', 20) = 'the quick\nbrown fox'.
  */
-public class Wordwrap extends Function
+public class Wordwrap implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		String s = arg1.getStringValue();
 		double maxWidth = arg2.getNumericValue();
 

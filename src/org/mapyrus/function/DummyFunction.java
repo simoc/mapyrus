@@ -22,17 +22,33 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
+import org.mapyrus.Argument;
+import org.mapyrus.ContextStack;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
+
 /**
  * Placeholder for a function that is not available.
  * Will throw exception if the evaluate() method is ever called.
  */
-public class DummyFunction extends Function
+public class DummyFunction implements Function
 {
 	private String mFunctionName;
 
 	public DummyFunction(String name)
 	{
 		mFunctionName = name;
+	}
+
+	/**
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
+	 */
+	public Argument evaluate(ContextStack context, ArrayList args)
+		throws MapyrusException
+	{
+		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 
 	/**

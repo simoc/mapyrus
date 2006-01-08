@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,34 +32,32 @@ import org.mapyrus.MapyrusException;
  * Function returning substring of a string.
  * For example, substr('foobar', 2, 3) = 'oob'
  */
-public class Substr extends Function
+public class Substr implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
-		throws MapyrusException
-	{
-		Argument retval;
-
-		/*
-		 * Set extract length long enough for all remaining characters in string.
-		 */
-		String s = arg1.toString();
-		Argument arg3 = new Argument(s.length());
-		retval = evaluate(context, arg1, arg2, arg3);
-		return(retval);
-	}
-
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		int startIndex, extractLen, len;
 		Argument retval;
 
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
+		Argument arg3;
+		if (args.size() == 3)
+		{
+			arg3 = (Argument)args.get(2);
+		}
+		else
+		{
+			/*
+		 	 * Set extract length long enough for all remaining characters in string.
+		 	 */
+			String s = arg1.toString();
+			arg3 = new Argument(s.length());
+		}
 		String s = arg1.toString();
 
 		/*

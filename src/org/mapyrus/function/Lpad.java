@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,35 +32,28 @@ import org.mapyrus.MapyrusException;
  * Function returning string left padded to a given length.
  * For example, lpad('hi', 5, 'xy') = 'xyxhi'.
  */
-public class Lpad extends Function
+public class Lpad implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
-		retval = evaluate(context, arg1, arg2, null);
-		return(retval);
-	}
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
-		throws MapyrusException
-	{
-		Argument retval;
 		String s = arg1.toString();
 		int currentLength = s.length();
 		int paddedLength = (int)arg2.getNumericValue();
 
 		String padding;
-		if (arg3 == null)
+		if (args.size() == 2)
 			padding = " ";
 		else
 		{
+			Argument arg3 = (Argument)args.get(2);
 			padding = arg3.toString();
 			if (padding.length() == 0)
 				padding = " ";

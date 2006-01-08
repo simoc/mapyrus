@@ -22,6 +22,7 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
@@ -32,7 +33,7 @@ import org.mapyrus.MapyrusException;
  * Function splitting string into array, delimited by a regular expression.
  * For example, split("foo:bar", ":") = [1] -> "foo", [2] -> "bar".
  */
-public class Split extends Function
+public class Split implements Function
 {
 	/*
 	 * Pre-defined hashmap keys for split function.
@@ -42,20 +43,18 @@ public class Split extends Function
 	private static Argument WHITESPACE_PATTERN = new Argument(Argument.STRING, " ");
 
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
-		return(evaluate(context, arg1, WHITESPACE_PATTERN));
-	}
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2;
+		if (args.size() == 2)
+			arg2 = (Argument)args.get(1);
+		else
+			arg2 = WHITESPACE_PATTERN;
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
-		throws MapyrusException
-	{
 		/*
 		 * Split string on regular expression and assign as hashmap entries
 		 * with keys, "1", "2", "3", ...
@@ -63,7 +62,7 @@ public class Split extends Function
 		Argument retval = new Argument();
 		String []split;
 		String key;
-		String delimiter = arg2.toString();
+		String delimiter = arg2.getStringValue();
 		if (delimiter.equals(WHITESPACE_PATTERN.toString()))
 		{
 			/*

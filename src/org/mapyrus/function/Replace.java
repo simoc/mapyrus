@@ -22,6 +22,7 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,16 +34,19 @@ import org.mapyrus.MapyrusException;
  * Function replacing all instances of a regular expression in a string with another string.
  * For example, replace('foobar', 'o+', '_') = 'f_bar'.
  */
-public class Replace extends Function
+public class Replace implements Function
 {
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * 	org.mapyrus.Argument, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2, Argument arg3)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
+		Argument arg3 = (Argument)args.get(2);
 
 		/*
 		 * Replace all occurrences of pattern given in second string

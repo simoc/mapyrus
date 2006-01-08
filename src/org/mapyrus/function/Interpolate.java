@@ -23,6 +23,7 @@
 package org.mapyrus.function;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
@@ -35,14 +36,16 @@ import org.mapyrus.MapyrusMessages;
  * Function returning value calculated using linear interpolation.
  * For example, interpolate("0 black 10 white", 4) = a shade of grey.
  */
-public class Interpolate extends Function
+public class Interpolate implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		String interpolationString = arg1.getStringValue();
 		double d = arg2.getNumericValue();
 		double upperLimit, lowerLimit = -Float.MAX_VALUE;

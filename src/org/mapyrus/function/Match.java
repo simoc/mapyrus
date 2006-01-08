@@ -22,6 +22,7 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -36,7 +37,7 @@ import org.mapyrus.MapyrusMessages;
  * Function returning index in string where a regular expression first matches.
  * For example, match('foobar', 'ob') = 3.
  */
-public class Match extends Function
+public class Match implements Function
 {
 	/*
 	 * Maximum number of compiled regular expressions we'll cache.
@@ -80,15 +81,17 @@ public class Match extends Function
 	}
 
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		/*
 		 * Find index of start of regular expression in string.
 		 */
 		Argument retval;
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		Pattern pattern = compileRegex(arg2.toString());
 		Matcher matcher = pattern.matcher(arg1.toString());
 		if (matcher.find())

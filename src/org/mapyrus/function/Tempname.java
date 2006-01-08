@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.Constants;
 import org.mapyrus.ContextStack;
@@ -32,17 +34,18 @@ import org.mapyrus.TransientFileFactory;
  * Function returning unique name for temporary file.
  * For example, tempname('.jpg') = 'tmpABC123.jpg'.
  */
-public class Tempname extends Function
+public class Tempname implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		/*
  		 * Generate name for temporary file with given suffix.
  		 */
+		Argument arg1 = (Argument)args.get(0);
 		Argument retval = new Argument(Argument.STRING,
 			TransientFileFactory.generate(arg1.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
 		return(retval);

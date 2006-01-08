@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,15 +32,16 @@ import org.mapyrus.MapyrusException;
  * Function returning length of string, or number of elements in an array.
  * For example, length("foo") = 3.
  */
-public class Length extends Function
+public class Length implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
+		Argument arg1 = (Argument)args.get(0);
 		if (arg1.getType() == Argument.HASHMAP)
 			retval = new Argument(arg1.getHashMapSize());
 		else

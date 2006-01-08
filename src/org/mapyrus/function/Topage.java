@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -30,32 +32,36 @@ import org.mapyrus.MapyrusException;
  * Function transforming world coordinates to page coordinates.
  * the inverse of the toworlds function.
  */
-public class Topage extends Function
+public class Topage implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
-		Argument retval = context.transformToPage(arg1);
-		return(retval);
-	}
-	
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
-	throws MapyrusException
-	{
-		/*
-		 * Build point geometry and transform it.
-		 */
-		double geometry[] = new double[5];
-		geometry[0] = Argument.GEOMETRY_POINT;
-		geometry[1] = 1;
-		geometry[2] = Argument.MOVETO;
-		geometry[3] = arg1.getNumericValue();
-		geometry[4] = arg2.getNumericValue();
-		Argument arg = new Argument(Argument.GEOMETRY_POINT, geometry);
-		Argument retval = context.transformToPage(arg);
+		Argument retval;
+		Argument arg1 = (Argument)args.get(0);
+		if (args.size() == 1)
+		{
+			retval = context.transformToPage(arg1);
+		}
+		else
+		{
+			Argument arg2 = (Argument)args.get(1);
+
+			/*
+		 	 * Build point geometry and transform it.
+		 	 */
+			double geometry[] = new double[5];
+			geometry[0] = Argument.GEOMETRY_POINT;
+			geometry[1] = 1;
+			geometry[2] = Argument.MOVETO;
+			geometry[3] = arg1.getNumericValue();
+			geometry[4] = arg2.getNumericValue();
+			Argument arg = new Argument(Argument.GEOMETRY_POINT, geometry);
+			retval = context.transformToPage(arg);
+		}
 		return(retval);
 	}
 

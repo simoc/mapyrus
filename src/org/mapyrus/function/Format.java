@@ -24,6 +24,7 @@ package org.mapyrus.function;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Locale;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -33,17 +34,19 @@ import org.mapyrus.MapyrusException;
  * Function returning a number formatted as a string.
  * For example, format("#.##", 1.2345) = "1.23".
  */
-public class Format extends Function
+public class Format implements Function
 {
 	private static DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
 
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval = null;
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		String format = arg1.getStringValue();
 		try
 		{

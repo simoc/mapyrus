@@ -22,15 +22,16 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
-import org.mapyrus.MapyrusMessages;
 
 /**
  * Base class extended by all classes that implement internal functions in Mapyrus. 
  */
-public abstract class Function
+public interface Function
 {
 	/**
 	 * Get name of function.
@@ -52,72 +53,12 @@ public abstract class Function
 	public abstract int getMaxArgumentCount();
 
 	/**
-	 * Evaluate function with zero arguments.
+	 * Evaluate function.
 	 * @param context context containing variables and other state information.
+	 * @param args arguments to function.
 	 * @return evaluated function value.
 	 * @throws MapyrusException
 	 */
-	public Argument evaluate(ContextStack context) throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
-	}
-
-	/**
-	 * Evaluate function with one argument.
-	 * @param context context containing variables and other state information.
-	 * @param arg1 first argument to function.
-	 * @return evaluated function value.
-	 * @throws MapyrusException
-	 */
-	public Argument evaluate(ContextStack context, Argument arg1) throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
-	}
-
-	/**
-	 * Evaluate function with two arguments.
-	 * @param context context containing variables and other state information.
-	 * @param arg1 first argument to function.
-	 * @param arg2 second argument to function.
-	 * @return evaluated function value.
-	 * @throws MapyrusException
-	 */
-	public Argument evaluate(ContextStack context,
-		Argument arg1, Argument arg2) throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
-	}
-
-	/**
-	 * Evaluate function with three arguments.
-	 * @param context context containing variables and other state information.
-	 * @param arg1 first argument to function.
-	 * @param arg2 second argument to function.
-	 * @param arg3 third argument to function.
-	 * @return evaluated function value.
-	 * @throws MapyrusException
-	 */	
-	public Argument evaluate(ContextStack context,
-		Argument arg1, Argument arg2, Argument arg3)
-		throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
-	}
-	
-	/**
-	 * Evaluate function with three arguments.
-	 * @param context context containing variables and other state information.
-	 * @param arg1 first argument to function.
-	 * @param arg2 second argument to function.
-	 * @param arg3 third argument to function.
-	 * @param arg4 third argument to function.
-	 * @return evaluated function value.
-	 * @throws MapyrusException
-	 */	
-	public Argument evaluate(ContextStack context,
-		Argument arg1, Argument arg2, Argument arg3, Argument arg4)
-		throws MapyrusException
-	{
-		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
-	}
+	public Argument evaluate(ContextStack context, ArrayList args)
+		throws MapyrusException;
 }

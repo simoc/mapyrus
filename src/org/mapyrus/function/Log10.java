@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -31,7 +33,7 @@ import org.mapyrus.MapyrusMessages;
  * Function returning log base 10 of a value.
  * For example, log10(1000) = 3.
  */
-public class Log10 extends Function
+public class Log10 implements Function
 {
 	/*
 	 * Constant for calculating base 10 logarithms.
@@ -39,11 +41,12 @@ public class Log10 extends Function
 	private static final double LOG_OF_10 = Math.log(10.0);
 
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
 		double d = arg1.getNumericValue();
 		if (d <= 0.0)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));

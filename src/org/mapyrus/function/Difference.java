@@ -23,6 +23,7 @@
 package org.mapyrus.function;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -37,13 +38,12 @@ import com.vividsolutions.jts.io.WKTReader;
  * For example, the difference of two overlapping polygons is a smaller polygon
  * containing the parts of the first polygon that are not in the second.
  */
-public class Difference extends Function
+public class Difference implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack,
-	 * org.mapyrus.Argument, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1, Argument arg2)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
 		Argument retval;
@@ -52,6 +52,8 @@ public class Difference extends Function
 		 * If bounding rectangles of geometries do not overlap
 		 * then difference of arg1 and arg2 must be arg1.
 		 */
+		Argument arg1 = (Argument)args.get(0);
+		Argument arg2 = (Argument)args.get(1);
 		Rectangle2D.Double rect1 = arg1.getGeometryBoundingBox();
 		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
 		if (rect1 == null || rect2 == null)

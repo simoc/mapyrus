@@ -22,6 +22,8 @@
  */
 package org.mapyrus.function;
 
+import java.util.ArrayList;
+
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
@@ -31,14 +33,15 @@ import org.mapyrus.font.StringDimension;
  * Function returning height of string if it were displayed on page.
  * For example, stringheight("foo\nbar") = 26.
  */
-public class Stringheight extends Function
+public class Stringheight implements Function
 {
 	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, org.mapyrus.Argument)
+	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, Argument arg1)
+	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
+		Argument arg1 = (Argument)args.get(0);
 		String s = arg1.toString();
 		StringDimension dim = context.getStringDimension(s);
 		double d = dim.getHeight();
