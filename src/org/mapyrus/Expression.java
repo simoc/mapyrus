@@ -24,6 +24,7 @@ package org.mapyrus;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import org.mapyrus.function.*;
 
@@ -89,12 +90,10 @@ public class Expression
 		Argument mLeafArg;
 
 		int mOperation;
-		ExpressionTreeNode mLeftBranch, mRightBranch;
+		ArrayList mBranches;
 
 		boolean mIsFunction;
 		Function mFunction;
-		ExpressionTreeNode mThirdFunctionExpression;
-		ExpressionTreeNode mFourthFunctionExpression;
 
 		/**
 		 * Create a leaf value containing either a number,
@@ -120,8 +119,9 @@ public class Expression
 			ExpressionTreeNode right)
 		{
 			mIsLeaf = mIsFunction = false;			
-			mLeftBranch = left;
-			mRightBranch = right;
+			mBranches = new ArrayList(2);
+			mBranches.add(left);
+			mBranches.add(right);
 			mOperation = operation;
 		}
 
@@ -137,32 +137,25 @@ public class Expression
 			int operation,
 			ExpressionTreeNode right, ExpressionTreeNode third)
 		{
-			mIsLeaf = mIsFunction = false;			
-			mLeftBranch = left;
-			mRightBranch = right;
+			mIsLeaf = mIsFunction = false;
+			mBranches = new ArrayList(3);
+			mBranches.add(left);
+			mBranches.add(right);
+			mBranches.add(third);
 			mOperation = operation;
-			mThirdFunctionExpression = third;
 		}
 
 		/**
 		 * Create a node containing a call to a function.
 		 * @param functionType is identifier of function being called.
-		 * @param arg1 is first argument to function.
-		 * @param arg2 is second argument to function (or null for single
-		 * argument functions).
-		 * @param arg3 is third argument to function (or null for functions
-		 * with less than 3 arguments)
+		 * @param args list of ExpressionTreeNode arguments to function.
 		 */
-		public ExpressionTreeNode(Function func, ExpressionTreeNode arg1,
-			ExpressionTreeNode arg2, ExpressionTreeNode arg3, ExpressionTreeNode arg4)
+		public ExpressionTreeNode(Function func, ArrayList args)
 		{
 			mIsLeaf = false;
 			mIsFunction = true;
 			mFunction = func;
-			mLeftBranch = arg1;
-			mRightBranch = arg2;
-			mThirdFunctionExpression = arg3;
-			mFourthFunctionExpression = arg4;
+			mBranches = args;
 		}
 
 		/**
@@ -187,35 +180,17 @@ public class Expression
 			String interpreterFilename)
 			throws MapyrusException
 		{
-			Argument leftValue = null;
-			Argument rightValue = null;
-			Argument thirdValue = null;
-			Argument fourthValue = null;
-			Argument retval = null;
-			int nArgs = 0;
+			int nArgs = mBranches.size();
+			ArrayList values = new ArrayList(nArgs);
+			Argument retval;
 
 			/*
 			 * Evaluate each of the arguments being passed to the function.
 			 */
-			if (mLeftBranch != null)
+			for (int i = 0; i < nArgs; i++)
 			{
-				leftValue = traverse(mLeftBranch, context, interpreterFilename);
-				nArgs = 1;
-			}
-			if (mRightBranch != null)
-			{
-				rightValue = traverse(mRightBranch, context, interpreterFilename);
-				nArgs = 2;
-			}
-			if (mThirdFunctionExpression != null)
-			{
-				thirdValue = traverse(mThirdFunctionExpression, context, interpreterFilename);
-				nArgs = 3;
-			}
-			if (mFourthFunctionExpression != null)
-			{
-				fourthValue = traverse(mFourthFunctionExpression, context, interpreterFilename);
-				nArgs = 4;
+				ExpressionTreeNode branch = (ExpressionTreeNode)mBranches.get(i);
+				values.add(traverse(branch, context, interpreterFilename));
 			}
 
 			/*
@@ -223,16 +198,7 @@ public class Expression
 			 */
 			try
 			{
-				if (nArgs == 0)
-					retval = mFunction.evaluate(context);
-				else if (nArgs == 1)
-					retval = mFunction.evaluate(context, leftValue);
-				else if (nArgs == 2)
-					retval = mFunction.evaluate(context, leftValue, rightValue);
-				else if (nArgs == 3)
-					retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue);
-				else if (nArgs == 4)
-					retval = mFunction.evaluate(context, leftValue, rightValue, thirdValue, fourthValue);
+				retval = mFunction.evaluate(context, values);
 			}
 			catch (MapyrusException e)
 			{
@@ -285,7 +251,8 @@ public class Expression
 				/*
 				 * Negation operates on a single expression.
 				 */
-				leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				leftValue = traverse(leftBranch, context, interpreterFilename);
 				if (leftValue.getType() == Argument.NUMERIC)
 				{
 					l = leftValue.getNumericValue();
@@ -300,28 +267,29 @@ public class Expression
 			}
 			else if (t.mOperation == ASSIGN_OPERATION)
 			{
-				rightValue = traverse(t.mRightBranch, context, interpreterFilename);
-				ExpressionTreeNode leftBranch = t.mLeftBranch;
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+				rightValue = traverse(rightBranch, context, interpreterFilename);
 				if (leftBranch.mIsLeaf)
 				{
 					/*
 					 * Simple assignment: a = b.
 					 */
-					String varName = t.mLeftBranch.mLeafArg.getVariableName();
+					String varName = leftBranch.mLeafArg.getVariableName();
 					context.defineVariable(varName, rightValue);
 				}
 				else if (leftBranch.mOperation == HASHMAP_REFERENCE &&
-					leftBranch.mLeftBranch.mIsLeaf)
+					((ExpressionTreeNode)leftBranch.mBranches.get(0)).mIsLeaf)
 				{
 					/*
 					 * Assign value as entry in a hashmap: a[55] = "foo".
 					 */
-					String hashMapName = leftBranch.mLeftBranch.mLeafArg.getVariableName();
+					String hashMapName = ((ExpressionTreeNode)leftBranch.mBranches.get(0)).mLeafArg.getVariableName();
 					if (hashMapName == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE));
 					}
-					Argument key = traverse(t.mLeftBranch.mRightBranch, context,
+					Argument key = traverse(((ExpressionTreeNode)leftBranch.mBranches.get(1)), context,
 						interpreterFilename);
 					if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
 					{
@@ -348,21 +316,23 @@ public class Expression
 				 * Lookup an individual entry in a hash map from a hash map
 				 * variable name and key.
 				 */
-				if (t.mLeftBranch.mIsLeaf && t.mLeftBranch.mLeafArg.getType() == Argument.VARIABLE)
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+				if (leftBranch.mIsLeaf && leftBranch.mLeafArg.getType() == Argument.VARIABLE)
 				{
-					String varName = t.mLeftBranch.mLeafArg.getVariableName();
+					String varName = leftBranch.mLeafArg.getVariableName();
 					hashMapVar = context.getVariableValue(varName, interpreterFilename);
 				}
-				else if (t.mLeftBranch.mIsFunction)
+				else if (leftBranch.mIsFunction)
 				{
-					hashMapVar = traverse(t.mLeftBranch, context, interpreterFilename);
+					hashMapVar = traverse(leftBranch, context, interpreterFilename);
 				}
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 				}
 
-				Argument key = traverse(t.mRightBranch, context, interpreterFilename);
+				Argument key = traverse(rightBranch, context, interpreterFilename);
 				if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HASHMAP_KEY));
@@ -388,19 +358,26 @@ public class Expression
 				/*
 				 * Test condition and return value for true, or value for false.
 				 */
-				leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+				leftValue = traverse(leftBranch, context, interpreterFilename);
 				if (leftValue.getNumericValue() != 0)
-					retval = traverse(t.mRightBranch, context, interpreterFilename);
+					retval = traverse(rightBranch, context, interpreterFilename);
 				else
-					retval = traverse(t.mThirdFunctionExpression, context, interpreterFilename);
+				{
+					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)t.mBranches.get(2);
+					retval = traverse(thirdBranch, context, interpreterFilename);
+				}
 			}
 			else
 			{
 				/*
 				 * Either expression can be a number or a string.
 				 */
-				leftValue = traverse(t.mLeftBranch, context, interpreterFilename);
-				rightValue = traverse(t.mRightBranch, context, interpreterFilename);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+				leftValue = traverse(leftBranch, context, interpreterFilename);
+				rightValue = traverse(rightBranch, context, interpreterFilename);
 
 				switch (t.mOperation)
 				{
@@ -636,17 +613,24 @@ public class Expression
 				}
 				
 				sb = new StringBuffer();
-				sb.append(mLeftBranch.toString());
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)mBranches.get(0);
+				sb.append(leftBranch.toString());
 				sb.append(' ');
 				sb.append(operation);
 				sb.append(' ');
 
 				if (mOperation != NOT_OPERATION)
-					sb.append(mRightBranch.toString());
+				{
+					ExpressionTreeNode rightBranch = (ExpressionTreeNode)mBranches.get(1);
+					sb.append(rightBranch.toString());
+				}
 				if (mOperation == HASHMAP_REFERENCE)
 					sb.append(']');
 				if (mOperation == CONDITIONAL_OPERATION)
-					sb.append(" : ").append(mThirdFunctionExpression.toString());
+				{
+					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)mBranches.get(1);
+					sb.append(" : ").append(thirdBranch.toString());
+				}
 				retval = sb.toString();
 			}
 			return(retval);
@@ -1374,13 +1358,12 @@ public class Expression
 				/*
 				 * Parse expression for each function argument.
 				 */
-				ExpressionTreeNode functionExpressions[] = new ExpressionTreeNode[4];
-				for (int i = 0; i < functionExpressions.length; i++)
-					functionExpressions[i] = null;
+				ArrayList functionExpressions = new ArrayList(4);
 
 				if (minArgs >= 0)
 				{
-					functionExpressions[0] = parseOrBoolean(p);
+					ExpressionTreeNode funcExpr = parseOrBoolean(p);
+					functionExpressions.add(funcExpr);
 				}
 
 				for (int i = 1; i < maxArgs; i++)
@@ -1401,7 +1384,8 @@ public class Expression
 							": " + buf.toString());
 					}
 
-					functionExpressions[i] = parseOrBoolean(p);
+					ExpressionTreeNode funcExpr = parseOrBoolean(p);
+					functionExpressions.add(funcExpr);
 				}
 
 				/*
@@ -1415,8 +1399,7 @@ public class Expression
 						": " + buf.toString());
 				}
 
-				expr = new ExpressionTreeNode(f, functionExpressions[0],
-					functionExpressions[1], functionExpressions[2], functionExpressions[3]);
+				expr = new ExpressionTreeNode(f, functionExpressions);
 			}
 			else
 			{
