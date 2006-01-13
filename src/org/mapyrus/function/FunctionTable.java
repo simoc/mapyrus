@@ -128,6 +128,9 @@ public class FunctionTable
 		f = new Substr();
 		mFunctions.put(f.getName(), f);
 
+		f = new Sum();
+		mFunctions.put(f.getName(), f);
+
 		f = new Tan();
 		mFunctions.put(f.getName(), f);
 
