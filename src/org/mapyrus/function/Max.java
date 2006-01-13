@@ -29,8 +29,8 @@ import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
 
 /**
- * Function returning maximum of two values.
- * For example, max(1, 3) = 3.
+ * Function returning maximum of all values.
+ * For example, max(1, 3, 2) = 3.
  */
 public class Max implements Function
 {
@@ -40,12 +40,40 @@ public class Max implements Function
 	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
-		Argument arg1 = (Argument)args.get(0);
-		Argument arg2 = (Argument)args.get(1);
-		double d1 = arg1.getNumericValue();
-		double d2 = arg2.getNumericValue();
-		Argument retval = (d1 > d2) ? arg1 : arg2;
-		return(retval);
+		double maxValue = -Double.MAX_VALUE;
+		Argument maxArg = null;
+
+		/*
+		 * Find maximum of all numbers and arrays of numbers.
+		 */
+		for (int i = 0; i < args.size(); i++)
+		{
+			Argument arg = (Argument)args.get(i);
+			if (arg.getType() == Argument.HASHMAP)
+			{
+				Object []keys = arg.getHashMapKeys();
+				for (int j = 0; j < keys.length; j++)
+				{
+					Argument entry = arg.getHashMapEntry(keys[j].toString());
+					double d = entry.getNumericValue();
+					if (d > maxValue)
+					{
+						maxArg = entry;
+						maxValue = d;
+					}
+				}
+			}
+			else
+			{
+				double d = arg.getNumericValue();
+				if (d > maxValue)
+				{
+					maxArg = arg;
+					maxValue = d;
+				}
+			}
+		}
+		return(maxArg);
 	}
 
 	/**
@@ -53,7 +81,7 @@ public class Max implements Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(2);
+		return(Integer.MAX_VALUE);
 	}
 
 	/**
@@ -61,7 +89,7 @@ public class Max implements Function
 	 */
 	public int getMinArgumentCount()
 	{
-		return(2);
+		return(1);
 	}
 
 	/**

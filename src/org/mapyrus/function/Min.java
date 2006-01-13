@@ -29,7 +29,7 @@ import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
 
 /**
- * Function returning minimum of two or more values.
+ * Function returning minimum of all values.
  * For example, min(1, 3, 5) = 1.
  */
 public class Min implements Function
@@ -40,17 +40,37 @@ public class Min implements Function
 	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
-		Argument minArg = (Argument)args.get(0);
-		double minValue = minArg.getNumericValue();
-		int nArgs = args.size();
-		for (int i = 1; i < nArgs; i++)
+		double minValue = Double.MAX_VALUE;
+		Argument minArg = null;
+		
+		/*
+		 * Find minimum of all numbers and arrays of numbers.
+		 */
+		for (int i = 0; i < args.size(); i++)
 		{
 			Argument arg = (Argument)args.get(i);
-			double d = arg.getNumericValue();
-			if (d < minValue)
+			if (arg.getType() == Argument.HASHMAP)
 			{
-				minArg = arg;
-				minValue = arg.getNumericValue();
+				Object []keys = arg.getHashMapKeys();
+				for (int j = 0; j < keys.length; j++)
+				{
+					Argument entry = arg.getHashMapEntry(keys[j].toString());
+					double d = entry.getNumericValue();
+					if (d < minValue)
+					{
+						minArg = entry;
+						minValue = d;
+					}
+				}
+			}
+			else
+			{
+				double d = arg.getNumericValue();
+				if (d < minValue)
+				{
+					minArg = arg;
+					minValue = d;
+				}
 			}
 		}
 		return(minArg);
