@@ -359,10 +359,13 @@ public class Expression
 				 * Test condition and return value for true, or value for false.
 				 */
 				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
-				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+				
 				leftValue = traverse(leftBranch, context, interpreterFilename);
 				if (leftValue.getNumericValue() != 0)
+				{
+					ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
 					retval = traverse(rightBranch, context, interpreterFilename);
+				}
 				else
 				{
 					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)t.mBranches.get(2);
@@ -628,7 +631,7 @@ public class Expression
 					sb.append(']');
 				if (mOperation == CONDITIONAL_OPERATION)
 				{
-					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)mBranches.get(1);
+					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)mBranches.get(2);
 					sb.append(" : ").append(thirdBranch.toString());
 				}
 				retval = sb.toString();
