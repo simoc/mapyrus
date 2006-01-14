@@ -84,8 +84,12 @@ public class PATImage
 			int height = stream.readInt();
 			int bytesPerPixel = stream.readInt();
 			byte []magicBuf = new byte[4];
-			stream.read(magicBuf);
-			
+			if (stream.read(magicBuf) != magicBuf.length)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+					": " + filename);
+			}
+
 			if ((!(magicBuf[0] == 'G' && magicBuf[1] == 'P' &&
 				magicBuf[2] == 'A' && magicBuf[3] == 'T')) ||
 				width <= 0 || height <= 0)
@@ -99,7 +103,13 @@ public class PATImage
 			 */
 			int offset = 24;
 			while (offset++ < headerLength)
-				stream.read();
+			{
+				if (stream.read() < 0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+						": " + filename);
+				}
+			}
 
 			/*
 			 * Read image pixels.
@@ -126,6 +136,11 @@ public class PATImage
 						red = stream.read();
 						green = stream.read();
 						blue = stream.read();
+					}
+					if (red < 0 || green < 0 || blue < 0)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+							": " + filename);
 					}
 					int pixel = (red << 16) | (green << 8) | blue;
 					mImage.setRGB(x, y, pixel);
