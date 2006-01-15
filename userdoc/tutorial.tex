@@ -2,7 +2,7 @@
 
 \section{Tutorial and Cookbook}
 
-The folllowing examples demonstrate how to use Mapyrus.  Each example is also
+The following examples demonstrate how to use Mapyrus.  Each example is also
 included as a file in the \texttt{userdoc} subdirectory.  All example files
 have file suffix \texttt{.mapyrus}.  This suffix is not required but makes
 identification of files that are to be interpreted by Mapyrus easier.
@@ -209,7 +209,7 @@ output of this example is shown in Figure \ref{tutorialprocedures2}.
 Put frequently used procedures in a separate file and use an
 \texttt{include}
 line to include it in other files.  When this is done for the
-previous example, the procudure is put in a file.
+previous example, the procedure is put in a file.
 
 \verbatiminput{tutorialprocedures3.mapyrus}
 
@@ -779,16 +779,6 @@ from the database as a WKT string and displaying it.
 
 \verbatiminput{tutorialdatasets6.mapyrus}
 
-\subsection{Displaying Many Datasets}
-
-To display data contained in many files, use the \texttt{listfiles}
-function to obtain a list of files in one or more directories matching
-a filename pattern.  Then display each dataset in a loop.
-Displaying from many ESRI Shape files is demonstrated in the following
-example.
-
-\verbatiminput{tutorialdatasets7.mapyrus}
-
 \subsection{Displaying Geo-Referenced Images}
 
 To display a geo-referenced image use the \texttt{geoimage} command.
@@ -844,6 +834,36 @@ The UMN Mapserver must be configured to return 24 bit PNG images
 as Mapyrus cannot read the default PNG format returned by Mapserver.
 
 \verbatiminput{tutorialgeoimage3.mapyrus}
+
+\subsection{Displaying Many Datasets or Geo-Referenced Images}
+
+To display data contained in many files, use the \texttt{listfiles}
+function to obtain a list of files in one or more directories matching
+a filename pattern.  Then display each dataset in a loop.
+Displaying from many ESRI Shape files is demonstrated in the following
+example.
+
+\verbatiminput{tutorialdatasets7.mapyrus}
+
+A common method of efficiently selecting the data that overlaps the page from
+hundreds of possible datasets and geo-referenced images is to create an index
+ESRI Shape file with a polygon containing the bounding rectangle of each
+dataset or image.
+
+This ESRI Shape file index is then searched for overlapping polygons.
+
+For ESRI Shape file datasets, the \texttt{tile4ms} program included in 
+UMN Mapserver\footnote{Available from http://mapserver.gis.umn.edu} is used
+to create an ESRI Shape file index.
+
+For geo-referenced images, the
+\texttt{gdaltindex} program included in the gdal\footnote{Available
+from http://www.gdal.org} library is used to create an ESRI Shape file index.
+
+The following example demonstrates searching an ESRI Shape file index
+for images to display.
+
+\verbatiminput{tutorialdatasets8.mapyrus}
 
 \subsection{Updating Existing Output Files}
 
@@ -972,7 +992,7 @@ To show the number of times a legend entry has been used on
 a map, include the special string \texttt{(\#)} in legend entry descriptions.
 This string is replaced in the legend by the number of times the legend entry
 was encountered whilst executing commands.
-This feature is demontrated in the following example,
+This feature is demonstrated in the following example,
 with output shown in 
 Figure \ref{tutoriallegend3}.
 
