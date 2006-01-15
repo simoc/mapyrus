@@ -537,8 +537,11 @@ public class OutputFormat
 				" << /Type /Font /Subtype /Type1");
 			nChars += writeLine(mWriter, "      /BaseFont /" + PDF_FONTS[i] +
 				" /Name /F" + i);
-			if (!PDF_FONTS[i].equals("ZapfDingbats"))
+			if ((!PDF_FONTS[i].equals("ZapfDingbats")) &&
+				(!PDF_FONTS[i].equals("Symbol")))
+			{
 				nChars += writeLine(mWriter, "    /Encoding /WinAnsiEncoding");
+			}
 			nChars += writeLine(mWriter, "    >>");
 		}
 		nChars += writeLine(mWriter, "  >>");
