@@ -22,21 +22,29 @@
  */
 package org.mapyrus.font;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 import org.mapyrus.Constants;
 
 /**
- * A PostScript Type 1 font, read from a .pfa font definition file.
- * Provides methods to parse the font file and include it in another
- * PostScript file.
+ * A PostScript Type 1 font, read from a .pfa or .pfb font definition file.
+ * Provides methods to parse the font file and include it in a
+ * PostScript or PDF file.
  */
 public class PostScriptFont
 {
+	private static final int LINE_LENGTH = 30;
+	
 	/*
 	 * Name of font given in header of font file.
 	 */
@@ -48,20 +56,184 @@ public class PostScriptFont
 	private StringBuffer mFileContents;
 
 	/**
-	 * Create PostScript Type 1 font from a .pfa file.
-	 * @param pfaFilename name of .pfa file.
+	 * Create PostScript Type 1 font from a .pfa or .pfb file.
+	 * @param filename name of .pfa or .pfb file.
+	 * @param isBinary true if file is to be parsed as binary file.
 	 */
-	public PostScriptFont(String pfaFilename) throws IOException, MapyrusException
+	public PostScriptFont(String filename, boolean isBinary)
+		throws IOException, MapyrusException
 	{
 		/*
-		 * Only accept filenames with .pfa suffix.
+		 * Only accept filenames with correct suffix.
 		 */
-		if (!pfaFilename.toLowerCase().endsWith(".pfa"))
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-				": " + pfaFilename);
+		if (isBinary)
+		{
+			if (!filename.toLowerCase().endsWith(".pfb"))
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFB_FILE) +
+				": " + filename);
+		}
+		else
+		{
+			if (!filename.toLowerCase().endsWith(".pfa"))
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+					": " + filename);
+		}
 
+		if (isBinary)
+			readPfbFile(filename);
+		else
+			readPfaFile(filename);
+	}
+
+	/**
+	 * Parse binary .pfb file.
+	 * @param pfbFilename name of .pfb file to read.
+	 */
+	private void readPfbFile(String pfbFilename)
+		throws IOException, MapyrusException
+	{
 		BufferedReader bufferedReader = null;
-		
+		BufferedInputStream stream = null;
+
+		try
+		{			
+			stream = new BufferedInputStream(new FileInputStream(pfbFilename));
+			byte magic[] = new byte[2];
+			byte header[] = new byte[4];
+			ArrayList segments = new ArrayList();
+			int totalLength = 0;
+
+			/*
+			 * Read each segment from .pfb file, as described in Adobe technical note
+			 * 5040 "Supporting Downloadable PostScript Language Fonts".
+			 */
+			if (stream.read(magic) != magic.length)
+			{
+				throw new IOException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+					": " + pfbFilename);
+			}
+			while (magic[1] != 3)
+			{
+				if (magic[0] != -128)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFB_FILE) +
+						": " + pfbFilename);
+				}
+				if (stream.read(header) != header.length)
+				{
+					throw new IOException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+						": " + pfbFilename);
+				}
+				int segmentLength = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).getInt();
+				totalLength += segmentLength;
+				byte []buf = new byte[segmentLength];
+				if (stream.read(buf) != buf.length)
+				{
+					throw new IOException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+						": " + pfbFilename);
+				}
+				segments.add(buf);
+				
+				if (stream.read(magic) != magic.length)
+				{
+					throw new IOException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+						": " + pfbFilename);
+				}
+			}
+			if (segments.size() < 3)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFB_FILE) +
+					": " + pfbFilename);
+			}
+
+			/*
+			 * Create embedded Type 1 font object as described in section 5.8
+			 * of Adobe PDF Reference Manual. 
+			 */
+			mFileContents = new StringBuffer(128 * 1024);
+			mFileContents.append("<< /Type /FontFile /Length ");
+			long hexEncodedLength = totalLength * 2 + Constants.LINE_SEPARATOR.length();
+			hexEncodedLength += totalLength / LINE_LENGTH * Constants.LINE_SEPARATOR.length();
+			mFileContents.append(hexEncodedLength);
+			mFileContents.append(" /Length1 ");
+			mFileContents.append(((byte [])segments.get(0)).length);
+			mFileContents.append(" /Length2 ");
+			mFileContents.append(((byte [])segments.get(1)).length);
+			mFileContents.append(" /Length3 ");
+			mFileContents.append(((byte [])segments.get(2)).length);
+			mFileContents.append(" /Filter /ASCIIHexDecode >>");
+			mFileContents.append(Constants.LINE_SEPARATOR);
+			mFileContents.append("stream");
+			mFileContents.append(Constants.LINE_SEPARATOR);
+
+			/*
+			 * Add all segments to PDF object as a hex encoded stream.
+			 */
+			StringBuffer firstLine = new StringBuffer();
+			int nBytesAdded = 0;
+			for (int i = 0; i < segments.size(); i++)
+			{
+				boolean onFirstLine = true;
+				byte []buf = (byte [])segments.get(i);
+				for (int j = 0; j < buf.length; j++)
+				{
+					if (i == 0 && onFirstLine)
+					{
+						/*
+						 * Extract font name from first line of first segment.
+						 */
+						if (buf[j] == '\r' || buf[j] == '\n')
+						{
+							onFirstLine = false;
+							mFontName = parseFontName(firstLine.toString());
+							if (mFontName == null)
+							{
+								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+									": " + pfbFilename);
+							}
+						}
+						else
+						{
+							firstLine.append((char)(buf[j]));
+						}
+					}
+					String s = Integer.toHexString(buf[j] & 0xff);
+					if (s.length() < 2)
+						mFileContents.append('0');
+					mFileContents.append(s);
+
+					/*
+					 * Add regular line breaks.
+					 */
+					if ((++nBytesAdded) % LINE_LENGTH == 0)
+						mFileContents.append(Constants.LINE_SEPARATOR);
+				}
+			}
+			mFileContents.append(Constants.LINE_SEPARATOR);
+			mFileContents.append("endstream");
+		}
+		finally
+		{
+			try
+			{
+				if (stream != null)
+					stream.close();
+			}
+			catch (IOException e)
+			{
+			}
+		}
+	}
+
+	/**
+	 * Parse ASCII .pfa file.
+	 * @param pfaFilename name of .pfa file to read.
+	 */
+	private void readPfaFile(String pfaFilename)
+		throws IOException, MapyrusException
+	{
+		BufferedReader bufferedReader = null;
+
 		try
 		{
 			bufferedReader = new BufferedReader(new FileReader(pfaFilename));
@@ -75,16 +247,12 @@ public class PostScriptFont
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 					": " + pfaFilename);
 	
-			String magicToken = null;
-			StringTokenizer st = new StringTokenizer(firstLine);
-			if (st.countTokens() > 1)
+			mFontName = parseFontName(firstLine);
+			if (mFontName == null)
 			{
-				magicToken = st.nextToken();
-				mFontName = st.nextToken();
-			}
-			if (magicToken == null || (!magicToken.startsWith("%!PS-AdobeFont")))
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 					": " + pfaFilename);
+			}
 	
 			/*
 			 * Read entire .pfa file into memory, most files are about 100kb in size.
@@ -105,6 +273,25 @@ public class PostScriptFont
 			if (bufferedReader != null)
 				bufferedReader.close();
 		}		
+	}
+
+	/**
+	 * Extract font name from first line of PostScript font file.
+	 * @param line first line of font file.
+	 * @return font name or null if it cannot be parsed.
+	 */
+	private String parseFontName(String line)
+	{
+		String fontName = null;
+		String magicToken = null;
+		StringTokenizer st = new StringTokenizer(line);
+		if (st.countTokens() > 1)
+		{
+			magicToken = st.nextToken();
+			if (magicToken.startsWith("%!PS-AdobeFont"))
+				fontName = st.nextToken();
+		}
+		return(fontName);
 	}
 
 	/**
