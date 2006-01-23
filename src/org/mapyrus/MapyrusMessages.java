@@ -148,6 +148,7 @@ public class MapyrusMessages
 	public static final String NOT_A_BMP_FILE = "notabmpfile";
 	public static final String NOT_A_PAT_FILE = "notapatfile";
 	public static final String NOT_A_PFA_FILE = "notapfafile";
+	public static final String NOT_A_PFB_FILE = "notapfbfile";
 	public static final String NOT_A_PPM_FILE = "notappmfile";
 	public static final String NOT_A_TTF_FILE = "notattffile";
 	public static final String NOT_MIF_FILE = "notmiffile";
