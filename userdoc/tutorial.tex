@@ -1556,10 +1556,10 @@ and oblique (italic) variations of these fonts.
 When a PostScript printer prints a file containing an unknown font,
 a substitute font is used.
 
-To make a font known to the printer, include the definition of
+To make a font known to the printer, include the ASCII definition of
 the font in the PostScript file being printed.
 
-A PostScript Type 1 font is defined in two files with suffixes
+An ASCII PostScript Type 1 font is defined in two files with suffixes
 \texttt{.pfa} and \texttt{.afm}.  PostScript
 font definition files are included in a PostScript file created
 by Mapyrus using the
@@ -1568,11 +1568,10 @@ options to the \texttt{newpage} command.
 Include filenames of PostScript font definition files for all fonts to be used
 in the page that are not known by the printer.
 
-PostScript Type 1 font definition files are text files and
-the first line of the file with \texttt{.pfa} suffix
+The first line of an ASCII PostScript Type 1 font definition file
 contains the name of the font defined in the file.
 
-To convert a True Type Font file to a PostScript Type 1 font use the
+To convert a True Type Font file to an ASCII PostScript Type 1 font use the
 ttf2pt1\footnote{Available from http://ttf2pt1.sourceforge.net} program.  The
 following command converts the font in the file \texttt{BEANTOWN.TTF} to a
 PostScript Type 1 font in files
@@ -1581,6 +1580,44 @@ PostScript Type 1 font in files
 
 \begin{verbatim}
 ttf2pt1 -e BEANTOWN.TTF BEANTOWN
+\end{verbatim}
+
+\subsection{Using PostScript Fonts In PDF Output}
+\label{psfonts}
+
+PDF format defines the following 14 standard fonts
+that are always available:
+Times-Roman, Times-Bold, Times-Italic, Times-BoldItalic,
+Helvetica, Helvetica-Bold, Helvetica-Oblique, Helvetica-BoldOblique,
+Courier, Courier-Bold, Courier-Oblique, Courier-BoldOblique,
+Symbol, ZapfDingbats.
+
+For other fonts, the definition of the font must be included
+in the PDF file as a binary PostScript Type 1 font.
+
+A binary PostScript Type 1 font is defined in two files with suffixes
+\texttt{.pfb} and \texttt{.afm}.  A binary PostScript Type 1
+font is included in a PDF file created
+by Mapyrus using the
+\textit{extras} \texttt{pfbfiles} and \texttt{afmfiles}
+options to the \texttt{newpage} command.
+Include filenames of PostScript font definition files for all
+non-standard fonts to be used in the PDF file.
+
+Binary PostScript Type 1 font definition files are binary files.
+However, many parts are plain text and the first plain text
+line in the file with \texttt{.pfb} suffix contains the name
+of the font defined in the file.
+
+To convert a True Type Font file to a binary  PostScript Type 1 font use the
+ttf2pt1\footnote{Available from http://ttf2pt1.sourceforge.net} program.  The
+following command converts the font in the file \texttt{BEANTOWN.TTF} to a
+binary PostScript Type 1 font in files
+\texttt{BEANTOWN.pfb} and
+\texttt{BEANTOWN.afm}.
+
+\begin{verbatim}
+ttf2pt1 -b BEANTOWN.TTF BEANTOWN
 \end{verbatim}
 
 \subsection{Using TrueType Fonts In Output to Image Formats}
