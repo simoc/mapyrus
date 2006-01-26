@@ -155,7 +155,8 @@ public class PostScriptFont
 			long hexEncodedLength = totalLength * 2 + Constants.LINE_SEPARATOR.length();
 			hexEncodedLength += totalLength / LINE_LENGTH * Constants.LINE_SEPARATOR.length();
 			mFileContents.append(hexEncodedLength);
-			mFileContents.append(" /Length1 ");
+			mFileContents.append(Constants.LINE_SEPARATOR);
+			mFileContents.append("/Length1 ");
 			mFileContents.append(((byte [])segments.get(0)).length);
 			mFileContents.append(" /Length2 ");
 			mFileContents.append(((byte [])segments.get(1)).length);
