@@ -1978,15 +1978,15 @@ information on converting TrueType fonts to PostScript Type 1 format.
 \vspace{10pt}
 \texttt{pfafiles=\textit{filename},\textit{filename2},...}
 
-Comma-separated list of PostScript Type 1 font definition filenames
+Comma-separated list of ASCII PostScript Type 1 font definition filenames
 to include in this PostScript file.
-A PostScript Type 1 font definition is defined in a file
+An ASCII PostScript Type 1 font definition is defined in a file
 with suffix \texttt{.pfa}.  Include
 files for all PostScript fonts to be used in this
 page that are not known by the printer.
 
 See section \ref{psfonts} for
-information on converting TrueType fonts to PostScript Type 1 format.
+information on converting TrueType fonts to ASCII PostScript Type 1 format.
 
 \vspace{10pt}
 \texttt{isolatinfonts=\textit{fontname},\textit{fontname2},...}
@@ -2027,6 +2027,43 @@ Page size is set to the size of the existing page,
 
 PDF &
 
+\vspace{10pt}
+\texttt{afmfiles=\textit{filename},\textit{filename2},...}
+
+Comma-separated list of PostScript Type 1 font metrics filenames
+to include in this PDF file.
+PostScript Type 1 font metrics are defined in a file
+with suffix \texttt{.afm}.  Include
+files for all PostScript fonts to be used in this
+page that are not one of the 14 standard PDF fonts.
+
+See section \ref{pdffonts} for
+information on converting TrueType fonts to binary PostScript Type 1 format.
+
+\vspace{10pt}
+\texttt{pfbfiles=\textit{filename},\textit{filename2},...}
+
+Comma-separated list of binary PostScript Type 1 font definition filenames
+to include in this PostScript file.
+A binary PostScript Type 1 font definition is defined in a file
+with suffix \texttt{.pfb}.  Include
+files for all PostScript fonts to be used in this
+page that are not one of the 14 standard PDF fonts.
+
+See section \ref{pdffonts} for
+information on converting TrueType fonts to binary PostScript Type 1 format.
+
+\vspace{10pt}
+\texttt{isolatinfonts=\textit{fontname},\textit{fontname2},...}
+
+Comma-separated list of PostScript Type 1 font names for
+which ISO Latin1 character encoding
+(also known as ISO-8859-1 encoding)
+is required.  Use ISO Latin1 encoding
+when extended characters such as accented characters
+or a copyright symbol are to be displayed from the font.
+
+\vspace{10pt}
 \texttt{background=\textit{color}}
 
 Background color for page, as a named color or as hex digits.
