@@ -63,6 +63,7 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
+import org.mapyrus.font.AdobeFontMetrics;
 import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.StringDimension;
@@ -184,6 +185,7 @@ public class OutputFormat
 	 */
 	private AdobeFontMetricsManager mAdobeFontMetrics;
 	private ArrayList mAfmFiles;
+	private HashMap mPDFFonts;
 	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
@@ -455,15 +457,64 @@ public class OutputFormat
 	 * @param resolution resolution of page in DPI.
 	 * @param turnPage flag true when page is to be rotated 90 degrees.
 	 * @param fontList list of PostScript fonts to include in header.
+	 * @param afmFiles list of PostScript AFM files to include in header.
 	 * @param backgroundColor background color for page, or null if no background.
 	 */
 	private void writePDFHeader(String filename, double width, double height,
-		int resolution, boolean turnPage, ArrayList fontList, Color backgroundColor)
+		int resolution, boolean turnPage, ArrayList fontList,
+		ArrayList afmFilenames, Color backgroundColor)
 		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *	Constants.POINTS_PER_INCH);
 		long heightInPoints = Math.round(height / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH);
 
+		int nFontObjects = 0;
+		HashMap afmFiles = new HashMap(afmFilenames.size());
+		for (int i = 0; i < afmFilenames.size(); i++)
+		{
+			/*
+			 * Read .afm file for each additional font file given by user.
+			 */
+			String afmFilename = (String)afmFilenames.get(i);
+			BufferedReader reader = null;
+			AdobeFontMetrics afm = null;
+			try
+			{
+				reader = new BufferedReader(new FileReader(afmFilename));
+				afm = new AdobeFontMetrics(reader, afmFilename, mEncodeAsISOLatin1);
+
+				/*
+				 * Find if there is a matching .pfb file for each font.
+				 */
+				boolean foundPfbFile = false;
+				int j = 0;
+				PostScriptFont font = null;
+				while (j < fontList.size() && (!foundPfbFile))
+				{
+					font = (PostScriptFont)fontList.get(j);
+					if (font.getName().equals(afm.getFontName()))
+						foundPfbFile = true;
+					else
+						j++;
+				}
+
+				/*
+				 * Objects for character widths and font descriptor will be needed
+				 * each font.  If .pfb file is given then an object is needed for
+				 * font definition too.
+				 */
+				if (foundPfbFile)
+					nFontObjects += 3;
+				else
+					nFontObjects += 2;
+				afmFiles.put(afm, font);
+			}
+			finally
+			{
+				if (reader != null)
+					reader.close();
+			}
+		}
 		mPDFFileOffsets = new ArrayList();
 
 		int nChars = writeLine(mWriter, "%PDF-1.4");
@@ -527,28 +578,129 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "/Resources");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text /ImageB /ImageC]");
-		nChars += writeLine(mWriter, "  /ExtGState 7 0 R");
-		nChars += writeLine(mWriter, "  /XObject 8 0 R");
+
+		nChars += writeLine(mWriter, "  /ExtGState " + (7 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "  /XObject " + (8 + nFontObjects) + " 0 R");
 		nChars += writeLine(mWriter, "  /Font");
 		nChars += writeLine(mWriter, "  <<");
 		for (int i = 0; i < PDF_FONTS.length; i++)
 		{
+			/*
+			 * Define names for each of the standard PDF fonts.
+			 */
 			nChars += writeLine(mWriter, "    /F" + i +
 				" << /Type /Font /Subtype /Type1");
 			nChars += writeLine(mWriter, "      /BaseFont /" + PDF_FONTS[i] +
 				" /Name /F" + i);
-			if ((!PDF_FONTS[i].equals("ZapfDingbats")) &&
-				(!PDF_FONTS[i].equals("Symbol")))
+			if (mEncodeAsISOLatin1.contains(PDF_FONTS[i]))
 			{
 				nChars += writeLine(mWriter, "    /Encoding /WinAnsiEncoding");
 			}
 			nChars += writeLine(mWriter, "    >>");
 		}
+
+		Iterator it = afmFiles.keySet().iterator();
+		int fontCounter = PDF_FONTS.length;
+		int objectCounter = 6;
+		while (it.hasNext())
+		{
+			/*
+			 * Add font dictionary for each additional font file given by user.
+			 */
+			AdobeFontMetrics afm = (AdobeFontMetrics)it.next();
+			nChars += writeLine(mWriter, "/F" + fontCounter);
+			mPDFFonts.put(afm.getFontName(), new Integer(fontCounter));
+			fontCounter++;
+			nChars += writeLine(mWriter, "<< /Type /Font /Subtype /Type1");
+			nChars += writeLine(mWriter, "/BaseFont /" + afm.getFontName());
+			nChars += writeLine(mWriter, "/FirstChar " + afm.getFirstChar());
+			nChars += writeLine(mWriter, "/LastChar " + afm.getLastChar());
+			nChars += writeLine(mWriter, "/Widths " + objectCounter + " 0 R");
+			objectCounter++;
+			nChars += writeLine(mWriter, "/FontDescriptor " + objectCounter + " 0 R");
+			objectCounter++;
+
+			/*
+			 * If .pfb font file is given then leave space for it too.
+			 */
+			if (afmFiles.get(afm) != null)
+				objectCounter++;
+			if (mEncodeAsISOLatin1.contains(afm.getFontName()))
+				nChars += writeLine(mWriter, "/Encoding /WinAnsiEncoding");
+			nChars += writeLine(mWriter, ">>");
+		}
 		nChars += writeLine(mWriter, "  >>");
 		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "/Contents 6 0 R % Page Drawing Stream");
+		nChars += writeLine(mWriter, "/Contents " + (6 + nFontObjects) +
+			" 0 R % Page Drawing Stream");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
+
+		/*
+		 * Write character widths, font descriptor and
+		 * font definition for each additional font too.
+		 */
+		it = afmFiles.keySet().iterator();
+		objectCounter = 6;
+		while (it.hasNext())
+		{
+			AdobeFontMetrics afm = (AdobeFontMetrics)it.next();
+			mPDFFileOffsets.add(new Integer(nChars));
+			nChars += writeLine(mWriter, objectCounter +
+				" 0 obj % Character Widths for " + afm.getFontName());
+			objectCounter++;
+			StringBuffer sb = new StringBuffer("[");
+			for (int k = afm.getFirstChar(); k <= afm.getLastChar(); k++)
+			{
+				sb.append(' ').append(afm.getCharWidth(k));
+				if (sb.length() >= 64)
+				{
+					nChars += writeLine(mWriter, sb.toString());
+					sb.setLength(0);
+				}
+			}
+			sb.append("]");
+			nChars += writeLine(mWriter, sb.toString());
+			nChars += writeLine(mWriter, "endobj");
+
+			mPDFFileOffsets.add(new Integer(nChars));
+			nChars += writeLine(mWriter, objectCounter + " 0 obj % Font Descriptor");
+			objectCounter++;
+			nChars += writeLine(mWriter, "<<");
+			nChars += writeLine(mWriter, "/Type /FontDescriptor");
+			nChars += writeLine(mWriter, "/FontName /" + afm.getFontName());
+			nChars += writeLine(mWriter, "/Flags " + afm.getFlags());
+			Rectangle rect = afm.getFontBBox();
+			nChars += writeLine(mWriter, "/FontBBox [" +
+				Math.round(rect.getMinX()) + " " +
+				Math.round(rect.getMinY()) + " " +
+				Math.round(rect.getMaxX()) + " " +
+				Math.round(rect.getMaxY()) + "]");
+			nChars += writeLine(mWriter, "/ItalicAngle " + afm.getItalicAngle());
+			nChars += writeLine(mWriter, "/Ascent " + afm.getAscender());
+			nChars += writeLine(mWriter, "/Descent " + afm.getDescender());
+			nChars += writeLine(mWriter, "/CapHeight " + afm.getCapHeight());
+			nChars += writeLine(mWriter, "/StemV 105");
+
+			PostScriptFont font = (PostScriptFont)afmFiles.get(afm);
+			if (font != null)
+			{
+				nChars += writeLine(mWriter, "/FontFile " + objectCounter + " 0 R");
+				
+			}
+			nChars += writeLine(mWriter, ">>");
+			nChars += writeLine(mWriter, "endobj");
+
+			if (font != null)
+			{
+				mPDFFileOffsets.add(new Integer(nChars));
+				nChars += writeLine(mWriter, objectCounter +
+					" 0 obj % Font File for " + font.getName());
+				objectCounter++;
+				nChars += writeLine(mWriter, font.getFontDefinition());
+				nChars += writeLine(mWriter, "endobj");
+			}
+		}
 
 		mPDFFileOffsets.add(new Integer(nChars));
 
@@ -752,6 +904,7 @@ public class OutputFormat
 		ArrayList fontList = new ArrayList();
 		mEncodeAsISOLatin1 = new HashSet();
 		mTTFFonts = new HashMap();
+		mPDFFonts = new HashMap();
 		mAfmFiles = new ArrayList();
 		mIsUpdatingFile = false;
 		int resolution;
@@ -779,8 +932,11 @@ public class OutputFormat
 		while (st.hasMoreTokens())
 		{
 			String token = st.nextToken();
-			if (token.startsWith("pfafiles="))
+			if ((token.startsWith("pfafiles=") && mOutputType != PDF) ||
+				(token.startsWith("pfbfiles=") && mOutputType == PDF))
 			{
+				boolean isBinary = (mOutputType == PDF);
+
 				/*
 				 * Build list of font filenames user wants
 				 * to include in this PostScript file.
@@ -788,16 +944,16 @@ public class OutputFormat
 				StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
 				while (st2.hasMoreTokens())
 				{
-					String pfaFilename = st2.nextToken();
-					if (pfaFilename.length() > 0)
+					String fontFilename = st2.nextToken();
+					if (fontFilename.length() > 0)
 					{
 						/*
 						 * Accept wildcards in filenames.
 						 */
-						WildcardFile wildcard = new WildcardFile(pfaFilename);
+						WildcardFile wildcard = new WildcardFile(fontFilename);
 						Iterator it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
-							fontList.add(new PostScriptFont((String)it.next()));
+							fontList.add(new PostScriptFont((String)it.next(), isBinary));
 					}
 				}
 			}
@@ -1014,7 +1170,7 @@ public class OutputFormat
 			mSuppliedFontResources = new HashSet();
 
 			if (mOutputType == PDF)
-				writePDFHeader(filename, width, height, resolution, turnPage, fontList, backgroundColor);
+				writePDFHeader(filename, width, height, resolution, turnPage, fontList, mAfmFiles, backgroundColor);
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
@@ -3251,6 +3407,9 @@ public class OutputFormat
 				int j = 0, index = -1;
 				while (j < PDF_FONTS.length && index < 0)
 				{
+					/*
+					 * Is it one of the standard PDF fonts?
+					 */
 					if (PDF_FONTS[j].equals(mFontName))
 						index = j;
 					else
@@ -3258,7 +3417,14 @@ public class OutputFormat
 				}
 				if (index < 0)
 				{
-					index = 4;
+					/*
+					 * Or is it a font given by the user?
+					 */
+					Integer k = (Integer)mPDFFonts.get(mFontName);
+					if (k != null)
+						index = k.intValue();
+					if (index < 0)
+						index = 4;
 				}
 				writeLine(mPDFGeometryWriter, "/F" + index + " " +
 					mCoordinateDecimal.format(mFontSize) + " Tf");
