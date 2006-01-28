@@ -916,6 +916,21 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.SINEWAVE:
+				if (nExpressions == 4)
+				{
+					x1 = mExecuteArgs[0].getNumericValue();
+					y1 = mExecuteArgs[1].getNumericValue();
+					double nRepeats = mExecuteArgs[2].getNumericValue();
+					double amplitude = mExecuteArgs[3].getNumericValue();
+					context.sineWaveTo(x1, y1, nRepeats, amplitude);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SINEWAVE));
+				}
+				break;
+
 			case Statement.WEDGE:
 				if (nExpressions == 5 || nExpressions == 6)
 				{
