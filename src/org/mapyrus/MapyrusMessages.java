@@ -126,6 +126,7 @@ public class MapyrusMessages
 	public static final String INVALID_SCALING = "invalidscaling";
 	public static final String INVALID_SCRIPT = "invalidscript";
 	public static final String INVALID_SETOUTPUT = "invalidsetoutput";
+	public static final String INVALID_SINEWAVE = "invalidsinewave";
 	public static final String INVALID_SPACING = "invalidspacing";
 	public static final String INVALID_SPIRAL = "invalidspiral";
 	public static final String INVALID_STAR = "invalidstar";
@@ -169,6 +170,7 @@ public class MapyrusMessages
 	public static final String NO_MOVETO = "nomoveto";
 	public static final String NO_OUTPUT = "nooutput";
 	public static final String NO_ROWS = "norows";
+	public static final String NO_SINE_WAVE_START = "nosinewavestart";
 	public static final String NUMERIC_FUNCTION = "numericfunction";
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
