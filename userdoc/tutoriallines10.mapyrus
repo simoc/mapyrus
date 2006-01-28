@@ -1,0 +1,25 @@
+newpage "eps", "tutoriallines10.eps", 60, 30
+
+move 5, 5
+draw 45, 25
+stroke
+
+clearpath
+move 30, 5
+draw 55, 25
+stroke
+
+# Draw lines a second time as sine wave curves.
+#
+color "red"
+linestyle 2
+clearpath
+move 5, 5
+sinewave 45, 25, 2, 3
+stroke
+
+color "green"
+clearpath
+move 30, 5
+sinewave 55, 25, 0.5, -4
+stroke
