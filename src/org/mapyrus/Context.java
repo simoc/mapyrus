@@ -98,6 +98,11 @@ public class Context
 	private static final float MITER_LIMIT = 10.0f;
 
 	/*
+	 * Number of straight line segments in each sine wave curve.
+	 */
+	private static final int N_SINE_WAVE_STEPS = 20;
+
+	/*
 	 * Graphical attributes
 	 */	
 	private Color mColor;
@@ -1218,6 +1223,82 @@ public class Context
 		mCtm.transform(pts, 0, dstPts, 0, pts.length / 2);
 
 		mPath.curveTo(dstPts[0], dstPts[1], dstPts[2], dstPts[3], dstPts[4], dstPts[5]);
+	}
+
+	/**
+	 * Add Sine wave curve to path from last point to a new point.
+	 * @param x X coordinate of end of path.
+	 * @param y Y coordinate of end of path.
+	 * @param nRepeats number of repeats of sine wave pattern.
+	 * @param amplitude scaling factor for height of sine wave.
+	 */
+	public void sineWaveTo(double x, double y,
+		double nRepeats, double amplitude) throws MapyrusException
+	{
+		/*
+		 * Make sure that a start point for sine wave was defined.
+		 */
+		if (mPath == null || mPath.getMoveToCount() == 0)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_SINE_WAVE_START));
+
+		try
+		{
+			/*
+			 * Calculate position of last point in path in current
+			 * coordinate system.
+			 */
+			Point2D currentPoint = mPath.getShape().getCurrentPoint();
+
+			/*
+			 * Transform back to current world coordinate system.
+			 */
+//TODO should transform through mProjection too if it is not null.
+			if (mWorldCtm != null)
+				mWorldCtm.inverseTransform(currentPoint, currentPoint);
+			mCtm.inverseTransform(currentPoint, currentPoint);
+
+			double xDiff = x - currentPoint.getX();
+			double yDiff = y - currentPoint.getY();
+			double length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+
+			if (length > 0 && nRepeats > 0)
+			{
+				double angle = Math.atan2(yDiff, xDiff);
+				double cosOffset = Math.cos(angle + Math.PI / 2);
+				double sinOffset = Math.sin(angle + Math.PI / 2);
+				for (int i = 0; i < nRepeats; i++)
+				{
+					/*
+					 * Draw each repeat of sine wave pattern.
+					 */
+					double xStart = currentPoint.getX() + (i / nRepeats) * xDiff;
+					double yStart = currentPoint.getY() + (i / nRepeats) * yDiff;
+					double thisRepeatLength = nRepeats - i;
+					if (thisRepeatLength > 1)
+						thisRepeatLength = 1;
+					for (int j = 0; j <= N_SINE_WAVE_STEPS; j++)
+					{
+						/*
+						 * Draw each sine wave pattern as many straight line segments.
+						 */
+						double x1 = xStart + ((double)j / N_SINE_WAVE_STEPS) * (xDiff * thisRepeatLength / nRepeats);
+						double y1 = yStart + ((double)j / N_SINE_WAVE_STEPS) * (yDiff * thisRepeatLength / nRepeats);
+						double offset = Math.sin((double)j / N_SINE_WAVE_STEPS * (Math.PI * 2) * thisRepeatLength) * amplitude;
+						x1 += cosOffset * offset;
+						y1 += sinOffset * offset;
+						lineTo(x1, y1);
+					}
+				}
+			}
+		}
+		catch (NoninvertibleTransformException e)
+		{
+			/*
+			 * The matrix should always be invertible because we prevent
+			 * scaling by 0 -- the only way an AffineTransform can become singular.
+			 */
+			throw new MapyrusException(e.getMessage());
+		}
 	}
 
 	/**

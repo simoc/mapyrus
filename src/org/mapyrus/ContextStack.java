@@ -518,6 +518,19 @@ public class ContextStack
 		getCurrentContext().curveTo(xControl1, yControl1,
 			xControl2, yControl2, xEnd, yEnd);
 	}
+	
+	/**
+	 * Add Sine wave curve to path from last point to a new point.
+	 * @param x X coordinate of end of path.
+	 * @param y Y coordinate of end of path.
+	 * @param nRepeats number of repeats of sine wave pattern.
+	 * @param amplitude scaling factor for height of sine wave.
+	 */
+	public void sineWaveTo(double x, double y, double nRepeats, double amplitude)
+		throws MapyrusException
+	{
+		getCurrentContext().sineWaveTo(x,y, nRepeats, amplitude);
+	}
 
 	/**
 	 * Adds ellipse to path.
