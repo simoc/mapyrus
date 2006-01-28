@@ -74,3 +74,9 @@ clearpath
 color "dodgerblue"
 raindrop 150, 20, 10
 fill
+
+clearpath
+color "crimson"
+move 180, 20
+sinewave 210, 20, 4, 15
+stroke
