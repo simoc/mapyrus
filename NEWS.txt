@@ -1,7 +1,7 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
-0.602, February 2006
+0.602, January 2006
 
 * Enable inclusion of PostScript Type 1 fonts in PDF output pfbfiles=
   option to newpage command.
