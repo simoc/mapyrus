@@ -647,6 +647,7 @@ The path defined with
 \texttt{ellipse},
 \texttt{hexagon},
 \texttt{pentagon},
+\texttt{sinewave},
 \texttt{spiral},
 \texttt{star},
 \texttt{triangle},
@@ -2372,6 +2373,26 @@ Use this command
 repeatedly following a \texttt{clip "outside"} command to produce a shadow
 effect for polygons, as shown in 
 Section \ref{tutorialshadow} on page \pageref{tutorialshadow}.
+
+\subsubsection{sinewave}
+
+\begin{alltt}
+sinewave \textit{xEnd}, \textit{yEnd}, \textit{repeats}, \textit{height}
+\end{alltt}
+
+Adds a a sine wave curve to the current path.  The curve begins at
+the last point added to the path and ends at (\textit{xEnd}, \textit{yEnd})
+
+The sine wave is repeated \textit{repeats} number of times.
+
+\textit{height} defines the height of the sine wave.
+If \textit{height} is a negative number then a mirror image
+of the sine wave is produced.
+
+The end point and height are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
 
 \subsubsection{sinkhole}
 
