@@ -1785,6 +1785,8 @@ public class Context
 		 * Check for a file containing a clip polygon for this image.
 		 */
 		GeometricPath clipPolygon = null;
+		float hue = 1;
+		float saturation = 1;
 		float brightness = 1;
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -1795,6 +1797,32 @@ public class Context
 				String clipFilename = token.substring(9);
 				ImageClippingFile clipFile = new ImageClippingFile(clipFilename, mWorldCtm);
 				clipPolygon = clipFile.getClippingPolygon();
+			}
+			else if (token.startsWith("hue="))
+			{
+				String s = token.substring(4);
+				try
+				{
+					hue = Float.parseFloat(s);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+						": " + s);
+				}
+			}
+			else if (token.startsWith("saturation="))
+			{
+				String s = token.substring(11);
+				try
+				{
+					saturation = Float.parseFloat(s);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+						": " + s);
+				}
 			}
 			else if (token.startsWith("brightness="))
 			{
@@ -1851,9 +1879,9 @@ public class Context
 			if (mWorldCtm != null)
 				mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
 
-			if (brightness != 1)
+			if (hue != 1 || saturation != 1 || brightness != 1)
 			{
-				ImageFilter.filter(image, brightness);
+				ImageFilter.filter(image, hue, saturation, brightness);
 			}
 
 			/*
@@ -1936,9 +1964,9 @@ public class Context
 				y1 = 0;
 			image = image.getSubimage(x1, y1, w, h);
 
-			if (brightness != 1)
+			if (hue != 1 || saturation != 1 || brightness != 1)
 			{
-				ImageFilter.filter(image, brightness);
+				ImageFilter.filter(image, hue, saturation, brightness);
 			}
 
 			mOutputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
