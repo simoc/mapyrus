@@ -1004,6 +1004,10 @@ public class ContextStack
 			retval = new Argument(bounds.getMaxX());
 		else if (part.equals("max.y"))
 			retval = new Argument(bounds.getMaxY());
+		else if (part.equals("center.x") || part.equals("centre.x"))
+			retval = new Argument(bounds.getCenterX());
+		else if (part.equals("center.y") || part.equals("centre.y"))
+			retval = new Argument(bounds.getCenterY());
 		else if (part.equals("width"))
 			retval = new Argument(bounds.getWidth());
 		else if (part.equals("height"))
