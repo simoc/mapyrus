@@ -1726,6 +1726,7 @@ public class OutputFormat
 		int bitCounter = 0;
 		for (int row = 0; row < pixelHeight; row += step)
 		{
+			Throttle.sleep();
 			for (int col = 0; col < pixelWidth; col += step)
 			{
 				int pixel = image.getRGB(col, row);

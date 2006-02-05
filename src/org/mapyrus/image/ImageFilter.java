@@ -22,49 +22,53 @@
  */
 package org.mapyrus.image;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import org.mapyrus.Throttle;
 
 /**
- * Filters an image, changing its brightness.
+ * Filters an image, changing its hue, saturation or brightness.
  */
 public class ImageFilter
 {
 	/**
-	 * Modify image by applying brightness filter.
+	 * Modify image by applying HSB filter.
 	 * @param image image to be modified in place.
-	 * @param factor brightness factor.
+	 * @param hue hue factor.
+	 * @param saturation saturation factor.
+	 * @param brightness brightness factor.
 	 */
-	public static void filter(BufferedImage image, float brightness)
+	public static void filter(BufferedImage image, float hue,
+		float saturation, float brightness)
 	{
 		int width = image.getWidth();
 		int height = image.getHeight();
 
+		if (hue < 0)
+			hue = 0;
+		if (saturation < 0)
+			saturation = 0;
 		if (brightness < 0)
 			brightness = 0;
 
+		float hsb[] = new float[3];
 		for (int y = 0; y < height; y++)
 		{
+			Throttle.sleep();
 			for (int x = 0; x < width; x++)
 			{
 				int pixel = image.getRGB(x, y);
 				int alpha = (pixel & 0xff000000);
+
 				int red = (pixel & 0xff0000) >> 16;
 				int green = (pixel & 0xff00) >> 8;
 				int blue = (pixel & 0xff);
-				
-				red = (int)(red * brightness);
-				green = (int)(green * brightness);
-				blue = (int)(blue * brightness);
-				
-				if (red > 255)
-					red = 255;
-				if (green > 255)
-					green = 255;
-				if (blue > 255)
-					blue = 255;
-
-				pixel = (alpha | (red << 16) | (green << 8) | blue);
-
+				Color.RGBtoHSB(red, green, blue, hsb);
+				hsb[0] *= hue;
+				hsb[1] *= saturation;
+				hsb[2] *= brightness;
+				pixel = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+				pixel = (alpha | pixel);
 				image.setRGB(x, y, pixel);
 			}
 		}
