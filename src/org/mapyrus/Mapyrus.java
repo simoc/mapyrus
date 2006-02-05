@@ -174,6 +174,8 @@ public class Mapyrus
 			"  -h            print this message",
 			"  -l <level>    sets logging level for HTTP server.  One of ",
 			"                FINEST, FINER, FINE, CONFIG, INFO, WARNING, SEVERE.",
+			"  -r <percent>  sets maximum CPU load.  " + Constants.PROGRAM_NAME + " runs more slowly,",
+			"                giving other processes more CPU time",
 			"  -s <port>     starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server on the",
 			"                given port.  Refer to manual for detailed instructions.",
 			"  -v            print version information and exit",
@@ -588,6 +590,27 @@ public class Mapyrus
 				{
 					System.err.println(e.getMessage());
 					System.exit(1);
+				}
+				argIndex += 2;
+			}
+			else if (arg.equals("-r"))
+			{
+				/*
+				 * Set CPU load reduction.
+				 */
+				if (argIndex + 1 == args.length)
+					printUsageAndExit();
+
+				try
+				{
+					int percentage = Integer.parseInt(args[argIndex + 1]);
+					Throttle.setMaxLoad(percentage);
+				}
+				catch (NumberFormatException e)
+				{
+					System.err.println(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
+						": " + args[argIndex + 1]);
+					printUsageAndExit();
 				}
 				argIndex += 2;
 			}
