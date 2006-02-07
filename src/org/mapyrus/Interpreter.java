@@ -673,6 +673,7 @@ public class Interpreter
 		 */
 		if (Thread.interrupted())
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INTERRUPTED));
+		Throttle.sleep();
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
