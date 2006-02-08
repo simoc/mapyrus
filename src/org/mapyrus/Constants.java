@@ -125,16 +125,31 @@ public class Constants
 	public static final int POINTS_PER_INCH = 72;
 	public static final double MM_PER_INCH = 25.4;
 
+	private static int mScreenResolution;
+
 	/**
 	 * Get screen resolution, in dots per inch.
 	 * @return DPI value. 
 	 */
 	public static final int getScreenResolution()
 	{
-		int resolution = Toolkit.getDefaultToolkit().getScreenResolution();
-		return(resolution);
+		if (mScreenResolution == 0)
+		{
+			try
+			{
+				mScreenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
+			}
+			catch (InternalError e)
+			{
+				/*
+				 * No display, or bad display.  So use a reasonable default.
+				 */
+				mScreenResolution = 96;
+			}
+		}
+		return(mScreenResolution);
 	}
-	
+
 	/**
 	 * Get screen width, in millimetres.
 	 * @return screen width.
