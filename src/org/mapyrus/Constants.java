@@ -23,6 +23,7 @@
 package org.mapyrus;
 
 import java.awt.Toolkit;
+import java.awt.HeadlessException;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -140,6 +141,13 @@ public class Constants
 				mScreenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
 			}
 			catch (InternalError e)
+			{
+				/*
+				 * No display, or bad display.  So use a reasonable default.
+				 */
+				mScreenResolution = 96;
+			}
+			catch (HeadlessException e)
 			{
 				/*
 				 * No display, or bad display.  So use a reasonable default.
