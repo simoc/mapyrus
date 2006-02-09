@@ -737,7 +737,9 @@ projection. \\
 \texttt{Mapyrus.dataset.min.x},
 \texttt{Mapyrus.dataset.min.y},
 \texttt{Mapyrus.dataset.max.x},
-\texttt{Mapyrus.dataset.max.y} &
+\texttt{Mapyrus.dataset.max.y},
+\texttt{Mapyrus.dataset.center.x},
+\texttt{Mapyrus.dataset.center.y} &
 The bounding rectangle of all data in the current dataset. \\
 
 \hline
@@ -806,6 +808,8 @@ dots. \\
 \texttt{Mapyrus.path.min.y},
 \texttt{Mapyrus.path.max.x},
 \texttt{Mapyrus.path.max.y},
+\texttt{Mapyrus.path.center.x},
+\texttt{Mapyrus.path.center.y},
 \texttt{Mapyrus.path.width},
 \texttt{Mapyrus.path.height} &
 The length of the current path on the page measured in millimeters,
@@ -877,6 +881,8 @@ The version of the software. \\
 \texttt{Mapyrus.worlds.min.y},
 \texttt{Mapyrus.worlds.max.x},
 \texttt{Mapyrus.worlds.max.y},
+\texttt{Mapyrus.worlds.center.x},
+\texttt{Mapyrus.worlds.center.y},
 \texttt{Mapyrus.worlds.width},
 \texttt{Mapyrus.worlds.height} &
 The bounding rectangle of world coordinates set with the 
@@ -1594,11 +1600,12 @@ Only image data inside the clip polygon is displayed.
 Using a clip polygon prevents display of a non-rectangular image
 from overwriting a neighbouring image. \\
 
-\texttt{brightness=\textit{factor}} &
+\texttt{hue=\textit{factor}}
+\texttt{saturation=\textit{factor}}
+\texttt{brightness=\textit{factor}}
+&
 
-Defines a brightness factor for the image.
-A value between 0 and 1 makes the image dimmer.
-A value greater than 1 makes the image brighter. \\
+Defines a hue, saturation or brightness multiplication factor for the image. \\
 
 \hline
 \end{longtable}
