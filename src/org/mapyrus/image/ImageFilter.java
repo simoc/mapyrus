@@ -24,6 +24,8 @@ package org.mapyrus.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+
+import org.mapyrus.MapyrusException;
 import org.mapyrus.Throttle;
 
 /**
@@ -39,7 +41,7 @@ public class ImageFilter
 	 * @param brightness brightness factor.
 	 */
 	public static void filter(BufferedImage image, float hue,
-		float saturation, float brightness)
+		float saturation, float brightness) throws MapyrusException
 	{
 		int width = image.getWidth();
 		int height = image.getHeight();
