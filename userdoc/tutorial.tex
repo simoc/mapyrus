@@ -1934,6 +1934,19 @@ do
 done' > ls.png
 \end{verbatim}
 
+The fourth example creates a PNG image containing a banner,
+running in headless mode on a server with no graphics display available.
+
+\begin{verbatim}
+java -Djava.awt.headless=true -classpath mapyrus.jar org.mapyrus.Mapyrus -e '
+newpage "png", "banner.png", 180, 30, "ttffiles=BEANTOWN.ttf"
+font "BeanTown", 24
+color "red"
+move 5, 5
+label "HERE IS MY BANNER"
+'
+\end{verbatim}
+
 \subsection{Creating Animations Using Mapyrus}
 
 To create an animated GIF image, create each frame as a separate
