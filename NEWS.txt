@@ -3,7 +3,9 @@ Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
 0.603, February 2006
 
-* Add -r startup option to run more slowly reducing CPU load.
+* Add -r command line option to run more slowly reducing CPU load.
+* Demonstrate using -Djava.awt.headless=true option for creating
+  PNG image output on "headless" computers with no graphics display.
 
 0.602, January 2006
 
