@@ -11,11 +11,8 @@ Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4.2 or higher,
 or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4.2 or higher.
 \item
 The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
-if running on Linux or a UNIX operating system (when a real X-Windows display
-is not available, use the
-\textit{X-Windows Virtual Framebuffer}, part of \textit{XFree86}
-from
-\texttt{http://www.xfree86.org}).
+if running on Linux or a UNIX operating system.  If a real X-Windows display
+is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
 \item
 The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com},
 if geometric functions are required
@@ -99,6 +96,12 @@ Defines an X Windows color names file containing additional color names
 for the
 \texttt{color} command.  Default value is
 \texttt{/usr/lib/X11/rgb.txt} \\
+
+\hline
+
+\texttt{java.awt.headless=true} &
+Run in headless mode.  Required when running on a server
+where no graphics display is available. \\
 
 \hline
 
