@@ -53,7 +53,7 @@ public class SingleLineFormatter extends Formatter
 		sb.append(g.get(Calendar.YEAR));
 		sb.append('.');
 
-		int month = g.get(Calendar.MONTH);
+		int month = g.get(Calendar.MONTH) + 1;
 		if (month < 10)
 			sb.append('0');
 		sb.append(month);
