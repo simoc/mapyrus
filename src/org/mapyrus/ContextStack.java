@@ -996,7 +996,9 @@ public class ContextStack
 	{
 		Argument retval;
 
-		if (part.equals("min.x"))
+		if (bounds == null)
+			retval = Argument.numericZero;
+		else if (part.equals("min.x"))
 			retval = new Argument(bounds.getMinX());
 		else if (part.equals("min.y"))
 			retval = new Argument(bounds.getMinY());
@@ -1051,7 +1053,8 @@ public class ContextStack
 		Rectangle2D bounds;
 
 		if (varName.startsWith(INTERNAL_VARIABLE_PREFIX) &&
-			varName.length() > INTERNAL_VARIABLE_PREFIX.length())
+			varName.length() > INTERNAL_VARIABLE_PREFIX.length() &&
+			(!varName.equals(HTTPRequest.HTTP_HEADER_ARRAY)))
 		{
 			c = varName.charAt(INTERNAL_VARIABLE_PREFIX.length());
 
