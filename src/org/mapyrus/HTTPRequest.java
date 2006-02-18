@@ -65,6 +65,12 @@ public class HTTPRequest extends Thread
 	private static final String POST_REQUEST_KEYWORD = "POST";
 	private static final int POST_REQUEST = 2;
 
+	/*
+	 * Variable name of array automatically set to contain header
+	 * of HTTP request. 
+	 */
+	public static final String HTTP_HEADER_ARRAY = Constants.PROGRAM_NAME + ".http.header";
+
 	private Pool mPool;
 	private Interpreter mInterpreter;
 	private Socket mSocket;
@@ -133,6 +139,39 @@ public class HTTPRequest extends Thread
 		return(retval);
 	}
 
+	/**
+	 * Append variable definition to string.
+	 * @param sb buffer to append string to.
+	 * @param varName name of variable.
+	 * @param value variable value.
+	 * @return string with variable appended.
+	 */
+	private StringBuffer addVariable(StringBuffer sb, String varName, String value)
+	{
+		/*
+		 * Add Mapyrus command to set variable,
+		 * using uppercase for all variable names.
+		 */
+		sb.append("let ");
+		sb.append(varName);
+		sb.append("='");
+
+		int valueLength = value.length();
+		for (int i = 0; i < valueLength; i++)
+		{
+			/*
+			 * Escape any single quote characters in value.
+			 */
+			char c = value.charAt(i);
+			if (c == '\'')
+				sb.append('\\');
+			sb.append(c);
+		}
+		sb.append("'");
+		sb.append(Constants.LINE_SEPARATOR);
+		return(sb);
+	}
+	
 	/**
 	 * Parse variables given in HTML form format: var1=val&va2=val.
 	 * @param form HTML form to parse.
@@ -203,23 +242,7 @@ public class HTTPRequest extends Thread
 				 * Add Mapyrus command to set variable,
 				 * using uppercase for all variable names.
 				 */
-				retval.append("let ");
-				retval.append(var.toUpperCase());
-				retval.append("='");
-						
-				int valueLength = value.length();
-				for (int i = 0; i < valueLength; i++)
-				{
-					/*
-					 * Escape any single quote characters in value.
-					 */
-					char c = value.charAt(i);
-					if (c == '\'')
-						retval.append('\\');
-					retval.append(c);
-				}
-				retval.append("'");
-				retval.append(Constants.LINE_SEPARATOR);
+				addVariable(retval, var.toUpperCase(), value);
 			}
 		}
 		return(retval);
@@ -341,17 +364,38 @@ public class HTTPRequest extends Thread
 					MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + nextLine);
 			}
 
-			if (nextLine.startsWith(CONTENT_LENGTH_KEYWORD + ":"))
+			int colonIndex = nextLine.indexOf(':');
+			if (colonIndex >= 0)
 			{
-				try
+				/*
+				 * Create array containing HTTP request header information.
+				 */
+				String keyword = nextLine.substring(0, colonIndex);
+				String value = nextLine.substring(colonIndex + 1).trim();
+				int keywordLength = keyword.length();
+				int i = 0;
+				boolean isValidKeyword = true;
+				while (i < keywordLength)
 				{
-					String s = nextLine.substring(CONTENT_LENGTH_KEYWORD.length() + 1);
-					postRequestLength = Integer.parseInt(s.trim());
+					char c = keyword.charAt(i);
+					if (!(Character.isLetterOrDigit(c) || c == '-'))
+						isValidKeyword = false;
+					i++;
 				}
-				catch (NumberFormatException e)
+				if (isValidKeyword)
+					addVariable(commands, HTTP_HEADER_ARRAY + "['" + keyword + "']", value);
+
+				if (keyword.equals(CONTENT_LENGTH_KEYWORD))
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HTTP_REQUEST) +
-						": " + nextLine);
+					try
+					{
+						postRequestLength = Integer.parseInt(value);
+					}
+					catch (NumberFormatException e)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HTTP_REQUEST) +
+							": " + nextLine);
+					}
 				}
 			}
 			nextLine = reader.readLine();
