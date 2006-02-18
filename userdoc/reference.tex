@@ -769,6 +769,17 @@ The amount of free memory that Java has available, in bytes. \\
 
 \hline
 
+\texttt{Mapyrus.http.header} &
+An array containing header information passed in the HTTP request
+when running as an HTTP server.
+Useful values are
+\texttt{Mapyrus.http.header['Referer']}
+giving the name of the referring HTML page and 
+\texttt{Mapyrus.http.header['User-Agent']}
+giving the name of the web browser making the HTTP request.  \\
+
+\hline
+
 \texttt{Mapyrus.imagemap.x},
 \texttt{Mapyrus.imagemap.y} &
 The pixel position of the point clicked in an HTML imagemap and
