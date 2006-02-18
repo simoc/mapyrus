@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.604, February 2006
+
+* When running as HTTP server, fill Mapyrus.http.header array with
+  header information passed in each HTTP request.
+
 0.603, February 2006
 
 * Add -r command line option to run more slowly reducing CPU load.
