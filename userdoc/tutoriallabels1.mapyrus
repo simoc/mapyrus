@@ -6,10 +6,10 @@ newpage "eps", "tutoriallabels1.eps", 125, 30, \
 # font is marked for ISO encoding in newpage command above.
 #
 color "black"
-font 'Times-Roman', 12
+font 'Times-Roman', 10
 clearpath
-move 2, 15
-label 'K\366ln 17\260'
+move 2, 5
+label 'M\374nchen 17\260'
 
 # Draw a three line centered label.
 #
