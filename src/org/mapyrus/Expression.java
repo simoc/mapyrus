@@ -1363,13 +1363,7 @@ public class Expression
 				 */
 				ArrayList functionExpressions = new ArrayList(4);
 
-				if (minArgs >= 0)
-				{
-					ExpressionTreeNode funcExpr = parseOrBoolean(p);
-					functionExpressions.add(funcExpr);
-				}
-
-				for (int i = 1; i < maxArgs; i++)
+				for (int i = 0; i < maxArgs; i++)
 				{
 					/*
 					 * Parse comma before next value, or closing bracket.
@@ -1379,6 +1373,10 @@ public class Expression
 					{
 						p.unread(c);
 						break;
+					}
+					else if (i == 0)
+					{
+						p.unread(c);
 					}
 					else if (c != ',')
 					{
