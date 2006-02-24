@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.605, March 2006
+
+* Add response command to set header for response to an HTTP request.
+* Add timestamp() function for setting dates in HTTP request responses.
+* Add readable() function to check if file is readable.
+
 0.604, February 2006
 
 * When running as HTTP server, fill Mapyrus.http.header array with
