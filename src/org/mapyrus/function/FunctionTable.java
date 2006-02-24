@@ -95,6 +95,9 @@ public class FunctionTable
 		f = new Random();
 		mFunctions.put(f.getName(), f);
 
+		f = new Readable();
+		mFunctions.put(f.getName(), f);
+
 		f = new Replace();
 		mFunctions.put(f.getName(), f);
 
@@ -135,6 +138,9 @@ public class FunctionTable
 		mFunctions.put(f.getName(), f);
 
 		f = new Tempname();
+		mFunctions.put(f.getName(), f);
+
+		f = new Timestamp();
 		mFunctions.put(f.getName(), f);
 
 		f = new Topage();
