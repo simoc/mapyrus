@@ -396,6 +396,12 @@ Generates a random floating point number between 0 and \textit{n}. \\
 
 \hline
 
+\texttt{readable(\textit{filename})} &
+Returns 1 if the file \textit{filename} exists and is readable.
+Otherwise 0 is returned. \\
+
+\hline
+
 \texttt{replace(\textit{str}, \textit{regex}, \textit{replacement})} &
 Returns the string \textit{str}, with all occurrences of the regular
 expression \textit{regex} replaced by \textit{replacement}. \\
@@ -490,6 +496,13 @@ Returns a unique temporary filename with given file suffix,
 for use when running as an HTTP server.
 Temporary files returned by this function
 are automatically deleted after 5 minutes. \\
+
+\hline
+
+\texttt{timestamp(\textit{n})} &
+Returns a time stamp containing the current GMT date and time plus
+\textit{n} seconds, for use in setting expiry dates when
+running as an HTTP server. \\
 
 \hline
 
