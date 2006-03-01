@@ -104,6 +104,7 @@ public class Statement
 	public static final int KEY = 69;
 	public static final int LEGEND = 70;
 	public static final int MIMETYPE = 71;
+	public static final int RESPONSE = 72;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -219,6 +220,7 @@ public class Statement
 		mStatementTypeLookup.put("key", new Integer(KEY));
 		mStatementTypeLookup.put("legend", new Integer(LEGEND));
 		mStatementTypeLookup.put("mimetype", new Integer(MIMETYPE));
+		mStatementTypeLookup.put("response", new Integer(RESPONSE));
 	}
 
 	/**
