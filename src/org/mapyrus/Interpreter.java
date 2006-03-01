@@ -1987,16 +1987,30 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_LEGEND_SIZE));
 				}
 				break;
+
 			case Statement.MIMETYPE:
 				if (nExpressions == 1)
 				{
 					String mimeType = mExecuteArgs[0].getStringValue();
-					context.setMimeType(mimeType);
+					String response = HTTPRequest.HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
+						HTTPRequest.CONTENT_TYPE_KEYWORD + ": " + mimeType +
+						Constants.LINE_SEPARATOR;
+					context.setHTTPReponse(response);
 				}
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MIME_TYPE));
 				}
+				break;
+				
+			case Statement.RESPONSE:
+				StringBuffer sb = new StringBuffer(128);
+				for (int i = 0; i < nExpressions; i++)
+				{
+					sb.append(mExecuteArgs[i].getStringValue());
+					sb.append(Constants.LINE_SEPARATOR);
+				}
+				context.setHTTPReponse(sb.toString());
 				break;
 		}		
 	}
