@@ -1813,6 +1813,47 @@ Some knowledge of JavaScript is necessary to understand this example.
 This method is also suitable for generating static HTML pages
 and imagemaps.
 
+\subsection{Setting Expiry Dates, Cookies and Redirections from
+Mapyrus HTTP Server}
+\label{cookies}
+
+For images that change infrequently, setting an expiry date prevents
+a web browser from making the same request to the HTTP server again.
+
+Change the \texttt{httpresponse} command in the example
+from section \ref{tutorialhttpserver} to the following value to
+stop a web browser from repeating the same HTTP request within
+the next 60 seconds.
+
+\begin{alltt}
+httpresponse "HTTP/1.0 200 OK
+Content-Type: image/png
+Expires: " . timestamp(60)
+\end{alltt}
+
+To track the number of times a web browser makes a request to the
+HTTP server, include a cookie in the response to an HTTP request.
+The web browser then returns this cookie in the HTTP header of
+the next request.  The following \texttt{httpresponse} command
+demonstrates this.
+
+\begin{alltt}
+let new_cookie = Mapyrus.http.header['Cookie'] + 1
+httpresponse "HTTP/1.0 200 OK
+Content-Type: image/png
+Set-Cookie: " . new_cookie
+\end{alltt}
+
+To redirect a web browser to a different location,
+return the following HTTP header using the \texttt{httpresponse}
+command.
+
+\begin{alltt}
+httpresponse "HTTP/1.0 301 OK
+Content-Type: image/png
+Location: other-image.png"
+\end{alltt}
+
 \subsection{Returning Additional Information From Mapyrus HTTP Server}
 
 Further ideas for building a complete HTML application are:
