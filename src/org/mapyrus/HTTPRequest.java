@@ -51,14 +51,14 @@ public class HTTPRequest extends Thread
 	/*
 	 * Keywords and codes received and sent in HTTP headers.
 	 */
-	private static final String HTTP_OK_KEYWORD = "HTTP/1.0 200 OK";
+	public static final String HTTP_OK_KEYWORD = "HTTP/1.0 200 OK";
 	private static final String HTTP_BAD_KEYWORD = "HTTP/1.0 400 Bad Request";
 	private static final String HTTP_NOT_FOUND_KEYWORD = "HTTP/1.0 404 Not Found";
 	private static final int HTTP_OK_CODE = 200;
 	private static final int HTTP_BAD_CODE = 400;
 	private static final int HTTP_NOT_FOUND_CODE = 404;
 
-	private static final String CONTENT_TYPE_KEYWORD = "Content-Type";
+	public static final String CONTENT_TYPE_KEYWORD = "Content-Type";
 	private static final String CONTENT_LENGTH_KEYWORD = "Content-Length";
 	private static final String GET_REQUEST_KEYWORD = "GET";
 	private static final int GET_REQUEST = 1;
@@ -467,7 +467,7 @@ public class HTTPRequest extends Thread
 		BufferedReader inReader = null;
 		BufferedInputStream inStream = null;
 		String reply;
-		String interpreterMimeType = null;
+		String httpResponse = null;
 
 		/*
 		 * Read and parse and execute HTTP request from an HTTP client.
@@ -512,7 +512,8 @@ public class HTTPRequest extends Thread
 					ByteArrayInputStream emptyStdin = new ByteArrayInputStream(emptyBuffer);
 					mInterpreter.interpret(context, f, emptyStdin,
 						printStream);
-					interpreterMimeType = context.getMimeType();
+					httpResponse = context.getHTTPResponse().trim() +
+						Constants.LINE_SEPARATOR + Constants.LINE_SEPARATOR;
 					context.closeContextStack();
 					context = null;
 				}
@@ -575,25 +576,32 @@ public class HTTPRequest extends Thread
 			if (mReturnStatus == HTTP_OK_CODE)
 			{
 				String contentType;
-				
+
 				if (mMimeType == null)
-					contentType = interpreterMimeType;
-				else
-					contentType = mMimeType;
- 
-				if (mLogger.isLoggable(Level.FINE))
 				{
-					mLogger.fine(getName() + ": " +
-						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + HTTP_OK_KEYWORD);
-					mLogger.fine(getName() + ": " +
-						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " +
-						CONTENT_TYPE_KEYWORD + ": " + contentType);
+					reply = httpResponse;
+				}
+				else
+				{
+					reply = HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
+						CONTENT_TYPE_KEYWORD + ": " + mMimeType +
+						Constants.LINE_SEPARATOR +
+						Constants.LINE_SEPARATOR;
 				}
 
-				reply = HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
-					CONTENT_TYPE_KEYWORD + ": " + contentType +
-					Constants.LINE_SEPARATOR +
-					Constants.LINE_SEPARATOR;
+				if (mLogger.isLoggable(Level.FINE))
+				{
+					/*
+					 * Log each line of HTTP header.
+					 */
+					StringTokenizer st = new StringTokenizer(reply, Constants.LINE_SEPARATOR);
+					while (st.hasMoreTokens())
+					{
+						String token = st.nextToken();
+						mLogger.fine(getName() + ": " +
+							MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + token);
+					}
+				}
 
 				outStream.write(reply.getBytes());
 
