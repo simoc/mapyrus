@@ -787,7 +787,9 @@ An array containing header information passed in the HTTP request
 when running as an HTTP server.
 Useful values are
 \texttt{Mapyrus.http.header['Referer']}
-giving the name of the referring HTML page and 
+giving the name of the referring HTML page,
+\texttt{Mapyrus.http.header['Cookie']}
+giving the contents of a cookie set by a previous HTTP request and
 \texttt{Mapyrus.http.header['User-Agent']}
 giving the name of the web browser making the HTTP request.  \\
 
@@ -1703,6 +1705,18 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
+\subsubsection{httpresponse}
+
+\begin{alltt}
+httpresponse \textit{header}
+\end{alltt}
+
+Sets the complete header to return from an HTTP request
+when Mapyrus is running as an HTTP server.  The header
+must include at least two lines containing an HTTP server
+response code and a MIME content type.  See section \ref{cookies}
+for example HTTP headers.
+
 \subsubsection{icon}
 
 \begin{alltt}
@@ -1898,7 +1912,9 @@ mimetype \textit{type}
 \end{alltt}
 
 Sets MIME type for content being returned from HTTP request
-when Mapyrus is running as an HTTP server.
+when Mapyrus is running as an HTTP server.  A more general
+solution is to use the \texttt{httpresponse} command to set
+the complete header returned from the HTTP request.
 
 \subsubsection{move}
 
@@ -2747,7 +2763,7 @@ Requests using either GET or POST methods are accepted by Mapyrus.
 The HTTP server runs forever and
 is stateless.  Each HTTP request is independent and
 variables, graphics state and legend entries are not shared between
-requests.  Cookies are not used.
+requests.
 Any files or URLs given on the command line when Mapyrus is started
 are interpreted before accepting HTTP requests.
 Procedures defined in these files
