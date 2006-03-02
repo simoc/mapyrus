@@ -2003,7 +2003,7 @@ public class Interpreter
 				}
 				break;
 				
-			case Statement.RESPONSE:
+			case Statement.HTTPRESPONSE:
 				StringBuffer sb = new StringBuffer(128);
 				for (int i = 0; i < nExpressions; i++)
 				{
