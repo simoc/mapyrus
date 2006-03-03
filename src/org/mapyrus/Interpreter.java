@@ -173,26 +173,10 @@ public class Interpreter
 				alpha = (int)Math.round(decimalAlpha * 255.0);
 			}
 
-			if (color.equals("contrast"))
-			{
-				context.contrastColor(alpha);
-				return;
-			}
-			else if (color.equals("brighter"))
-			{
-				context.setBrighterColor(alpha);
-				return;
-			}
-			else if (color.equals("darker"))
-			{
-				context.setDarkerColor(alpha);
-				return;
-			}
-
 			/*
-			 * Find named color of hex value in color database.
+			 * Find named color or hex value in color database.
 			 */
-			c = ColorDatabase.getColor(color, alpha);
+			c = ColorDatabase.getColor(color, alpha, context.getColor());
 			if (c == null)
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
@@ -1507,13 +1491,39 @@ public class Interpreter
 			case Statement.GRADIENTFILL:
 				if (nExpressions == 4 || nExpressions == 5)
 				{
-					Color c1 = ColorDatabase.getColor(mExecuteArgs[0].toString(), 255);
-					Color c2 = ColorDatabase.getColor(mExecuteArgs[1].toString(), 255);
-					Color c3 = ColorDatabase.getColor(mExecuteArgs[2].toString(), 255);
-					Color c4 = ColorDatabase.getColor(mExecuteArgs[3].toString(), 255);
+					Color current = context.getColor();
+					Color c1 = ColorDatabase.getColor(mExecuteArgs[0].toString(), 255, current);
+					if (c1 == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+							": " + mExecuteArgs[0].toString());
+					}
+					Color c2 = ColorDatabase.getColor(mExecuteArgs[1].toString(), 255, current);
+					if (c2 == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+							": " + mExecuteArgs[1].toString());
+					}
+					Color c3 = ColorDatabase.getColor(mExecuteArgs[2].toString(), 255, current);
+					if (c3 == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+							": " + mExecuteArgs[2].toString());
+					}
+					Color c4 = ColorDatabase.getColor(mExecuteArgs[3].toString(), 255, current);
+					if (c4 == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+							": " + mExecuteArgs[3].toString());
+					}
 					Color c5 = null;
 					if (nExpressions == 5)
-						c5 = ColorDatabase.getColor(mExecuteArgs[4].toString(), 255);
+					{
+						c5 = ColorDatabase.getColor(mExecuteArgs[4].toString(), 255, current);
+						if (c5 == null)
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+								": " + mExecuteArgs[4].toString());
+					}
 					context.gradientFill(c1, c2, c3, c4, c5);
 				}
 				else
