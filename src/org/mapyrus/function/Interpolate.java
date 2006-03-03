@@ -116,8 +116,18 @@ public class Interpolate implements Function
 					}
 					catch (NumberFormatException e)
 					{
-						lowerColor = ColorDatabase.getColor(lastToken, 255);
-						upperColor = ColorDatabase.getColor(token, 255);
+						lowerColor = ColorDatabase.getColor(lastToken, 255, context.getColor());
+						if (lowerColor == null)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+								": " + lastToken);
+						}
+						upperColor = ColorDatabase.getColor(token, 255, context.getColor());
+						if (upperColor == null)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
+								": " + token);
+						}
 						float []lowerHSB = new float[3];
 						float []upperHSB = new float[3];
 						Color.RGBtoHSB(lowerColor.getRed(), lowerColor.getGreen(),
