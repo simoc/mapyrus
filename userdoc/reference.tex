@@ -1118,13 +1118,14 @@ color \textit{name} [, \textit{alpha}]
 color "contrast" [, \textit{alpha}]
 color "brighter" [, \textit{alpha}]
 color "darker" [, \textit{alpha}]
+color "current" [, \textit{alpha}]
 color "\#\textit{hexdigits}" [, \textit{alpha}]
 color "0x\textit{hexdigits}" [, \textit{alpha}]
 color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
 color "hsb", \textit{hue}, \textit{saturation}, \textit{brightness} [, \textit{alpha}]
 \end{alltt}
 
-Sets color for drawing.  Around 150 commonly used color names are defined,
+Sets color for drawing.  Around 500 commonly used color names are defined,
 additional color names are defined in a file given as a startup variable (see
 Table \ref{startupvariables} on page \pageref{startupvariables}).
 Color names are case-insensitive.
@@ -1132,11 +1133,10 @@ Color names are case-insensitive.
 If color name is \texttt{contrast} then color is set to either black or white,
 whichever constrasts more with the current color.
 
-If color name is \texttt{brighter} then color is set a brighter
-version of the current color.
+If color name is \texttt{brighter} or \texttt{darker}
+then color is set a brighter or darker version of the current color.
 
-If color name is \texttt{darker} then color is set a darker
-version of the current color.
+If color name is \texttt{current} then the current color is set again.
 
 \textit{hexdigits} is a 6 digit hexadecimal
 value defining RGB values, as used in HTML pages.
