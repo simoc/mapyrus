@@ -689,11 +689,12 @@ public class ColorDatabase
 
 	/**
 	 * Return color structure from named color.
-	 * @param colorName is named color or to lookup or hex value.
+	 * @param colorName is named color to lookup or hex value.
 	 * @param alpha alpha channel value for color.
+	 * @param current color.
 	 * @return color definition, or null if color not known.
 	 */	
-	public static Color getColor(String colorName, int alpha)
+	public static Color getColor(String colorName, int alpha, Color currentColor)
 		throws MapyrusException
 	{
 		Color retval;
@@ -716,6 +717,58 @@ public class ColorDatabase
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + colorName);
 			}
+		}
+		else if (colorName.equals("brighter"))
+		{
+			int currentAlpha = currentColor.getAlpha();
+			retval = currentColor.brighter();
+			if (alpha != currentAlpha)
+			{
+				retval = new Color(retval.getRed(), retval.getGreen(),
+					retval.getBlue(), alpha);
+			}
+		}
+		else if (colorName.equals("darker"))
+		{
+			int currentAlpha = currentColor.getAlpha();
+			retval = currentColor.darker();
+			if (alpha != currentAlpha)
+			{
+				retval = new Color(retval.getRed(), retval.getGreen(),
+					retval.getBlue(), alpha);
+			}
+		}
+		else if (colorName.equals("contrast"))
+		{
+			/*
+			 * Calculate darkness of current color.
+			 */
+			int darkness = currentColor.getRed() * 3 +
+				currentColor.getGreen() * 4 +
+				currentColor.getBlue() * 3;
+
+			/*
+			 * If color is currently close to black, then contrasting
+			 * color is white, otherwise contrasting color is black.
+			 */
+			if (darkness > (3 + 4 + 3) * 255 / 2)
+			{
+				if (alpha == 255)
+					retval = Color.BLACK;
+				else
+					retval = new Color(0, 0, 0, alpha);
+			}
+			else
+			{
+				if (alpha == 255)
+					retval = Color.WHITE;
+				else
+					retval = new Color(255, 255, 255, alpha);
+			}
+		}
+		else if (colorName.equals("current"))
+		{
+			retval = currentColor;
 		}
 		else
 		{
