@@ -250,75 +250,13 @@ public class ContextStack
 	}
 
 	/**
-	 * Sets color to contrast of current color.
-	 * @param alpha alpha value for new color.
+	 * Get current color.
+	 * @return current color.
 	 */
-	public void contrastColor(int alpha)
+	public Color getColor()
 	{
-		Color contrast;
-		Color currentColor = getCurrentContext().getColor();
-
-		/*
-		 * Calculate darkness of current color.
-		 */
-		int darkness = currentColor.getRed() * 3 +
-			currentColor.getGreen() * 4 +
-			currentColor.getBlue() * 3;
-
-		/*
-		 * If color is currently close to black, then contrasting
-		 * color is white, otherwise contrasting color is black.
-		 */
-		if (darkness > (3 + 4 + 3) * 255 / 2)
-		{
-			if (alpha == 255)
-				contrast = Color.BLACK;
-			else
-				contrast = new Color(0, 0, 0, alpha);
-		}
-		else
-		{
-			if (alpha == 255)
-				contrast = Color.WHITE;
-			else
-				contrast = new Color(255, 255, 255, alpha);
-		}
-
-		getCurrentContext().setColor(contrast);
-	}
-
-	/**
-	 * Set color brighter than the current color.
-	 * @param alpha alpha value for new color.
-	 */
-	public void setBrighterColor(int alpha)
-	{
-		Color currentColor = getCurrentContext().getColor();
-		int currentAlpha = currentColor.getAlpha();
-		Color brighter = currentColor.brighter();
-		if (alpha != currentAlpha)
-		{
-			brighter = new Color(brighter.getRed(), brighter.getGreen(),
-				brighter.getBlue(), alpha);
-		}
-		getCurrentContext().setColor(brighter);
-	}
-
-	/**
-	 * Set color darker than the current color.
-	 * @param alpha alpha value for new color.
-	 */
-	public void setDarkerColor(int alpha)
-	{
-		Color currentColor = getCurrentContext().getColor();
-		int currentAlpha = currentColor.getAlpha();
-		Color darker = currentColor.darker();
-		if (alpha != currentAlpha)
-		{
-			darker = new Color(darker.getRed(), darker.getGreen(),
-				darker.getBlue(), alpha);
-		}
-		getCurrentContext().setColor(darker);
+		Color retval = getCurrentContext().getColor();
+		return(retval);
 	}
 
 	/**
