@@ -2378,7 +2378,7 @@ public class Context
 			if (token.startsWith("background="))
 			{
 				String colorName = token.substring(11);
-				bgColor = ColorDatabase.getColor(colorName, 255);
+				bgColor = ColorDatabase.getColor(colorName, 255, getColor());
 				if (bgColor == null)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
