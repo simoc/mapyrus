@@ -738,6 +738,22 @@ public class ColorDatabase
 					retval.getBlue(), alpha);
 			}
 		}
+		else if (colorName.equals("softer"))
+		{
+			/*
+			 * Set softer version of current color.
+			 */
+			int red = 128 + currentColor.getRed() / 2;
+			if (red > 255)
+				red = 255;
+			int green = 128 + currentColor.getGreen() / 2;
+			if (green > 255)
+				green = 255;
+			int blue = 128 + currentColor.getBlue() / 2;
+			if (blue > 255)
+				blue = 255;
+			retval = new Color(red, green, blue, alpha);
+		}
 		else if (colorName.equals("contrast"))
 		{
 			/*
