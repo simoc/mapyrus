@@ -1,8 +1,10 @@
+httpresponse "HTTP/1.0 200 OK
+Content-type: image/svg+xml"
+
 # Display the file coastline.shp in an uncompressed SVG
 # file that is sent to standard output.
 #
 newpage "svg", "-", 100, 100
-mimetype "image/svg+xml"  # Content type being returned to browser.
 dataset "shapefile", "coastline.shp", ""
 worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
   Mapyrus.dataset.max.x, Mapyrus.dataset.max.y

@@ -63,7 +63,9 @@ then
 	let recordCount = recordCount + Mapyrus.fetch.count
 endif
 
-mimetype "text/html"
+httpresponse "HTTP/1.0 200 OK
+Content-type: text/html"
+
 print '<html>'
 print '<img src="' . imageFile . '">'
 

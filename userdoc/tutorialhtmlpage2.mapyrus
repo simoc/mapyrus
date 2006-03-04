@@ -59,7 +59,9 @@ let zoomOutURL = Mapyrus.filename . '?X1=' . (X1 - xZoom) . '&Y1=' . (Y1 - yZoom
 # Spool HTML file to standard output, replacing placeholder tokens
 # with actual values for this request.
 #
-mimetype "text/html"
+httpresponse "HTTP/1.0 200 OK
+Content-type: text/html"
+
 let r = spool("tutorialhtmlpage2.txt")
 let r = replace(r, '@placeholder_title@', 'Real Title')
 let r = replace(r, '@placeholder_coordinates@', xMid . ', ' . yMid)

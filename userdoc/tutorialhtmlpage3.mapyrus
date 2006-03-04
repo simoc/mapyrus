@@ -1,4 +1,5 @@
-mimetype "text/html"
+httpresponse "HTTP/1.0 200 OK
+Content-type: text/html"
 
 # Create image of Australia and imagemap to show a tooltip when
 # mouse moved over Australia.
