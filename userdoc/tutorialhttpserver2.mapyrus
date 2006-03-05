@@ -1,5 +1,5 @@
 httpresponse "HTTP/1.0 200 OK
-Content-type: application/pdf"
+Content-Type: application/pdf"
 
 # Display the file coastline.shp in a PDF file.
 #

@@ -1,5 +1,5 @@
 httpresponse "HTTP/1.0 200 OK
-Content-type: image/svg+xml"
+Content-Type: image/svg+xml"
 
 # Display the file coastline.shp in an uncompressed SVG
 # file that is sent to standard output.

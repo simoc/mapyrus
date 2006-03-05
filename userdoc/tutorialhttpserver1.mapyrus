@@ -1,9 +1,9 @@
+httpresponse "HTTP/1.0 200 OK
+Content-Type: image/png"
+
 # Display the file coastline.shp in a PNG file that
 # is sent to standard output.
 #
-httpresponse "HTTP/1.0 200 OK
-Content-type: image/png"
-
 newpage "png", "-", 100, 100
 color "red"
 dataset "shapefile", "coastline.shp", ""

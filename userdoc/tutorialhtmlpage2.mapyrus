@@ -60,7 +60,7 @@ let zoomOutURL = Mapyrus.filename . '?X1=' . (X1 - xZoom) . '&Y1=' . (Y1 - yZoom
 # with actual values for this request.
 #
 httpresponse "HTTP/1.0 200 OK
-Content-type: text/html"
+Content-Type: text/html"
 
 let r = spool("tutorialhtmlpage2.txt")
 let r = replace(r, '@placeholder_title@', 'Real Title')

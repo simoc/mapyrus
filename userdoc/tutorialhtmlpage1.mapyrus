@@ -64,7 +64,7 @@ then
 endif
 
 httpresponse "HTTP/1.0 200 OK
-Content-type: text/html"
+Content-Type: text/html"
 
 print '<html>'
 print '<img src="' . imageFile . '">'
