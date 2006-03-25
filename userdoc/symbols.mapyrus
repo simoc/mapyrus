@@ -1670,7 +1670,7 @@ begin repeaticon hexdigits, iconsize
 	icon hexdigits, iconsize
 end
 
-begin chessboard
+begin chessfill
 	key "box", "Chessboard Pattern"
 	color "black"
 	repeaticon "0xaa55aa55aa55aa55", 5
@@ -2070,7 +2070,7 @@ then
 	quiltfill
 	circlefill
 	boxfill
-	chessboard
+	chessfill
 	walltiling
 	trellistiling
 	dotpattern
