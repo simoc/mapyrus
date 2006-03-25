@@ -1052,6 +1052,24 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
+\subsubsection{chessboard}
+
+\begin{alltt}
+chessboard \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}, \textit{size}
+\end{alltt}
+
+Adds squares in a chessboard pattern to the current path.
+The points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
+any two opposite corners of a rectangular area for the pattern, with
+\textit{size} defining the size of each square.
+
+The two corner points and size of squares
+are first transformed through any world coordinate
+transformation set with a \texttt{worlds} command,
+then scaled and rotated by \texttt{scale}
+and \texttt{rotate} values.
+
 \subsubsection{circle}
 
 \begin{alltt}
