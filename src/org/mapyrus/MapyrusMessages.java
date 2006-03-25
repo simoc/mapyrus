@@ -83,7 +83,7 @@ public class MapyrusMessages
 	public static final String INVALID_EXPRESSION = "invalidexpression";
 	public static final String INVALID_FIELD_NAME = "invalidfieldname";
 	public static final String INVALID_FONT = "invalidfont";
-	public static final String INVALID_FONT_SIZE = "invalidfontsize";
+	public static final String INVALID_SIZE = "invalidsize";
 	public static final String INVALID_FORMAT = "invalidformat";
 	public static final String INVALID_GEOGRAPHIC = "invalidgeographic";
 	public static final String INVALID_GEOIMAGE = "invalidgeoimage";
