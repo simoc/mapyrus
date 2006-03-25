@@ -389,7 +389,7 @@ public class Interpreter
 			size = args[1].getNumericValue();
 			if (size <= 0.0)
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FONT_SIZE) +
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SIZE) +
 					": " + size);
 			}
 
@@ -1219,18 +1219,20 @@ public class Interpreter
 			case Statement.BOX:
 			case Statement.ROUNDEDBOX:
 			case Statement.BOX3D:
+			case Statement.CHESSBOARD:
 			case Statement.GUILLOTINE:
 			case Statement.PROTECT:
 			case Statement.UNPROTECT:
 				if (nExpressions == 4 || ((type == Statement.ROUNDEDBOX ||
-					type == Statement.BOX3D) && nExpressions == 5))
+					type == Statement.BOX3D ||
+					type == Statement.CHESSBOARD) && nExpressions == 5))
 				{
 					x1 = mExecuteArgs[0].getNumericValue();
 					y1 = mExecuteArgs[1].getNumericValue();
 					x2 = mExecuteArgs[2].getNumericValue();
 					y2 = mExecuteArgs[3].getNumericValue();
-					
-					double xMin, xMax, yMin, yMax, depth = 0;
+
+					double xMin, xMax, yMin, yMax, tileSize = 1, depth = 0;
  
 					if (x1 < x2)
 					{
@@ -1286,6 +1288,16 @@ public class Interpreter
 							depth = mExecuteArgs[4].getNumericValue();
 						}
 					}
+					else if (type == Statement.CHESSBOARD)
+					{
+						if (nExpressions == 5)
+						{
+							tileSize = mExecuteArgs[4].getNumericValue();
+						}
+						if (tileSize <= 0)
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SIZE) +
+								": " + tileSize);
+					}
 
 					if (type == Statement.BOX || type == Statement.BOX3D)
 					{
@@ -1335,6 +1347,43 @@ public class Interpreter
 						context.lineTo(xMin + radius, yMin);
 						context.arcTo(1, xMin + radius, yMin + radius, xMin, yMin + radius);
 						context.closePath();
+					}
+					else if (type == Statement.CHESSBOARD)
+					{
+						int i = 0, j;
+						y1 = yMin;
+						while (y1 < yMax)
+						{
+							y2 = y1 + tileSize;
+							if (y2 > yMax)
+								y2 = yMax;
+
+							j = 0;
+							x1 = xMin;
+							while (x1 < xMax)
+							{
+								/*
+							 	 * Only draw half the squares,
+								 * like on a chessboard.
+							 	 */
+								if ((i + j) % 2 == 0)
+								{
+									x2 = x1 + tileSize;
+									if (x2 > xMax)
+										x2 = xMax;
+									context.moveTo(x1, y1);
+									context.lineTo(x1, y2);
+									context.lineTo(x2, y2);
+									context.lineTo(x2, y1);
+									context.closePath();
+								}
+
+								j++;
+								x1 = xMin + j * tileSize;
+							}
+							i++;
+							y1 = yMin + i * tileSize;
+						}
 					}
 					else if (type == Statement.GUILLOTINE)
 					{
