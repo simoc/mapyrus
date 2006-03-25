@@ -80,3 +80,9 @@ color "crimson"
 move 180, 20
 sinewave 210, 20, 4, 15
 stroke
+
+clearpath
+color "black"
+move 240, 20
+chessboard 240, 10, 270, 40, 5
+fill
