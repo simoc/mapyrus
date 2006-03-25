@@ -1,10 +1,7 @@
 newpage "epsimage", "tutorialtrans2.eps", 80, 40, "background=white"
 
-color "lightgoldenrodyellow"
-box 0, 0, 20, 20
-box 20, 20, 40, 40
-box 40, 0, 60, 20
-box 60, 20, 80, 40
+color "lightgray"
+chessboard 0, 0, 80, 40, 5
 fill
 
 begin fadingDot startingColor
@@ -31,5 +28,5 @@ fadingLine "blue"
 
 clearpath
 move 10, 18
-draw 70, 8
+draw 75, 8
 fadingLine "red"
