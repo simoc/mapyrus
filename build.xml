@@ -74,7 +74,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Generate all examples, doing tutorial examples separately so -->
 <!-- it is not necessary to show path being cleared in each example -->
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
-<arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus"/>
+<arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus turtle7.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst1.mapyrus"/>

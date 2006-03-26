@@ -1,0 +1,28 @@
+# @(#) $Id$
+newpage "eps", "turtle7.eps", 35, 30
+
+# Draw caption in a box with a /=\ shaped tab above it.
+#
+begin caption tab, col1, col2
+  font "Helvetica-Narrow", 3
+  color "black"
+  move 0, 0
+  table "background=0xffccdd", col1, col2
+
+  clearpath
+  move 0, 0
+  draw 0, 3, 1, 4, 13, 4, 14, 3, 14, 0
+  closepath
+  color "black"
+  fill
+  clearpath
+
+  color "white"
+  move 1.5, 1
+  label tab
+end
+
+move 2, 20
+let col1[1] = "9am", col1[2] = "12pm", col1[3] = "5pm"
+let col2[1] = "meeting", col2[2] = "lunch", col2[3] = "video\nconference"
+caption "Monday", col1, col2
