@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.606, April 2006
+
+* Add chessboard command to easily add a grid to the page.
+* Enable several colors to be used for table background for coloring
+  rows and/or columns differently.
+
 0.605, March 2006
 
 * Add httpresponse command to set complete header for response
