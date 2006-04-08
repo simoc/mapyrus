@@ -7,7 +7,7 @@ begin caption tab, col1, col2
   font "Helvetica-Narrow", 3
   color "black"
   move 0, 0
-  table "background=0xffccdd", col1, col2
+  table "background=0xffccdd,0xffccdd,white,white", col1, col2
 
   clearpath
   move 0, 0
@@ -22,7 +22,7 @@ begin caption tab, col1, col2
   label tab
 end
 
-move 2, 20
-let col1[1] = "9am", col1[2] = "12pm", col1[3] = "5pm"
-let col2[1] = "meeting", col2[2] = "lunch", col2[3] = "video\nconference"
+move 2, 24
+let col1[1] = "9am", col1[2] = "12pm", col1[3] = "5pm", col1[4] = "6pm"
+let col2[1] = "meeting", col2[2] = "lunch", col2[3] = "video\nconference", col2[4] = "interview"
 caption "Monday", col1, col2
