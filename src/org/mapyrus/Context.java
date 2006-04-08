@@ -2363,7 +2363,7 @@ public class Context
 		double xPadding;
 		Object primaryKeys[] = null;
 
-		Color bgColor = null;
+		ArrayList bgColors = new ArrayList();
 		boolean drawBorders = true;
 		int sortColumn = -1;
 		int sortOrder = 1;
@@ -2377,12 +2377,18 @@ public class Context
 			String token = st.nextToken();
 			if (token.startsWith("background="))
 			{
-				String colorName = token.substring(11);
-				bgColor = ColorDatabase.getColor(colorName, 255, getColor());
-				if (bgColor == null)
+				String colorNames = token.substring(11);
+				StringTokenizer st2 = new StringTokenizer(colorNames, ",");
+				while (st2.hasMoreTokens())
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
-						": " + colorName);
+					String colorName = st2.nextToken();
+					Color c = ColorDatabase.getColor(colorName, 255, getColor());
+					if (c == null)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.COLOR_NOT_FOUND) +
+							": " + colorName);
+					}
+					bgColors.add(c);
 				}
 			}
 			else if (token.startsWith("borders="))
@@ -2502,10 +2508,12 @@ public class Context
 					box.lineTo(x2, y1);
 					box.closePath();
 
-					if (bgColor != null)
+					if (!bgColors.isEmpty())
 					{
 						mOutputFormat.saveState();
-						mOutputFormat.setColorAttribute(bgColor);
+						int slotIndex = k * columns.size() + j;
+						Color c = (Color)bgColors.get(slotIndex % bgColors.size());
+						mOutputFormat.setColorAttribute(c);
 						mOutputFormat.fill(box.getShape());
 						mOutputFormat.restoreState();
 						mAttributesChanged |= ATTRIBUTE_COLOR;
