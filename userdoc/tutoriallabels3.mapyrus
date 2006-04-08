@@ -1,4 +1,4 @@
-newpage "eps", "tutoriallabels3.eps", 80, 30
+newpage "eps", "tutoriallabels3.eps", 100, 30
 
 # Draw label, then underline it.
 #
@@ -42,3 +42,11 @@ label h1
 color "yellow"
 font "Helvetica", 12
 label h1
+
+# Draw only outline of letter.
+#
+clearpath
+move 82, 6
+color "black"
+font "Helvetica", 24, "outlinewidth=0.2"
+label "A"
