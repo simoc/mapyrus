@@ -36,7 +36,7 @@ done
 worlds 0, 0, 100, 50
 clearpath
 move 60, 45
-table "background=grey90", ref, name, rating
+table "background=grey90,grey90,grey90,white,white,white", ref, name, rating
 clearpath
 move 60, 20
 table "background=grey90", split("Title Block,Author,Date", ",")
