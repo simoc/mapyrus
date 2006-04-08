@@ -2566,9 +2566,12 @@ Extra & Description \\
 \hline
 \endhead
 
-\texttt{background=\textit{color}} &
+\texttt{background=\textit{colors}} &
 
-Background color for table, as a named color or as hex digits.
+Comma-separated list of colors to use as background for entries
+in the table, as named colors or as hex digits.
+The colors are used in turn for each column in each row.
+When the end of the list is reached, the list is repeated.
 By default the background is not displayed. \\
 
 \texttt{borders=\textit{flag}} &
