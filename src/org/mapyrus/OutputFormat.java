@@ -3584,11 +3584,23 @@ public class OutputFormat
 					/*
 					 * Make text string XML safe.
 					 */
-					nextLine = nextLine.replaceAll("&", "&amp;");
-					nextLine = nextLine.replaceAll("<", "&lt;");
-					nextLine = nextLine.replaceAll(">", "&gt;");
-					nextLine = nextLine.replaceAll("\"", "&quot;");
-					writeLine(mWriter, ">" + nextLine + "</text>");
+					StringBuffer sb = new StringBuffer(nextLine.length() * 2);
+					for (int j = 0; j < nextLine.length(); j++)
+					{
+						char c = nextLine.charAt(j);
+						if (c == '&' || c == '<' || c == '>' || c == '"' || c > 127)
+						{
+								/*
+								 * Give character codes for special characters.
+								 */
+								sb.append("&#").append(Integer.toString(c)).append(";");
+						}
+						else
+						{
+								sb.append(c);
+						}
+					}
+					writeLine(mWriter, ">" + sb.toString() + "</text>");
 
 					if (mFontRotation != 0)
 						writeLine(mWriter, "</g>");
