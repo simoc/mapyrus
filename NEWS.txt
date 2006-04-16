@@ -6,6 +6,7 @@ Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 * Add chessboard command to easily add a grid to the page.
 * Enable several colors to be used for table background for coloring
   rows and/or columns differently.
+* Add SVG command for including other SVG files in SVG output.
 
 0.605, March 2006
 
