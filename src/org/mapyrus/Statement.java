@@ -89,23 +89,24 @@ public class Statement
 	public static final int ICON = 54;
 	public static final int GEOIMAGE = 55;
 	public static final int EPS = 56;
-	public static final int SCALE = 57;
-	public static final int ROTATE = 58;
-	public static final int WORLDS = 59;
-	public static final int PROJECT = 60;
-	public static final int DATASET = 61;
-	public static final int FETCH = 62;
-	public static final int NEWPAGE = 63;
-	public static final int ENDPAGE = 64;
-	public static final int SETOUTPUT = 65;
-	public static final int PRINT = 66;
-	public static final int LOCAL = 67;
-	public static final int LET = 68;
-	public static final int EVAL = 69;
-	public static final int KEY = 70;
-	public static final int LEGEND = 71;
-	public static final int MIMETYPE = 72;
-	public static final int HTTPRESPONSE = 73;
+	public static final int SVG = 57;
+	public static final int SCALE = 58;
+	public static final int ROTATE = 59;
+	public static final int WORLDS = 60;
+	public static final int PROJECT = 61;
+	public static final int DATASET = 62;
+	public static final int FETCH = 63;
+	public static final int NEWPAGE = 64;
+	public static final int ENDPAGE = 65;
+	public static final int SETOUTPUT = 66;
+	public static final int PRINT = 67;
+	public static final int LOCAL = 68;
+	public static final int LET = 69;
+	public static final int EVAL = 70;
+	public static final int KEY = 71;
+	public static final int LEGEND = 72;
+	public static final int MIMETYPE = 73;
+	public static final int HTTPRESPONSE = 74;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -206,6 +207,7 @@ public class Statement
 		mStatementTypeLookup.put("icon", new Integer(ICON));
 		mStatementTypeLookup.put("geoimage", new Integer(GEOIMAGE));
 		mStatementTypeLookup.put("eps", new Integer(EPS));
+		mStatementTypeLookup.put("svg", new Integer(SVG));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
