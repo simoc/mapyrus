@@ -1791,6 +1791,27 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_EPS));
 				}
 				break;
+				
+			case Statement.SVG:
+				if (nExpressions == 1 || nExpressions == 2)
+				{
+					double size;
+					if (nExpressions == 2)
+					{
+						size = mExecuteArgs[1].getNumericValue();
+					}
+					else
+					{
+						size = 0;
+					}
+
+					context.drawSVG(mExecuteArgs[0].getStringValue(), size);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SVG));
+				}
+				break;
 		
 			case Statement.SCALE:
 				if (nExpressions == 1)
