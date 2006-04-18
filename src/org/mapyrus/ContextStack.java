@@ -622,6 +622,17 @@ public class ContextStack
 	}
 
 	/**
+	 * Includes Scalable Vector Graphics file in page.
+	 * @param SVG filename.
+	 * @param size size for SVG file on page in millimetres.
+	 */
+	public void drawSVG(String filename, double size)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().drawSVG(filename, size);
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.

@@ -2007,6 +2007,24 @@ public class Context
 	}
 
 	/**
+	 * Includes Scalable Vector Graphics file in page.
+	 * @param SVG filename.
+	 * @param size size for SVG file on page in millimetres.
+	 */
+	public void drawSVG(String filename, double size)
+		throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null && mOutputFormat != null)
+		{
+			setGraphicsAttributes(ATTRIBUTE_CLIP);
+			mOutputFormat.drawSVG(path.getMoveTos(), filename,
+				size, mRotation, mScaling);
+		}
+	}
+
+	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke() throws IOException, MapyrusException
