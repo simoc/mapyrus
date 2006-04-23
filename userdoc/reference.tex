@@ -1429,7 +1429,7 @@ would be drawn.
 
 \textit{filename} is the name of an Encapsulated PostScript file.
 
-\textit{size} is the optional size for the Encapsulated PostScript
+\textit{size} is the optional size for the Encapsulated PostScript file
 in millimeters.  If no size
 is given or size is zero then the file is displayed at its natural size,
 as defined in the Encapsulated PostScript file.
@@ -2532,6 +2532,30 @@ stroke
 Draws the current path using the current color and linestyle.
 The current path is not.
 
+\subsubsection{svg}
+
+\begin{alltt}
+svg \textit{filename}, [, \textit{size}]
+\end{alltt}
+
+Displays a Scalable Vector Graphics (SVG) file at each \texttt{move} point in
+the current path.  
+
+\textit{filename} is the name of an SVG file, with 
+either an \texttt{.svg} or \texttt{.svgz} suffix.
+
+\textit{size} is the optional size for the SVG file
+in millimeters.  If no size
+is given or size is zero then the file is displayed at its natural size,
+as defined in the SVG file.
+The file is scaled and rotated according to the current \texttt{scale}
+and \texttt{rotate} settings.
+
+SVG files can only be displayed when creating
+SVG output.  For other formats,
+a grey box is drawn showing where the SVG file
+would be drawn.
+
 \subsubsection{table}
 
 \begin{alltt}
@@ -2772,8 +2796,11 @@ An image file is returned if the
 \texttt{newpage} command is used with output file set
 to standard output.
 Otherwise the output of any \texttt{print} commands is returned.
-The MIME type set in a \texttt{mimetype} command is returned as
-the content type to the HTTP client.
+The HTTP header information set in a
+\texttt{mimetype}
+or
+\texttt{httpresponse}
+command is returned to the HTTP client.
 
 An HTTP error state is returned if the request fails.
 \end{enumerate}
