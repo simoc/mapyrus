@@ -23,16 +23,15 @@
 package org.mapyrus.svg;
 
 import java.awt.geom.Rectangle2D;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.zip.InflaterInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.mapyrus.Constants;
+import org.mapyrus.FileOrURL;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 import org.xml.sax.Attributes;
@@ -49,6 +48,7 @@ public class SVGFile extends DefaultHandler
 	private Rectangle2D mBoundingBox;
 	private StringBuffer mContents;
 	private StringBuffer mSVGAttributes;
+	private int mSVGTagCount;
 
 	/**
 	 * Open PostScript file and parse header information.
@@ -62,11 +62,8 @@ public class SVGFile extends DefaultHandler
 			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			xmlReader.setContentHandler(this);
 			xmlReader.setEntityResolver(this);
-			stream = new FileInputStream(filename);
-			InputStream inflatedStream = stream;
-			if (filename.toLowerCase().endsWith(".svgz"))
-				inflatedStream = new InflaterInputStream(inflatedStream);
-			xmlReader.parse(new InputSource(inflatedStream));
+			stream = new FileOrURL(filename).getInputStream();
+			xmlReader.parse(new InputSource(stream));
 		}
 		catch (ParserConfigurationException e)
 		{
@@ -103,7 +100,7 @@ public class SVGFile extends DefaultHandler
 	public void startDocument()
 	{
 		mContents = new StringBuffer(1024);
-		mSVGAttributes = new StringBuffer();
+		mSVGAttributes = new StringBuffer(256);
 	}
 
 	public InputSource resolveEntity(String publicId, String systemId)
@@ -151,9 +148,11 @@ public class SVGFile extends DefaultHandler
 		String qName, Attributes attributes)
 	{
 		if (qName.equals("svg"))
+			mSVGTagCount++;
+		if (qName.equals("svg") && mSVGTagCount == 1)
 		{
 			/*
-			 * Parse width and height of SVG file.
+			 * Parse width and height of SVG file from outermost SVG tag.
 			 */
 			String width = attributes.getValue("width");
 			String height = attributes.getValue("height");
@@ -194,13 +193,35 @@ public class SVGFile extends DefaultHandler
 
 	public void endElement(String uri, String localName, String qName)
 	{
-		if (!qName.equals("svg"))
+		if (qName.equals("svg"))
+		{
+			mSVGTagCount--;	
+			if (mSVGTagCount > 0)
+				mContents.append("</svg>");
+		}
+		else
+		{
 			mContents.append("</").append(qName).append(">");
+		}
 	}
 
 	public void characters(char[] ch, int start, int length)
 	{
-		mContents.append(ch, start, length);
+		for (int i = 0; i < length; i++)
+		{
+			char c = ch[start + i];
+			if (c == '&' || c == '<' || c == '>' || c == '"' || c > 127)
+			{
+					/*
+					 * Give character codes for special XML characters.
+					 */
+				mContents.append("&#").append(Integer.toString(c)).append(";");
+			}
+			else
+			{
+				mContents.append(c);
+			}
+		}
 	}
 
 	/**
