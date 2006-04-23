@@ -72,6 +72,7 @@ import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
 import org.mapyrus.ps.PostScriptFile;
+import org.mapyrus.svg.SVGFile;
 
 /**
  * Abstraction of a graphics format.  Provides methods to create new
@@ -2879,6 +2880,38 @@ public class OutputFormat
 		}
 	}
 
+	private void drawBoundingBoxes(ArrayList pointList, double size, double rotation)
+	{
+		GeneralPath path = new GeneralPath();
+		Color currentColor = mGraphics2D.getColor();
+		mGraphics2D.setColor(new Color(127, 127, 127, 127));
+
+		for (int i = 0; i < pointList.size(); i++)
+		{
+			Point2D pt = (Point2D)(pointList.get(i));
+			double x = pt.getX();
+			double y = pt.getY();
+			double xDist = Math.cos(rotation) * size / 2;
+			double yDist = Math.sin(rotation) * size / 2;
+			Point2D currentPoint;
+
+			path.reset();
+			path.moveTo((float)(x - xDist + yDist), (float)(y - yDist - xDist));
+			currentPoint = path.getCurrentPoint();
+			path.lineTo((float)(currentPoint.getX() - yDist - yDist),
+				(float)(currentPoint.getY() + xDist + xDist));
+			currentPoint = path.getCurrentPoint();
+			path.lineTo((float)(currentPoint.getX() + xDist + xDist),
+				(float)(currentPoint.getY() + yDist + yDist));
+			currentPoint = path.getCurrentPoint();
+			path.lineTo((float)(currentPoint.getX() + yDist + yDist),
+				(float)(currentPoint.getY() - xDist - xDist));
+			path.closePath();
+			fill(path);
+		}
+		mGraphics2D.setColor(currentColor);	
+	}
+
 	/**
 	 * Draw EPS file at points on page.
 	 * @param pointList is list of Point2D objects at which to draw EPS file.
@@ -2986,34 +3019,93 @@ public class OutputFormat
 			 * We cannot show EPS files when drawing to an image file so show a
 			 * transparent grey box where the EPS file would appear.
 			 */
-			GeneralPath path = new GeneralPath();
-			Color currentColor = mGraphics2D.getColor();
-			mGraphics2D.setColor(new Color(127, 127, 127, 127));
+			drawBoundingBoxes(pointList, size, rotation);
+		}
+	}
 
+	/**
+	 * Draw SVG file at points on page.
+	 * @param pointList is list of Point2D objects at which to draw SVG file.
+	 * @param SVG filename.
+	 * @param size size for SVG file on page in millimetres.
+	 * @param rotation rotation angle for SVG file.
+	 * @param scaling scale factor for SVG file.
+	 */
+	public void drawSVG(ArrayList pointList, String filename,
+		double size, double rotation, double scaling)
+		throws IOException, MapyrusException
+	{
+		SVGFile svgfile = new SVGFile(filename);
+		Rectangle2D boundingBox = svgfile.getBoundingBox();
+		int pointWidth = (int)boundingBox.getWidth();
+		int pointHeight = (int)boundingBox.getHeight();
+		Point2D pt;
+		int i;
+		double x, y;
+
+		/*
+		 * If size not given then make SVG about as large as defined in the SVG file.
+		 */
+		if (size <= 0.0)
+		{
+			size = Math.max(pointWidth, pointHeight) *
+				(Constants.MM_PER_INCH / Constants.POINTS_PER_INCH);
+		}
+		size *= scaling;
+
+		if (mOutputType == SVG)
+		{
+			/*
+			 * Include SVG file at each position in list.
+			 */
 			for (i = 0; i < pointList.size(); i++)
 			{
 				pt = (Point2D)(pointList.get(i));
 				x = pt.getX();
 				y = pt.getY();
-				double xDist = Math.cos(rotation) * size / 2;
-				double yDist = Math.sin(rotation) * size / 2;
-				Point2D currentPoint;
 
-				path.reset();
-				path.moveTo((float)(x - xDist + yDist), (float)(y - yDist - xDist));
-				currentPoint = path.getCurrentPoint();
-				path.lineTo((float)(currentPoint.getX() - yDist - yDist),
-					(float)(currentPoint.getY() + xDist + xDist));
-				currentPoint = path.getCurrentPoint();
-				path.lineTo((float)(currentPoint.getX() + xDist + xDist),
-					(float)(currentPoint.getY() + yDist + yDist));
-				currentPoint = path.getCurrentPoint();
-				path.lineTo((float)(currentPoint.getX() + yDist + yDist),
-					(float)(currentPoint.getY() - xDist - xDist));
-				path.closePath();
-				fill(path);
+				/*
+				 * Skip points that are outside page.
+				 */
+				if (x + size >= 0 && x - size <= mPageWidth &&
+					y + size >= 0.0 && y - size <= mPageHeight)
+				{
+					writeLine(mWriter, "<!-- begin " + filename + " -->");
+					if (mIsClipPathActive)
+					{
+						writeLine(mWriter, "<g clip-path=\"url(#clip" + mClipPathCounter + ")\">");
+					}
+					writeLine(mWriter, "<g");
+					writeLine(mWriter, svgfile.getSVGAttributes());
+					writeLine(mWriter, "transform=\"translate(" + x + "," + (mPageHeight - y) + ")");
+					writeLine(mWriter, "rotate(" + Math.toDegrees(-rotation) + ")");
+
+					/*
+					 * SVG file is centred at each point.
+					 * Shift position left and down half it's size
+					 * so that it is displayed centered.
+					 */
+					writeLine(mWriter, "translate(" + mCoordinateDecimal.format(-size / 2) +
+						"," + mCoordinateDecimal.format(-size / 2) + ")");
+
+					double scale = size / Math.max(pointWidth, pointHeight);
+					writeLine(mWriter, "scale(" + scale + ")\">");
+
+					writeLine(mWriter, svgfile.toString());
+					writeLine(mWriter, "<!-- end " + filename + " -->");
+					writeLine(mWriter, "</g>");
+					if (mIsClipPathActive)
+						writeLine(mWriter, "</g>");
+				}
 			}
-			mGraphics2D.setColor(currentColor);	
+		}
+		else
+		{
+			/*
+			 * We cannot show SVG files when drawing to an image file so show a
+			 * transparent grey box where the SVG file would appear.
+			 */
+			drawBoundingBoxes(pointList, size, rotation);
 		}
 	}
 
