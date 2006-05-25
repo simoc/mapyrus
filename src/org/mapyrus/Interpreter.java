@@ -1712,7 +1712,9 @@ public class Interpreter
 				break;
 
 			case Statement.TABLE:
-				if (nExpressions >= 2)
+			case Statement.TREE:
+				if ((type == Statement.TREE && nExpressions == 2) ||
+					(type == Statement.TABLE && nExpressions >= 2))
 				{
 					extras = mExecuteArgs[0].getStringValue();
 					ArrayList columns = new ArrayList(nExpressions - 1);
@@ -1730,11 +1732,17 @@ public class Interpreter
 						}
 						columns.add(arg);
 					}
-					context.drawTable(extras, columns);
+					if (type == Statement.TABLE)
+						context.drawTable(extras, columns);
+					else
+						context.drawTree(extras, (Argument)columns.get(0));
 				}
 				else
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TABLE));
+					if (type == Statement.TABLE)
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TABLE));
+					else
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TREE));
 				}
 				break;
 
