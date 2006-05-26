@@ -836,6 +836,17 @@ public class ContextStack
 	}
 
 	/**
+	 * Draw a tree of labels at current path position.
+	 * @param extras options for tree.
+	 * @param tree array argument with tree entries.
+	 */
+	public void drawTree(String extras, Argument tree) throws IOException, MapyrusException
+	{
+		getCurrentContext().drawTree(extras, tree);
+	}
+
+
+	/**
 	 * Returns the number of moveTo's in path defined in current context.
 	 * @return count of moveTo calls made.
 	 */
