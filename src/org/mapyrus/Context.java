@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 import java.io.File;
 import java.io.IOException;
@@ -2271,7 +2273,8 @@ public class Context
 			 */
 			if (pathPoints.isEmpty())
 			{
-				startPt = (Point2D.Double)path.getMoveTos().get(0);
+				Point2D.Float pt = (Point2D.Float)path.getMoveTos().get(0);
+				startPt = new Point2D.Double(pt.getX(), pt.getY());
 				endPt = new Point2D.Double(startPt.x + Math.cos(mRotation) * totalStringWidth,
 					startPt.y + Math.sin(mRotation) * totalStringWidth);
 				pathPoints.add(startPt);
@@ -2553,6 +2556,132 @@ public class Context
 					ptCopy.y -= (yPadding + rowHeights[k] + yPadding); 
 				}
 				ptCopy.x += (xPadding + columnWidths[j] + xPadding);
+			}
+		}
+
+		mOutputFormat.restoreState();
+		setJustify(oldJustify);
+		mAttributesChanged |= attributeMask;
+		mAttributesPending |= attributeMask;
+	}
+
+	/**
+	 * Draw a tree of labels at current path position.
+	 * @param extras options for tree.
+	 * @param tree array containing labels for tree.
+	 */
+	public void drawTree(String extras, Argument tree) throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+		if (path == null || mOutputFormat == null)
+			return;
+
+		StringDimension dim = getStringDimension("X", false);
+		String delimiter = null;
+
+		/*
+		 * Override default settings for tree with options given by user.
+		 */
+		StringTokenizer st = new StringTokenizer(extras);
+		while (st.hasMoreTokens())
+		{
+			String token = st.nextToken();
+			if (token.startsWith("delimiter="))
+			{
+				delimiter = token.substring(10);
+			}
+		}
+
+		Object keys[] = tree.getHashMapKeys();
+
+		/*
+		 * Save state so we can temporarily change label justification.
+		 */
+		mOutputFormat.saveState();
+		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_TOP);
+		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|
+			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
+		setGraphicsAttributes(attributeMask);
+
+		ArrayList moveTos = path.getMoveTos();
+		for (int i = 0; i < moveTos.size(); i++)
+		{
+			Point2D.Float pt = (Point2D.Float)moveTos.get(i);
+			Point2D.Float ptCopy = (Point2D.Float)pt.clone();
+			LinkedList lastEntry = new LinkedList();
+			int lastIndent = -1;
+			LinkedList lastY2 = new LinkedList();
+
+			for (int j = 0; j < keys.length; j++)
+			{
+				String val = tree.getHashMapEntry(keys[j].toString()).getStringValue();
+				if (delimiter == null)
+					st = new StringTokenizer(val);
+				else
+					st = new StringTokenizer(val, delimiter);
+
+				LinkedList entry = new LinkedList();
+				while (st.hasMoreTokens())
+					entry.add(st.nextToken());
+
+				int indent = 0;
+				ListIterator it = entry.listIterator();
+				ListIterator lastIt = lastEntry.listIterator();
+				while (it.hasNext() && lastIt.hasNext())
+				{
+					String token = (String)it.next();
+					String lastToken = (String)lastIt.next();
+					if (token.equals(lastToken))
+						indent++;
+					else
+						break;
+				}
+
+				/*
+				 * Draw 'L' line dropping from element above and the
+				 * label to the right of it.
+				 */
+				for (int k = indent; k < entry.size(); k++)
+				{
+					String s = (String)entry.get(k);
+
+					GeometricPath box = new GeometricPath();
+					float x1 = (float)(ptCopy.x + dim.getWidth() * k - dim.getWidth() / 2);
+					float y1 = (float)(ptCopy.y - dim.getHeight() / 5);
+					float x2 = (float)(x1 + dim.getWidth() / 2);
+					float y2 = (float)(y1 - dim.getHeight() / 2);
+					if (k < lastY2.size())
+					{
+						/*
+						 * Draw line down from last entry at this level of indentation.
+						 */
+						y1 = ((Float)(lastY2.get(k))).floatValue();
+						int l = lastY2.size() - k;
+						while (l-- > 0)
+							lastY2.removeLast();
+					}
+					box.moveTo(x1, y1, 0);
+					box.lineTo(x1, y2);
+					box.lineTo(x2, y2);
+					if (k > 0)
+						mOutputFormat.stroke(box.getShape());
+
+					Point2D.Float labelPt = new Point2D.Float();
+					labelPt.x = (float)(ptCopy.x + dim.getWidth() * k);
+					if (k > 0)
+						labelPt.x += dim.getWidth() / 5; 
+					labelPt.y = (float)ptCopy.y;
+
+					ArrayList ptList = new ArrayList();
+					ptList.add(labelPt);
+					mOutputFormat.label(ptList, s);
+					StringDimension sDim = getStringDimension(s, false);
+
+					ptCopy.y -= Math.max(sDim.getHeight(), dim.getHeight());
+					lastIndent = indent;
+					lastY2.add(k, new Float(y2));
+				}
+				lastEntry = entry;
 			}
 		}
 
