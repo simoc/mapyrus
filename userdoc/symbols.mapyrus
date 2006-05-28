@@ -872,7 +872,7 @@ begin pennant
 	stroke
 end
 
-begin tree
+begin pinetree
 	key "point", "Tree"
 	color "forestgreen"
 	linestyle 0.1
@@ -2026,7 +2026,7 @@ then
 	cave
 	flag
 	pennant
-	tree
+	pinetree
 	radiotower
 	church
 	hospital
