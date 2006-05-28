@@ -1,5 +1,5 @@
 # @(#) $Id$
-newpage "eps", "turtle7.eps", 35, 30
+newpage "eps", "turtle7.eps", 50, 30
 
 # Draw caption in a box with a /=\ shaped tab above it.
 #
@@ -26,3 +26,15 @@ move 2, 24
 let col1[1] = "9am", col1[2] = "12pm", col1[3] = "5pm", col1[4] = "6pm"
 let col2[1] = "meeting", col2[2] = "lunch", col2[3] = "video\nconference", col2[4] = "interview"
 caption "Monday", col1, col2
+
+linestyle 0.4
+color "black"
+font "Helvetica", 3
+clearpath
+move 35, 30
+let t[1] = "etc/group"
+let t[2] = "etc/hosts"
+let t[3] = "etc/init.d/httpd"
+let t[4] = "etc/passwd"
+let t[5] = "etc/shadow"
+tree "delimiter=/", t
