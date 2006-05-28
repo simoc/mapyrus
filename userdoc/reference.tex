@@ -2620,6 +2620,52 @@ order, or \texttt{desc} for descending order.  Default is ascending order. \\
 \end{longtable}
 
 
+\subsubsection{tree}
+
+\begin{alltt}
+tree \textit{extras}, \textit{entries}
+\end{alltt}
+
+Draws a tree of labels at each point in the path set with the
+\texttt{move} command.
+An array is given defining tree entries.
+Each entry is split using the delimiter.  An entry starting
+with the same values as a previous entry is indented to the
+right with an arrow linking it to the previous entry.
+
+Labels are drawn using the current color and font settings.
+
+\textit{extras} defines further options for the tree, given as
+\textit{variable=value} values, separated by whitespace.
+See Table \ref{treeextras}
+for available options.
+
+\begin{longtable}{|l|p{7cm}|}
+\hline
+\label{treeextras}
+Extra & Description \\
+\hline
+\hline
+\endfirsthead
+\hline
+\caption{Tree Extras} \\
+\endfoot
+
+\hline
+Extra & Description \\
+\hline
+\hline
+\endhead
+
+\texttt{delimiter=\textit{string}} &
+
+Delimiter used to determine indentation of labels.
+By default whitespace is used as the delimiter. \\
+
+\hline
+\end{longtable}
+
+
 \subsubsection{triangle}
 
 \begin{alltt}
