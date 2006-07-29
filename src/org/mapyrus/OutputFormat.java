@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -758,9 +759,11 @@ public class OutputFormat
 	 * Write SVG file header, starting with XML waffle.
 	 * @param width width of page in mm.
 	 * @param height height of page in mm.
+	 * @param scriptFilename additional XML file to be added to start of SVG file.
 	 * @param backgroundColor background color for page, or null if no background.
 	 */
-	private void writeSVGHeader(double width, double height, Color backgroundColor)
+	private void writeSVGHeader(double width, double height, String scriptFilename, Color backgroundColor)
+		throws IOException, MapyrusException
 	{
 		writeLine(mWriter, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
 
@@ -778,6 +781,28 @@ public class OutputFormat
 		writeLine(mWriter, "  overflow=\"hidden\"");
 		writeLine(mWriter, "  xml:space=\"preserve\"");
 		writeLine(mWriter, "  xmlns=\"http://www.w3.org/2000/svg\">");
+
+		if (scriptFilename != null)
+		{
+			/*
+			 * Add any other XML elements (for example Javascript functions).
+			 */
+			LineNumberReader reader = null;
+			try
+			{
+				String line;
+				reader = new FileOrURL(scriptFilename).getReader();
+				while ((line = reader.readLine()) != null)
+				{
+					writeLine(mWriter, line);
+				}
+			}
+			finally
+			{
+				if (reader != null)
+					reader.close();
+			}
+		}
 
 		if (backgroundColor != null)
 		{
@@ -914,6 +939,7 @@ public class OutputFormat
 		boolean labelAntiAliasing = true;
 		boolean lineAntiAliasing = false;
 		boolean compressOutput = false;
+		String scriptFilename = null;
 		Rectangle2D existingBoundingBox = null;
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
@@ -1079,6 +1105,10 @@ public class OutputFormat
 						": " + colorName);
 				}
 			}
+			else if (token.startsWith("scriptfile="))
+			{
+				scriptFilename = token.substring(11);
+			}
 		}
 
 		if ((mOutputType == POSTSCRIPT_GEOMETRY ||
@@ -1217,7 +1247,7 @@ public class OutputFormat
 		else if (mOutputType == SVG)
 		{
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
-			writeSVGHeader(width, height, backgroundColor);
+			writeSVGHeader(width, height, scriptFilename, backgroundColor);
 
 			/*
 			 * Create a graphics context we can use for saving current graphics
