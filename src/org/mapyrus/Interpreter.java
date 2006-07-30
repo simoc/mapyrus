@@ -1820,6 +1820,13 @@ public class Interpreter
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SVG));
 				}
 				break;
+
+			case Statement.SVGCODE:
+				for (int i = 0; i < nExpressions; i++)
+				{
+					context.addSVGCode(mExecuteArgs[i].getStringValue());
+				}
+				break;
 		
 			case Statement.SCALE:
 				if (nExpressions == 1)
