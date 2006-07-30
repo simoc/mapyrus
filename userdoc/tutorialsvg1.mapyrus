@@ -1,0 +1,16 @@
+newpage "svg", "tutorialsvg1.svg", 30, 30, "scriptfile=svg1.js"
+
+svgcode '<g id="layer1">'
+color "indigo"
+circle 20, 20, 10
+fill "onmouseover='highlight(evt, \"yellow\")'"
+svgcode '</g>'
+clearpath
+
+svgcode '<g id="layer2">'
+box 0, 0, 10, 10
+linestyle 2
+color "red"
+
+stroke "onmouseover='highlight(evt, \"green\")' onmouseout='highlight(evt, \"blue\")'"
+svgcode '</g>'
