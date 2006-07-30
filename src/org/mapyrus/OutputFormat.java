@@ -2937,7 +2937,7 @@ public class OutputFormat
 			path.lineTo((float)(currentPoint.getX() + yDist + yDist),
 				(float)(currentPoint.getY() - xDist - xDist));
 			path.closePath();
-			fill(path);
+			fill(path, null);
 		}
 		mGraphics2D.setColor(currentColor);	
 	}
@@ -3155,8 +3155,10 @@ public class OutputFormat
 
 	/**
 	 * Draw currently defined path to output page.
+	 * @param shape
+	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
-	public void stroke(Shape shape)
+	public void stroke(Shape shape, String xmlAttributes)
 	{
 		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG || mOutputType == PDF)
 		{
@@ -3216,7 +3218,9 @@ public class OutputFormat
 						writeLine(mWriter, ";stroke-opacity:" + (alpha / 255.0f));
 					}
 
-					writeLine(mWriter, ";fill:none\"/>");
+					writeLine(mWriter, ";fill:none\"");
+					if (xmlAttributes != null)
+						writeLine(mWriter, xmlAttributes);					writeLine(mWriter, "/>");
 				}
 				else
 				{
@@ -3242,9 +3246,10 @@ public class OutputFormat
 	/**
 	 * Fill currently defined path on output page.
 	 * @param shape shape to fill on page.
+	 * @param xmlAttributes XML attributes to add for SVG output.
 	 * run when this shape is clicked.
 	 */
-	public void fill(Shape shape)
+	public void fill(Shape shape, String xmlAttributes)
 	{
 		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG || mOutputType == PDF)
 		{
@@ -3268,7 +3273,10 @@ public class OutputFormat
 					{
 						sb.append(";fill-opacity:" + (alpha / 255.0f));
 					}
-					sb.append(";stroke:none\"/>");
+					sb.append(";stroke:none\" ");
+					if (xmlAttributes != null)
+						sb.append(xmlAttributes);
+					sb.append("/>");
 					writeLine(mWriter, sb.toString());
 				}
 				else
