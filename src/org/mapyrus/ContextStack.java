@@ -633,6 +633,16 @@ public class ContextStack
 	}
 
 	/**
+	 * Add Scalable Vector Graphics code to page.
+	 * @param xml XML elements to add to SVG file.
+	 */
+	public void addSVGCode(String xml)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().addSVGCode(xml);
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.

@@ -2027,6 +2027,16 @@ public class Context
 	}
 
 	/**
+	 * Add Scalable Vector Graphics code to page.
+	 * @param xml XML elements to add to SVG file.
+	 */
+	public void addSVGCode(String xml)
+		throws IOException, MapyrusException
+	{
+		mOutputFormat.addSVGCode(xml);
+	}
+
+	/**
 	 * Draw currently defined path.
 	 */
 	public void stroke() throws IOException, MapyrusException
