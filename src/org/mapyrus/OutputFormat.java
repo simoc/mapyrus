@@ -3140,6 +3140,20 @@ public class OutputFormat
 	}
 
 	/**
+	 * Add Scalable Vector Graphics code to page.
+	 * @param xml XML elements to add to SVG file.
+	 */
+	public void addSVGCode(String xml)
+		throws IOException, MapyrusException
+	{
+		if (mOutputType == SVG)
+		{
+			writeLine(mWriter, "<!-- svgcode -->");
+			writeLine(mWriter, xml);
+		}
+	}
+
+	/**
 	 * Draw currently defined path to output page.
 	 */
 	public void stroke(Shape shape)
