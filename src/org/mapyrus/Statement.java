@@ -91,23 +91,24 @@ public class Statement
 	public static final int GEOIMAGE = 56;
 	public static final int EPS = 57;
 	public static final int SVG = 58;
-	public static final int SCALE = 59;
-	public static final int ROTATE = 60;
-	public static final int WORLDS = 61;
-	public static final int PROJECT = 62;
-	public static final int DATASET = 63;
-	public static final int FETCH = 64;
-	public static final int NEWPAGE = 65;
-	public static final int ENDPAGE = 66;
-	public static final int SETOUTPUT = 67;
-	public static final int PRINT = 68;
-	public static final int LOCAL = 69;
-	public static final int LET = 70;
-	public static final int EVAL = 71;
-	public static final int KEY = 72;
-	public static final int LEGEND = 73;
-	public static final int MIMETYPE = 74;
-	public static final int HTTPRESPONSE = 75;
+	public static final int SVGCODE = 59;
+	public static final int SCALE = 60;
+	public static final int ROTATE = 61;
+	public static final int WORLDS = 62;
+	public static final int PROJECT = 63;
+	public static final int DATASET = 64;
+	public static final int FETCH = 65;
+	public static final int NEWPAGE = 66;
+	public static final int ENDPAGE = 67;
+	public static final int SETOUTPUT = 68;
+	public static final int PRINT = 69;
+	public static final int LOCAL = 70;
+	public static final int LET = 71;
+	public static final int EVAL = 72;
+	public static final int KEY = 73;
+	public static final int LEGEND = 74;
+	public static final int MIMETYPE = 75;
+	public static final int HTTPRESPONSE = 76;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -210,6 +211,7 @@ public class Statement
 		mStatementTypeLookup.put("geoimage", new Integer(GEOIMAGE));
 		mStatementTypeLookup.put("eps", new Integer(EPS));
 		mStatementTypeLookup.put("svg", new Integer(SVG));
+		mStatementTypeLookup.put("svgcode", new Integer(SVGCODE));
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
