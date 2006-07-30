@@ -2013,6 +2013,28 @@ The following command makes an animated GIF file from all frames.
 gifsicle frame*.gif > anim.gif
 \end{verbatim}
 
+\subsection{Creating SVG Files With Event Handling}
+
+Scalable Vector Graphics files are made interactive by
+adding JavaScript functions and defining
+mouse events that call these functions.
+
+Groups of shapes or layers are defined by adding extra
+XML \texttt{<g>} tags to an SVG file.
+
+Using the following JavaScript contained in file \texttt{svg1.js}
+
+\verbatiminput{svg1.js}
+
+the next example demonstrates creating an SVG file with
+mouse events that change the color of shapes when the mouse is moved over
+the shapes.
+XML \texttt{<g>} tags are also added to the SVG file using the \texttt{svgcode}
+command to
+identify different groups of shapes or layers.
+
+\verbatiminput{tutorialsvg1.mapyrus}
+
 \subsection{Building Mapyrus From Source}
 
 To build Mapyrus from source code, the following development tools
