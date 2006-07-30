@@ -1,6 +1,14 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.608, July 2006
+
+* Add scriptfile= option to NEWPAGE command to include JavaScript functions
+  in SVG output.
+* Add SVGCODE command for embedding extra XML tags in SVG format output.
+* Enable XML attributes defining event handling to be added to shapes
+  in SVG output.
+
 0.607, May 2006
 
 * Add TREE command to draw a tree of labels on the page.
