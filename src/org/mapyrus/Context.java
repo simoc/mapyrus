@@ -2038,29 +2038,31 @@ public class Context
 
 	/**
 	 * Draw currently defined path.
+	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
-	public void stroke() throws IOException, MapyrusException
+	public void stroke(String xmlAttributes) throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 
 		if (path != null && mOutputFormat != null)
 		{
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP);
-			mOutputFormat.stroke(path.getShape());
+			mOutputFormat.stroke(path.getShape(), xmlAttributes);
 		}
 	}
 
 	/**
 	 * Fill currently defined path.
+	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
-	public void fill() throws IOException, MapyrusException
+	public void fill(String xmlAttributes) throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		
 		if (path != null && mOutputFormat != null)
 		{	
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_CLIP);
-			mOutputFormat.fill(path.getShape());
+			mOutputFormat.fill(path.getShape(), xmlAttributes);
 		}
 	}
 
@@ -2545,14 +2547,14 @@ public class Context
 						int slotIndex = k * columns.size() + j;
 						Color c = (Color)bgColors.get(slotIndex % bgColors.size());
 						mOutputFormat.setColorAttribute(c);
-						mOutputFormat.fill(box.getShape());
+						mOutputFormat.fill(box.getShape(), null);
 						mOutputFormat.restoreState();
 						mAttributesChanged |= ATTRIBUTE_COLOR;
 						mAttributesPending |= ATTRIBUTE_COLOR;
 						setGraphicsAttributes(ATTRIBUTE_COLOR);
 					}
 					if (drawBorders)
-						mOutputFormat.stroke(box.getShape());
+						mOutputFormat.stroke(box.getShape(), null);
 
 					String s = arg.getHashMapEntry(primaryKeys[k].toString()).toString();
 					Point2D.Float labelPt = new Point2D.Float();
@@ -2674,7 +2676,7 @@ public class Context
 					box.lineTo(x1, y2);
 					box.lineTo(x2, y2);
 					if (k > 0)
-						mOutputFormat.stroke(box.getShape());
+						mOutputFormat.stroke(box.getShape(), null);
 
 					Point2D.Float labelPt = new Point2D.Float();
 					labelPt.x = (float)(ptCopy.x + dim.getWidth() * k);

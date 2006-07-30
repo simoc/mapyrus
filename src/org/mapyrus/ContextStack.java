@@ -757,18 +757,20 @@ public class ContextStack
 
 	/**
 	 * Draw currently defined path.
+	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
-	public void stroke() throws IOException, MapyrusException
+	public void stroke(String xmlAttributes) throws IOException, MapyrusException
 	{
-		getCurrentContext().stroke();
+		getCurrentContext().stroke(xmlAttributes);
 	}
 
 	/**
 	 * Fill currently defined path.
+	 * @param xmlAttribtes XML attributes to add for SVG output.
 	 */
-	public void fill() throws IOException, MapyrusException
+	public void fill(String xmlAttributes) throws IOException, MapyrusException
 	{
-		getCurrentContext().fill();
+		getCurrentContext().fill(xmlAttributes);
 	}
 
 	/**

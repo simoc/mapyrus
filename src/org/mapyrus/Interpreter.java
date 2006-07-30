@@ -578,7 +578,7 @@ public class Interpreter
 				context.restoreState();
 				context.setColor(Color.BLACK);
 				context.setLinestyle(0.1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0, null);
-				context.stroke();
+				context.stroke(null);
 			}
 			context.restoreState();
 		}
@@ -1524,17 +1524,29 @@ public class Interpreter
 			case Statement.STROKE:
 				if (nExpressions > 0)
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+					StringBuffer sb = new StringBuffer(mExecuteArgs[0].getStringValue());
+					for (int i = 1; i < nExpressions; i++)
+						sb.append(mExecuteArgs[i].getStringValue()).append(Constants.LINE_SEPARATOR);
+					context.stroke(sb.toString());
 				}
-				context.stroke();
+				else
+				{
+					context.stroke(null);
+				}
 				break;
 				
 			case Statement.FILL:
 				if (nExpressions > 0)
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+					StringBuffer sb = new StringBuffer(mExecuteArgs[0].getStringValue());
+					for (int i = 1; i < nExpressions; i++)
+						sb.append(mExecuteArgs[i].getStringValue()).append(Constants.LINE_SEPARATOR);
+					context.fill(sb.toString());
 				}
-				context.fill();
+				else
+				{
+					context.fill(null);
+				}
 				break;
 
 			case Statement.GRADIENTFILL:
