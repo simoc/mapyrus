@@ -7,7 +7,7 @@ Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
   in SVG output.
 * Add SVGCODE command for embedding extra XML tags in SVG format output.
 * Enable XML attributes defining event handling to be added to shapes
-  in SVG output.
+  in SVG output for FILL and STROKE commands.
 
 0.607, May 2006
 
