@@ -1494,13 +1494,17 @@ to ensure that another record is available from the dataset.
 \subsubsection{fill}
 
 \begin{alltt}
-fill
+fill [\textit{xml-attributes}]
 \end{alltt}
 
 Flood fills the current path with the current color.
 The winding rule is used for determining the inside and outside
 regions of polygons containing islands.
 The current path is not modified by this command.
+
+For SVG output, any XML attributes given in
+\textit{xml-attributes} are
+included in the \texttt{<path>} XML element for the filled path.
 
 \subsubsection{flowlabel}
 
@@ -2532,11 +2536,15 @@ with a \texttt{clip} command to produce a hatched fill pattern.
 \subsubsection{stroke}
 
 \begin{alltt}
-stroke
+stroke [\textit{xml-attributes}]
 \end{alltt}
 
 Draws the current path using the current color and linestyle.
-The current path is not.
+The current path is not modified by this command.
+
+For SVG output, any XML attributes given in
+\textit{xml-attributes} are
+included in the \texttt{<path>} XML element for the drawn path.
 
 \subsubsection{svg}
 
