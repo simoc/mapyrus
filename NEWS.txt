@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.609, September 2006
+
+* Add new FUNCTION keyword for user-defined functions.
+
 0.608, July 2006
 
 * Add scriptfile= option to NEWPAGE command to include JavaScript functions
