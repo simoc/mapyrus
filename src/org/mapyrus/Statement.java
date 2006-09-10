@@ -229,17 +229,7 @@ public class Statement
 		mStatementTypeLookup.put("legend", new Integer(LEGEND));
 		mStatementTypeLookup.put("mimetype", new Integer(MIMETYPE));
 		mStatementTypeLookup.put("httpresponse", new Integer(HTTPRESPONSE));
-	}
-
-	/**
-	 * Constant for 'return' statement.
-	 */
-	public static final Statement RETURN_STATEMENT;
-
-	static
-	{
-		RETURN_STATEMENT = new Statement("", null);
-		RETURN_STATEMENT.mType = RETURN;
+		mStatementTypeLookup.put("return", new Integer(RETURN));
 	}
 
 	/**
