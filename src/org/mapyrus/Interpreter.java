@@ -36,7 +36,11 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.StringTokenizer;
+
+import org.mapyrus.function.Function;
+import org.mapyrus.function.UserFunction;
 
 /**
  * Language interpreter.  Parse and executes commands read from file, or
@@ -55,6 +59,7 @@ public class Interpreter
 	private static final char ARGUMENT_SEPARATOR = ',';
 	private static final char PARAM_SEPARATOR = ',';
 	private static final String BEGIN_KEYWORD = "begin";
+	private static final String FUNCTION_KEYWORD = "function";
 	private static final String END_KEYWORD = "end";
 
 	/*
@@ -80,11 +85,6 @@ public class Interpreter
 	 */
 	private static final String FOR_KEYWORD = "for";
 	private static final String IN_KEYWORD = "in";
-
-	/*
-	 * Keyword to return from procedure block.
-	 */
-	private static final String RETURN_KEYWORD = "return";
 
 	/*
 	 * States during parsing statements.
@@ -121,6 +121,11 @@ public class Interpreter
 	 * this interpreter.
 	 */
 	private HashMap mStatementBlocks;
+
+	/*
+	 * Functions that user has defined.
+	 */
+	private HashMap mUserFunctions;
 	
 	/*
 	 * Static world coordinate system units lookup table.
@@ -2260,7 +2265,7 @@ public class Interpreter
 				 * Parse an expression.
 				 */
 				preprocessor.unread(c);
-				expr = new Expression(preprocessor);
+				expr = new Expression(preprocessor, mUserFunctions);
 				expressions.add(expr);
 
 				c = readSkipComments(preprocessor);
@@ -2349,10 +2354,10 @@ public class Interpreter
 	}
 
 	/**
-	 * Reads and parses a procedure block, several statements
-	 * grouped together between "begin" and "end" keywords.
+	 * Reads and parses several statements
+	 * grouped together between "begin"/"function" and "end" keywords.
 	 * @param preprocessor is source to read from.
-	 * @retval parsed procedure block as single statement.
+	 * @return parsed procedure block as single statement.
 	 */
 	private ParsedStatement parseProcedureBlock(Preprocessor preprocessor)
 		throws IOException, MapyrusException
@@ -2445,7 +2450,7 @@ public class Interpreter
 		String currentFilename = preprocessor.getCurrentFilename();
 		int currentLineNumber = preprocessor.getCurrentLineNumber();
 		
-		test = new Expression(preprocessor);
+		test = new Expression(preprocessor, mUserFunctions);
 		
 		/*
 		 * Expect to parse "do" keyword.
@@ -2526,7 +2531,7 @@ public class Interpreter
 		String currentFilename = preprocessor.getCurrentFilename();
 		int currentLineNumber = preprocessor.getCurrentLineNumber();
 
-		var = new Expression(preprocessor);
+		var = new Expression(preprocessor, mUserFunctions);
 
 		/*
 		 * Expect to parse "in" keyword.
@@ -2548,7 +2553,7 @@ public class Interpreter
 				": " + IN_KEYWORD);
 		}
 
-		arrayExpr = new Expression(preprocessor);
+		arrayExpr = new Expression(preprocessor, mUserFunctions);
 
 		/*
 		 * Expect to parse "do" keyword.
@@ -2632,7 +2637,7 @@ public class Interpreter
 		Statement statement;
 		boolean checkForEndif = true;	/* do we need to check for "endif" keyword at end of statement? */
 
-		test = new Expression(preprocessor);
+		test = new Expression(preprocessor, mUserFunctions);
 
 		/*
 		 * Expect to parse "then" keyword.
@@ -2810,12 +2815,12 @@ public class Interpreter
 				String lower = keyword.toLowerCase();
 
 				/*
-				 * Is this the start or end of a procedure block definition?
+				 * Is this the start or end of a procedure block or function definition?
 				 */
-				if (lower.equals(BEGIN_KEYWORD))
+				if (lower.equals(BEGIN_KEYWORD) || lower.equals(FUNCTION_KEYWORD))
 				{
 					/*
-					 * Nested procedure blocks not allowed.
+					 * Nested procedure blocks and functions not allowed.
 					 */
 					if (inProcedureDefn)
 					{
@@ -2823,6 +2828,14 @@ public class Interpreter
 							": " + MapyrusMessages.get(MapyrusMessages.NESTED_PROC));
 					}
 					retval = parseProcedureBlock(preprocessor);
+					if (lower.equals(FUNCTION_KEYWORD))
+					{
+						String funcName = retval.getStatement().getBlockName();
+						Function f = new UserFunction(funcName,
+							retval.getStatement().getBlockParameters(),
+							retval.getStatement().getStatementBlock(), this);
+						mUserFunctions.put(funcName, f);
+					}
 				}
 				else if (lower.equals(IF_KEYWORD))
 				{
@@ -2839,10 +2852,6 @@ public class Interpreter
 				else if (lower.equals(FOR_KEYWORD))
 				{
 					retval = parseForStatement(preprocessor, inProcedureDefn);
-				}
-				else if (lower.equals(RETURN_KEYWORD))
-				{
-					retval = new ParsedStatement(Statement.RETURN_STATEMENT);
 				}
 				else
 				{
@@ -2916,8 +2925,8 @@ public class Interpreter
 			 */
 			while ((st = parseStatement(preprocessor)) != null)
 			{
-				int type = executeStatement(st);
-				if (type == Statement.RETURN)
+				Argument returnValue = executeStatement(st);
+				if (returnValue != null)
 					break;
 			}
 		}
@@ -2950,8 +2959,11 @@ public class Interpreter
 		for (int i = 0; i < v.size(); i++)
 		{
 			statement = (Statement)v.get(i);
-			int type = executeStatement(statement);
-			if (type == Statement.RETURN)
+
+			/*
+			 * Found return statement so stop executing.
+			 */
+			if (executeStatement(statement) != null)
 				break;
 		}
 	}
@@ -2962,11 +2974,12 @@ public class Interpreter
 	 * @param statement is statement to execute.
 	 * @return type of last statement executed.
 	 */
-	private int executeStatement(Statement statement)
+	public Argument executeStatement(Statement statement)
 		throws IOException, MapyrusException
 	{
 		Argument []args;
 		int statementType = statement.getType();
+		Argument returnValue = null;
 
 		/*
 		 * Store procedure blocks away for later execution,
@@ -2979,8 +2992,17 @@ public class Interpreter
 		else if (statementType == Statement.RETURN)
 		{
 			/*
-			 * Nothing to do, just return.
+			 * Evaluate any value to return.
 			 */
+			Expression []expr = statement.getExpressions();
+			if (expr.length > 1)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
+			}
+			if (expr.length == 0)
+				returnValue = Argument.emptyString;
+			else
+				returnValue = expr[0].evaluate(mContext, statement.getFilename());
 		}
 		else if (statementType == Statement.CONDITIONAL)
 		{
@@ -3020,8 +3042,12 @@ public class Interpreter
 				for (int i = 0; i < v.size(); i++)
 				{
 					statement = (Statement)v.get(i);
-					statementType = executeStatement(statement);
-					if (statementType == Statement.RETURN)
+					returnValue = executeStatement(statement);
+
+					/*
+					 * Found return statement so stop executing.
+					 */
+					if (returnValue != null)
 						break;
 				}
 			}
@@ -3069,12 +3095,11 @@ public class Interpreter
 			/*
 			 * Execute loop while expression remains true (non-zero).
 			 */
-			boolean gotReturn = false;
 			int iter = 0;
 			int loopStatementType = statementType;
 			while
 			(
-				(!gotReturn) &&
+				(returnValue == null) &&
 			 	((loopStatementType == Statement.WHILE_LOOP &&
 					test.getNumericValue() != 0.0) ||
 			 	(loopStatementType == Statement.REPEAT_LOOP &&
@@ -3087,15 +3112,16 @@ public class Interpreter
 				for (int i = 0; i < v.size(); i++)
 				{
 					Statement st = (Statement)v.get(i);
-					statementType = executeStatement(st);
-					if (statementType == Statement.RETURN)
-					{
-						gotReturn = true;
+					returnValue = executeStatement(st);
+					
+					/*
+					 * Found return statement so stop executing.
+					 */
+					if (returnValue != null)
 						break;
-					}
 				}
 
-				if (loopStatementType == Statement.WHILE_LOOP && (!gotReturn))
+				if (loopStatementType == Statement.WHILE_LOOP && (returnValue == null))
 				{
 					test = expr[0].evaluate(mContext, statement.getFilename());
 					if (test.getType() != Argument.NUMERIC)
@@ -3148,19 +3174,20 @@ public class Interpreter
 					String currentKey = (String)keys[i];
 					mContext.defineVariable(varName,
 						new Argument(Argument.STRING, currentKey));
-	
+
 					/*
 					 * Execute each of the statements.
 					 */	
 					for (int j = 0; j < v.size(); j++)
 					{
 						Statement st = (Statement)v.get(j);
-						statementType = executeStatement(st);
-						if (statementType == Statement.RETURN)
-						{
-							gotReturn = true;
+						returnValue = executeStatement(st);
+						
+						/*
+						 * Found return statement so stop executing.
+						 */
+						if (returnValue != null)
 							break;
-						}
 					}
 				}
 			}
@@ -3269,7 +3296,7 @@ public class Interpreter
 					": " + e.getMessage());
 			}
 		}
-		return(statementType);
+		return(returnValue);
 	}
 
 	/**
@@ -3278,9 +3305,10 @@ public class Interpreter
 	public Interpreter()
 	{
 		mStatementBlocks = new HashMap();
+		mUserFunctions = new HashMap();
 		mExecuteArgs = null;
 	}
-	
+
 	/**
 	 * Return a clone of this interpreter.
 	 * @return cloned interpreter.
@@ -3292,6 +3320,18 @@ public class Interpreter
 		retval.mContext = null;
 		retval.mInComment = false;
 		retval.mStatementBlocks = (HashMap)(this.mStatementBlocks.clone());
+		
+		/*
+		 * Copy all the user functions for use in new interpreter.
+		 */
+		retval.mUserFunctions = new HashMap(this.mUserFunctions.size());
+		Iterator it = this.mUserFunctions.keySet().iterator();
+		while (it.hasNext())
+		{
+			String key = (String)it.next();
+			UserFunction userFunction = (UserFunction)this.mUserFunctions.get(key);
+			retval.mUserFunctions.put(key, userFunction.clone(retval));
+		}
 		retval.mStdinStream = null;
 		retval.mStdoutStream = null;
 		return((Object)retval);

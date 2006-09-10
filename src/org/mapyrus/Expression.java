@@ -25,6 +25,7 @@ package org.mapyrus;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mapyrus.function.*;
 
@@ -645,13 +646,13 @@ public class Expression
 	/*
 	 * Parse expression including "or" boolean operations.
 	 */
-	private ExpressionTreeNode parseOrBoolean(Preprocessor p)
+	private ExpressionTreeNode parseOrBoolean(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, b;
 		int op1, op2;
 
-		expr = parseAndBoolean(p);
+		expr = parseAndBoolean(p, userFunctions);
 		while (true)
 		{
 			/*
@@ -664,7 +665,7 @@ public class Expression
 				op2 = p.read();
 				if (op2 == 'r' || op2 == 'R')
 				{
-					b = parseAndBoolean(p);
+					b = parseAndBoolean(p, userFunctions);
 					expr = new ExpressionTreeNode(expr, OR_OPERATION, b);
 				}
 				else
@@ -686,13 +687,13 @@ public class Expression
 	/*
 	 * Parse expression including "and" boolean operations.
 	 */
-	private ExpressionTreeNode parseAndBoolean(Preprocessor p)
+	private ExpressionTreeNode parseAndBoolean(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, b;
 		int op1, op2, op3;
 
-		expr = parseNotBoolean(p);
+		expr = parseNotBoolean(p, userFunctions);
 		while (true)
 		{
 			/*
@@ -708,7 +709,7 @@ public class Expression
 					op3 = p.read();
 					if (op3 == 'd' || op3 == 'D')
 					{
-						b = parseNotBoolean(p);
+						b = parseNotBoolean(p, userFunctions);
 						expr = new ExpressionTreeNode(expr, AND_OPERATION, b);
 					}
 					else
@@ -738,7 +739,7 @@ public class Expression
 	/*
 	 * Parse expression including "not" boolean operations.
 	 */
-	private ExpressionTreeNode parseNotBoolean(Preprocessor p)
+	private ExpressionTreeNode parseNotBoolean(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode b, expr = null;
@@ -760,7 +761,7 @@ public class Expression
 					op4 = p.read();
 					if (!Character.isLetterOrDigit((char)op4) && op4 != '_' && op4 != '.')
 					{
-						b = parseNotBoolean(p);
+						b = parseNotBoolean(p, userFunctions);
 						expr = new ExpressionTreeNode(b, NOT_OPERATION, null);
 					}
 					else
@@ -790,20 +791,20 @@ public class Expression
 		}
 
 		if (expr == null)
-			expr = parseAssignment(p);
+			expr = parseAssignment(p, userFunctions);
 		return(expr);
 	}
 
 	/*
 	 * Parse expression including assignment to variables.
 	 */
-	private ExpressionTreeNode parseAssignment(Preprocessor p)
+	private ExpressionTreeNode parseAssignment(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, value;
 		int op1, op2;
 
-		expr = parseConditional(p);
+		expr = parseConditional(p, userFunctions);
 		while (true)
 		{
 			/*
@@ -834,7 +835,7 @@ public class Expression
 						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 					}
-					value = parseConditional(p);
+					value = parseConditional(p, userFunctions);
 					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
 				}
 				else
@@ -855,13 +856,13 @@ public class Expression
 	/*
 	 * Parse conditional expression, like: hour < 12 ? "AM" : "PM"
 	 */
-	private ExpressionTreeNode parseConditional(Preprocessor p)
+	private ExpressionTreeNode parseConditional(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, trueExpr, falseExpr;
 		int op;
 
-		expr = parseComparison(p);
+		expr = parseComparison(p, userFunctions);
 		while (true)
 		{
 			op = p.readNonSpace();
@@ -872,11 +873,11 @@ public class Expression
 				 * i == 1 ? j == 2 ? 3 : 4 : 5
 				 * is parsed correctly using "right associativity".
 				 */
-				trueExpr = parseOrBoolean(p);
+				trueExpr = parseOrBoolean(p, userFunctions);
 				op = p.readNonSpace();
 				if (op == ':')
 				{
-					falseExpr = parseOrBoolean(p);
+					falseExpr = parseOrBoolean(p, userFunctions);
 					expr = new ExpressionTreeNode(expr, CONDITIONAL_OPERATION, trueExpr, falseExpr);
 				}
 				else
@@ -897,14 +898,14 @@ public class Expression
 	/*
 	 * Parse a comparison expression.
 	 */
-	private ExpressionTreeNode parseComparison(Preprocessor p)
+	private ExpressionTreeNode parseComparison(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, cond;
 		int op1, op2;
 		int opType;
 
-		cond = parseExpression(p);
+		cond = parseExpression(p, userFunctions);
 		while (true)
 		{
 			/*
@@ -968,7 +969,7 @@ public class Expression
 			 */
 			if (opType != NO_OPERATION)
 			{
-				expr = parseExpression(p);
+				expr = parseExpression(p, userFunctions);
 				cond = new ExpressionTreeNode(cond, opType, expr);
 			}
 			else				
@@ -983,19 +984,19 @@ public class Expression
 	/*
 	 * Parse expression.
 	 */
-	private ExpressionTreeNode parseExpression(Preprocessor p)
+	private ExpressionTreeNode parseExpression(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, term;
 		int op;
 
-		expr = parseTerm(p);
+		expr = parseTerm(p, userFunctions);
 		while (true)
 		{
 			op = p.readNonSpace();
 			if (op == '+' || op == '-' || op == '.')
 			{
-				term = parseTerm(p);
+				term = parseTerm(p, userFunctions);
 				int opType;
 				if (op == '+')
 					opType = PLUS_OPERATION;
@@ -1018,13 +1019,13 @@ public class Expression
 	/*
 	 * Parse term.
 	 */
-	private ExpressionTreeNode parseTerm(Preprocessor p)
+	private ExpressionTreeNode parseTerm(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode term, factor;
 		int op;
 
-		term = parseUnary(p);
+		term = parseUnary(p, userFunctions);
 		while (true)
 		{
 			op = p.readNonSpace();
@@ -1041,7 +1042,7 @@ public class Expression
 				else
 					opType = REPEAT_OPERATION;
 
-				factor = parseUnary(p);
+				factor = parseUnary(p, userFunctions);
 				term = new ExpressionTreeNode(term, opType, factor);
 			}
 			else
@@ -1056,7 +1057,7 @@ public class Expression
 	/*
 	 * Parse expression including unary plus or minus.
 	 */
-	private ExpressionTreeNode parseUnary(Preprocessor p)
+	private ExpressionTreeNode parseUnary(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr;
@@ -1067,7 +1068,7 @@ public class Expression
 		{
 			p.unread(op);
 		}
-		expr = parseHashMapReference(p);
+		expr = parseHashMapReference(p, userFunctions);
 		if (op == '-')
 		{
 			/*
@@ -1082,13 +1083,13 @@ public class Expression
 	/*
 	 * Parse expression including reference to an element in a hashmap.
 	 */
-	private ExpressionTreeNode parseHashMapReference(Preprocessor p)
+	private ExpressionTreeNode parseHashMapReference(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, keyExpr;
 		int op1;
 
-		expr = parseFactor(p);
+		expr = parseFactor(p, userFunctions);
 		while (true)
 		{
 			/*
@@ -1097,7 +1098,7 @@ public class Expression
 			op1 = p.readNonSpace();
 			if (op1 == '[')
 			{
-				keyExpr = parseOrBoolean(p);
+				keyExpr = parseOrBoolean(p, userFunctions);
 				op1 = p.readNonSpace();
 				if (op1 != ']')
 				{
@@ -1121,11 +1122,12 @@ public class Expression
 		}
 		return(expr);
 	}
-	
+
 	/*
 	 * Parse a single number, string or variable name.
 	 */
-	private ExpressionTreeNode parseFactor(Preprocessor p) throws IOException, MapyrusException
+	private ExpressionTreeNode parseFactor(Preprocessor p, HashMap userFunctions)
+		throws IOException, MapyrusException
 	{
 		boolean parsedDigit;
 		StringBuffer buf = new StringBuffer();
@@ -1314,7 +1316,7 @@ public class Expression
 
 		if (c == '(')
 		{
-			expr = parseOrBoolean(p);
+			expr = parseOrBoolean(p, userFunctions);
 
 			c = p.readNonSpace();
 			if (c != ')')
@@ -1339,9 +1341,12 @@ public class Expression
 			}
 
 			/*
-			 * Is this a function call like "round(3.14)"?
+			 * Is this a function call like "round(3.14)"
+			 * or a function defined by the user?
 			 */
 			Function f = FunctionTable.getFunction(buf.toString());
+			if (f == null)
+				f = (Function)userFunctions.get(buf.toString());
 			if (f != null)
 			{
 				/*
@@ -1385,7 +1390,7 @@ public class Expression
 							": " + buf.toString());
 					}
 
-					ExpressionTreeNode funcExpr = parseOrBoolean(p);
+					ExpressionTreeNode funcExpr = parseOrBoolean(p, userFunctions);
 					functionExpressions.add(funcExpr);
 				}
 
@@ -1426,10 +1431,12 @@ public class Expression
 	 * As many characters as possible are read that can be interpreted
 	 * as part of an expression.
 	 * @param p is the preprocessed output to read from.
+	 * @param userFunctions user-defined functions.
 	 */
-	public Expression(Preprocessor p) throws IOException, MapyrusException
+	public Expression(Preprocessor p, HashMap userFunctions)
+		throws IOException, MapyrusException
 	{
-		mExprTree = parseOrBoolean(p);
+		mExprTree = parseOrBoolean(p, userFunctions);
 	}
 
 	/**
@@ -1479,6 +1486,7 @@ public class Expression
 			Preprocessor p;
 			Expression e1, e2;
 			ContextStack context = new ContextStack();
+			HashMap userFunctions = new HashMap();
 			Argument a1, a2;
 
 			context.defineVariable("pi", new Argument(3.1415));
@@ -1487,9 +1495,9 @@ public class Expression
 			 * Read two expressions separated by a comma or newline.
 			 */
 			p = new Preprocessor(args[0]);
-			e1 = new Expression(p);
+			e1 = new Expression(p, userFunctions);
 			p.read();
-			e2 = new Expression(p);
+			e2 = new Expression(p, userFunctions);
 			a1 = e1.evaluate(context, "test");
 			a2 = e2.evaluate(context, "test");
 			if (a1.getType() == Argument.NUMERIC)
