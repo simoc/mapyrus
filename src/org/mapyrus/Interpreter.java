@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import org.mapyrus.function.Function;
 import org.mapyrus.function.UserFunction;
 
 /**
@@ -2357,10 +2356,11 @@ public class Interpreter
 	 * Reads and parses several statements
 	 * grouped together between "begin"/"function" and "end" keywords.
 	 * @param preprocessor is source to read from.
+	 * @param isFunction true if function is being parsed.
 	 * @return parsed procedure block as single statement.
 	 */
-	private ParsedStatement parseProcedureBlock(Preprocessor preprocessor)
-		throws IOException, MapyrusException
+	private ParsedStatement parseProcedureBlock(Preprocessor preprocessor,
+		boolean isFunction) throws IOException, MapyrusException
 	{
 		String blockName;
 		ArrayList parameters;
@@ -2368,6 +2368,7 @@ public class Interpreter
 		ParsedStatement st;
 		Statement retval;
 		boolean parsedEndKeyword = false;
+		UserFunction function = null;
 		int c;
 
 		/*
@@ -2376,9 +2377,19 @@ public class Interpreter
 		c = readSkipComments(preprocessor);
 		while (Character.isWhitespace((char)c))
 			c = readSkipComments(preprocessor);
-		
+
 		blockName = parseWord(c, preprocessor);
 		parameters = parseParameters(preprocessor);
+
+		/*
+		 * Define function now so that it can be called recursively
+		 * inside the function definition.
+		 */
+		if (isFunction)
+		{
+			function = new UserFunction(blockName, parameters, null, this);
+			mUserFunctions.put(blockName, function);
+		}
 
 		/*
 		 * Keep reading statements until we get matching "end"
@@ -2423,13 +2434,16 @@ public class Interpreter
 		}
 		while(!parsedEndKeyword);
 
+		if (isFunction)
+			function.setStatements(procedureStatements);
+
 		/*
 		 * Return procedure block as a single statement.
 		 */
 		retval = new Statement(blockName, parameters, procedureStatements);
 		return(new ParsedStatement(retval));
 	}
-	
+
 	/**
 	 * Reads and parses repeat or while loop statement.
 	 * Parses test expression, "do" keyword, some
@@ -2827,15 +2841,7 @@ public class Interpreter
 						throw new MapyrusException(preprocessor.getCurrentFilenameAndLineNumber() +
 							": " + MapyrusMessages.get(MapyrusMessages.NESTED_PROC));
 					}
-					retval = parseProcedureBlock(preprocessor);
-					if (lower.equals(FUNCTION_KEYWORD))
-					{
-						String funcName = retval.getStatement().getBlockName();
-						Function f = new UserFunction(funcName,
-							retval.getStatement().getBlockParameters(),
-							retval.getStatement().getStatementBlock(), this);
-						mUserFunctions.put(funcName, f);
-					}
+					retval = parseProcedureBlock(preprocessor, lower.equals(FUNCTION_KEYWORD));
 				}
 				else if (lower.equals(IF_KEYWORD))
 				{
