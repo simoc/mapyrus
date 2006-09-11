@@ -1,14 +1,21 @@
-begin randomLetter
-  # Set random position, then draw a random letter there.
+function randomLetter
+  # Return random letter
   #
-  move random(3), random(3)
+  local alphabet
+  let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  return substr(alphabet, random(length(alphabet)), 1)
+end
+
+begin placeLetter
+  # Place random letter in random position.
+  #
+  move random(2), random(2)
   color "#0000A0"
   font "Helvetica", 3
-  let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  label substr(alphabet, random(length(alphabet)), 1)
+  label randomLetter()
 end
 begin alphabetSoup
-  # Draw polygon outline, then letters inside polygon.
+  # Draw polygon outline, then grid of letters inside polygon.
   #
   color "black"
   linestyle 0.1
@@ -16,7 +23,7 @@ begin alphabetSoup
   clip "inside"
   stripepath 4, 0
   samplepath 4, 0
-  randomLetter
+  placeLetter
 end
 
 newpage "eps", "tutorialrand3.eps", 40, 40
