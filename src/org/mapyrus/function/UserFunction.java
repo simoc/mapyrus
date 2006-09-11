@@ -154,6 +154,15 @@ public class UserFunction implements Function
 	}
 
 	/**
+	 * Set statements to execute for this function.
+	 * @param statements statements to execute.
+	 */
+	public void setStatements(ArrayList statements)
+	{
+		mStatements = statements;
+	}
+
+	/**
 	 * Make a copy of this function that can be used in another interpreter.
 	 * @param interpreter interpreter that will use this function.
 	 * @return copy of this function.
