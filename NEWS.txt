@@ -4,6 +4,7 @@ Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 0.609, September 2006
 
 * Add new FUNCTION keyword for user-defined functions.
+* Add manual section demonstrating how Mapyrus is used in a Jython application.
 
 0.608, July 2006
 
