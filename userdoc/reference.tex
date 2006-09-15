@@ -144,7 +144,7 @@ a string literal is interpreted as an octal character code (where
 An expression contains arguments and operators and functions
 on those arguments, like in BASIC, C, or Python.
 Available operators are shown in Table \ref{operators}.
-Available functions are shown in Table \ref{functions}.
+Pre-defined functions are shown in Table \ref{functions}.
 
 
 \begin{table}[htb]
@@ -553,9 +553,10 @@ Variable names are
 case-sensitive.  Variables and array elements that are accessed without having
 been defined have a value of zero, or an empty string.
 
-Variables accepted as parameters to a procedure, or declared in the procedure
-with the local command are local to that procedure and not visible outside the
-procedure.  All other variables are global.
+Variables accepted as parameters to a function or procedure, or declared in the
+function or procedure with the local command are local to that function or
+procedure and not visible outside the function or procedure.  All other
+variables are global.
 
 Array elements are accessed by giving the index between
 square brackets (\texttt{[} and \texttt{]}).
@@ -564,8 +565,8 @@ Multi-dimension arrays are available by using
 indexes named \textit{index1}\texttt{."}\textit{c}\texttt{".}\textit{index2},
 where \textit{c} is any character that never appears in an index.
 
-The \texttt{if}, \texttt{repeat}, \texttt{while} and \texttt{for}
-flow control structures
+The \texttt{if}, \texttt{repeat}, \texttt{while}, \texttt{for}
+and \texttt{function} flow control structures
 found in other languages are available:
 
 \begin{alltt}
@@ -619,6 +620,16 @@ indexes are numeric, otherwise in alphabetical index order:
 for \textit{var} in \textit{array} do
   \textit{commands} \dots
 done
+\end{alltt}
+
+Functions are used to repeat commonly used calculations and to
+return a value:
+
+\begin{alltt}
+function \textit{name} [\textit{arg1}, \dots]
+  \textit{commands} \dots
+  \texttt{return} \textit{arg}
+end
 \end{alltt}
 
 Procedures group frequently used commands together, save
