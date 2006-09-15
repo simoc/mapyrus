@@ -1,9 +1,9 @@
-function randomLetter
-  # Return random letter
+function randomLetter letters
+  # Return a random letter from a list of letters
   #
-  local alphabet
-  let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  return substr(alphabet, random(length(alphabet)), 1)
+  local n
+  let n = substr(letters, random(length(letters)), 1)
+  return n
 end
 
 begin placeLetter
@@ -12,7 +12,7 @@ begin placeLetter
   move random(2), random(2)
   color "#0000A0"
   font "Helvetica", 3
-  label randomLetter()
+  label randomLetter("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 end
 begin alphabetSoup
   # Draw polygon outline, then grid of letters inside polygon.
