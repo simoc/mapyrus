@@ -1589,6 +1589,10 @@ options to the \texttt{newpage} command.
 Include filenames of PostScript font definition files for all fonts to be used
 in the page that are not known by the printer.
 
+If extended characters from any fonts are to be used then also
+include the list of font names in the \texttt{isolatinfonts} option
+to the \texttt{newpage} command.
+
 The first line of an ASCII PostScript Type 1 font definition file
 contains the name of the font defined in the file.
 
@@ -1624,6 +1628,10 @@ by Mapyrus using the
 options to the \texttt{newpage} command.
 Include filenames of PostScript font definition files for all
 non-standard fonts to be used in the PDF file.
+
+If extended characters from any fonts are to be used then also
+include the list of font names in the \texttt{isolatinfonts} option
+to the \texttt{newpage} command.
 
 Binary PostScript Type 1 font definition files are binary files.
 However, many parts are plain text and the first plain text
@@ -1917,6 +1925,33 @@ imagedestroy($im);
 Pass variables to Mapyrus in the URL to vary the map display,
 as described in section \ref{urlvariables}
 on page \pageref{urlvariables}.
+
+\subsection{Using Mapyrus In A Jython Application}
+
+Jython is a Java implementation of the Python programming language.
+
+To use Mapyrus in a Jython application, include the
+file \texttt{mapyrus.jar} in the Java classpath and then
+create and use a Mapyrus object in Jython using the following code:
+
+\begin{verbatim}
+from java.lang import System
+from java.io import IOException
+from org.mapyrus import Mapyrus, MapyrusException
+
+cmds1 = ["newpage 'png', 'j.png', 100, 100", "color 'yellow'"]
+cmds2 = ["hexagon 50, 50, 40", "fill"]
+
+m = Mapyrus()
+try:
+        m.interpret(cmds1, System.in, System.out)
+        m.interpret(cmds2, System.in, System.out)
+        m.close()
+except MapyrusException, ex:
+        print "Error:", ex
+except IOException, ex:
+        print "Error:", ex
+\end{verbatim}
 
 \subsection{Combining Mapyrus With Other Software}
 
