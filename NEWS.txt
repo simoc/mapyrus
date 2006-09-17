@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.610, September 2006
+
+* Add option to define where words may be split (hyphenation)
+  in WORDWRAP function.
+* Add option to define justification of entries in a table.
+
 0.609, September 2006
 
 * Add new FUNCTION keyword for user-defined functions.
