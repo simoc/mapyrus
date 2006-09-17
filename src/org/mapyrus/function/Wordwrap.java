@@ -23,6 +23,7 @@
 package org.mapyrus.function;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
@@ -48,6 +49,9 @@ public class Wordwrap implements Function
 		Argument arg2 = (Argument)args.get(1);
 		String s = arg1.getStringValue();
 		double maxWidth = arg2.getNumericValue();
+		String hyphenation = null;
+		if (args.size() == 3)
+			hyphenation = ((Argument)args.get(2)).toString();
 
 		StringTokenizer st = new StringTokenizer(s);
 		String token;
@@ -66,67 +70,122 @@ public class Wordwrap implements Function
 				token = " " + token;
 
 			/*
-			 * Calculate width of next word.  If word is too long to
-			 * add to current line then start a new line, then add word.
+			 * Split word on hyphenation characters too.
 			 */
-			dim = context.getStringDimension(token);
-			wordWidth = dim.getWidth();
-			if (lineWidth > 0 && lineWidth + wordWidth > maxWidth)
+			LinkedList splitList;
+			if (hyphenation != null)
 			{
-				sb.append(Constants.LINE_SEPARATOR);
-				
-				/*
-				 * Trim any leading space we added before starting new line.
-				 */
-				token = token.trim();
-				dim = context.getStringDimension(token);
-				wordWidth = dim.getWidth();
-				lineWidth = 0;
+				splitList = split(token, hyphenation);
+			}
+			else
+			{
+				splitList = new LinkedList();
+				splitList.add(token);
 			}
 
-			/*
-			 * If this word alone is too long for a line, then split it into
-			 * a hyphenated word (like "compli-cations") over two lines.
-			 */
-			while (lineWidth + wordWidth > maxWidth)
+			while (!splitList.isEmpty())
 			{
-				int tokenLength = token.length();
-				int i = 1;
-				String lastPartToken = null;
-				String partToken = "";
-
-				wordWidth = 0;
-
-				while (i < tokenLength && lineWidth + wordWidth <= maxWidth)
+				int nElementsToAdd = splitList.size();
+				while (nElementsToAdd > 0 && !splitList.isEmpty())
 				{
-					lastPartToken = partToken;
-					partToken = token.substring(0, i);
+					/*
+					 * Progressively try adding less and less of word until
+					 * it will fit on line.
+					 */
+					StringBuffer joined = new StringBuffer(token.length());
+					for (int i = 0; i < nElementsToAdd; i++)
+						joined.append(splitList.get(i));
+					if (nElementsToAdd <  splitList.size())
+						joined.append('-');
 
-					dim = context.getStringDimension(partToken + "-");
+					dim = context.getStringDimension(joined.toString());
 					wordWidth = dim.getWidth();
-					i++;
+					if (lineWidth + wordWidth <= maxWidth)
+					{
+						sb.append(joined);
+						lineWidth += wordWidth;
+						for (int i = 0; i < nElementsToAdd; i++)
+							splitList.removeFirst();
+						nElementsToAdd = splitList.size();
+					}
+					else
+					{
+						/*
+						 * Try adding a bit less of word to see if that fits.
+						 */
+						nElementsToAdd--;
+					}
 				}
-				
+
 				/*
-				 * Ensure that there is at least one letter on each line,
-				 * regardless of whether it fits or not.
+				 * If we were not able to add anything then add at least
+				 * a single letter, regardless of whether it fits or not.
 				 */
-				if (lastPartToken.length() == 0)
-					lastPartToken = token.substring(0, 1);
+				if (nElementsToAdd == 0 && lineWidth == 0)
+				{
+					String firstElement = (String)splitList.removeFirst();
+					int nChars = firstElement.length();
+					while (nChars > 0)
+					{
+						String sub = firstElement.substring(0, nChars) + "-";
+						dim = context.getStringDimension(sub);
+						wordWidth = dim.getWidth();
+						if (wordWidth <= maxWidth || nChars == 1)
+						{
+							sb.append(sub);
+							lineWidth += wordWidth;
 
-				sb.append(lastPartToken);
-				sb.append("-");
-				sb.append(Constants.LINE_SEPARATOR);
-				token = token.substring(lastPartToken.length());
-				dim = context.getStringDimension(token);
-				wordWidth = dim.getWidth();
+							/*
+							 * Add remaining letters back to list so as
+							 * they still have to be added.
+							 */
+							splitList.addFirst(firstElement.substring(nChars));
+							break;
+						}
+						nChars--;
+					}
+				}
+
+				/*
+				 * Add a newline, then continue adding rest of word.
+				 */
+				if (!splitList.isEmpty())
+				{
+					sb.append(Constants.LINE_SEPARATOR);
+					lineWidth = 0;
+
+					/*
+					 * Trim any leading space we added before starting new line.
+					 */
+					String firstElement = (String)splitList.removeFirst();
+					splitList.addFirst(firstElement.trim());
+				}
 			}
-
-			sb.append(token);
-			lineWidth += wordWidth;
 		}
 
 		Argument retval = new Argument(Argument.STRING, sb.toString());
+		return(retval);
+	}
+
+	/**
+	 * Split string into list.
+	 * @param s string to split.
+	 * @param sequence sequence to split on.
+	 * @return list of substrings.
+	 */
+	private LinkedList split(String s, String sequence)
+	{
+		LinkedList retval = new LinkedList();
+		int i = 0;
+		int lastI = 0;
+		while ((i = s.indexOf(sequence, lastI)) >= 0)
+		{
+			if (i > lastI)
+				retval.add(s.substring(lastI, i));
+			lastI = i + sequence.length();
+		}
+		if (lastI < s.length())
+			retval.add(s.substring(lastI));
 		return(retval);
 	}
 
@@ -135,7 +194,7 @@ public class Wordwrap implements Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(2);
+		return(3);
 	}
 
 	/**
