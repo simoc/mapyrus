@@ -2389,7 +2389,7 @@ public class Context
 		if (path == null || mOutputFormat == null)
 			return;
 
-		double columnWidths[] = new double[columns.size()];
+		double columnWidths[];
 		double rowHeights[] = null;
 		double minRowHeight = getStringDimension("X", false).getHeight();
 		double yPadding = minRowHeight / 4;
@@ -2398,6 +2398,7 @@ public class Context
 
 		ArrayList bgColors = new ArrayList();
 		boolean drawBorders = true;
+		double []justify = null;
 		int sortColumn = -1;
 		int sortOrder = 1;
 
@@ -2428,6 +2429,24 @@ public class Context
 			{
 				String flag = token.substring(8);
 				drawBorders = flag.equalsIgnoreCase("true");
+			}
+			else if (token.startsWith("justify="))
+			{
+				String justifyValues = token.substring(8);
+				StringTokenizer st2 = new StringTokenizer(justifyValues, ",");
+				justify = new double[columns.size()];
+				int counter = 0;
+				while (st2.hasMoreTokens() && counter < columns.size())
+				{
+					String s = st2.nextToken().toLowerCase();
+					double offset = 0;
+					if (s.equals("right"))
+						offset = 1;
+					else if (s.equals("center") || s.equals("centre"))
+						offset = 0.5;
+					justify[counter] = offset;
+					counter++;
+				}
 			}
 			else if (token.startsWith("sortcolumn="))
 			{
@@ -2479,6 +2498,7 @@ public class Context
 		}
 		rowHeights = new double[primaryKeys.length];
 		Arrays.fill(rowHeights, minRowHeight);
+		columnWidths = new double[columns.size()];
 
 		/*
 		 * Calculate width needed for each column and height needed for each row.
@@ -2524,6 +2544,20 @@ public class Context
 				if (xPadding > 20)
 					xPadding = 20;
 
+				if (justify != null)
+				{
+					/*
+					 * Set justification for labels in this column.
+					 */
+					if (justify[j] == 1)
+						setJustify(OutputFormat.JUSTIFY_RIGHT | OutputFormat.JUSTIFY_TOP);
+					else if (justify[j] == 0)
+						setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_TOP);
+					else
+						setJustify(OutputFormat.JUSTIFY_CENTER | OutputFormat.JUSTIFY_TOP);
+					setGraphicsAttributes(ATTRIBUTE_JUSTIFY);
+				}
+
 				Argument arg = (Argument)columns.get(j);
 				for (int k = 0; k < primaryKeys.length; k++)
 				{
@@ -2560,6 +2594,12 @@ public class Context
 					Point2D.Float labelPt = new Point2D.Float();
 					labelPt.x = (float)(ptCopy.x + xPadding);
 					labelPt.y = (float)(ptCopy.y - yPadding);
+
+					/*
+					 * Justify the label too. 
+					 */
+					if (justify != null)
+						labelPt.x += justify[j] * columnWidths[j];
 
 					ArrayList ptList = new ArrayList();
 					ptList.add(labelPt);
