@@ -536,7 +536,7 @@ Returns \textit{str} converted to upper case. \\
 
 \hline
 
-\texttt{wordwrap(\textit{str}, \textit{width})} &
+\texttt{wordwrap(\textit{str}, \textit{width})}
 \texttt{wordwrap(\textit{str}, \textit{width}, \textit{hyphen-string})} &
 Returns \textit{str} broken into several lines for
 use in a \texttt{label} command.
@@ -2644,6 +2644,12 @@ By default the background is not displayed. \\
 If \textit{flag} is \texttt{true} then a border is drawn around
 each entry in the table using the current linestyle and color.
 By default borders are drawn. \\
+
+\texttt{justify=\textit{justifications}} &
+
+A comma-separated list of horizontal justification values for each column
+in the table.  Each justification is one of
+\texttt{left}, \texttt{right} or \texttt{center}. \\
 
 \texttt{sortcolumn=\textit{index}} &
 
