@@ -22,8 +22,10 @@
  */
 package org.mapyrus;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -69,6 +71,7 @@ import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
+import org.mapyrus.image.BlendComposite;
 import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
@@ -1942,16 +1945,28 @@ public class OutputFormat
 		else if (mOutputType == PDF)
 		{
 			/*
-			 * Now that we have the complete geometry, we can write it to the PDF file.
+			 * Now that we have the complete geometry, we can compress it
+			 * and write it to the PDF file.
 			 */
 			mPDFGeometryWriter.flush();
+			StringBuffer sb2 = mPDFGeometryStringWriter.getBuffer();
+			int stringLength = sb2.length();
+			StringWriter sw = new StringWriter(stringLength);
+			ASCII85Writer ascii85 = new ASCII85Writer(sw, true);
+			for (int i = 0; i < stringLength; i++)
+				ascii85.write(sb2.charAt(i));
+			ascii85.close();
+			sw.write("~>");
+			StringBuffer compressedGeometry = sw.getBuffer();
+			int geometryLength = compressedGeometry.length() + 2;
+
 			int objIndex = mPDFFileOffsets.size();
 			int nChars = writeLine(mWriter, objIndex + " 0 obj % Geometry Object");
 			objIndex++;
-			String geometry = mPDFGeometryStringWriter.toString();
-			nChars += writeLine(mWriter, "<< /Length " + geometry.length() + " >>");
+			nChars += writeLine(mWriter, "<< /Length " + geometryLength);
+			nChars += writeLine(mWriter, "/Filter [/ASCII85Decode /FlateDecode] >>");
 			nChars += writeLine(mWriter, "stream");
-			nChars += writeLine(mWriter, geometry);
+			nChars += writeLine(mWriter, compressedGeometry.toString());
 			nChars += writeLine(mWriter, "endstream");
 			nChars += writeLine(mWriter, "endobj");
 
@@ -2369,12 +2384,12 @@ public class OutputFormat
 	 */
 	public void setBlendAttribute(String blend)
 	{
+		blend = blend.toLowerCase().trim();
 		if (mOutputType == PDF)
 		{
 			/*
 			 * Ensure correct capitalisation of name.
 			 */
-			blend = blend.toLowerCase().trim();
 			if (blend.equals("colordodge"))
 				blend = "ColorDodge";
 			else if (blend.equals("colorburn"))
@@ -2397,6 +2412,13 @@ public class OutputFormat
 			String gsKey = PDF_GSTATE_PREFIX + blend;
 			mPDFObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
 			writeLine(mPDFGeometryWriter, "/" + gsKey + " gs");
+		}
+		else if (mOutputType != POSTSCRIPT_GEOMETRY)
+		{
+			Composite comp = BlendComposite.getBlendComposite(blend);
+			if (comp == null)
+				comp = AlphaComposite.SrcOver;
+			mGraphics2D.setComposite(comp);
 		}
 	}
 
