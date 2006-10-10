@@ -119,6 +119,7 @@ public class Mapyrus
 	{
 		if (extras == null)
 			extras = "";
+		initialise();
 		mContext.setOutputFormat(image, extras);
 	}
 
