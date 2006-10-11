@@ -26,7 +26,6 @@ import java.awt.Composite;
 import java.awt.CompositeContext;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
@@ -163,7 +162,10 @@ public class BlendComposite implements Composite
 					/*
 					 * Same as color burn.
 					 */
-					resultPixel[i] = 255 - (((255 - dstPixel[i]) * 256) / srcPixel[i]);
+					if (srcPixel[i] == 0)
+						resultPixel[i] = 0;
+					else
+						resultPixel[i] = 255 - (((255 - dstPixel[i]) * 256) / srcPixel[i]);
 					if (resultPixel[i] < 0)
 						resultPixel[i] = 0;
 				}
@@ -172,8 +174,13 @@ public class BlendComposite implements Composite
 					/*
 					 * Same as color dodge.
 					 */
-					resultPixel[i] = (dstPixel[i] * 256) / (255 - srcPixel[i]);
+					if (srcPixel[i] == 255)
+						resultPixel[i] = 255;
+					else
+						resultPixel[i] = (dstPixel[i] * 256) / (255 - srcPixel[i]);
 				}
+				if (resultPixel[i] > 255)
+					resultPixel[i] = 255;
 			}
 		}
 	});
