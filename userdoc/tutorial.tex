@@ -1926,7 +1926,7 @@ Pass variables to Mapyrus in the URL to vary the map display,
 as described in section \ref{urlvariables}
 on page \pageref{urlvariables}.
 
-\subsection{Using Mapyrus In A Jython Application}
+\subsection{Using Mapyrus In A Java Or Jython Application}
 
 Jython is a Java implementation of the Python programming language.
 
@@ -1952,6 +1952,17 @@ except MapyrusException, ex:
 except IOException, ex:
         print "Error:", ex
 \end{verbatim}
+
+To make Mapyrus draw into an image created in the application,
+use the following code:
+
+\begin{verbatim}
+        b = BufferedImage(200, 200, BufferedImage.TYPE_4BYTE_ABGR)
+        m.setPage(b, "")
+\end{verbatim}
+
+The same constructors and method calls are used to embed
+Mapyrus in a Java application.
 
 \subsection{Combining Mapyrus With Other Software}
 
