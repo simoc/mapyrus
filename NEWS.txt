@@ -4,7 +4,10 @@ Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 0.611, October 2006
 
 * Compress all data when creating PDF files to reduce file size.
-* Extend BLEND command to set color compositing for output to image files.
+* Extend BLEND command to set color compositing for output to image
+  and SVG files.
+* Change third parameter to WORDWRAP function for new adjustspacing= option
+  that adds extra spaces to align label on both left and right margins.
 
 0.610, September 2006
 
