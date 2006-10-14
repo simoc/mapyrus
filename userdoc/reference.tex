@@ -537,13 +537,17 @@ Returns \textit{str} converted to upper case. \\
 \hline
 
 \texttt{wordwrap(\textit{str}, \textit{width})}
-\texttt{wordwrap(\textit{str}, \textit{width}, \textit{hyphen-string})} &
+\texttt{wordwrap(\textit{str}, \textit{width}, \textit{extras})} &
 Returns \textit{str} broken into several lines for
 use in a \texttt{label} command.
 Each line will not be
 longer than \textit{width} millimeters wide.
-If \textit{hyphen-string} is given then words containing the hyphen
-string may also be split onto two lines at that point using a hyphen. \\
+If \textit{extras} contains \texttt{hyphenation=}\textit{str} then
+words containing the hyphenation
+string may also be split onto two lines at that point using a hyphen.
+If \textit{extras} contains \texttt{adjustspacing=true} then
+additional spaces are added between words so that each line has the
+required width.  \\
 
 \hline
 \end{longtable}
@@ -1029,6 +1033,7 @@ Blend mode is one of \texttt{Normal},
 
 The effect of each blend mode is described in the PDF Reference Manual,
 available from \texttt{http://www.adobe.com}.
+Only the first six blend modes are available for SVG format output.
 
 \subsubsection{box}
 
