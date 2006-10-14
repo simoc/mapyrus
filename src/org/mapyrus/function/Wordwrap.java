@@ -50,8 +50,24 @@ public class Wordwrap implements Function
 		String s = arg1.getStringValue();
 		double maxWidth = arg2.getNumericValue();
 		String hyphenation = null;
+		boolean adjustSpacing = false;
 		if (args.size() == 3)
-			hyphenation = ((Argument)args.get(2)).toString();
+		{
+			StringTokenizer st = new StringTokenizer(((Argument)args.get(2)).toString());
+			while (st.hasMoreTokens())
+			{
+				String token = st.nextToken();
+				if (token.startsWith("hyphenation="))
+				{
+					hyphenation = token.substring(12);
+				}
+				else if (token.startsWith("adjustspacing="))
+				{
+					String flag = token.substring(14);
+					adjustSpacing = flag.equalsIgnoreCase("true");
+				}
+			} 
+		}
 
 		StringTokenizer st = new StringTokenizer(s);
 		String token;
@@ -59,6 +75,8 @@ public class Wordwrap implements Function
 		double lineWidth = 0;
 		double wordWidth;
 		StringBuffer sb = new StringBuffer(s.length() + 5);
+		int lineStartIndex = 0;
+		double spaceWidth = context.getStringDimension(" ").getWidth();
 
 		/*
 		 * Break string into lines, not exceeding maxWidth in length.
@@ -151,7 +169,51 @@ public class Wordwrap implements Function
 				 */
 				if (!splitList.isEmpty())
 				{
+					if (adjustSpacing)
+					{
+						/*
+						 * Add more spaces between words to make each
+						 * line as close as possible to the same length.
+						 */
+						int spaceIndex = lineStartIndex;
+						boolean addedSpace = false;
+						while (lineWidth + spaceWidth <= maxWidth)
+						{
+							spaceIndex = sb.indexOf(" ", spaceIndex);
+							if (spaceIndex >= 0)
+							{
+								/*
+								 * Skip over multiple spaces.
+								 */
+								while (spaceIndex + 1 < sb.length() &&
+									sb.charAt(spaceIndex + 1) == ' ')
+								{
+									spaceIndex++;
+								}
+								sb.insert(spaceIndex, ' ');
+								spaceIndex += 2;
+								lineWidth += spaceWidth;
+								addedSpace = true;
+							}
+							else if (addedSpace)
+							{
+								/*
+								 * Go back to start of line and add
+								 * some more spaces.
+								 */
+								spaceIndex = lineStartIndex;
+							}
+							else
+							{
+								/*
+								 * No spaces in line so nowhere to add any more spaces.
+								 */
+								break;
+							}
+						}
+					}
 					sb.append(Constants.LINE_SEPARATOR);
+					lineStartIndex = sb.length();
 					lineWidth = 0;
 
 					/*
