@@ -823,6 +823,19 @@ public class OutputFormat
 		writeLine(mWriter, "<g transform=\"scale(" + pxPerMM + ")\"");
 		writeLine(mWriter, "  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
 		writeLine(mWriter, "  clip-rule=\"nonzero\">");
+
+		/*
+		 * Define filters for all possible transparent color blending modes.
+		 */
+		writeLine(mWriter, "<defs>");
+		String []blends = {"normal", "multiply", "screen", "darken", "lighten"};
+		for (int i = 0; i < blends.length; i++)
+		{
+			writeLine(mWriter, "<filter id=\"" + blends[i] + "\">");
+			writeLine(mWriter, "<feBlend mode=\"" + blends[i] + "\" in2=\"BackgroundImage\" in=\"SourceGraphic\"/>");
+			writeLine(mWriter, "</filter>");
+		}
+		writeLine(mWriter, "</defs>");
 	}
 
 	/**
@@ -3241,8 +3254,17 @@ public class OutputFormat
 					}
 
 					writeLine(mWriter, ";fill:none\"");
+					Composite comp = mGraphics2D.getComposite();
+					if (comp instanceof BlendComposite)
+					{
+						BlendComposite blendComposite = (BlendComposite)comp;
+						writeLine(mWriter, "filter=\"url(#" +
+							blendComposite.getName() + ")\"");
+					}
+
 					if (xmlAttributes != null)
-						writeLine(mWriter, xmlAttributes);					writeLine(mWriter, "/>");
+						writeLine(mWriter, xmlAttributes);
+					writeLine(mWriter, "/>");
 				}
 				else
 				{
@@ -3296,6 +3318,14 @@ public class OutputFormat
 						sb.append(";fill-opacity:" + (alpha / 255.0f));
 					}
 					sb.append(";stroke:none\" ");
+					Composite comp = mGraphics2D.getComposite();
+					if (comp instanceof BlendComposite)
+					{
+						BlendComposite blendComposite = (BlendComposite)comp;
+						writeLine(mWriter, "filter=\"url(#" +
+							blendComposite.getName() + ")\"");
+					}
+
 					if (xmlAttributes != null)
 						sb.append(xmlAttributes);
 					sb.append("/>");
@@ -3385,6 +3415,14 @@ public class OutputFormat
 				writeLine(mWriter, "<path d=\"");
 				writeShape(shape, mOutputType, mWriter, null);
 				writeLine(mWriter, "\"");
+
+				Composite comp = mGraphics2D.getComposite();
+				if (comp instanceof BlendComposite)
+				{
+					BlendComposite blendComposite = (BlendComposite)comp;
+					writeLine(mWriter, "filter=\"url(#" +
+						blendComposite.getName() + ")\"");
+				}
 
 				if (mIsClipPathActive)
 				{
@@ -3507,7 +3545,7 @@ public class OutputFormat
 
 		st = new StringTokenizer(label, Constants.LINE_SEPARATOR);
 		while (st.hasMoreTokens())
-				lines.add(st.nextToken());
+			lines.add(st.nextToken());
 
 		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF)
 		{
@@ -3741,6 +3779,15 @@ public class OutputFormat
 						fontName.equalsIgnoreCase("dialog"))
 					{
 						fontName = "Courier";
+					}
+
+					Composite comp = mGraphics2D.getComposite();
+					if (comp instanceof BlendComposite)
+					{
+						BlendComposite blendComposite = (BlendComposite)comp;
+						extras.append(" filter=\"url(#");
+						extras.append(blendComposite.getName());
+						extras.append(")\" ");
 					}
 
 					writeLine(mWriter, "  font-family=\"" + fontName + "\" " +
