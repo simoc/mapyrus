@@ -2562,12 +2562,13 @@ public class OutputFormat
 
 		float coords[] = new float[6];
 		float lastX = 0.0f, lastY = 0.0f;
+		float moveX = 0.0f, moveY = 0.0f;
 		float x = 0.0f, y = 0.0f;
 		float distSquared;
 		float resolutionSquared = (float)(mResolution * mResolution);
 		int segmentType = PathIterator.SEG_CLOSE;
 		boolean skippedLastSegment = false;
-		String imageMapString = null;
+		int moveCounter = 0;
 
 		while (!pi.isDone())
 		{
@@ -2575,8 +2576,9 @@ public class OutputFormat
 			switch (segmentType)
 			{
 				case PathIterator.SEG_MOVETO:
-					lastX = coords[0];
-					lastY = coords[1];
+					moveX = lastX = coords[0];
+					moveY = lastY = coords[1];
+					moveCounter++;
 					if (outputType == SVG)
 					{
 						writeLine(pw,
@@ -2585,14 +2587,12 @@ public class OutputFormat
 					}
 					else if (outputType == IMAGEMAP)
 					{
-						if (imageMapString != null)
-							mImageMapWriter.println(imageMapString);
-
-						mImageMapWriter.println("<area shape=\"polygon\" coords=\"" +
-							Math.round(lastX / mResolution) + "," +
+						if (moveCounter == 1)
+							mImageMapWriter.print("<area shape=\"polygon\" coords=\"");
+						else
+							mImageMapWriter.print(",");
+						mImageMapWriter.println(Math.round(lastX / mResolution) + "," +
 							Math.round((mPageHeight - lastY) / mResolution));
-
-						imageMapString = "\" " + scriptCommands + " >";
 					}
 					else
 					{
@@ -2658,7 +2658,7 @@ public class OutputFormat
 						}
 						else if (outputType == IMAGEMAP)
 						{
-							if (imageMapString != null)
+							if (moveCounter > 0)
 							{
 								mImageMapWriter.println("," + Math.round(x / mResolution) +
 									"," + Math.round((mPageHeight - y) / mResolution));
@@ -2677,10 +2677,13 @@ public class OutputFormat
 					}
 					else if (outputType == IMAGEMAP)
 					{
-						if (imageMapString != null)
+						if (moveCounter > 0)
 						{
-							mImageMapWriter.println(imageMapString);
-							imageMapString = null;
+							/*
+							 * Add first point of polygon again.
+							 */
+							mImageMapWriter.println("," + Math.round(moveX / mResolution) +
+								"," + Math.round((mPageHeight - moveY) / mResolution));
 						}
 					}
 					else
@@ -2731,7 +2734,7 @@ public class OutputFormat
 			}
 			else if (outputType == IMAGEMAP)
 			{
-				if (imageMapString != null)
+				if (moveCounter > 0)
 				{
 					mImageMapWriter.println("," + Math.round(x / mResolution) +
 						"," + Math.round((mPageHeight - y) / mResolution));
@@ -2747,8 +2750,9 @@ public class OutputFormat
 		/*
 		 * Complete any imagemap being created.
 		 */
-		if (outputType == IMAGEMAP && imageMapString != null)
+		if (outputType == IMAGEMAP && moveCounter > 0)
 		{
+			String imageMapString = "\" " + scriptCommands + " >";
 			mImageMapWriter.println(imageMapString);
 		}
 	}
