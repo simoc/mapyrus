@@ -1365,6 +1365,15 @@ public class OutputFormat
 		mPageMask = null;
 	}
 
+	/*
+	 * Set writer for HTML image map.
+     	 * @param imageMapWriter is HTML image map to write to.
+	 */
+	public void setImageMapWriter(PrintWriter imageMapWriter)
+	{
+		mImageMapWriter = imageMapWriter;
+	}
+
 	/**
 	 * Creates new graphics file, ready for drawing to.
 	 * @param filename name of image file output will be saved to.

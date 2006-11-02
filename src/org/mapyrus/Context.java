@@ -41,6 +41,7 @@ import java.util.StringTokenizer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -485,6 +486,21 @@ public class Context
 			width, height, extras, stdoutStream);
 		mOutputDefined = true;
 	}
+
+    /**
+     * Sets image for drawing to.
+     * @param image is buffered image to draw into.
+     * @param imageMapWriter is HTML image map to write to.
+     * @param extras contains extra settings for this output.
+     */
+    public void setOutputFormat(BufferedImage image,
+		PrintWriter imageMapWriter, String extras)
+		throws IOException, MapyrusException
+    {
+		setOutputFormat(image, extras);
+		if (imageMapWriter != null)
+			mOutputFormat.setImageMapWriter(imageMapWriter);
+    }
 
 	/**
 	 * Sets image for drawing to.

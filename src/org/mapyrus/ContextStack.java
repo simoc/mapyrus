@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -196,6 +197,19 @@ public class ContextStack
 	{
 		getCurrentContext().setOutputFormat(format, filename,
 			width, height, extras, stdoutStream);
+	}
+
+	/**
+	 * Sets image for drawing to.
+	 * @param image is buffered image to draw into.
+	 * @param imageMapWriter is HTML image map to write to.
+	 * @param extras contains extra settings for this output.
+	 */
+	public void setOutputFormat(BufferedImage image,
+		PrintWriter imageMapWriter, String extras)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().setOutputFormat(image, imageMapWriter, extras);
 	}
 
 	/**
