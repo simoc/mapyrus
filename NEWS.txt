@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.612, November 2006
+
+* Fix creation of HTML imagemaps to add polygons with holes correctly.
+
 0.611, October 2006
 
 * Compress all data when creating PDF files to reduce file size.
