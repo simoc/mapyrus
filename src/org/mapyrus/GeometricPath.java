@@ -595,6 +595,198 @@ public class GeometricPath
 	}
 
 	/**
+	 * Return current path as a geometry argument.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
+	 * @return current path.
+	 */
+	public Argument toArgument(double resolution)
+	{
+		Argument retval;
+		int moveCount = mMoveTos.size();
+		double []coords;
+
+		if (moveCount == 0)
+		{
+			/*
+			 * Empty path.
+			 */
+			retval = Argument.emptyGeometry;
+		}
+		else if (mNLineTos == 0)
+		{
+			/*
+			 * Path with only move points.
+			 */
+			Point2D.Float pt;
+			if (moveCount == 1)
+			{
+				pt = (Point2D.Float)mMoveTos.get(0);
+				coords = new double[]{Argument.GEOMETRY_POINT, 1,
+					Argument.MOVETO, pt.x, pt.y};
+			}
+			else
+			{
+				/*
+				 * Multiple move points so make a MULTIPOINT geometry.
+				 */
+				coords = new double[2 + moveCount * 5];
+				coords[0] = Argument.GEOMETRY_MULTIPOINT;
+				coords[1] = moveCount;
+				int index = 2;
+				for (int i = 0; i < moveCount; i++)
+				{
+					pt = (Point2D.Float)mMoveTos.get(i);
+					coords[index++] = Argument.GEOMETRY_POINT;
+					coords[index++] = 1;
+					coords[index++] = Argument.MOVETO;
+					coords[index++] = pt.x;
+					coords[index++] = pt.y;
+				}
+			}
+			retval = new Argument((int)coords[0], coords);
+		}
+		else
+		{
+			/*
+			 * Path contains move and draw points.
+			 */
+			int segmentType;
+			float pathCoords[] = new float[6];
+			PathIterator pi = mPath.getPathIterator(mIdentityMatrix, resolution);
+
+			/*
+			 * Walk through path and find number of slots needed
+			 * for complete geometry.
+			 */
+			int coordCounter = 2;
+			while (!pi.isDone())
+			{
+				segmentType = pi.currentSegment(pathCoords);
+				if (segmentType == PathIterator.SEG_MOVETO)
+					coordCounter += 5;
+				else
+					coordCounter += 3;
+				pi.next();
+			}
+			coords = new double[coordCounter];
+
+			/*
+			 * Walk through path again, building geometry.
+			 */
+			boolean isClosed = false;
+			double xMove = Double.MAX_VALUE;
+			double yMove = Double.MAX_VALUE;
+			double x = xMove;
+			double y = yMove;
+			int nPolygons = 0;
+			int nLinestrings = 0;
+			coordCounter = 0;
+			int index = 0, startIndex = 0;
+			pi = mPath.getPathIterator(mIdentityMatrix, resolution);
+			while (!pi.isDone())
+			{
+				segmentType = pi.currentSegment(pathCoords);
+				if (segmentType == PathIterator.SEG_MOVETO)
+				{
+					/*
+					 * Starting new line or polygon, add any previous
+					 * line or polygon to path.
+					 */
+					if (coordCounter > 0)
+					{
+						if (x == xMove && y == yMove)
+							isClosed = true;
+
+						if (isClosed)
+						{
+							coords[startIndex] = Argument.GEOMETRY_POLYGON;
+							nPolygons++;
+						}
+						else
+						{
+							coords[startIndex] = Argument.GEOMETRY_LINESTRING;
+							nLinestrings++;
+						}
+						coords[startIndex + 1] = coordCounter;
+						startIndex = index;
+					}
+					coordCounter = 1;
+					isClosed = false;
+
+					/*
+					 * Skip two slots with geometry type and geometry count --
+					 * we will fill them in later when we know their values.
+					 */
+					index += 2;
+
+					coords[index] = Argument.MOVETO;
+					coords[index + 1] = xMove = pathCoords[0];
+					coords[index + 2] = yMove = pathCoords[1];
+					index += 3;
+				}
+				else if (segmentType == PathIterator.SEG_CLOSE)
+				{
+					isClosed = true;
+					coords[index] = Argument.LINETO;
+					coords[index + 1] = xMove;
+					coords[index + 2] = yMove;
+					index += 3;
+					coordCounter++;
+				}
+				else
+				{
+					coords[index] = Argument.LINETO;
+					coords[index + 1] = pathCoords[0];
+					coords[index + 2] = pathCoords[1];
+					index += 3;
+					coordCounter++;
+				}
+				x = pathCoords[0];
+				y = pathCoords[1];
+				pi.next();
+			}
+
+			if (coordCounter > 1)
+			{
+				/*
+				 * Finish off last geometry we were adding.
+				 */
+				if (x == xMove && y == yMove)
+					isClosed = true;
+
+				if (isClosed)
+				{
+					coords[startIndex] = Argument.GEOMETRY_POLYGON;
+					nPolygons++;
+				}
+				else
+				{
+					coords[startIndex] = Argument.GEOMETRY_LINESTRING;
+					nLinestrings++;
+				}
+				coords[startIndex + 1] = coordCounter;
+			}
+			if (nPolygons + nLinestrings > 1)
+			{
+				/*
+				 * Shift array along and make it into a multiple geometry.
+				 */
+				System.arraycopy(coords, 0, coords, 2, coords.length - 2);
+				if (nLinestrings == 0)
+					coords[0] = Argument.GEOMETRY_MULTIPOLYGON;
+				else if (nPolygons == 0)
+					coords[0] = Argument.GEOMETRY_MULTILINESTRING;
+				else
+					coords[0] = Argument.GEOMETRY_COLLECTION;
+				coords[1] = nPolygons + nLinestrings;
+			}
+			retval = new Argument((int)coords[0], coords);
+		}
+		return(retval);
+	}
+
+	/**
 	 * Return new path, with all coordinates in path shifted by a fixed amount.
 	 * @param xShift distance in millimetres to shift X coordinate values.
 	 * @param yShift distance in millimetres to shift Y coordinate values.
