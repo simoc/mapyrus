@@ -2923,6 +2923,19 @@ public class Context
 	}
 
 	/**
+	 * Get current path as a geometry argument.
+	 * @return current path.
+	 */
+	public Argument getPathArgument() throws MapyrusException
+	{
+		Argument retval = Argument.emptyGeometry;
+		GeometricPath path = getDefinedPath();
+		if (path != null)
+			retval = path.toArgument(getResolution());
+		return(retval);
+	}
+
+	/**
 	 * Returns value of a variable.
 	 * @param variable name to lookup.
 	 * @return value of variable, or null if it is not defined.

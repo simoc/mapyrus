@@ -1221,6 +1221,10 @@ public class ContextStack
 					retval = getBoundingBoxVariable(sub, bounds);
 				}
 			}
+			else if (varName.equals(INTERNAL_VARIABLE_PREFIX + PATH_VARIABLE))
+			{
+				retval = getCurrentContext().getPathArgument();
+			}
 			else if (varName.startsWith(INTERNAL_VARIABLE_PREFIX + WORLDS_VARIABLE + "."))
 			{
 				bounds = getCurrentContext().getWorldExtents();
