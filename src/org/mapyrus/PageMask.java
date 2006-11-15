@@ -22,7 +22,11 @@
  */
 package org.mapyrus;
 
-import java.util.Arrays;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 /**
  * Manages a bitmap mask for a page.  Rectangular regions of the page can
@@ -35,7 +39,8 @@ public class PageMask
 	 * The mask as a 0/1 array (corresponding to values false/true)
 	 * and its width and height.
 	 */
-	private boolean []mMask;
+	BufferedImage mMask;
+	private Graphics2D mMaskGraphics;
 	private int mMaskWidth;
 	private int mMaskHeight;
 
@@ -46,8 +51,11 @@ public class PageMask
 	 */
 	public PageMask(int maskWidth, int maskHeight)
 	{
-		mMask = new boolean[maskWidth * maskHeight];
-		Arrays.fill(mMask, false);
+		mMask = new BufferedImage(maskWidth, maskHeight,
+			BufferedImage.TYPE_BYTE_BINARY);
+		mMaskGraphics = (Graphics2D)mMask.getGraphics();
+		mMaskGraphics.setColor(Color.BLACK);
+		mMaskGraphics.fillRect(0, 0, maskWidth, maskHeight);
 
 		mMaskWidth = maskWidth;
 		mMaskHeight = maskHeight;
@@ -67,29 +75,23 @@ public class PageMask
 		int xMax = Math.max(x1, x2);
 		int yMin = Math.min(y1, y2);
 		int yMax = Math.max(y1, y2);
-		
-		/*
-		 * Avoid running off edge of mask array.
-		 */
-		if (xMin < 0)
-			xMin = 0;
-		if (yMin < 0)
-			xMax = 0;
-		if (xMax >= mMaskWidth)
-			xMax = mMaskWidth - 1;
-		if (yMax >= mMaskHeight)
-			yMax = mMaskHeight - 1;
-
-		boolean booleanValue = (value != 0);
-		for (int y = yMin; y <= yMax; y++)
-		{
-			for (int x = xMin; x <= xMax; x++)
-				mMask[y * mMaskWidth + x] = booleanValue;
-		}
+		mMaskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
+		mMaskGraphics.fillRect(xMin, yMin, xMax - xMin, yMax - yMin);
 	}
 
 	/**
-	 * Find whether all values inside rectangulare area are zero.
+	 * Set all values inside shape in mask to 0 or to 1. 
+	 * @param shape area to set in mask.
+	 * @param value 0 or 1 value to set.
+	 */
+	public void setValue(Shape s, int value)
+	{
+		mMaskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
+		mMaskGraphics.fill(s);
+	}
+
+	/**
+	 * Find whether all values inside rectangular area are zero.
 	 * @param x1 X coordinate of one corner of area.
 	 * @param y1 Y coordinate of one corner of area.
 	 * @param x2 X coordinate of opposite corner of area.
@@ -114,14 +116,62 @@ public class PageMask
 		while ((!foundNonZero) && y <= yMax)
 		{
 			int x = xMin;
-			int index = y * mMaskWidth + x;
 			while ((!foundNonZero) && x <= xMax)
 			{
-				foundNonZero = mMask[index];
-				index++;
+				int pixel = (mMask.getRGB(x, y) & 0xffffff);
+				foundNonZero = (pixel != 0); 
 				x++;
 			}
 			y++;
+		}
+		return(!foundNonZero);
+	}
+
+	/**
+	 * Find whether all values inside area of mask are zero.
+	 * @param s shape in mask.
+	 * @return true if all values are zero.
+	 */
+	public boolean isAllZero(Shape s)
+	{
+		Rectangle2D bounds = s.getBounds2D();
+		boolean foundNonZero = (bounds.getMinX() < 0 || bounds.getMinY() < 0 ||
+			bounds.getMaxX() >= mMaskWidth || bounds.getMaxY() >= mMaskHeight);
+		if (!foundNonZero)
+		{
+			/*
+			 * Make another buffer covering the same area as the mask.
+			 * Draw the shape into this buffer.
+			 * If any pixels are set in this buffer and in the mask then
+			 * there is an overlap.
+			 */
+			BufferedImage shapeBuffer = new BufferedImage(mMaskWidth, mMaskHeight,
+				BufferedImage.TYPE_BYTE_BINARY);
+			Graphics2D shapeGraphics = (Graphics2D)shapeBuffer.getGraphics();
+			shapeGraphics.setColor(Color.BLACK);
+			shapeGraphics.fillRect(0, 0, mMaskWidth, mMaskHeight);
+			shapeGraphics.setColor(Color.WHITE);
+			shapeGraphics.fill(s);
+
+			int y = 0;
+			while (y < mMaskHeight && (!foundNonZero))
+			{
+				int x = 0;
+				while (x < mMaskWidth && (!foundNonZero))
+				{
+					int shapePixel = (shapeBuffer.getRGB(x, y) & 0xffffff);
+					if (shapePixel != 0)
+					{
+						/*
+						 * Is shape overlapping part of the mask that is set to 1?
+						 */
+						int maskPixel = (mMask.getRGB(x, y) & 0xffffff);
+						foundNonZero = (maskPixel != 0);
+					}
+					x++;
+				}
+				y++;
+			}
 		}
 		return(!foundNonZero);
 	}
