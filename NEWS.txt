@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.613, November 2006
+
+* Add Mapyrus.path variable to return current path as OGC WKT string.
+* For PROTECT command, allow any shape to be protected not just rectangles.
+
 0.612, November 2006
 
 * Fix creation of HTML imagemaps to add polygons with holes correctly.
