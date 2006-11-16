@@ -376,15 +376,16 @@ Returns \textit{a} to the power \textit{b}. \\
 \hline
 
 \texttt{protected(\textit{x1}, \textit{y1}, \textit{x2}, \textit{y2})}
-\texttt{protected(\textit{g})} &
-Returns 1 if any part of the given rectangle or
-the bounding box of the geometry
-has been protected using the \texttt{protect}
-command.
-The points
-(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
-any two opposite corners of the rectangle, in current world coordinate
-units.
+\texttt{protected(\textit{g})}
+\texttt{protected()} &
+For points
+(\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) defining
+any two opposite corners of a rectangle, returns 1 if any part of
+this rectangle has been protected using the \texttt{protect} command.
+For polygon geometry \textit{g}, returns 1 if any part of the polygon
+has been protected.
+When no rectangle or geometry is given then 1 is returned if any
+part of the current path has been protected.
 Otherwise 0 is returned. \\
 
 \hline
@@ -2323,26 +2324,28 @@ or destination using the \texttt{setoutput} command.
 \begin{alltt}
 protect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
 protect \textit{geometry}
+protect
 \end{alltt}
 
-Marks a rectangular region of the page as protected.
-The function \texttt{protected} will return 1 for any
-point in this rectangular region.
+Marks a region of the page as protected.
+The function \texttt{protected} will then return 1 for any
+point in this region.
 
 The points
 (\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
 any two opposite corners of the rectangle to mark as protected.
-For a \textit{geometry}, the bounding rectangle of the geometry
-is protected.
+
+If \textit{geometry} containing a polygon is given, then the region
+covered by that polygon is protected.
+
+If no arguments are given then the region inside the current path is
+protected.
 
 The rectangle or geometry
 is first transformed through any world coordinate
 transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
-
-The rectangular region protected is always aligned with the X
-and Y axes of the page, regardless of any rotation angle.
 
 \subsubsection{raindrop}
 
@@ -2746,25 +2749,25 @@ and \textit{rotate} values.
 \begin{alltt}
 unprotect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
 unprotect \textit{geometry}
+unprotect
 \end{alltt}
 
-Clears all protected regions from the page in a rectangular
-area.
+Clears all protected regions from an area on the page.
 
 The points
 (\textit{x1}, \textit{y1}) and (\textit{x2}, \textit{y2}) define
 any two opposite corners of the rectangle to clear.
-For a \textit{geometry}, the bounding rectangle of the geometry
-is cleared.
+
+If \textit{geometry} containing a polygon is given then the region
+inside that polygon is cleared.
+
+If no arguments are given then the region inside the current path is cleared.
 
 The rectangle or geometry
 is first transformed through any world coordinate
 transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
-
-The rectangular region cleared is always aligned with the X
-and Y axes of the page, regardless of any rotation angle.
 
 \subsubsection{wedge}
 
