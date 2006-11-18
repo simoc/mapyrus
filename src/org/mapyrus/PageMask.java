@@ -44,6 +44,12 @@ public class PageMask
 	private int mMaskWidth;
 	private int mMaskHeight;
 
+	/*
+	 * Number of pixels in mask for each millimetre on page.
+	 * A higher value results in a more accurate mask but needs more memory.
+	 */
+	private static final int PIXELS_PER_MM = 3;
+
 	/**
 	 * Create new mask, with all values initially zero.
 	 * @param maskWidth width of mask in pixels.
@@ -51,9 +57,11 @@ public class PageMask
 	 */
 	public PageMask(int maskWidth, int maskHeight)
 	{
-		mMask = new BufferedImage(maskWidth, maskHeight,
+		mMask = new BufferedImage(maskWidth * PIXELS_PER_MM,
+			maskHeight * PIXELS_PER_MM,
 			BufferedImage.TYPE_BYTE_BINARY);
 		mMaskGraphics = (Graphics2D)mMask.getGraphics();
+		mMaskGraphics.scale(PIXELS_PER_MM, PIXELS_PER_MM);
 		mMaskGraphics.setColor(Color.BLACK);
 		mMaskGraphics.fillRect(0, 0, maskWidth, maskHeight);
 
@@ -75,8 +83,10 @@ public class PageMask
 		int xMax = Math.max(x1, x2);
 		int yMin = Math.min(y1, y2);
 		int yMax = Math.max(y1, y2);
+		int width = Math.max(xMax - xMin, 1);
+		int height = Math.max(yMax - yMin, 1);
 		mMaskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
-		mMaskGraphics.fillRect(xMin, yMin, xMax - xMin, yMax - yMin);
+		mMaskGraphics.fillRect(xMin, yMin, width, height);
 	}
 
 	/**
@@ -87,7 +97,11 @@ public class PageMask
 	public void setValue(Shape s, int value)
 	{
 		mMaskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
-		mMaskGraphics.fill(s);
+		Rectangle2D bounds = s.getBounds2D();
+		if (bounds.getWidth() == 0 && bounds.getHeight() == 0)
+			mMaskGraphics.fillRect((int)bounds.getMinX(), (int)bounds.getMinY(), 1, 1);
+		else
+			mMaskGraphics.fill(s);
 	}
 
 	/**
@@ -112,11 +126,11 @@ public class PageMask
 		 */
 		boolean foundNonZero = (xMin < 0 || yMin < 0 || xMax >= mMaskWidth || yMax >= mMaskHeight);
 
-		int y = yMin;
-		while ((!foundNonZero) && y <= yMax)
+		int y = yMin * PIXELS_PER_MM;
+		while ((!foundNonZero) && y <= yMax * PIXELS_PER_MM)
 		{
-			int x = xMin;
-			while ((!foundNonZero) && x <= xMax)
+			int x = xMin * PIXELS_PER_MM;
+			while ((!foundNonZero) && x <= xMax * PIXELS_PER_MM)
 			{
 				int pixel = (mMask.getRGB(x, y) & 0xffffff);
 				foundNonZero = (pixel != 0); 
@@ -145,19 +159,27 @@ public class PageMask
 			 * If any pixels are set in this buffer and in the mask then
 			 * there is an overlap.
 			 */
-			BufferedImage shapeBuffer = new BufferedImage(mMaskWidth, mMaskHeight,
+			BufferedImage shapeBuffer = new BufferedImage(mMaskWidth * PIXELS_PER_MM,
+				mMaskHeight * PIXELS_PER_MM,
 				BufferedImage.TYPE_BYTE_BINARY);
 			Graphics2D shapeGraphics = (Graphics2D)shapeBuffer.getGraphics();
+			shapeGraphics.scale(PIXELS_PER_MM, PIXELS_PER_MM);
 			shapeGraphics.setColor(Color.BLACK);
 			shapeGraphics.fillRect(0, 0, mMaskWidth, mMaskHeight);
 			shapeGraphics.setColor(Color.WHITE);
-			shapeGraphics.fill(s);
 
-			int y = 0;
-			while (y < mMaskHeight && (!foundNonZero))
+			if (bounds.getWidth() == 0 && bounds.getHeight() == 0)
+				shapeGraphics.fillRect((int)bounds.getMinX(), (int)bounds.getMinY(), 1, 1);
+			else
+				shapeGraphics.fill(s);
+
+			int y = (int)(bounds.getMinY() * PIXELS_PER_MM);
+			int xMax = (int)(bounds.getMaxX() * PIXELS_PER_MM);
+			int yMax = (int)(bounds.getMaxY() * PIXELS_PER_MM);
+			while (y <= yMax && (!foundNonZero))
 			{
-				int x = 0;
-				while (x < mMaskWidth && (!foundNonZero))
+				int x = (int)(bounds.getMinX() * PIXELS_PER_MM);
+				while (x <= xMax && (!foundNonZero))
 				{
 					int shapePixel = (shapeBuffer.getRGB(x, y) & 0xffffff);
 					if (shapePixel != 0)
