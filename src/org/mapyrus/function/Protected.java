@@ -22,7 +22,6 @@
  */
 package org.mapyrus.function;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.mapyrus.Argument;
@@ -31,7 +30,7 @@ import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 
 /**
- * Function returning 1 if a rectangular area on page is protected.
+ * Function returning 1 if an area of page is protected.
  * This is most useful for determining if displaying a label or symbol
  * will overwrite an existing label or symbol.
  * For example, protected(12.1, 13.7, 13.33, 14.1) = 1.
@@ -44,43 +43,40 @@ public class Protected implements Function
 	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException
 	{
-		Argument arg1 = (Argument)args.get(0);
-		if (args.size() == 1)
-			return(evaluate(context, arg1));
-		if (args.size() != 4)
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
-
-		Argument arg2 = (Argument)args.get(1);
-		Argument arg3 = (Argument)args.get(2);
-		Argument arg4 = (Argument)args.get(3);
-
 		Argument retval;
-		double x1 = arg1.getNumericValue();
-		double y1 = arg2.getNumericValue();
-		double x2 = arg3.getNumericValue();
-		double y2 = arg4.getNumericValue();
-
-		double xMin = Math.min(x1, x2);
-		double yMin = Math.min(y1, y2);
-		double xMax = Math.max(x1, x2);
-		double yMax = Math.max(y1, y2);
-
-		if (context.isProtected(xMin, yMin, xMax, yMax))
-			retval = Argument.numericOne;
-		else
-			retval = Argument.numericZero; 
-		return(retval);
-	}
-
-	private Argument evaluate(ContextStack context, Argument arg1)
-		throws MapyrusException
-	{
-		Argument retval = Argument.numericZero;
-		Rectangle2D.Double rect = arg1.getGeometryBoundingBox();
-		if (rect != null && context.isProtected(rect.getMinX(), rect.getMinY(),
-			rect.getMaxX(), rect.getMaxY()))
+		if (args.isEmpty())
 		{
-			retval = Argument.numericOne;
+			retval = context.isProtected() ? Argument.numericOne : Argument.numericZero;
+		}
+		else if (args.size() == 1)
+		{
+			Argument arg1 = (Argument)args.get(0);
+			retval = context.isProtected(arg1) ? Argument.numericOne : Argument.numericZero;
+		}
+		else
+		{			
+			if (args.size() != 4)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
+
+			Argument arg1 = (Argument)args.get(0);
+			Argument arg2 = (Argument)args.get(1);
+			Argument arg3 = (Argument)args.get(2);
+			Argument arg4 = (Argument)args.get(3);
+
+			double x1 = arg1.getNumericValue();
+			double y1 = arg2.getNumericValue();
+			double x2 = arg3.getNumericValue();
+			double y2 = arg4.getNumericValue();
+
+			double xMin = Math.min(x1, x2);
+			double yMin = Math.min(y1, y2);
+			double xMax = Math.max(x1, x2);
+			double yMax = Math.max(y1, y2);
+
+			if (context.isProtected(xMin, yMin, xMax, yMax))
+				retval = Argument.numericOne;
+			else
+				retval = Argument.numericZero;
 		}
 		return(retval);
 	}
@@ -98,7 +94,7 @@ public class Protected implements Function
 	 */
 	public int getMinArgumentCount()
 	{
-		return(1);
+		return(0);
 	}
 
 	/**
