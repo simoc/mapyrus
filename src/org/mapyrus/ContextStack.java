@@ -742,6 +742,25 @@ public class ContextStack
 	}
 
 	/**
+	 * Mark area on page as protected.
+	 * @param geometry area on page to protect.
+	 */
+	public void protect(Argument geometry)
+		throws MapyrusException
+	{
+		getCurrentContext().setPageMask(geometry, 1);
+	}
+
+	/**
+	 * Mark area on page covered by current path as protected.
+	 */
+	public void protect()
+		throws MapyrusException
+	{
+		getCurrentContext().setPageMask(1);
+	}
+
+	/**
 	 * Mark rectangular area on page (x1, y1) and (x2, y2) as unprotected.
 	 * @param x1 lower-left corner of rectangle.
 	 * @param y1 lower-left corner of rectangle.
@@ -755,6 +774,25 @@ public class ContextStack
 	}
 
 	/**
+	 * Mark area on page as unprotected.
+	 * @param geometry area on page to unprotect.
+	 */
+	public void unprotect(Argument geometry)
+		throws MapyrusException
+	{
+		getCurrentContext().setPageMask(geometry, 0);
+	}
+
+	/**
+	 * Mark area on page covered by current path as unprotected.
+	 */
+	public void unprotect()
+		throws MapyrusException
+	{
+		getCurrentContext().setPageMask(0);
+	}
+	
+	/**
 	 * Determine whether part of a rectangular area of page is protected.
 	 * @param x1 lower-left corner of rectangle.
 	 * @param y1 lower-left corner of rectangle.
@@ -766,6 +804,29 @@ public class ContextStack
 		throws MapyrusException
 	{
 		boolean isZero = getCurrentContext().isPageMaskAllZero(x1, y1, x2, y2);
+		return(!isZero);
+	}
+
+	/**
+	 * Determine whether a part of the page is protected.
+	 * @param geometry area to check.
+	 * @return true if any part of this region is protected.
+	 */
+	public boolean isProtected(Argument geometry)
+		throws MapyrusException
+	{
+		boolean isZero = getCurrentContext().isPageMaskAllZero(geometry);
+		return(!isZero);
+	}
+
+	/**
+	 * Determine whether a part of the page covered by current path is protected.
+	 * @return true if any part of path is protected.
+	 */
+	public boolean isProtected()
+		throws MapyrusException
+	{
+		boolean isZero = getCurrentContext().isPageMaskAllZero();
 		return(!isZero);
 	}
 
