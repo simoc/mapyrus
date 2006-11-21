@@ -1546,7 +1546,7 @@ public class Context
 	}
 
 	/**
-	 * Set rectangular area in page mask toa value.
+	 * Set rectangular area in page mask to a value.
 	 * @param x1 lower-left corner of rectangle.
 	 * @param y1 lower-left corner of rectangle.
 	 * @param x2 upper-right corner of rectangle.
@@ -1593,6 +1593,45 @@ public class Context
 		}
 	}
 
+	/**
+	 * Set page mask for region of page.
+	 * @param geometry area of page to set mask for.
+	 * @param maskValue value to set in mask.
+	 * @throws MapyrusException
+	 */
+	public void setPageMask(Argument geometry, int maskValue)
+		throws MapyrusException
+	{
+		if (mOutputFormat != null)
+		{
+			/*
+			 * Get mask for this page and mark area as protected/unprotected.
+			 */
+			PageMask pageMask = mOutputFormat.getPageMask();
+			GeometricPath path = new GeometricPath();
+			double []coords = geometry.getGeometryValue();
+			addGeometryToPath(coords, 0, path);
+			pageMask.setValue(path.getShape(), maskValue);
+		}
+	}
+
+	/**
+	 * Set page mask for region of page covered by current path.
+	 * @param maskValue value to set in mask.
+	 */
+	public void setPageMask(int maskValue) throws MapyrusException
+	{
+		if (mOutputFormat != null)
+		{
+			GeometricPath path = getDefinedPath();
+			if (path != null)
+			{
+				PageMask pageMask = mOutputFormat.getPageMask();
+				pageMask.setValue(path.getShape(), maskValue);
+			}
+		}
+	}
+
 	public boolean isPageMaskAllZero(double x1, double y1, double x2, double y2)
 		throws MapyrusException
 	{
@@ -1632,6 +1671,106 @@ public class Context
 
 			retval = pageMask.isAllZero(Math.round(dstPts[0]), Math.round(dstPts[1]),
 				Math.round(dstPts[2]), Math.round(dstPts[3]));
+		}
+		return(retval);
+	}
+
+	private int addGeometryToPath(double []coords, int index, GeometricPath path)
+		throws MapyrusException
+	{
+		double srcPts[] = new double[2];
+		float dstPts[] = new float[2];
+		int i;
+		int geometryType = (int)(coords[index]);
+		int nCoords = (int)(coords[index + 1]);
+		index += 2;
+
+		/*
+		 * Add geometry to path.  Complex, nested geometries must be
+		 * added recursively.
+		 */
+		switch (geometryType)
+		{
+			case Argument.GEOMETRY_POINT:
+			case Argument.GEOMETRY_LINESTRING:
+			case Argument.GEOMETRY_POLYGON:
+				for (i = 0; i < nCoords; i++)
+				{
+					srcPts[0] = coords[index + 1];
+					srcPts[1] = coords[index + 2];
+
+					/*
+					 * Transform rectangle to correct world coordinate system.
+					 */
+					if (mProjectionTransform != null)
+					{
+						mProjectionTransform.forwardTransform(srcPts);
+					}
+			
+					/*
+					 * Transform rectangle from world coordinates
+					 * to millimetre position on page.
+					 */
+					if (mWorldCtm != null)
+						mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
+					mCtm.transform(srcPts, 0, dstPts, 0, 1);
+
+					if (coords[index] == Argument.MOVETO)
+						path.moveTo(dstPts[0], dstPts[1], 0);
+					else
+						path.lineTo(dstPts[0], dstPts[1]);
+					index += 3;
+				}
+				break;
+			case Argument.GEOMETRY_MULTIPOINT:
+			case Argument.GEOMETRY_MULTILINESTRING:
+			case Argument.GEOMETRY_MULTIPOLYGON:
+			case Argument.GEOMETRY_COLLECTION:
+				for (i = 0; i < nCoords; i++)
+				{
+					index = addGeometryToPath(coords, index, path);
+				}
+				break;
+		}
+		return(index);
+	}
+
+	/**
+	 * Determine whether a part of the page is protected.
+	 * @param geometry area to check.
+	 * @return true if any part of this region is protected.
+	 */
+	public boolean isPageMaskAllZero(Argument geometry) throws MapyrusException
+	{
+		boolean retval = true;
+
+		if (mOutputFormat != null)
+		{
+			double coords[] = geometry.getGeometryValue();
+			GeometricPath path = new GeometricPath();
+			addGeometryToPath(coords, 0, path);
+
+			/*
+			 * Get mask for this page and check whether area is protected.
+			 */
+			PageMask pageMask = mOutputFormat.getPageMask();
+			retval = pageMask.isAllZero(path.getShape());
+		}
+		return(retval);
+	}
+
+	/**
+	 * Determine whether a part of the page covered by current path is protected.
+	 * @return true if any part of path is protected.
+	 */
+	public boolean isPageMaskAllZero() throws MapyrusException
+	{
+		boolean retval = true;
+		GeometricPath path = getDefinedPath();
+		if (path != null)
+		{
+			PageMask pageMask = mOutputFormat.getPageMask();
+			retval = pageMask.isAllZero(path.getShape());
 		}
 		return(retval);
 	}
