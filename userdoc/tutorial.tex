@@ -1330,7 +1330,7 @@ is shown in Figure \ref{tutorialwordwrap1}.
 
 \subsection{Avoiding Overlapping Labels}
 
-Mapyrus maintains a list of rectangular
+Mapyrus stores a list of
 areas on the page that have been marked as protected by the
 \texttt{protect} command.
 To avoid overlapping labels, check that the area that will be
@@ -1364,6 +1364,23 @@ protected too.  However, in many cases it is simpler to
 display most important data last to ensure it is not overwritten.
 
 Use the \texttt{unprotect} command to clear protected areas.
+
+To avoid labels overlapping other important data on the page, set the
+area to be protected in the path and use
+the \texttt{protect} command with no arguments to protect that area.
+
+This is demonstrated in the following example, with labels
+drawn in random positions but avoiding overlaps with other data
+already displayed on the page.
+Output is shown in Figure \ref{tutorialprotect2}.
+
+\verbatiminput{tutorialprotect2.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialprotect2.eps}
+\caption{More Label Positioning}
+\label{tutorialprotect2}
+\end{figure}
 
 \subsection{Displaying Image Icons}
 \label{icons}
@@ -1954,7 +1971,7 @@ except IOException, ex:
 \end{verbatim}
 
 To make Mapyrus draw into an image created in the application,
-use the following code:
+add the following code before interpreting Mapyrus commands:
 
 \begin{verbatim}
         b = BufferedImage(200, 200, BufferedImage.TYPE_4BYTE_ABGR)
