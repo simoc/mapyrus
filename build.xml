@@ -100,7 +100,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <arg line="tutorialexisting1.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
-<arg line="tutorialrand1.mapyrus tutorialrand2.mapyrus tutorialrand3.mapyrus tutorialpiechart1.mapyrus tutorialprotect1.mapyrus tutorialturnpage1.mapyrus tutoriallayout1.mapyrus"/>
+<arg line="tutorialrand1.mapyrus tutorialrand2.mapyrus tutorialrand3.mapyrus tutorialpiechart1.mapyrus tutorialprotect1.mapyrus tutorialprotect2.mapyrus tutorialturnpage1.mapyrus tutoriallayout1.mapyrus"/>
 </java>
 <!-- For examples using 'Java Topology Suite' we need jts JAR file in classpath -->
 <java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
