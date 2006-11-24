@@ -242,6 +242,7 @@ public class Context
 		
 		mProjectionTransform = null;
 		mWorldCtm = null;
+		mPageWorldExtents = null;
 	}
 
 	/**
