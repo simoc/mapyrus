@@ -1,0 +1,33 @@
+newpage "eps", "tutorialprotect2.eps", 75, 50
+
+# Draw some shapes then mark those areas as protected.
+#
+triangle 40, 20, 9, 180
+stroke
+protect
+clearpath
+triangle 50, 40, 9, 0
+stroke
+protect
+
+font "Helvetica", 4
+color "blue"
+let w = stringwidth("ABCD")
+let counter = 0
+
+# Draw 30 randomly positioned labels, avoiding overlaps with anything
+# we have already drawn.
+#
+while counter < 30
+do
+  let x = random(75)
+  let y = random(50)
+  if (not protected(x, y, x + w, y + 4))
+  then
+    clearpath
+    move x, y
+    label "ABCD"
+    protect x, y, x + w, y + 4
+    let counter = counter + 1
+  endif
+done
