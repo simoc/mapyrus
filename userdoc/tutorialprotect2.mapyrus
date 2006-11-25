@@ -1,12 +1,9 @@
 newpage "eps", "tutorialprotect2.eps", 75, 50
 
-# Draw some shapes then mark those areas as protected.
+# Draw a shape then mark that area as protected.
 #
-triangle 40, 20, 9, 180
-stroke
-protect
-clearpath
-triangle 50, 40, 9, 0
+move 10, 10
+draw 60, 40, 55, 45, 5, 15, 10, 10
 stroke
 protect
 
@@ -15,10 +12,10 @@ color "blue"
 let w = stringwidth("ABCD")
 let counter = 0
 
-# Draw 30 randomly positioned labels, avoiding overlaps with anything
+# Draw 25 randomly positioned labels, avoiding overlaps with anything
 # we have already drawn.
 #
-while counter < 30
+while counter < 25
 do
   let x = random(75)
   let y = random(50)
