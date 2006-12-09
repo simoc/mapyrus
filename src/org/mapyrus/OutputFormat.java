@@ -847,7 +847,8 @@ public class OutputFormat
 	 * @param labelAliasing flag true if labels should be drawn with anti-aliasing.
 	 */
 	private void setupBufferedImage(double resolution, Color backgroundColor,
-		boolean lineAntiAliasing, boolean labelAntiAliasing)
+		boolean lineAntiAliasing, boolean labelAntiAliasing,
+		boolean fractionalFontMetrics)
 	{
 		double scale;
 
@@ -894,6 +895,17 @@ public class OutputFormat
 		{
 			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF));
+		}
+
+		if (fractionalFontMetrics)
+		{
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_ON));
+		}
+		else
+		{
+			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
+				RenderingHints.VALUE_FRACTIONALMETRICS_OFF));
 		}
 	}
 
@@ -954,6 +966,7 @@ public class OutputFormat
 		Color backgroundColor = null;
 		boolean labelAntiAliasing = true;
 		boolean lineAntiAliasing = false;
+		boolean fractionalFontMetrics = false;
 		boolean compressOutput = false;
 		String scriptFilename = null;
 		Rectangle2D existingBoundingBox = null;
@@ -1096,6 +1109,11 @@ public class OutputFormat
 			{
 				String flag = token.substring(17);
 				lineAntiAliasing = flag.equalsIgnoreCase("true");
+			}
+			else if (token.startsWith("fractionalfontmetrics="))
+			{
+				String flag = token.substring(22);
+				fractionalFontMetrics = flag.equalsIgnoreCase("true");
 			}
 			else if (token.startsWith("update=") && mOutputType != SVG && mOutputType != PDF)
 			{
@@ -1330,7 +1348,7 @@ public class OutputFormat
 				height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
 			}
 			mGraphics2D = (Graphics2D)(mImage.getGraphics());
-			setupBufferedImage(resolution, backgroundColor, lineAntiAliasing, labelAntiAliasing);
+			setupBufferedImage(resolution, backgroundColor, lineAntiAliasing, labelAntiAliasing, fractionalFontMetrics);
 		}
 
 		if (mImageMapWriter != null)
