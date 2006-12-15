@@ -28,6 +28,7 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -2900,6 +2901,41 @@ public class OutputFormat
 		}
 		else if (mOutputType != SVG)
 		{
+			double mmPerPixel = Constants.MM_PER_INCH / Constants.getScreenResolution();
+			double xScale = (mmWidth / mmPerPixel) / pixelWidth;
+			double yScale = (mmHeight / mmPerPixel) / pixelHeight;
+
+			int reduction = (int)Math.round(1 / xScale);
+			int step = 1;
+			Image imageToDisplay = image;
+			while (reduction > 1)
+			{
+				reduction = reduction / 2;
+				step = step * 2;
+			}
+			if (step > 2)
+			{
+				/*
+				 * Java2D uses nearest-neighbour resampling to draw scaled
+				 * icons.  This produces a poor result.
+				 *
+				 * For large icons drawn at small sizes, create a smaller,
+				 * smoothed copy of the icon and draw that icon instead.
+				 * This produces a better result.
+				 */
+				int reducedWidth = pixelWidth / step;
+				int reducedHeight = pixelHeight / step;
+				if (reducedWidth > 0 && reducedHeight > 0)
+				{
+					imageToDisplay = image.getScaledInstance(reducedWidth,
+						reducedHeight, Image.SCALE_SMOOTH);
+					xScale *= ((double)pixelWidth / reducedWidth);
+					yScale *= ((double)pixelHeight / reducedHeight);
+					pixelWidth = reducedWidth;
+					pixelHeight = reducedHeight;
+				}
+			}
+
 			for (i = 0; i < pointList.size(); i++)
 			{
 				pt = (Point2D)(pointList.get(i));
@@ -2910,7 +2946,6 @@ public class OutputFormat
 				/*
 				 * Scale transformation so that units are in pixels.
 				 */
-				double mmPerPixel = Constants.MM_PER_INCH / Constants.getScreenResolution();
 				affine.scale(mmPerPixel, mmPerPixel * -1);
 
 				/*
@@ -2921,8 +2956,6 @@ public class OutputFormat
 				/*
 				 * Scale image to requested size.
 				 */
-				double xScale = (mmWidth / mmPerPixel) / pixelWidth;
-				double yScale = (mmHeight / mmPerPixel) / pixelHeight;
 				affine.scale(xScale, yScale);
 
 				/*
@@ -2936,7 +2969,7 @@ public class OutputFormat
 					 * Sun JVM throws NullPointerException if image is
 					 * too big to fit in memory.
 					 */
-					mGraphics2D.drawImage(image, affine, null);
+					mGraphics2D.drawImage(imageToDisplay, affine, null);
 				}
 				catch (NullPointerException e)
 				{
