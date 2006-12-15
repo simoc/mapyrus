@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
 
+0.614, December 2006
+
+* Add newpage option for fractional font metrics for more accurate
+  label positioning.
+* Use image smoothing to improve display of icons in image files.
+
 0.613, November 2006
 
 * Add Mapyrus.path variable to return current path as OGC WKT string.
