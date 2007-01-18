@@ -1,5 +1,12 @@
 Mapyrus Change History
-Copyright (C) 2003, 2004, 2005, 2006 Simon Chenery <simoc@users.sourceforge.net>
+Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
+
+0.701, January 2007
+
+* Set miter limit so sharp "/\" points in letters are not visible when
+  displaying labels with font outlinewidth= option.
+* Add linewidthlimit option to NEWPAGE command.  This prevents very thin
+  lines that appear differently in different output formats.
 
 0.614, December 2006
 
