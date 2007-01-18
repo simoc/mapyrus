@@ -132,6 +132,12 @@ public class OutputFormat
 	public static final int JUSTIFY_BOTTOM = 32;
 
 	/*
+	 * Mitering for outlined fonts to prevent sharp angles
+	 * extending too far.
+	 */
+	private static final int FONT_OUTLINE_MITER_LIMIT = 2;
+
+	/*
 	 * List of fonts that are always available in PDF file.
 	 */
 	private static final String []PDF_FONTS =
@@ -434,7 +440,7 @@ public class OutputFormat
 		writeLine(mWriter, "rmoveto");
 		writeLine(mWriter, "% Draw label or label outline");
 		writeLine(mWriter, "foutline 0 gt");
-		writeLine(mWriter, "{str false charpath foutline w 0 j 0 J 2 M stroke}");
+		writeLine(mWriter, "{str false charpath foutline w 0 j 0 J " + FONT_OUTLINE_MITER_LIMIT + " M stroke}");
 		writeLine(mWriter, "{str show}");
 		writeLine(mWriter, "ifelse");
 		writeLine(mWriter, "grestore newpath");
@@ -3622,7 +3628,7 @@ public class OutputFormat
 				 */
 				originalStroke = mGraphics2D.getStroke();
 				BasicStroke outlineStroke = new BasicStroke((float)mFontOutlineWidth,
-					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2.0f);
+					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, (float)FONT_OUTLINE_MITER_LIMIT);
 				mGraphics2D.setStroke(outlineStroke);
 			}
 		}
@@ -3700,7 +3706,7 @@ public class OutputFormat
 				if (mFontOutlineWidth > 0)
 				{
 					writeLine(mPDFGeometryWriter, "1 Tr " +
-						mCoordinateDecimal.format(mFontOutlineWidth) + " w");
+						mCoordinateDecimal.format(mFontOutlineWidth) + " w " + FONT_OUTLINE_MITER_LIMIT + " M");
 				}
 				else
 				{
@@ -3777,7 +3783,7 @@ public class OutputFormat
 						extras.append(ColorDatabase.toHexString(color));
 						extras.append("\" stroke-width=\"");
 						extras.append(mFontOutlineWidth);
-						extras.append("\" ");
+						extras.append("\" stroke-miterlimit=\"" + FONT_OUTLINE_MITER_LIMIT + "\" ");
 
 						if (alpha != 255)
 						{
