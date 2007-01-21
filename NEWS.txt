@@ -5,7 +5,7 @@ Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
 
 * Set miter limit so sharp "/\" points in letters are not visible when
   displaying labels with font outlinewidth= option.
-* Add linewidthlimit option to NEWPAGE command.  This prevents very thin
+* Add minimumlinewidth option to NEWPAGE command.  This prevents very thin
   lines that appear differently in different output formats.
 
 0.614, December 2006
