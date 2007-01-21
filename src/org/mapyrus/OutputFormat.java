@@ -210,7 +210,12 @@ public class OutputFormat
 	private double mPageWidth;
 	private double mPageHeight;
 	private double mResolution;
-	
+
+	/*
+	 * Minimum line width.
+	 */
+	private double mMinimumLineWidth;
+
 	/*
 	 * Selected font and size.
 	 */
@@ -991,6 +996,8 @@ public class OutputFormat
 		 */
 		mAdobeFontMetrics = null;
 
+		mMinimumLineWidth = 0;
+
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
 		{
@@ -1149,6 +1156,19 @@ public class OutputFormat
 			else if (token.startsWith("scriptfile="))
 			{
 				scriptFilename = token.substring(11);
+			}
+			else if (token.startsWith("minimumlinewidth="))
+			{
+				String lineWidth = token.substring(17);
+				try
+				{
+					mMinimumLineWidth = Double.parseDouble(lineWidth);
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH) +
+						": " + e.getMessage());
+				}
 			}
 		}
 
@@ -2475,6 +2495,7 @@ public class OutputFormat
 	 */
 	public void setLinestyleAttribute(BasicStroke linestyle)
 	{
+		double width = linestyle.getLineWidth();
 		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
 		{
 			PrintWriter pw;
@@ -2502,7 +2523,9 @@ public class OutputFormat
 			else /* BEVEL */
 				join = 2;
 
-			writeLine(pw, mCoordinateDecimal.format(linestyle.getLineWidth()) + " w " +
+			if (width < mMinimumLineWidth)
+				width = mMinimumLineWidth;
+			writeLine(pw, mCoordinateDecimal.format(width) + " w " +
 				cap + " J " + join + " j " +
 				mCoordinateDecimal.format(linestyle.getMiterLimit()) + " M");
 
@@ -2534,6 +2557,21 @@ public class OutputFormat
 		}
 		else
 		{
+			if (width < mMinimumLineWidth)
+			{
+				float []dashes = linestyle.getDashArray();
+				if (dashes == null)
+				{
+					linestyle = new BasicStroke((float)mMinimumLineWidth, linestyle.getEndCap(),
+						linestyle.getLineJoin(), linestyle.getMiterLimit());
+				}
+				else
+				{
+					linestyle = new BasicStroke((float)mMinimumLineWidth, linestyle.getEndCap(),
+							linestyle.getLineJoin(), linestyle.getMiterLimit(), dashes,
+							linestyle.getDashPhase());
+				}
+			}
 			mGraphics2D.setStroke(linestyle);
 		}
 	}
