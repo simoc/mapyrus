@@ -92,7 +92,6 @@ public class PostScriptFont
 	private void readPfbFile(String pfbFilename)
 		throws IOException, MapyrusException
 	{
-		BufferedReader bufferedReader = null;
 		BufferedInputStream stream = null;
 
 		try
