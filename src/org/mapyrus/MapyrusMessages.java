@@ -44,6 +44,7 @@ public class MapyrusMessages
 	public static final String EXIT = "exit";
 	public static final String EXPECTED = "expected";
 	public static final String EXPORT_AS_PNG = "exportaspng";
+	public static final String FAILED_PDF = "failedpdf";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
 	public static final String FIELD_NOT_OGC_TEXT = "fieldnotogctext";
