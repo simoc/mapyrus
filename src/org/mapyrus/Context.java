@@ -84,13 +84,6 @@ public class Context
 	private static final int ATTRIBUTE_CLIP = 32;
 
 	/*
-	 * Projection transformation may results in some strange warping.
-	 * To get a better estimate of extents when projecting to world coordinate
-	 * system we project many points in a grid to find minimum and maximum values.
-	 */
-	private static final int PROJECTED_GRID_STEPS = 5;
-
-	/*
 	 * Page resolution to use when no output page defined.
 	 */
 	private static final int DEFAULT_RESOLUTION = 96;
@@ -2817,7 +2810,6 @@ public class Context
 			Point2D.Float pt = (Point2D.Float)moveTos.get(i);
 			Point2D.Float ptCopy = (Point2D.Float)pt.clone();
 			LinkedList lastEntry = new LinkedList();
-			int lastIndent = -1;
 			LinkedList lastY2 = new LinkedList();
 
 			for (int j = 0; j < keys.length; j++)
@@ -2886,7 +2878,6 @@ public class Context
 					StringDimension sDim = getStringDimension(s, false);
 
 					ptCopy.y -= Math.max(sDim.getHeight(), dim.getHeight());
-					lastIndent = indent;
 					lastY2.add(k, new Float(y2));
 				}
 				lastEntry = entry;
