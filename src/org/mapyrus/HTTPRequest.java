@@ -575,8 +575,6 @@ public class HTTPRequest extends Thread
 			outStream = new BufferedOutputStream(mSocket.getOutputStream());
 			if (mReturnStatus == HTTP_OK_CODE)
 			{
-				String contentType;
-
 				if (mMimeType == null)
 				{
 					reply = httpResponse;
