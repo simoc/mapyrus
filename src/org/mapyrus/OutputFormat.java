@@ -3744,7 +3744,7 @@ public class OutputFormat
 				if (mFontOutlineWidth > 0)
 				{
 					writeLine(mPDFGeometryWriter, "1 Tr " +
-						mCoordinateDecimal.format(mFontOutlineWidth) + " w " + FONT_OUTLINE_MITER_LIMIT + " M");
+						mCoordinateDecimal.format(mFontOutlineWidth) + " w " + FONT_OUTLINE_MITER_LIMIT + " M 2 J 0 j [] 0 d");
 				}
 				else
 				{
