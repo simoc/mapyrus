@@ -3297,6 +3297,22 @@ public class OutputFormat
 	}
 
 	/**
+	 * Draw PDF file at points on page.
+	 * @param pointList is list of Point2D objects at which to draw PDF file.
+	 * @param PDF filename.
+	 * @param page page number in PDF file to display.
+	 * @param size size for PDF file on page in millimetres.
+	 * @param rotation rotation angle for PDF file.
+	 * @param scaling scale factor for PDF file.
+	 */
+	public void drawPDF(ArrayList pointList, String filename, int page,
+		double size, double rotation, double scaling)
+		throws IOException, MapyrusException
+	{
+
+	}
+	
+	/**
 	 * Draw currently defined path to output page.
 	 * @param shape
 	 * @param xmlAttributes XML attributes to add for SVG output.
