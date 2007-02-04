@@ -37,88 +37,287 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PDFFile
 {
-	private String m_filename;
-	private RandomAccessFile m_pdfFile;
-	private HashMap m_objects;
+	private String mFilename;
+	private RandomAccessFile mPdfFile;
+	private HashMap mObjects;
+	private ArrayList mPageObjects;
 
 	public PDFFile(String filename) throws IOException, MapyrusException
 	{
-		/*
-		 * Open file, find and read the 'xref' table at the end of the
-		 * file giving the file offset of each object.
-		 */
-		m_filename = filename;
-		m_pdfFile = new RandomAccessFile(filename, "r");
-		String header = m_pdfFile.readLine();
-		if (!header.startsWith("%PDF-"))
+		try
 		{
-			throw new MapyrusException("");
-		}
-
-		byte []xrefBuf = new byte[20];
-		m_pdfFile.seek(m_pdfFile.length() - xrefBuf.length);
-		m_pdfFile.readLine();	/* skip line with 'startxref' keyword */
-		String line = m_pdfFile.readLine();
-		long xrefOffset = Long.parseLong(line);
-
-		m_pdfFile.seek(xrefOffset);
-		m_pdfFile.readLine();	/* skip line with 'xref' keyword */
-		line = m_pdfFile.readLine();
-		StringTokenizer st = new StringTokenizer(line);
-		if (st.countTokens() < 2)
-			throw new MapyrusException("");
-		int startIndex = Integer.parseInt(st.nextToken());
-		int count = Integer.parseInt(st.nextToken());
-		HashMap objectOffsets = new HashMap();
-		for (int i = 0; i < count; i++)
-		{
-			line = m_pdfFile.readLine();
-			st = new StringTokenizer(line);
-			if (st.countTokens() < 3)
-				throw new MapyrusException("");
-			Long objOffset = Long.valueOf(st.nextToken());
-			st.nextToken();	/* skip generation number */
-			String status = st.nextToken();
-			if (status.equals("n"))
-				objectOffsets.put(new Integer(i + startIndex), objOffset);
-		}
-
-		/*
-		 * Now read the 'trailer' dictionary.
-		 */
-		m_pdfFile.readLine();	/* skip line with 'trailer' keyword */
-		PDFObject trailer = readObject();
-
-		/*
-		 * Read each of the objects in the PDF file. 
-		 */
-		m_objects = new HashMap(objectOffsets.size());
-		Iterator it = objectOffsets.keySet().iterator();
-		while (it.hasNext())
-		{
-			Integer key = (Integer)(it.next());
-			Long objectOffset = (Long)objectOffsets.get(key);
-			m_pdfFile.seek(objectOffset.longValue());
-
-			int id = readObjectBegin();
-			if (id != key.intValue())
+			/*
+			 * Open file, find and read the 'xref' table at the end of the
+			 * file giving the file offset of each object.
+			 */
+			mFilename = filename;
+			mPdfFile = new RandomAccessFile(filename, "r");
+			String header = mPdfFile.readLine();
+			if (!header.startsWith("%PDF-"))
 			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-					": " + m_filename);
+				throw new MapyrusException("");
 			}
-			PDFObject obj = readObject();
-			long streamOffset = readObjectEnd();
-			obj.setStreamOffset(streamOffset);
+	
+			byte []xrefBuf = new byte[20];
+			mPdfFile.seek(mPdfFile.length() - xrefBuf.length);
+			mPdfFile.readLine();	/* skip line with 'startxref' keyword */
+			String line = mPdfFile.readLine();
+			long xrefOffset = Long.parseLong(line);
 
-			m_objects.put(key, obj);
+			HashMap objectOffsets = new HashMap();
+			mPdfFile.seek(xrefOffset);
+			PDFObject trailer = readXrefSection(objectOffsets);
+
+			/*
+			 * Read each of the objects in the PDF file. 
+			 */
+			mObjects = new HashMap(objectOffsets.size());
+			Iterator it = objectOffsets.keySet().iterator();
+			while (it.hasNext())
+			{
+				Integer key = (Integer)(it.next());
+				Long objectOffset = (Long)objectOffsets.get(key);
+				mPdfFile.seek(objectOffset.longValue());
+
+				int id = readObjectBegin();
+				if (id != key.intValue())
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
+						": " + mFilename);
+				}
+				PDFObject obj = readObject();
+				long streamOffset = readObjectEnd();
+				obj.setStreamOffset(streamOffset);
+	
+				mObjects.put(key, obj);
+			}
+
+			/*
+			 * Find root object containing reference to pages.
+			 */
+			PDFObject rootObject = getDictionaryValue(trailer, "/Root");
+			PDFObject pagesObject = getDictionaryValue(rootObject, "/Pages");
+
+			/*
+			 * Make list of objects for each page.
+			 */
+			mPageObjects = buildPageObjectList(pagesObject);
+		}
+		catch(IOException e)
+		{
+			/*
+			 * Ensure file is closed on error.
+			 */
+			close();
+			throw(e);
+		}
+		catch (MapyrusException e)
+		{
+			close();
+			throw(e);
+		}
+	}
+
+	/**
+	 * Build list of pages from object defining page layout.
+	 * @param pageObject object for page or pages.
+	 * @return list of objects, one for each page.
+	 */
+	private ArrayList buildPageObjectList(PDFObject pagesObject)
+		throws MapyrusException
+	{
+		ArrayList retval = new ArrayList();
+		PDFObject kidsObject = getDictionaryValue(pagesObject, "/Kids");
+		PDFObject[] kidsArray = kidsObject.getArray();
+		for (int i = 0; i < kidsArray.length; i++)
+		{
+			PDFObject kidObject = kidsArray[i];
+			if (kidObject.isReference())
+				kidObject = (PDFObject)mObjects.get(new Integer(kidObject.getReference()));
+			PDFObject objectType = getDictionaryValue(kidObject, "/Type");
+			if (objectType.getValue().equals("/Page"))
+			{
+				retval.add(kidObject);
+			}
+			else
+			{
+				retval.addAll(buildPageObjectList(kidObject));
+			}
+		}
+		return(retval);
+	}
+
+	/**
+	 * Read xref sections from PDF file.
+	 * @param objectOffsets table to save offset of each object into.
+	 */
+	private PDFObject readXrefSection(HashMap objectOffsets)
+		throws IOException, MapyrusException
+	{
+		String line = mPdfFile.readLine();	/* skip line with 'xref' keyword */
+		line = mPdfFile.readLine();
+
+		while (!line.equals("trailer"))
+		{
+			StringTokenizer st = new StringTokenizer(line);
+
+			if (st.countTokens() < 2)
+				throw new MapyrusException("");
+			int startIndex = Integer.parseInt(st.nextToken());
+			int count = Integer.parseInt(st.nextToken());
+			
+			for (int i = 0; i < count; i++)
+			{
+				line = mPdfFile.readLine();
+				st = new StringTokenizer(line);
+				if (st.countTokens() < 3)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
+						": " + mFilename);
+				}
+				Long objOffset = Long.valueOf(st.nextToken());
+				st.nextToken();	/* skip generation number */
+				String status = st.nextToken();
+				if (status.equals("n"))
+				{
+					/*
+					 * Newest offsets were added first.
+					 * Do not overwrite them with older values from
+					 * previous 'xref' sections.
+					 */
+					Integer key = new Integer(i + startIndex);
+					if (!objectOffsets.containsKey(key))
+						objectOffsets.put(key, objOffset);
+				}
+			}
+			line = mPdfFile.readLine();
 		}
 
 		/*
-		 * Find root object containing reference to pages.
+		 * Now read the trailer dictionary.
 		 */
-		HashMap dictionary = trailer.getDictionary();
-		PDFObject rootReference = (PDFObject)dictionary.get("/Root");
-		int id = rootReference.getReference();
+		PDFObject trailer = readObject();
+		PDFObject prevObject = getDictionaryValue(trailer, "/Prev");
+		if (prevObject != null)
+		{
+			/*
+			 * Read any previous xref section in the PDF file too.
+			 */
+			String s = prevObject.getValue();
+			long offset = Long.parseLong(s);
+			mPdfFile.seek(offset);
+			readXrefSection(objectOffsets);
+		}
+		return(trailer);
+	}
+
+	/**
+	 * Close the PDF file.
+	 */
+	public void close()
+	{
+		if (mPdfFile != null)
+		{
+			try
+			{
+				mPdfFile.close();
+			}
+			catch (IOException e)
+			{
+			}
+			mPdfFile = null;
+		}
+	}
+
+	/**
+	 * Get number of pages in PDF file.
+	 * @return page count.
+	 */
+	public int getPageCount()
+	{
+		return(mPageObjects.size());
+	}
+
+	/**
+	 * Get resources used by a page.
+	 * @param page page number.
+	 * @return resources used by page. 
+	 */
+	public PDFObject getResources(int page) throws MapyrusException
+	{
+		PDFObject pageObject = (PDFObject)mPageObjects.get(page);
+		PDFObject resourcesObject = getDictionaryValue(pageObject, "/Resources");
+		return(resourcesObject);
+	}
+
+	/**
+	 * Get media box for page.
+	 * @param page page number, with 0 being the first page.
+	 * @return (x1, y1) and (x2, y2) coordinates of page in points.
+	 */
+	public int[] getMediaBox(int page) throws MapyrusException
+	{
+		PDFObject pageObject = (PDFObject)mPageObjects.get(page);
+		PDFObject boxObject = getDictionaryValue(pageObject, "/MediaBox");
+		PDFObject[] boxArray = boxObject.getArray();
+		int retval[] = new int[4];
+		for (int i = 0; i < retval.length; i++)
+		{
+			PDFObject obj = boxArray[i];
+			if (obj.isReference())
+				obj = (PDFObject)mObjects.get(new Integer(obj.getReference()));
+			String s = obj.getValue();
+			retval[i] = Integer.parseInt(s);
+		}
+		return(retval);
+	}
+
+	/**
+	 * Get objects containing page contents.
+	 * @param page page number, with 0 being the first page.
+	 * @return page contents.
+	 */
+	public ArrayList getContentsObjects(int page) throws IOException, MapyrusException
+	{
+		ArrayList retval = new ArrayList();
+		PDFObject pageObject = (PDFObject)mPageObjects.get(page);
+		PDFObject contentsObject = getDictionaryValue(pageObject, "/Contents");
+
+		if (contentsObject == null)
+		{
+			/*
+			 * No contents.  Return empty list.
+			 */
+		}
+		else if (contentsObject.isArray())
+		{
+			/*
+			 * Contents are an array of objects.
+			 */
+			PDFObject[] contentsArray = contentsObject.getArray();
+			for (int i = 0; i < contentsArray.length; i++)
+				retval.add(contentsArray[i]);
+		}
+		else
+		{
+			retval.add(contentsObject);
+		}
+
+		/*
+		 * Replace any references to other objects with actual values.
+		 */
+		for (int i = 0; i < retval.size(); i++)
+		{
+			contentsObject = (PDFObject)retval.get(i);
+			if (contentsObject.isReference())
+			{
+				contentsObject = (PDFObject)mObjects.get(new Integer(contentsObject.getReference()));
+				retval.set(i, contentsObject);
+			}
+			resolveReference(contentsObject, "/Length");
+			resolveReference(contentsObject, "/Filter");
+		}
+		return(retval);
 	}
 
 	/**
@@ -128,11 +327,11 @@ public class PDFFile
 	 */
 	private int readChar(boolean skipComments) throws IOException, MapyrusException
 	{
-		int c = m_pdfFile.read();
+		int c = mPdfFile.read();
 		if (c == -1)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
-				": " + m_filename);
+				": " + mFilename);
 		}
 		else if (skipComments && c == '%')
 		{
@@ -150,9 +349,9 @@ public class PDFFile
 	 */
 	private int peekChar(boolean skipComments) throws IOException, MapyrusException
 	{
-		long offset = m_pdfFile.getFilePointer();
+		long offset = mPdfFile.getFilePointer();
 		int c = readChar(skipComments);
-		m_pdfFile.seek(offset);
+		mPdfFile.seek(offset);
 		return(c);
 	}
 
@@ -284,7 +483,7 @@ public class PDFFile
 				sb.append((char)c);
 				c = peekChar(false);
 			}
-			long offset = m_pdfFile.getFilePointer();
+			long offset = mPdfFile.getFilePointer();
 			
 			/*
 			 * Check if this is a reference of the form '12 0 R'.
@@ -306,13 +505,13 @@ public class PDFFile
 				else
 				{
 					retval = new PDFObject(sb.toString());
-					m_pdfFile.seek(offset);
+					mPdfFile.seek(offset);
 				}
 			}
 			else
 			{
 				retval = new PDFObject(sb.toString());
-				m_pdfFile.seek(offset);
+				mPdfFile.seek(offset);
 			}
 		}
 		return(retval);
@@ -342,15 +541,20 @@ public class PDFFile
 		catch (NumberFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-				": " + m_filename + ": " + sb.toString());
+				": " + mFilename + ": " + sb.toString());
 		}
 
 		for (int i = 0; i < 2; i++)
 		{
 			while (Character.isWhitespace((char)c))
 				c = readChar(true);
-			while (!Character.isWhitespace((char)c))
-				c = readChar(true);
+
+			c = peekChar(true);
+			while ((!Character.isWhitespace((char)c)) && c != '<')
+			{
+				readChar(true);
+				c = peekChar(true);
+			}
 		}
 		return(id);
 	}
@@ -359,7 +563,7 @@ public class PDFFile
 	 * Read keywords marking the stream for object.
 	 * @return file offset of stream for this object.
 	 */
-	public long readObjectEnd() throws IOException, MapyrusException
+	private long readObjectEnd() throws IOException, MapyrusException
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -382,21 +586,64 @@ public class PDFFile
 			readChar(false);
 		long retval = -1;
 		if (sb.toString().equals("stream"))
-			retval = m_pdfFile.getFilePointer();
+			retval = mPdfFile.getFilePointer();
 		return(retval);
 	}
 
-	public String getXObjects()
+	/**
+	 * Lookup value in dictionary.
+	 * @param obj dictionary object.
+	 * @param key key to lookup in dictionary.
+	 * @return value of key.
+	 */
+	private PDFObject getDictionaryValue(PDFObject dictObj, String key)
+		throws MapyrusException
 	{
-		return("");
+		HashMap dict = dictObj.getDictionary();
+
+		if (dict == null)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
+				": " + mFilename);
+		}
+		PDFObject value = (PDFObject)dict.get(key);
+		if (value != null && value.isReference())
+		{
+			value = (PDFObject)mObjects.get(new Integer(value.getReference()));
+		}
+		return(value);
 	}
-	
+
+	/**
+	 * Replace any references in a dictionary object with actual values.
+	 * @param dictionaryObject dictionary in which to replace values.
+	 * @param key dictionary key.
+	 */
+	private void resolveReference(PDFObject dictionaryObject, String key)
+		throws IOException, MapyrusException
+	{
+		PDFObject valueObject = getDictionaryValue(dictionaryObject, key);
+		dictionaryObject.getDictionary().put(key, valueObject);
+	}
+
 	public static void main(String []args)
 	{
 		try
 		{
-			PDFFile pdf = new PDFFile("/home/schenery/text1.pdf");
-			pdf.getXObjects();
+			PDFFile pdf = new PDFFile("/tmp/text1.pdf");
+			int nPages = pdf.getPageCount();
+			for (int i = 0; i < nPages; i++)
+			{
+				System.out.println("-- Page " + i);
+				int[] box = pdf.getMediaBox(i);
+				System.out.println("[" + box[0] + " " + box[1] + " " + box[2] + " " + box[3] + "]");
+				System.out.println("-- Resources");
+				System.out.println(pdf.getResources(i));
+				System.out.println("-- Contents");
+				ArrayList contents = pdf.getContentsObjects(i);
+				for (int j = 0; j < contents.size(); j++)
+					System.out.println(contents.get(j));
+			}
 		}
 		catch (Exception e)
 		{
