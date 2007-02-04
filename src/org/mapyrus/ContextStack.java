@@ -657,6 +657,18 @@ public class ContextStack
 	}
 
 	/**
+	 * Includes PDF file in page.
+	 * @param PDF filename.
+	 * @param page page number in PDF file to display.
+	 * @param size size for PDF file on page in millimetres.
+	 */
+	public void drawPDF(String filename, int page, double size)
+		throws IOException, MapyrusException
+	{
+		getCurrentContext().drawPDF(filename, page, size);
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.

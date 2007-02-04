@@ -2186,6 +2186,25 @@ public class Context
 	}
 
 	/**
+	 * Includes PDF file in page.
+	 * @param SVG filename.
+	 * @param page page number in PDF file to display.
+	 * @param size size for SVG file on page in millimetres.
+	 */
+	public void drawPDF(String filename, int page, double size)
+		throws IOException, MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+
+		if (path != null && mOutputFormat != null)
+		{
+			setGraphicsAttributes(ATTRIBUTE_CLIP);
+			mOutputFormat.drawPDF(path.getMoveTos(), filename, page,
+				size, mRotation, mScaling);
+		}
+	}
+
+	/**
 	 * Draw currently defined path.
 	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
