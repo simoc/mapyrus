@@ -34,7 +34,7 @@ public class PDFObject
 	private int mReference = -1;
 	private PDFObject[] mArray = null;
 	private HashMap mDictionary = null;
-	private long m_streamOffset = -1;
+	private long mStreamOffset = -1;
 
 	/**
 	 * Create new PDF object.
@@ -78,7 +78,25 @@ public class PDFObject
 	 */
 	public void setStreamOffset(long offset)
 	{
-		m_streamOffset = offset;
+		mStreamOffset = offset;
+	}
+
+	/**
+	 * Get value for object.
+	 * @return simple value stored for this object.
+	 */
+	public String getValue()
+	{
+		return(mValue);
+	}
+
+	/**
+	 * Check if this object is an array.
+	 * @return true if object is an array.
+	 */
+	public boolean isArray()
+	{
+		return(mArray != null);
 	}
 
 	/**
@@ -100,6 +118,15 @@ public class PDFObject
 	}
 
 	/**
+	 * Check if this object is a reference to another object.
+	 * @return true if object is a reference.
+	 */
+	public boolean isReference()
+	{
+		return(mReference != -1);
+	}
+
+	/**
 	 * Get reference for object.
 	 * @return reference to other object.
 	 */
@@ -114,7 +141,7 @@ public class PDFObject
 	 */
 	public long getStreamOffset()
 	{
-		return(m_streamOffset);
+		return(mStreamOffset);
 	}
 
 	/**
