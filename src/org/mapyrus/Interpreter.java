@@ -1845,7 +1845,30 @@ public class Interpreter
 					context.addSVGCode(mExecuteArgs[i].getStringValue());
 				}
 				break;
-		
+
+			case Statement.PDF:
+				if (nExpressions == 2 || nExpressions == 3)
+				{
+					double size;
+					if (nExpressions == 3)
+					{
+						size = mExecuteArgs[2].getNumericValue();
+					}
+					else
+					{
+						size = 0;
+					}
+					long pageNumber = Math.round(mExecuteArgs[1].getNumericValue());
+
+					context.drawPDF(mExecuteArgs[0].getStringValue(),
+						(int)pageNumber, size);
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PDF));
+				}
+				break;
+
 			case Statement.SCALE:
 				if (nExpressions == 1)
 				{
