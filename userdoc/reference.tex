@@ -455,18 +455,22 @@ Returns square root of \textit{n}. \\
 \hline
 
 \texttt{stringheight(\textit{str})} &
-Returns the height in millimeters of the string \textit{str}
+Returns the height of the string \textit{str}
 if it were displayed using the \texttt{label} command.
 For strings containing several lines, the total height of all
-lines is returned.  \\
+lines is returned.
+The height is returned in world coordinate units if set with a
+\texttt{worlds} command, otherwise in page coordinates. \\
 
 \hline
 
 \texttt{stringwidth(\textit{str})} &
-Returns the width in millimeters of the string \textit{str}
+Returns the width of the string \textit{str}
 if it were displayed using the \texttt{label} command.
 For strings containing several lines, the width of the longest
-line is returned.  \\
+line is returned.
+The width is returned in world coordinate units if set with a
+\texttt{worlds} command, otherwise in page coordinates. \\
 
 \hline
 
@@ -1393,9 +1397,9 @@ Character string at start of a line marking a comment line that
 is to be ignored.  Default value is a hash character (\texttt{\#}).
 
 \vspace{10pt}
-\texttt{delimiters=\textit{string}}
+\texttt{delimiter=\textit{character}}
 
-Characters separating fields in the text file.  Default value
+Character separating fields in the text file.  Default value
 is all whitespace characters. \\
 
 \end{longtable}
