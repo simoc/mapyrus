@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
 
+0.702, February 2007
+
+* Add PDF command for including other PDF files in PDF output.
+
 0.701, January 2007
 
 * Set miter limit so sharp "/\" points in letters are not visible when
