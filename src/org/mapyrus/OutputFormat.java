@@ -76,6 +76,7 @@ import org.mapyrus.image.BlendComposite;
 import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
+import org.mapyrus.pdf.PDFFile;
 import org.mapyrus.ps.PostScriptFile;
 import org.mapyrus.svg.SVGFile;
 
@@ -150,10 +151,11 @@ public class OutputFormat
 	};
 
 	/*
-	 * Prefixes for PDF objects containing images and graphics states.
+	 * Prefixes for PDF objects containing fonts, images and graphics states.
 	 */
-	private static final String PDF_IMAGE_PREFIX = "Img";
-	private static final String PDF_GSTATE_PREFIX = "Gstate";
+	private String mPDFFontPrefix;
+	private String mPDFImagePrefix;
+	private String mPDFGstatePrefix;
 
 	/*
 	 * File or image that drawing commands are
@@ -605,10 +607,10 @@ public class OutputFormat
 			/*
 			 * Define names for each of the standard PDF fonts.
 			 */
-			nChars += writeLine(mWriter, "    /F" + i +
+			nChars += writeLine(mWriter, "    /" + mPDFFontPrefix + i +
 				" << /Type /Font /Subtype /Type1");
 			nChars += writeLine(mWriter, "      /BaseFont /" + PDF_FONTS[i] +
-				" /Name /F" + i);
+				" /Name /" + mPDFFontPrefix + i);
 			if (mEncodeAsISOLatin1.contains(PDF_FONTS[i]))
 			{
 				nChars += writeLine(mWriter, "    /Encoding /WinAnsiEncoding");
@@ -625,7 +627,7 @@ public class OutputFormat
 			 * Add font dictionary for each additional font file given by user.
 			 */
 			AdobeFontMetrics afm = (AdobeFontMetrics)it.next();
-			nChars += writeLine(mWriter, "/F" + fontCounter);
+			nChars += writeLine(mWriter, "/" + mPDFFontPrefix + fontCounter);
 			mPDFFonts.put(afm.getFontName(), new Integer(fontCounter));
 			fontCounter++;
 			nChars += writeLine(mWriter, "<< /Type /Font /Subtype /Type1");
@@ -960,6 +962,22 @@ public class OutputFormat
 			"/" + fontName + " exch definefont pop");
 	}
 
+	/**
+	 * Get unique key.
+	 * @return 8 digit hexadecimal key.
+	 */
+	private String getUniqueKey()
+	{
+		StringBuffer sb = new StringBuffer();
+		long timeStamp = (System.currentTimeMillis() & 0x7fffffff);
+		String s = Long.toHexString(timeStamp);
+		int zeroPadding = 8 - s.length();
+		while (zeroPadding-- > 0)
+			sb.append("0");
+		sb.append(s);
+		return(sb.toString());
+	}
+
 	private void setOutput(String filename, double width, double height,
 		String extras, PrintStream stdoutStream)
 		throws IOException, MapyrusException
@@ -982,6 +1000,10 @@ public class OutputFormat
 		boolean compressOutput = false;
 		String scriptFilename = null;
 		Rectangle2D existingBoundingBox = null;
+		String uniqueKey = getUniqueKey();
+		mPDFFontPrefix = "Mapyrus" + uniqueKey + "F";
+		mPDFImagePrefix = "Mapyrus" + uniqueKey + "Img";
+		mPDFGstatePrefix = "Mapyrus" + uniqueKey + "Gstate";
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
@@ -1644,7 +1666,7 @@ public class OutputFormat
 		int step;
 		String imageKey = null;
 		if (mPDFObjects != null)
-			imageKey = PDF_IMAGE_PREFIX + mPDFObjects.size();
+			imageKey = mPDFImagePrefix + mPDFObjects.size();
 		StringWriter sw = null;
 		PrintWriter pw;
 		if (mOutputType == PDF)
@@ -2053,7 +2075,7 @@ public class OutputFormat
 			for (int i = 0; i < pdfObjs.length; i++)
 			{
 				String key = pdfObjs[i].toString();
-				if (key.indexOf(PDF_GSTATE_PREFIX) >= 0)
+				if (key.indexOf(mPDFGstatePrefix) >= 0)
 				{
 					nChars += writeLine(mWriter, "/" + key +
 						" " + (objIndex + counter + 1) + " 0 R");
@@ -2075,7 +2097,7 @@ public class OutputFormat
 			for (int i = 0; i < pdfObjs.length; i++)
 			{
 				String key = pdfObjs[i].toString();
-				if (key.indexOf(PDF_IMAGE_PREFIX) >= 0)
+				if (key.indexOf(mPDFImagePrefix) >= 0)
 				{
 					nChars += writeLine(mWriter, "/" + key +
 						" " + (objIndex + counter) + " 0 R");
@@ -2429,7 +2451,7 @@ public class OutputFormat
 				 */
 				int alpha = color.getAlpha();
 				String as = mCoordinateDecimal.format(alpha / 255.0);
-				String gsKey = PDF_GSTATE_PREFIX + alpha;
+				String gsKey = mPDFGstatePrefix + alpha;
 				mPDFObjects.put(gsKey, "<< /Type /ExtGState /CA " +
 					as + " /ca " + as + " >>");
 
@@ -2476,7 +2498,7 @@ public class OutputFormat
 			 * repeated use of the same blend results in
 			 * the same dictionary value being used.
 			 */
-			String gsKey = PDF_GSTATE_PREFIX + blend;
+			String gsKey = mPDFGstatePrefix + blend;
 			mPDFObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
 			writeLine(mPDFGeometryWriter, "/" + gsKey + " gs");
 		}
@@ -3309,9 +3331,68 @@ public class OutputFormat
 		double size, double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
+		PDFFile pdffile = new PDFFile(filename);
+		
+		if (page < 1 || page > pdffile.getPageCount())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_NUMBER) +
+				": " + page);
+		}
 
+		int[] boundingBox = pdffile.getMediaBox(page);
+		int pointWidth = boundingBox[2] - boundingBox[0];
+		int pointHeight = boundingBox[3] - boundingBox[1];
+		Point2D pt;
+		int i;
+		double x, y;
+
+		/*
+		 * If size not given then make PDF about as large as defined in the PDF file.
+		 */
+		if (size <= 0.0)
+		{
+			size = Math.max(pointWidth, pointHeight) *
+				(Constants.MM_PER_INCH / Constants.POINTS_PER_INCH);
+		}
+		size *= scaling;
+
+		if (mOutputType == PDF)
+		{
+			/*
+			 * Include PDF file at each position in list.
+			 */
+			for (i = 0; i < pointList.size(); i++)
+			{
+				pt = (Point2D)(pointList.get(i));
+				x = pt.getX();
+				y = pt.getY();
+
+				/*
+				 * Skip points that are outside page.
+				 */
+				if (x + size >= 0 && x - size <= mPageWidth &&
+					y + size >= 0.0 && y - size <= mPageHeight)
+				{
+					/*
+					 * PDF file is centred at each point.
+					 * Shift position left and down half it's size
+					 * so that it is displayed centered.
+					 */
+					writeLine(mPDFGeometryWriter, "q");
+					writeLine(mPDFGeometryWriter, "Q");
+				}
+			}
+		}
+		else
+		{
+			/*
+			 * We cannot show PDF files when drawing to an image file so show a
+			 * transparent grey box where the PDF file would appear.
+			 */
+			drawBoundingBoxes(pointList, size, rotation);
+		}
 	}
-	
+
 	/**
 	 * Draw currently defined path to output page.
 	 * @param shape
@@ -3755,8 +3836,8 @@ public class OutputFormat
 					if (index < 0)
 						index = 4;
 				}
-				writeLine(mPDFGeometryWriter, "/F" + index + " " +
-					mCoordinateDecimal.format(mFontSize) + " Tf");
+				writeLine(mPDFGeometryWriter, "/" + mPDFFontPrefix + index +
+					" " + mCoordinateDecimal.format(mFontSize) + " Tf");
 				if (mFontOutlineWidth > 0)
 				{
 					writeLine(mPDFGeometryWriter, "1 Tr " +
