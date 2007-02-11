@@ -91,6 +91,19 @@ public class PDFObject
 	}
 
 	/**
+	 * Set object to be the same as another object
+	 * @param anotherObject object to copy.
+	 */
+	public void setValue(PDFObject otherObject)
+	{
+		mValue = otherObject.mValue;
+		mReference = otherObject.mReference;
+		mArray = otherObject.mArray;
+		mDictionary = otherObject.mDictionary;
+		mStreamOffset = otherObject.mStreamOffset;
+	}
+
+	/**
 	 * Check if this object is an array.
 	 * @return true if object is an array.
 	 */
@@ -106,6 +119,15 @@ public class PDFObject
 	public PDFObject[] getArray()
 	{
 		return(mArray);
+	}
+
+	/**
+	 * Check if this object is a dictionary.
+	 * @return true if object is a dictionary.
+	 */
+	public boolean isDictionary()
+	{
+		return(mDictionary != null);
 	}
 
 	/**
