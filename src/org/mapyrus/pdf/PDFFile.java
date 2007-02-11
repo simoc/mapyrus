@@ -27,7 +27,10 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
@@ -243,21 +246,46 @@ public class PDFFile
 	 * @param page page number.
 	 * @return resources used by page. 
 	 */
-	public PDFObject getResources(int page) throws MapyrusException
+	private PDFObject getResources(int page) throws MapyrusException
 	{
-		PDFObject pageObject = (PDFObject)mPageObjects.get(page);
+		PDFObject pageObject = (PDFObject)mPageObjects.get(page - 1);
 		PDFObject resourcesObject = getDictionaryValue(pageObject, "/Resources");
 		return(resourcesObject);
 	}
 
 	/**
+	 * Get dictionary containing external graphics states for page.
+	 * @param page page number.
+	 * @return dictionary containing graphics states.
+	 */
+	public PDFObject getExtGState(int page) throws IOException, MapyrusException
+	{
+		PDFObject resourcesObject = getResources(page);
+		PDFObject extGStatesObject = getDictionaryValue(resourcesObject, "/ExtGState");
+		resolveAllReferences(extGStatesObject);
+		return(extGStatesObject);
+	}
+
+	/**
+	 * Get dictionary containing external objects for page.
+	 * @param page page number.
+	 * @return dictionary containing objects.
+	 */
+	public PDFObject getXObject(int page) throws IOException, MapyrusException
+	{
+		PDFObject resourcesObject = getResources(page);
+		PDFObject externalObject = getDictionaryValue(resourcesObject, "/XObject");
+		return(externalObject);
+	}
+
+	/**
 	 * Get media box for page.
-	 * @param page page number, with 0 being the first page.
+	 * @param page page number.
 	 * @return (x1, y1) and (x2, y2) coordinates of page in points.
 	 */
 	public int[] getMediaBox(int page) throws MapyrusException
 	{
-		PDFObject pageObject = (PDFObject)mPageObjects.get(page);
+		PDFObject pageObject = (PDFObject)mPageObjects.get(page - 1);
 		PDFObject boxObject = getDictionaryValue(pageObject, "/MediaBox");
 		PDFObject[] boxArray = boxObject.getArray();
 		int retval[] = new int[4];
@@ -273,20 +301,20 @@ public class PDFFile
 	}
 
 	/**
-	 * Get objects containing page contents.
-	 * @param page page number, with 0 being the first page.
+	 * Get contents of page.
+	 * @param page page number.
 	 * @return page contents.
 	 */
-	public ArrayList getContentsObjects(int page) throws IOException, MapyrusException
+	public byte []getContents(int page) throws IOException, MapyrusException
 	{
-		ArrayList retval = new ArrayList();
-		PDFObject pageObject = (PDFObject)mPageObjects.get(page);
+		ArrayList byteBuffers = new ArrayList();
+		PDFObject pageObject = (PDFObject)mPageObjects.get(page - 1);
 		PDFObject contentsObject = getDictionaryValue(pageObject, "/Contents");
 
 		if (contentsObject == null)
 		{
 			/*
-			 * No contents.  Return empty list.
+			 * No contents.  Return nothing.
 			 */
 		}
 		else if (contentsObject.isArray())
@@ -296,28 +324,325 @@ public class PDFFile
 			 */
 			PDFObject[] contentsArray = contentsObject.getArray();
 			for (int i = 0; i < contentsArray.length; i++)
-				retval.add(contentsArray[i]);
+			{
+				byteBuffers.add(decodeStream(contentsArray[i]));
+			}
 		}
 		else
 		{
-			retval.add(contentsObject);
+			byteBuffers.add(decodeStream(contentsObject));
 		}
 
 		/*
-		 * Replace any references to other objects with actual values.
+		 * Find total length of all contents for this page.
 		 */
-		for (int i = 0; i < retval.size(); i++)
+		int totalLength = 0;
+		for (int i = 0; i < byteBuffers.size(); i++)
+			totalLength += ((byte [])byteBuffers.get(i)).length;
+
+		byte[] retval = null;
+		if (totalLength > 0)
 		{
-			contentsObject = (PDFObject)retval.get(i);
-			if (contentsObject.isReference())
+			/*
+			 * Join all the byte buffers together.
+			 */
+			retval = new byte[totalLength];
+			int offset = 0;
+			for (int i = 0; i < byteBuffers.size(); i++)
 			{
-				contentsObject = (PDFObject)mObjects.get(new Integer(contentsObject.getReference()));
-				retval.set(i, contentsObject);
+				byte[] buf = (byte [])byteBuffers.get(i);
+				System.arraycopy(buf, 0, retval, offset, buf.length);
+				offset += buf.length;
 			}
-			resolveReference(contentsObject, "/Length");
-			resolveReference(contentsObject, "/Filter");
 		}
 		return(retval);
+	}
+
+	/**
+	 * Decode content stream of page contents object.
+	 * @param contentsObject page contents object.
+	 * @return decoded stream.
+	 */
+	private byte[] decodeStream(PDFObject contentsObject)
+		throws IOException, MapyrusException
+	{
+		PDFObject filterObject = getDictionaryValue(contentsObject, "/Filter");
+		PDFObject contentsLengthObject = getDictionaryValue(contentsObject, "/Length");
+		String s = contentsLengthObject.getValue();
+		int streamLength = Integer.parseInt(s);
+		byte []buf = new byte[streamLength];
+		mPdfFile.seek(contentsObject.getStreamOffset());
+		mPdfFile.readFully(buf);
+	
+		if (filterObject != null)
+		{
+			/*
+			 * Build list of filters to use to decode stream.
+			 */
+			String[] filterNames;
+			if (!filterObject.isArray())
+			{
+				filterNames = new String[]{filterObject.getValue()};
+			}
+			else
+			{
+				PDFObject[] filterArray = filterObject.getArray();
+				filterNames = new String[filterArray.length];
+				for (int i = 0; i < filterArray.length; i++)
+				{
+					filterObject = filterArray[i];
+					if (filterObject.isReference())
+						filterObject = (PDFObject)mObjects.get(new Integer(filterObject.getReference()));
+					filterNames[i] = filterObject.getValue();
+				}
+			}
+			
+			/*
+			 * Decode stream using each filter in turn.
+			 */
+			for (int i = 0; i < filterNames.length; i++)
+			{
+				if (filterNames[i].equals("/FlateDecode"))
+				{
+					buf = decodeDeflatedBytes(buf);
+				}
+				else if (filterNames[i].equals("/ASCII85Decode"))
+				{
+					buf = decodeASCII85Bytes(buf);
+				}
+				else if (filterNames[i].equals("/ASCIIHexDecode"))
+				{
+					buf = decodeHexBytes(buf);
+				}
+			}
+		}
+		return(buf);
+	}
+	
+	/**
+	 * Decode deflated bytes.
+	 * @param buf bytes to uncompress.
+	 * @return uncompressed bytes.
+	 */
+	private byte[] decodeDeflatedBytes(byte []buf) throws MapyrusException
+	{
+		Inflater inflater = new Inflater();
+		inflater.setInput(buf);
+		int count = 0;
+		buf = new byte[buf.length * 5];
+		try
+		{
+			while(!inflater.finished())
+			{
+				int nBytes = inflater.inflate(buf, count, 1 /*buf.length - count*/);
+				count += nBytes;
+				if (count == buf.length)
+				{
+					/*
+					 * Array not long enough for uncompressed data.
+					 * Make it bigger.
+					 */
+					byte[] newBuf = new byte[buf.length * 2];
+					System.arraycopy(buf, 0, newBuf, 0, buf.length);
+					buf = newBuf;
+				}
+			}
+	
+			/*
+			 * Return array that is exactly the size of the decompressed data.
+			 */
+			byte[] newBuf = new byte[count];
+			System.arraycopy(buf, 0, newBuf, 0, count);
+			buf = newBuf;
+		}
+		catch (DataFormatException e)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
+				": " + mFilename + ": " + e.getMessage());
+		}
+		return(buf);
+	}
+	
+	/**
+	 * Decode ASCII85 encoded bytes from PDF content stream.
+	 * @param buf ASCII85 bytes to decode.
+	 * @return decoded bytes.
+	 */
+	private byte[] decodeASCII85Bytes(byte []buf)
+	{
+		StringBuffer ascii85 = new StringBuffer();
+		byte[] newBuf = new byte[buf.length];
+		int j = 0;
+		int nBytes = 0;
+		while (j < buf.length && buf[j] != '~')
+		{
+			if (!Character.isWhitespace((char)buf[j]))
+			{
+				ascii85.append((char)buf[j]);
+				if (ascii85.length() == 5)
+				{
+					byte[] decoded = decodeASCII85(ascii85.toString(), ascii85.length());
+					System.arraycopy(decoded, 0, newBuf, nBytes, decoded.length);
+					nBytes += decoded.length;
+					ascii85.setLength(0);
+				}
+				else if (ascii85.charAt(0) == 'z')
+				{
+					for (int k = 0; k < 5; k++)
+						newBuf[nBytes++] = 0;
+					ascii85.setLength(0);
+				}
+			}
+			j++;
+		}
+		if (ascii85.length() > 0)
+		{
+			/*
+			 * Decompress final group of 1, 2, 3 or 4 characters.
+			 */
+			int finalLength = ascii85.length();
+			while (ascii85.length() < 5)
+				ascii85.append('!');
+			byte[] decoded = decodeASCII85(ascii85.toString(), finalLength);
+			System.arraycopy(decoded, 0, newBuf, nBytes, decoded.length);
+			nBytes += decoded.length;
+		}
+		
+		/*
+		 * Return array that is exactly the size of the decompressed data.
+		 */
+		buf = new byte[nBytes];
+		System.arraycopy(newBuf, 0, buf, 0, nBytes);
+		return(buf);
+	}
+	
+	/**
+	 * Decode five ASCII85 encoded characters into 4 bytes.
+	 * @param ascii85 five character string to decode.
+	 * @return four decoded bytes.
+	 */
+	private byte[] decodeASCII85(String ascii85, int nChars)
+	{
+		/*
+		 * Unpack up to 5 characters into 4 byte integer.
+		 */
+		int c = ascii85.charAt(0) - '!';
+		long n = (c * 85 * 85 * 85 * 85);
+	
+		c = ascii85.charAt(1) - '!';
+		n += (c * 85 * 85 * 85);
+	
+		if (nChars > 2)
+		{
+			c = ascii85.charAt(2) - '!';
+			n += (c * 85 * 85);
+		}
+		if (nChars > 3)
+		{
+			c = ascii85.charAt(3) - '!';
+			n += (c * 85);
+		}
+		if (nChars > 4)
+		{
+			c = ascii85.charAt(4) - '!';
+			n += c;
+		}
+	
+		byte[] buf = new byte[nChars - 1];
+	
+		/*
+		 * Create 4 byte array from 4 byte integer.
+		 */
+		long b = ((n >> 24) & 255);
+		if (b > 127)
+			b = b - 256;
+		buf[0] = (byte)b;
+	
+		if (nChars > 2)
+		{
+			b = ((n >> 16) & 255);
+			if (b > 127)
+				b = b - 256;
+			buf[1] = (byte)b;
+		}
+	
+		if (nChars > 3)
+		{
+			b = ((n >> 8) & 255);
+			if (b > 127)
+				b = b - 256;
+			buf[2] = (byte)b;
+		}
+		
+		if (nChars > 4)
+		{
+			b = (n & 255);
+			if (b > 127)
+				b = b - 256;
+			buf[3] = (byte)b;
+		}
+		
+		if (nChars < 5 && (n & 255) > 127)
+		{
+			/*
+			 * Need to increment final digit because ASCII85 conversion loses
+			 * some precision by not including all five characters in the set.
+			 */
+			b = (buf[nChars - 2] & 255);
+			b++;
+			if (b > 127)
+				b = b - 256;
+			buf[nChars - 2] = (byte)b;
+			
+		}
+	
+		return(buf);
+	}
+	
+	/**
+	 * Decode hex digits from PDF content stream.
+	 * @param buf hex digits to decode.
+	 * @return decoded hex bytes.
+	 */
+	private byte[] decodeHexBytes(byte []buf)
+	{
+		StringBuffer hex = new StringBuffer();
+		byte[] newBuf = new byte[buf.length];
+		int j = 0;
+		int nBytes = 0;
+		while (j < buf.length && buf[j] != '>')
+		{
+			if (Character.isLetterOrDigit((char)buf[j]))
+			{
+				hex.append((char)buf[j]);
+				if (hex.length() == 2)
+				{
+					int k = Integer.parseInt(hex.toString(), 16);
+					if (k > 127)
+						k = k - 256;
+					newBuf[nBytes++] = (byte)k;
+					hex.setLength(0);
+				}
+			}
+		}
+		if (hex.length() == 1)
+		{
+			/*
+			 * Decompress final single digit.
+			 */
+			hex.append('0');
+			int k = Integer.parseInt(hex.toString(), 16);
+			if (k > 127)
+				k = k - 256;
+			newBuf[nBytes++] = (byte)k;		
+		}
+	
+		/*
+		 * Return array that is exactly the size of the decompressed data.
+		 */
+		buf = new byte[nBytes];
+		System.arraycopy(newBuf, 0, buf, 0, nBytes);
+		return(buf);
 	}
 
 	/**
@@ -615,15 +940,35 @@ public class PDFFile
 	}
 
 	/**
-	 * Replace any references in a dictionary object with actual values.
-	 * @param dictionaryObject dictionary in which to replace values.
-	 * @param key dictionary key.
+	 * Replace all references in an object by their actual values.
+	 * @param obj object in which to replace values.
 	 */
-	private void resolveReference(PDFObject dictionaryObject, String key)
+	private void resolveAllReferences(PDFObject obj)
 		throws IOException, MapyrusException
 	{
-		PDFObject valueObject = getDictionaryValue(dictionaryObject, key);
-		dictionaryObject.getDictionary().put(key, valueObject);
+		if (obj.isDictionary())
+		{
+			Set keys = obj.getDictionary().keySet();
+			Iterator it = keys.iterator();
+			while (it.hasNext())
+			{
+				String key = (String)it.next();
+				PDFObject value = (PDFObject)(obj.getDictionary().get(key));
+				resolveAllReferences(value);
+			}
+		}
+		else if (obj.isArray())
+		{
+			PDFObject[] arrayObjects = obj.getArray();
+			for (int i = 0; i < arrayObjects.length; i++)
+				resolveAllReferences(arrayObjects[i]);
+		}
+		else if (obj.isReference())
+		{
+			PDFObject value = (PDFObject)mObjects.get(new Integer(obj.getReference()));
+			resolveAllReferences(value);
+			obj.setValue(value);
+		}
 	}
 
 	public static void main(String []args)
@@ -632,17 +977,18 @@ public class PDFFile
 		{
 			PDFFile pdf = new PDFFile("/tmp/text1.pdf");
 			int nPages = pdf.getPageCount();
-			for (int i = 0; i < nPages; i++)
+			for (int i = 1; i <= nPages; i++)
 			{
 				System.out.println("-- Page " + i);
 				int[] box = pdf.getMediaBox(i);
 				System.out.println("[" + box[0] + " " + box[1] + " " + box[2] + " " + box[3] + "]");
-				System.out.println("-- Resources");
-				System.out.println(pdf.getResources(i));
+				System.out.println("-- ExtGState");
+				System.out.println(pdf.getExtGState(i));
+				System.out.println("-- XObject");
+				System.out.println(pdf.getXObject(i));
 				System.out.println("-- Contents");
-				ArrayList contents = pdf.getContentsObjects(i);
-				for (int j = 0; j < contents.size(); j++)
-					System.out.println(contents.get(j));
+				String contents = new String(pdf.getContents(i));
+				System.out.println(contents);
 			}
 		}
 		catch (Exception e)
