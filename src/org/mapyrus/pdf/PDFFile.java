@@ -262,8 +262,63 @@ public class PDFFile
 	{
 		PDFObject resourcesObject = getResources(page);
 		PDFObject extGStatesObject = getDictionaryValue(resourcesObject, "/ExtGState");
-		resolveAllReferences(extGStatesObject);
+		if (extGStatesObject != null)
+			resolveAllReferences(extGStatesObject);
 		return(extGStatesObject);
+	}
+
+	/**
+	 * Get dictionary containing color states for page.
+	 * @param page page number.
+	 * @return dictionary containing color spaces.
+	 */
+	public PDFObject getColorSpace(int page) throws IOException, MapyrusException
+	{
+		PDFObject resourcesObject = getResources(page);
+		PDFObject colorSpaceObject = getDictionaryValue(resourcesObject, "/ColorSpace");
+		if (colorSpaceObject != null)
+			resolveAllReferences(colorSpaceObject);
+		return(colorSpaceObject);
+	}
+
+	/**
+	 * Get dictionary containing patterns for page.
+	 * @param page page number.
+	 * @return dictionary containing patterns.
+	 */
+	public PDFObject getPattern(int page) throws IOException, MapyrusException
+	{
+		PDFObject resourcesObject = getResources(page);
+		PDFObject patternObject = getDictionaryValue(resourcesObject, "/Pattern");
+		if (patternObject != null)
+			resolveAllReferences(patternObject);
+		return(patternObject);
+	}
+
+	/**
+	 * Get dictionary containing shading for page.
+	 * @param page page number.
+	 * @return dictionary containing shading.
+	 */
+	public PDFObject getShading(int page) throws IOException, MapyrusException
+	{
+		PDFObject resourcesObject = getResources(page);
+		PDFObject shadingObject = getDictionaryValue(resourcesObject, "/Shading");
+		if (shadingObject != null)
+			resolveAllReferences(shadingObject);
+		return(shadingObject);
+	}
+
+	/**
+	 * Get dictionary containing fonts for page.
+	 * @param page page number.
+	 * @return dictionary containing fonts.
+	 */
+	public PDFObject getFont(int page) throws IOException, MapyrusException
+	{
+		PDFObject resourcesObject = getResources(page);
+		PDFObject fontObject = getDictionaryValue(resourcesObject, "/Font");
+		return(fontObject);
 	}
 
 	/**
