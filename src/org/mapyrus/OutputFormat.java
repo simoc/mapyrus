@@ -199,7 +199,8 @@ public class OutputFormat
 	 */
 	private AdobeFontMetricsManager mAdobeFontMetrics;
 	private ArrayList mAfmFiles;
-	private HashMap mPDFFonts;
+	private ArrayList mPfbFiles;
+	private ArrayList mPDFFonts;
 	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
@@ -271,7 +272,8 @@ public class OutputFormat
 	private ArrayList mPDFFileOffsets;
 	private StringWriter mPDFGeometryStringWriter;
 	private PrintWriter mPDFGeometryWriter;
-	private HashMap mPDFObjects;
+	private HashMap mPDFExtGStateObjects;
+	private HashMap mPDFImageObjects;
 
 	/*
 	 * Format for writing coordinate values.
@@ -476,64 +478,18 @@ public class OutputFormat
 	 * @param resolution resolution of page in DPI.
 	 * @param turnPage flag true when page is to be rotated 90 degrees.
 	 * @param fontList list of PostScript fonts to include in header.
-	 * @param afmFiles list of PostScript AFM files to include in header.
 	 * @param backgroundColor background color for page, or null if no background.
 	 */
 	private void writePDFHeader(String filename, double width, double height,
 		int resolution, boolean turnPage, ArrayList fontList,
-		ArrayList afmFilenames, Color backgroundColor)
+		Color backgroundColor)
 		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *	Constants.POINTS_PER_INCH);
 		long heightInPoints = Math.round(height / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH);
 
-		int nFontObjects = 0;
-		HashMap afmFiles = new HashMap(afmFilenames.size());
-		for (int i = 0; i < afmFilenames.size(); i++)
-		{
-			/*
-			 * Read .afm file for each additional font file given by user.
-			 */
-			String afmFilename = (String)afmFilenames.get(i);
-			BufferedReader reader = null;
-			AdobeFontMetrics afm = null;
-			try
-			{
-				reader = new BufferedReader(new FileReader(afmFilename));
-				afm = new AdobeFontMetrics(reader, afmFilename, mEncodeAsISOLatin1);
+		mPfbFiles = fontList;
 
-				/*
-				 * Find if there is a matching .pfb file for each font.
-				 */
-				boolean foundPfbFile = false;
-				int j = 0;
-				PostScriptFont font = null;
-				while (j < fontList.size() && (!foundPfbFile))
-				{
-					font = (PostScriptFont)fontList.get(j);
-					if (font.getName().equals(afm.getFontName()))
-						foundPfbFile = true;
-					else
-						j++;
-				}
-
-				/*
-				 * Objects for character widths and font descriptor will be needed
-				 * each font.  If .pfb file is given then an object is needed for
-				 * font definition too.
-				 */
-				if (foundPfbFile)
-					nFontObjects += 3;
-				else
-					nFontObjects += 2;
-				afmFiles.put(afm, font);
-			}
-			finally
-			{
-				if (reader != null)
-					reader.close();
-			}
-		}
 		mPDFFileOffsets = new ArrayList();
 
 		int nChars = writeLine(mWriter, "%PDF-1.4");
@@ -572,64 +528,171 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "/Count 0");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
-		mWriter.flush();
 
 		mPDFFileOffsets.add(new Integer(nChars));
 		nChars += writeLine(mWriter, "4 0 obj % Page Tree Node");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Pages");
-		nChars += writeLine(mWriter, "/Kids [5 0 R]");
+		nChars += writeLine(mWriter, "/Kids [6 0 R]");
 		nChars += writeLine(mWriter, "/Count 1");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "5 0 obj % Single Page");
+		nChars += writeLine(mWriter, "5 0 obj % MediaBox");
+		String mediaBox;
+		if (turnPage)
+			mediaBox = "[0 0 " + heightInPoints + " " + widthInPoints + "]";
+		else
+			mediaBox = "[0 0 " + widthInPoints + " " + heightInPoints + "]";
+		nChars += writeLine(mWriter, mediaBox);
+		nChars += writeLine(mWriter, "endobj");
+		mWriter.flush();
+
+		mPDFFileOffsets.add(new Integer(nChars));
+
+		mPDFExtGStateObjects = new HashMap();
+		mPDFImageObjects = new HashMap();
+		mPDFGeometryStringWriter = new StringWriter();
+		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
+
+		if (turnPage)
+		{
+			/*
+			 * Turn page 90 degrees so that a landscape orientation page appears
+			 * on a portrait page.
+			 */
+			writeLine(mPDFGeometryWriter, "0 1 -1 0 0 0 cm");
+			writeLine(mPDFGeometryWriter, "1 0 0 1 0 " + (-heightInPoints) + " cm");
+		}
+
+		if (backgroundColor != null)
+		{
+			/*
+			 * Write object to set page background.
+			 */
+			float components[] = backgroundColor.getColorComponents(null);
+			writeLine(mPDFGeometryWriter, "q");
+			writeLine(mPDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
+			for (int i = 0; i < components.length; i++)
+				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(components[i]));
+			writeLine(mPDFGeometryWriter, "rg f Q");
+		}
+		writeLine(mPDFGeometryWriter, "0 0 0 RG 0 0 0 rg");
+
+		/*
+		 * Set scale so that we can give all coordinate positions in millimetres.
+		 */
+		double scale = Constants.POINTS_PER_INCH / Constants.MM_PER_INCH;
+		writeLine(mPDFGeometryWriter, scale + " 0 0 " + scale + " 0 0 cm");
+
+		for (int i = 0; i < mAfmFiles.size(); i++)
+		{
+			/*
+			 * Read .afm file for each additional font file given by user.
+			 */
+			String afmFilename = (String)mAfmFiles.get(i);
+			BufferedReader reader = null;
+			AdobeFontMetrics afm = null;
+			try
+			{
+				reader = new BufferedReader(new FileReader(afmFilename));
+				afm = new AdobeFontMetrics(reader, afmFilename, mEncodeAsISOLatin1);
+				mPDFFonts.add(afm);
+			}
+			finally
+			{
+				if (reader != null)
+					reader.close();
+			}
+		}
+	}
+
+	/**
+	 * Write resource dictionary to PDF file defining fonts and images
+	 * used in PDF file.
+	 */
+	private void writePDFResources() throws IOException, MapyrusException
+	{
+		int nFontObjects = 0;
+		HashMap afmFiles = new HashMap(mPDFFonts.size());
+		for (int i = 0; i < mPDFFonts.size(); i++)
+		{
+			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
+
+			/*
+			 * Find if there is a matching .pfb file for each font.
+			 */
+			boolean foundPfbFile = false;
+			int j = 0;
+			PostScriptFont font = null;
+			while (j < mPfbFiles.size() && (!foundPfbFile))
+			{
+				font = (PostScriptFont)mPfbFiles.get(j);
+				if (font.getName().equals(afm.getFontName()))
+					foundPfbFile = true;
+				else
+					j++;
+			}
+
+			/*
+			 * Objects for character widths and font descriptor will be needed
+			 * each font.  If .pfb file is given then an object is needed for
+			 * font definition too.
+			 */
+			if (foundPfbFile)
+				nFontObjects += 3;
+			else
+			{
+				nFontObjects += 2;
+				font = null;
+			}
+			afmFiles.put(afm, font);
+		}
+
+		Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+		int nChars = offset.intValue();
+		nChars += writeLine(mWriter, "6 0 obj % Single Page");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Page");
 		nChars += writeLine(mWriter, "/Parent 4 0 R");
-		String mediaBox;
-		if (turnPage)
-			mediaBox = "/MediaBox [0 0 " + heightInPoints + " " + widthInPoints + "]";
-		else
-			mediaBox = "/MediaBox [0 0 " + widthInPoints + " " + heightInPoints + "]";
-		nChars += writeLine(mWriter, mediaBox);
+		nChars += writeLine(mWriter, "/MediaBox 5 0 R");
+		nChars += writeLine(mWriter, "/Contents " + (7 + nFontObjects) + " 0 R");
 		nChars += writeLine(mWriter, "/Resources");
 		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "  /ProcSet [/PDF /Text /ImageB /ImageC]");
+		nChars += writeLine(mWriter, "/ProcSet [/PDF /Text /ImageB /ImageC]");
+		nChars += writeLine(mWriter, "/ExtGState " + (8 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/ColorSpace " + (9 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/Pattern " + (10 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/Shading " + (11 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/XObject " + (12 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/Font");
+		nChars += writeLine(mWriter, "<<");
 
-		nChars += writeLine(mWriter, "  /ExtGState " + (7 + nFontObjects) + " 0 R");
-		nChars += writeLine(mWriter, "  /XObject " + (8 + nFontObjects) + " 0 R");
-		nChars += writeLine(mWriter, "  /Font");
-		nChars += writeLine(mWriter, "  <<");
 		for (int i = 0; i < PDF_FONTS.length; i++)
 		{
 			/*
 			 * Define names for each of the standard PDF fonts.
 			 */
-			nChars += writeLine(mWriter, "    /" + mPDFFontPrefix + i +
+			nChars += writeLine(mWriter, "/" + mPDFFontPrefix + i +
 				" << /Type /Font /Subtype /Type1");
-			nChars += writeLine(mWriter, "      /BaseFont /" + PDF_FONTS[i] +
+			nChars += writeLine(mWriter, "/BaseFont /" + PDF_FONTS[i] +
 				" /Name /" + mPDFFontPrefix + i);
 			if (mEncodeAsISOLatin1.contains(PDF_FONTS[i]))
 			{
-				nChars += writeLine(mWriter, "    /Encoding /WinAnsiEncoding");
+				nChars += writeLine(mWriter, "/Encoding /WinAnsiEncoding");
 			}
-			nChars += writeLine(mWriter, "    >>");
+			nChars += writeLine(mWriter, ">>");
 		}
 
-		Iterator it = afmFiles.keySet().iterator();
-		int fontCounter = PDF_FONTS.length;
-		int objectCounter = 6;
-		while (it.hasNext())
+		int objectCounter = 7;
+		for (int i = 0; i < mPDFFonts.size(); i++)
 		{
 			/*
 			 * Add font dictionary for each additional font file given by user.
 			 */
-			AdobeFontMetrics afm = (AdobeFontMetrics)it.next();
-			nChars += writeLine(mWriter, "/" + mPDFFontPrefix + fontCounter);
-			mPDFFonts.put(afm.getFontName(), new Integer(fontCounter));
-			fontCounter++;
+			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
+			nChars += writeLine(mWriter, "/" + mPDFFontPrefix + (PDF_FONTS.length + i));
 			nChars += writeLine(mWriter, "<< /Type /Font /Subtype /Type1");
 			nChars += writeLine(mWriter, "/BaseFont /" + afm.getFontName());
 			nChars += writeLine(mWriter, "/FirstChar " + afm.getFirstChar());
@@ -648,10 +711,8 @@ public class OutputFormat
 				nChars += writeLine(mWriter, "/Encoding /WinAnsiEncoding");
 			nChars += writeLine(mWriter, ">>");
 		}
-		nChars += writeLine(mWriter, "  >>");
 		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "/Contents " + (6 + nFontObjects) +
-			" 0 R % Page Drawing Stream");
+		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
@@ -659,11 +720,10 @@ public class OutputFormat
 		 * Write character widths, font descriptor and
 		 * font definition for each additional font too.
 		 */
-		it = afmFiles.keySet().iterator();
-		objectCounter = 6;
-		while (it.hasNext())
+		objectCounter = 7;
+		for (int i = 0; i < mPDFFonts.size(); i++)
 		{
-			AdobeFontMetrics afm = (AdobeFontMetrics)it.next();
+			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
 			mPDFFileOffsets.add(new Integer(nChars));
 			nChars += writeLine(mWriter, objectCounter +
 				" 0 obj % Character Widths for " + afm.getFontName());
@@ -722,40 +782,6 @@ public class OutputFormat
 		}
 
 		mPDFFileOffsets.add(new Integer(nChars));
-
-		mPDFObjects = new HashMap();
-		mPDFGeometryStringWriter = new StringWriter();
-		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
-
-		if (turnPage)
-		{
-			/*
-			 * Turn page 90 degrees so that a landscape orientation page appears
-			 * on a portrait page.
-			 */
-			writeLine(mPDFGeometryWriter, "0 1 -1 0 0 0 cm");
-			writeLine(mPDFGeometryWriter, "1 0 0 1 0 " + (-heightInPoints) + " cm");
-		}
-
-		if (backgroundColor != null)
-		{
-			/*
-			 * Write object to set page background.
-			 */
-			float components[] = backgroundColor.getColorComponents(null);
-			writeLine(mPDFGeometryWriter, "q");
-			writeLine(mPDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
-			for (int i = 0; i < components.length; i++)
-				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(components[i]));
-			writeLine(mPDFGeometryWriter, "rg f Q");
-		}
-		writeLine(mPDFGeometryWriter, "0 0 0 RG 0 0 0 rg");
-
-		/*
-		 * Set scale so that we can give all coordinate positions in millimetres.
-		 */
-		double scale = Constants.POINTS_PER_INCH / Constants.MM_PER_INCH;
-		writeLine(mPDFGeometryWriter, scale + " 0 0 " + scale + " 0 0 cm");
 	}
 
 	/*
@@ -988,7 +1014,7 @@ public class OutputFormat
 		ArrayList fontList = new ArrayList();
 		mEncodeAsISOLatin1 = new HashSet();
 		mTTFFonts = new HashMap();
-		mPDFFonts = new HashMap();
+		mPDFFonts = new ArrayList();
 		mAfmFiles = new ArrayList();
 		mIsUpdatingFile = false;
 		int resolution;
@@ -1284,7 +1310,7 @@ public class OutputFormat
 			mSuppliedFontResources = new HashSet();
 
 			if (mOutputType == PDF)
-				writePDFHeader(filename, width, height, resolution, turnPage, fontList, mAfmFiles, backgroundColor);
+				writePDFHeader(filename, width, height, resolution, turnPage, fontList, backgroundColor);
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
@@ -1665,8 +1691,8 @@ public class OutputFormat
 		int pixelWidth, pixelHeight;
 		int step;
 		String imageKey = null;
-		if (mPDFObjects != null)
-			imageKey = mPDFImagePrefix + mPDFObjects.size();
+		if (mPDFImageObjects != null)
+			imageKey = mPDFImagePrefix + mPDFImageObjects.size();
 		StringWriter sw = null;
 		PrintWriter pw;
 		if (mOutputType == PDF)
@@ -1908,7 +1934,7 @@ public class OutputFormat
 			writeLine(pw, s);
 			writeLine(pw, "endstream");
 			pw.flush();
-			mPDFObjects.put(imageKey, sw);
+			mPDFImageObjects.put(imageKey, sw);
 		}
 		else
 		{
@@ -2034,6 +2060,12 @@ public class OutputFormat
 		else if (mOutputType == PDF)
 		{
 			/*
+			 * Now we have finished the page we know all needed resources
+			 * and can write the resource dictionary.
+			 */
+			writePDFResources();
+
+			/*
 			 * Now that we have the complete geometry, we can compress it
 			 * and write it to the PDF file.
 			 */
@@ -2069,19 +2101,52 @@ public class OutputFormat
 			objIndex++;
 			nChars += writeLine(mWriter, "<<");
 
-			Object []pdfObjs = mPDFObjects.keySet().toArray();
-			Arrays.sort(pdfObjs);
+			Object []pdfExtGStateObjs = mPDFExtGStateObjects.keySet().toArray();
+			Arrays.sort(pdfExtGStateObjs);
 			int counter = 0;
-			for (int i = 0; i < pdfObjs.length; i++)
+			for (int i = 0; i < pdfExtGStateObjs.length; i++)
 			{
-				String key = pdfObjs[i].toString();
-				if (key.indexOf(mPDFGstatePrefix) >= 0)
-				{
-					nChars += writeLine(mWriter, "/" + key +
-						" " + (objIndex + counter + 1) + " 0 R");
-					counter++;
-				}
+				String key = pdfExtGStateObjs[i].toString();
+				nChars += writeLine(mWriter, "/" + key +
+					" " + (objIndex + counter + 4) + " 0 R");
+				counter++;
 			}
+			nChars += writeLine(mWriter, ">>");
+			nChars += writeLine(mWriter, "endobj");
+
+			/*
+			 * Write dictionary containing colorspaces used in external
+			 * PDF files.
+			 */
+			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(mWriter, objIndex + " 0 obj % ColorSpace");
+			objIndex++;
+			nChars += writeLine(mWriter, "<<");
+			nChars += writeLine(mWriter, ">>");
+			nChars += writeLine(mWriter, "endobj");
+			
+			/*
+			 * Write dictionary containing patterns used in external
+			 * PDF files.
+			 */
+			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(mWriter, objIndex + " 0 obj % Pattern");
+			objIndex++;
+			nChars += writeLine(mWriter, "<<");
+			nChars += writeLine(mWriter, ">>");
+			nChars += writeLine(mWriter, "endobj");
+
+			/*
+			 * Write dictionary containing shading used in external
+			 * PDF files.
+			 */
+			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(mWriter, objIndex + " 0 obj % Shading");
+			objIndex++;
+			nChars += writeLine(mWriter, "<<");
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
 
@@ -2094,30 +2159,40 @@ public class OutputFormat
 			objIndex++;
 			nChars += writeLine(mWriter, "<<");
 
-			for (int i = 0; i < pdfObjs.length; i++)
+			Object []pdfImageObjs = mPDFImageObjects.keySet().toArray();
+			Arrays.sort(pdfImageObjs);
+			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
-				String key = pdfObjs[i].toString();
-				if (key.indexOf(mPDFImagePrefix) >= 0)
-				{
-					nChars += writeLine(mWriter, "/" + key +
-						" " + (objIndex + counter) + " 0 R");
-					counter++;
-				}
+				String key = pdfImageObjs[i].toString();
+				nChars += writeLine(mWriter, "/" + key +
+					" " + (objIndex + counter) + " 0 R");
+				counter++;
 			}
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
 
 			/*
-			 * Write each image and graphics state to file.
+			 * Write each graphics state and each image to PDF file.
 			 */
-			for (int i = 0; i < pdfObjs.length; i++)
+			for (int i = 0; i < pdfExtGStateObjs.length; i++)
 			{
 				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
-				Object key = pdfObjs[i];
+				Object key = pdfExtGStateObjs[i];
 				nChars = writeLine(mWriter, objIndex + " 0 obj % " + key);
-				nChars += writeLine(mWriter, mPDFObjects.get(key).toString());
+				nChars += writeLine(mWriter, mPDFExtGStateObjects.get(key).toString());
+				nChars += writeLine(mWriter, "endobj");
+				objIndex++;
+			}
+			for (int i = 0; i < pdfImageObjs.length; i++)
+			{
+				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+
+				Object key = pdfImageObjs[i];
+				nChars = writeLine(mWriter, objIndex + " 0 obj % " + key);
+				nChars += writeLine(mWriter, mPDFImageObjects.get(key).toString());
 				nChars += writeLine(mWriter, "endobj");
 				objIndex++;
 			}
@@ -2452,7 +2527,7 @@ public class OutputFormat
 				int alpha = color.getAlpha();
 				String as = mCoordinateDecimal.format(alpha / 255.0);
 				String gsKey = mPDFGstatePrefix + alpha;
-				mPDFObjects.put(gsKey, "<< /Type /ExtGState /CA " +
+				mPDFExtGStateObjects.put(gsKey, "<< /Type /ExtGState /CA " +
 					as + " /ca " + as + " >>");
 
 				/*
@@ -2499,7 +2574,7 @@ public class OutputFormat
 			 * the same dictionary value being used.
 			 */
 			String gsKey = mPDFGstatePrefix + blend;
-			mPDFObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
+			mPDFExtGStateObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
 			writeLine(mPDFGeometryWriter, "/" + gsKey + " gs");
 		}
 		else if (mOutputType != POSTSCRIPT_GEOMETRY)
@@ -3830,9 +3905,14 @@ public class OutputFormat
 					/*
 					 * Or is it a font given by the user?
 					 */
-					Integer k = (Integer)mPDFFonts.get(mFontName);
-					if (k != null)
-						index = k.intValue();
+					for (int k = 0; k < mPDFFonts.size() && index < 0; k++)
+					{
+						AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(k);
+						if (afm.getFontName().equals(mFontName))
+						{
+							index = k + PDF_FONTS.length;
+						}
+					}
 					if (index < 0)
 						index = 4;
 				}
