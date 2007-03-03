@@ -1,7 +1,7 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
 
-0.702, February 2007
+0.702, March 2007
 
 * Add PDF command for including other PDF files in PDF output.
 
