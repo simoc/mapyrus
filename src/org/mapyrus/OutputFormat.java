@@ -276,6 +276,12 @@ public class OutputFormat
 	private HashMap mPDFImageObjects;
 
 	/*
+	 * Pages in external PDF files to be included in this one.
+	 */
+	private ArrayList mPDFIncludedFiles;
+	private ArrayList mPDFIncludedPages;
+
+	/*
 	 * Format for writing coordinate values.
 	 */
 	private DecimalFormat mCoordinateDecimal = new DecimalFormat("#.###",
@@ -553,6 +559,8 @@ public class OutputFormat
 
 		mPDFExtGStateObjects = new HashMap();
 		mPDFImageObjects = new HashMap();
+		mPDFIncludedFiles = new ArrayList();
+		mPDFIncludedPages = new ArrayList();
 		mPDFGeometryStringWriter = new StringWriter();
 		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
 
@@ -614,14 +622,37 @@ public class OutputFormat
 	 */
 	private void writePDFResources() throws IOException, MapyrusException
 	{
-		int nFontObjects = 0;
-		HashMap afmFiles = new HashMap(mPDFFonts.size());
+		int objectCounter = 7;
+		String newline = "\r\n";
+
+		StringBuffer fontDictionary = new StringBuffer(4 * 1024);
+		ArrayList pdfFontObjects = new ArrayList();
+		fontDictionary.append("<<").append(newline);
+		for (int i = 0; i < PDF_FONTS.length; i++)
+		{
+			/*
+			 * Define names for each of the standard PDF fonts.
+			 */
+			fontDictionary.append("/" + mPDFFontPrefix + i);
+			fontDictionary.append(newline);
+			fontDictionary.append("<< /Type /Font /Subtype /Type1");
+			fontDictionary.append(" /BaseFont /" + PDF_FONTS[i] +
+				" /Name /" + mPDFFontPrefix + i);
+			if (mEncodeAsISOLatin1.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding /WinAnsiEncoding");
+			}
+			fontDictionary.append(" >>");
+			fontDictionary.append(newline);
+		}
+
 		for (int i = 0; i < mPDFFonts.size(); i++)
 		{
 			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
 
 			/*
-			 * Find if there is a matching .pfb file for each font.
+			 * Add each user defined font, given by a .pfa file.
+			 * Find if there is a matching .pfb file for this font too.
 			 */
 			boolean foundPfbFile = false;
 			int j = 0;
@@ -636,19 +667,111 @@ public class OutputFormat
 			}
 
 			/*
-			 * Objects for character widths and font descriptor will be needed
-			 * each font.  If .pfb file is given then an object is needed for
-			 * font definition too.
+			 * Add font dictionary for this font file.
 			 */
-			if (foundPfbFile)
-				nFontObjects += 3;
-			else
+			fontDictionary.append("/" + mPDFFontPrefix + (PDF_FONTS.length + i));
+			fontDictionary.append(newline);
+			fontDictionary.append("<< /Type /Font /Subtype /Type1");
+			fontDictionary.append(" /BaseFont /").append(afm.getFontName());
+			fontDictionary.append(" /FirstChar ").append(afm.getFirstChar());
+			fontDictionary.append(" /LastChar ").append(afm.getLastChar());
+			fontDictionary.append(" /Widths ").append(objectCounter).append(" 0 R");
+
+			/*
+			 * Build object containing widths for this font.
+			 * We can then add it after completing the font dictionary.
+			 */
+			StringBuffer sb = new StringBuffer();
+			sb.append(objectCounter).append(" 0 obj % Character Widths for ").append(afm.getFontName());
+			sb.append(newline);
+			objectCounter++;
+			sb.append("[");
+			for (int k = afm.getFirstChar(); k <= afm.getLastChar(); k++)
 			{
-				nFontObjects += 2;
-				font = null;
+				if (k % 16 == 0)
+					sb.append(newline);
+				sb.append(' ').append(afm.getCharWidth(k));
 			}
-			afmFiles.put(afm, font);
+			sb.append("]").append(newline).append("endobj").append(newline);
+			pdfFontObjects.add(sb);
+
+			fontDictionary.append(" /FontDescriptor ").append(objectCounter).append(" 0 R");
+
+			sb = new StringBuffer();
+			sb.append(objectCounter).append(" 0 obj % Font Descriptor");
+			sb.append(newline);
+			objectCounter++;
+			sb.append("<<");
+			sb.append(newline);
+			sb.append("/Type /FontDescriptor");
+			sb.append(newline);
+			sb.append("/FontName /").append(afm.getFontName());
+			sb.append(newline);
+			sb.append("/Flags ").append(afm.getFlags());
+			sb.append(newline);
+			Rectangle rect = afm.getFontBBox();
+			sb.append("/FontBBox [" +
+				Math.round(rect.getMinX()) + " " +
+				Math.round(rect.getMinY()) + " " +
+				Math.round(rect.getMaxX()) + " " +
+				Math.round(rect.getMaxY()) + "]");
+			sb.append(newline);
+			sb.append("/ItalicAngle ").append(afm.getItalicAngle());
+			sb.append(newline);
+			sb.append("/Ascent ").append(afm.getAscender());
+			sb.append(newline);
+			sb.append("/Descent ").append(afm.getDescender());
+			sb.append(newline);
+			sb.append("/CapHeight ").append(afm.getCapHeight());
+			sb.append(newline);
+			sb.append("/StemV 105");
+			sb.append(newline);
+			if (foundPfbFile)
+				sb.append("/FontFile ").append(objectCounter).append(" 0 R").append(newline);
+			sb.append(">>").append(newline);
+			sb.append("endobj").append(newline);
+			pdfFontObjects.add(sb);
+
+			if (foundPfbFile)
+			{
+				sb = new StringBuffer();
+				sb.append(objectCounter).append(" 0 obj % Font File for ").append(font.getName());
+				sb.append(newline);
+				objectCounter++;
+				sb.append(font.getFontDefinition()).append(newline);
+				sb.append("endobj").append(newline);
+				pdfFontObjects.add(sb);
+			}
+
+			if (mEncodeAsISOLatin1.contains(afm.getFontName()))
+				fontDictionary.append("/Encoding /WinAnsiEncoding");
+			fontDictionary.append(" >>").append(newline);
 		}
+
+		for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+		{
+			PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
+			ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+			for (int j = 0; j < pageNumbers.size(); j++)
+			{
+				Integer pageNumber = (Integer)pageNumbers.get(j);
+				ArrayList list = pdfFile.getFont(pageNumber.intValue(), objectCounter);
+				if (list != null && !list.isEmpty())
+				{
+					/*
+					 * Include dictionary keys from external PDF files
+					 * and any other objects that the keys refer to.
+					 */
+					fontDictionary.append(list.get(0).toString());
+					for (int k = 1; k < list.size(); k++)
+					{
+						pdfFontObjects.add(list.get(k));
+						objectCounter++;
+					}
+				}
+			}
+		}
+		fontDictionary.append(">>").append(newline);
 
 		Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 		int nChars = offset.intValue();
@@ -657,131 +780,38 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "/Type /Page");
 		nChars += writeLine(mWriter, "/Parent 4 0 R");
 		nChars += writeLine(mWriter, "/MediaBox 5 0 R");
-		nChars += writeLine(mWriter, "/Contents " + (7 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/Contents " + objectCounter + " 0 R");
+		objectCounter++;
 		nChars += writeLine(mWriter, "/Resources");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/ProcSet [/PDF /Text /ImageB /ImageC]");
-		nChars += writeLine(mWriter, "/ExtGState " + (8 + nFontObjects) + " 0 R");
-		nChars += writeLine(mWriter, "/ColorSpace " + (9 + nFontObjects) + " 0 R");
-		nChars += writeLine(mWriter, "/Pattern " + (10 + nFontObjects) + " 0 R");
-		nChars += writeLine(mWriter, "/Shading " + (11 + nFontObjects) + " 0 R");
-		nChars += writeLine(mWriter, "/XObject " + (12 + nFontObjects) + " 0 R");
+		nChars += writeLine(mWriter, "/ExtGState " + objectCounter + " 0 R");
+		objectCounter++;
+		nChars += writeLine(mWriter, "/ColorSpace " + objectCounter + " 0 R");
+		objectCounter++;
+		nChars += writeLine(mWriter, "/Pattern " + objectCounter + " 0 R");
+		objectCounter++;
+		nChars += writeLine(mWriter, "/Shading " + objectCounter + " 0 R");
+		objectCounter++;
+		nChars += writeLine(mWriter, "/XObject " + objectCounter + " 0 R");
+		objectCounter++;
+
 		nChars += writeLine(mWriter, "/Font");
-		nChars += writeLine(mWriter, "<<");
+		nChars += writeLine(mWriter, fontDictionary.toString());
 
-		for (int i = 0; i < PDF_FONTS.length; i++)
-		{
-			/*
-			 * Define names for each of the standard PDF fonts.
-			 */
-			nChars += writeLine(mWriter, "/" + mPDFFontPrefix + i +
-				" << /Type /Font /Subtype /Type1");
-			nChars += writeLine(mWriter, "/BaseFont /" + PDF_FONTS[i] +
-				" /Name /" + mPDFFontPrefix + i);
-			if (mEncodeAsISOLatin1.contains(PDF_FONTS[i]))
-			{
-				nChars += writeLine(mWriter, "/Encoding /WinAnsiEncoding");
-			}
-			nChars += writeLine(mWriter, ">>");
-		}
-
-		int objectCounter = 7;
-		for (int i = 0; i < mPDFFonts.size(); i++)
-		{
-			/*
-			 * Add font dictionary for each additional font file given by user.
-			 */
-			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
-			nChars += writeLine(mWriter, "/" + mPDFFontPrefix + (PDF_FONTS.length + i));
-			nChars += writeLine(mWriter, "<< /Type /Font /Subtype /Type1");
-			nChars += writeLine(mWriter, "/BaseFont /" + afm.getFontName());
-			nChars += writeLine(mWriter, "/FirstChar " + afm.getFirstChar());
-			nChars += writeLine(mWriter, "/LastChar " + afm.getLastChar());
-			nChars += writeLine(mWriter, "/Widths " + objectCounter + " 0 R");
-			objectCounter++;
-			nChars += writeLine(mWriter, "/FontDescriptor " + objectCounter + " 0 R");
-			objectCounter++;
-
-			/*
-			 * If .pfb font file is given then leave space for it too.
-			 */
-			if (afmFiles.get(afm) != null)
-				objectCounter++;
-			if (mEncodeAsISOLatin1.contains(afm.getFontName()))
-				nChars += writeLine(mWriter, "/Encoding /WinAnsiEncoding");
-			nChars += writeLine(mWriter, ">>");
-		}
-		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
 
 		/*
-		 * Write character widths, font descriptor and
-		 * font definition for each additional font too.
+		 * Now add font width, font descriptor and font file objects.
 		 */
-		objectCounter = 7;
-		for (int i = 0; i < mPDFFonts.size(); i++)
-		{
-			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
-			mPDFFileOffsets.add(new Integer(nChars));
-			nChars += writeLine(mWriter, objectCounter +
-				" 0 obj % Character Widths for " + afm.getFontName());
-			objectCounter++;
-			StringBuffer sb = new StringBuffer("[");
-			for (int k = afm.getFirstChar(); k <= afm.getLastChar(); k++)
-			{
-				sb.append(' ').append(afm.getCharWidth(k));
-				if (sb.length() >= 64)
-				{
-					nChars += writeLine(mWriter, sb.toString());
-					sb.setLength(0);
-				}
-			}
-			sb.append("]");
-			nChars += writeLine(mWriter, sb.toString());
-			nChars += writeLine(mWriter, "endobj");
-
-			mPDFFileOffsets.add(new Integer(nChars));
-			nChars += writeLine(mWriter, objectCounter + " 0 obj % Font Descriptor");
-			objectCounter++;
-			nChars += writeLine(mWriter, "<<");
-			nChars += writeLine(mWriter, "/Type /FontDescriptor");
-			nChars += writeLine(mWriter, "/FontName /" + afm.getFontName());
-			nChars += writeLine(mWriter, "/Flags " + afm.getFlags());
-			Rectangle rect = afm.getFontBBox();
-			nChars += writeLine(mWriter, "/FontBBox [" +
-				Math.round(rect.getMinX()) + " " +
-				Math.round(rect.getMinY()) + " " +
-				Math.round(rect.getMaxX()) + " " +
-				Math.round(rect.getMaxY()) + "]");
-			nChars += writeLine(mWriter, "/ItalicAngle " + afm.getItalicAngle());
-			nChars += writeLine(mWriter, "/Ascent " + afm.getAscender());
-			nChars += writeLine(mWriter, "/Descent " + afm.getDescender());
-			nChars += writeLine(mWriter, "/CapHeight " + afm.getCapHeight());
-			nChars += writeLine(mWriter, "/StemV 105");
-
-			PostScriptFont font = (PostScriptFont)afmFiles.get(afm);
-			if (font != null)
-			{
-				nChars += writeLine(mWriter, "/FontFile " + objectCounter + " 0 R");
-				
-			}
-			nChars += writeLine(mWriter, ">>");
-			nChars += writeLine(mWriter, "endobj");
-
-			if (font != null)
-			{
-				mPDFFileOffsets.add(new Integer(nChars));
-				nChars += writeLine(mWriter, objectCounter +
-					" 0 obj % Font File for " + font.getName());
-				objectCounter++;
-				nChars += writeLine(mWriter, font.getFontDefinition());
-				nChars += writeLine(mWriter, "endobj");
-			}
-		}
-
 		mPDFFileOffsets.add(new Integer(nChars));
+		for (int i = 0; i < pdfFontObjects.size(); i++)
+		{
+			nChars += writeLine(mWriter, pdfFontObjects.get(i).toString());
+			mPDFFileOffsets.add(new Integer(nChars));
+		}
 	}
 
 	/*
@@ -1027,9 +1057,9 @@ public class OutputFormat
 		String scriptFilename = null;
 		Rectangle2D existingBoundingBox = null;
 		String uniqueKey = getUniqueKey();
-		mPDFFontPrefix = "Mapyrus" + uniqueKey + "F";
-		mPDFImagePrefix = "Mapyrus" + uniqueKey + "Img";
-		mPDFGstatePrefix = "Mapyrus" + uniqueKey + "Gstate";
+		mPDFFontPrefix = Constants.PROGRAM_NAME.charAt(0) + uniqueKey + "F";
+		mPDFImagePrefix = Constants.PROGRAM_NAME.charAt(0) + uniqueKey + "Img";
+		mPDFGstatePrefix = Constants.PROGRAM_NAME.charAt(0) + uniqueKey + "Gstate";
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
@@ -2111,6 +2141,32 @@ public class OutputFormat
 					" " + (objIndex + counter + 4) + " 0 R");
 				counter++;
 			}
+
+			ArrayList includedExtGstateObjects = new ArrayList();
+			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			{
+				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
+				ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+				for (int j = 0; j < pageNumbers.size(); j++)
+				{
+					Integer pageNumber = (Integer)pageNumbers.get(j);
+					ArrayList list = pdfFile.getExtGState(pageNumber.intValue(),
+						objIndex + counter + 4);
+					if (list != null && !list.isEmpty())
+					{
+						/*
+						 * Include dictionary keys from external PDF files
+						 * and any other objects that the keys refer to.
+						 */
+						nChars += writeLine(mWriter, list.get(0).toString());
+						for (int k = 1; k < list.size(); k++)
+						{
+							includedExtGstateObjects.add(list.get(k));
+							counter++;
+						}
+					}
+				}
+			}
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
 
@@ -2168,6 +2224,31 @@ public class OutputFormat
 					" " + (objIndex + counter) + " 0 R");
 				counter++;
 			}
+			ArrayList includedImageObjects = new ArrayList();
+			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			{
+				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
+				ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+				for (int j = 0; j < pageNumbers.size(); j++)
+				{
+					Integer pageNumber = (Integer)pageNumbers.get(j);
+					ArrayList list = pdfFile.getXObject(pageNumber.intValue(),
+						objIndex + counter);
+					if (list != null && !list.isEmpty())
+					{
+						/*
+						 * Include dictionary keys from external PDF files
+						 * and any other objects that the keys refer to.
+						 */
+						nChars += writeLine(mWriter, list.get(0).toString());
+						for (int k = 1; k < list.size(); k++)
+						{
+							includedImageObjects.add(list.get(k));
+							counter++;
+						}
+					}
+				}
+			}
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
 
@@ -2185,6 +2266,15 @@ public class OutputFormat
 				nChars += writeLine(mWriter, "endobj");
 				objIndex++;
 			}
+			for (int i = 0; i < includedExtGstateObjects.size(); i++)
+			{
+				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+
+				String extGState = includedExtGstateObjects.get(i).toString();
+				nChars = writeLine(mWriter, extGState);
+				objIndex++;
+			}
 			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
 				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
@@ -2196,13 +2286,22 @@ public class OutputFormat
 				nChars += writeLine(mWriter, "endobj");
 				objIndex++;
 			}
+			for (int i = 0; i < includedImageObjects.size(); i++)
+			{
+				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+
+				String image = includedImageObjects.get(i).toString();
+				nChars = writeLine(mWriter, image);
+				objIndex++;
+			}
 
 			/*
 			 * Write cross reference table giving file offset of each
 			 * object in PDF file.
 			 */
 			writeLine(mWriter, "xref");
-			writeLine(mWriter, "0 " + objIndex);
+			writeLine(mWriter, "0 " + (mPDFFileOffsets.size() + 1));
 			writeLine(mWriter, "0000000000 65535 f");
 			Iterator it = mPDFFileOffsets.iterator();
 			while (it.hasNext())
@@ -2219,7 +2318,7 @@ public class OutputFormat
 
 			writeLine(mWriter, "trailer");
 			writeLine(mWriter, "<<");
-			writeLine(mWriter, "/Size " + objIndex);
+			writeLine(mWriter, "/Size " + (mPDFFileOffsets.size() + 1));
 			writeLine(mWriter, "/Root 1 0 R");
 			writeLine(mWriter, "/Info 2 0 R");
 			writeLine(mWriter, ">>");
@@ -3406,15 +3505,43 @@ public class OutputFormat
 		double size, double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
-		PDFFile pdffile = new PDFFile(filename);
-		
-		if (page < 1 || page > pdffile.getPageCount())
+		/*
+		 * If we have used this PDF file before then use same file,
+		 * otherwise we need to open it.
+		 */
+		PDFFile pdfFile = null;
+		int index = 0;
+		while (index < mPDFIncludedFiles.size() && pdfFile == null)
+		{
+			PDFFile p = (PDFFile)mPDFIncludedFiles.get(index);
+			if (p.getFilename().equals(filename))
+				pdfFile = p;
+			else
+				index++;
+		}
+		if (pdfFile == null)
+		{
+			pdfFile = new PDFFile(filename);
+			mPDFIncludedFiles.add(pdfFile);
+			mPDFIncludedPages.add(new ArrayList());
+			index = mPDFIncludedFiles.size() - 1;
+		}
+
+		if (page < 1 || page > pdfFile.getPageCount())
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_NUMBER) +
 				": " + page);
 		}
 
-		int[] boundingBox = pdffile.getMediaBox(page);
+		/*
+		 * Add this page to the list of pages to display from the PDF file.
+		 */
+		ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(index);
+		Integer pageNumber = new Integer(page);
+		if (!pageNumbers.contains(pageNumber))
+			pageNumbers.add(pageNumber);
+
+		int[] boundingBox = pdfFile.getMediaBox(page);
 		int pointWidth = boundingBox[2] - boundingBox[0];
 		int pointHeight = boundingBox[3] - boundingBox[1];
 		Point2D pt;
@@ -3436,6 +3563,7 @@ public class OutputFormat
 			/*
 			 * Include PDF file at each position in list.
 			 */
+			byte []contentsBuf = pdfFile.getContents(page);
 			for (i = 0; i < pointList.size(); i++)
 			{
 				pt = (Point2D)(pointList.get(i));
@@ -3453,8 +3581,32 @@ public class OutputFormat
 					 * Shift position left and down half it's size
 					 * so that it is displayed centered.
 					 */
+					writeLine(mPDFGeometryWriter, "% " + filename);
 					writeLine(mPDFGeometryWriter, "q");
-					writeLine(mPDFGeometryWriter, "Q");
+					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
+						mCoordinateDecimal.format(x) + " " +
+						mCoordinateDecimal.format(y) + " cm");
+					double cosRotation = Math.cos(rotation);
+					double sinRotation = Math.sin(rotation);
+					writeLine(mPDFGeometryWriter, cosRotation + " " + sinRotation +
+						" " + (-sinRotation) + " " + cosRotation + " 0 0 cm");
+					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
+						-(size / 2) + " " + -(size / 2) + " cm");
+
+					double scale = size / Math.max(pointWidth, pointHeight);
+					writeLine(mPDFGeometryWriter,
+						scale + " 0 0 " + scale + " 0 0 cm");
+
+					/*
+					 * Shift EPS file so that lower-left corner of EPS file is in
+					 * lower left corner of our box on the page.
+					 */
+					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
+						-boundingBox[0] + " " + -boundingBox[1] + " cm");
+
+					for (int j = 0; j < contentsBuf.length; j++)
+						mPDFGeometryWriter.write(contentsBuf[j]);
+					writeLine(mPDFGeometryWriter, " Q");
 				}
 			}
 		}
@@ -3466,6 +3618,7 @@ public class OutputFormat
 			 */
 			drawBoundingBoxes(pointList, size, rotation);
 		}
+
 	}
 
 	/**
