@@ -56,7 +56,8 @@ public class PDFFile
 			String header = mPdfFile.readLine();
 			if (!header.startsWith("%PDF-"))
 			{
-				throw new MapyrusException("");
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
+					": " + mFilename);
 			}
 	
 			byte []xrefBuf = new byte[20];
@@ -163,7 +164,10 @@ public class PDFFile
 			StringTokenizer st = new StringTokenizer(line);
 
 			if (st.countTokens() < 2)
-				throw new MapyrusException("");
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
+					": " + mFilename);
+			}
 			int startIndex = Integer.parseInt(st.nextToken());
 			int count = Integer.parseInt(st.nextToken());
 			
@@ -274,7 +278,7 @@ public class PDFFile
 				int totalLength = 0;
 				for (int i = 0; i < objs.length; i++)
 				{
-					buf[i] = objs[i].getStream(mPdfFile, mObjects);
+					buf[i] = objs[i].getStream(mPdfFile, mFilename, mObjects);
 					totalLength += buf[i].length;
 				}
 				retval = new byte[totalLength];
@@ -287,7 +291,7 @@ public class PDFFile
 			}
 			else
 			{
-				retval = contentsObject.getStream(mPdfFile, mObjects);
+				retval = contentsObject.getStream(mPdfFile, mFilename, mObjects);
 			}
 		}
 		return(retval);
@@ -308,7 +312,7 @@ public class PDFFile
 		PDFObject obj = getDictionaryValue(resourcesObject, dictKey);
 		if (obj != null)
 		{
-			retval = obj.toPDFString(objectNumber, false, false, mObjects, mPdfFile);
+			retval = obj.toPDFString(objectNumber, false, false, mObjects, mPdfFile, mFilename);
 		}
 		return(retval);
 	}
@@ -469,13 +473,14 @@ public class PDFFile
 			/*
 			 * Parse simple string.
 			 */
-			c = readChar(false);
-			while (!(c == ')' && lastC != '\\'))
+			sb.append((char)c);
+			do
 			{
-				sb.append((char)c);
 				lastC = c;
 				c = readChar(false);
-			}
+				sb.append((char)c);
+			}	
+			while (!(c == ')' && lastC != '\\'));
 			retval = new PDFObject(sb.toString());
 		}
 		else if (c == '<')
@@ -486,13 +491,14 @@ public class PDFFile
 				/*
 				 * Parse simple hex string.
 				 */
-				c = readChar(false);
-				while (!(c == '>' && lastC != '\\'))
+				sb.append('<');
+				do
 				{
-					sb.append((char)c);
 					lastC = c;
 					c = readChar(false);
+					sb.append((char)c);
 				}
+				while (!(c == '>' && lastC != '\\'));
 				retval = new PDFObject(sb.toString());
 			}
 			else
@@ -642,7 +648,7 @@ public class PDFFile
 				c = readChar(true);
 
 			c = peekChar(true);
-			while ((!Character.isWhitespace((char)c)) && c != '<')
+			while ((!Character.isWhitespace((char)c)) && c != '<' && c != '[')
 			{
 				readChar(true);
 				c = peekChar(true);
