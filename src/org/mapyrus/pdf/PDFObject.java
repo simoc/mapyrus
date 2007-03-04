@@ -184,17 +184,21 @@ public class PDFObject
 	 * @param addDictionaryMarkers if true then << and >> tokens added around PDF dictionary object.
 	 * @param pdfObjects table of all objects for resolving references.
 	 * @param pdfFile PDF file to read streams from.
+	 * @param filename name of PDF file being read.
 	 * @return object and its referenced objects as a list of StringBuffers.
 	 */
 	public ArrayList toPDFString(int objectNumber, boolean addObjectHeader,
-		boolean addDictionaryMarkers, HashMap pdfObjects, RandomAccessFile pdfFile)
-		throws IOException, MapyrusException
+		boolean addDictionaryMarkers, HashMap pdfObjects, RandomAccessFile pdfFile,
+		String filename) throws IOException, MapyrusException
 	{
 		StringBuffer sb = new StringBuffer();
 		ArrayList retval = new ArrayList();
 
 		if (addObjectHeader)
+		{
 			sb.append(objectNumber).append(" 0 obj\r\n");
+			objectNumber++;
+		}
 		if (mValue != null)
 		{
 			sb.append(mValue).append("\r\n");
@@ -205,7 +209,7 @@ public class PDFObject
 			for (int i = 0; i < mArray.length; i++)
 			{
 				ArrayList referencedObjects = mArray[i].toPDFString(objectNumber + retval.size(),
-					false, true, pdfObjects, pdfFile);
+					false, true, pdfObjects, pdfFile, filename);
 
 				sb.append(referencedObjects.get(0).toString());
 				if (referencedObjects.size() > 1)
@@ -234,7 +238,7 @@ public class PDFObject
 					sb.append(" ");
 
 					ArrayList referencedObjects = value.toPDFString(objectNumber + retval.size(),
-						false, true, pdfObjects, pdfFile);
+						false, true, pdfObjects, pdfFile, filename);
 
 					sb.append(referencedObjects.get(0).toString());
 					if (referencedObjects.size() > 1)
@@ -256,7 +260,7 @@ public class PDFObject
 			sb.append(objectNumber + retval.size()).append(" 0 R\r\n");
 			PDFObject referencedObject = (PDFObject)pdfObjects.get(new Integer(mReference));
 			ArrayList referencedObjects = referencedObject.toPDFString(objectNumber + retval.size(),
-				true, true, pdfObjects, pdfFile);
+				true, true, pdfObjects, pdfFile, filename);
 			retval.addAll(referencedObjects);
 		}
 
@@ -265,7 +269,7 @@ public class PDFObject
 		 */
 		if (mStreamOffset >= 0)
 		{
-			byte []buf = getStream(pdfFile, pdfObjects);
+			byte []buf = getStream(pdfFile, filename, pdfObjects);
 			StringWriter sw = new StringWriter(buf.length);
 			PrintWriter pw = new PrintWriter(sw);
 			ASCII85Writer ascii85 = new ASCII85Writer(pw, true);
@@ -298,11 +302,13 @@ public class PDFObject
 	}
 
 	/**
-	 * Decode content stream of page contents object.
-	 * @param contentsObject page contents object.
+	 * Get stream of for this object.
+	 * @param pdfFile PDF file to read from.
+	 * @param filename filename of PDf file.
+	 * @param pdfObjects offsets of all PDf objects in PDF file.
 	 * @return decoded stream.
 	 */
-	public byte[] getStream(RandomAccessFile pdfFile, HashMap pdfObjects)
+	public byte[] getStream(RandomAccessFile pdfFile, String filename, HashMap pdfObjects)
 		throws IOException, MapyrusException
 	{
 		PDFObject value = (PDFObject)mDictionary.get("/Length");
@@ -348,7 +354,7 @@ public class PDFObject
 			{
 				if (filterNames[i].equals("/FlateDecode"))
 				{
-					buf = decodeDeflatedBytes(buf);
+					buf = decodeDeflatedBytes(buf, filename);
 				}
 				else if (filterNames[i].equals("/ASCII85Decode"))
 				{
@@ -358,6 +364,11 @@ public class PDFObject
 				{
 					buf = decodeHexBytes(buf);
 				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.EXTENDED_PDF) +
+						": " + filename + ": " + filterNames[i]);
+				}
 			}
 		}
 		return(buf);
@@ -366,9 +377,10 @@ public class PDFObject
 	/**
 	 * Decode deflated bytes.
 	 * @param buf bytes to uncompress.
+	 * @param filename name of PDF file being read.
 	 * @return uncompressed bytes.
 	 */
-	private byte[] decodeDeflatedBytes(byte []buf) throws MapyrusException
+	private byte[] decodeDeflatedBytes(byte []buf, String filename) throws MapyrusException
 	{
 		Inflater inflater = new Inflater();
 		inflater.setInput(buf);
@@ -378,7 +390,7 @@ public class PDFObject
 		{
 			while(!inflater.finished())
 			{
-				int nBytes = inflater.inflate(buf, count, 1 /*buf.length - count*/);
+				int nBytes = inflater.inflate(buf, count, buf.length - count);
 				count += nBytes;
 				if (count == buf.length)
 				{
@@ -402,7 +414,7 @@ public class PDFObject
 		catch (DataFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-				": " + e.getMessage());
+				": " + filename + ": " + e.getMessage());
 		}
 		return(buf);
 	}
