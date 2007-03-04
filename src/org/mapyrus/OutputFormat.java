@@ -2179,6 +2179,31 @@ public class OutputFormat
 			nChars = writeLine(mWriter, objIndex + " 0 obj % ColorSpace");
 			objIndex++;
 			nChars += writeLine(mWriter, "<<");
+			ArrayList includedColorSpaceObjects = new ArrayList();
+			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			{
+				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
+				ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+				for (int j = 0; j < pageNumbers.size(); j++)
+				{
+					Integer pageNumber = (Integer)pageNumbers.get(j);
+					ArrayList list = pdfFile.getColorSpace(pageNumber.intValue(),
+						objIndex + counter + 3);
+					if (list != null && !list.isEmpty())
+					{
+						/*
+						 * Include dictionary keys from external PDF files
+						 * and any other objects that the keys refer to.
+						 */
+						nChars += writeLine(mWriter, list.get(0).toString());
+						for (int k = 1; k < list.size(); k++)
+						{
+							includedColorSpaceObjects.add(list.get(k));
+							counter++;
+						}
+					}
+				}
+			}
 			nChars += writeLine(mWriter, ">>");
 			nChars += writeLine(mWriter, "endobj");
 			
@@ -2275,6 +2300,15 @@ public class OutputFormat
 				nChars = writeLine(mWriter, extGState);
 				objIndex++;
 			}
+			for (int i = 0; i < includedColorSpaceObjects.size(); i++)
+			{
+				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+
+				String colorSpace = includedColorSpaceObjects.get(i).toString();
+				nChars = writeLine(mWriter, colorSpace);
+				objIndex++;
+			}
 			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
 				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
@@ -2335,6 +2369,12 @@ public class OutputFormat
 				mWriter.flush();
 			else
 				mWriter.close();
+
+			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			{
+				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
+				pdfFile.close();
+			}
 
 			if (mWriter.checkError())
 			{
@@ -3530,7 +3570,7 @@ public class OutputFormat
 		if (page < 1 || page > pdfFile.getPageCount())
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_NUMBER) +
-				": " + page);
+				": " + pdfFile.getFilename() + ": " + page);
 		}
 
 		/*
