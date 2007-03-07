@@ -580,6 +580,7 @@ public class PDFObject
 					hex.setLength(0);
 				}
 			}
+			j++;
 		}
 		if (hex.length() == 1)
 		{
