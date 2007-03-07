@@ -409,9 +409,9 @@ public class PDFFile
 		{
 			PDFObject obj = boxArray[i];
 			if (obj.isReference())
-				obj = (PDFObject)mObjects.get(new Integer(obj.getReference()));
+				obj = (PDFObject)mObjects.get(new Double(obj.getReference()));
 			String s = obj.getValue();
-			retval[i] = Integer.parseInt(s);
+			retval[i] = (int)Math.round(Double.parseDouble(s));
 		}
 		return(retval);
 	}
