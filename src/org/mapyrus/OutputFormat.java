@@ -3623,9 +3623,11 @@ public class OutputFormat
 					 */
 					writeLine(mPDFGeometryWriter, "% " + filename);
 					writeLine(mPDFGeometryWriter, "q");
+					setColorAttribute(Color.BLACK);
 					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
 						mCoordinateDecimal.format(x) + " " +
 						mCoordinateDecimal.format(y) + " cm");
+
 					double cosRotation = Math.cos(rotation);
 					double sinRotation = Math.sin(rotation);
 					writeLine(mPDFGeometryWriter, cosRotation + " " + sinRotation +
