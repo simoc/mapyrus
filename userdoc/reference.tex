@@ -2329,6 +2329,30 @@ negative then path is created to the left of the current path.
 When used on complex paths with sharp angles, this command creates
 paths that self-intersect.
 
+\subsubsection{pdf}
+
+\begin{alltt}
+pdf \textit{filename}, \textit{page} [, \textit{size}]
+\end{alltt}
+
+Displays a Portable Document Format (PDF) file at each \texttt{move} point in
+the current path.  
+
+\textit{filename} is the name of a PDF file.
+\textit{page} is the page number from the PDF file to display.
+
+\textit{size} is the optional size for the PDF file
+in millimeters.  If no size
+is given or size is zero then the file is displayed at its natural size,
+as defined in the PDF file.
+The file is scaled and rotated according to the current \texttt{scale}
+and \texttt{rotate} settings.
+
+PDF files can only be displayed when creating
+PDF output.  For other formats,
+a grey box is drawn showing where the PDF file
+would be drawn.
+
 \subsubsection{pentagon}
 
 \begin{alltt}
