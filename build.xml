@@ -146,7 +146,7 @@ Examples from user manual are in userdoc directory.
 
 Changes in this version of Mapyrus are described in file NEWS.txt.
 
-Mapyrus runs on any operating system for which Java 1.5 (or later)
+Mapyrus runs on any operating system for which Java 5 (or later)
 is available.
 
 Start Mapyrus from a terminal window with a command like:
