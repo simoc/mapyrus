@@ -43,12 +43,12 @@ public class WorldCoordinateTransform
 	private static native int define(String description);
 	private static native int transform(int t1, int t2, double []coords, int nCoords);
 
-	static private Hashtable mDefinedCoordinateSystems;
+	static private Hashtable<String, Integer> mDefinedCoordinateSystems;
 
 	static
 	{
 		System.loadLibrary("mapyrusproj");
-		mDefinedCoordinateSystems = new Hashtable();
+		mDefinedCoordinateSystems = new Hashtable<String, Integer>();
 	}
 
 	/**

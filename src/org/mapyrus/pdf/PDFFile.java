@@ -40,7 +40,7 @@ public class PDFFile
 {
 	private String mFilename;
 	private RandomAccessFile mPdfFile;
-	private HashMap mObjects;
+	private HashMap<Integer, PDFObject> mObjects;
 	private ArrayList mPageObjects;
 
 	public PDFFile(String filename) throws IOException, MapyrusException
@@ -73,7 +73,7 @@ public class PDFFile
 			/*
 			 * Read each of the objects in the PDF file. 
 			 */
-			mObjects = new HashMap(objectOffsets.size());
+			mObjects = new HashMap<Integer, PDFObject>(objectOffsets.size());
 			Iterator it = objectOffsets.keySet().iterator();
 			while (it.hasNext())
 			{
@@ -125,10 +125,10 @@ public class PDFFile
 	 * @param pageObject object for page or pages.
 	 * @return list of objects, one for each page.
 	 */
-	private ArrayList buildPageObjectList(PDFObject pagesObject)
+	private ArrayList<PDFObject> buildPageObjectList(PDFObject pagesObject)
 		throws MapyrusException
 	{
-		ArrayList retval = new ArrayList();
+		ArrayList<PDFObject> retval = new ArrayList<PDFObject>();
 		PDFObject kidsObject = getDictionaryValue(pagesObject, "/Kids");
 		PDFObject[] kidsArray = kidsObject.getArray();
 		for (int i = 0; i < kidsArray.length; i++)

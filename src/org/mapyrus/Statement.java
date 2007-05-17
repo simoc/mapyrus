@@ -156,11 +156,11 @@ public class Statement
 	/*
 	 * Static statement type lookup table for fast lookup.
 	 */
-	private static HashMap mStatementTypeLookup;
+	private static HashMap<String, Integer> mStatementTypeLookup;
 	
 	static
 	{
-		mStatementTypeLookup = new HashMap();
+		mStatementTypeLookup = new HashMap<String, Integer>();
 		mStatementTypeLookup.put("color", new Integer(COLOR));
 		mStatementTypeLookup.put("colour", new Integer(COLOR));
 		mStatementTypeLookup.put("blend", new Integer(BLEND));

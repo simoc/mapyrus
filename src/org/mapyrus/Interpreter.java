@@ -118,21 +118,21 @@ public class Interpreter
 	 * Blocks of statements for each procedure defined in
 	 * this interpreter.
 	 */
-	private HashMap mStatementBlocks;
+	private HashMap<String, Statement> mStatementBlocks;
 
 	/*
 	 * Functions that user has defined.
 	 */
-	private HashMap mUserFunctions;
+	private HashMap<String, UserFunction> mUserFunctions;
 	
 	/*
 	 * Static world coordinate system units lookup table.
 	 */
-	private static HashMap mWorldUnitsLookup;
+	private static HashMap<String, Integer> mWorldUnitsLookup;
 
 	static
 	{
-		mWorldUnitsLookup = new HashMap();
+		mWorldUnitsLookup = new HashMap<String, Integer>();
 		mWorldUnitsLookup.put("m", new Integer(Context.WORLD_UNITS_METRES));
 		mWorldUnitsLookup.put("metres", new Integer(Context.WORLD_UNITS_METRES));
 		mWorldUnitsLookup.put("meters", new Integer(Context.WORLD_UNITS_METRES));
@@ -1735,7 +1735,7 @@ public class Interpreter
 					(type == Statement.TABLE && nExpressions >= 2))
 				{
 					extras = mExecuteArgs[0].getStringValue();
-					ArrayList columns = new ArrayList(nExpressions - 1);
+					ArrayList<Argument> columns = new ArrayList<Argument>(nExpressions - 1);
 					for (int i = 1; i < nExpressions; i++)
 					{
 						Argument arg;
@@ -2242,7 +2242,7 @@ public class Interpreter
 		throws MapyrusException, IOException
 	{
 		int state;
-		ArrayList expressions = new ArrayList();
+		ArrayList<Expression> expressions = new ArrayList<Expression>();
 		Expression expr;
 		Statement retval = null;
 		boolean finishedStatement = false;
@@ -2333,7 +2333,7 @@ public class Interpreter
 		throws IOException, MapyrusException
 	{
 		int c;
-		ArrayList parameters = new ArrayList();
+		ArrayList<String> parameters = new ArrayList<String>();
 		int state;
 
 		/*
@@ -2389,7 +2389,7 @@ public class Interpreter
 	{
 		String blockName;
 		ArrayList parameters;
-		ArrayList procedureStatements = new ArrayList();
+		ArrayList<Statement> procedureStatements = new ArrayList<Statement>();
 		ParsedStatement st;
 		Statement retval;
 		boolean parsedEndKeyword = false;
@@ -2484,7 +2484,7 @@ public class Interpreter
 	{
 		ParsedStatement st;
 		Expression test;
-		ArrayList loopStatements = new ArrayList();
+		ArrayList<Statement> loopStatements = new ArrayList<Statement>();
 		Statement statement;
 		String currentFilename = preprocessor.getCurrentFilename();
 		int currentLineNumber = preprocessor.getCurrentLineNumber();
@@ -2565,7 +2565,7 @@ public class Interpreter
 	{
 		ParsedStatement st;
 		Expression var, arrayExpr;
-		ArrayList loopStatements = new ArrayList();
+		ArrayList<Statement> loopStatements = new ArrayList<Statement>();
 		Statement statement;
 		String currentFilename = preprocessor.getCurrentFilename();
 		int currentLineNumber = preprocessor.getCurrentLineNumber();
@@ -2671,8 +2671,8 @@ public class Interpreter
 		String currentFilename = preprocessor.getCurrentFilename();
 		int currentLineNumber = preprocessor.getCurrentLineNumber();
 		Expression test;
-		ArrayList thenStatements = new ArrayList();
-		ArrayList elseStatements = new ArrayList();
+		ArrayList<Statement> thenStatements = new ArrayList<Statement>();
+		ArrayList<Statement> elseStatements = new ArrayList<Statement>();
 		Statement statement;
 		boolean checkForEndif = true;	/* do we need to check for "endif" keyword at end of statement? */
 
@@ -2790,11 +2790,11 @@ public class Interpreter
 	/*
 	 * Static keyword lookup table for fast keyword lookup.
 	 */
-	private static HashMap mKeywordLookup;
+	private static HashMap<String, ParsedStatement> mKeywordLookup;
 
 	static
 	{
-		mKeywordLookup = new HashMap();
+		mKeywordLookup = new HashMap<String, ParsedStatement>();
 		mKeywordLookup.put(END_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_END));
 		mKeywordLookup.put(THEN_KEYWORD,
@@ -3335,8 +3335,8 @@ public class Interpreter
 	 */
 	public Interpreter()
 	{
-		mStatementBlocks = new HashMap();
-		mUserFunctions = new HashMap();
+		mStatementBlocks = new HashMap<String, Statement>();
+		mUserFunctions = new HashMap<String, UserFunction>();
 		mExecuteArgs = null;
 	}
 
@@ -3350,12 +3350,13 @@ public class Interpreter
 		retval.mExecuteArgs = null;
 		retval.mContext = null;
 		retval.mInComment = false;
-		retval.mStatementBlocks = (HashMap)(this.mStatementBlocks.clone());
-		
+		retval.mStatementBlocks = new HashMap<String, Statement>(this.mStatementBlocks.size());
+		retval.mStatementBlocks.putAll(this.mStatementBlocks);
+
 		/*
 		 * Copy all the user functions for use in new interpreter.
 		 */
-		retval.mUserFunctions = new HashMap(this.mUserFunctions.size());
+		retval.mUserFunctions = new HashMap<String, UserFunction>(this.mUserFunctions.size());
 		Iterator it = this.mUserFunctions.keySet().iterator();
 		while (it.hasNext())
 		{

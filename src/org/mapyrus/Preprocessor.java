@@ -40,7 +40,7 @@ class Preprocessor
 	 * Files we are reading from and their names.
 	 * Built up as a stack as we include nested files.
 	 */
-	private LinkedList mFileStack;
+	private LinkedList<FileOrURL> mFileStack;
 	
 	/*
 	 * First file we are reading from.
@@ -59,7 +59,7 @@ class Preprocessor
 	 */
 	private void initFileStack(FileOrURL f)
 	{
-		mFileStack = new LinkedList();
+		mFileStack = new LinkedList<FileOrURL>();
 		mFileStack.add(f);
 		mInitialFile = f;
 	}
