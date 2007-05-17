@@ -71,7 +71,7 @@ public class HTTPRequest extends Thread
 	 */
 	public static final String HTTP_HEADER_ARRAY = Constants.PROGRAM_NAME + ".http.header";
 
-	private Pool mPool;
+	private Pool<Interpreter> mPool;
 	private Interpreter mInterpreter;
 	private Socket mSocket;
 

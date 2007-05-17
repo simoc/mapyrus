@@ -27,7 +27,7 @@ import java.awt.Font;
 /**
  * Least recently used cache of java.awt.Font objects.
  */
-public class FontCache extends LRUCache
+public class FontCache extends LRUCache<String, Font>
 {
 	/*
 	 * Number of fonts to cache in memory.
@@ -69,7 +69,7 @@ public class FontCache extends LRUCache
 	public Font get(String name, int style, float size, double rotation)
 	{
 		String key = hash(name, style, size, rotation);
-		Font retval = (Font)get(key);
+		Font retval = get(key);
 		return(retval);
 	}
 

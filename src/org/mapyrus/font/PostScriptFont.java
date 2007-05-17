@@ -99,7 +99,7 @@ public class PostScriptFont
 			stream = new BufferedInputStream(new FileInputStream(pfbFilename));
 			byte magic[] = new byte[2];
 			byte header[] = new byte[4];
-			ArrayList segments = new ArrayList();
+			ArrayList<byte []> segments = new ArrayList<byte []>();
 			int totalLength = 0;
 
 			/*

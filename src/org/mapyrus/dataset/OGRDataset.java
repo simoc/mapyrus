@@ -181,7 +181,7 @@ public class OGRDataset implements GeographicDataset
 				 * Parse attribute field names following projection definition.
 				 */
 				nextLine = mReader.readLine();
-				ArrayList fieldNames = new ArrayList();
+				ArrayList<String> fieldNames = new ArrayList<String>();
 				while (nextLine != null && (!nextLine.startsWith("OGRFeature")))
 				{
 					int colonIndex = nextLine.indexOf(':');

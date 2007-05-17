@@ -44,7 +44,7 @@ public class GrassDataset implements GeographicDataset
 	 */
 	private String mFilename;
 
-	private Hashtable mMetadata;
+	private Hashtable<String, String> mMetadata;
 	private String[] mFieldNames;
 	private Rectangle2D.Double mExtents;
 
@@ -53,7 +53,7 @@ public class GrassDataset implements GeographicDataset
 	 */
 	private boolean mIsThreed;
 
-	private ArrayList mAllRows;
+	private ArrayList<Row> mAllRows;
 	int mRowFetchIndex;
 
 	/*
@@ -92,7 +92,7 @@ public class GrassDataset implements GeographicDataset
 			FileOrURL f = new FileOrURL(filename);
 			reader = f.getReader();
 			mFilename = filename;
-			mMetadata = new Hashtable();
+			mMetadata = new Hashtable<String, String>();
 			mAttributeBuffer = new StringBuffer();
 			mRowFetchIndex = 0;
 
@@ -149,7 +149,7 @@ public class GrassDataset implements GeographicDataset
 			double yMax = Float.MIN_VALUE;
 
 			Row row;
-			mAllRows = new ArrayList();
+			mAllRows = new ArrayList<Row>();
 			do
 			{
 				row = parseRow(reader, line);

@@ -91,7 +91,7 @@ public class AdobeFontMetricsManager
 	/*
 	 * Font metrics for all fonts.
 	 */
-	private HashMap mFontMetrics;
+	private HashMap<String, AdobeFontMetrics> mFontMetrics;
 
 	/**
 	 * Create font metrics information for PostScript fonts.
@@ -101,7 +101,7 @@ public class AdobeFontMetricsManager
 	public AdobeFontMetricsManager(List afmFilenames, HashSet ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
-		mFontMetrics = new HashMap();
+		mFontMetrics = new HashMap<String, AdobeFontMetrics>();
 
 		/*
 		 * Load font metrics information for standard PostScript fonts
