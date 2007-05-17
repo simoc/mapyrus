@@ -306,7 +306,7 @@ public class Mapyrus
 	{
 		ServerSocket serverSocket = null;
 		Pool interpreterPool;
-		HashSet activeThreads;
+		HashSet<HTTPRequest> activeThreads;
 
 		/*
 		 * Make pool of interpreters available to threads that
@@ -320,7 +320,7 @@ public class Mapyrus
 		/*
 		 * Initialise set of threads that have been started.
 		 */
-		activeThreads = new HashSet();
+		activeThreads = new HashSet<HTTPRequest>();
 
 		/*
 		 * Create a logger for writing errors and information whilst

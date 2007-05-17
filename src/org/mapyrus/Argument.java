@@ -29,6 +29,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
@@ -98,7 +99,7 @@ public class Argument implements Comparable
 	private String mVarname;
 	private double []mGeometryValue;
 	private Rectangle2D.Double mGeometryBoundingBox;
-	private HashMap mHashMap;
+	private HashMap<String, Argument> mHashMap;
 
 	/**
 	 * Create a new numeric argument.
@@ -140,7 +141,7 @@ public class Argument implements Comparable
 	public Argument()
 	{
 		mType = HASHMAP;
-		mHashMap = new HashMap();	
+		mHashMap = new HashMap<String, Argument>();	
 	}
 
 	/**
@@ -1140,7 +1141,13 @@ public class Argument implements Comparable
 			 * we do not want changes in the hashmap copy appearing
 			 * in the original hashmap.
 			 */
-			retval.mHashMap = (HashMap)mHashMap.clone();
+			retval.mHashMap = new HashMap<String, Argument>(mHashMap.size());
+			Iterator<String> it = mHashMap.keySet().iterator();
+			while (it.hasNext())
+			{
+				String key = it.next();
+				retval.mHashMap.put(key, mHashMap.get(key));
+			}
 		}
 		else
 		{

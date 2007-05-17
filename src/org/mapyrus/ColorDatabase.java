@@ -38,7 +38,7 @@ import java.io.IOException;
  */
 public class ColorDatabase
 {
-	static private Hashtable mColors = null;
+	static private Hashtable<String, Color> mColors = null;
 	
 	/**
 	 * Load global color name database from a file.
@@ -59,7 +59,7 @@ public class ColorDatabase
 		 * Define basic set of commonly used colors here (values taken
 		 * from color name list in SVG specification).
 		 */
-		mColors = new Hashtable();
+		mColors = new Hashtable<String, Color>();
 		mColors.put("aliceblue", new Color(240, 248, 255));
 		mColors.put("antiquewhite", new Color(250, 235, 215));
 		mColors.put("aqua", new Color(0, 255, 255));
