@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
 
+0.703, May 2007
+
+* Upgrade to Java version 1.5.
+* Enable shell environment variables to be used directly in Mapyrus.
+
 0.702, March 2007
 
 * Add PDF command for including other PDF files in PDF output.
