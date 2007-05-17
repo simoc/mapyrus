@@ -7,8 +7,8 @@
 Mapyrus requires:
 \begin{itemize}
 \item
-Java 2 Runtime Environment, Standard Edition, (J2RE) v1.4.2 or higher,
-or Java 2 Software Developers Kit, Standard Edition (J2SDK) v1.4.2 or higher.
+Java 2 Runtime Environment, Standard Edition, (J2RE) 5 or higher,
+or Java 2 Software Developers Kit, Standard Edition (J2SDK) 5 or higher.
 \item
 The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system.  If a real X-Windows display
@@ -39,7 +39,8 @@ or a URL for Mapyrus to read from.  If \textit{filename} is \texttt{-}
 then standard input is read.  If several filenames and URLs are
 given then they are read in turn.
 
-Variables passed to Mapyrus using the Java \texttt{-D} option
+Environment variables
+and variables passed to Mapyrus using the Java \texttt{-D} option
 are available in the Mapyrus interpreter.  The
 \textit{Java Topology Suite} JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
@@ -734,7 +735,8 @@ relative to each \texttt{move} point.
 
 \subsection{Internal Variables}
 
-All Java standard system properties (\texttt{os.arch}, \texttt{user.dir}, etc.)
+All environment variables and
+Java standard system properties (\texttt{os.arch}, \texttt{user.dir}, etc.)
 are defined as variables in Mapyrus.
 
 Mapyrus maintains the internal variables shown in Table \ref{internalvariables}.
