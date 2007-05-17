@@ -32,7 +32,7 @@ import org.mapyrus.MapyrusException;
  */
 public class FunctionTable
 {
-	static HashMap mFunctions = new HashMap();
+	static HashMap<String, Function> mFunctions = new HashMap<String, Function>();
 
 	/*
 	 * Load all internal functions and any additional functions defined by user.

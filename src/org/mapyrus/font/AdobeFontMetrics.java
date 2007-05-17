@@ -62,11 +62,11 @@ public class AdobeFontMetrics
 	 * Taken from Adobe PostScript Language Reference Manual (2nd Edition) Appendix E,
 	 * p. 605.
 	 */
-	private static HashMap mISOLatin1CharIndexes;
+	private static HashMap<String, Integer> mISOLatin1CharIndexes;
 	
 	static
 	{
-		mISOLatin1CharIndexes = new HashMap(256);
+		mISOLatin1CharIndexes = new HashMap<String, Integer>(256);
 		mISOLatin1CharIndexes.put("Aacute", new Integer(193));
 		mISOLatin1CharIndexes.put("Acircumflex", new Integer(194));
 		mISOLatin1CharIndexes.put("Adieresis", new Integer(196));

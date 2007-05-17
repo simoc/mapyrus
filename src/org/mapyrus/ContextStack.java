@@ -76,7 +76,7 @@ public class ContextStack
 	/*
 	 * Stack of contexts, with current context in last slot.
 	 */
-	private LinkedList mStack;
+	private LinkedList<Context> mStack;
 
 	/*
 	 * List of legend keys encountered whilst interpreting statements.
@@ -86,7 +86,7 @@ public class ContextStack
 	/*
 	 * Cache of icons we've already used and are likely to use again.
 	 */
-	private LRUCache mIconCache;
+	private LRUCache<String, BufferedImage> mIconCache;
 
 	/*
 	 * Time at which this context was allocated.
@@ -109,12 +109,12 @@ public class ContextStack
 	 */
 	public ContextStack()
 	{
-		mStack = new LinkedList();
+		mStack = new LinkedList<Context>();
 		mStack.add(new Context());
 		mStartTime = System.currentTimeMillis();
 		mImagemapPoint = null;
 		mLegendEntries = new LegendEntryList();
-		mIconCache = new LRUCache(Constants.ICON_CACHE_SIZE);
+		mIconCache = new LRUCache<String, BufferedImage>(Constants.ICON_CACHE_SIZE);
 		mHTTPResponse = HTTPRequest.HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
 			HTTPRequest.CONTENT_TYPE_KEYWORD + ": " + MimeTypes.get("html") +
 			Constants.LINE_SEPARATOR;

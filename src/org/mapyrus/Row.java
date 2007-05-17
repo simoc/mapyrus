@@ -30,7 +30,7 @@ package org.mapyrus;
 
 import java.util.ArrayList;
 
-public class Row extends ArrayList
+public class Row extends ArrayList<Argument>
 {
 	/**
 	 * Create a new row.

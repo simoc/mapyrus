@@ -98,7 +98,7 @@ public class ShapefileDataset implements GeographicDataset
 	 * Flags indicating which fields in DBF file that user wants to fetch
 	 * and the total number of fields the user wants to fetch.
 	 */
-	private ArrayList mDBFFieldsToFetch;
+	private ArrayList<Boolean> mDBFFieldsToFetch;
 	private int mNDBFFieldsToFetch;
 
 	/*
@@ -133,7 +133,7 @@ public class ShapefileDataset implements GeographicDataset
 		String shapeFilename, dbfFilename, prjFilename;
 		StringTokenizer st, st2;
 		String token, s;
-		HashSet extrasDBFFields;
+		HashSet<String> extrasDBFFields;
 		double d, xMin, yMin, xMax, yMax;
 
 		/*
@@ -153,7 +153,7 @@ public class ShapefileDataset implements GeographicDataset
 				 * Parse list of comma separated field names that user wants
 				 * to fetch.
 				 */
-				extrasDBFFields = new HashSet();
+				extrasDBFFields = new HashSet<String>();
 				st2 = new StringTokenizer(token.substring(10), ",");
 				while (st2.hasMoreTokens())
 				{
@@ -453,12 +453,12 @@ public class ShapefileDataset implements GeographicDataset
 		int i;
 		int fieldIndex;
 		byte dbfField[];
-		ArrayList dbfFields = new ArrayList();
+		ArrayList<byte []> dbfFields = new ArrayList<byte []>();
 		int nBytesRead;
 		boolean fetchStatus;
 
 		nTotalFields = mNDBFFieldsToFetch = headerLength = nBytesRead = 0;
-		mDBFFieldsToFetch = new ArrayList();
+		mDBFFieldsToFetch = new ArrayList<Boolean>();
 
 		if (mDBFStream != null)
 		{

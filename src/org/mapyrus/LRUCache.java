@@ -31,7 +31,7 @@ import java.util.Map;
  * cache is full when a new object is added, the object with the oldest
  * access time is automatically removed from the cache.
  */
-public class LRUCache extends LinkedHashMap
+public class LRUCache<K,V> extends LinkedHashMap<K,V>
 {
 	/*
 	 * The maximum number of elements to hold in the cache.
