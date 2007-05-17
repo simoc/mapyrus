@@ -42,7 +42,7 @@ public class TransientFileFactory
 	 * List of generated filenames, sorted by expiry date (with
 	 * file that is next to expire at start of list).
 	 */
-	private static LinkedList mGeneratedFilenames = new LinkedList();
+	private static LinkedList<TransientFile> mGeneratedFilenames = new LinkedList<TransientFile>();
 
 	/**
 	 * Generate unique filename for use as temporary filename
@@ -136,14 +136,5 @@ public class TransientFileFactory
 			mGeneratedFilenames.addLast(t);
 
 		return(retval);
-	}
-
-	static public void main(String []args)
-	{
-		for (int i = 0; i < 100; i++)
-		{
-			String s = generate("png", 30000);
-			System.out.println(s);
-		}
 	}
 }

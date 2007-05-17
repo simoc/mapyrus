@@ -62,8 +62,8 @@ public class GeometricPath
 	 * Coordinates and rotation angle at each moveTo point.  GeneralPath
 	 * ignores successive moveTo points so we _must_ save them ourselves.
 	 */
-	private ArrayList mRotations;
-	private ArrayList mMoveTos;
+	private ArrayList<Double> mRotations;
+	private ArrayList<Point2D> mMoveTos;
 
 	/*
 	 * Count of number of lineTos in path.
@@ -76,8 +76,8 @@ public class GeometricPath
 	public GeometricPath()
 	{
 		mPath = new GeneralPath();
-		mRotations = new ArrayList();
-		mMoveTos = new ArrayList();
+		mRotations = new ArrayList<Double>();
+		mMoveTos = new ArrayList<Point2D>();
 		mNLineTos = 0;
 	}
 
@@ -93,8 +93,12 @@ public class GeometricPath
 		/*
 		 * Copy the list of moveTo points and rotations.
 		 */
-		mMoveTos = (ArrayList)(path.mMoveTos.clone());
-		mRotations = (ArrayList)(path.mRotations.clone());
+		mMoveTos = new ArrayList<Point2D>(path.mMoveTos.size());
+		for (Point2D p : path.mMoveTos)
+			mMoveTos.add(p);
+		mRotations = new ArrayList<Double>(path.mRotations.size());
+		for (Double d : path.mRotations)
+			mRotations.add(d);
 	}
 
 	/**
@@ -244,8 +248,8 @@ public class GeometricPath
 	public void append(GeometricPath path, boolean connect)
 	{
 		mPath.append(path.getShape(), connect);
-		ArrayList moveTos = path.getMoveTos();
-		ArrayList rotations = path.getMoveToRotations();
+		ArrayList<Point2D> moveTos = path.getMoveTos();
+		ArrayList<Double> rotations = path.getMoveToRotations();
 
 		for (int i = 0; i < moveTos.size(); i++)
 		{		
@@ -276,7 +280,7 @@ public class GeometricPath
 	 * Returns moveTo points in current path.
 	 * @return list of Point2D.Float objects of moveTo points in path.
 	 */
-	public ArrayList getMoveTos()
+	public ArrayList<Point2D> getMoveTos()
 	{
 		return(mMoveTos);
 	}
@@ -285,7 +289,7 @@ public class GeometricPath
 	 * Returns rotation angle at each moveTo point in current path.
 	 * @return list containing rotation at each moveTo point.
 	 */
-	public ArrayList getMoveToRotations()
+	public ArrayList<Double> getMoveToRotations()
 	{
 		return(mRotations);
 	}
@@ -323,7 +327,7 @@ public class GeometricPath
 		double xEnd = 0.0, yEnd = 0.0;
 		double xMoveTo = 0.0, yMoveTo = 0.0;
 		boolean addingPoints = false;
-		ArrayList points = new ArrayList();
+		ArrayList<Point2D> points = new ArrayList<Point2D>();
 		double angle = 0.0;
 
 		PathIterator pi = mPath.getPathIterator(Constants.IDENTITY_MATRIX,
@@ -813,7 +817,9 @@ public class GeometricPath
 			retval.mMoveTos.add(pt);
 		}
 		retval.mNLineTos = mNLineTos;
-		retval.mRotations = (ArrayList)(mRotations.clone());
+		retval.mRotations = new ArrayList<Double>(mRotations.size());
+		for (Double d : mRotations)
+			retval.mRotations.add(d);
 
 		return(retval);
 	}
@@ -920,7 +926,7 @@ public class GeometricPath
 		float xStart = 0.0f, yStart = 0.0f;
 		float xEnd = 0.0f, yEnd = 0.0f;
 		boolean isPathClosed = false;
-		ArrayList lineEquations = new ArrayList();
+		ArrayList<LineEquation> lineEquations = new ArrayList<LineEquation>();
 
 		/*
 		 * Flatten arcs in path and make list of line equations
