@@ -1391,11 +1391,34 @@ public class ContextStack
 				{
 					if (retval == null)
 					{
-						/*
-						 * Variable not defined by user.  Is it set
-						 * as a system property?
-						 */
-						property = System.getProperty(varName);
+						try
+						{
+							/*
+							 * Variable not defined by user.  Is it set
+							 * as a system property or in environment?
+							 */
+							property = System.getProperty(varName);
+						}
+						catch (SecurityException e)
+						{
+							/*
+							 * We cannot access variable as a property so
+							 * consider it to be undefined.
+							 */
+						}
+						try
+						{
+							if (property == null)
+								property = System.getenv(varName);
+						}
+						catch (SecurityException e)
+						{
+							/*
+							 * We cannot access variable from environment so
+							 * consider it to be undefined.
+							 */
+						}
+
 						if (property != null)
 						{
 							/*
@@ -1405,13 +1428,6 @@ public class ContextStack
 							retval = new Argument(d);
 						}
 					}
-				}
-				catch (SecurityException e)
-				{
-					/*
-					 * We cannot access variable as a property so
-					 * consider it to be undefined.
-					 */
 				}
 				catch (NumberFormatException e)
 				{
