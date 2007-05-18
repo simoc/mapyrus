@@ -90,14 +90,14 @@ public class Wordwrap implements Function
 			/*
 			 * Split word on hyphenation characters too.
 			 */
-			LinkedList splitList;
+			LinkedList<String> splitList;
 			if (hyphenation != null)
 			{
 				splitList = split(token, hyphenation);
 			}
 			else
 			{
-				splitList = new LinkedList();
+				splitList = new LinkedList<String>();
 				splitList.add(token);
 			}
 
@@ -235,9 +235,9 @@ public class Wordwrap implements Function
 	 * @param sequence sequence to split on.
 	 * @return list of substrings.
 	 */
-	private LinkedList split(String s, String sequence)
+	private LinkedList<String> split(String s, String sequence)
 	{
-		LinkedList retval = new LinkedList();
+		LinkedList<String> retval = new LinkedList<String>();
 		int i = 0;
 		int lastI = 0;
 		while ((i = s.indexOf(sequence, lastI)) >= 0)

@@ -66,7 +66,7 @@ public class PDFFile
 			String line = mPdfFile.readLine();
 			long xrefOffset = Long.parseLong(line);
 
-			HashMap objectOffsets = new HashMap();
+			HashMap<Integer, Long> objectOffsets = new HashMap<Integer, Long>();
 			mPdfFile.seek(xrefOffset);
 			PDFObject trailer = readXrefSection(objectOffsets);
 
@@ -153,7 +153,7 @@ public class PDFFile
 	 * Read xref sections from PDF file.
 	 * @param objectOffsets table to save offset of each object into.
 	 */
-	private PDFObject readXrefSection(HashMap objectOffsets)
+	private PDFObject readXrefSection(HashMap<Integer, Long> objectOffsets)
 		throws IOException, MapyrusException
 	{
 		String line = mPdfFile.readLine();	/* skip line with 'xref' keyword */
@@ -508,7 +508,7 @@ public class PDFFile
 				/*
 				 * Parse dictionary.
 				 */
-				HashMap dictionary = new HashMap();
+				HashMap<String, PDFObject> dictionary = new HashMap<String, PDFObject>();
 
 				/*
 				 * Skip whitespace.
@@ -547,7 +547,7 @@ public class PDFFile
 			/*
 			 * Parse array of objects.
 			 */
-			ArrayList list = new ArrayList();
+			ArrayList<PDFObject> list = new ArrayList<PDFObject>();
 
 			PDFObject obj = readObject();
 			while (obj != null)

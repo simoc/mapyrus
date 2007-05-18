@@ -91,7 +91,7 @@ public class Expression
 		Argument mLeafArg;
 
 		int mOperation;
-		ArrayList mBranches;
+		ArrayList<ExpressionTreeNode> mBranches;
 
 		boolean mIsFunction;
 		Function mFunction;
@@ -120,7 +120,7 @@ public class Expression
 			ExpressionTreeNode right)
 		{
 			mIsLeaf = mIsFunction = false;			
-			mBranches = new ArrayList(2);
+			mBranches = new ArrayList<ExpressionTreeNode>(2);
 			mBranches.add(left);
 			mBranches.add(right);
 			mOperation = operation;
@@ -139,7 +139,7 @@ public class Expression
 			ExpressionTreeNode right, ExpressionTreeNode third)
 		{
 			mIsLeaf = mIsFunction = false;
-			mBranches = new ArrayList(3);
+			mBranches = new ArrayList<ExpressionTreeNode>(3);
 			mBranches.add(left);
 			mBranches.add(right);
 			mBranches.add(third);
@@ -151,7 +151,7 @@ public class Expression
 		 * @param functionType is identifier of function being called.
 		 * @param args list of ExpressionTreeNode arguments to function.
 		 */
-		public ExpressionTreeNode(Function func, ArrayList args)
+		public ExpressionTreeNode(Function func, ArrayList<ExpressionTreeNode> args)
 		{
 			mIsLeaf = false;
 			mIsFunction = true;
@@ -182,7 +182,7 @@ public class Expression
 			throws MapyrusException
 		{
 			int nArgs = mBranches.size();
-			ArrayList values = new ArrayList(nArgs);
+			ArrayList<Argument> values = new ArrayList<Argument>(nArgs);
 			Argument retval;
 
 			/*
@@ -1366,7 +1366,7 @@ public class Expression
 				/*
 				 * Parse expression for each function argument.
 				 */
-				ArrayList functionExpressions = new ArrayList(4);
+				ArrayList<ExpressionTreeNode> functionExpressions = new ArrayList<ExpressionTreeNode>(4);
 
 				for (int i = 0; i < maxArgs; i++)
 				{

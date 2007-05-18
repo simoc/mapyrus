@@ -108,7 +108,7 @@ public class HTTPRequest extends Thread
 	 * @param logger logger to write log messages to.
 	 */
 	public HTTPRequest(Socket socket, Interpreter interpreter,
-		Pool interpreterPool, Logger logger)
+		Pool<Interpreter> interpreterPool, Logger logger)
 	{
 		super();
 		

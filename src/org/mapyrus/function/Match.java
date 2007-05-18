@@ -47,7 +47,8 @@ public class Match implements Function
 	/*
 	 * Static table of frequently used regular expressions.
 	 */
-	private static LRUCache mRegexCache = new LRUCache(MAX_COMPILED_REGEX);
+	private static LRUCache<String, Pattern> mRegexCache =
+		new LRUCache<String, Pattern>(MAX_COMPILED_REGEX);
 
 	/**
 	 * Compile a regular expression string into a Pattern that can be used for matching.

@@ -305,17 +305,17 @@ public class Mapyrus
 		int port, Level logLevel)
 	{
 		ServerSocket serverSocket = null;
-		Pool interpreterPool;
+		Pool<Interpreter> interpreterPool;
 		HashSet<HTTPRequest> activeThreads;
 
 		/*
 		 * Make pool of interpreters available to threads that
 		 * handle HTTP requests.
 		 */
-		interpreterPool = new Pool();
+		interpreterPool = new Pool<Interpreter>();
 		interpreterPool.put(interpreter);
 		for (int i = 1; i < Constants.MAX_HTTP_THREADS; i++)
-			interpreterPool.put(interpreter.clone());
+			interpreterPool.put((Interpreter)interpreter.clone());
 
 		/*
 		 * Initialise set of threads that have been started.
