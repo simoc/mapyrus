@@ -161,7 +161,7 @@ public class Context
 	 * polygon to preserve the inside/outside of each individual
 	 * clip polygon.
 	 */
-	private ArrayList mClippingPaths;
+	private ArrayList<GeometricPath> mClippingPaths;
 	
 	/*
 	 * Currently defined variables and variables that are local
@@ -204,7 +204,8 @@ public class Context
 	 * OGC WMS requests.  Avoid re-reading images which will be outside
 	 * page area and not visible.
 	 */
-	private static Hashtable mImageBoundsCache = new Hashtable();
+	private static Hashtable<String, GeoImageBoundingBox> mImageBoundsCache =
+		new Hashtable<String, GeoImageBoundingBox>();
 
 	/**
 	 * Clear graphics context to empty state.
@@ -2276,7 +2277,7 @@ public class Context
 				 * Draw gradiated image pattern covering complete current path.
 				 */
 				BufferedImage image = GradientFillFactory.getImage(c1, c2, c3, c4, c5);
-				ArrayList coords = new ArrayList();
+				ArrayList<Point2D> coords = new ArrayList<Point2D>();
 				coords.add(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
 				mOutputFormat.drawIcon(coords, image,
 					Math.max(bounds.getWidth(), bounds.getHeight()), 0.0, 1.0);

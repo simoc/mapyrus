@@ -304,10 +304,10 @@ public class PDFFile
 	 * @param dictKey key of values to fetch from resources dictionary.
 	 * @returnlist of PDF objects containing for this key.
 	 */
-	private ArrayList getResource(int page, int objectNumber, String dictKey)
+	private ArrayList<StringBuffer> getResource(int page, int objectNumber, String dictKey)
 		throws IOException, MapyrusException
 	{
-		ArrayList retval = null;
+		ArrayList<StringBuffer> retval = null;
 		PDFObject resourcesObject = getResources(page);
 		PDFObject obj = getDictionaryValue(resourcesObject, dictKey);
 		if (obj != null)
@@ -323,9 +323,9 @@ public class PDFFile
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing graphics states.
 	 */
-	public ArrayList getExtGState(int page, int objectNumber) throws IOException, MapyrusException
+	public ArrayList<StringBuffer> getExtGState(int page, int objectNumber) throws IOException, MapyrusException
 	{
-		ArrayList retval = getResource(page, objectNumber, "/ExtGState");
+		ArrayList<StringBuffer> retval = getResource(page, objectNumber, "/ExtGState");
 		return(retval);
 	}
 
@@ -335,10 +335,10 @@ public class PDFFile
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing color spaces.
 	 */
-	public ArrayList getColorSpace(int page, int objectNumber)
+	public ArrayList<StringBuffer> getColorSpace(int page, int objectNumber)
 		throws IOException, MapyrusException
 	{
-		ArrayList retval = getResource(page, objectNumber, "/ColorSpace");
+		ArrayList<StringBuffer> retval = getResource(page, objectNumber, "/ColorSpace");
 		return(retval);
 	}
 
@@ -348,10 +348,10 @@ public class PDFFile
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing patterns.
 	 */
-	public ArrayList getPattern(int page, int objectNumber)
+	public ArrayList<StringBuffer> getPattern(int page, int objectNumber)
 		throws IOException, MapyrusException
 	{
-		ArrayList retval = getResource(page, objectNumber, "/Pattern");
+		ArrayList<StringBuffer> retval = getResource(page, objectNumber, "/Pattern");
 		return(retval);
 	}
 
@@ -361,10 +361,10 @@ public class PDFFile
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing shading.
 	 */
-	public ArrayList getShading(int page, int objectNumber)
+	public ArrayList<StringBuffer> getShading(int page, int objectNumber)
 		throws IOException, MapyrusException
 	{
-		ArrayList retval = getResource(page, objectNumber, "/Shading");
+		ArrayList<StringBuffer> retval = getResource(page, objectNumber, "/Shading");
 		return(retval);
 	}
 
@@ -374,10 +374,10 @@ public class PDFFile
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing fonts.
 	 */
-	public ArrayList getFont(int page, int objectNumber)
+	public ArrayList<StringBuffer> getFont(int page, int objectNumber)
 		throws IOException, MapyrusException
 	{
-		ArrayList retval = getResource(page, objectNumber, "/Font");
+		ArrayList<StringBuffer> retval = getResource(page, objectNumber, "/Font");
 		return(retval);
 	}
 
@@ -387,10 +387,10 @@ public class PDFFile
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing external objects.
 	 */
-	public ArrayList getXObject(int page, int objectNumber)
+	public ArrayList<StringBuffer> getXObject(int page, int objectNumber)
 		throws IOException, MapyrusException
 	{
-		ArrayList retval = getResource(page, objectNumber, "/XObject");
+		ArrayList<StringBuffer> retval = getResource(page, objectNumber, "/XObject");
 		return(retval);
 	}
 

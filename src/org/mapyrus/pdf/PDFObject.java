@@ -187,12 +187,12 @@ public class PDFObject
 	 * @param filename name of PDF file being read.
 	 * @return object and its referenced objects as a list of StringBuffers.
 	 */
-	public ArrayList toPDFString(int objectNumber, boolean addObjectHeader,
+	public ArrayList<StringBuffer> toPDFString(int objectNumber, boolean addObjectHeader,
 		boolean addDictionaryMarkers, HashMap pdfObjects, RandomAccessFile pdfFile,
 		String filename) throws IOException, MapyrusException
 	{
 		StringBuffer sb = new StringBuffer();
-		ArrayList retval = new ArrayList();
+		ArrayList<StringBuffer> retval = new ArrayList<StringBuffer>();
 
 		if (addObjectHeader)
 		{
@@ -208,7 +208,7 @@ public class PDFObject
 			sb.append("[");
 			for (int i = 0; i < mArray.length; i++)
 			{
-				ArrayList referencedObjects = mArray[i].toPDFString(objectNumber + retval.size(),
+				ArrayList<StringBuffer> referencedObjects = mArray[i].toPDFString(objectNumber + retval.size(),
 					false, true, pdfObjects, pdfFile, filename);
 
 				sb.append(referencedObjects.get(0).toString());
@@ -237,7 +237,7 @@ public class PDFObject
 					sb.append(key);
 					sb.append(" ");
 
-					ArrayList referencedObjects = value.toPDFString(objectNumber + retval.size(),
+					ArrayList<StringBuffer> referencedObjects = value.toPDFString(objectNumber + retval.size(),
 						false, true, pdfObjects, pdfFile, filename);
 
 					sb.append(referencedObjects.get(0).toString());
@@ -259,7 +259,7 @@ public class PDFObject
 			 */
 			sb.append(objectNumber + retval.size()).append(" 0 R\r\n");
 			PDFObject referencedObject = (PDFObject)pdfObjects.get(new Integer(mReference));
-			ArrayList referencedObjects = referencedObject.toPDFString(objectNumber + retval.size(),
+			ArrayList<StringBuffer> referencedObjects = referencedObject.toPDFString(objectNumber + retval.size(),
 				true, true, pdfObjects, pdfFile, filename);
 			retval.addAll(referencedObjects);
 		}
