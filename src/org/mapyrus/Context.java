@@ -167,8 +167,8 @@ public class Context
 	 * Currently defined variables and variables that are local
 	 * to this context.
 	 */
-	private HashMap mVars;
-	private HashSet mLocalVars;
+	private HashMap<String, Argument> mVars;
+	private HashSet<String> mLocalVars;
 
 	/*
 	 * Output device we are drawing to.
@@ -2446,7 +2446,7 @@ public class Context
 			 * Make list of points of the line segments along which label 
 			 * will be drawn.
 			 */
-			ArrayList pathPoints = path.getSubPathPoints(offset, totalStringWidth);
+			ArrayList<Point2D> pathPoints = path.getSubPathPoints(offset, totalStringWidth);
 			
 			/*
 			 * If path could not be calculated then just use horizontal line from
@@ -2492,7 +2492,7 @@ public class Context
 			 * Draw letters along each line segment.
 			 */
 			int letterIndex = 0;
-			ArrayList pointPath = new ArrayList();
+			ArrayList<Point2D> pointPath = new ArrayList<Point2D>();
 
 			offset = 0;
 			while (letterIndex < nLetters && startIndex != endIndex)
@@ -2565,7 +2565,7 @@ public class Context
 		double xPadding;
 		Object primaryKeys[] = null;
 
-		ArrayList bgColors = new ArrayList();
+		ArrayList<Color> bgColors = new ArrayList<Color>();
 		boolean drawBorders = true;
 		double []justify = null;
 		int sortColumn = -1;
@@ -2770,7 +2770,7 @@ public class Context
 					if (justify != null)
 						labelPt.x += justify[j] * columnWidths[j];
 
-					ArrayList ptList = new ArrayList();
+					ArrayList<Point2D> ptList = new ArrayList<Point2D>();
 					ptList.add(labelPt);
 					mOutputFormat.label(ptList, s);
 
@@ -2829,8 +2829,8 @@ public class Context
 		{
 			Point2D.Float pt = (Point2D.Float)moveTos.get(i);
 			Point2D.Float ptCopy = (Point2D.Float)pt.clone();
-			LinkedList lastEntry = new LinkedList();
-			LinkedList lastY2 = new LinkedList();
+			LinkedList<String> lastEntry = new LinkedList<String>();
+			LinkedList<Float> lastY2 = new LinkedList<Float>();
 
 			for (int j = 0; j < keys.length; j++)
 			{
@@ -2840,7 +2840,7 @@ public class Context
 				else
 					st = new StringTokenizer(val, delimiter);
 
-				LinkedList entry = new LinkedList();
+				LinkedList<String> entry = new LinkedList<String>();
 				while (st.hasMoreTokens())
 					entry.add(st.nextToken());
 
@@ -2892,7 +2892,7 @@ public class Context
 						labelPt.x += dim.getWidth() / 5; 
 					labelPt.y = (float)ptCopy.y;
 
-					ArrayList ptList = new ArrayList();
+					ArrayList<Point2D> ptList = new ArrayList<Point2D>();
 					ptList.add(labelPt);
 					mOutputFormat.label(ptList, s);
 					StringDimension sDim = getStringDimension(s, false);
@@ -3015,9 +3015,9 @@ public class Context
 	 * Returns coordinate for each each moveTo point in current path.
 	 * @return array of Point2D.Float objects relative to current transformation matrix.
 	 */
-	public ArrayList getMoveTos() throws MapyrusException
+	public ArrayList<Point2D> getMoveTos() throws MapyrusException
 	{
-		ArrayList retval = null;
+		ArrayList<Point2D> retval = null;
 		GeometricPath path = getDefinedPath();
 		AffineTransform inverse;
 		ArrayList moveTos;
@@ -3039,7 +3039,7 @@ public class Context
 				{
 					inverse = mCtm.createInverse();
 					moveTos = path.getMoveTos();
-					retval = new ArrayList(moveTos.size());
+					retval = new ArrayList<Point2D>(moveTos.size());
 
 					for (int i = 0; i < moveTos.size(); i++)
 					{
@@ -3117,7 +3117,7 @@ public class Context
 		 * Record that variable is local.
 		 */
 		if (mLocalVars == null)
-			mLocalVars = new HashSet();
+			mLocalVars = new HashSet<String>();
 		mLocalVars.add(varName);
 	}
 
@@ -3144,7 +3144,7 @@ public class Context
 		 * Create new variable.
 		 */
 		if (mVars == null)
-			mVars = new HashMap();
+			mVars = new HashMap<String, Argument>();
 
 		/*
 		 * Clone hashmap variables to avoid changes to entries
@@ -3165,7 +3165,7 @@ public class Context
 	public void defineHashMapEntry(String hashMapName, String key, Argument value)
 	{
 		if (mVars == null)
-			mVars = new HashMap();
+			mVars = new HashMap<String, Argument>();
 
 		/*
 		 * Create new entry in a hash map.

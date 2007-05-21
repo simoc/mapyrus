@@ -4005,7 +4005,7 @@ public class OutputFormat
 	 * @param pointList is list of Point2D objects at which to draw label.
 	 * @param label is string to draw on path.
 	 */
-	public void label(ArrayList pointList, String label) throws IOException, MapyrusException
+	public void label(ArrayList<Point2D> pointList, String label) throws IOException, MapyrusException
 	{
 		Point2D pt, startPt;
 		double x, y;
@@ -4016,7 +4016,7 @@ public class OutputFormat
 		AffineTransform affine;
 		FontRenderContext frc = null;
 		Stroke originalStroke = null;
-		ArrayList lines = new ArrayList();
+		ArrayList<String> lines = new ArrayList<String>();
 
 		st = new StringTokenizer(label, Constants.LINE_SEPARATOR);
 		while (st.hasMoreTokens())

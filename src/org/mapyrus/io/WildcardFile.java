@@ -59,7 +59,7 @@ public class WildcardFile
 	 * by file separators and asterisks.
 	 * For example "/etc/rc*.d/S*" is split into "rc", "*", ".d", "/", "S", "*".
 	 */
-	private ArrayList mPatternParts;
+	private ArrayList<String> mPatternParts;
 
 	public WildcardFile(String wildcard)
 	{
@@ -97,7 +97,7 @@ public class WildcardFile
 		/*
 		 * Split filename into pieces, separated by asterisk characters and "/".
 		 */
-		mPatternParts = new ArrayList();
+		mPatternParts = new ArrayList<String>();
 		StringTokenizer st = new StringTokenizer(pattern, "*" + File.separator, true);
 
 		String lastToken = "";
@@ -126,9 +126,9 @@ public class WildcardFile
 	 * @param index index in mPatternParts to start matching.
 	 * @return list of matching files.
 	 */
-	private List recursivelyMatchFiles(File directory, int index)
+	private List<String> recursivelyMatchFiles(File directory, int index)
 	{
-		LinkedList retval = new LinkedList();
+		LinkedList<String> retval = new LinkedList<String>();
 
 		int nFilenameParts = mPatternParts.size();
 		String []filenames = directory.list();
@@ -169,7 +169,7 @@ public class WildcardFile
 					File subDirectory = new File(directory, filenames[i]);
 					if (subDirectory.isDirectory())
 					{
-						List list = recursivelyMatchFiles(subDirectory, j + 1);
+						List<String> list = recursivelyMatchFiles(subDirectory, j + 1);
 						retval.addAll(list);
 					}
 
@@ -234,15 +234,15 @@ public class WildcardFile
 	 * @param wildcard wildcard pattern to match.
 	 * @return list of matching files in sorted order.
 	 */
-	public List getMatchingFiles()
+	public List<String> getMatchingFiles()
 	{
-		List retval;
+		List<String> retval;
 		if (mPatternParts.size() == 0)
 		{
 			/*
 			 * An empty filename cannot match anything.
 			 */
-			retval = new LinkedList();
+			retval = new LinkedList<String>();
 		}
 		else
 		{
@@ -261,7 +261,7 @@ public class WildcardFile
 				 * For a pattern with no '*' we can simply check for existence of
 				 * the single file.
 				 */
-				retval = new LinkedList();
+				retval = new LinkedList<String>();
 	
 				File f = new File(mBaseDirectory + File.separator + (String)mPatternParts.get(0));
 				if (f.exists() && f.isFile())

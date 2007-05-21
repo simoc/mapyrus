@@ -318,7 +318,7 @@ public class GeometricPath
 	 * @param length length of new path.
 	 * @return new path containing part of this path.
 	 */
-	public ArrayList getSubPathPoints(double offset, double length)
+	public ArrayList<Point2D> getSubPathPoints(double offset, double length)
 	{
 		float coords[] = new float[6];
 		int segmentType;
