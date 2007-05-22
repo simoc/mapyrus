@@ -184,7 +184,7 @@ public class OutputFormat
 	 * List of font definitions included in this PostScript file and list of fonts
 	 * used in this file but not defined.
 	 */
-	private HashSet mSuppliedFontResources;
+	private HashSet<String> mSuppliedFontResources;
 	private HashSet mNeededFontResources;
 
 	/*
@@ -269,7 +269,7 @@ public class OutputFormat
 	 * all geometry and additional objects (images and graphics
 	 * states) to be included in PDF file. 
 	 */
-	private ArrayList mPDFFileOffsets;
+	private ArrayList<Integer> mPDFFileOffsets;
 	private StringWriter mPDFGeometryStringWriter;
 	private PrintWriter mPDFGeometryWriter;
 	private HashMap mPDFExtGStateObjects;
@@ -278,8 +278,8 @@ public class OutputFormat
 	/*
 	 * Pages in external PDF files to be included in this one.
 	 */
-	private ArrayList mPDFIncludedFiles;
-	private ArrayList mPDFIncludedPages;
+	private ArrayList<PDFFile> mPDFIncludedFiles;
+	private ArrayList<ArrayList<Integer>> mPDFIncludedPages;
 
 	/*
 	 * Format for writing coordinate values.
@@ -496,7 +496,7 @@ public class OutputFormat
 
 		mPfbFiles = fontList;
 
-		mPDFFileOffsets = new ArrayList();
+		mPDFFileOffsets = new ArrayList<Integer>();
 
 		int nChars = writeLine(mWriter, "%PDF-1.4");
 
@@ -559,8 +559,8 @@ public class OutputFormat
 
 		mPDFExtGStateObjects = new HashMap();
 		mPDFImageObjects = new HashMap();
-		mPDFIncludedFiles = new ArrayList();
-		mPDFIncludedPages = new ArrayList();
+		mPDFIncludedFiles = new ArrayList<PDFFile>();
+		mPDFIncludedPages = new ArrayList<ArrayList<Integer>>();
 		mPDFGeometryStringWriter = new StringWriter();
 		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
 
@@ -751,7 +751,7 @@ public class OutputFormat
 		for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 		{
 			PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-			ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+			ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
 			for (int j = 0; j < pageNumbers.size(); j++)
 			{
 				Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -773,7 +773,7 @@ public class OutputFormat
 		}
 		fontDictionary.append(">>").append(newline);
 
-		Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+		Integer offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 		int nChars = offset.intValue();
 		nChars += writeLine(mWriter, "6 0 obj % Single Page");
 		nChars += writeLine(mWriter, "<<");
@@ -1337,7 +1337,7 @@ public class OutputFormat
 
 			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
 
-			mSuppliedFontResources = new HashSet();
+			mSuppliedFontResources = new HashSet<String>();
 
 			if (mOutputType == PDF)
 				writePDFHeader(filename, width, height, resolution, turnPage, fontList, backgroundColor);
@@ -2125,7 +2125,7 @@ public class OutputFormat
 			 * Write dictionary containing graphics states defining
 			 * blend modes and alpha values.
 			 */
-			Integer offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			Integer offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 			nChars = writeLine(mWriter, objIndex + " 0 obj % Graphics States");
 			objIndex++;
@@ -2146,7 +2146,7 @@ public class OutputFormat
 			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 			{
 				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-				ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+				ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -2174,7 +2174,7 @@ public class OutputFormat
 			 * Write dictionary containing colorspaces used in external
 			 * PDF files.
 			 */
-			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 			nChars = writeLine(mWriter, objIndex + " 0 obj % ColorSpace");
 			objIndex++;
@@ -2183,7 +2183,7 @@ public class OutputFormat
 			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 			{
 				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-				ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+				ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -2211,7 +2211,7 @@ public class OutputFormat
 			 * Write dictionary containing patterns used in external
 			 * PDF files.
 			 */
-			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 			nChars = writeLine(mWriter, objIndex + " 0 obj % Pattern");
 			objIndex++;
@@ -2223,7 +2223,7 @@ public class OutputFormat
 			 * Write dictionary containing shading used in external
 			 * PDF files.
 			 */
-			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 			nChars = writeLine(mWriter, objIndex + " 0 obj % Shading");
 			objIndex++;
@@ -2234,7 +2234,7 @@ public class OutputFormat
 			/*
 			 * Write dictionary containing each image used in file.
 			 */
-			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 			nChars = writeLine(mWriter, objIndex + " 0 obj % Image Dictionary");
 			objIndex++;
@@ -2253,7 +2253,7 @@ public class OutputFormat
 			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 			{
 				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-				ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(i);
+				ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -2282,7 +2282,7 @@ public class OutputFormat
 			 */
 			for (int i = 0; i < pdfExtGStateObjs.length; i++)
 			{
-				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				Object key = pdfExtGStateObjs[i];
@@ -2293,7 +2293,7 @@ public class OutputFormat
 			}
 			for (int i = 0; i < includedExtGstateObjects.size(); i++)
 			{
-				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				String extGState = includedExtGstateObjects.get(i).toString();
@@ -2302,7 +2302,7 @@ public class OutputFormat
 			}
 			for (int i = 0; i < includedColorSpaceObjects.size(); i++)
 			{
-				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				String colorSpace = includedColorSpaceObjects.get(i).toString();
@@ -2311,7 +2311,7 @@ public class OutputFormat
 			}
 			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
-				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				Object key = pdfImageObjs[i];
@@ -2322,7 +2322,7 @@ public class OutputFormat
 			}
 			for (int i = 0; i < includedImageObjects.size(); i++)
 			{
-				offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				String image = includedImageObjects.get(i).toString();
@@ -2361,7 +2361,7 @@ public class OutputFormat
 			 * Write file offset of start of cross reference table.
 			 */
 			writeLine(mWriter, "startxref");
-			offset = (Integer)mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 			writeLine(mWriter, Integer.toString(offset.intValue() + nChars));
 			writeLine(mWriter, "%%EOF");
 
@@ -3563,7 +3563,7 @@ public class OutputFormat
 		{
 			pdfFile = new PDFFile(filename);
 			mPDFIncludedFiles.add(pdfFile);
-			mPDFIncludedPages.add(new ArrayList());
+			mPDFIncludedPages.add(new ArrayList<Integer>());
 			index = mPDFIncludedFiles.size() - 1;
 		}
 
@@ -3576,7 +3576,7 @@ public class OutputFormat
 		/*
 		 * Add this page to the list of pages to display from the PDF file.
 		 */
-		ArrayList pageNumbers = (ArrayList)mPDFIncludedPages.get(index);
+		ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(index);
 		Integer pageNumber = new Integer(page);
 		if (!pageNumbers.contains(pageNumber))
 			pageNumbers.add(pageNumber);

@@ -38,7 +38,7 @@ public class LegendEntryList
 	/*
 	 * All legend entries.
 	 */
-	private HashMap mLegendHashMap;
+	private HashMap<String, LegendEntry> mLegendHashMap;
 
 	/*
 	 * Flag true when further additions to list are accepted.
@@ -50,7 +50,7 @@ public class LegendEntryList
 	 */
 	public LegendEntryList()
 	{
-		mLegendHashMap = new HashMap();
+		mLegendHashMap = new HashMap<String, LegendEntry>();
 		mAcceptAdditions = true;
 	}
 
@@ -137,11 +137,11 @@ public class LegendEntryList
 		 */
 		if (mLegendHashMap.size() > 0)
 		{
-			Collection values = mLegendHashMap.values();
-			ArrayList list = new ArrayList(values);
+			Collection<LegendEntry> values = mLegendHashMap.values();
+			ArrayList<LegendEntry> list = new ArrayList<LegendEntry>(values);
 			Collections.sort(list);
 
-			retval = (LegendEntry)list.get(0);
+			retval = list.get(0);
 			mLegendHashMap.remove(hash(retval.getBlockName(), retval.getDescription()));
 		}
 		return(retval);
@@ -160,10 +160,10 @@ public class LegendEntryList
 		 */
 		if (mLegendHashMap.size() > 0)
 		{
-			Collection values = mLegendHashMap.values();
-			ArrayList list = new ArrayList(values);
+			Collection<LegendEntry> values = mLegendHashMap.values();
+			ArrayList<LegendEntry> list = new ArrayList<LegendEntry>(values);
 			Collections.sort(list);
-			retval = (LegendEntry)list.get(0);
+			retval = list.get(0);
 		}
 		return(retval);
 	}
