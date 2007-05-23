@@ -185,14 +185,14 @@ public class OutputFormat
 	 * used in this file but not defined.
 	 */
 	private HashSet<String> mSuppliedFontResources;
-	private HashSet mNeededFontResources;
+	private HashSet<String> mNeededFontResources;
 
 	/*
 	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
 	 * This is normally done so that extended symbols (such as degree symbol)
 	 * can be used.
 	 */
-	private HashSet mEncodeAsISOLatin1;
+	private HashSet<String> mEncodeAsISOLatin1;
 
 	/*
 	 * Adobe Font Metrics files containing character width information for all fonts.
@@ -1042,7 +1042,7 @@ public class OutputFormat
 		 * Parse list of additional options given by caller.
 		 */
 		ArrayList fontList = new ArrayList();
-		mEncodeAsISOLatin1 = new HashSet();
+		mEncodeAsISOLatin1 = new HashSet<String>();
 		mTTFFonts = new HashMap();
 		mPDFFonts = new ArrayList();
 		mAfmFiles = new ArrayList();
@@ -1344,7 +1344,7 @@ public class OutputFormat
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
-			mNeededFontResources = new HashSet();
+			mNeededFontResources = new HashSet<String>();
 
 			if (mIsUpdatingFile)
 			{

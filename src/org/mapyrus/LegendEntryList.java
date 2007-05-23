@@ -22,9 +22,8 @@
  */
 package org.mapyrus;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -138,10 +137,10 @@ public class LegendEntryList
 		if (mLegendHashMap.size() > 0)
 		{
 			Collection<LegendEntry> values = mLegendHashMap.values();
-			ArrayList<LegendEntry> list = new ArrayList<LegendEntry>(values);
-			Collections.sort(list);
-
-			retval = list.get(0);
+			LegendEntry[] entries = new LegendEntry[values.size()];
+			values.toArray(entries);
+			Arrays.sort(entries);
+			retval = entries[0];
 			mLegendHashMap.remove(hash(retval.getBlockName(), retval.getDescription()));
 		}
 		return(retval);
@@ -161,9 +160,10 @@ public class LegendEntryList
 		if (mLegendHashMap.size() > 0)
 		{
 			Collection<LegendEntry> values = mLegendHashMap.values();
-			ArrayList<LegendEntry> list = new ArrayList<LegendEntry>(values);
-			Collections.sort(list);
-			retval = list.get(0);
+			LegendEntry[] entries = new LegendEntry[values.size()];
+			values.toArray(entries);
+			Arrays.sort(entries);
+			retval = entries[0];
 		}
 		return(retval);
 	}
