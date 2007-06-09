@@ -31,23 +31,23 @@ import java.util.LinkedList;
  * in the pool is returned, with the request blocking until an object
  * becomes available if the pool is currently empty.
  */
-public class Pool
+public class Pool<E>
 {
-	private LinkedList mList;
+	private LinkedList<E> mList;
 
 	/**
 	 * Create new pool.
 	 */
 	public Pool()
 	{
-		mList = new LinkedList();
+		mList = new LinkedList<E>();
 	}
 
 	/**
 	 * Add object to pool
 	 * @param o object to add to pool.
 	 */
-	public synchronized void put(Object o)
+	public synchronized void put(E o)
 	{
 		/*
 		 * Add object to pool and notify anyone who is waiting on this pool for
@@ -64,9 +64,9 @@ public class Pool
 	 * @return one object from the pool, or null if none available
 	 * and none become available within timeout.
 	 */
-	public synchronized Object get(long timeout)
+	public synchronized E get(long timeout)
 	{
-		Object retval;
+		E retval;
 		while (mList.size() == 0)
 		{
 			try

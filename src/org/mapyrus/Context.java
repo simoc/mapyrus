@@ -312,7 +312,7 @@ public class Context
 		 * Copy list of paths we must clip against.
 		 */
 		if (existing.mClippingPaths != null)			
-			mClippingPaths = (ArrayList)(existing.mClippingPaths.clone());
+			mClippingPaths = new ArrayList<GeometricPath>(existing.mClippingPaths);
 		else
 			mClippingPaths = null;
 
@@ -2002,9 +2002,9 @@ public class Context
 		 * Save original path and clipping path.
 		 */
 		GeometricPath pathCopy = mPath;
-		ArrayList clippingPathCopy;
+		ArrayList<GeometricPath> clippingPathCopy;
 		if (mClippingPaths != null)
-			clippingPathCopy = (ArrayList)mClippingPaths.clone();
+			clippingPathCopy = new ArrayList<GeometricPath>(mClippingPaths);
 		else
 			clippingPathCopy = null;
 
@@ -2268,8 +2268,8 @@ public class Context
 				 */
 				mOutputFormat.saveState();
 				if (mClippingPaths == null)
-					mClippingPaths = new ArrayList();
-				ArrayList copy = (ArrayList)mClippingPaths.clone();
+					mClippingPaths = new ArrayList<GeometricPath>();
+				ArrayList<GeometricPath> copy = new ArrayList<GeometricPath>(mClippingPaths);
 				clipInside();
 				setGraphicsAttributes(ATTRIBUTE_CLIP);
 
@@ -2357,7 +2357,7 @@ public class Context
 			 * Add this polygon to list of paths we are clipping against.
 			 */
 			if (mClippingPaths == null)
-				mClippingPaths = new ArrayList();
+				mClippingPaths = new ArrayList<GeometricPath>();
 			mClippingPaths.add(protectedPath);
 		}
 	}
@@ -2374,7 +2374,7 @@ public class Context
 		{
 			clipPath = new GeometricPath(path);
 			if (mClippingPaths == null)
-				mClippingPaths = new ArrayList();
+				mClippingPaths = new ArrayList<GeometricPath>();
 			mClippingPaths.add(clipPath);
 			mAttributesPending |= ATTRIBUTE_CLIP;
 			mAttributesChanged |= ATTRIBUTE_CLIP;

@@ -98,7 +98,7 @@ public class AdobeFontMetricsManager
 	 * @param afmFilenames names of user-provided .afm file.
 	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
 	 */
-	public AdobeFontMetricsManager(List afmFilenames, HashSet ISOLatin1EncodedFonts)
+	public AdobeFontMetricsManager(List afmFilenames, HashSet<String> ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
 		mFontMetrics = new HashMap<String, AdobeFontMetrics>();
