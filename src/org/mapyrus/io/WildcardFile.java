@@ -25,7 +25,6 @@ package org.mapyrus.io;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -273,15 +272,5 @@ public class WildcardFile
 			}
 		}
 		return(retval);
-	}
-
-	public static void main(String []args)
-	{
-		WildcardFile w = new WildcardFile("/opt/data/shape/bakersfield*/*/*a*.shp");
-		List list = w.getMatchingFiles();
-		Iterator it = list.iterator();
-		int i = 0;
-		while (it.hasNext())
-			System.out.println(++i + ": " + (String)it.next());
 	}
 }

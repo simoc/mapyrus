@@ -44,7 +44,7 @@ public class PDFObject
 	private String mValue = null;
 	private int mReference = -1;
 	private PDFObject[] mArray = null;
-	private HashMap mDictionary = null;
+	private HashMap<String, PDFObject> mDictionary = null;
 	private long mStreamOffset = -1;
 
 	/**
@@ -69,7 +69,7 @@ public class PDFObject
 	 * Create new PDF dictionary object.
 	 * @param dictionary of key, value pairs.
 	 */
-	public PDFObject(HashMap dictionary)
+	public PDFObject(HashMap<String, PDFObject> dictionary)
 	{
 		mDictionary = dictionary;
 	}
@@ -145,7 +145,7 @@ public class PDFObject
 	 * Get dictionary for object.
 	 * @return hash map containing key, value pairs.
 	 */
-	public HashMap getDictionary()
+	public HashMap<String, PDFObject> getDictionary()
 	{
 		return(mDictionary);
 	}
@@ -188,7 +188,7 @@ public class PDFObject
 	 * @return object and its referenced objects as a list of StringBuffers.
 	 */
 	public ArrayList<StringBuffer> toPDFString(int objectNumber, boolean addObjectHeader,
-		boolean addDictionaryMarkers, HashMap pdfObjects, RandomAccessFile pdfFile,
+		boolean addDictionaryMarkers, HashMap<Integer, PDFObject> pdfObjects, RandomAccessFile pdfFile,
 		String filename) throws IOException, MapyrusException
 	{
 		StringBuffer sb = new StringBuffer();
@@ -308,8 +308,8 @@ public class PDFObject
 	 * @param pdfObjects offsets of all PDf objects in PDF file.
 	 * @return decoded stream.
 	 */
-	public byte[] getStream(RandomAccessFile pdfFile, String filename, HashMap pdfObjects)
-		throws IOException, MapyrusException
+	public byte[] getStream(RandomAccessFile pdfFile, String filename,
+		HashMap<Integer, PDFObject> pdfObjects) throws IOException, MapyrusException
 	{
 		PDFObject value = (PDFObject)mDictionary.get("/Length");
 		if (value.isReference())

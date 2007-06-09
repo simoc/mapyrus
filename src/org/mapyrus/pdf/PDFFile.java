@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -74,11 +73,9 @@ public class PDFFile
 			 * Read each of the objects in the PDF file. 
 			 */
 			mObjects = new HashMap<Integer, PDFObject>(objectOffsets.size());
-			Iterator it = objectOffsets.keySet().iterator();
-			while (it.hasNext())
+			for (Integer key : objectOffsets.keySet())
 			{
-				Integer key = (Integer)(it.next());
-				Long objectOffset = (Long)objectOffsets.get(key);
+				Long objectOffset = objectOffsets.get(key);
 				mPdfFile.seek(objectOffset.longValue());
 
 				int id = readObjectBegin();
@@ -721,12 +718,10 @@ public class PDFFile
 	{
 		if (obj.isDictionary())
 		{
-			Set keys = obj.getDictionary().keySet();
-			Iterator it = keys.iterator();
-			while (it.hasNext())
+			Set<String> keys = obj.getDictionary().keySet();
+			for (String key : keys)
 			{
-				String key = (String)it.next();
-				PDFObject value = (PDFObject)(obj.getDictionary().get(key));
+				PDFObject value = obj.getDictionary().get(key);
 				resolveAllReferences(value);
 			}
 		}

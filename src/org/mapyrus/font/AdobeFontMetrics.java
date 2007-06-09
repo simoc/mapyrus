@@ -176,8 +176,8 @@ public class AdobeFontMetrics
 	 * @param afmFilename filename being read (for any error message).
 	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
 	 */	
-	public AdobeFontMetrics (BufferedReader r, String afmFilename, HashSet ISOLatin1EncodedFonts)
-		throws IOException, MapyrusException
+	public AdobeFontMetrics (BufferedReader r, String afmFilename,
+		HashSet<String> ISOLatin1EncodedFonts) throws IOException, MapyrusException
 	{
 		String line;
 		boolean inCharMetrics = false;

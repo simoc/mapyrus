@@ -35,7 +35,6 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.mapyrus.function.UserFunction;
@@ -3357,11 +3356,9 @@ public class Interpreter
 		 * Copy all the user functions for use in new interpreter.
 		 */
 		retval.mUserFunctions = new HashMap<String, UserFunction>(this.mUserFunctions.size());
-		Iterator it = this.mUserFunctions.keySet().iterator();
-		while (it.hasNext())
+		for (String key : this.mUserFunctions.keySet())
 		{
-			String key = (String)it.next();
-			UserFunction userFunction = (UserFunction)this.mUserFunctions.get(key);
+			UserFunction userFunction = this.mUserFunctions.get(key);
 			retval.mUserFunctions.put(key, userFunction.clone(retval));
 		}
 		retval.mStdinStream = null;

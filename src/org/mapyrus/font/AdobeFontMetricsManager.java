@@ -98,7 +98,7 @@ public class AdobeFontMetricsManager
 	 * @param afmFilenames names of user-provided .afm file.
 	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
 	 */
-	public AdobeFontMetricsManager(List afmFilenames, HashSet<String> ISOLatin1EncodedFonts)
+	public AdobeFontMetricsManager(List<String> afmFilenames, HashSet<String> ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
 		mFontMetrics = new HashMap<String, AdobeFontMetrics>();
@@ -130,7 +130,7 @@ public class AdobeFontMetricsManager
 		/*
 		 * Load font metrics information from .afm files provided by caller.
 		 */
-		Iterator it = afmFilenames.iterator();
+		Iterator<String> it = afmFilenames.iterator();
 		while (it.hasNext())
 		{
 			String filename = (String)it.next();

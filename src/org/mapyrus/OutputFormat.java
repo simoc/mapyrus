@@ -198,14 +198,14 @@ public class OutputFormat
 	 * Adobe Font Metrics files containing character width information for all fonts.
 	 */
 	private AdobeFontMetricsManager mAdobeFontMetrics;
-	private ArrayList mAfmFiles;
-	private ArrayList mPfbFiles;
-	private ArrayList mPDFFonts;
+	private ArrayList<String> mAfmFiles;
+	private ArrayList<PostScriptFont> mPfbFiles;
+	private ArrayList<AdobeFontMetrics> mPDFFonts;
 	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
 	 */
-	private HashMap mTTFFonts;
+	private HashMap<String, TrueTypeFont> mTTFFonts;
 
 	/*
 	 * Page dimensions and resolution.
@@ -272,8 +272,8 @@ public class OutputFormat
 	private ArrayList<Integer> mPDFFileOffsets;
 	private StringWriter mPDFGeometryStringWriter;
 	private PrintWriter mPDFGeometryWriter;
-	private HashMap mPDFExtGStateObjects;
-	private HashMap mPDFImageObjects;
+	private HashMap<String, String> mPDFExtGStateObjects;
+	private HashMap<String, StringWriter> mPDFImageObjects;
 
 	/*
 	 * Pages in external PDF files to be included in this one.
@@ -297,7 +297,7 @@ public class OutputFormat
 	 * @param backgroundColor background color for page, or null if no background.
 	 */
 	private void writePostScriptHeader(double width, double height,
-		int resolution, boolean turnPage, ArrayList fontList, Color backgroundColor)
+		int resolution, boolean turnPage, ArrayList<PostScriptFont> fontList, Color backgroundColor)
 		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
@@ -487,7 +487,7 @@ public class OutputFormat
 	 * @param backgroundColor background color for page, or null if no background.
 	 */
 	private void writePDFHeader(String filename, double width, double height,
-		int resolution, boolean turnPage, ArrayList fontList,
+		int resolution, boolean turnPage, ArrayList<PostScriptFont> fontList,
 		Color backgroundColor)
 		throws IOException, MapyrusException
 	{
@@ -557,8 +557,8 @@ public class OutputFormat
 
 		mPDFFileOffsets.add(new Integer(nChars));
 
-		mPDFExtGStateObjects = new HashMap();
-		mPDFImageObjects = new HashMap();
+		mPDFExtGStateObjects = new HashMap<String, String>();
+		mPDFImageObjects = new HashMap<String, StringWriter>();
 		mPDFIncludedFiles = new ArrayList<PDFFile>();
 		mPDFIncludedPages = new ArrayList<ArrayList<Integer>>();
 		mPDFGeometryStringWriter = new StringWriter();
@@ -626,7 +626,7 @@ public class OutputFormat
 		String newline = "\r\n";
 
 		StringBuffer fontDictionary = new StringBuffer(4 * 1024);
-		ArrayList pdfFontObjects = new ArrayList();
+		ArrayList<StringBuffer> pdfFontObjects = new ArrayList<StringBuffer>();
 		fontDictionary.append("<<").append(newline);
 		for (int i = 0; i < PDF_FONTS.length; i++)
 		{
@@ -755,7 +755,7 @@ public class OutputFormat
 			for (int j = 0; j < pageNumbers.size(); j++)
 			{
 				Integer pageNumber = (Integer)pageNumbers.get(j);
-				ArrayList list = pdfFile.getFont(pageNumber.intValue(), objectCounter);
+				ArrayList<StringBuffer> list = pdfFile.getFont(pageNumber.intValue(), objectCounter);
 				if (list != null && !list.isEmpty())
 				{
 					/*
@@ -1041,11 +1041,11 @@ public class OutputFormat
 		/*
 		 * Parse list of additional options given by caller.
 		 */
-		ArrayList fontList = new ArrayList();
+		ArrayList<PostScriptFont> fontList = new ArrayList<PostScriptFont>();
 		mEncodeAsISOLatin1 = new HashSet<String>();
-		mTTFFonts = new HashMap();
-		mPDFFonts = new ArrayList();
-		mAfmFiles = new ArrayList();
+		mTTFFonts = new HashMap<String, TrueTypeFont>();
+		mPDFFonts = new ArrayList<AdobeFontMetrics>();
+		mAfmFiles = new ArrayList<String>();
 		mIsUpdatingFile = false;
 		int resolution;
 		boolean turnPage = false;
@@ -1117,7 +1117,7 @@ public class OutputFormat
 						 * Accept wildcards in filenames.
 						 */
 						WildcardFile wildcard = new WildcardFile(afmFilename);
-						Iterator it = wildcard.getMatchingFiles().iterator();
+						Iterator<String> it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
 						{
 							mAfmFiles.add(it.next());
@@ -2142,7 +2142,7 @@ public class OutputFormat
 				counter++;
 			}
 
-			ArrayList includedExtGstateObjects = new ArrayList();
+			ArrayList<StringBuffer> includedExtGstateObjects = new ArrayList<StringBuffer>();
 			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 			{
 				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
@@ -2150,7 +2150,7 @@ public class OutputFormat
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
-					ArrayList list = pdfFile.getExtGState(pageNumber.intValue(),
+					ArrayList<StringBuffer> list = pdfFile.getExtGState(pageNumber.intValue(),
 						objIndex + counter + 4);
 					if (list != null && !list.isEmpty())
 					{
@@ -2179,7 +2179,7 @@ public class OutputFormat
 			nChars = writeLine(mWriter, objIndex + " 0 obj % ColorSpace");
 			objIndex++;
 			nChars += writeLine(mWriter, "<<");
-			ArrayList includedColorSpaceObjects = new ArrayList();
+			ArrayList<StringBuffer> includedColorSpaceObjects = new ArrayList<StringBuffer>();
 			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 			{
 				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
@@ -2187,7 +2187,7 @@ public class OutputFormat
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
-					ArrayList list = pdfFile.getColorSpace(pageNumber.intValue(),
+					ArrayList<StringBuffer> list = pdfFile.getColorSpace(pageNumber.intValue(),
 						objIndex + counter + 3);
 					if (list != null && !list.isEmpty())
 					{
@@ -2249,7 +2249,7 @@ public class OutputFormat
 					" " + (objIndex + counter) + " 0 R");
 				counter++;
 			}
-			ArrayList includedImageObjects = new ArrayList();
+			ArrayList<StringBuffer> includedImageObjects = new ArrayList<StringBuffer>();
 			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
 			{
 				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
@@ -2257,7 +2257,7 @@ public class OutputFormat
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
-					ArrayList list = pdfFile.getXObject(pageNumber.intValue(),
+					ArrayList<StringBuffer> list = pdfFile.getXObject(pageNumber.intValue(),
 						objIndex + counter);
 					if (list != null && !list.isEmpty())
 					{
