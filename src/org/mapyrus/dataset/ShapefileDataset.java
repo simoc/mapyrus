@@ -258,7 +258,8 @@ public class ShapefileDataset implements GeographicDataset
 			 */
 			readDBFHeader(extrasDBFFields);
 
-			if (mQueryExtents.intersects(mExtents))
+			if (overlaps(mQueryExtents, mExtents.getMinX(), mExtents.getMinY(),
+				mExtents.getMaxX(), mExtents.getMaxY()))
 			{
 				mBytesRead = 0;
 				mDBFRecord = new byte[mDBFRecordLength];
@@ -281,6 +282,27 @@ public class ShapefileDataset implements GeographicDataset
 			close();
 			throw e2;
 		}
+	}
+
+	/**
+	 * Find whether two rectangles overlap.
+	 * @param r1 first rectangle.
+	 * @param xMin minimum X coordinate of second rectangle.
+	 * @param yMin minimum Y coordinate of second rectangle.
+	 * @param xMax maximum X coordinate of second rectangle.
+	 * @param yMax maximum Y coordinate of second rectangle.
+	 * @return true if rectangles overlap.
+	 */
+	private boolean overlaps(Rectangle2D.Double r, double xMin, double yMin, double xMax, double yMax)
+	{
+		boolean retval = (xMin >= r.getMinX() && xMin <= r.getMaxX()) ||
+			(r.getMaxX() >= xMin && r.getMaxX() <= xMax);
+		if (retval)
+		{
+			retval = (yMin >= r.getMinY() && yMin <= r.getMaxY()) ||
+				(r.getMaxY() >= yMin && r.getMaxY() <= yMax);
+		}
+		return(retval);
 	}
 
 	/**
@@ -672,7 +694,7 @@ public class ShapefileDataset implements GeographicDataset
 					xMax = readLittleEndianDouble(mShapeStream);
 					yMax = readLittleEndianDouble(mShapeStream);
 					nBytes += 4 * 8;
-					shapeInExtents = mQueryExtents.intersects(xMin, yMin, xMax - xMin, yMax - yMin);
+					shapeInExtents = overlaps(mQueryExtents, xMin, yMin, xMax, yMax);
 					if (shapeInExtents)
 					{
 						/*
@@ -796,7 +818,7 @@ public class ShapefileDataset implements GeographicDataset
 					xMax = readLittleEndianDouble(mShapeStream);
 					yMax = readLittleEndianDouble(mShapeStream);
 					nBytes += 4 * 8;
-					shapeInExtents = mQueryExtents.intersects(xMin, yMin, xMax - xMin, yMax - yMin);
+					shapeInExtents = overlaps(mQueryExtents, xMin, yMin, xMax, yMax);
 					if (shapeInExtents)
 					{
 						nPoints = readLittleEndianInt(mShapeStream);
