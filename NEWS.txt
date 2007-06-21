@@ -1,10 +1,13 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
 
-0.703, May 2007
+0.703, June 2007
 
 * Upgrade to Java version 1.5.
 * Enable shell environment variables to be used directly in Mapyrus.
+* Fix reading of ESRI Shape files to correctly read zero width attribute
+  fields, files containing only a single point, and MULTIPOINT geometry
+  having only one point.
 
 0.702, March 2007
 
