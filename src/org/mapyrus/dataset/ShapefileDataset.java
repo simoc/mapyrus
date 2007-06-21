@@ -545,7 +545,7 @@ public class ShapefileDataset implements GeographicDataset
 			/*
 			 * Length is unsigned byte value.
 			 */
-			if (dbfField[16] > 0)
+			if (dbfField[16] >= 0)
 				mDBFFieldLengths[i] = dbfField[16];
 			else
 				mDBFFieldLengths[i] = 256 + dbfField[16];
