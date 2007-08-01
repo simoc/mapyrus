@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
 
+0.704, August 2007
+
+* Simplify PDF output so that it can be read by ImageMagick software.
+
 0.703, June 2007
 
 * Upgrade to Java version 1.5.
