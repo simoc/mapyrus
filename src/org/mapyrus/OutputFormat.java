@@ -213,6 +213,7 @@ public class OutputFormat
 	private double mPageWidth;
 	private double mPageHeight;
 	private double mResolution;
+	private String mMediaBox;
 
 	/*
 	 * Minimum line width.
@@ -539,23 +540,17 @@ public class OutputFormat
 		nChars += writeLine(mWriter, "4 0 obj % Page Tree Node");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Pages");
-		nChars += writeLine(mWriter, "/Kids [6 0 R]");
+		nChars += writeLine(mWriter, "/Kids [5 0 R]");
 		nChars += writeLine(mWriter, "/Count 1");
 		nChars += writeLine(mWriter, ">>");
 		nChars += writeLine(mWriter, "endobj");
-
 		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "5 0 obj % MediaBox");
-		String mediaBox;
+
 		if (turnPage)
-			mediaBox = "[0 0 " + heightInPoints + " " + widthInPoints + "]";
+			mMediaBox = "[0 0 " + heightInPoints + " " + widthInPoints + "]";
 		else
-			mediaBox = "[0 0 " + widthInPoints + " " + heightInPoints + "]";
-		nChars += writeLine(mWriter, mediaBox);
-		nChars += writeLine(mWriter, "endobj");
+			mMediaBox = "[0 0 " + widthInPoints + " " + heightInPoints + "]";
 		mWriter.flush();
-
-		mPDFFileOffsets.add(new Integer(nChars));
 
 		mPDFExtGStateObjects = new HashMap<String, String>();
 		mPDFImageObjects = new HashMap<String, StringWriter>();
@@ -622,7 +617,7 @@ public class OutputFormat
 	 */
 	private void writePDFResources() throws IOException, MapyrusException
 	{
-		int objectCounter = 7;
+		int objectCounter = 6;
 		String newline = "\r\n";
 
 		StringBuffer fontDictionary = new StringBuffer(4 * 1024);
@@ -775,11 +770,11 @@ public class OutputFormat
 
 		Integer offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
 		int nChars = offset.intValue();
-		nChars += writeLine(mWriter, "6 0 obj % Single Page");
+		nChars += writeLine(mWriter, "5 0 obj % Single Page");
 		nChars += writeLine(mWriter, "<<");
 		nChars += writeLine(mWriter, "/Type /Page");
 		nChars += writeLine(mWriter, "/Parent 4 0 R");
-		nChars += writeLine(mWriter, "/MediaBox 5 0 R");
+		nChars += writeLine(mWriter, "/MediaBox " + mMediaBox);
 		nChars += writeLine(mWriter, "/Contents " + objectCounter + " 0 R");
 		objectCounter++;
 		nChars += writeLine(mWriter, "/Resources");
