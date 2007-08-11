@@ -152,7 +152,6 @@ public class MapyrusMessages
 	public static final String NESTED_PROC = "nestedproc";
 	public static final String NOT_A_AFM_FILE = "notaafmfile";
 	public static final String NOT_ASCENDING = "notascending";
-	public static final String NOT_A_BMP_FILE = "notabmpfile";
 	public static final String NOT_A_PAT_FILE = "notapatfile";
 	public static final String NOT_A_PFA_FILE = "notapfafile";
 	public static final String NOT_A_PFB_FILE = "notapfbfile";
