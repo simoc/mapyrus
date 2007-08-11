@@ -130,11 +130,6 @@ public class Context
 	private double mRotation;
 
 	/*
-	 * Projection transformation from one world coordinate system to another.
-	 */
-	private WorldCoordinateTransform mProjectionTransform;
-
-	/*
 	 * Transformation matrix from world coordinates to page coordinates
 	 * and the units of world coordinates.
 	 */
@@ -233,8 +228,7 @@ public class Context
 			ATTRIBUTE_BLEND |
 			ATTRIBUTE_FONT | ATTRIBUTE_JUSTIFY | ATTRIBUTE_LINESTYLE);
 		mAttributesChanged = 0;
-		
-		mProjectionTransform = null;
+
 		mWorldCtm = null;
 		mPageWorldExtents = null;
 	}
@@ -280,7 +274,6 @@ public class Context
 		mFontLineSpacing = existing.mFontLineSpacing;
 
 		mCtm = new AffineTransform(existing.mCtm);
-		mProjectionTransform = null;
 		mWorldCtm = null;
 		mScaling = existing.mScaling;
 		mRotation = existing.mRotation;
@@ -831,19 +824,6 @@ public class Context
 	}
 
 	/**
-	 * Sets reprojection between two world coordinate systems.
-	 * @param sourceSystem description of coordinate system coordinates transformed form.
-	 * @param destinationSystem description of coordinate system coordinates
-	 * are transformed to.
-	 */
-	public void setReprojection(String sourceSystem, String destinationSystem)
-		throws MapyrusException
-	{
-		mProjectionTransform = new WorldCoordinateTransform(sourceSystem,
-			destinationSystem);
-	}
-
-	/**
 	 * Transform geometry from page coordinates to world coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
@@ -1027,14 +1007,6 @@ public class Context
 
 		srcPts[0] = x;
 		srcPts[1] = y;
-
-		/*
-		 * Transform to correct world coordinate system.
-		 */
-		if (mProjectionTransform != null)
-		{
-			mProjectionTransform.forwardTransform(srcPts);
-		}
 		
 		/*
 		 * Transform point from world coordinates
@@ -1070,14 +1042,6 @@ public class Context
 		 */
 		if (mPath == null || mPath.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MOVETO));
-
-		/*
-		 * Transform to correct world coordinate system.
-		 */
-		if (mProjectionTransform != null)
-		{
-			mProjectionTransform.forwardTransform(srcPts);
-		}
 
 		/*
 		 * Transform point from world coordinates
@@ -1163,15 +1127,6 @@ public class Context
 		 */
 		if (mPath == null || mPath.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ARC_START));
-		
-		/*
-		 * Transform to correct world coordinate system.
-		 */
-		if (mProjectionTransform != null)
-		{
-			mProjectionTransform.forwardTransform(centrePts);
-			mProjectionTransform.forwardTransform(endPts);
-		}
 
 		/*
 		 * Transform points from world coordinates
@@ -1216,15 +1171,7 @@ public class Context
 		 */
 		if (mPath == null || mPath.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_BEZIER_START));
-				
-		/*
-		 * Transform to correct world coordinate system.
-		 */
-		if (mProjectionTransform != null)
-		{
-			mProjectionTransform.forwardTransform(pts);
-		}
-		
+
 		/*
 		 * Transform points from world coordinates
 		 * to millimetre position on page.
@@ -1331,14 +1278,6 @@ public class Context
 		cornerPts[1] = yMin;
 		cornerPts[2] = xMax;
 		cornerPts[3] = yMax;
-
-		/*
-		 * Transform to correct world coordinate system.
-		 */
-		if (mProjectionTransform != null)
-		{
-			mProjectionTransform.forwardTransform(cornerPts);
-		}
 
 		/*
 		 * Transform points from world coordinates
@@ -1458,14 +1397,6 @@ public class Context
 			srcPts[3] = y2;
 
 			/*
-			 * Transform rectangle to correct world coordinate system.
-			 */
-			if (mProjectionTransform != null)
-			{
-				mProjectionTransform.forwardTransform(srcPts);
-			}
-
-			/*
 			 * Transform rectangle from world coordinates
 			 * to millimetre position on page.
 			 */
@@ -1561,14 +1492,6 @@ public class Context
 		srcPts[3] = y2;
 
 		/*
-		 * Transform rectangle to correct world coordinate system.
-		 */
-		if (mProjectionTransform != null)
-		{
-			mProjectionTransform.forwardTransform(srcPts);
-		}
-
-		/*
 		 * Transform rectangle from world coordinates
 		 * to millimetre position on page.
 		 */
@@ -1644,14 +1567,6 @@ public class Context
 			srcPts[3] = y2;
 
 			/*
-			 * Transform rectangle to correct world coordinate system.
-			 */
-			if (mProjectionTransform != null)
-			{
-				mProjectionTransform.forwardTransform(srcPts);
-			}
-
-			/*
 			 * Transform rectangle from world coordinates
 			 * to millimetre position on page.
 			 */
@@ -1694,14 +1609,6 @@ public class Context
 					srcPts[0] = coords[index + 1];
 					srcPts[1] = coords[index + 2];
 
-					/*
-					 * Transform rectangle to correct world coordinate system.
-					 */
-					if (mProjectionTransform != null)
-					{
-						mProjectionTransform.forwardTransform(srcPts);
-					}
-			
 					/*
 					 * Transform rectangle from world coordinates
 					 * to millimetre position on page.

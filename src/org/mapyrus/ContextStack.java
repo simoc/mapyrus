@@ -353,18 +353,6 @@ public class ContextStack
 	}
 
 	/**
-	 * Sets transformation between two world coordinate systems.
-	 * @param sourceSystem description of coordinate system coordinates transformed form.
-	 * @param destinationSystem description of coordinate system coordinates
-	 * are transformed to.
-	 */
-	public void setTransform(String sourceSystem, String destinationSystem)
-		throws MapyrusException
-	{
-		getCurrentContext().setReprojection(sourceSystem, destinationSystem);
-	}
-
-	/**
 	 * Transform geometry from page coordinates to world coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
