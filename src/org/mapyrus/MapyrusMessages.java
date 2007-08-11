@@ -136,7 +136,6 @@ public class MapyrusMessages
 	public static final String INVALID_STAR = "invalidstar";
 	public static final String INVALID_SVG = "invalidsvg";
 	public static final String INVALID_TABLE = "invalidtable";
-	public static final String INVALID_TRANSFORM = "invalidtransform";
 	public static final String INVALID_TREE = "invalidtree";
 	public static final String INVALID_TRIANGLE = "invalidtriangle";
 	public static final String INVALID_VARIABLE = "invalidvariable";
