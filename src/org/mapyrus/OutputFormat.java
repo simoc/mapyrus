@@ -1429,7 +1429,7 @@ public class OutputFormat
 					 * Create images with transparency for all formats except
 					 * JPEG and PPM (which do not support it).
 					 */
-					if (mFormatName.equals("jpg") || mFormatName.equals("jpeg") || mFormatName.equals("ppm"))
+					if (mFormatName.equals("jpg") || mFormatName.equals("jpeg") || mFormatName.equals("ppm") || mFormatName.equals("bmp"))
 						imageType = BufferedImage.TYPE_3BYTE_BGR;
 					else
 						imageType = BufferedImage.TYPE_INT_ARGB;
