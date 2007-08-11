@@ -96,20 +96,19 @@ public class Statement
 	public static final int SCALE = 61;
 	public static final int ROTATE = 62;
 	public static final int WORLDS = 63;
-	public static final int PROJECT = 64;
-	public static final int DATASET = 65;
-	public static final int FETCH = 66;
-	public static final int NEWPAGE = 67;
-	public static final int ENDPAGE = 68;
-	public static final int SETOUTPUT = 69;
-	public static final int PRINT = 70;
-	public static final int LOCAL = 71;
-	public static final int LET = 72;
-	public static final int EVAL = 73;
-	public static final int KEY = 74;
-	public static final int LEGEND = 75;
-	public static final int MIMETYPE = 76;
-	public static final int HTTPRESPONSE = 77;
+	public static final int DATASET = 64;
+	public static final int FETCH = 65;
+	public static final int NEWPAGE = 66;
+	public static final int ENDPAGE = 67;
+	public static final int SETOUTPUT = 68;
+	public static final int PRINT = 69;
+	public static final int LOCAL = 70;
+	public static final int LET = 71;
+	public static final int EVAL = 72;
+	public static final int KEY = 73;
+	public static final int LEGEND = 74;
+	public static final int MIMETYPE = 75;
+	public static final int HTTPRESPONSE = 76;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -217,7 +216,6 @@ public class Statement
 		mStatementTypeLookup.put("scale", new Integer(SCALE));
 		mStatementTypeLookup.put("rotate", new Integer(ROTATE));
 		mStatementTypeLookup.put("worlds", new Integer(WORLDS));
-		mStatementTypeLookup.put("project", new Integer(PROJECT));
 		mStatementTypeLookup.put("dataset", new Integer(DATASET));
 		mStatementTypeLookup.put("fetch", new Integer(FETCH));
 		mStatementTypeLookup.put("newpage", new Integer(NEWPAGE));

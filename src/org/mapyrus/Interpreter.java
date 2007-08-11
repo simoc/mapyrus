@@ -1960,18 +1960,6 @@ public class Interpreter
 					units, allowDistortion);
 				break;
 
-			case Statement.PROJECT:
-				if (nExpressions == 2)
-				{
-						context.setTransform(mExecuteArgs[0].getStringValue(),
-							mExecuteArgs[1].getStringValue());
-				}
-				else
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TRANSFORM));
-				}
-				break;
-	
 			case Statement.DATASET:
 				// TODO accept two arguments, with extras string then empty.
 				if (nExpressions == 3)
