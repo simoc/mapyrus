@@ -510,7 +510,7 @@ public class ShapefileDataset implements GeographicDataset
 					 */
 					fetchStatus = (dbfFieldnameList == null ||
 						dbfFieldnameList.contains(fieldName));
-					mDBFFieldsToFetch.add(new Boolean(fetchStatus));
+					mDBFFieldsToFetch.add(Boolean.valueOf(fetchStatus));
 					if (fetchStatus)
 						mNDBFFieldsToFetch++;
 	
