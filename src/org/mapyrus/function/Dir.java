@@ -23,8 +23,6 @@
 package org.mapyrus.function;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -49,16 +47,13 @@ public class Dir implements Function
 		Argument retval = new Argument();
 
 		WildcardFile wildcard = new WildcardFile(pattern);
-		List list = wildcard.getMatchingFiles();
-		Iterator it = list.iterator();
 		int counter = 1;
 
 		/*
 		 * Add each matching file to the array.
 		 */
-		while (it.hasNext())
+		for (String next : wildcard.getMatchingFiles())
 		{
-			String next = (String)it.next();
 			retval.addHashMapEntry(Integer.toString(counter),
 				new Argument(Argument.STRING, next));
 			counter++;

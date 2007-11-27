@@ -28,7 +28,6 @@ import java.io.RandomAccessFile;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -227,10 +226,8 @@ public class PDFObject
 		{
 			if (addDictionaryMarkers)
 				sb.append("<<\r\n");
-			Iterator it = mDictionary.keySet().iterator();
-			while (it.hasNext())
+			for (String key : mDictionary.keySet())
 			{
-				String key = (String)it.next();
 				PDFObject value = (PDFObject)mDictionary.get(key);
 				if (!(key.equals("/Length") || key.equals("/Filter")))
 				{
