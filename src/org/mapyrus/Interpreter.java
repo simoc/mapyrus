@@ -132,15 +132,15 @@ public class Interpreter
 	static
 	{
 		mWorldUnitsLookup = new HashMap<String, Integer>();
-		mWorldUnitsLookup.put("m", new Integer(Context.WORLD_UNITS_METRES));
-		mWorldUnitsLookup.put("metres", new Integer(Context.WORLD_UNITS_METRES));
-		mWorldUnitsLookup.put("meters", new Integer(Context.WORLD_UNITS_METRES));
-		mWorldUnitsLookup.put("feet", new Integer(Context.WORLD_UNITS_FEET));
-		mWorldUnitsLookup.put("foot", new Integer(Context.WORLD_UNITS_FEET));
-		mWorldUnitsLookup.put("ft", new Integer(Context.WORLD_UNITS_FEET));
-		mWorldUnitsLookup.put("degrees", new Integer(Context.WORLD_UNITS_DEGREES));
-		mWorldUnitsLookup.put("degree", new Integer(Context.WORLD_UNITS_DEGREES));
-		mWorldUnitsLookup.put("deg", new Integer(Context.WORLD_UNITS_DEGREES));
+		mWorldUnitsLookup.put("m", Integer.valueOf(Context.WORLD_UNITS_METRES));
+		mWorldUnitsLookup.put("metres", Integer.valueOf(Context.WORLD_UNITS_METRES));
+		mWorldUnitsLookup.put("meters", Integer.valueOf(Context.WORLD_UNITS_METRES));
+		mWorldUnitsLookup.put("feet", Integer.valueOf(Context.WORLD_UNITS_FEET));
+		mWorldUnitsLookup.put("foot", Integer.valueOf(Context.WORLD_UNITS_FEET));
+		mWorldUnitsLookup.put("ft", Integer.valueOf(Context.WORLD_UNITS_FEET));
+		mWorldUnitsLookup.put("degrees", Integer.valueOf(Context.WORLD_UNITS_DEGREES));
+		mWorldUnitsLookup.put("degree", Integer.valueOf(Context.WORLD_UNITS_DEGREES));
+		mWorldUnitsLookup.put("deg", Integer.valueOf(Context.WORLD_UNITS_DEGREES));
 	}
 
 	/**
@@ -1941,7 +1941,7 @@ public class Interpreter
 					if (token.startsWith("units="))
 					{
 						String s = token.substring(6);
-						Integer u = (Integer)mWorldUnitsLookup.get(s);
+						Integer u = mWorldUnitsLookup.get(s);
 						if (u == null)
 						{
 							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLD_UNITS) +
