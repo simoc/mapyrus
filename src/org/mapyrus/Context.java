@@ -1378,7 +1378,7 @@ public class Context
 	}
 
 	/**
-	 * Replace path defining polygon with a sinkhole point.
+	 * Replace path with path clipped against a rectangle.
 	 */
 	public void guillotine(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -1418,14 +1418,14 @@ public class Context
 			if (path.getLineToCount() == 0 && path.getMoveToCount() > 0)
 			{
 				ArrayList moveTos = path.getMoveTos();
-				ArrayList moveToRotations = path.getMoveToRotations();
+				ArrayList<Double> moveToRotations = path.getMoveToRotations();
 				mPath = new GeometricPath();
 				for (int i = 0; i < moveTos.size(); i++)
 				{
 					Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
 					if (rect.outcode(pt) == 0)
 					{
-						Double rotation = (Double)(moveToRotations.get(i));
+						Double rotation = moveToRotations.get(i);
 						mPath.moveTo(pt.x, pt.y, rotation.doubleValue());
 					}
 				}
