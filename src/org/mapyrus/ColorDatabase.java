@@ -788,7 +788,7 @@ public class ColorDatabase
 		}
 		else
 		{
-			retval = (Color)(mColors.get(colorName));
+			retval = mColors.get(colorName);
 			if (retval == null)
 			{
 				/*
@@ -807,7 +807,7 @@ public class ColorDatabase
 						sb.append(Character.toLowerCase(c));
 					}
 				}
-				retval = (Color)mColors.get(sb.toString());
+				retval = mColors.get(sb.toString());
 				if (retval != null)
 				{
 					/*

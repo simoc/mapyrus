@@ -64,7 +64,7 @@ public class TransientFileFactory
 		 */
 		if (!mGeneratedFilenames.isEmpty())
 		{
-			TransientFile expired = (TransientFile)(mGeneratedFilenames.getFirst());
+			TransientFile expired = mGeneratedFilenames.getFirst();
 			while (expired != null && now >= expired.mExpiryTimestamp)
 			{
 				File f = new File(expired.mFilename);
@@ -75,7 +75,7 @@ public class TransientFileFactory
 				if (mGeneratedFilenames.isEmpty())
 					expired = null;
 				else
-					expired = (TransientFile)(mGeneratedFilenames.getFirst());
+					expired = mGeneratedFilenames.getFirst();
 			}
 		}
 
@@ -111,7 +111,7 @@ public class TransientFileFactory
 			 * If entry expires at a later time than all other files we've
 			 * generated then we can just add it to end of list.
 			 */
-			TransientFile t = (TransientFile)(mGeneratedFilenames.getLast());
+			TransientFile t = mGeneratedFilenames.getLast();
 			if (t.mExpiryTimestamp <= expiry)
 			{
 				found = true;

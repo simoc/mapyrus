@@ -155,7 +155,7 @@ public class GrassDataset implements GeographicDataset
 				row = parseRow(reader, line);
 				mAllRows.add(row);
 
-				Argument pt = (Argument)row.get(0);
+				Argument pt = row.get(0);
 				double[] els = pt.getGeometryValue();
 				double x = els[3];
 				double y = els[4];
@@ -414,7 +414,7 @@ public class GrassDataset implements GeographicDataset
 		Row retval;
 
 		if (mRowFetchIndex < mAllRows.size())
-			retval = (Row)mAllRows.get(mRowFetchIndex++);
+			retval = mAllRows.get(mRowFetchIndex++);
 		else
 			retval = null;
 
