@@ -388,7 +388,7 @@ public class Mapyrus
 				 * until one becomes available, if necessary).
 				 * Then start new thread to handle this request.
 				 */
-				interpreter = (Interpreter)(interpreterPool.get(Constants.HTTP_TIMEOUT));
+				interpreter = interpreterPool.get(Constants.HTTP_TIMEOUT);
 				if (interpreter == null)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.HTTP_TIMEOUT));
