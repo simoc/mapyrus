@@ -241,7 +241,7 @@ public class Statement
 	private int getStatementType(String s)
 	{
 		int retval;
-		Integer type = (Integer)mStatementTypeLookup.get(s.toLowerCase());
+		Integer type = mStatementTypeLookup.get(s.toLowerCase());
 
 		if (type == null)
 			retval = CALL;
