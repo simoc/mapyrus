@@ -29,6 +29,8 @@ import java.lang.String;
  */
 public class MapyrusException extends Exception
 {
+	private static final long serialVersionUID = 0x4a510005;
+
 	public MapyrusException()
 	{
 		super();

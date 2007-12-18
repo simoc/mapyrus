@@ -20,18 +20,19 @@
 /*
  * @(#) $Id$
  */
+package org.mapyrus;
+
+import java.util.ArrayList;
 
 /**
  * A row read from a geographic dataset containing one geometrical object plus
  * its attributes.
  * Or as the OGIS people would say, a "simple feature".
  */
-package org.mapyrus;
-
-import java.util.ArrayList;
-
 public class Row extends ArrayList<Argument>
 {
+	private static final long serialVersionUID = 0x4a510001;
+
 	/**
 	 * Create a new row.
 	 */

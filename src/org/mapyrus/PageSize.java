@@ -34,6 +34,8 @@ import javax.print.attribute.standard.MediaSizeName;
  */
 public class PageSize extends MediaSizeName
 {
+	private static final long serialVersionUID = 0x4a510002;
+
 	private Point2D mDimension;
 
 	/**

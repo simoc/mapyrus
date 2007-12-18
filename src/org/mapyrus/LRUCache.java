@@ -33,6 +33,8 @@ import java.util.Map;
  */
 public class LRUCache<K,V> extends LinkedHashMap<K,V>
 {
+	private static final long serialVersionUID = 0x4a510004;
+
 	/*
 	 * The maximum number of elements to hold in the cache.
 	 */

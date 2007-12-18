@@ -29,6 +29,8 @@ import java.awt.Font;
  */
 public class FontCache extends LRUCache<String, Font>
 {
+	private static final long serialVersionUID = 0x4a510003;
+
 	/*
 	 * Number of fonts to cache in memory.
 	 */
