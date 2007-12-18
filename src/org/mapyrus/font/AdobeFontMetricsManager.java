@@ -133,7 +133,7 @@ public class AdobeFontMetricsManager
 		Iterator<String> it = afmFilenames.iterator();
 		while (it.hasNext())
 		{
-			String filename = (String)it.next();
+			String filename = it.next();
 			BufferedReader r = null;
 
 			try
@@ -161,7 +161,7 @@ public class AdobeFontMetricsManager
 	{
 		double retval = 0;
 
-		AdobeFontMetrics afm = (AdobeFontMetrics)mFontMetrics.get(fontName);
+		AdobeFontMetrics afm = mFontMetrics.get(fontName);
 		if (afm != null)
 		{
 			retval = afm.getStringWidth(s, pointSize);
