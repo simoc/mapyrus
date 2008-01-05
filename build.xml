@@ -139,7 +139,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Create README file -->
 <echo file="README.txt" level="info">
 Mapyrus Version ${version} README
-Copyright (C) 2003 - 2007 Simon Chenery.
+Copyright (C) 2003 - 2008 Simon Chenery.
 
 User manual is mapyrus.pdf.
 Examples from user manual are in userdoc directory.
