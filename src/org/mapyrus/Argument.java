@@ -39,7 +39,7 @@ import java.util.StringTokenizer;
  * For example, '2 * a + 7' and 'prefix["DE"] . "11823"' both contain three
  * arguments.
  */
-public class Argument implements Comparable
+public class Argument implements Comparable<Argument>
 {
 	public static final int NUMERIC = 0;
 	public static final int STRING = 1;
@@ -575,10 +575,12 @@ public class Argument implements Comparable
 	 */	
 	public int getType()
 	{
+		int retval;
 		if (mType == NUMERIC || mType == STRING || mType == VARIABLE || mType == HASHMAP)
-			return(mType);
+			retval = mType;
 		else
-			return(GEOMETRY);
+			retval = GEOMETRY;
+		return(retval);
 	}
 
 	/**
@@ -855,7 +857,7 @@ public class Argument implements Comparable
 	 */	
 	public Argument getHashMapEntry(String key)
 	{
-		Argument retval = (Argument)mHashMap.get(key);
+		Argument retval = mHashMap.get(key);
 		if (retval == null)
 			retval = emptyString;
 		return(retval);
@@ -876,13 +878,11 @@ public class Argument implements Comparable
 	 * Orders list elements that contain numbers numerically, other
 	 * elements alphabetically.
 	 */
-	private class NumericAndStringComparator implements Comparator
+	private class NumericAndStringComparator implements Comparator<String>
 	{
-		public int compare(Object o1, Object o2)
+		public int compare(String s1, String s2)
 		{
 			int retval;
-			String s1 = (String)o1;
-			String s2 = (String)o2;
 
 			try
 			{
@@ -908,8 +908,12 @@ public class Argument implements Comparable
 	 */
 	public Object[] getHashMapKeys()
 	{
-		Object []keys = mHashMap.keySet().toArray();
-		
+		String []keys = new String[mHashMap.size()];
+		Iterator<String> it = mHashMap.keySet().iterator();
+		int i = 0;
+		while (it.hasNext())
+			keys[i++] = it.next();
+
 		/*
 		 * Return keys in sorted order, either numerically or alphabetically.
 		 */
@@ -932,8 +936,8 @@ public class Argument implements Comparable
 		{
 			for (int j = i + 1; j < keys.length; j++)
 			{
-				Argument arg1 = (Argument)mHashMap.get(keys[i]);
-				Argument arg2 = (Argument)mHashMap.get(keys[j]);
+				Argument arg1 = mHashMap.get(keys[i]);
+				Argument arg2 = mHashMap.get(keys[j]);
 				if (arg1.compareTo(arg2) > 0)
 				{
 					/*
@@ -1102,7 +1106,7 @@ public class Argument implements Comparable
 			{
 				sb.append(keys[i]);
 				sb.append(' ');
-				Argument value = (Argument)mHashMap.get(keys[i]);
+				Argument value = mHashMap.get(keys[i]);
 				sb.append(value.getStringValue());
 				sb.append(Constants.LINE_SEPARATOR);
 			}
@@ -1153,7 +1157,7 @@ public class Argument implements Comparable
 		{
 			retval = new Argument(mType, mGeometryValue);
 		}
-		return((Object)retval);
+		return(retval);
 	}
 
 	/**
@@ -1161,48 +1165,40 @@ public class Argument implements Comparable
 	 * @param other argument.
 	 * @return -1, 0, 1 depending on comparison between arguments.
 	 */
-	public int compareTo(Object o)
+	public int compareTo(Argument arg)
 	{
 		int retval;
 
-		if (o instanceof Argument)
+		if (getType() == Argument.NUMERIC &&
+			arg.getType() == Argument.NUMERIC)
 		{
-			Argument arg = (Argument)o;
-			if (getType() == Argument.NUMERIC &&
-				arg.getType() == Argument.NUMERIC)
+			/*
+			 * Both arguments are numbers so compare them numerically.
+			 */
+			double a = 1, b = 0;
+			try
 			{
-				/*
-				 * Both arguments are numbers so compare them numerically.
-				 */
-				double a = 1, b = 0;
-				try
-				{
-					a = getNumericValue();
-					b = arg.getNumericValue();
-				}
-				catch (MapyrusException ignore)
-				{
-				}
-				if (NumericalAnalysis.equals(a, b))
-					retval = 0;
-				else if (a > b)
-					retval = 1;
-				else
-					retval = -1;
+				a = getNumericValue();
+				b = arg.getNumericValue();
 			}
+			catch (MapyrusException ignore)
+			{
+			}
+			if (NumericalAnalysis.equals(a, b))
+				retval = 0;
+			else if (a > b)
+				retval = 1;
 			else
-			{
-				/*
-				 * Compare other arguments as strings.
-				 */
-				String a = getStringValue();
-				String b = arg.getStringValue();
-				retval = a.compareTo(b);
-			}
+				retval = -1;
 		}
 		else
 		{
-			retval = 1;
+			/*
+			 * Compare other arguments as strings.
+			 */
+			String a = getStringValue();
+			String b = arg.getStringValue();
+			retval = a.compareTo(b);
 		}
 		return(retval);
 	}
