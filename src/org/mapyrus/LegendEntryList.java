@@ -99,7 +99,7 @@ public class LegendEntryList
 			 * otherwise make a new legend entry.
 			 */
 			String hashValue = hash(blockName, description);
-			LegendEntry entry = (LegendEntry)mLegendHashMap.get(hashValue);
+			LegendEntry entry = mLegendHashMap.get(hashValue);
 			if (entry != null)
 			{
 				entry.addReference();

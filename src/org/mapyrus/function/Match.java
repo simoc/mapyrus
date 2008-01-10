@@ -59,7 +59,7 @@ public class Match implements Function
 	 */
 	public static synchronized Pattern compileRegex(String regex) throws MapyrusException
 	{
-		Pattern retval = (Pattern)(mRegexCache.get(regex));
+		Pattern retval = mRegexCache.get(regex);
 
 		if (retval == null)
 		{
