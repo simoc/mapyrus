@@ -22,9 +22,10 @@
  */
 package org.mapyrus.function;
 
-import java.util.HashMap;
-
-import org.mapyrus.MapyrusException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Manages all available functions.  Provides function name
@@ -32,7 +33,7 @@ import org.mapyrus.MapyrusException;
  */
 public class FunctionTable
 {
-	static HashMap<String, Function> mFunctions = new HashMap<String, Function>();
+	static Hashtable<String, Function> mFunctions = new Hashtable<String, Function>();
 
 	/*
 	 * Load all internal functions and any additional functions defined by user.
@@ -202,13 +203,73 @@ public class FunctionTable
 	}
 
 	/**
+	 * Lookup Java method using reflection.
+	 * @param funcName name of class and method to lookup.
+	 * @return function for calling this method, or null if no method found.
+	 */
+	private static Function getJavaFunction(String funcName, int dotIndex)
+	{
+		String methodName = funcName.substring(dotIndex + 1);
+		String className = funcName.substring(0, dotIndex);
+		Function retval = null;
+
+		try
+		{
+			/*
+			 * Try to find Java class.
+			 */
+			Class clazz = Class.forName(className);
+
+			/*
+			 * Now try to find method in the Java class.
+			 */
+			Method[] methods = clazz.getDeclaredMethods();
+			ArrayList<Method> possibleMethods = new ArrayList<Method>();
+			for (int i = 0; i < methods.length; i++)
+			{
+				int modifiers = methods[i].getModifiers();
+				if ((modifiers & Modifier.STATIC) != 0 &&
+					(modifiers & Modifier.PUBLIC) != 0 &&
+					methodName.equals(methods[i].getName()))
+				{
+					possibleMethods.add(methods[i]);
+				}
+			}
+			if (!possibleMethods.isEmpty())
+			{
+				retval = new JavaFunction(className, methodName, possibleMethods); 
+
+				/*
+				 * Add function to standard function table to avoid having to search
+				 * for it again next time it is used. 
+				 */
+				mFunctions.put(funcName, retval);
+			}
+		}
+		catch (ClassNotFoundException e)
+		{
+		}
+		return(retval);
+	}
+
+	/**
 	 * Lookup function from name and return object
 	 * @param name name of function to lookup.
 	 * @return object for evaluating this function, or null if not found.
 	 */
-	public static Function getFunction(String funcName) throws MapyrusException
+	public static Function getFunction(String funcName)
 	{
-		Function retval = (Function)(mFunctions.get(funcName));
+		Function retval = mFunctions.get(funcName);
+		
+		if (retval == null)
+		{
+			/*
+			 * Try and find a Java method with this name instead.
+			 */
+			int index = funcName.lastIndexOf('.');
+			if (index >= 0)
+				retval = getJavaFunction(funcName, index);
+		}
 		return(retval);
 	}
 }
