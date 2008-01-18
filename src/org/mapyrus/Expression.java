@@ -1374,8 +1374,14 @@ public class Expression
 					 * Parse comma before next value, or closing bracket.
 					 */
 					c = p.readNonSpace();
-					if (i >= minArgs && c == ')')
+					if (c == ')')
 					{
+						if (i < minArgs)
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+								": " + MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES) +
+								": " + buf.toString());
+						}
 						p.unread(c);
 						break;
 					}
