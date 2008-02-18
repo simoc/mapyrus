@@ -153,7 +153,9 @@ The output of this example is shown in Figure \ref{tutorialvar1}.
 
 The second example demonstrates the use of the
 \texttt{length} and \texttt{substr}
-functions
+functions,
+the Java API function
+\texttt{java.lang.Integer.parseInt}
 and stepping through a string one element at a time.
 The output of this example is shown in Figure \ref{tutorialvar2}.
 
@@ -1980,6 +1982,22 @@ add the following code before interpreting Mapyrus commands:
 
 The same constructors and method calls are used to embed
 Mapyrus in a Java application.
+
+\subsection{Calling Java Functions From Mapyrus}
+
+Java provides a large library of classes.  Class methods that
+are declared \texttt{public} and \texttt{static} are available
+as functions in Mapyrus.
+The following examples demonstrate calling Java methods from
+Mapyrus.
+
+\begin{verbatim}
+print java.lang.Integer.toHexString(32767)
+let b = java.lang.Integer.parseInt("101110", 2)
+let dummy = java.lang.Thread.sleep(1000)
+
+print com.vividsolutions.jts.io.WKTWriter.stringOfChar("x", 12)
+\end{verbatim}
 
 \subsection{Combining Mapyrus With Other Software}
 

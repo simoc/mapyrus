@@ -2,7 +2,7 @@ newpage "eps", "tutorialvar2.eps", 70, 20
 
 # Set binary sequence
 #
-let seq = "1011001001101110"
+let seq = java.lang.Integer.toBinaryString(45678)
 let seqlen = length(seq)
 
 # Draw sequence, showing black bars for bits
