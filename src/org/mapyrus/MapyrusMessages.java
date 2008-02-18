@@ -1,6 +1,6 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
- * Copyright (C) 2003 - 2008 Simon Chenery.
+ * Copyright (C) 2003 - 2007 Simon Chenery.
  *
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -46,6 +46,7 @@ public class MapyrusMessages
 	public static final String EXPORT_AS_PNG = "exportaspng";
 	public static final String EXTENDED_PDF = "extendedpdf";
 	public static final String FAILED_PDF = "failedpdf";
+	public static final String FAILED_JAVA_FUNCTION = "failedjavafunction";
 	public static final String FIELD_MISMATCH = "fieldmismatch";
 	public static final String FIELD_NOT_FOUND = "fieldnotfound";
 	public static final String FIELD_NOT_OGC_TEXT = "fieldnotogctext";
