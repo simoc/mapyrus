@@ -42,6 +42,8 @@ public class GeometricPath
 	static final int CALCULATE_AREAS = 2;
 	static final int CALCULATE_CENTROID = 3;
 	static final int CALCULATE_PIP = 4;	/* point in polygon */
+	static final int CALCULATE_START_ANGLE = 5; /* angle of first line segment */
+	static final int CALCULATE_END_ANGLE = 6; /* angle of last line segment */
 
 	/*
 	 * Mathematical constant 1/sqrt(2).
@@ -503,13 +505,37 @@ public class GeometricPath
 	}
 
 	/**
-	 * Walks path, calculating length, area or centroid.  Length or area
+	 * Returns angle of first line segment in path.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
+	 * @return angle of first line segment in radians.
+	 */
+	public double getStartAngle(double resolution)
+	{
+		double angles[] = walkPath(CALCULATE_START_ANGLE, resolution);
+		return(angles[0]);
+	}
+
+	/**
+	 * Returns angle of last line segment in path.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
+	 * @return angle of last line segment in radians.
+	 */
+	public double getEndAngle(double resolution)
+	{
+		double angles[] = walkPath(CALCULATE_END_ANGLE, resolution);
+		return(angles[0]);
+	}
+
+	/**
+	 * Walks path, calculating length, area, centroid or angle.  Length or area
 	 * for each moveTo, lineTo, ... part is calculated separately.
 	 * If the path is not closed then the calculated area is meaningless.
 	 * @param attributeToCalculate is type of calculation to make
 	 * @param resolution is size of a pixel in mm, curves are expanded to be no
 	 * less accurate than this value.
-	 * @return array with length or area of each part of the path.
+	 * @return array with length, angle or area of each part of the path.
 	 */
 	private double []walkPath(int attributeToCalculate, double resolution)
 	{
@@ -517,10 +543,12 @@ public class GeometricPath
 		PathIterator pi = mPath.getPathIterator(mIdentityMatrix, resolution);
 		float coords[] = new float[6];
 		float xStart = 0.0f, yStart = 0.0f;
-		float xEnd, yEnd;
+		float xEnd = 0, yEnd = 0;
+		float xPrevious = 0, yPrevious = 0;
 		float xMoveTo = 0.0f, yMoveTo =0.0f;
-		double partLengths[], partAreas[], centroid[];
+		double partLengths[], partAreas[], centroid[], angles[];
 		int moveToCount = 0;
+		int lineToCount = 0;
 		double ai, aSum, xSum, ySum;
 		int nEls;
 
@@ -528,12 +556,14 @@ public class GeometricPath
 		 * Create array to hold length and area of each part of path.
 		 */
 		aSum = xSum = ySum = 0.0;
-		if (attributeToCalculate == CALCULATE_CENTROID)
+		if (attributeToCalculate == CALCULATE_START_ANGLE || attributeToCalculate == CALCULATE_END_ANGLE)
+			nEls = 1;
+		else if (attributeToCalculate == CALCULATE_CENTROID)
 			nEls = 2;
 		else
 			nEls = getMoveToCount();
 
-		centroid = partAreas = partLengths = new double[nEls];
+		angles = centroid = partAreas = partLengths = new double[nEls];
 		for (int i = 0; i < partLengths.length; i++)
 			partLengths[i] = 0.0;
 
@@ -551,6 +581,15 @@ public class GeometricPath
 			}
 			else
 			{
+				lineToCount++;
+				if (attributeToCalculate == CALCULATE_START_ANGLE)
+				{
+					/*
+					 * First two points are enough to determine angle of first line segment.
+					 */
+					break;
+				}
+
 				if (segmentType == PathIterator.SEG_CLOSE)
 				{
 					xEnd = xMoveTo;
@@ -583,6 +622,9 @@ public class GeometricPath
 					xSum += (xEnd + xStart) * ai;
 					ySum += (yEnd + yStart) * ai;
 				}
+				
+				xPrevious = xStart;
+				yPrevious = yStart;
 
 				xStart = xEnd;
 				yStart = yEnd;
@@ -590,7 +632,17 @@ public class GeometricPath
 			pi.next();
 		}
 
-		if (attributeToCalculate == CALCULATE_CENTROID)
+		if (attributeToCalculate == CALCULATE_START_ANGLE)
+		{
+			if (lineToCount > 0)
+				angles[0] = Math.atan2(coords[1] - yStart, coords[0] - xStart);
+		}
+		else if (attributeToCalculate == CALCULATE_END_ANGLE)
+		{
+			if (lineToCount > 0)
+				angles[0] = Math.atan2(yEnd - yPrevious, xEnd - xPrevious);
+		}
+		else if (attributeToCalculate == CALCULATE_CENTROID)
 		{
 			centroid[0] = xSum / (3.0 * aSum);
 			centroid[1] = ySum / (3.0 * aSum);
