@@ -2901,6 +2901,36 @@ public class Context
 	}
 
 	/**
+	 * Returns angle of first line segment in path.
+	 * @return angle in radians.
+	 */
+	public double getPathStartAngle() throws MapyrusException
+	{
+		double retval = 0;
+		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
+		
+		if (path != null)
+			retval = path.getStartAngle(resolution);
+		return(retval);
+	}
+
+	/**
+	 * Returns angle of last line segment in path.
+	 * @return angle in radians.
+	 */
+	public double getPathEndAngle() throws MapyrusException
+	{
+		double retval = 0;
+		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
+		
+		if (path != null)
+			retval = path.getEndAngle(resolution);
+		return(retval);
+	}
+
+	/**
 	 * Returns rotation angle for each each moveTo point in current path
 	 * @return array of rotation angles relative to rotation in current
 	 * transformation matrix.
