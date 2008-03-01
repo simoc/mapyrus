@@ -1744,6 +1744,18 @@ public class Context
 	}
 
 	/**
+	 * Reverse direction of path.
+	 */
+	public void reversePath() throws MapyrusException
+	{
+		GeometricPath path = getDefinedPath();
+		double resolution = getResolution();
+
+		if (path != null)
+			mPath = path.reversePath(resolution);
+	}
+
+	/**
 	 * Draw image icon at current point on path.
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.

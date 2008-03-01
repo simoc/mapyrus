@@ -24,6 +24,7 @@ package org.mapyrus;
 
 import java.awt.geom.*;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.awt.geom.Ellipse2D;
 
 import org.mapyrus.geom.LineEquation;
@@ -1513,6 +1514,122 @@ public class GeometricPath
 
 				retval.lineTo(x, y);
 			}
+		}
+		return(retval);
+	}
+
+	private class PathElement
+	{
+		public int mSegmentType;
+		public float mX, mY;
+		
+		public PathElement(int segmentType, float x, float y)
+		{
+			mSegmentType = segmentType;
+			mX = x;
+			mY = y;
+		}
+	}
+
+	/**
+	 * Create new path in reverse direction.
+	 * @param resolution is size of a pixel in mm, curves are expanded to be no
+	 * less accurate than this value.
+	 * @return new path in opposite direction to existing path.
+	 */
+	public GeometricPath reversePath(double resolution)
+	{
+		PathIterator pi;
+		float coords[] = new float[6];
+		float xMoveTo = 0, yMoveTo = 0;
+		int segmentType;
+		GeometricPath retval = new GeometricPath();
+		Stack<PathElement> path = new Stack<PathElement>();
+
+		if (getMoveToCount() > 0 && getLineToCount() == 0)
+		{
+			/*
+			 * Path is just a series of points so we can simply
+			 * reverse the point order.
+			 */
+			for (int i = mMoveTos.size() - 1; i >= 0; i--)
+			{
+				Point2D pt = mMoveTos.get(i);
+				Double rotation = mRotations.get(i);
+				retval.moveTo((float)pt.getX(), (float)pt.getY(), rotation.doubleValue());
+			}
+			return(retval);
+		}
+
+		/*
+		 * Build stack with current path.
+		 */
+		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		while (!pi.isDone())
+		{
+			segmentType = pi.currentSegment(coords);
+			if (segmentType == PathIterator.SEG_MOVETO)
+			{
+				xMoveTo = coords[0];
+				yMoveTo = coords[1];
+				path.push(new PathElement(segmentType, xMoveTo, yMoveTo));
+			}
+			else if (segmentType == PathIterator.SEG_CLOSE)
+			{
+				/*
+				 * Remember point that path closes back to.
+				 */
+				path.push(new PathElement(segmentType, xMoveTo, yMoveTo));
+			}
+			else
+			{
+				path.push(new PathElement(segmentType, coords[0], coords[1]));
+			}
+			pi.next();
+		}
+
+		/*
+		 * Build new path from stack with reverse order of coordinates.
+		 */
+		boolean isClosedPath = false;
+		boolean isMovePoint = true;
+		while (!path.isEmpty())
+		{
+			PathElement el = path.pop();
+
+			if (isMovePoint || el.mSegmentType == PathIterator.SEG_CLOSE)
+			{
+				/*
+				 * The last point of the path (or of a subpath) becomes the
+				 * first point of the reversed path.
+				 */
+				xMoveTo = el.mX;
+				yMoveTo = el.mY;
+				isClosedPath = (el.mSegmentType == PathIterator.SEG_CLOSE);
+				retval.moveTo(xMoveTo, yMoveTo, 0);
+				isMovePoint = false;
+			}
+			else if (el.mSegmentType == PathIterator.SEG_LINETO)
+			{
+				retval.lineTo(el.mX, el.mY);
+			}
+			else
+			{
+				/*
+				 * A moveto point.
+				 */
+				if (isClosedPath)
+					retval.closePath();
+				else
+					retval.lineTo(el.mX, el.mY);
+
+				isClosedPath = false;
+
+				/*
+				 * Next point is the last point of a sub path.
+				 */
+				isMovePoint = true;
+			}			
 		}
 		return(retval);
 	}

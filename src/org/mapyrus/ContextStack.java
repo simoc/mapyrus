@@ -708,6 +708,14 @@ public class ContextStack
 	}
 
 	/**
+	 * Reverse direction of path.
+	 */
+	public void reversePath() throws MapyrusException
+	{
+		getCurrentContext().reversePath();
+	}
+
+	/**
 	 * Replace path defining polygon with a sinkhole point.
 	 */
 	public void createSinkhole()
@@ -1276,12 +1284,12 @@ public class ContextStack
 					retval = new Argument(getCurrentContext().getPathCentroid().getX());
 				else if (sub.equals("centroid.y"))
 					retval = new Argument(getCurrentContext().getPathCentroid().getY());
-				else if (sub.equals("angle.start"))
+				else if (sub.equals("start.angle"))
 				{
 					double radians = getCurrentContext().getPathStartAngle();
 					retval = new Argument(Math.toDegrees(radians));
 				}
-				else if (sub.equals("angle.end"))
+				else if (sub.equals("end.angle"))
 				{
 					double radians = getCurrentContext().getPathEndAngle();
 					retval = new Argument(Math.toDegrees(radians));
