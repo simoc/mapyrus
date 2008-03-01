@@ -1518,6 +1518,14 @@ public class Interpreter
 				}
 				break;
 
+			case Statement.REVERSEPATH:
+				if (nExpressions > 0)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
+				}
+				context.reversePath();
+				break;
+
 			case Statement.SINKHOLE:
 				if (nExpressions > 0)
 				{
