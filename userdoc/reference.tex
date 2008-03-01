@@ -14,7 +14,7 @@ The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system.  If a real X-Windows display
 is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
 \item
-The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com},
+The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com/JTS},
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
 \item
@@ -864,6 +864,8 @@ in millimetres. \\
 
 \texttt{Mapyrus.path.length},
 \texttt{Mapyrus.path.area},
+\texttt{Mapyrus.path.start.angle},
+\texttt{Mapyrus.path.end.angle},
 \texttt{Mapyrus.path.min.x},
 \texttt{Mapyrus.path.min.y},
 \texttt{Mapyrus.path.max.x},
@@ -873,8 +875,10 @@ in millimetres. \\
 \texttt{Mapyrus.path.width},
 \texttt{Mapyrus.path.height} &
 The length of the current path on the page measured in millimeters,
-the area of the current path measured in square millimeters
-and the bounding rectangle of the current path. \\
+the area of the current path measured in square millimeters,
+the angles at the start and end of the path in degrees measured
+counter-clockwise,
+and the bounding rectangle of the current path.  \\
 
 \hline
 
@@ -2429,6 +2433,14 @@ The center point and radius are transformed through any
 transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
+
+\subsubsection{reversepath}
+
+\begin{alltt}
+reversepath
+\end{alltt}
+
+Reverses the direction of the current path.
 
 \subsubsection{rotate}
 
