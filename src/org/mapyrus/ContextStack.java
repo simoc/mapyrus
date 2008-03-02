@@ -1284,6 +1284,14 @@ public class ContextStack
 					retval = new Argument(getCurrentContext().getPathCentroid().getX());
 				else if (sub.equals("centroid.y"))
 					retval = new Argument(getCurrentContext().getPathCentroid().getY());
+				else if (sub.equals("start.x"))
+					retval = new Argument(getCurrentContext().getPathStartPoint().getX());
+				else if (sub.equals("start.y"))
+					retval = new Argument(getCurrentContext().getPathStartPoint().getY());
+				else if (sub.equals("end.x"))
+					retval = new Argument(getCurrentContext().getPathEndPoint().getX());
+				else if (sub.equals("end.y"))
+					retval = new Argument(getCurrentContext().getPathEndPoint().getY());
 				else if (sub.equals("start.angle"))
 				{
 					double radians = getCurrentContext().getPathStartAngle();
