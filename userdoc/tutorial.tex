@@ -516,6 +516,26 @@ with output shown in Figure \ref{tutoriallabels4}.
 \label{tutoriallabels4}
 \end{figure}
 
+When labelling streets using the \texttt{flowlabel} command,
+labels will appear above or below the street depending on whether
+the street was digitized left-to-right or right-to-left.
+To ensure that all streets are labelled on the same side, compare the
+\texttt{Mapyrus.path.start.x} and \texttt{Mapyrus.path.end.x}
+variables.
+Reverse the direction of the streets digitized in the wrong
+direction using the \texttt{reversepath} command.
+This is demonstrated in the following example, with two streets
+digitized in opposite directions.
+The output is shown in Figure \ref{tutoriallabels5}.
+
+\verbatiminput{tutorialflowlabel2.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialflowlabel2.eps}
+\caption{Labelling Streets}
+\label{tutoriallabels5}
+\end{figure}
+
 The \texttt{sinkhole} command is used determine a position
 for a label in a polygon.  This command
 replaces the current path defining a polygon with a single point in
