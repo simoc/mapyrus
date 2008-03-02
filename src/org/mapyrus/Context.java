@@ -2943,6 +2943,38 @@ public class Context
 	}
 
 	/**
+	 * Returns first point in path.
+	 * @return first point or (0, 0) if path is empty.
+	 */
+	public Point2D getPathStartPoint() throws MapyrusException
+	{
+		Point2D retval = null;
+		GeometricPath path = getDefinedPath();
+
+		if (path != null)
+			retval = path.getStartPoint();
+		if (retval == null)
+			retval = new Point2D.Double();
+		return(retval);
+	}
+
+	/**
+	 * Returns last point in path.
+	 * @return last point or (0, 0) if path is empty.
+	 */
+	public Point2D getPathEndPoint() throws MapyrusException
+	{
+		Point2D retval = null;
+		GeometricPath path = getDefinedPath();
+
+		if (path != null)
+			retval = path.getEndPoint();
+		if (retval == null)
+			retval = new Point2D.Double();
+		return(retval);
+	}
+
+	/**
 	 * Returns rotation angle for each each moveTo point in current path
 	 * @return array of rotation angles relative to rotation in current
 	 * transformation matrix.
