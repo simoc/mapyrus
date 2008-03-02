@@ -1,13 +1,15 @@
 Mapyrus Change History
-Copyright (C) 2003 - 2007 Simon Chenery <simoc@users.sourceforge.net>
+Copyright (C) 2003 - 2008 Simon Chenery <simoc@users.sourceforge.net>
 
-0.802, March 2007
+0.802, March 2008
 
 * Add variables Mapyrus.path.start.angle, Mapyrus.path.end.angle giving
-  the angle of the start and end of the path.
+  angle of the start and end of the path.
+* Add variables Mapyrus.path.start.x, Mapyrus.path.start.y,
+  Mapyrus.path.end.x, Mapyrus.path.end.y giving start and end points of path.
 * Add REVERSEPATH command to reverse the direction of the path.
 
-0.801, February 2007
+0.801, February 2008
 
 * Enable Java functions to be called directly from Mapyrus.
 
