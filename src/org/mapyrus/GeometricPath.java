@@ -303,7 +303,37 @@ public class GeometricPath
 	 */
 	public Rectangle2D getBounds2D()
 	{
-		return mPath.getBounds2D();
+		Rectangle2D retval;
+		
+		if (mMoveTos.size() > 0 && mNLineTos == 0)
+		{
+			/*
+			 * Path is just a series of points.
+			 * Find rectangle containing all points.
+			 */
+			double xMin, yMin, xMax, yMax;
+			Point2D pt = mMoveTos.get(0);
+			xMin = xMax = pt.getX();
+			yMin = yMax = pt.getY();
+			for (int i = 1; i < mMoveTos.size(); i++)
+			{
+				pt = mMoveTos.get(i);
+				if (pt.getX() < xMin)
+					xMin = pt.getX();
+				if (pt.getY() < yMin)
+					yMin = pt.getY();
+				if (pt.getX() > xMax)
+					xMax = pt.getX();
+				if (pt.getY() > yMax)
+					yMax = pt.getY();
+			}
+			retval = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
+		}
+		else
+		{
+			retval = mPath.getBounds2D();
+		}
+		return retval;
 	}
 
 	/**
@@ -527,6 +557,82 @@ public class GeometricPath
 	{
 		double angles[] = walkPath(CALCULATE_END_ANGLE, resolution);
 		return(angles[0]);
+	}
+
+	/**
+	 * Returns first point in path.
+	 * @return first point or null if path is empty.
+	 */
+	public Point2D getStartPoint()
+	{
+		/*
+		 * If path is only points then return the last point.
+		 */
+		if (mMoveTos.size() > 0 && mNLineTos == 0) 
+			return(mMoveTos.get(0));
+
+		PathIterator pi = mPath.getPathIterator(mIdentityMatrix);
+		float coords[] = new float[6];
+		Point2D retval = null;
+		if (!pi.isDone())
+		{
+			/*
+			 * Take first point of path.
+			 */
+			pi.currentSegment(coords);
+			retval = new Point2D.Float(coords[0], coords[1]);
+		}
+		return(retval);
+	}
+
+	/**
+	 * Returns last point in path.
+	 * @return last point or null if path is empty.
+	 */
+	public Point2D getEndPoint()
+	{
+		/*
+		 * If path is only points then return the last point.
+		 */
+		if (mMoveTos.size() > 0 && mNLineTos == 0) 
+			return(mMoveTos.get(mMoveTos.size() - 1));
+
+		Point2D retval = null;
+		PathIterator pi = mPath.getPathIterator(mIdentityMatrix);
+		float coords[] = new float[6];
+		int segmentType;
+		float xMoveTo = 0, yMoveTo = 0;
+
+		boolean isPathEmpty = true;
+		while (!pi.isDone())
+		{
+			segmentType = pi.currentSegment(coords);
+			if (segmentType == PathIterator.SEG_MOVETO)
+			{
+				xMoveTo = coords[0];
+				yMoveTo = coords[1];
+			}
+			else if (segmentType == PathIterator.SEG_CLOSE)
+			{
+				coords[0] = xMoveTo;
+				coords[1] = yMoveTo;
+			}
+			else if (segmentType == PathIterator.SEG_QUADTO)
+			{
+				coords[1] = coords[3];
+				coords[0] = coords[2];
+			}
+			else if (segmentType == PathIterator.SEG_CUBICTO)
+			{
+				coords[1] = coords[5];
+				coords[0] = coords[4];
+			}
+			isPathEmpty = false;
+			pi.next();
+		}
+		if (!isPathEmpty)
+			retval = new Point2D.Double(coords[0], coords[1]);
+		return(retval);
 	}
 
 	/**
