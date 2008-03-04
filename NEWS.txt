@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2008 Simon Chenery <simoc@users.sourceforge.net>
 
+0.803, March 2008
+
+* Fix clipping in SVG output.
+* Upgrade to current Java Topology Suite library version 1.8.
+
 0.802, March 2008
 
 * Add variables Mapyrus.path.start.angle, Mapyrus.path.end.angle giving
