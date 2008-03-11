@@ -64,6 +64,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
@@ -151,11 +152,12 @@ public class OutputFormat
 	};
 
 	/*
-	 * Prefixes for PDF objects containing fonts, images and graphics states.
+	 * Prefixes for SVG and PDF objects containing fonts, images and graphics states.
 	 */
 	private String mPDFFontPrefix;
 	private String mPDFImagePrefix;
 	private String mPDFGstatePrefix;
+	private String mSVGClipPathPrefix;
 
 	/*
 	 * File or image that drawing commands are
@@ -174,7 +176,8 @@ public class OutputFormat
 	private Process mOutputProcess;
 	private File mTempFile;
 	private PrintWriter mImageMapWriter;
-	
+	private String mUniqueKey;
+
 	/*
 	 * Frequently used fonts.
 	 */
@@ -262,7 +265,7 @@ public class OutputFormat
 	 * so each clip path and gradient can be given a unique id.
 	 */
 	private int mClipPathCounter;
-	private boolean mIsClipPathActive;
+	private Stack<Integer> mSVGOpenGTags;
 	private int mGradientCounter;
 
 	/*
@@ -888,6 +891,7 @@ public class OutputFormat
 		writeLine(mWriter, "<g transform=\"scale(" + pxPerMM + ")\"");
 		writeLine(mWriter, "  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
 		writeLine(mWriter, "  clip-rule=\"nonzero\">");
+		mSVGOpenGTags.push(Integer.valueOf(1));
 
 		/*
 		 * Define filters for all possible transparent color blending modes.
@@ -1023,6 +1027,7 @@ public class OutputFormat
 		long timeStamp = (System.currentTimeMillis() & 0x7fffffff);
 		String s = Long.toHexString(timeStamp);
 		int zeroPadding = 8 - s.length();
+		sb.append(Constants.PROGRAM_NAME.charAt(0));
 		while (zeroPadding-- > 0)
 			sb.append("0");
 		sb.append(s);
@@ -1041,6 +1046,7 @@ public class OutputFormat
 		mTTFFonts = new HashMap<String, TrueTypeFont>();
 		mPDFFonts = new ArrayList<AdobeFontMetrics>();
 		mAfmFiles = new ArrayList<String>();
+		mSVGOpenGTags = new Stack<Integer>();
 		mIsUpdatingFile = false;
 		int resolution;
 		boolean turnPage = false;
@@ -1051,10 +1057,11 @@ public class OutputFormat
 		boolean compressOutput = false;
 		String scriptFilename = null;
 		Rectangle2D existingBoundingBox = null;
-		String uniqueKey = getUniqueKey();
-		mPDFFontPrefix = Constants.PROGRAM_NAME.charAt(0) + uniqueKey + "F";
-		mPDFImagePrefix = Constants.PROGRAM_NAME.charAt(0) + uniqueKey + "Img";
-		mPDFGstatePrefix = Constants.PROGRAM_NAME.charAt(0) + uniqueKey + "Gstate";
+		mUniqueKey = getUniqueKey();
+		mPDFFontPrefix =  mUniqueKey + "F";
+		mPDFImagePrefix = mUniqueKey + "Img";
+		mPDFGstatePrefix = mUniqueKey + "Gstate";
+		mSVGClipPathPrefix = mUniqueKey + "C";
 
 		if (mOutputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
@@ -1978,7 +1985,16 @@ public class OutputFormat
 		else if (mOutputType == PDF)
 			writeLine(mPDFGeometryWriter, "q");
 		else if (mOutputType == SVG)
+		{
 			writeLine(mWriter, "<g>");
+			
+			/*
+			 * We will use <g> tags for clipping too.  Keep track
+			 * of how many we open so that we can close them all when
+			 * we restore the state.
+			 */
+			mSVGOpenGTags.push(Integer.valueOf(1));
+		}
 	}
 
 	/**
@@ -2004,7 +2020,14 @@ public class OutputFormat
 		else 
 		{
 			if (mOutputType == SVG)
-				writeLine(mWriter, "</g>");
+			{
+				/*
+				 * Close all the <g> tags that we opened.
+				 */
+				int nStates = mSVGOpenGTags.pop().intValue();
+				for (int i = 0; i < nStates; i++)
+					writeLine(mWriter, "</g>");
+			}
 
 			/*
 			 * Can't restore state when drawing to an image or SVG file.  Caller
@@ -2379,7 +2402,9 @@ public class OutputFormat
 		}
 		else if (mOutputType == SVG)
 		{
-			writeLine(mWriter, "</g>");
+			int nStates = mSVGOpenGTags.pop().intValue();
+			for (int i = 0; i < nStates; i++)
+				writeLine(mWriter, "</g>");
 			writeLine(mWriter, "</svg>");
 
 			if (mIsStandardOutput)
@@ -2814,35 +2839,17 @@ public class OutputFormat
 	 */
 	public void setClipAttribute(ArrayList clipPaths)
 	{
-		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF)
+		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF && mOutputType != SVG)
 		{
 			mGraphics2D.setClip(null);
-			mIsClipPathActive = (clipPaths != null && clipPaths.size() > 0);
-			if (mIsClipPathActive)
+			boolean isClipPathActive = (clipPaths != null && clipPaths.size() > 0);
+			if (isClipPathActive)
 			{
-				if (mOutputType == SVG)
-				{
-					mClipPathCounter++;
-					writeLine(mWriter, "<clipPath id=\"clip" + mClipPathCounter + "\">");
-				}
-
 				for (int i = 0; i < clipPaths.size(); i++)
 				{
 					GeometricPath clipPath = (GeometricPath)(clipPaths.get(i));
-					if (mOutputType == SVG)
-					{
-						writeLine(mWriter, "<path d=\"");
-						writeShape(clipPath.getShape(), mOutputType, mWriter, null);
-						writeLine(mWriter, "\"/>");
-					}
-					else
-					{
-						mGraphics2D.clip(clipPath.getShape());
-					}
+					mGraphics2D.clip(clipPath.getShape());
 				}
-
-				if (mOutputType == SVG)
-					writeLine(mWriter, "</clipPath>");
 			}
 		}
 	}
@@ -3475,10 +3482,6 @@ public class OutputFormat
 					y + size >= 0.0 && y - size <= mPageHeight)
 				{
 					writeLine(mWriter, "<!-- begin " + filename + " -->");
-					if (mIsClipPathActive)
-					{
-						writeLine(mWriter, "<g clip-path=\"url(#clip" + mClipPathCounter + ")\">");
-					}
 					writeLine(mWriter, "<g");
 					writeLine(mWriter, svgfile.getSVGAttributes());
 					writeLine(mWriter, "transform=\"translate(" + x + "," + (mPageHeight - y) + ")");
@@ -3498,8 +3501,6 @@ public class OutputFormat
 					writeLine(mWriter, svgfile.toString());
 					writeLine(mWriter, "<!-- end " + filename + " -->");
 					writeLine(mWriter, "</g>");
-					if (mIsClipPathActive)
-						writeLine(mWriter, "</g>");
 				}
 			}
 		}
@@ -3697,10 +3698,6 @@ public class OutputFormat
 					else
 						joinString = "round";
 
-					if (mIsClipPathActive)
-					{
-						writeLine(mWriter, "  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
-					}
 					writeLine(mWriter, "  style=\"stroke:" + ColorDatabase.toHexString(color) +
 						";stroke-width:" + width +
 						";stroke-linecap:" + capString +
@@ -3777,10 +3774,6 @@ public class OutputFormat
 					Color color = mGraphics2D.getColor();
 					int alpha = color.getAlpha();
 
-					if (mIsClipPathActive)
-					{
-						writeLine(mWriter, "  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
-					}
 					StringBuffer sb = new StringBuffer("  style=\"fill:");
 					sb.append(ColorDatabase.toHexString(color));
 					if (alpha != 255)
@@ -3893,11 +3886,6 @@ public class OutputFormat
 					writeLine(mWriter, "filter=\"url(#" +
 						blendComposite.getName() + ")\"");
 				}
-
-				if (mIsClipPathActive)
-				{
-					writeLine(mWriter, "  clip-path=\"url(#clip" + mClipPathCounter + ")\"");
-				}
 				writeLine(mWriter, "  fill=\"url(#" + uniqueId + ")\" stroke=\"none\"/>");
 			}
 		}
@@ -3934,6 +3922,26 @@ public class OutputFormat
 					mOutputType, pw, null);
 			}
 			writeLine(pw, "W n");
+		}
+		else if (mOutputType == SVG)
+		{
+			/*
+			 * Ensure that each clip path gets a unique name.
+			 */
+			mClipPathCounter++;
+			writeLine(mWriter, "<clipPath id=\"" + mSVGClipPathPrefix + mClipPathCounter + "\">");
+			writeLine(mWriter, "<path d=\"");
+			writeShape(shape, mOutputType, mWriter, null);
+			writeLine(mWriter, "\"/>");
+			writeLine(mWriter, "</clipPath>");
+			writeLine(mWriter, "<g clip-path=\"url(#" + mSVGClipPathPrefix + mClipPathCounter + ")\">");
+
+			/*
+			 * Increment number of "<g>" graphics states we have written so we
+			 * know how many to remove later in the SVG file. 
+			 */
+			Integer nStates = mSVGOpenGTags.pop();
+			mSVGOpenGTags.push(Integer.valueOf(nStates + 1));
 		}
 	}
 
@@ -4209,12 +4217,6 @@ public class OutputFormat
 							extras.append(alpha / 255.0f);
 							extras.append("\" ");
 						}
-					}
-					if (mIsClipPathActive)
-					{
-						extras.append(" clip-path=\"url(#clip");
-						extras.append(mClipPathCounter);
-						extras.append(")\" ");
 					}
 
 					double px, py;
