@@ -79,6 +79,16 @@ public class LineEquation
 	}
 
 	/**
+	 * Get angle of line.
+	 * @return angle of line in radians.
+	 */
+	public double getAngle()
+	{
+		double retval = Math.atan2(mY2 - mY1, mX2 - mX1);
+		return(retval);
+	}
+
+	/**
 	 * Determine whether a point on line is between the two points
 	 * given to define the line.
 	 * @param eq equation for line.
