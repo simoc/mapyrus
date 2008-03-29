@@ -984,6 +984,134 @@ public class GeometricPath
 	}
 
 	/**
+	 * Remove line segments that would result in loops in the
+	 * parallel path.
+	 * @param lineEquations equations of each line segment of path.
+	 * @param distance parallel distance for new path.
+	 * @param isClosed when true, original path interpreted as closed path.
+	 * @return list of line equation with segments that make a loop removed.
+	 */
+	private ArrayList<LineEquation> eliminateParallelLoops(ArrayList<LineEquation> lineEquations,
+		double distance, boolean isClosed)
+	{
+		ArrayList<LineEquation> retval;
+		ArrayList<LineEquation> parallelEquations;
+		LineEquation eq = null, lastEq = null;
+		LineEquation lastParallelEq = null, parallelEq = null;
+		Point2D.Double intersectionPt = null, lastIntersectionPt = null;
+		Point2D.Double closePt = null;
+		int nEquations = lineEquations.size();
+
+		if (nEquations < 3)
+		{
+			/*
+			 * Simple paths cannot have any loops.
+			 */
+			retval = lineEquations;
+		}
+		else
+		{
+			retval = new ArrayList<LineEquation>(nEquations);
+			parallelEquations = new ArrayList<LineEquation>(nEquations);
+			for (int i = 0; i <= nEquations; i++)
+			{
+				if (i < nEquations)
+				{
+					eq = lineEquations.get(i);
+					parallelEq = eq.createParallel(distance);
+				}
+
+				if (i == 0)
+				{
+					if (isClosed)
+					{
+						LineEquation p = lineEquations.get(nEquations - 1);
+						closePt = parallelEq.intersect(p.createParallel(distance),
+							false);
+
+						/*
+						 * Path closes with a line parallel to first line.
+						 */
+						if (closePt == null)
+							closePt = parallelEq.getStartPoint();
+						intersectionPt = closePt;
+					}
+					else
+					{
+						intersectionPt = parallelEq.getStartPoint();
+					}
+				}
+				else
+				{
+					/*
+					 * Find intersection of last two parallel lines.
+					 */
+					if (i == nEquations)
+					{
+						if (isClosed)
+							intersectionPt = closePt;
+						else
+							intersectionPt = parallelEq.getEndPoint();
+					}
+					else
+					{
+						intersectionPt = parallelEq.intersect(lastParallelEq, false);
+					}
+					if (intersectionPt == null)
+					{
+						/*
+						 * Line continues in same direction.  Add segment.
+						 */
+						retval.add(lastEq);
+						parallelEquations.add(lastParallelEq);
+						intersectionPt = lastIntersectionPt;
+					}
+					else
+					{
+						double xDiff = intersectionPt.x - lastIntersectionPt.x;
+						double yDiff = intersectionPt.y - lastIntersectionPt.y;
+						double intersectionAngle = Math.atan2(yDiff, xDiff);
+						double lastIntersectionAngle = lastParallelEq.getAngle();
+
+						/*
+						 * Skip line segment if the parallel line goes in
+						 * opposite direction to original line because this
+						 * would create a loop.
+						 * Use approximate test to avoid rounding problems.
+						 */
+						double angleDiff = Math.abs(intersectionAngle - lastIntersectionAngle);
+						if (angleDiff < 0.1 || angleDiff > Math.PI * 2 - 0.1)
+						{
+							retval.add(lastEq);
+							parallelEquations.add(lastParallelEq);
+						}
+						else
+						{
+							int nParallel = parallelEquations.size();
+							if (nParallel > 0)
+							{
+								/*
+								 * Continue from the intersection of this line
+								 * segment with the last line segment.
+								 */
+								LineEquation p1 = parallelEquations.get(nParallel - 1);
+								intersectionPt = p1.intersect(parallelEq, false);
+								if (intersectionPt == null)
+									intersectionPt = p1.getStartPoint();
+							}
+						}
+					}
+				}
+
+				lastEq = eq;
+				lastParallelEq = parallelEq;
+				lastIntersectionPt = intersectionPt;
+			}
+		}
+		return(retval);
+	}
+
+	/**
 	 * Create paths parallel to original path.
 	 * @param distances list of parallel distances for new paths.
 	 * @param lineEquations equations of each line segment of original path.
@@ -991,36 +1119,39 @@ public class GeometricPath
 	 * @param isClosed when true, original path interpreted as closed path.
 	 */
 	private GeometricPath createParallelPath(double []distances,
-		ArrayList lineEquations, GeometricPath path, boolean isClosed)
+		ArrayList<LineEquation> lineEquations, GeometricPath path, boolean isClosed)
 	{
 		/*
 		 * Create parallel path at each distance given.
 		 */
-		int nEquations = lineEquations.size();
-
-		LineEquation eq, lastEq;
+		LineEquation eq, lastParallelEq;
 		for (int i = 0; i < distances.length; i++)
 		{
 			boolean addedMoveTo = false;
 			LineEquation parallelEq = null;
 
+			ArrayList<LineEquation> checkedEquations;
+			checkedEquations = eliminateParallelLoops(lineEquations, distances[i],
+				isClosed);
+			int nEquations = checkedEquations.size();
+
 			/*
 			 * For closed paths, first segment must be intersected
 			 * with last segment.
 			 */
-			if (isClosed)
+			if (isClosed && nEquations > 0)
 			{
-				lastEq = (LineEquation)lineEquations.get(nEquations - 1);
-				lastEq = lastEq.createParallel(distances[i]);
+				lastParallelEq = checkedEquations.get(nEquations - 1);
+				lastParallelEq = lastParallelEq.createParallel(distances[i]);
 			}
 			else
 			{
-				lastEq = null;
+				lastParallelEq = null;
 			}
 
 			for (int j = 0; j < nEquations; j++)
 			{
-				eq = (LineEquation)lineEquations.get(j);
+				eq = checkedEquations.get(j);
 				parallelEq = eq.createParallel(distances[i]);
 
 				/*
@@ -1028,10 +1159,10 @@ public class GeometricPath
 				 * parallel line segment.  Add this point to path.
 				 */
 				Point2D.Double pt;
-				if (lastEq == null)
+				if (lastParallelEq == null)
 					pt = parallelEq.getStartPoint();
 				else
-					pt = parallelEq.intersect(lastEq, false);
+					pt = parallelEq.intersect(lastParallelEq, false);
 
 				/*
 				 * Skip parallel line segments that do not intersect.
@@ -1048,7 +1179,7 @@ public class GeometricPath
 							addedMoveTo = true;
 					}
 				}
-				lastEq = parallelEq;
+				lastParallelEq = parallelEq;
 			}
 
 			/*
@@ -1057,7 +1188,8 @@ public class GeometricPath
 			 */
 			if (isClosed)
 			{
-				path.closePath();
+				if (addedMoveTo)
+					path.closePath();
 			}
 			else if (parallelEq != null)
 			{
