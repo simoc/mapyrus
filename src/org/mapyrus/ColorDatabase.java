@@ -162,6 +162,7 @@ public class ColorDatabase
 		mColors.put("moccasin", new Color(255, 228, 181));
 		mColors.put("navajowhite", new Color(255, 222, 173));
 		mColors.put("navy", new Color(0, 0, 128));
+		mColors.put("navyblue", new Color(0, 0, 128));
 		mColors.put("oldlace", new Color(253, 245, 230));
 		mColors.put("olive", new Color(128, 128, 0));
 		mColors.put("olivedrab", new Color(107, 142, 35));
