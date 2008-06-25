@@ -309,7 +309,8 @@ public class JDBCDataset implements GeographicDataset
 					}
 					else if (mFieldTypes[i] == Types.BINARY ||
 						mFieldTypes[i] == Types.VARBINARY ||
-						mFieldTypes[i] == Types.LONGVARBINARY)
+						mFieldTypes[i] == Types.LONGVARBINARY ||
+						mFieldTypes[i] == Types.BLOB)
 					{
 						byte []b = mResultSet.getBytes(i + 1);
 						if (b == null)
@@ -318,20 +319,6 @@ public class JDBCDataset implements GeographicDataset
 						}
 						else
 						{
-							double []geometry = WKBGeometryParser.parse(b);
-							arg = new Argument((int)geometry[0], geometry);
-						}
-					}
-					else if (mFieldTypes[i] == Types.BLOB)
-					{
-						Blob blob = mResultSet.getBlob(i + 1);
-						if (blob == null)
-						{
-							arg = Argument.emptyGeometry;
-						}
-						else
-						{
-							byte []b = blob.getBytes(0, (int)blob.length());
 							double []geometry = WKBGeometryParser.parse(b);
 							arg = new Argument((int)geometry[0], geometry);
 						}
@@ -377,6 +364,18 @@ public class JDBCDataset implements GeographicDataset
 							{
 								arg = new Argument(Argument.STRING, new String(b));
 							}
+						}
+					}
+					else if (mFieldTypes[i] == 2002)
+					{
+						Object obj = mResultSet.getObject(i + 1);
+						if (obj == null)
+						{
+							arg = Argument.emptyString;
+						}
+						else
+						{
+							arg = OracleGeometry.parseGeometry(obj);
 						}
 					}
 					else
