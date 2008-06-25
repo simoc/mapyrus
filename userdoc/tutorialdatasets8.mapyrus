@@ -1,28 +1,16 @@
-newpage "eps", "tutorialdatasets8.eps", "A4"
-worlds 12000, 17000, 16000, 21000
+let allFiles = dir("H:\\data\\shape\\*\\*.shp")
 
-# Find polygons (that represent images) in ESRI Shape file index
-# that overlap world coordinates set for page.
-#
-let nTiles = 0
-dataset "shapefile", "sydney-index.shp", \
-    "xmin=" . Mapyrus.worlds.min.x . " ymin=" . Mapyrus.worlds.min.y . \
-    " xmax=" . Mapyrus.worlds.max.x . " ymax=" . Mapyrus.worlds.max.y
-while Mapyrus.fetch.more
+newpage "eps", "tutorialdatasets7.eps", 180, 260
+worlds 1600000, 610000, 1770000, 710000
+
+for i in allFiles
 do
+  dataset "shapefile", allFiles[i], "dbffields="
+  while Mapyrus.fetch.more
+  do
     fetch
-    let nTiles = nTiles + 1
-
-    # Geo-referenced image filename stored in LOCATION attribute field.
-    #
-    let tiles[nTiles] = LOCATION
-done
-
-# Display each overlapping image.
-#
-let i = 1
-while i <= nTiles
-do
-    geoimage tiles[i]
-    let i = i + 1
+    clearpath
+    addpath GEOMETRY
+    stroke
+  done
 done
