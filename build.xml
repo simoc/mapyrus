@@ -33,6 +33,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <available file="${jts.jar}" property="jts.jar.isAvailable"/>
 <fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
 
+<!-- Oracle Spatial JAR files required for building some Java classes -->
+<property name="oracle.jars" value="sdoapi.jar:ojdbc14.jar"/>
+<condition property="oracle.jars.areAvailable">
+<and>
+<available file="sdoapi.jar"/>
+<available file="ojdbc14.jar"/>
+</and>
+</condition>
+<fail message="Oracle Spatial JAR files ${oracle.jars} not found." unless="oracle.jars.areAvailable"/>
+
 <tstamp>
 <format property="today" pattern="d-MMMM-yyyy" locale="en"/>
 </tstamp>
@@ -43,7 +53,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <replace dir="src" token="@release_date_token@" value="${today}"/>
 
 <mkdir dir="build/classes"/>
-<javac srcdir="src" listfiles="yes" classpath="${jts.jar}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
+<javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${oracle.jars}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
 
 <!-- Copy resource files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
