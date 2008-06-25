@@ -274,14 +274,16 @@ public class TextfileDataset implements GeographicDataset
 	public Row fetch() throws MapyrusException
 	{
 		Row row = new Row();
+		Row retval;
 
 		/*
 		 * Try to read next row.
 		 */
 		if (readNextRow(row))
-			return(row);
+			retval = row;
 		else
-			return(null);
+			retval = null;
+		return(retval);
 	}
 
 	/**
