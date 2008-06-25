@@ -792,7 +792,7 @@ A JDBC driver for MySQL is available from
 \newline
 \texttt{http://www.mysql.com/products/connector/j}.
 
-A JDBC driver for Oracle is included the
+A JDBC driver for Oracle is included in the
 \texttt{\$ORACLE\_HOME/jdbc} directory of an Oracle installation.
 
 Each field in a database table has a name.
@@ -818,6 +818,22 @@ The following example demonstrates fetching a geometry field named \texttt{geom}
 from a PostGIS database as a WKT string and displaying it.
 
 \verbatiminput{tutorialdatasets6.mapyrus}
+
+The next example demonstrates fetching geometry from an
+Oracle database as WKB geometry values and displaying it.
+The \texttt{Get\_WKB} function is used to convert Oracle
+Spatial geometry to WKB geometry values.
+
+\verbatiminput{tutorialdatasets7.mapyrus}
+
+Mapyrus is also able to read Oracle Spatial
+columns with type \texttt{MDSYS.SDO\_GEOMETRY} directly
+without the \texttt{Get\_WKB} function.  When reading
+Oracle Spatial columns directly the
+\texttt{sdoapi.jar}
+JAR file from an Oracle database installation
+containing Oracle Spatial data types must also be
+included in the Java classpath.
 
 \subsection{Displaying Geo-Referenced Images}
 
@@ -883,7 +899,7 @@ a filename pattern.  Then display each dataset in a loop.
 Displaying from many ESRI Shape files is demonstrated in the following
 example.
 
-\verbatiminput{tutorialdatasets7.mapyrus}
+\verbatiminput{tutorialdatasets8.mapyrus}
 
 A common method of efficiently selecting the data that overlaps the page from
 hundreds of possible datasets and geo-referenced images is to create an index
@@ -904,7 +920,7 @@ library is used to create an ESRI Shape file index.
 The following example demonstrates searching an ESRI Shape file index
 for images to display.
 
-\verbatiminput{tutorialdatasets8.mapyrus}
+\verbatiminput{tutorialdatasets9.mapyrus}
 
 \subsection{Updating Existing Output Files}
 
@@ -2154,6 +2170,11 @@ Ant build tool.
 Java 2 SDK 5, or higher.
 \item
 Java Topology Suite 1.8, or higher from \texttt{http://www.vividsolutions.com/JTS}.
+\item
+Oracle JDBC driver JAR file \texttt{ojdbc14.jar} and Oracle
+Spatial data types JAR file \texttt{sdoapi.jar} from an
+Oracle 10g database, or higher.  This is only required for reading
+of Oracle Spatial column types from an Oracle database.
 \item
 \LaTeX.
 \end{itemize}
