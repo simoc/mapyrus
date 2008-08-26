@@ -149,6 +149,7 @@ public class MapyrusMessages
 	public static final String MISSING_FILENAME = "missingfilename";
 	public static final String MISSING_HTTP_POST = "missinghttppost";
 	public static final String MISSING_VALUE = "missingvalue";
+	public static final String MISSING_XML_ATTRIBUTE = "missingxmlattribute";
 	public static final String NESTED_PROC = "nestedproc";
 	public static final String NOT_A_AFM_FILE = "notaafmfile";
 	public static final String NOT_ASCENDING = "notascending";
