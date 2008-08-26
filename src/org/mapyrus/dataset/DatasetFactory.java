@@ -67,6 +67,8 @@ public class DatasetFactory
 				retval = new GrassDataset(name, extras);
 			else if (type.equalsIgnoreCase("ogrinfo"))
 				retval = new OGRDataset(name, extras, stdin);
+			else if (type.equalsIgnoreCase("osm"))
+				retval = new OpenStreetMapDataset(name, extras, stdin);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET_TYPE) +
