@@ -1362,6 +1362,18 @@ variables with attribute field names. \\
 
 \hline
 
+\texttt{osm} &
+Reads from OpenStreetMap URL or file \textit{name}.
+Each node and way is fetched as a separate record.  For each node or way,
+the variable \texttt{TYPE} is set to either \texttt{node}
+or \texttt{way} to indicate the type of data, the
+variable \texttt{GEOMETRY} is set to the geometry of the
+node or way, and the variable \texttt{TAGS} is created
+as an array containing the tag information for the node
+or way. \\
+
+\hline
+
 \texttt{shapefile} &
 Reads from ESRI Shape format file with filename \textit{name}.
 The geometry for each fetched record is assigned to a variable named
