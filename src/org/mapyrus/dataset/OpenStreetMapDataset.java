@@ -1,3 +1,25 @@
+/*
+ * This file is part of Mapyrus, software for plotting maps.
+ * Copyright (C) 2003 - 2008 Simon Chenery.
+ *
+ * Mapyrus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Mapyrus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Mapyrus; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
+/*
+ * @(#) $Id$
+ */
 package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
@@ -31,13 +53,13 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OpenStreetMapDataset extends DefaultHandler implements GeographicDataset
 {
-	private static String[] FIELD_NAMES = new String[]{"TYPE", "GEOMETRY", "TAGS"};
+	private static String[] FIELD_NAMES = new String[]{"TYPE", "ID", "GEOMETRY", "TAGS"};
 
 	private static Argument NODE_TYPE_ARGUMENT = new Argument(Argument.STRING, "node");
 	private static Argument WAY_TYPE_ARGUMENT = new Argument(Argument.STRING, "way");
 
 	/*
-	 * Rows of data parsed from XML file for nodes, ways and relations.
+	 * Rows of data parsed from XML file for nodes and ways.
 	 */
 	private LinkedList<Row> mData;
 
@@ -261,7 +283,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 		else if (qName.equals("tag") && mVisible)
 		{
 			/*
-			 * Create hash table entry for key-value pairs for node, way or relation.
+			 * Create hash table entry for key-value pairs for node or way.
 			 */
 			if (mTags == null)
 				mTags = new Argument();
@@ -298,6 +320,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 				 */
 				Row row = new Row(FIELD_NAMES.length);
 				row.add(NODE_TYPE_ARGUMENT);
+				row.add(new Argument(Argument.STRING, mNodeId));
 				double []els = new double[]{Argument.GEOMETRY_POINT, 1, Argument.MOVETO, mLon, mLat};
 				Argument geometryArgument = new Argument(Argument.GEOMETRY_POINT, els);
 				row.add(geometryArgument);
@@ -305,6 +328,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 					row.add(mTags);
 				else
 					row.add(Argument.emptyString);
+				mTags = null;
 				mData.add(row);
 				mAllNodes.put(mNodeId, els);
 			}
@@ -318,6 +342,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 				 */
 				Row row = new Row(FIELD_NAMES.length);
 				row.add(WAY_TYPE_ARGUMENT);
+				row.add(new Argument(Argument.STRING, mWayId));
 				
 				/*
 				 * Determine if way is a closed polygon.
@@ -358,6 +383,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 					row.add(mTags);
 				else
 					row.add(Argument.emptyString);
+				mTags = null;
 				mData.add(row);
 			}
 		}
@@ -365,7 +391,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 
 	public String getProjection()
 	{
-		return "GEOGCS for geo_wgs84";
+		return "GEOGCS[\"wgs84\",DATUM[\"WGS_1984\",SPHEROID[\"wgs84\",6378137,298.257223563],TOWGS84[0.000,0.000,0.000]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
 	}
 
 	public Hashtable getMetadata()
