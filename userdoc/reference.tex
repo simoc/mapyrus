@@ -1366,9 +1366,10 @@ variables with attribute field names. \\
 Reads from OpenStreetMap URL or file \textit{name}.
 Each node and way is fetched as a separate record.  For each node or way,
 the variable \texttt{TYPE} is set to either \texttt{node}
-or \texttt{way} to indicate the type of data, the
-variable \texttt{GEOMETRY} is set to the geometry of the
-node or way, and the variable \texttt{TAGS} is created
+or \texttt{way} to indicate the type of data, \texttt{ID}
+is set to the ID of the node or way,
+\texttt{GEOMETRY} is set to the geometry of the
+node or way, and \texttt{TAGS} is created
 as an array containing the tag information for the node
 or way. \\
 
