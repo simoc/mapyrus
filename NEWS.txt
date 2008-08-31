@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2008 Simon Chenery <simoc@users.sourceforge.net>
 
+0.806, September 2008
+
+* Add support for OpenStreetMap format data.
+
 0.805, July 2008
 
 * Add support for Oracle Spatial geometry types (MDSYS.SDO_GEOMETRY).
