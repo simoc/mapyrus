@@ -667,58 +667,19 @@ symbols.
 \label{tutorialdatasets3}
 \end{figure}
 
-\subsection{Displaying Data Using \texttt{ogrinfo}}
+\subsection{Displaying OpenStreetMap Data}
 
-The \texttt{ogrinfo} program is part of the OGR library, a freely-available
-library for reading several GIS data formats.
+The OpenStreetMap Protocol enables street map data to be fetched
+using HTTP requests.
 
-\texttt{ogrinfo} writes the geometry and attributes of a GIS dataset
-to a common format.
-
-Mapyrus runs the \texttt{ogrinfo} program, and reads the
-geometry and attributes written by ogrinfo and makes them available
-for display.
-
-The following example demonstrates reading a MapInfo TAB format
-file containing street network data.  Mapyrus runs the
-given \texttt{ogrinfo} command ending with a pipe (\texttt{|})
-and reads the output of this command.
+The following example demonstrates reading and displaying
+street data from the OpenStreetMap server.
 
 \verbatiminput{tutorialdatasets4.mapyrus}
 
-First run a \texttt{ogrinfo} command outside of Mapyrus
-to check that it gives the expected output.
-
-On UNIX operating systems, it is possible to pipe the output of
-\texttt{ogrinfo} program directly to Mapyrus.  This is demonstrated in the
-following example, reading \texttt{ogrinfo} output containing points as
-standard input (\texttt{-})
-in Mapyrus and displaying them in a PostScript file.
-The \texttt{ogrinfo -where} option is used to limit displayed
-data to monuments.
-
-\begin{verbatim}
-ogrinfo -where "TYPE = 'monument'" /tmp/landmarks.tab landmarks | \
-  java -classpath mapyrus.jar org.mapyrus.Mapyrus -e '
-dataset "ogrinfo", "-", ""
-newpage "ps", "landmarks.ps", 210, 297, ""
-worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
-  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y
-
-begin hex1
-  color "red"
-  hexagon 0, 0, 2
-  fill
-end
-
-while Mapyrus.fetch.more
-do
-  fetch
-  clearpath
-  addpath GEOMETRY
-  hex1
-done'
-\end{verbatim}
+To avoid repeated requests to the OpenStreetMap server it is also
+possible to save the OpenStreetMap server output to a file and give
+the filename in the \texttt{dataset} command instead.
 
 \subsection{Displaying Data Stored In A Database}
 
