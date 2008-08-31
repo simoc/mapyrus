@@ -1,24 +1,34 @@
 newpage "eps", "tutorialdatasets4.eps", 210, 297
-dataset "ogrinfo", "ogrinfo /tmp/streets1.tab streets1 |", ""
+let x1 = 151.1, y1 = -34, x2 = 151.2, y2 = -33.9
+let url = "http://api.openstreetmap.org/api/0.5/map?bbox=" . \
+  x1 . "," . y1 . "," . x2 . "," . y2
+dataset "osm", url, ""
 
-worlds Mapyrus.dataset.min.x, Mapyrus.dataset.min.y, \
-  Mapyrus.dataset.max.x, Mapyrus.dataset.max.y
+worlds x1, y1, x2, y2
 
-color "red"
 while Mapyrus.fetch.more
 do
   fetch
-
-  # Display different categories of streets in different colors,
-  # based on the R_CLASS attribute field value.
-  #
-  if R_CLASS == 4
+  if TYPE eq "way"
   then
-    color "red"
-  else
-    color "orange"
+    if TAGS["highway"] eq "primary"
+    then
+      linestyle 0.7
+      color "red"
+    elif TAGS["highway"] eq "secondary"
+    then
+      linestyle 0.4
+      color "orange"
+    elif TAGS["natural"] eq "coastline"
+    then
+      linestyle 0.1
+      color "lightgreen"
+    else
+      linestyle 0.1
+      color "black"
+    endif
+    clearpath
+    addpath GEOMETRY
+    stroke
   endif
-  clearpath
-  addpath GEOMETRY
-  stroke
 done
