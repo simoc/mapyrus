@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
 public class MapyrusMessages
 {
 	public static final String ACCEPTING_HTTP = "acceptinghttp";
+	public static final String BAD_IMAGE_READER_CLASS = "badimagereaderclass";
 	public static final String CANNOT_OPEN_URL = "cannotopenurl";
 	public static final String CLASS_NOT_FUNCTION = "classnotfunction";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
