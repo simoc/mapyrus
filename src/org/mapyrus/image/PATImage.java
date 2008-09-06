@@ -27,7 +27,6 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 import org.mapyrus.MapyrusException;
@@ -60,17 +59,6 @@ public class PATImage
 		init(stream, filename);
 	}
 
-	/**
-	 * Read GIMP image pattern from open stream.
-	 * @param stream open stream to read from.
-	 * @param filename name of file.
-	 */
-	public PATImage(InputStream stream, String filename) throws MapyrusException, IOException
-	{
-		DataInputStream stream2 = new DataInputStream(new BufferedInputStream(stream));
-		init(stream2, filename);
-	}
-	
 	private void init(DataInputStream stream, String filename) throws MapyrusException, IOException
 	{
 		try

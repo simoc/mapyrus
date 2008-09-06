@@ -29,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
@@ -40,16 +39,6 @@ import org.mapyrus.MapyrusMessages;
 public class PNMImage
 {
 	private BufferedImage mImage;
-
-	/**
-	 * Read Netpbm PNM image from URL.
-	 * @param url URL.
-	 */
-	public PNMImage(URL url) throws MapyrusException, IOException
-	{
-		DataInputStream stream = new DataInputStream(new BufferedInputStream(url.openStream()));
-		init(stream, url.toString());
-	}
 
 	/**
 	 * Read Netpbm PNM image from file.

@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.StringTokenizer;
 
 import org.mapyrus.MapyrusException;
@@ -39,17 +38,6 @@ import org.mapyrus.MapyrusException;
 public class XBMImage
 {
 	private BufferedImage mImage;
-
-	/**
-	 * Read XBM image from URL.
-	 * @param url URL.
-	 * @param rgb RGB color for pixel values in image.
-	 */
-	public XBMImage(URL url, int rgb) throws MapyrusException, IOException
-	{
-		InputStream stream = url.openStream();
-		init(stream, url.toString(), rgb);
-	}
 
 	/**
 	 * Read XBM image from file.
