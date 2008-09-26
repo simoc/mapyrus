@@ -1364,7 +1364,7 @@ variables with attribute field names. \\
 
 \texttt{osm} &
 Reads from OpenStreetMap URL or file \textit{name}.
-Each node and way is fetched as a separate record.  For each node or way,
+Each node or way is fetched as a separate record.  For each node or way,
 the variable \texttt{TYPE} is set to either \texttt{node}
 or \texttt{way} to indicate the type of data, \texttt{ID}
 is set to the ID of the node or way,
@@ -1663,6 +1663,8 @@ Displays a geo-referenced image.
 is the name of a BMP, GIF, JPEG, PNG, PPM or XBM format image file.
 An associated "worlds" file with suffix \texttt{.tfw} must exist,
 defining the world coordinate range covered by the image.
+The \texttt{extras} option \texttt{readerclass} enables additional
+image formats to be read using external Java classes.
 
 \textit{webMapServiceUrl} is a URL request to an
 OGC Web Mapping Service (WMS)
@@ -1712,6 +1714,24 @@ from overwriting a neighbouring image. \\
 &
 
 Defines a hue, saturation or brightness multiplication factor for the image. \\
+
+\texttt{readerclass=\textit{classname}} &
+
+Gives the name of a Java class to read the image and the world
+coordinate range covered by the image.  The Java class must
+be included in the Java classpath and must contain the following methods:
+\begin{itemize}
+\item
+\texttt{constructor(String filename, String extras)}
+\item
+\texttt{BufferedImage read()}
+\item
+\texttt{Rectangle2D getBounds()}
+\end{itemize}
+
+The methods may throw any type of Java exception on error.
+This option enables Mapyrus to
+be extended to read additional image formats. \\
 
 \hline
 \end{longtable}
