@@ -109,8 +109,11 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 		}
 		catch (InvocationTargetException e)
 		{
+			String targetMessage = "";
+			if (e.getTargetException() != null)
+				targetMessage = e.getTargetException().getMessage();
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.BAD_IMAGE_READER_CLASS) +
-				": " + className + "." + methodName + ": " + e.getClass().getName() + ": " + e.getMessage());
+				": " + className + "." + methodName + ": " + e.getClass().getName() + ": " + targetMessage);
 		}
 	}
 
