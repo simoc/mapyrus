@@ -53,6 +53,7 @@ import org.mapyrus.geom.SutherlandHodgman;
 import org.mapyrus.image.GradientFillFactory;
 import org.mapyrus.image.ImageFilter;
 import org.mapyrus.image.ImageIOWrapper;
+import org.mapyrus.image.MapyrusExternalImage;
 import org.mapyrus.io.GeoImageBoundingBox;
 import org.mapyrus.io.ImageClippingFile;
 import org.mapyrus.io.TFWFile;
@@ -1788,78 +1789,15 @@ public class Context
 		boolean isWMSRequest = false;
 		URL url = null;
 
-		try
-		{
-			url = new URL(filename);
-			String urlQuery = url.getQuery();
-			if (urlQuery != null)
-				isWMSRequest = (urlQuery.toUpperCase().indexOf("REQUEST=GETMAP") >= 0);
-		}
-		catch (MalformedURLException e)
-		{
-		}
-
 		/*
-		 * Reading large images takes a lot of time.
-		 * Do not open it for display if it is not visible
-		 * on the page.
-		 */
-		imageBounds = (GeoImageBoundingBox)mImageBoundsCache.get(filename);
-		if (imageBounds != null &&
-			(!imageBounds.getBounds().intersects(worldExtents)))
-		{
-			return;
-		}
-
-		/*
-		 * Load image.
-		 */
-		if (url != null)
-		{
-			try
-			{
-				image = ImageIOWrapper.read(url, getColor());
-			}
-			catch (IOException e)
-			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) +
-					": " + url + Constants.LINE_SEPARATOR + e.getMessage());
-			}
-		}
-		else
-		{
-			image = ImageIOWrapper.read(new File(filename), getColor());
-		}
-
-		if (image == null)
-		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
-				": " + filename);
-		}
-
-		if (imageBounds == null)
-		{
-			if (isWMSRequest)
-				imageBounds = new WMSRequestBoundingBox(url);
-			else
-				imageBounds = new TFWFile(filename, image);
-
-			/*
-			 * Do not put WMS requests in cache because it is unlikely
-			 * that exactly the same request will be used in the future.
-			 */
-			if (!isWMSRequest)
-				mImageBoundsCache.put(filename, imageBounds);
-		}
-
-		/*
-		 * Check for a file containing a clip polygon for this image.
+		 * Parse options for the image.
 		 */
 		GeometricPath clipPolygon = null;
 		float hue = 1;
 		float saturation = 1;
 		float brightness = 1;
 		StringTokenizer st = new StringTokenizer(extras);
+		MapyrusExternalImage readerClass = null;
 		while (st.hasMoreTokens())
 		{
 			String token = st.nextToken();
@@ -1908,6 +1846,87 @@ public class Context
 						": " + s);
 				}
 			}
+			else if (token.startsWith("readerclass="))
+			{
+				String className = token.substring(12);
+				readerClass = new MapyrusExternalImage(className, filename, extras);
+			}
+		}
+
+		if (readerClass == null)
+		{
+			try
+			{
+				url = new URL(filename);
+				String urlQuery = url.getQuery();
+				if (urlQuery != null)
+					isWMSRequest = (urlQuery.toUpperCase().indexOf("REQUEST=GETMAP") >= 0);
+			}
+			catch (MalformedURLException e)
+			{
+			}
+		}
+
+		/*
+		 * Reading large images takes a lot of time.
+		 * Do not open it for display if it is not visible
+		 * on the page.
+		 */
+		imageBounds = (GeoImageBoundingBox)mImageBoundsCache.get(filename);
+		if (imageBounds != null &&
+			(!imageBounds.getBounds().intersects(worldExtents)))
+		{
+			return;
+		}
+
+		/*
+		 * Load image.
+		 */
+		if (url != null)
+		{
+			try
+			{
+				image = ImageIOWrapper.read(url, getColor());
+			}
+			catch (IOException e)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) +
+					": " + url + Constants.LINE_SEPARATOR + e.getMessage());
+			}
+		}
+		else if (readerClass != null)
+		{
+			image = readerClass.read();
+		}
+		else
+		{
+			image = ImageIOWrapper.read(new File(filename), getColor());
+		}
+
+		if (image == null)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
+				": " + filename);
+		}
+
+		if (imageBounds == null)
+		{
+			if (isWMSRequest)
+				imageBounds = new WMSRequestBoundingBox(url);
+			else if (readerClass != null)
+				imageBounds = readerClass;
+			else
+				imageBounds = new TFWFile(filename, image);
+
+			/*
+			 * Do not put WMS requests in cache because it is unlikely
+			 * that exactly the same request will be used in the future.
+			 * 
+			 * Do not put images from external classes in cache because
+			 * we have no idea how they operate.
+			 */
+			if (!(isWMSRequest || readerClass != null))
+				mImageBoundsCache.put(filename, imageBounds);
 		}
 
 		/*
