@@ -174,7 +174,7 @@ See file named userdoc/COPYING for details.
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-	<fileset dir="." includes="userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, NEWS.txt, README.txt" excludes="userdoc/CVS/**, userdoc/cvs/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc userdoc/*.aux"/>
+	<fileset dir="." includes="userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, NEWS.txt, README.txt" excludes="userdoc/CVS/**, userdoc/cvs/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc userdoc/*.aux userdoc/*.lof userdoc/*.out"/>
 <fileset dir="." includes="userdoc/flag.eps"/>
 </zip>
 </target>
