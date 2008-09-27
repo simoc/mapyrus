@@ -1724,9 +1724,9 @@ be included in the Java classpath and must contain the following methods:
 \item
 \texttt{constructor(String filename, String extras)}
 \item
-\texttt{BufferedImage read()}
+\texttt{java.awt.image.BufferedImage read()}
 \item
-\texttt{Rectangle2D getBounds()}
+\texttt{java.awt.geom.Rectangle2D getBounds()}
 \end{itemize}
 
 The methods may throw any type of Java exception on error.
@@ -1839,7 +1839,7 @@ Any other characters in the string are ignored.
 
 \textit{hexdigits} are 4, 16 or 64 hexadecimal digits defining
 a square single color bitmap image of size 4x4, 8x8 or 16x16 pixels.
-Any non-hexadecimal digit characters in the string are ignored.
+Any non-hexadecimal characters in the string are ignored.
 
 \textit{resourcename} is the name of the Java resource containing the
 image, in the form \texttt{au/com/company/filename.png}.
