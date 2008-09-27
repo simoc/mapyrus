@@ -3,17 +3,12 @@
 # Draw label in black, with white highlight so that it is easier to read.
 #
 begin highlightlabel name
-	font "Helvetica-Bold", 3
+	font "Helvetica-Bold", 3, "outlinewidth=1"
 	color "white"
 	clearpath
-	move -Mapyrus.page.resolution.mm, 0
-	move Mapyrus.page.resolution.mm, 0
-	move 0, -Mapyrus.page.resolution.mm
-	move 0, Mapyrus.page.resolution.mm
-	label name
-
-	clearpath
 	move 0, 0
+	label name
+	font "Helvetica-Bold", 3
 	color "black"
 	label name
 end
@@ -46,11 +41,11 @@ begin warehouse name, inventory
 	# Show warehouse name under boxes.
 	#
 	clearpath
-	move -4, -5
+	move -4, -3
 	highlightlabel name
 end
 
-newpage "eps", "mapview4.eps", 60, 60, "background=lightpink"
+newpage "eps", "mapview4.eps", 60, 60, "background=lightpink lineantialiasing=true"
 
 # Import freight rail line network in Munich
 #
@@ -101,4 +96,4 @@ warehouse "Feldkirchen", 7
 worlds 0, 0, Mapyrus.page.width, Mapyrus.page.height
 clearpath
 move 7, 7
-warehouse "represents 1000 units", 1
+warehouse "bedeutet 1000 Kasten", 1

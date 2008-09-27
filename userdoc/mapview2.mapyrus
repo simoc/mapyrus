@@ -6,7 +6,7 @@ include symbols.mapyrus
 include scalebar.mapyrus
 
 
-newpage "eps", "mapview2.eps", 70, 40, "background=white"
+newpage "eps", "mapview2.eps", 70, 40, "background=white lineantialiasing=true"
 worlds 40000, 40000, 50000, 45000
 
 let scale=Mapyrus.worlds.scale
