@@ -1,12 +1,39 @@
 # @(#) $Id$
 
-newpage "eps", "turtle5.eps", 40, 30, "background=white"
+newpage "eps", "turtle5.eps", 40, 30, "background=white lineantialiasing=true"
 clearpath
-box 2, 2, 18, 28
+box 2, 16, 18, 26
 gradientfill "red", "orange", "orange", "white"
 stroke
 
+begin raindrop2
+  color "red"
+  rotate 180
+  raindrop 0, 0, 3
+  fill
+  color "black"
+  linestyle 0.3
+  stroke
+  clearpath
+  font "Helvetica-Bold", 4
+  rotate -180
+  move 1.5, 0.5
+  label "Z"
+end
 clearpath
-hexagon 30, 15, 10
+move 10, 10
+raindrop2
+
+clearpath
+hexagon 30, 21, 6
 gradientfill "darkgreen", "lightgreen", "darkgreen", "lightgreen"
+color "black"
 stroke
+
+clearpath
+cylinder 30, 5, 5, 5
+color "lightgreen"
+fill
+color "black"
+stroke
+

@@ -33,7 +33,7 @@ begin fern
   fernbranch 6
 end
 #
-newpage "eps", "turtle2.eps", 30, 30, "background=white"
+newpage "eps", "turtle2.eps", 30, 30, "background=white lineantialiasing=true"
 clearpath
 move 15, 4
 fern

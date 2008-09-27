@@ -21,7 +21,7 @@ begin sun
   done
 end
 #
-newpage "eps", "turtle1.eps", 30, 30, "background=white"
+newpage "eps", "turtle1.eps", 30, 30, "background=white lineantialiasing=true"
 clearpath
 move 15, 15
 sun
