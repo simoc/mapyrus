@@ -87,7 +87,6 @@ public class MapyrusMessages
 	public static final String INVALID_EXPRESSION = "invalidexpression";
 	public static final String INVALID_FIELD_NAME = "invalidfieldname";
 	public static final String INVALID_FONT = "invalidfont";
-	public static final String INVALID_SIZE = "invalidsize";
 	public static final String INVALID_FORMAT = "invalidformat";
 	public static final String INVALID_GEOGRAPHIC = "invalidgeographic";
 	public static final String INVALID_GEOIMAGE = "invalidgeoimage";
@@ -100,6 +99,7 @@ public class MapyrusMessages
 	public static final String INVALID_HTTP_REQUEST = "invalidhttp";
 	public static final String INVALID_ICON = "invalidicon";
 	public static final String INVALID_IMPORT = "invalidimport";
+	public static final String INVALID_INTERVAL = "invalidinterval";
 	public static final String INVALID_KEYWORD = "invalidkeyword";
 	public static final String INVALID_JUSTIFY = "invalidjustify";
 	public static final String INVALID_LEGEND_ENTRY = "invalidlegendentry";
@@ -127,12 +127,14 @@ public class MapyrusMessages
 	public static final String INVALID_PENTAGON = "invalidpentagon";
 	public static final String INVALID_RADIUS = "invalidradius";
 	public static final String INVALID_RAINDROP = "invalidraindrop";
+	public static final String INVALID_RANGE = "invalidrange";
 	public static final String INVALID_REGEX = "invalidregex";
 	public static final String INVALID_ROTATION = "invalidrotation";
 	public static final String INVALID_SCALING = "invalidscaling";
 	public static final String INVALID_SCRIPT = "invalidscript";
 	public static final String INVALID_SETOUTPUT = "invalidsetoutput";
 	public static final String INVALID_SINEWAVE = "invalidsinewave";
+	public static final String INVALID_SIZE = "invalidsize";
 	public static final String INVALID_SPACING = "invalidspacing";
 	public static final String INVALID_SPIRAL = "invalidspiral";
 	public static final String INVALID_STAR = "invalidstar";
