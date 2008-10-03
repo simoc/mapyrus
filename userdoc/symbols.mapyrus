@@ -501,10 +501,7 @@ end
 # of the twelve months.
 #
 begin temperatureBar mint, maxt
-	move 0, mint / 5
-	draw 0, maxt / 5
-	draw 1, maxt / 5
-	draw 1, mint / 5
+	box 0, mint / 5, 1, maxt / 5
 	fill
 end
 
