@@ -1,40 +1,80 @@
 # @(#) $Id$
-newpage "eps", "turtle7.eps", 50, 30
 
-# Draw caption in a box with a /=\ shaped tab above it.
-#
-begin caption tab, col1, col2
-  font "Helvetica-Narrow", 3
-  color "black"
-  move 0, 0
-  table "background=0xffccdd,0xffccdd,white,white", col1, col2
+let vals1 = split("170:125:132:140:158:153:162", ":")
+let labels = split("M:T:W:T:F:S:S", ":")
+let title = "Turtle Sightings (Week 13)"
 
-  clearpath
-  move 0, 0
-  draw 0, 3, 1, 4, 13, 4, 14, 3, 14, 0
-  closepath
-  color "black"
-  fill
-  clearpath
+let nXVals = length(vals1)
+newpage "eps", "turtle7.eps", nXVals * 5 + 20, 30, "background=gray90 lineantialiasing=true"
 
-  color "white"
-  move 1.5, 1
-  label tab
-end
-
-move 2, 24
-let col1[1] = "9am", col1[2] = "12pm", col1[3] = "5pm", col1[4] = "6pm"
-let col2[1] = "meeting", col2[2] = "lunch", col2[3] = "video\nconference", col2[4] = "interview"
-caption "Monday", col1, col2
-
-linestyle 0.4
-color "black"
+# Draw centered title
+move Mapyrus.page.width / 2, 25
+justify "center bottom"
 font "Helvetica", 3
+color "black"
+label title
+
+# Calculate and draw Y axis
+let maxVal = max(vals1)
+let minVal = min(vals1)
+let yAxisVals = axis(0, maxVal, 4)
+let nYVals = length(yAxisVals)
 clearpath
-move 35, 30
-let t[1] = "etc/group"
-let t[2] = "etc/hosts"
-let t[3] = "etc/init.d/httpd"
-let t[4] = "etc/passwd"
-let t[5] = "etc/shadow"
-tree "delimiter=/", t
+move 10, 5
+rdraw 0, (nYVals - 1) * 4
+stroke
+let i = 1
+while i <= nYVals
+do
+  clearpath
+  move 10, 5 + (i - 1) * 4
+  rdraw -2, 0
+  stroke
+  clearpath
+  move 7, 5 + (i - 1) * 4
+  justify "right middle"
+  font "Helvetica", 3
+  label yAxisVals[i]
+  let i = i + 1
+done
+
+# Calculate and draw X axis
+clearpath
+move 10, 5
+rdraw nXVals * 5, 0
+stroke
+let i = 1
+while i <= nXVals
+do
+  clearpath
+  move 10 + (i - 1) * 5, 5
+  rdraw 0, -1
+#  stroke
+  clearpath
+  move 10 + (i - 1) * 5 + 2.5, 4
+  justify "center top"
+  font "Helvetica", 3
+  label labels[i]
+  let i = i + 1
+done
+
+# Draw graph
+move 10, 5
+let i = 1
+let yMin = yAxisVals[1]
+let yMax = yAxisVals[nYVals]
+while i <= nXVals
+do
+  let yVal = vals1[i] 
+  let x1 = 10 + (i - 1) * 5 + 1
+  let x2 = x1 + 2
+  let y1 = 5
+  let y2 = y1 + (yVal - yMin) / (yMax - yMin) * 4 * (nYVals - 1)
+  clearpath
+  box3d x1, y1, x2, y2, 1
+  color "seagreen"
+  fill
+  color "black"
+  stroke
+  let i = i + 1
+done
