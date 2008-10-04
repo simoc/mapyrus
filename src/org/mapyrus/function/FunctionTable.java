@@ -45,6 +45,9 @@ public class FunctionTable
 		f = new Abs();
 		mFunctions.put(f.getName(), f);
 
+		f = new Axis();
+		mFunctions.put(f.getName(), f);
+
 		f = new Ceil();
 		mFunctions.put(f.getName(), f);
 
