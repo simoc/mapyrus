@@ -62,7 +62,7 @@ do
 	stroke
 done
 
-newpage "eps", "mapview2legend.eps", 40, 50, "background=white"
+newpage "eps", "mapview2legend.eps", 40, 50, "background=white lineantialiasing=true"
 clearpath
 let counter=0
 while counter < Mapyrus.key.count
@@ -77,7 +77,7 @@ legend 7
 
 # Create a scalebar for the map.
 #
-newpage "eps", "mapview2scalebar.eps", 50, 15, "background=white"
+newpage "eps", "mapview2scalebar.eps", 50, 15, "background=white lineantialiasing=true"
 clearpath
 scalebar scale, "m", 0, 0
 
