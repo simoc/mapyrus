@@ -45,7 +45,7 @@ begin warehouse name, inventory
 	highlightlabel name
 end
 
-newpage "eps", "mapview4.eps", 60, 60, "background=lightpink lineantialiasing=true"
+newpage "eps", "mapview4.eps", 60, 60, "background=lightpink lineantialiasing=true isolatinfonts=Helvetica-Bold"
 
 # Import freight rail line network in Munich
 #
@@ -86,7 +86,7 @@ move 11.115, 48.251
 warehouse "Pasing", 2
 clearpath
 move 11.188, 48.376
-warehouse "Harthof", 19
+warehouse "Oberschlei\337heim", 19
 clearpath
 move 11.357, 48.298
 warehouse "Feldkirchen", 7
