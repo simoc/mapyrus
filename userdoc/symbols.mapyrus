@@ -2095,7 +2095,7 @@ then
 		if x > 150
 		then
 			let pageNumber = pageNumber + 1
-			newpage "eps", "symbols" . pageNumber . ".eps", 170, 200
+			newpage "eps", "symbols" . pageNumber . ".eps", 170, 200, "lineantialiasing=true"
 
 			# Ensure page has a white background.
 			#
