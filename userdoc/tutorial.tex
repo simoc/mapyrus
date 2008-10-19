@@ -620,6 +620,9 @@ are also read as text files.
 For files containing lines and polygons, a loop and counter
 are used to read all coordinates for each line and polygon.
 
+For files containing header lines, use the \texttt{fetch} command
+outside of a loop to skip these lines.
+
 The following example demonstrates
 reading and displaying the GenaMap GIS ZF19 format export file shown in Figure
 \ref{streetsEE} containing line
