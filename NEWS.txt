@@ -4,6 +4,7 @@ Copyright (C) 2003 - 2008 Simon Chenery <simoc@users.sourceforge.net>
 0.807, November 2008
 
 * Add AXIS function to generate suitable values for a graph axis.
+* Add '++' and '--' for incrementing and decrementing variable values.
 
 0.806, September 2008
 
