@@ -75,6 +75,10 @@ public class Expression
 	private static final int CONDITIONAL_OPERATION = 300;	/* a == 77 ? "yes" : "no" */
 
 	private static final int ASSIGN_OPERATION = 400;	/* a = 77 */
+	private static final int PRE_INCREMENT_OPERATION = 401;	/* ++a */
+	private static final int PRE_DECREMENT_OPERATION = 402;	/* --a */
+	private static final int POST_INCREMENT_OPERATION = 403;	/* a++ */
+	private static final int POST_DECREMENT_OPERATION = 404;	/* a-- */
 
 	private static final int AND_OPERATION = 500;
 	private static final int OR_OPERATION = 501;
@@ -266,11 +270,42 @@ public class Expression
 						Argument.numericOne : Argument.numericZero;
 				}
 			}
-			else if (t.mOperation == ASSIGN_OPERATION)
+			else if (t.mOperation == ASSIGN_OPERATION || t.mOperation == PRE_INCREMENT_OPERATION ||
+				t.mOperation == PRE_DECREMENT_OPERATION || t.mOperation == POST_INCREMENT_OPERATION ||
+				t.mOperation == POST_DECREMENT_OPERATION)
 			{
 				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
-				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
-				rightValue = traverse(rightBranch, context, interpreterFilename);
+				Argument varValue = null;
+
+				if (t.mOperation == PRE_INCREMENT_OPERATION)
+				{
+					rightValue = traverse(leftBranch, context, interpreterFilename);
+					rightValue = new Argument(rightValue.getNumericValue() + 1);
+				}
+				else if (t.mOperation == PRE_DECREMENT_OPERATION)
+				{
+					rightValue = traverse(leftBranch, context, interpreterFilename);
+					rightValue = new Argument(rightValue.getNumericValue() - 1);
+				}
+				else if (t.mOperation == POST_INCREMENT_OPERATION)
+				{
+					varValue = traverse(leftBranch, context, interpreterFilename);
+					if (varValue == Argument.emptyString)
+						varValue = Argument.numericZero;
+					rightValue = new Argument(varValue.getNumericValue() + 1);
+				}
+				else if (t.mOperation == POST_DECREMENT_OPERATION)
+				{
+					varValue = traverse(leftBranch, context, interpreterFilename);
+					if (varValue == Argument.emptyString)
+						varValue = Argument.numericZero;
+					rightValue = new Argument(varValue.getNumericValue() - 1);
+				}
+				else
+				{
+					ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+					rightValue = traverse(rightBranch, context, interpreterFilename);
+				}
 				if (leftBranch.mIsLeaf)
 				{
 					/*
@@ -307,7 +342,10 @@ public class Expression
 				/*
 				 * Return value assigned.
 				 */
-				retval = rightValue;
+				if (t.mOperation == POST_INCREMENT_OPERATION || t.mOperation == POST_DECREMENT_OPERATION)
+					retval = varValue;
+				else
+					retval = rightValue;
 			}
 			else if (t.mOperation == HASHMAP_REFERENCE)
 			{
@@ -602,6 +640,14 @@ public class Expression
 					case ASSIGN_OPERATION:
 						operation = "=";
 						break;
+					case PRE_INCREMENT_OPERATION:
+					case POST_INCREMENT_OPERATION:
+						operation = "++";
+						break;
+					case PRE_DECREMENT_OPERATION:
+					case POST_DECREMENT_OPERATION:
+						operation = "--";
+						break;
 					case AND_OPERATION:
 						operation = "and";
 						break;
@@ -618,12 +664,17 @@ public class Expression
 				
 				sb = new StringBuffer();
 				ExpressionTreeNode leftBranch = (ExpressionTreeNode)mBranches.get(0);
+				if (mOperation == PRE_INCREMENT_OPERATION || mOperation == PRE_DECREMENT_OPERATION)
+				{
+					sb.append(operation);
+					operation = "";
+				}
 				sb.append(leftBranch.toString());
 				sb.append(' ');
 				sb.append(operation);
 				sb.append(' ');
 
-				if (mOperation != NOT_OPERATION)
+				if (!(mOperation == NOT_OPERATION || mOperation == PRE_INCREMENT_OPERATION || mOperation == PRE_DECREMENT_OPERATION))
 				{
 					ExpressionTreeNode rightBranch = (ExpressionTreeNode)mBranches.get(1);
 					sb.append(rightBranch.toString());
@@ -642,6 +693,64 @@ public class Expression
 	}
 
 	ExpressionTreeNode mExprTree;
+
+	/*
+	 * Parse expression including assignment to variables.
+	 */
+	private ExpressionTreeNode parseAssignment(Preprocessor p, HashMap userFunctions)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, value;
+		int op1, op2;
+
+		expr = parseOrBoolean(p, userFunctions);
+		while (true)
+		{
+			/*
+			 * If next character is '=' then we have an assignment
+			 * to a variable.
+			 */
+			op1 = p.readNonSpace();
+			if (op1 == '=')
+			{
+				op2 = p.read();
+				p.unread(op2);
+				if (op2 != '=')
+				{
+					/*
+					 * Check that lefthandside of an assignment is a variable name,
+					 * or an element in a hashmap.
+					 */
+					if (expr.mIsLeaf)
+					{
+						if (expr.mLeafArg.getType() != Argument.VARIABLE)
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+						}
+					}
+					else if (expr.mOperation != HASHMAP_REFERENCE)
+					{
+						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+					}
+					value = parseOrBoolean(p, userFunctions);
+					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
+				}
+				else
+				{
+					p.unread(op1);
+					break;
+				}
+			}
+			else				
+			{
+				p.unread(op1);
+				break;
+			}
+		}
+		return(expr);
+	}
 
 	/*
 	 * Parse expression including "or" boolean operations.
@@ -791,65 +900,7 @@ public class Expression
 		}
 
 		if (expr == null)
-			expr = parseAssignment(p, userFunctions);
-		return(expr);
-	}
-
-	/*
-	 * Parse expression including assignment to variables.
-	 */
-	private ExpressionTreeNode parseAssignment(Preprocessor p, HashMap userFunctions)
-		throws IOException, MapyrusException
-	{
-		ExpressionTreeNode expr, value;
-		int op1, op2;
-
-		expr = parseConditional(p, userFunctions);
-		while (true)
-		{
-			/*
-			 * If next character is '=' then we have an assignment
-			 * to a variable.
-			 */
-			op1 = p.readNonSpace();
-			if (op1 == '=')
-			{
-				op2 = p.read();
-				p.unread(op2);
-				if (op2 != '=')
-				{
-					/*
-					 * Check that lefthandside of an assignment is a variable name,
-					 * or an element in a hashmap.
-					 */
-					if (expr.mIsLeaf)
-					{
-						if (expr.mLeafArg.getType() != Argument.VARIABLE)
-						{
-							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
-								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
-						}
-					}
-					else if (expr.mOperation != HASHMAP_REFERENCE)
-					{
-						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
-								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
-					}
-					value = parseConditional(p, userFunctions);
-					expr = new ExpressionTreeNode(expr, ASSIGN_OPERATION, value);
-				}
-				else
-				{
-					p.unread(op1);
-					break;
-				}
-			}
-			else				
-			{
-				p.unread(op1);
-				break;
-			}
-		}
+			expr = parseConditional(p, userFunctions);
 		return(expr);
 	}
 
@@ -873,11 +924,11 @@ public class Expression
 				 * i == 1 ? j == 2 ? 3 : 4 : 5
 				 * is parsed correctly using "right associativity".
 				 */
-				trueExpr = parseOrBoolean(p, userFunctions);
+				trueExpr = parseAssignment(p, userFunctions);
 				op = p.readNonSpace();
 				if (op == ':')
 				{
-					falseExpr = parseOrBoolean(p, userFunctions);
+					falseExpr = parseAssignment(p, userFunctions);
 					expr = new ExpressionTreeNode(expr, CONDITIONAL_OPERATION, trueExpr, falseExpr);
 				}
 				else
@@ -1061,21 +1112,111 @@ public class Expression
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr;
-		int op;
+		int op1, op2;
 
-		op = p.readNonSpace();
-		if (op != '+' && op != '-')
+		op1 = p.readNonSpace();
+		if (op1 != '+' && op1 != '-')
 		{
-			p.unread(op);
+			p.unread(op1);
 		}
-		expr = parseHashMapReference(p, userFunctions);
-		if (op == '-')
+		else
+		{
+			/*
+			 * Ignore if it is '++n' or '--n' instead of a unary.
+			 */
+			op2 = p.read();
+			p.unread(op2);
+			if (op2 == op1)
+			{
+				p.unread(op1);
+				op1 = ' ';
+			}
+		}
+		expr = parsePlusPlus(p, userFunctions);
+		if (op1 == '-')
 		{
 			/*
 			 * Negate value of expression by multiplying by -1.
 			 */
 			ExpressionTreeNode left = new ExpressionTreeNode(Argument.numericMinusOne);
 			expr = new ExpressionTreeNode(left, MULTIPLY_OPERATION, expr);
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse expression including '++' increment or '--' decrement.
+	 */
+	private ExpressionTreeNode parsePlusPlus(Preprocessor p, HashMap userFunctions)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr;
+		int op1, op2, type = NO_OPERATION;
+
+		/*
+		 * Check for '++' or '--' before variable.
+		 */
+		op1 = p.readNonSpace();
+		if (op1 == '+' || op1 == '-')
+		{
+			op2 = p.read();
+			if (op2 == op1)
+			{
+				type = (op1 == '+' ? PRE_INCREMENT_OPERATION : PRE_DECREMENT_OPERATION);
+			}
+			else
+			{
+				p.unread(op2);
+				p.unread(op1);
+			}
+		}
+		else
+		{	
+			p.unread(op1);
+		}
+		expr = parseHashMapReference(p, userFunctions);
+
+		/*
+		 * Check for '++' or '--' after variable.
+		 */
+		op1 = p.readNonSpace();
+		if (op1 == '+' || op1 == '-')
+		{
+			op2 = p.read();
+			if (op2 == op1)
+			{
+				if (type != NO_OPERATION)
+				{
+					/*
+					 * '++a++' is not allowed.
+					 */
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+						MapyrusMessages.get(MapyrusMessages.INVALID_EXPRESSION));
+				}
+				type = (op1 == '+' ? POST_INCREMENT_OPERATION : POST_DECREMENT_OPERATION);
+			}
+			else
+			{
+				p.unread(op2);
+				p.unread(op1);
+			}
+		}
+		else
+		{	
+			p.unread(op1);
+		}
+		if (type != NO_OPERATION)
+		{
+			/*
+			 * Make sure expression is a variable.  Things like '++5' are not allowed.
+			 */
+			if (!((expr.mIsLeaf && expr.mLeafArg.getType() == Argument.VARIABLE) ||
+				expr.mOperation == HASHMAP_REFERENCE))
+			{
+				throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
+					MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
+			}
+			expr = new ExpressionTreeNode(expr, type, null);
 		}
 		return(expr);
 	}
@@ -1098,7 +1239,7 @@ public class Expression
 			op1 = p.readNonSpace();
 			if (op1 == '[')
 			{
-				keyExpr = parseOrBoolean(p, userFunctions);
+				keyExpr = parseAssignment(p, userFunctions);
 				op1 = p.readNonSpace();
 				if (op1 != ']')
 				{
@@ -1316,7 +1457,7 @@ public class Expression
 
 		if (c == '(')
 		{
-			expr = parseOrBoolean(p, userFunctions);
+			expr = parseAssignment(p, userFunctions);
 
 			c = p.readNonSpace();
 			if (c != ')')
@@ -1396,7 +1537,7 @@ public class Expression
 							": " + buf.toString());
 					}
 
-					ExpressionTreeNode funcExpr = parseOrBoolean(p, userFunctions);
+					ExpressionTreeNode funcExpr = parseAssignment(p, userFunctions);
 					functionExpressions.add(funcExpr);
 				}
 
@@ -1442,7 +1583,7 @@ public class Expression
 	public Expression(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
-		mExprTree = parseOrBoolean(p, userFunctions);
+		mExprTree = parseAssignment(p, userFunctions);
 	}
 
 	/**
