@@ -61,11 +61,11 @@ public class ConvexHull implements Function
 		}
 		catch (ParseException e)
 		{
-			throw new MapyrusException(e.getMessage());
+			throw new MapyrusException(e.getClass().getName() + ": " + e.getMessage());
 		}
 		catch (IllegalArgumentException e)
 		{
-			throw new MapyrusException(e.getMessage());
+			throw new MapyrusException(e.getClass().getName() + ": " + e.getMessage());
 		}
 		return(retval);
 	}
