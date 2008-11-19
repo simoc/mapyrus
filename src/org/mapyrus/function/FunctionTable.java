@@ -177,6 +177,9 @@ public class FunctionTable
 			f = new ConvexHull();
 			mFunctions.put(f.getName(), f);
 
+			f = new Crosses();
+			mFunctions.put(f.getName(), f);
+
 			f = new Difference();
 			mFunctions.put(f.getName(), f);
 			
