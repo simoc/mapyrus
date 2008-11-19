@@ -253,6 +253,7 @@ Returns the smallest integer value that is not less than \textit{n}. \\
 If point (\textit{x}, \textit{y}) or geometry \textit{g2}
 is contained inside \textit{g1} then
 1 is returned.  Otherwise 0 is returned.
+Geometries may be the same type or different types.
 This function requires the \textit{Java Topology Suite}. \\
 
 \hline
@@ -264,6 +265,15 @@ Returns a convex hull geometry that surrounds geometry \textit{g}. \\
 
 \texttt{cos(\textit{n})} &
 Returns the cosine of angle \textit{n}, given in degrees. \\
+
+\hline
+
+\texttt{crosses(\textit{g1}, \textit{g2})} &
+If geometry \textit{g2} crosses \textit{g1} then
+1 is returned.  Otherwise 0 is returned.
+Geometries must be of different types.  To compare
+geometries of the same type, use \texttt{overlaps}.
+This function requires the \textit{Java Topology Suite}. \\
 
 \hline
 
