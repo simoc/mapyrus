@@ -439,7 +439,7 @@ begin quadrants title, q1, q2, q3, q4, qLabels
 end
 
 begin windname name
-	font "Helvetica", 3
+	font "Helvetica-Bold", 3
 	justify "center"
 	move 0, -Mapyrus.screen.resolution.mm
 	move 0, Mapyrus.screen.resolution.mm
@@ -492,7 +492,7 @@ begin windindicator bearing, strength, name
 	linestyle 1
 	color "white"
 	stroke
-	linestyle 0.1
+	linestyle 0.2
 	color "black"
 	stroke
 end
