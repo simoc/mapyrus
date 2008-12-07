@@ -126,7 +126,7 @@ public class HTTPRequest extends Thread
 	 * @param word is word to check.
 	 * @return true if word is legal variable name.
 	 */
-	private boolean isLegalVariable(String word)
+	public static boolean isLegalVariable(String word)
 	{
 		boolean retval = true;
 		
@@ -146,7 +146,7 @@ public class HTTPRequest extends Thread
 	 * @param value variable value.
 	 * @return string with variable appended.
 	 */
-	private StringBuffer addVariable(StringBuffer sb, String varName, String value)
+	public static StringBuffer addVariable(StringBuffer sb, String varName, String value)
 	{
 		/*
 		 * Add Mapyrus command to set variable,
