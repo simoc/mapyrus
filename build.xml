@@ -33,6 +33,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <available file="${jts.jar}" property="jts.jar.isAvailable"/>
 <fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
 
+<!-- servlet-api.jar JAR file required for building servlet -->
+<property name="servlet-api.jar" value="servlet-api.jar"/>
+<available file="${servlet-api.jar}" property="servlet-api.jar.isAvailable"/>
+<fail message="Servlet API JAR file ${servlet-api.jar} not found.  Download it as part of Tomcat from http://tomcat.apache.org" unless="servlet-api.jar.isAvailable"/>
+
 <!-- Oracle Spatial JAR files required for building some Java classes -->
 <property name="oracle.jars" value="sdoapi.jar:ojdbc14.jar"/>
 <condition property="oracle.jars.areAvailable">
@@ -53,7 +58,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <replace dir="src" token="@release_date_token@" value="${today}"/>
 
 <mkdir dir="build/classes"/>
-<javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${oracle.jars}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
+<javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
 
 <!-- Copy resource files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
@@ -70,6 +75,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <attribute name="Built-By" value="${user.name}"/>
 </manifest>
 <jar jarfile="${ant.project.name}.jar" basedir="build/classes" manifest="manifest"/>
+</target>
+
+<target name="war" depends="jar, compile" description="Build war file from classes">
+<war destfile="${ant.project.name}.war" webxml="web.xml">
+<lib file="${ant.project.name}.jar"/>
+</war>
 </target>
 
 <target name="doc" depends="jar" description="Build documentation and examples (requires LaTeX)">
@@ -170,11 +181,11 @@ See file named userdoc/COPYING for details.
 </target>
 
 
-<target name="deploy" depends="init, jar, doc" description="Build package for distribution">
+<target name="deploy" depends="init, jar, war, doc" description="Build package for distribution">
 <!-- Build new zip file for distribution -->
 <delete file="${ant.project.name}-${version}.zip"/>
 <zip destfile="${ant.project.name}-${version}.zip">
-	<fileset dir="." includes="userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.pdf, NEWS.txt, README.txt" excludes="userdoc/CVS/**, userdoc/cvs/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc userdoc/*.aux userdoc/*.lof userdoc/*.out"/>
+	<fileset dir="." includes="userdoc/**, ${ant.project.name}.jar, ${ant.project.name}.war, ${ant.project.name}.pdf, NEWS.txt, README.txt" excludes="userdoc/CVS/**, userdoc/cvs/**, userdoc/*.eps, userdoc/*.dvi, userdoc/*.log, userdoc/*.toc userdoc/*.aux userdoc/*.lof userdoc/*.out"/>
 <fileset dir="." includes="userdoc/flag.eps"/>
 </zip>
 </target>
@@ -183,7 +194,7 @@ See file named userdoc/COPYING for details.
 <target name="clean" description="Remove everything we have built">
 <delete dir="build"/>
 <delete>
-<fileset dir="." includes="${ant.project.name}.jar, manifest, README.txt"/>
+<fileset dir="." includes="${ant.project.name}.jar, ${ant.project.name}.war, manifest, README.txt"/>
 <fileset dir="." includes="${ant.project.name}*.zip, ${ant.project.name}.pdf"/>
 <fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out" excludes="flag.eps"/>
 </delete>
