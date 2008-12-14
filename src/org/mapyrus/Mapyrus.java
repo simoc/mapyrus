@@ -101,7 +101,6 @@ public class Mapyrus
 		StringReader sr = makeStringReader(commands);
 		FileOrURL f = new FileOrURL(sr, "commands");
 
-		ColorDatabase.load();
 		mInterpreter.interpret(mContext, f, stdin, stdout);
 	}
 
@@ -119,7 +118,6 @@ public class Mapyrus
 	{
 		if (extras == null)
 			extras = "";
-		initialise();
 		mContext.setOutputFormat(image, extras);
 	}
 
@@ -246,27 +244,6 @@ public class Mapyrus
 			return(false);
 		}
 		return(true);
-	}
-	
-	/*
-	 * Initialise global settings, color name lookup tables.
-	 */
-	private static void initialise()
-	{
-		try
-		{
-			ColorDatabase.load();
-		}
-		catch (IOException e)
-		{
-			System.err.println(e.getMessage());
-			System.exit(1);
-		}
-		catch (MapyrusException e)
-		{
-			System.err.println(e.getMessage());
-			System.exit(1);
-		}
 	}
 
 	/**
@@ -632,8 +609,6 @@ public class Mapyrus
 				System.exit(1);
 			}
 		}
-
-		initialise();
 
 		context = new ContextStack();
 		Interpreter interpreter = new Interpreter();

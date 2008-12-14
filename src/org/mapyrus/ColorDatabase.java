@@ -43,7 +43,7 @@ public class ColorDatabase
 	/**
 	 * Load global color name database from a file.
 	 */
-	public static synchronized void load() throws MapyrusException, IOException
+	private static synchronized void loadColorNames() throws MapyrusException
 	{
 		String filename, line;
 		StringTokenizer st;
@@ -682,9 +682,19 @@ public class ColorDatabase
 				}
 			}
 		}
+		catch (IOException e)
+		{
+			throw new MapyrusException(e.getMessage());
+		}
 		finally
 		{
-			reader.close();
+			try
+			{
+				reader.close();
+			}
+			catch (IOException e)
+			{
+			}
 		}
 	}
 
@@ -789,6 +799,7 @@ public class ColorDatabase
 		}
 		else
 		{
+			loadColorNames();
 			retval = mColors.get(colorName);
 			if (retval == null)
 			{
