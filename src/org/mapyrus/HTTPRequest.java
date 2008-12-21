@@ -51,9 +51,10 @@ public class HTTPRequest extends Thread
 	/*
 	 * Keywords and codes received and sent in HTTP headers.
 	 */
-	public static final String HTTP_OK_KEYWORD = "HTTP/1.0 200 OK";
-	private static final String HTTP_BAD_KEYWORD = "HTTP/1.0 400 Bad Request";
-	private static final String HTTP_NOT_FOUND_KEYWORD = "HTTP/1.0 404 Not Found";
+	public static final String HTTP_KEYWORD = "HTTP/1.0";
+	public static final String HTTP_OK_KEYWORD = HTTP_KEYWORD + " 200 OK";
+	private static final String HTTP_BAD_KEYWORD = HTTP_KEYWORD + " 400 Bad Request";
+	private static final String HTTP_NOT_FOUND_KEYWORD = HTTP_KEYWORD + " 404 Not Found";
 	private static final int HTTP_OK_CODE = 200;
 	private static final int HTTP_BAD_CODE = 400;
 	private static final int HTTP_NOT_FOUND_CODE = 404;
