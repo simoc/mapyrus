@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+<!-- $Id$ -->
+
+    <display-name>Mapyrus</display-name>
+    <description>
+	Mapyrus Servlet http://mapyrus.sourceforge.net
+    </description>
+
+    <servlet>
+        <servlet-name>MapyrusServlet</servlet-name>
+        <servlet-class>org.mapyrus.MapyrusServlet</servlet-class>
+        <init-param>
+            <param-name>c1</param-name>
+            <param-value>
+# Mapyrus commands
+
+# Select output format based on HTTP request parameter.
+let filetype = lower(OUTFORMAT)
+if filetype eq "svg"
+then
+  let mime = "image/svg+xml"
+elif filetype eq "pdf"
+then
+  let mime = "application/pdf"
+elif filetype eq "jpg" or filetype eq "jpeg"
+then
+  let mime = "image/jpeg"
+else
+  let filetype = "png"
+  let mime = "image/png"
+endif
+
+newpage filetype, "-", 40, 21, "background=white"
+mimetype mime
+
+color "0xf8f47f"
+box 5, 7, 10, 8.5
+box 15, 7, 20, 8.5
+box 25, 7, 30, 8.5
+box 10, 18, 15, 19.5
+box 20, 18, 25, 19.5
+box 30, 18, 35, 19.5
+fill
+
+color "black"
+clearpath
+box 10, 7, 15, 8.5
+box 20, 7, 25, 8.5
+box 30, 7, 35, 8.5
+box 5, 18, 10, 19.5
+box 15, 18, 20, 19.5
+box 25, 18, 30, 19.5
+fill
+
+clearpath
+box 5, 7, 35, 8.5
+box 5, 18, 35, 19.5
+linestyle 0.1
+stroke
+
+font "Utopia", 5.5
+clearpath
+move 7, 11
+label "MAPYRUS"
+clearpath
+move 5, 2
+font "Utopia", 3.5
+label "Version " . Mapyrus.version
+
+            </param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MapyrusServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>
