@@ -83,7 +83,7 @@ public class HTTPRequest extends Thread
 	private String mMimeType;
 	private String mFilename;
 	private Point mImagemapPoint;
-	private String mCommands;
+	private String mVariables, mCommands;
 
 	/*
 	 * Holds return status and any error message from running this thread.
@@ -257,6 +257,7 @@ public class HTTPRequest extends Thread
 	private void parseRequest(BufferedReader reader)
 		throws IOException, MapyrusException
 	{
+		StringBuffer variables = new StringBuffer();
 		StringBuffer commands = new StringBuffer();
 		int postRequestLength = 0;
 		int requestType;
@@ -350,7 +351,7 @@ public class HTTPRequest extends Thread
 			/*
 			 * Parse GET request arguments given after question mark in URL.
 			 */
-			commands.append(parseForm(url.substring(questionIndex + 1)));
+			variables.append(parseForm(url.substring(questionIndex + 1)));
 		}
 
 		/*
@@ -384,7 +385,7 @@ public class HTTPRequest extends Thread
 					i++;
 				}
 				if (isValidKeyword)
-					addVariable(commands, HTTP_HEADER_ARRAY + "['" + keyword + "']", value);
+					addVariable(variables, HTTP_HEADER_ARRAY + "['" + keyword + "']", value);
 
 				if (keyword.equals(CONTENT_LENGTH_KEYWORD))
 				{
@@ -420,8 +421,9 @@ public class HTTPRequest extends Thread
 				mLogger.fine(getName() + ": " +
 					MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + sb.toString());
 			}
-			commands.append(parseForm(sb.toString()));
+			variables.append(parseForm(sb.toString()));
 		}
+		mVariables = variables.toString();
 
 		if (mMimeType == null)
 		{
@@ -499,7 +501,8 @@ public class HTTPRequest extends Thread
 				/*
 				 * Send commands to Mapyrus to interpret and capture their output.
 				 */
-				FileOrURL f = new FileOrURL(new StringReader(mCommands), getName());
+				FileOrURL f1 = new FileOrURL(new StringReader(mVariables), getName());
+				FileOrURL f2 = new FileOrURL(new StringReader(mCommands), getName());
 				ContextStack context = new ContextStack();
 				if (mImagemapPoint != null)
 				{
@@ -511,8 +514,12 @@ public class HTTPRequest extends Thread
 				{
 					byte []emptyBuffer = new byte[0];
 					ByteArrayInputStream emptyStdin = new ByteArrayInputStream(emptyBuffer);
-					mInterpreter.interpret(context, f, emptyStdin,
-						printStream);
+					
+					/*
+					 * Run commands to set variables, then run commands to generate output.
+					 */
+					mInterpreter.interpret(context, f1, emptyStdin, null);
+					mInterpreter.interpret(context, f2, emptyStdin, printStream);
 					httpResponse = context.getHTTPResponse().trim() +
 						Constants.LINE_SEPARATOR + Constants.LINE_SEPARATOR;
 					context.closeContextStack();

@@ -63,7 +63,7 @@ public class MapyrusServlet extends HttpServlet
 		 * Generate Mapyrus commands to set variables from HTTP request parameters,
 		 * using uppercase for all variable names.
 		 */
-		StringBuffer commands = new StringBuffer(1024);
+		StringBuffer variables = new StringBuffer(512);
 		Map parameters = request.getParameterMap();
 		Iterator it = parameters.keySet().iterator();
 
@@ -76,7 +76,7 @@ public class MapyrusServlet extends HttpServlet
 				throw new ServletException(MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED) +
 					": " + var);
 			}
-			commands = HTTPRequest.addVariable(commands, var.toUpperCase(), value[0]);
+			variables = HTTPRequest.addVariable(variables, var.toUpperCase(), value[0]);
 
 			/*
 			 * Special HTTP request parameter giving name of servlet initialisation
@@ -95,7 +95,7 @@ public class MapyrusServlet extends HttpServlet
 			String var = (String)headerNames.nextElement();
 			String value = request.getHeader(var);
 			if (HTTPRequest.isLegalVariable(var))
-				HTTPRequest.addVariable(commands, HTTPRequest.HTTP_HEADER_ARRAY + "['" + var + "']", value);
+				HTTPRequest.addVariable(variables, HTTPRequest.HTTP_HEADER_ARRAY + "['" + var + "']", value);
 		}
 	
 		/*
@@ -108,12 +108,13 @@ public class MapyrusServlet extends HttpServlet
 			throw new ServletException(MapyrusMessages.get(MapyrusMessages.SERVLET_INIT_PARAM) +
 				": " + paramName);
 		}
-		commands.append(paramValue);
 
 		ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
 		PrintStream printStream = new PrintStream(byteArrayStream);
 
-		FileOrURL f = new FileOrURL(new StringReader(commands.toString()), request.getServletPath());
+		String servletPath = request.getServletPath();
+		FileOrURL f1 = new FileOrURL(new StringReader(variables.toString()), servletPath);
+		FileOrURL f2 = new FileOrURL(new StringReader(paramValue), servletPath);
 		ContextStack context = new ContextStack();
 		byte []emptyBuffer = new byte[0];
 		ByteArrayInputStream emptyStdin = new ByteArrayInputStream(emptyBuffer);
@@ -121,7 +122,12 @@ public class MapyrusServlet extends HttpServlet
 		try
 		{
 			Interpreter interpreter = new Interpreter();
-			interpreter.interpret(context, f, emptyStdin, printStream);
+			
+			/*
+			 * Run commands to set variables, then run commands to generate output.
+			 */
+			interpreter.interpret(context, f1, emptyStdin, null);
+			interpreter.interpret(context, f2, emptyStdin, printStream);
 			String responseHeader = context.getHTTPResponse().trim();
 			context.closeContextStack();
 			context = null;
