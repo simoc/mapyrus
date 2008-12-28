@@ -36,7 +36,8 @@ else
 endif
 
 newpage filetype, "-", 40, 21, "background=white"
-mimetype mime
+httpresponse "HTTP/1.0 200 OK
+Content-Type: " . mime
 
 color "0xf8f47f"
 box 5, 7, 10, 8.5
@@ -72,6 +73,16 @@ move 5, 2
 font "Utopia", 3.5
 label "Version " . Mapyrus.version
 
+            </param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>c2</param-name>
+            <param-value>
+mimetype "text/plain"
+print "Mapyrus received HTTP request and is returning plain text output."
+print "--"
+print "Mapyrus Version " . Mapyrus.version
             </param-value>
         </init-param>
     </servlet>
