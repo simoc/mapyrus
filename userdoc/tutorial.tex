@@ -1923,31 +1923,6 @@ clicked in the image (with origin in top-left corner of the image).
 Use these variables to calculate the new area to display.
 \end{itemize}
 
-\subsection{Using Mapyrus In A PHP Application}
-
-Make the output of Mapyrus available to a PHP application by running as an
-HTTP server, as described in section \ref{tutorialhttpserver}
-on page \pageref{tutorialhttpserver}.
-
-This avoids restarting Java each time a map is to be displayed.
-
-Web format images are requested and fetched by the PHP
-application and returned to the web browser using a
-web page containing the following PHP functions.
-
-\begin{verbatim}
-<?php
-header("Content-Type: image/png");
-$im = imagecreatefrompng("http://localhost:8410/tutorialhttpserver1.mapyrus");
-imagepng($im);
-imagedestroy($im);
-?>
-\end{verbatim}
-
-Pass variables to Mapyrus in the URL to vary the map display,
-as described in section \ref{urlvariables}
-on page \pageref{urlvariables}.
-
 \subsection{Using Mapyrus In A Java Or Jython Application}
 
 Jython is a Java implementation of the Python programming language.
