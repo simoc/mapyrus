@@ -11,8 +11,7 @@ Scalable Vector Graphics (SVG) format
 and web image output formats.
 
 Mapyrus is open source software and is implemented entirely in Java
-enabling it to run on Linux, Mac OS X, Sun Solaris, Microsoft Windows
-and other operating systems for which Java is available.
+enabling it to run on a wide range of operating systems.
 
 The software combines the following four features.
 
@@ -156,7 +155,7 @@ This library provides geometric algorithms
 such as buffering, point-in-polygon test and polygon intersection.
 
 \item
-Flexibility.  Running in one of two ways.
+Flexibility.  Running in one of three ways.
 
 \begin{enumerate}
 \item
@@ -167,10 +166,11 @@ showing different areas, or using different criteria for each map).
 
 \item
 As a self-contained web server providing map and
-graph images to a web-based application.
-This also enables Mapyrus to be integrated into larger applications
-(such as PHP-based applications),
-with map images fetched using HTTP requests.
+graph images to a web-based application via HTTP requests.
+
+\item
+As a Java Servlet in a web server such as Apache Tomcat,
+generating map and graph images in response to HTTP requests.
 
 \end{enumerate}
 
