@@ -3075,3 +3075,45 @@ When all threads in the HTTP server are busy handling requests,
 further requests are queued.
 
 Logging of HTTP requests is controlled by the \texttt{-l} command line option.
+
+\subsection{Mapyrus Servlet}
+
+The file \texttt{mapyrus.war} contains a web application.  After
+being deployed in a web server, the Mapyrus servlet handles HTTP
+requests to the following URL.
+
+\begin{verbatim}
+http://localhost:8080/mapyrus/
+\end{verbatim}
+
+The commands run by Mapyrus servlet when an HTTP request is received
+are defined in a servlet initialisation
+parameter.  Servlet initialisation parameters are set in
+the servlet configuration file \texttt{WEB-INF/web.xml}
+contained in the web application file \texttt{mapyrus.war}.
+
+By default, Mapyrus commands are defined in the servlet initialisation
+parameter \texttt{c1}.  If the URL parameter \texttt{ipn} is set to
+a servlet initialisation parameter name then Mapyrus commands are read from
+that initialisation parameter instead.
+
+Any parameters passed in the URL (following the \texttt{?} character in
+the URL or passed in an HTML form) are set as variables in Mapyrus.
+Variable names are converted to uppercase.
+
+The standard output of the Mapyrus commands is returned from
+the HTTP request.  A
+\texttt{mimetype}
+or
+\texttt{httpresponse}
+command must be used to define the type of output being returned.
+
+Mapyrus commands are not cached.
+If a single \texttt{include} statement is given for the Mapyrus commands
+in the servlet initialisation parameter then it is possible to
+define the Mapyrus commands run by the servlet in a file outside of
+the web server.  It is then not necessary to redeploy
+the servlet after modifying the file.
+
+The Mapyrus servlet throws a Java ServletException if there is an error
+in the Mapyrus commands, or an error running the Mapyrus commands.
