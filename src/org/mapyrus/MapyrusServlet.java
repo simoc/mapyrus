@@ -83,7 +83,18 @@ public class MapyrusServlet extends HttpServlet
 			 * parameter containing commands for this HTTP request.
 			 */
 			if (var.equals("ipn"))
+			{
+				/*
+				 * Ensure that value will be valid as a servlet
+				 * initialisation parameter name.
+				 */
+				if (!HTTPRequest.isLegalVariable(value[0]))
+				{
+					throw new ServletException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE) +
+						": " + value[0]);
+				}
 				paramName = value[0];
+			}
 		}
 
 		/*
