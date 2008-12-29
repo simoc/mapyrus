@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <!--
 This file is part of Mapyrus, software for plotting maps.
-Copyright (C) 2003 - 2008 Simon Chenery.
+Copyright (C) 2003 - 2009 Simon Chenery.
 
 Mapyrus is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <!-- Current software version, this value is updated -->
 <!-- manually for each new release. -->
-<property name="version" value="0.807"/>
+<property name="version" value="0.901"/>
 
 <!-- 'Java Topology Suite' JAR file required for building some Java classes -->
 <property name="jts.jar" value="jts-1.8.jar"/>
@@ -160,7 +160,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Create README file -->
 <echo file="README.txt" level="info">
 Mapyrus Version ${version} README
-Copyright (C) 2003 - 2008 Simon Chenery.
+Copyright (C) 2003 - 2009 Simon Chenery.
 
 User manual is mapyrus.pdf.
 Examples from user manual are in userdoc directory.
