@@ -1,5 +1,9 @@
 Mapyrus Change History
-Copyright (C) 2003 - 2008 Simon Chenery <simoc@users.sourceforge.net>
+Copyright (C) 2003 - 2009 Simon Chenery <simoc@users.sourceforge.net>
+
+0.901, January 2009
+
+* Allow database connection through JNDI.
 
 0.807, December 2008
 
