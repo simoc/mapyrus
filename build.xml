@@ -79,6 +79,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <target name="war" depends="jar, compile" description="Build war file from classes">
 <war destfile="${ant.project.name}.war" webxml="web.xml">
+<metainf file="context.xml"/>
 <lib file="${ant.project.name}.jar"/>
 </war>
 </target>
