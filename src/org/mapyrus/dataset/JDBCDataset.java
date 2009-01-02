@@ -28,6 +28,10 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.sql.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.mapyrus.Argument;
 import org.mapyrus.Constants;
@@ -49,6 +53,7 @@ public class JDBCDataset implements GeographicDataset
 	private String mSql;
 
 	private String mUrl;
+	private String mJndiName = null;
 
 	/*
 	 * Names and types of fields returned from SQL query.
@@ -86,6 +91,8 @@ public class JDBCDataset implements GeographicDataset
 					driver = value;
 				else if (key.equals("url"))
 					mUrl = value;
+				else if (key.equals("jndiname"))
+					mJndiName = value;
 				else
 				{
 					properties.put(key, value);
@@ -106,10 +113,29 @@ public class JDBCDataset implements GeographicDataset
 
 		try
 		{
-			/*
-			 * Connect to database.
-			 */
-			mConnection = ConnectionPool.get(mUrl, properties);
+			if (mJndiName != null)
+			{
+				/*
+			 	 * Connect to database using JNDI.
+				 * Obtain our environment naming context.
+				 */
+				Context initCtx = new InitialContext();
+				Context envCtx = (Context) initCtx.lookup("java:comp/env");
+
+				/*
+				 * Look up our data source.
+				 */
+				DataSource ds = (DataSource)envCtx.lookup(mJndiName);
+
+				/*
+				 * Allocate and use a connection from the pool.
+				 */
+				mConnection = ds.getConnection();
+			}
+			else
+			{
+				mConnection = ConnectionPool.get(mUrl, properties);
+			}
 		}
 		catch (SQLException e)
 		{
@@ -118,8 +144,14 @@ public class JDBCDataset implements GeographicDataset
 				state = ": " + state;
 			else
 				state = "";
+			if (mUrl == null)
+				mUrl = "";
 			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
 				 state + ": " + mUrl);
+		}
+		catch (NamingException e)
+		{
+			throw new MapyrusException(e.getMessage() + ": " + mJndiName);
 		}
 
 		try
@@ -463,7 +495,25 @@ public class JDBCDataset implements GeographicDataset
 		finally
 		{
 			if (mConnection != null)
-				ConnectionPool.put(mUrl, mConnection, succeeded);
+			{
+				if (mJndiName != null)
+				{
+					try
+					{
+						/*
+						 * Return JDBC connection that we have finished with.
+						 */
+						mConnection.close();
+					}
+					catch (SQLException e)
+					{
+					}
+				}
+				else
+				{
+					ConnectionPool.put(mUrl, mConnection, succeeded);
+				}
+			}
 			mConnection = null;
 			mStatement = null;
 		}
