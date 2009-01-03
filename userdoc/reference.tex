@@ -1359,6 +1359,18 @@ Username for connecting to the database.
 Password for connecting to the database.
 
 \vspace{10pt}
+\texttt{jndiname=\textit{string}}
+
+Java JNDI resource name of DataSource to use for database connection.
+Available when running as a servlet with Apache Tomcat.
+Tomcat provides database connection
+pooling with database connections obtained using a JNDI lookup.
+JNDI resource names are commonly of the form \texttt{java:/comp/env/jdbc/MYDB1}.
+No other options are required when using a JNDI name.  The database
+driver, user, password and URL are set in \texttt{mapyrus.war}, in
+files \texttt{WEB-INF/web.xml} and \texttt{META-INF/context.xml}.
+
+\vspace{10pt}
 Other values are set as properties for the JDBC driver. \\
 
 \hline
@@ -3114,6 +3126,11 @@ in the servlet initialisation parameter then it is possible to
 define the Mapyrus commands run by the servlet in a file outside of
 the web server.  It is then not necessary to redeploy
 the servlet after modifying the file.
+
+If a JNDI DataSource is setup in the web server to provide 
+database connection pooling then database connections from the
+pool are available using the \texttt{jndiname} option in
+the \texttt{dataset} command.
 
 The Mapyrus servlet throws a Java ServletException if there is an error
 in the Mapyrus commands, or an error running the Mapyrus commands.
