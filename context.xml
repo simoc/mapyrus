@@ -1,3 +1,15 @@
 <!-- $Id$ -->
 <Context>
+  <!-- Example JNDI Resource for connecting to a PostgreSQL database -->
+  <Resource name="jdbc/MYDB1" auth="Container"
+            type="javax.sql.DataSource" username="postgres" password="postgres"
+            driverClassName="org.postgresql.Driver"
+            url="jdbc:postgresql:pogo"
+            maxActive="8" maxIdle="4"/>
+  <!-- Example JNDI Resource for connecting to an Oracle database -->
+  <Resource name="jdbc/MYDB2" auth="Container"
+            type="javax.sql.DataSource" username="system" password="manager"
+            driverClassName="oracle.jdbc.OracleDriver"
+            url="jdbc:oracle:oci:@DEMO"
+            maxActive="8" maxIdle="4"/>
 </Context>
