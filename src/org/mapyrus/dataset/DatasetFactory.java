@@ -51,7 +51,7 @@ public class DatasetFactory
 
 		/*
 		 * Branch to open dataset, depending on type.
-		 * Catch all kinds of dataset openning exceptions here and return
+		 * Catch all kinds of dataset opening exceptions here and return
 		 * them all as MapyrusExceptions to avoid exposing higher level code
 		 * to lots of exception types.
 		 */		
@@ -69,6 +69,8 @@ public class DatasetFactory
 				retval = new OGRDataset(name, extras, stdin);
 			else if (type.equalsIgnoreCase("osm"))
 				retval = new OpenStreetMapDataset(name, extras, stdin);
+			else if (type.equalsIgnoreCase("countries") || type.equalsIgnoreCase("capitals"))
+				retval = new WorldMapDataset(type, extras);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET_TYPE) +
