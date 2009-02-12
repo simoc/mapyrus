@@ -43,7 +43,7 @@ public class BlendComposite implements Composite
 	 * List of available blending modes and the formulas for blending
 	 * pixel values.
 	 */
-	public static BlendComposite MULTIPLY = new BlendComposite("multiply", new Blender()
+	public static final BlendComposite MULTIPLY = new BlendComposite("multiply", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -52,7 +52,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite SCREEN = new BlendComposite("screen", new Blender()
+	public static final BlendComposite SCREEN = new BlendComposite("screen", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -61,7 +61,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite OVERLAY = new BlendComposite("overlay", new Blender()
+	public static final BlendComposite OVERLAY = new BlendComposite("overlay", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -75,7 +75,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite DARKEN = new BlendComposite("darken", new Blender()
+	public static final BlendComposite DARKEN = new BlendComposite("darken", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -86,7 +86,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite LIGHTEN = new BlendComposite("lighten", new Blender()
+	public static final BlendComposite LIGHTEN = new BlendComposite("lighten", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -97,7 +97,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite COLORDODGE = new BlendComposite("colordodge", new Blender()
+	public static final BlendComposite COLORDODGE = new BlendComposite("colordodge", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -117,7 +117,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite COLORBURN = new BlendComposite("colorburn", new Blender()
+	public static final BlendComposite COLORBURN = new BlendComposite("colorburn", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -137,7 +137,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite HARDLIGHT = new BlendComposite("hardlight", new Blender()
+	public static final BlendComposite HARDLIGHT = new BlendComposite("hardlight", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -151,7 +151,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite SOFTLIGHT = new BlendComposite("softlight", new Blender()
+	public static final BlendComposite SOFTLIGHT = new BlendComposite("softlight", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -185,7 +185,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite DIFFERENCE = new BlendComposite("difference", new Blender()
+	public static final BlendComposite DIFFERENCE = new BlendComposite("difference", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
@@ -194,7 +194,7 @@ public class BlendComposite implements Composite
 		}
 	});
 
-	public static BlendComposite EXCLUSION = new BlendComposite("exclusion", new Blender()
+	public static final BlendComposite EXCLUSION = new BlendComposite("exclusion", new Blender()
 	{
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
