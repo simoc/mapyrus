@@ -132,7 +132,7 @@ public class PDFFile
 		{
 			PDFObject kidObject = kidsArray[i];
 			if (kidObject.isReference())
-				kidObject = (PDFObject)mObjects.get(new Integer(kidObject.getReference()));
+				kidObject = (PDFObject)mObjects.get(Integer.valueOf(kidObject.getReference()));
 			PDFObject objectType = getDictionaryValue(kidObject, "/Type");
 			if (objectType.getValue().equals("/Page"))
 			{
@@ -187,7 +187,7 @@ public class PDFFile
 					 * Do not overwrite them with older values from
 					 * previous 'xref' sections.
 					 */
-					Integer key = new Integer(i + startIndex);
+					Integer key = Integer.valueOf(i + startIndex);
 					if (!objectOffsets.containsKey(key))
 						objectOffsets.put(key, objOffset);
 				}
@@ -406,7 +406,7 @@ public class PDFFile
 		{
 			PDFObject obj = boxArray[i];
 			if (obj.isReference())
-				obj = (PDFObject)mObjects.get(new Double(obj.getReference()));
+				obj = (PDFObject)mObjects.get(Integer.valueOf(obj.getReference()));
 			String s = obj.getValue();
 			retval[i] = (int)Math.round(Double.parseDouble(s));
 		}
@@ -704,7 +704,7 @@ public class PDFFile
 		PDFObject value = (PDFObject)dict.get(key);
 		if (value != null && value.isReference())
 		{
-			value = (PDFObject)mObjects.get(new Integer(value.getReference()));
+			value = (PDFObject)mObjects.get(Integer.valueOf(value.getReference()));
 		}
 		return(value);
 	}
@@ -733,7 +733,7 @@ public class PDFFile
 		}
 		else if (obj.isReference())
 		{
-			PDFObject value = (PDFObject)mObjects.get(new Integer(obj.getReference()));
+			PDFObject value = (PDFObject)mObjects.get(Integer.valueOf(obj.getReference()));
 			resolveAllReferences(value);
 			obj.setValue(value);
 		}
