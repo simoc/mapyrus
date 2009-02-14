@@ -45,7 +45,7 @@ import org.mapyrus.function.UserFunction;
  *
  * May be called repeatedly to interpret several files in the same context.
  */
-public class Interpreter
+public class Interpreter implements Cloneable
 {
 	/*
 	 * Character starting a comment on a line.
@@ -1969,13 +1969,13 @@ public class Interpreter
 				break;
 
 			case Statement.DATASET:
-				// TODO accept two arguments, with extras string then empty.
-				if (nExpressions == 3)
+				if (nExpressions == 2 || nExpressions == 3)
 				{
-					context.setDataset(mExecuteArgs[0].getStringValue(),
-						mExecuteArgs[1].getStringValue(),
-						mExecuteArgs[2].getStringValue(),
-						mStdinStream);
+					extras = "";
+					if (nExpressions > 2)
+						extras = mExecuteArgs[2].getStringValue();
+					String name = mExecuteArgs[1].getStringValue();
+					context.setDataset(mExecuteArgs[0].getStringValue(), name, extras, mStdinStream);
 				}
 				else
 				{
