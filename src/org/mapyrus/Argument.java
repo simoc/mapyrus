@@ -39,7 +39,7 @@ import java.util.StringTokenizer;
  * For example, '2 * a + 7' and 'prefix["DE"] . "11823"' both contain three
  * arguments.
  */
-public class Argument implements Comparable<Argument>
+public class Argument implements Comparable<Argument>, Cloneable
 {
 	public static final int NUMERIC = 0;
 	public static final int STRING = 1;
