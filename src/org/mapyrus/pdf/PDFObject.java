@@ -255,7 +255,7 @@ public class PDFObject
 			 * Add reference to object and then add the referenced object.
 			 */
 			sb.append(objectNumber + retval.size()).append(" 0 R\r\n");
-			PDFObject referencedObject = (PDFObject)pdfObjects.get(new Integer(mReference));
+			PDFObject referencedObject = (PDFObject)pdfObjects.get(Integer.valueOf(mReference));
 			ArrayList<StringBuffer> referencedObjects = referencedObject.toPDFString(objectNumber + retval.size(),
 				true, true, pdfObjects, pdfFile, filename);
 			retval.addAll(referencedObjects);
@@ -310,12 +310,12 @@ public class PDFObject
 	{
 		PDFObject value = (PDFObject)mDictionary.get("/Length");
 		if (value.isReference())
-			value = (PDFObject)pdfObjects.get(new Integer(value.mReference));
+			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.mReference));
 		int streamLength = Integer.parseInt(value.mValue);
 
 		PDFObject filter = (PDFObject)mDictionary.get("/Filter");
 		if (value.isReference())
-			value = (PDFObject)pdfObjects.get(new Integer(value.mReference));
+			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.mReference));
 
 		byte []buf = new byte[streamLength];
 		pdfFile.seek(mStreamOffset);
@@ -339,7 +339,7 @@ public class PDFObject
 				{
 					filter = filterArray[i];
 					if (filter.isReference())
-						filter = (PDFObject)pdfObjects.get(new Integer(filter.getReference()));
+						filter = (PDFObject)pdfObjects.get(Integer.valueOf(filter.getReference()));
 					filterNames[i] = filter.getValue();
 				}
 			}
