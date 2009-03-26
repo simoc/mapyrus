@@ -45,10 +45,10 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SVGFile extends DefaultHandler
 {
-	private Rectangle2D mBoundingBox;
-	private StringBuffer mContents;
-	private StringBuffer mSVGAttributes;
-	private int mSVGTagCount;
+	private Rectangle2D m_boundingBox;
+	private StringBuffer m_contents;
+	private StringBuffer m_SVGAttributes;
+	private int m_SVGTagCount;
 
 	/**
 	 * Open PostScript file and parse header information.
@@ -94,13 +94,13 @@ public class SVGFile extends DefaultHandler
 	 */
 	public Rectangle2D getBoundingBox()
 	{
-		return(mBoundingBox);
+		return(m_boundingBox);
 	}
 
 	public void startDocument()
 	{
-		mContents = new StringBuffer(1024);
-		mSVGAttributes = new StringBuffer(256);
+		m_contents = new StringBuffer(1024);
+		m_SVGAttributes = new StringBuffer(256);
 	}
 
 	public InputSource resolveEntity(String publicId, String systemId)
@@ -148,15 +148,15 @@ public class SVGFile extends DefaultHandler
 		String qName, Attributes attributes)
 	{
 		if (qName.equals("svg"))
-			mSVGTagCount++;
-		if (qName.equals("svg") && mSVGTagCount == 1)
+			m_SVGTagCount++;
+		if (qName.equals("svg") && m_SVGTagCount == 1)
 		{
 			/*
 			 * Parse width and height of SVG file from outermost SVG tag.
 			 */
 			String width = attributes.getValue("width");
 			String height = attributes.getValue("height");
-			mBoundingBox = new Rectangle2D.Double(0, 0,
+			m_boundingBox = new Rectangle2D.Double(0, 0,
 				parseSize(width), parseSize(height));
 
 			/*
@@ -167,27 +167,27 @@ public class SVGFile extends DefaultHandler
 				if ((!attributes.getQName(i).equals("width")) &&
 					(!attributes.getQName(i).equals("height")))
 				{
-					mSVGAttributes.append(attributes.getQName(i));
-					mSVGAttributes.append("=\"");
-					mSVGAttributes.append(attributes.getValue(i));
-					mSVGAttributes.append("\"");
-					mSVGAttributes.append(Constants.LINE_SEPARATOR);
+					m_SVGAttributes.append(attributes.getQName(i));
+					m_SVGAttributes.append("=\"");
+					m_SVGAttributes.append(attributes.getValue(i));
+					m_SVGAttributes.append("\"");
+					m_SVGAttributes.append(Constants.LINE_SEPARATOR);
 				}
 			}
 		}
 		else
 		{
-			mContents.append("<").append(qName).append(" ");
+			m_contents.append("<").append(qName).append(" ");
 			for (int i = 0; i < attributes.getLength(); i++)
 			{
-				mContents.append(attributes.getQName(i));
-				mContents.append("=\"");
-				mContents.append(attributes.getValue(i));
-				mContents.append("\"");
-				mContents.append(Constants.LINE_SEPARATOR);
+				m_contents.append(attributes.getQName(i));
+				m_contents.append("=\"");
+				m_contents.append(attributes.getValue(i));
+				m_contents.append("\"");
+				m_contents.append(Constants.LINE_SEPARATOR);
 				
 			}
-			mContents.append(">");
+			m_contents.append(">");
 		}
 	}
 
@@ -195,13 +195,13 @@ public class SVGFile extends DefaultHandler
 	{
 		if (qName.equals("svg"))
 		{
-			mSVGTagCount--;	
-			if (mSVGTagCount > 0)
-				mContents.append("</svg>");
+			m_SVGTagCount--;	
+			if (m_SVGTagCount > 0)
+				m_contents.append("</svg>");
 		}
 		else
 		{
-			mContents.append("</").append(qName).append(">");
+			m_contents.append("</").append(qName).append(">");
 		}
 	}
 
@@ -215,11 +215,11 @@ public class SVGFile extends DefaultHandler
 					/*
 					 * Give character codes for special XML characters.
 					 */
-				mContents.append("&#").append(Integer.toString(c)).append(";");
+				m_contents.append("&#").append(Integer.toString(c)).append(";");
 			}
 			else
 			{
-				mContents.append(c);
+				m_contents.append(c);
 			}
 		}
 	}
@@ -230,7 +230,7 @@ public class SVGFile extends DefaultHandler
 	 */	
 	public String toString()
 	{
-		return(mContents.toString());
+		return(m_contents.toString());
 	}
 
 	/**
@@ -239,6 +239,6 @@ public class SVGFile extends DefaultHandler
 	 */	
 	public String getSVGAttributes()
 	{
-		return(mSVGAttributes.toString());
+		return(m_SVGAttributes.toString());
 	}
 }
