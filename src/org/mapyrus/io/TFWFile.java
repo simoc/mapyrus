@@ -37,7 +37,7 @@ import org.mapyrus.MapyrusMessages;
  */
 public class TFWFile implements GeoImageBoundingBox
 {
-	Rectangle2D.Double mBounds;
+	private Rectangle2D.Double m_bounds;
 
 	/**
 	 * Read tfw file for an image.
@@ -118,7 +118,7 @@ public class TFWFile implements GeoImageBoundingBox
 
 			int imageWidth = image.getWidth();
 			int imageHeight = image.getHeight();
-			mBounds = new Rectangle2D.Double(xMin, yMax - imageHeight * pixelHeight,
+			m_bounds = new Rectangle2D.Double(xMin, yMax - imageHeight * pixelHeight,
 				imageWidth * pixelWidth, imageHeight * pixelHeight);
 		}
 		finally
@@ -140,6 +140,6 @@ public class TFWFile implements GeoImageBoundingBox
 	 */
 	public Rectangle2D getBounds()
 	{
-		return(mBounds);
+		return(m_bounds);
 	}
 }

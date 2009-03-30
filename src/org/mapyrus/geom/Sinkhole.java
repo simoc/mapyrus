@@ -51,11 +51,11 @@ public class Sinkhole
 	 * Single bitmap to draw polygon into and pixel buffers to use for
 	 * shrinking the polygon one pixel at a time.
 	 */
-	private static byte []mPixelBuffer1 = new byte[BITMAP_SIZE * BITMAP_SIZE];
-	private static byte []mPixelBuffer2 = new byte[BITMAP_SIZE * BITMAP_SIZE];
-	private static BufferedImage mBufferedImage = new BufferedImage(BITMAP_SIZE, BITMAP_SIZE,
+	private static byte []m_pixelBuffer1 = new byte[BITMAP_SIZE * BITMAP_SIZE];
+	private static byte []m_pixelBuffer2 = new byte[BITMAP_SIZE * BITMAP_SIZE];
+	private static BufferedImage m_bufferedImage = new BufferedImage(BITMAP_SIZE, BITMAP_SIZE,
 		BufferedImage.TYPE_BYTE_BINARY);
-	private static Graphics2D mG2 = (Graphics2D)mBufferedImage.getGraphics();
+	private static Graphics2D m_g2 = (Graphics2D)m_bufferedImage.getGraphics();
 
 	/*
 	 * Nth last pixel to choose.  Last pixel can be at the end of a long
@@ -67,8 +67,8 @@ public class Sinkhole
 	/*
 	 * Buffer of last cleared pixels.
 	 */
-	private static int []mLastClearedX = new int[NTH_LAST_PIXEL];
-	private static int []mLastClearedY = new int[NTH_LAST_PIXEL];
+	private static int []m_lastClearedX = new int[NTH_LAST_PIXEL];
+	private static int []m_lastClearedY = new int[NTH_LAST_PIXEL];
 		
 	/**
 	 * Calculate a sinkhole point inside a polygon.
@@ -96,12 +96,12 @@ public class Sinkhole
 		/*
 		 * Clear image and draw shape into it, filling the entire image.
 		 */
-		mG2.setTransform(Constants.IDENTITY_MATRIX);
-		mG2.setColor(Color.BLACK);
-		mG2.fillRect(0, 0, BITMAP_SIZE, BITMAP_SIZE);
-		mG2.setColor(Color.WHITE);
-		mG2.setTransform(affine);
-		mG2.fill(s);
+		m_g2.setTransform(Constants.IDENTITY_MATRIX);
+		m_g2.setColor(Color.BLACK);
+		m_g2.fillRect(0, 0, BITMAP_SIZE, BITMAP_SIZE);
+		m_g2.setColor(Color.WHITE);
+		m_g2.setTransform(affine);
+		m_g2.fill(s);
 
 		/*
 		 * Create a 0/1 bitmap from the image.
@@ -110,11 +110,11 @@ public class Sinkhole
 		{
 			for (x = 0; x < BITMAP_SIZE; x++)
 			{
-				int pixval = (mBufferedImage.getRGB(x, y) & 0xffffff);
+				int pixval = (m_bufferedImage.getRGB(x, y) & 0xffffff);
 				if (pixval != 0)
-					mPixelBuffer1[y * BITMAP_SIZE + x] = 1;
+					m_pixelBuffer1[y * BITMAP_SIZE + x] = 1;
 				else
-					mPixelBuffer1[y * BITMAP_SIZE + x] = 0;
+					m_pixelBuffer1[y * BITMAP_SIZE + x] = 0;
 			}
 		}
 
@@ -141,19 +141,19 @@ public class Sinkhole
 				for (x = lastXMin; x <= lastXMax; x++)
 				{
 					int index = y * BITMAP_SIZE + x;
-					if (mPixelBuffer1[index] != 0)
+					if (m_pixelBuffer1[index] != 0)
 					{
 						/*
 						 * Count how many neighbouring pixels are set.
 						 */
 						int nNeighboursSet = 0;
-						if (y > lastYMin && mPixelBuffer1[index - BITMAP_SIZE] != 0)
+						if (y > lastYMin && m_pixelBuffer1[index - BITMAP_SIZE] != 0)
 							nNeighboursSet++;
-						if (y < lastYMax && mPixelBuffer1[index + BITMAP_SIZE] != 0)
+						if (y < lastYMax && m_pixelBuffer1[index + BITMAP_SIZE] != 0)
 							nNeighboursSet++;
-						if (x > lastXMin && mPixelBuffer1[index - 1] != 0)
+						if (x > lastXMin && m_pixelBuffer1[index - 1] != 0)
 							nNeighboursSet++;
-						if (x < lastXMax && mPixelBuffer1[index + 1] != 0)
+						if (x < lastXMax && m_pixelBuffer1[index + 1] != 0)
 							nNeighboursSet++;
 
 						/*
@@ -162,7 +162,7 @@ public class Sinkhole
 						 */
 						if (nNeighboursSet == 4)
 						{
-							mPixelBuffer2[index] = 1;
+							m_pixelBuffer2[index] = 1;
 							nPixelsSet++;
 
 							/*
@@ -181,7 +181,7 @@ public class Sinkhole
 						}
 						else
 						{
-							mPixelBuffer2[index] = 0;
+							m_pixelBuffer2[index] = 0;
 							nPixelsCleared++;
 
 							/*
@@ -192,13 +192,13 @@ public class Sinkhole
 							if (lastClearedIndex == NTH_LAST_PIXEL)
 								lastClearedIndex = 0;
 
-							mLastClearedX[lastClearedIndex] = x;
-							mLastClearedY[lastClearedIndex] = y;
+							m_lastClearedX[lastClearedIndex] = x;
+							m_lastClearedY[lastClearedIndex] = y;
 						}
 					}
 					else
 					{
-						mPixelBuffer2[index] = 0;
+						m_pixelBuffer2[index] = 0;
 					}
 				}
 			}
@@ -207,7 +207,7 @@ public class Sinkhole
 			 * Move second buffer to first buffer and repeat process if some
 			 * pixels are still set.
 			 */
-			System.arraycopy(mPixelBuffer2, 0, mPixelBuffer1, 0, mPixelBuffer2.length);
+			System.arraycopy(m_pixelBuffer2, 0, m_pixelBuffer1, 0, m_pixelBuffer2.length);
 
 			/*
 			 * Shrink area of bitmap to loop through for next iteration.
@@ -245,8 +245,8 @@ public class Sinkhole
 					lastClearedIndex = 0;
 			}
 
-			retval = new Point2D.Double(mLastClearedX[lastClearedIndex],
-				mLastClearedY[lastClearedIndex]);
+			retval = new Point2D.Double(m_lastClearedX[lastClearedIndex],
+				m_lastClearedY[lastClearedIndex]);
 			try
 			{
 				affine.inverseTransform(retval, retval);

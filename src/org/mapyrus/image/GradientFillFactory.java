@@ -57,18 +57,18 @@ public class GradientFillFactory
 	/*
 	 * Last image returned and the colors it contains.
 	 */
-	private static BufferedImage mLastImage = null;
-	private static Color mLastC1 = Color.BLACK;
-	private static Color mLastC2 = Color.BLACK;
-	private static Color mLastC3 = Color.BLACK;
-	private static Color mLastC4 = Color.BLACK;
-	private static Color mLastC5 = Color.BLACK;
+	private static BufferedImage m_lastImage = null;
+	private static Color m_lastC1 = Color.BLACK;
+	private static Color m_lastC2 = Color.BLACK;
+	private static Color m_lastC3 = Color.BLACK;
+	private static Color m_lastC4 = Color.BLACK;
+	private static Color m_lastC5 = Color.BLACK;
 
-	private static short c1Weightings[];
-	private static short c2Weightings[];
-	private static short c3Weightings[];
-	private static short c4Weightings[];
-	private static short c5Weightings[];
+	private static short m_c1Weightings[];
+	private static short m_c2Weightings[];
+	private static short m_c3Weightings[];
+	private static short m_c4Weightings[];
+	private static short m_c5Weightings[];
 
 	/*
 	 * Precalculate weighting of colors in each pixel in the image
@@ -76,11 +76,11 @@ public class GradientFillFactory
 	 */
 	static
 	{
-		c1Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
-		c2Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
-		c3Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
-		c4Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
-		c5Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
+		m_c1Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
+		m_c2Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
+		m_c3Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
+		m_c4Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
+		m_c5Weightings = new short[IMAGE_SIZE * IMAGE_SIZE];
 
 		int maxDistance = IMAGE_SIZE * IMAGE_SIZE * 2;
 		for (int y = 0; y < IMAGE_SIZE; y++)
@@ -105,11 +105,11 @@ public class GradientFillFactory
 				 * Set weighting so that color at each pixel is most influenced
 				 * by the closest fixed colors.
 				 */
-				c1Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c1Distance / maxDistance));
-				c2Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c2Distance / maxDistance));
-				c3Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c3Distance / maxDistance));
-				c4Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c4Distance / maxDistance));
-				c5Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c5Distance / maxDistance));
+				m_c1Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c1Distance / maxDistance));
+				m_c2Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c2Distance / maxDistance));
+				m_c3Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c3Distance / maxDistance));
+				m_c4Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c4Distance / maxDistance));
+				m_c5Weightings[index] = (short)Math.round(Short.MAX_VALUE * power8(1 - (double)c5Distance / maxDistance));
 			}
 		}
 	}
@@ -143,11 +143,11 @@ public class GradientFillFactory
 		 * If colors are the same as the last call then we
 		 * can return the same image again.
 		 */
-		if (c1.equals(mLastC1) && c2.equals(mLastC2) &&
-			c3.equals(mLastC3) && c4.equals(mLastC4) &&
-			((c5 == null && mLastC5 == null) || (c5 != null && mLastC5 != null && c5.equals(mLastC5))))
+		if (c1.equals(m_lastC1) && c2.equals(m_lastC2) &&
+			c3.equals(m_lastC3) && c4.equals(m_lastC4) &&
+			((c5 == null && m_lastC5 == null) || (c5 != null && m_lastC5 != null && c5.equals(m_lastC5))))
 		{
-			retval = mLastImage;
+			retval = m_lastImage;
 		}
 		else
 		{
@@ -161,11 +161,11 @@ public class GradientFillFactory
 				for (int x = 0; x < IMAGE_SIZE; x++)
 				{
 					int index = y * IMAGE_SIZE + x;
-					int c1w = c1Weightings[index];
-					int c2w = c2Weightings[index];
-					int c3w = c3Weightings[index];
-					int c4w = c4Weightings[index];
-					int c5w = c5Weightings[index];
+					int c1w = m_c1Weightings[index];
+					int c2w = m_c2Weightings[index];
+					int c3w = m_c3Weightings[index];
+					int c4w = m_c4Weightings[index];
+					int c5w = m_c5Weightings[index];
 
 					float sumWeightings = c1w + c2w + c3w + c4w;
 					if (c5 != null)
@@ -210,14 +210,14 @@ public class GradientFillFactory
 			 * Remember image being returned so that if caller asks
 			 * for the same image again next time we can return it again.
 			 */
-			mLastImage = retval;
-			mLastC1 = c1;
-			mLastC2 = c2;
-			mLastC3 = c3;
-			mLastC4 = c4;
-			mLastC5 = c5;
+			m_lastImage = retval;
+			m_lastC1 = c1;
+			m_lastC2 = c2;
+			m_lastC3 = c3;
+			m_lastC4 = c4;
+			m_lastC5 = c5;
 		}
-		return(mLastImage);
+		return(m_lastImage);
 	}
 
 	public static void main(String []args)

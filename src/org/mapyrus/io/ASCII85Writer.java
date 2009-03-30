@@ -44,26 +44,26 @@ public class ASCII85Writer
 	/*
 	 * Bytes buffered but yet to be encoded.
 	 */
-	private int []mUnencodedBytes;
-	private int mNUnencodedBytes;
+	private int []m_unencodedBytes;
+	private int m_nUnencodedBytes;
 
 	/*
 	 * Encoded bytes ready to be written to file.
 	 */
-	private char []mEncodedChars;
+	private char []m_encodedChars;
 
 	/*
 	 * File to write bytes to and number of bytes written to current line of file. 
 	 */
-	private Writer mWriter;
-	private int mNCharsOnLine;
+	private Writer m_writer;
+	private int m_nCharsOnLine;
 
 	/*
 	 * Deflater to ZLIB compress data before converting it to ASCII85 stream.
 	 */
-	private Deflater mDeflater;
-	private byte mDeflateBuffer[];
-	private int mNBytesBuffered;
+	private Deflater m_deflater;
+	private byte m_deflateBuffer[];
+	private int m_nBytesBuffered;
 
 	/**
 	 * Create new ASCII85 filtered output stream.
@@ -72,15 +72,15 @@ public class ASCII85Writer
 	 */
 	public ASCII85Writer(Writer writer, boolean deflate) throws IOException
 	{
-		mUnencodedBytes = new int[4];
-		mNUnencodedBytes = 0;
-		mEncodedChars = new char[5];
-		mWriter = writer;
+		m_unencodedBytes = new int[4];
+		m_nUnencodedBytes = 0;
+		m_encodedChars = new char[5];
+		m_writer = writer;
 		if (deflate)
 		{
-			mDeflater = new Deflater();
-			mDeflateBuffer = new byte[512];
-			mNBytesBuffered = 0;
+			m_deflater = new Deflater();
+			m_deflateBuffer = new byte[512];
+			m_nBytesBuffered = 0;
 		}
 
 		/*
@@ -88,8 +88,8 @@ public class ASCII85Writer
 		 * commonly strip all lines beginning with a '%' comment character
 		 * do not strip any of our ASCII85 characters. 
 		 */
-		mWriter.write(' ');
-		mNCharsOnLine = 1;
+		m_writer.write(' ');
+		m_nCharsOnLine = 1;
 	}
 
 	/**
@@ -104,26 +104,26 @@ public class ASCII85Writer
 		 * to avoid problems with sign bit of integer.
 		 */
 		long l;
-		l = ((long)mUnencodedBytes[0] << 24);
-		l |= ((long)mUnencodedBytes[1] << 16);
-		l |= ((long)mUnencodedBytes[2] << 8);
-		l |= ((long)mUnencodedBytes[3]);
+		l = ((long)m_unencodedBytes[0] << 24);
+		l |= ((long)m_unencodedBytes[1] << 16);
+		l |= ((long)m_unencodedBytes[2] << 8);
+		l |= ((long)m_unencodedBytes[3]);
 
 		if ((!isFinalSet) && l == 0)
 		{
-			mWriter.write('z');
-			mNCharsOnLine++;
+			m_writer.write('z');
+			m_nCharsOnLine++;
 		}
 		else
 		{
-			mEncodedChars[4] = (char)((l % 85) + '!');
+			m_encodedChars[4] = (char)((l % 85) + '!');
 			l /= 85;
-			mEncodedChars[3] = (char)((l % 85) + '!');
+			m_encodedChars[3] = (char)((l % 85) + '!');
 			l /= 85;
-			mEncodedChars[2] = (char)((l % 85) + '!');
+			m_encodedChars[2] = (char)((l % 85) + '!');
 			l /= 85;
-			mEncodedChars[1] = (char)((l % 85) + '!');
-			mEncodedChars[0] = (char)((l / 85) + '!');
+			m_encodedChars[1] = (char)((l % 85) + '!');
+			m_encodedChars[0] = (char)((l / 85) + '!');
 
 			/*
 			 * Length of final set of encoded bytes is one byte
@@ -131,12 +131,12 @@ public class ASCII85Writer
 			 */
 			if (isFinalSet)
 			{
-				mWriter.write(mEncodedChars, 0, mNUnencodedBytes + 1);
+				m_writer.write(m_encodedChars, 0, m_nUnencodedBytes + 1);
 			}
 			else
 			{
-				mWriter.write(mEncodedChars);
-				mNCharsOnLine += mEncodedChars.length;
+				m_writer.write(m_encodedChars);
+				m_nCharsOnLine += m_encodedChars.length;
 
 			}
 		}
@@ -144,10 +144,10 @@ public class ASCII85Writer
 		/*
 		 * Break lines so that they don't become too long.
 		 */
-		if (mNCharsOnLine > 72)
+		if (m_nCharsOnLine > 72)
 		{
-			mWriter.write(Constants.LINE_SEPARATOR + " ");
-			mNCharsOnLine = 0;
+			m_writer.write(Constants.LINE_SEPARATOR + " ");
+			m_nCharsOnLine = 0;
 		}
 	}
 
@@ -162,11 +162,11 @@ public class ASCII85Writer
 		 * them to a 5 character ASCII string and write this to underlying
 		 * stream.
 		 */
-		mUnencodedBytes[mNUnencodedBytes++] = b;
-		if (mNUnencodedBytes == mUnencodedBytes.length)
+		m_unencodedBytes[m_nUnencodedBytes++] = b;
+		if (m_nUnencodedBytes == m_unencodedBytes.length)
 		{
 			writeEncoded(false);
-			mNUnencodedBytes = 0;
+			m_nUnencodedBytes = 0;
 		}
 	}
 
@@ -176,7 +176,7 @@ public class ASCII85Writer
 	 */
 	public void write(int b) throws IOException
 	{
-		if (mDeflater != null)
+		if (m_deflater != null)
 		{
 			/*
 			 * Fill buffer with bytes for Deflate compression.
@@ -185,27 +185,27 @@ public class ASCII85Writer
 			 */
 			if (b >= 128)
 				b = b - 256;
-			mDeflateBuffer[mNBytesBuffered++] = (byte)b;
-			if (mNBytesBuffered == mDeflateBuffer.length)
+			m_deflateBuffer[m_nBytesBuffered++] = (byte)b;
+			if (m_nBytesBuffered == m_deflateBuffer.length)
 			{
-				mDeflater.setInput(mDeflateBuffer);
+				m_deflater.setInput(m_deflateBuffer);
 
 				/*
 				 * Java Deflate Compression appears to hold reference to array
 				 * of bytes to compress so begin a new buffer to avoid
 				 * overwriting it.
 				 */
-				mDeflateBuffer = new byte[mDeflateBuffer.length];
-				mNBytesBuffered = 0;
+				m_deflateBuffer = new byte[m_deflateBuffer.length];
+				m_nBytesBuffered = 0;
 
 				/*
 				 * ASCII85 encode any bytes that have finished being compressed.
 				 */
 				int nBytes;
-				while ((nBytes = mDeflater.deflate(mDeflateBuffer)) > 0)
+				while ((nBytes = m_deflater.deflate(m_deflateBuffer)) > 0)
 				{
 					for (int i = 0; i < nBytes; i++)
-						save(mDeflateBuffer[i] & 0xff);
+						save(m_deflateBuffer[i] & 0xff);
 				}
 			}
 		}
@@ -220,31 +220,31 @@ public class ASCII85Writer
 	 */
 	public void close() throws IOException
 	{
-		if (mDeflater != null)
+		if (m_deflater != null)
 		{
 			/*
 			 * Compress and write out any remaining bytes.
 			 */
-			if (mNBytesBuffered > 0)
-				mDeflater.setInput(mDeflateBuffer, 0, mNBytesBuffered);
-			mDeflater.finish();
+			if (m_nBytesBuffered > 0)
+				m_deflater.setInput(m_deflateBuffer, 0, m_nBytesBuffered);
+			m_deflater.finish();
 
-			mDeflateBuffer = new byte[mDeflateBuffer.length];
-			while (!mDeflater.finished())
+			m_deflateBuffer = new byte[m_deflateBuffer.length];
+			while (!m_deflater.finished())
 			{
-				int nBytes = mDeflater.deflate(mDeflateBuffer);
+				int nBytes = m_deflater.deflate(m_deflateBuffer);
 				for (int i = 0; i < nBytes; i++)
-					save(mDeflateBuffer[i] & 0xff);
+					save(m_deflateBuffer[i] & 0xff);
 			}
 		}
 
 		/*
 		 * Complete any group of 4 bytes we were in the middle of writing.
 		 */
-		if (mNUnencodedBytes > 0)
+		if (m_nUnencodedBytes > 0)
 		{
-			for (int i = mNUnencodedBytes; i < mUnencodedBytes.length; i++)
-				mUnencodedBytes[i] = 0;
+			for (int i = m_nUnencodedBytes; i < m_unencodedBytes.length; i++)
+				m_unencodedBytes[i] = 0;
 			writeEncoded(true);
 		}
 	}

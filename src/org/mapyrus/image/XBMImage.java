@@ -37,7 +37,7 @@ import org.mapyrus.MapyrusException;
  */
 public class XBMImage
 {
-	private BufferedImage mImage;
+	private BufferedImage m_image;
 
 	/**
 	 * Read XBM image from file.
@@ -94,13 +94,13 @@ public class XBMImage
 					catch (NumberFormatException e)
 					{
 					}
-					if (imageWidth > 0 && imageHeight > 0 && mImage == null)
+					if (imageWidth > 0 && imageHeight > 0 && m_image == null)
 					{
-						mImage = new BufferedImage(imageWidth, imageHeight,
+						m_image = new BufferedImage(imageWidth, imageHeight,
 							BufferedImage.TYPE_INT_ARGB);
 					}
 				}
-				else if (mImage != null)
+				else if (m_image != null)
 				{
 					StringTokenizer st = new StringTokenizer(line, " \t,{};");
 					while (st.hasMoreTokens())
@@ -116,7 +116,7 @@ public class XBMImage
 							for (int i = 0; i < 8; i++)
 							{
 								if (x + i < imageWidth && ((bits >> i) & 1) != 0)
-									mImage.setRGB(x + i, y, rgb);
+									m_image.setRGB(x + i, y, rgb);
 							}
 
 							/*
@@ -151,6 +151,6 @@ public class XBMImage
 	 */
 	public BufferedImage getBufferedImage()
 	{
-		return(mImage);
+		return(m_image);
 	}
 }

@@ -47,7 +47,7 @@ import org.mapyrus.MapyrusMessages;
  */
 public class ImageClippingFile
 {
-	GeometricPath mPath;
+	private GeometricPath m_path;
 
 	/**
 	 * Read optional clipping polygon for an image.
@@ -68,7 +68,7 @@ public class ImageClippingFile
 			f = new FileOrURL(filename);
 
 			reader = f.getReader();
-			mPath = new GeometricPath();
+			m_path = new GeometricPath();
 
 			while ((line = reader.readLine()) != null)
 			{
@@ -94,13 +94,13 @@ public class ImageClippingFile
 							ctm.transform(pt, 0, pt, 0, 1);
 
 						if (nPts++ == 0)
-							mPath.moveTo((float)pt[0], (float)pt[1], 0);
+							m_path.moveTo((float)pt[0], (float)pt[1], 0);
 						else
-							mPath.lineTo((float)pt[0], (float)pt[1]);
+							m_path.lineTo((float)pt[0], (float)pt[1]);
 					}
 				}
 			}
-			mPath.closePath();
+			m_path.closePath();
 		}
 		finally
 		{
@@ -121,6 +121,6 @@ public class ImageClippingFile
 	 */
 	public GeometricPath getClippingPolygon()
 	{
-		return(mPath);
+		return(m_path);
 	}
 }

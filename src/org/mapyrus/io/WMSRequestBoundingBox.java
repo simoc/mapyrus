@@ -35,7 +35,7 @@ import org.mapyrus.MapyrusMessages;
  */
 public class WMSRequestBoundingBox implements GeoImageBoundingBox
 {
-	Rectangle2D.Double mBounds;
+	private Rectangle2D.Double m_bounds;
 
 	/**
 	 * Create geo-referenced image from WMS request.
@@ -75,7 +75,7 @@ public class WMSRequestBoundingBox implements GeoImageBoundingBox
 						x2 = swap;
 					}
 
-					mBounds = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
+					m_bounds = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
 				}
 				catch (NumberFormatException e)
 				{
@@ -84,7 +84,7 @@ public class WMSRequestBoundingBox implements GeoImageBoundingBox
 			}
 		}
 
-		if (mBounds == null)
+		if (m_bounds == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WMS_REQUEST) + ": " + url);
 	}
 
@@ -94,6 +94,6 @@ public class WMSRequestBoundingBox implements GeoImageBoundingBox
 	 */
 	public Rectangle2D getBounds()
 	{
-		return(mBounds);
+		return(m_bounds);
 	}
 }

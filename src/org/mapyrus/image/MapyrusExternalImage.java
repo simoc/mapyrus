@@ -41,9 +41,9 @@ import org.mapyrus.io.GeoImageBoundingBox;
  */
 public class MapyrusExternalImage implements GeoImageBoundingBox
 {
-	private BufferedImage mImage;
-	private Rectangle2D mBounds;
-	private HashMap<String, Color> mLegendKeys;
+	private BufferedImage m_image;
+	private Rectangle2D m_bounds;
+	private HashMap<String, Color> m_legendKeys;
 
 	public MapyrusExternalImage(String className, String filename, String extras) throws MapyrusException
 	{
@@ -63,17 +63,17 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 			 */
 			methodName = "read";
 			Method readMethod = clazz.getMethod(methodName);
-			mImage = (BufferedImage)readMethod.invoke(imageReader);
+			m_image = (BufferedImage)readMethod.invoke(imageReader);
 
 			methodName = "getBounds";
 			Method getBoundsMethod = clazz.getMethod(methodName);
-			mBounds = (Rectangle2D)getBoundsMethod.invoke(imageReader);
+			m_bounds = (Rectangle2D)getBoundsMethod.invoke(imageReader);
 
 			try
 			{
 				methodName = "getLegendKeys";
 				Method getLegendKeysMethod = clazz.getMethod(methodName);
-				mLegendKeys = (HashMap)getLegendKeysMethod.invoke(imageReader);
+				m_legendKeys = (HashMap)getLegendKeysMethod.invoke(imageReader);
 			}
 			catch (NoSuchMethodException e)
 			{
@@ -123,7 +123,7 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 	 */
 	public BufferedImage read()
 	{
-		return(mImage);
+		return(m_image);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 	 */
 	public Rectangle2D getBounds()
 	{
-		return(mBounds);
+		return(m_bounds);
 	}
 
 	/**
@@ -141,6 +141,6 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 	 */
 	public HashMap<String, Color> getLegendKeys()
 	{
-		return(mLegendKeys);
+		return(m_legendKeys);
 	}
 }

@@ -34,12 +34,12 @@ public class LineEquation
 	/*
 	 * Equation of line in form: ax + by + c = 0.
 	 */
-	private double mA, mB, mC;
+	private double m_A, m_B, m_C;
 
 	/*
 	 * Two points given to define line.
 	 */
-	private double mX1, mX2, mY1, mY2;
+	private double m_X1, m_X2, m_Y1, m_Y2;
 
 	/**
 	 * Create new line equation from two points on line.
@@ -50,14 +50,14 @@ public class LineEquation
 	 */
 	public LineEquation(double x1, double y1, double x2, double y2)
 	{
-		mA = y2 - y1;
-		mB = x1 - x2;
-		mC = x2 * y1 - x1 * y2;
+		m_A = y2 - y1;
+		m_B = x1 - x2;
+		m_C = x2 * y1 - x1 * y2;
 
-		mX1 = x1;
-		mY1 = y1;
-		mX2 = x2;
-		mY2 = y2;
+		m_X1 = x1;
+		m_Y1 = y1;
+		m_X2 = x2;
+		m_Y2 = y2;
 	}
 
 	/**
@@ -67,12 +67,12 @@ public class LineEquation
 	 */
 	public LineEquation createParallel(double parallelDistance)
 	{
-		double xDiff = mX2 - mX1;
-		double yDiff = mY2 - mY1;
+		double xDiff = m_X2 - m_X1;
+		double yDiff = m_Y2 - m_Y1;
 		double theta = Math.atan2(yDiff, xDiff);
 		theta -= Math.PI / 2;
-		double x1 = mX1 + Math.cos(theta) * parallelDistance;
-		double y1 = mY1 + Math.sin(theta) * parallelDistance;
+		double x1 = m_X1 + Math.cos(theta) * parallelDistance;
+		double y1 = m_Y1 + Math.sin(theta) * parallelDistance;
 
 		LineEquation retval = new LineEquation(x1, y1, x1 + xDiff, y1 + yDiff);
 		return(retval);
@@ -84,7 +84,7 @@ public class LineEquation
 	 */
 	public double getAngle()
 	{
-		double retval = Math.atan2(mY2 - mY1, mX2 - mX1);
+		double retval = Math.atan2(m_Y2 - m_Y1, m_X2 - m_X1);
 		return(retval);
 	}
 
@@ -100,25 +100,25 @@ public class LineEquation
 	{
 		boolean retval = true;
 
-		if (eq.mX1 <= eq.mX2)
+		if (eq.m_X1 <= eq.m_X2)
 		{
-			if (x < eq.mX1 || x > eq.mX2)
+			if (x < eq.m_X1 || x > eq.m_X2)
 				retval = false;
 		}
 		else
 		{
-			if (x > eq.mX1 || x < eq.mX2)
+			if (x > eq.m_X1 || x < eq.m_X2)
 				retval = false;
 		}
 
-		if (eq.mY1 <= eq.mY2)
+		if (eq.m_Y1 <= eq.m_Y2)
 		{
-			if (y < eq.mY1 || y > eq.mY2)
+			if (y < eq.m_Y1 || y > eq.m_Y2)
 				retval = false;
 		}
 		else
 		{
-			if (y > eq.mY1 || y < eq.mY2)
+			if (y > eq.m_Y1 || y < eq.m_Y2)
 				retval = false;
 		}
 
@@ -131,7 +131,7 @@ public class LineEquation
 	 */
 	public Point2D.Double getStartPoint()
 	{
-		Point2D.Double retval = new Point2D.Double(mX1, mY1);
+		Point2D.Double retval = new Point2D.Double(m_X1, m_Y1);
 		return(retval);
 	}
 
@@ -141,7 +141,7 @@ public class LineEquation
 	 */
 	public Point2D.Double getEndPoint()
 	{
-		Point2D.Double retval = new Point2D.Double(mX2, mY2);
+		Point2D.Double retval = new Point2D.Double(m_X2, m_Y2);
 		return(retval);
 	}
 
@@ -155,15 +155,15 @@ public class LineEquation
 	public Point2D.Double intersect(LineEquation eq2, boolean betweenPoints)
 	{
 		Point2D.Double retval;
-		double determinant = this.mA * eq2.mB - eq2.mA * this.mB;
+		double determinant = this.m_A * eq2.m_B - eq2.m_A * this.m_B;
 		if (NumericalAnalysis.equals(determinant, 0))
 		{
 			retval = null;
 		}
 		else
 		{
-			double x = (this.mB * eq2.mC - eq2.mB * this.mC) / determinant;
-			double y = -(this.mA * eq2.mC - eq2.mA * this.mC) / determinant;
+			double x = (this.m_B * eq2.m_C - eq2.m_B * this.m_C) / determinant;
+			double y = -(this.m_A * eq2.m_C - eq2.m_A * this.m_C) / determinant;
 			retval = new Point2D.Double(x, y);
 
 			if (betweenPoints)
@@ -187,7 +187,7 @@ public class LineEquation
 	 */
 	public String toString()
 	{
-		return(mA + "x + " + mB + "y + " + mC + " = 0");
+		return(m_A + "x + " + m_B + "y + " + m_C + " = 0");
 	}
 
 	public static void main(String []args)

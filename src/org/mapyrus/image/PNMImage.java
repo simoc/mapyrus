@@ -38,7 +38,7 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PNMImage
 {
-	private BufferedImage mImage;
+	private BufferedImage m_image;
 
 	/**
 	 * Read Netpbm PNM image from file.
@@ -107,7 +107,7 @@ public class PNMImage
 			/*
 			 * Read pixel values into image.
 			 */
-			mImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			m_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 			int nextByte = 0;
 			for (int y = 0; y < height; y++)
@@ -156,7 +156,7 @@ public class PNMImage
 						}
 					}
 					pixel = (r << 16) | (g << 8) | b;
-					mImage.setRGB(x, y, pixel);
+					m_image.setRGB(x, y, pixel);
 				}
 			}
 		}
@@ -205,7 +205,7 @@ public class PNMImage
 	 */
 	public BufferedImage getBufferedImage()
 	{
-		return(mImage);
+		return(m_image);
 	}
 
 	/**

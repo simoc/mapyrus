@@ -37,7 +37,7 @@ import org.mapyrus.Constants;
  */
 public class WildcardFile
 {
-	private static boolean mFilenamesCaseInsensitive;
+	private static boolean m_filenamesCaseInsensitive;
 
 	static
 	{
@@ -45,20 +45,20 @@ public class WildcardFile
 		 * If running on Windows then filenames are case insensitive.
 		 * So the pattern "*.txt" will match filenames "foo.txt" and "BAR.TXT".
 		 */
-		mFilenamesCaseInsensitive = (Constants.getOSName().indexOf("WIN") >= 0);
+		m_filenamesCaseInsensitive = (Constants.getOSName().indexOf("WIN") >= 0);
 	}
 
 	/*
 	 * Base directory of all matching files.
 	 */
-	private File mBaseDirectory;
+	private File m_baseDirectory;
 	
 	/*
 	 * File and directory names being matched, split into parts delimited
 	 * by file separators and asterisks.
 	 * For example "/etc/rc*.d/S*" is split into "rc", "*", ".d", "/", "S", "*".
 	 */
-	private ArrayList<String> mPatternParts;
+	private ArrayList<String> m_patternParts;
 
 	public WildcardFile(String wildcard)
 	{
@@ -67,7 +67,7 @@ public class WildcardFile
 		 */
 		String base, pattern;
 		
-		if (mFilenamesCaseInsensitive)
+		if (m_filenamesCaseInsensitive)
 			wildcard = wildcard.toUpperCase();
 
 		int wildcardIndex = wildcard.indexOf('*');
@@ -89,14 +89,14 @@ public class WildcardFile
 		}
 
 		if (base.length() == 0)
-			mBaseDirectory = new File(System.getProperty("user.dir"));
+			m_baseDirectory = new File(System.getProperty("user.dir"));
 		else
-			mBaseDirectory = new File(base);
+			m_baseDirectory = new File(base);
 
 		/*
 		 * Split filename into pieces, separated by asterisk characters and "/".
 		 */
-		mPatternParts = new ArrayList<String>();
+		m_patternParts = new ArrayList<String>();
 		StringTokenizer st = new StringTokenizer(pattern, "*" + File.separator, true);
 
 		String lastToken = "";
@@ -113,7 +113,7 @@ public class WildcardFile
 			if ((!(tokenIsAsterisk && lastToken.equals("*"))) &&
 				(!(tokenIsFileSeparator && lastToken.equals(File.separator))))
 			{
-				mPatternParts.add(token);
+				m_patternParts.add(token);
 			}
 			lastToken = token;
 		}
@@ -129,7 +129,7 @@ public class WildcardFile
 	{
 		LinkedList<String> retval = new LinkedList<String>();
 
-		int nFilenameParts = mPatternParts.size();
+		int nFilenameParts = m_patternParts.size();
 		String []filenames = directory.list();
 
 		if (filenames == null)
@@ -140,7 +140,7 @@ public class WildcardFile
 		 * convert all filenames to upper case and match against uppercase
 		 * wildcard pattern.
 		 */
-		if (mFilenamesCaseInsensitive)
+		if (m_filenamesCaseInsensitive)
 		{
 			for (int i = 0; i < filenames.length; i++)
 				filenames[i] = filenames[i].toUpperCase();
@@ -155,7 +155,7 @@ public class WildcardFile
 
 			for (int j = index; j < nFilenameParts && matched; j++)
 			{
-				String part = (String)mPatternParts.get(j);
+				String part = (String)m_patternParts.get(j);
 				if (part.equals("*"))
 				{
 				}
@@ -191,7 +191,7 @@ public class WildcardFile
 						 * If next part of pattern is a "/" then end of filename must
 						 * match current string in pattern.
 						 */
-						String nextPart = (String)mPatternParts.get(j + 1);
+						String nextPart = (String)m_patternParts.get(j + 1);
 						if (nextPart.equals(File.separator) &&
 							(!filename.endsWith(part)))
 						{
@@ -236,7 +236,7 @@ public class WildcardFile
 	public List<String> getMatchingFiles()
 	{
 		List<String> retval;
-		if (mPatternParts.size() == 0)
+		if (m_patternParts.size() == 0)
 		{
 			/*
 			 * An empty filename cannot match anything.
@@ -247,9 +247,9 @@ public class WildcardFile
 		{
 			boolean isSingleFile = false;
 
-			if (mPatternParts.size() == 1)
+			if (m_patternParts.size() == 1)
 			{
-				String first = (String)mPatternParts.get(0);
+				String first = (String)m_patternParts.get(0);
 				if (!first.equals("*"))
 					isSingleFile = true;
 			}
@@ -262,13 +262,13 @@ public class WildcardFile
 				 */
 				retval = new LinkedList<String>();
 	
-				File f = new File(mBaseDirectory + File.separator + (String)mPatternParts.get(0));
+				File f = new File(m_baseDirectory + File.separator + (String)m_patternParts.get(0));
 				if (f.exists() && f.isFile())
 					retval.add(f.toString());
 			}
 			else
 			{
-				retval = recursivelyMatchFiles(mBaseDirectory, 0);
+				retval = recursivelyMatchFiles(m_baseDirectory, 0);
 			}
 		}
 		return(retval);

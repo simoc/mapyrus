@@ -36,7 +36,7 @@ public class Bitmap
 	public static final int HEX_DIGIT_BITMAP = 0;
 	public static final int BINARY_DIGIT_BITMAP = 1;
 
-	private BufferedImage mBitmap;
+	private BufferedImage m_bitmap;
 
 	/**
 	 * Create new bitmap from hex or binary digit string.
@@ -108,7 +108,7 @@ public class Bitmap
 		/*
 		 * Create image and set pixels on/off as defined in hex digits.
 		 */
-		mBitmap = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_4BYTE_ABGR);
+		m_bitmap = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_4BYTE_ABGR);
 		int rgbPixel = c.getRGB();
 		int bitIndex = 0;
 		for (int y = 0; y < iconSize; y++)
@@ -116,7 +116,7 @@ public class Bitmap
 			for (int x = 0; x < iconSize; x++)
 			{
 				if (bits[bitIndex++] != 0)
-					mBitmap.setRGB(x, y, rgbPixel);
+					m_bitmap.setRGB(x, y, rgbPixel);
 			}
 		}
 	}
@@ -151,6 +151,6 @@ public class Bitmap
 	 */
 	public BufferedImage getBufferedImage()
 	{
-		return(mBitmap);
+		return(m_bitmap);
 	}
 }

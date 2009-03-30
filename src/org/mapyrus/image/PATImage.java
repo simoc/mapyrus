@@ -37,7 +37,7 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PATImage
 {
-	private BufferedImage mImage;
+	private BufferedImage m_image;
 
 	/**
 	 * Read GIMP image pattern from URL.
@@ -102,7 +102,7 @@ public class PATImage
 			/*
 			 * Read image pixels.
 			 */
-			mImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			m_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 			for (int y = 0; y < height; y++)
 			{
@@ -131,7 +131,7 @@ public class PATImage
 							": " + filename);
 					}
 					int pixel = (red << 16) | (green << 8) | blue;
-					mImage.setRGB(x, y, pixel);
+					m_image.setRGB(x, y, pixel);
 				}
 			}
 		}
@@ -153,6 +153,6 @@ public class PATImage
 	 */
 	public BufferedImage getBufferedImage()
 	{
-		return(mImage);
+		return(m_image);
 	}
 }
