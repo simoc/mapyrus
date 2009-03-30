@@ -87,40 +87,40 @@ public class ShapefileDataset implements GeographicDataset
 	/*
 	 * Files containing data, their lengths and type.
 	 */	
-	private DataInputStream mShapeStream;
-	private DataInputStream mDBFStream;
-	private String mFilename;
-	private int mShapeFileLength, mShapeFileType, mGeometryType;
-	private int mDBFRecordLength;
-	private String mProjection;
+	private DataInputStream m_shapeStream;
+	private DataInputStream m_DBFStream;
+	private String m_filename;
+	private int m_shapeFileLength, m_shapeFileType, m_geometryType;
+	private int m_DBFRecordLength;
+	private String m_projection;
 	
 	/*
 	 * Flags indicating which fields in DBF file that user wants to fetch
 	 * and the total number of fields the user wants to fetch.
 	 */
-	private ArrayList<Boolean> mDBFFieldsToFetch;
-	private int mNDBFFieldsToFetch;
+	private ArrayList<Boolean> m_DBFFieldsToFetch;
+	private int m_nDBFFieldsToFetch;
 
 	/*
 	 * Field names, types, and types and lengths as given in DBF file.
 	 */
-	private String []mFieldNames;
-	private int []mFieldTypes;
-	private int []mDBFFieldTypes;
-	private int []mDBFFieldLengths;
+	private String []m_fieldNames;
+	private int []m_fieldTypes;
+	private int []m_DBFFieldTypes;
+	private int []m_DBFFieldLengths;
 
 	/*
 	 * Extents of shape file and extents being queried.
 	 */
-	private Rectangle2D.Double mExtents;
-	private Rectangle2D.Double mQueryExtents;
+	private Rectangle2D.Double m_extents;
+	private Rectangle2D.Double m_queryExtents;
 	
 	/*
 	 * Number of bytes already read for query.
 	 * A record read from DBF file for query.
 	 */
-	private int mBytesRead;
-	private byte []mDBFRecord;
+	private int m_BytesRead;
+	private byte []m_DBFRecord;
 
 	/**
 	 * Open ESRI shape file containing geographic data for querying.
@@ -184,7 +184,7 @@ public class ShapefileDataset implements GeographicDataset
 					yMax = d;
 			}
 		}
-		mQueryExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
+		m_queryExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 
 		/*
 		 * Determine full names of .shp and .dbf files.
@@ -192,38 +192,38 @@ public class ShapefileDataset implements GeographicDataset
 		if (filename.endsWith(".shp") || filename.endsWith(".dbf") ||
 			filename.endsWith(".shx"))
 		{
-			mFilename = filename.substring(0, filename.length() - 4);
-			shapeFilename = mFilename + ".shp";
-			dbfFilename = mFilename + ".dbf";
-			prjFilename = mFilename + ".prj";
+			m_filename = filename.substring(0, filename.length() - 4);
+			shapeFilename = m_filename + ".shp";
+			dbfFilename = m_filename + ".dbf";
+			prjFilename = m_filename + ".prj";
 		}
 		else if (filename.endsWith(".SHP") || filename.endsWith(".DBF") ||
 			filename.endsWith(".SHX"))
 		{
-			mFilename = filename.substring(0, filename.length() - 4);
-			shapeFilename = mFilename + ".SHP";
-			dbfFilename = mFilename + ".DBF";
-			prjFilename = mFilename + ".PRJ";
+			m_filename = filename.substring(0, filename.length() - 4);
+			shapeFilename = m_filename + ".SHP";
+			dbfFilename = m_filename + ".DBF";
+			prjFilename = m_filename + ".PRJ";
 		}
 		else
 		{
-			mFilename = filename;
+			m_filename = filename;
 			shapeFilename = filename + ".shp";
 			dbfFilename = filename + ".dbf";
 			prjFilename = filename + ".prj";
 		}
 			
-		mShapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
+		m_shapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
 		try
 		{
-			mDBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
+			m_DBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
 		}
 		catch (FileNotFoundException e)
 		{
 			/*
 			 * If .dbf file does not exist then just continue without it.
 			 */
-			mDBFStream = null;
+			m_DBFStream = null;
 		}
 
 		/*
@@ -233,11 +233,11 @@ public class ShapefileDataset implements GeographicDataset
 		try
 		{
 			prjReader = new BufferedReader(new FileReader(prjFilename));
-			mProjection = prjReader.readLine();
+			m_projection = prjReader.readLine();
 		}
 		catch(FileNotFoundException e)
 		{
-			mProjection = "";
+			m_projection = "";
 		}
 		finally
 		{
@@ -258,18 +258,18 @@ public class ShapefileDataset implements GeographicDataset
 			 */
 			readDBFHeader(extrasDBFFields);
 
-			if (overlaps(mQueryExtents, mExtents.getMinX(), mExtents.getMinY(),
-				mExtents.getMaxX(), mExtents.getMaxY()))
+			if (overlaps(m_queryExtents, m_extents.getMinX(), m_extents.getMinY(),
+				m_extents.getMaxX(), m_extents.getMaxY()))
 			{
-				mBytesRead = 0;
-				mDBFRecord = new byte[mDBFRecordLength];
+				m_BytesRead = 0;
+				m_DBFRecord = new byte[m_DBFRecordLength];
 			}
 			else
 			{
 				/*
 				 * Shape file does not overlap current extents.  Fetch will return nothing.
 				 */
-				mBytesRead = mShapeFileLength;
+				m_BytesRead = m_shapeFileLength;
 			}
 		}
 		catch (IOException e1)
@@ -384,60 +384,60 @@ public class ShapefileDataset implements GeographicDataset
 		int magic;
 		double xMin, yMin, xMax, yMax;
 
-		magic = mShapeStream.readInt();
+		magic = m_shapeStream.readInt();
 		if (magic != MAGIC_NUMBER)
 		{
-			throw new MapyrusException(mFilename + ": " +
+			throw new MapyrusException(m_filename + ": " +
 				MapyrusMessages.get(MapyrusMessages.NOT_SHAPE_FILE));
 		}
 
-		mShapeStream.readInt();
-		mShapeStream.readInt();
-		mShapeStream.readInt();
-		mShapeStream.readInt();
-		mShapeStream.readInt();
-		mShapeFileLength = mShapeStream.readInt() * 2 - 100;
-		readLittleEndianInt(mShapeStream);	/* version */
-		mShapeFileType = readLittleEndianInt(mShapeStream);
-		xMin = readLittleEndianDouble(mShapeStream);
-		yMin = readLittleEndianDouble(mShapeStream);
-		xMax = readLittleEndianDouble(mShapeStream);
-		yMax = readLittleEndianDouble(mShapeStream);
+		m_shapeStream.readInt();
+		m_shapeStream.readInt();
+		m_shapeStream.readInt();
+		m_shapeStream.readInt();
+		m_shapeStream.readInt();
+		m_shapeFileLength = m_shapeStream.readInt() * 2 - 100;
+		readLittleEndianInt(m_shapeStream);	/* version */
+		m_shapeFileType = readLittleEndianInt(m_shapeStream);
+		xMin = readLittleEndianDouble(m_shapeStream);
+		yMin = readLittleEndianDouble(m_shapeStream);
+		xMax = readLittleEndianDouble(m_shapeStream);
+		yMax = readLittleEndianDouble(m_shapeStream);
 		
-		readLittleEndianDouble(mShapeStream);	/* zMin */
-		readLittleEndianDouble(mShapeStream);	/* zMax */
-		readLittleEndianDouble(mShapeStream);	/* mMin */
-		readLittleEndianDouble(mShapeStream);	/* mMax */
-		mExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
+		readLittleEndianDouble(m_shapeStream);	/* zMin */
+		readLittleEndianDouble(m_shapeStream);	/* zMax */
+		readLittleEndianDouble(m_shapeStream);	/* mMin */
+		readLittleEndianDouble(m_shapeStream);	/* mMax */
+		m_extents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 
 		/*
 		 * Convert geometry type to the type we use internally.
 		 */		
-		switch (mShapeFileType)
+		switch (m_shapeFileType)
 		{
 			case NULL_SHAPE:
-				mGeometryType = 0;
+				m_geometryType = 0;
 				break;
 			case POINT:
 			case POINT_Z:
 			case POINT_M:
-				mGeometryType = Argument.GEOMETRY_POINT;
+				m_geometryType = Argument.GEOMETRY_POINT;
 				break;
 			case POLYLINE:
 			case POLYLINE_Z:
 			case POLYLINE_M:
-				mGeometryType = Argument.GEOMETRY_MULTILINESTRING;
+				m_geometryType = Argument.GEOMETRY_MULTILINESTRING;
 				break;
 			case POLYGON:
 			case POLYGON_Z:
 			case POLYGON_M:
 			case MULTIPATCH:
-				mGeometryType = Argument.GEOMETRY_MULTIPOLYGON;
+				m_geometryType = Argument.GEOMETRY_MULTIPOLYGON;
 				break;
 			case MULTIPOINT:
 			case MULTIPOINT_Z:
 			case MULTIPOINT_M:
-				mGeometryType = Argument.GEOMETRY_MULTIPOINT;
+				m_geometryType = Argument.GEOMETRY_MULTIPOINT;
 				break;
 		}
 	}
@@ -479,16 +479,16 @@ public class ShapefileDataset implements GeographicDataset
 		int nBytesRead;
 		boolean fetchStatus;
 
-		nTotalFields = mNDBFFieldsToFetch = headerLength = nBytesRead = 0;
-		mDBFFieldsToFetch = new ArrayList<Boolean>();
+		nTotalFields = m_nDBFFieldsToFetch = headerLength = nBytesRead = 0;
+		m_DBFFieldsToFetch = new ArrayList<Boolean>();
 
-		if (mDBFStream != null)
+		if (m_DBFStream != null)
 		{
-			mDBFStream.skipBytes(4);
-			readLittleEndianInt(mDBFStream);	/* number of DBF records */
-			headerLength = readLittleEndianShort(mDBFStream);
-			mDBFRecordLength = readLittleEndianShort(mDBFStream);
-			mDBFStream.skipBytes(20);
+			m_DBFStream.skipBytes(4);
+			readLittleEndianInt(m_DBFStream);	/* number of DBF records */
+			headerLength = readLittleEndianShort(m_DBFStream);
+			m_DBFRecordLength = readLittleEndianShort(m_DBFStream);
+			m_DBFStream.skipBytes(20);
 			nBytesRead = 32;
 
 			/*
@@ -497,11 +497,11 @@ public class ShapefileDataset implements GeographicDataset
 			do
 			{
 				dbfField = new byte[32];
-				dbfField[0] = (byte)(mDBFStream.read());
+				dbfField[0] = (byte)(m_DBFStream.read());
 				nBytesRead++;
 				if (dbfField[0] != DBF_HEADER_SENTINEL)
 				{
-					mDBFStream.read(dbfField, 1, dbfField.length - 1);
+					m_DBFStream.read(dbfField, 1, dbfField.length - 1);
 					fieldName = unpackString(dbfField, 0, 11);
 	
 					/*
@@ -510,9 +510,9 @@ public class ShapefileDataset implements GeographicDataset
 					 */
 					fetchStatus = (dbfFieldnameList == null ||
 						dbfFieldnameList.contains(fieldName));
-					mDBFFieldsToFetch.add(Boolean.valueOf(fetchStatus));
+					m_DBFFieldsToFetch.add(Boolean.valueOf(fetchStatus));
 					if (fetchStatus)
-						mNDBFFieldsToFetch++;
+						m_nDBFFieldsToFetch++;
 	
 					nBytesRead += dbfField.length - 1;
 					dbfFields.add(dbfField);
@@ -525,13 +525,13 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * Add one extra field to end of field list for the geometry.
 		 */
-		mFieldNames = new String[mNDBFFieldsToFetch + 1];
-		mFieldTypes = new int[mNDBFFieldsToFetch + 1];
-		mDBFFieldTypes = new int[nTotalFields];
-		mDBFFieldLengths = new int[nTotalFields];
+		m_fieldNames = new String[m_nDBFFieldsToFetch + 1];
+		m_fieldTypes = new int[m_nDBFFieldsToFetch + 1];
+		m_DBFFieldTypes = new int[nTotalFields];
+		m_DBFFieldLengths = new int[nTotalFields];
 
-		mFieldNames[mNDBFFieldsToFetch] = "GEOMETRY";
-		mFieldTypes[mNDBFFieldsToFetch] = Argument.GEOMETRY;
+		m_fieldNames[m_nDBFFieldsToFetch] = "GEOMETRY";
+		m_fieldTypes[m_nDBFFieldsToFetch] = Argument.GEOMETRY;
 
 		/*
 		 * Read description of each field.
@@ -540,39 +540,39 @@ public class ShapefileDataset implements GeographicDataset
 		{
 			dbfField = (byte [])(dbfFields.get(i));
 
-			mDBFFieldTypes[i] = dbfField[11];
+			m_DBFFieldTypes[i] = dbfField[11];
 
 			/*
 			 * Length is unsigned byte value.
 			 */
 			if (dbfField[16] >= 0)
-				mDBFFieldLengths[i] = dbfField[16];
+				m_DBFFieldLengths[i] = dbfField[16];
 			else
-				mDBFFieldLengths[i] = 256 + dbfField[16];
+				m_DBFFieldLengths[i] = 256 + dbfField[16];
 
 			/*
 			 * Unpack field information if we are going to be fetching this field.
 			 */
-			if (((Boolean)mDBFFieldsToFetch.get(i)).booleanValue())
+			if (((Boolean)m_DBFFieldsToFetch.get(i)).booleanValue())
 			{
 				/*
 				 * Extract null terminated field name.
 				 */
-				mFieldNames[fieldIndex] = unpackString(dbfField, 0, 11);
+				m_fieldNames[fieldIndex] = unpackString(dbfField, 0, 11);
 	
 				/*
 				 * Convert shape field type to our representation of field types.
 				 */
-				switch (mDBFFieldTypes[i])
+				switch (m_DBFFieldTypes[i])
 				{
 					case DBF_CHARACTER:
 					case DBF_DATE:
-						mFieldTypes[fieldIndex] = Argument.STRING;
+						m_fieldTypes[fieldIndex] = Argument.STRING;
 						break;
 					case DBF_LOGICAL:
 					case DBF_NUMBER:
 					case DBF_FLOATING:
-						mFieldTypes[fieldIndex] = Argument.NUMERIC;
+						m_fieldTypes[fieldIndex] = Argument.NUMERIC;
 						break;
 				}
 				fieldIndex++;
@@ -584,7 +584,7 @@ public class ShapefileDataset implements GeographicDataset
 		 */
 		int skipBytes = headerLength - nBytesRead;
 		if (skipBytes > 0)
-			mDBFStream.skipBytes(skipBytes);
+			m_DBFStream.skipBytes(skipBytes);
 	}
 
 	/**
@@ -592,7 +592,7 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	public String getProjection()
 	{
-		return mProjection;
+		return m_projection;
 	}
 
 	/**
@@ -608,7 +608,7 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	public String[] getFieldNames()
 	{
-		return(mFieldNames);
+		return(m_fieldNames);
 	}
 
 	/**
@@ -616,7 +616,7 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
-		return(mExtents);
+		return(m_extents);
 	}
 
 	/**
@@ -641,15 +641,15 @@ public class ShapefileDataset implements GeographicDataset
 			 * the end of the file.
 			 */
 			row = new Row();
-			while (!shapeInExtents && mBytesRead < mShapeFileLength)
+			while (!shapeInExtents && m_BytesRead < m_shapeFileLength)
 			{
 				/*
 				 * Read header for next shape.  Convert record length to byte length.
 				 */
-				mShapeStream.readInt();	/* record number */
-				recordLength = mShapeStream.readInt() * 2;
+				m_shapeStream.readInt();	/* record number */
+				recordLength = m_shapeStream.readInt() * 2;
 				
-				shapeType = readLittleEndianInt(mShapeStream);
+				shapeType = readLittleEndianInt(m_shapeStream);
 				nBytes = 4;
 				
 				if (shapeType == 0)
@@ -660,8 +660,8 @@ public class ShapefileDataset implements GeographicDataset
 					path = Argument.emptyGeometry.getGeometryValue();
 					shapeInExtents = true;
 				}
-				else if (mShapeFileType == POINT || mShapeFileType == POINT_Z ||
-					mShapeFileType == POINT_M)
+				else if (m_shapeFileType == POINT || m_shapeFileType == POINT_Z ||
+					m_shapeFileType == POINT_M)
 				{
 					/*
 					 * Read point coordinates, see if they are inside
@@ -671,57 +671,57 @@ public class ShapefileDataset implements GeographicDataset
 					path[0] = Argument.GEOMETRY_POINT;
 					path[1] = 1;
 					path[2] = Argument.MOVETO;
-					path[3] = readLittleEndianDouble(mShapeStream);
-					path[4] = readLittleEndianDouble(mShapeStream);
+					path[3] = readLittleEndianDouble(m_shapeStream);
+					path[4] = readLittleEndianDouble(m_shapeStream);
 					nBytes += 16;
 
 					/*
 					 * Accept points on query boundary rectangle, reject anything outside.
 					 */
-					shapeInExtents = (mQueryExtents.outcode(path[3], path[4]) == 0);
+					shapeInExtents = (m_queryExtents.outcode(path[3], path[4]) == 0);
 				}
-				else if (mShapeFileType == POLYLINE || mShapeFileType == POLYGON ||
-					mShapeFileType == POLYLINE_Z || mShapeFileType == POLYGON_Z ||
-					mShapeFileType == POLYLINE_M || mShapeFileType == POLYGON_M ||
-					mShapeFileType == MULTIPATCH)
+				else if (m_shapeFileType == POLYLINE || m_shapeFileType == POLYGON ||
+					m_shapeFileType == POLYLINE_Z || m_shapeFileType == POLYGON_Z ||
+					m_shapeFileType == POLYLINE_M || m_shapeFileType == POLYGON_M ||
+					m_shapeFileType == MULTIPATCH)
 				{
 					/*
 					 * Read bounding box of polyline or polygon.
 					 * Find if it intersects with query extents.
 					 */
-					xMin = readLittleEndianDouble(mShapeStream);
-					yMin = readLittleEndianDouble(mShapeStream);
-					xMax = readLittleEndianDouble(mShapeStream);
-					yMax = readLittleEndianDouble(mShapeStream);
+					xMin = readLittleEndianDouble(m_shapeStream);
+					yMin = readLittleEndianDouble(m_shapeStream);
+					xMax = readLittleEndianDouble(m_shapeStream);
+					yMax = readLittleEndianDouble(m_shapeStream);
 					nBytes += 4 * 8;
-					shapeInExtents = overlaps(mQueryExtents, xMin, yMin, xMax, yMax);
+					shapeInExtents = overlaps(m_queryExtents, xMin, yMin, xMax, yMax);
 					if (shapeInExtents)
 					{
 						/*
 						 * Read polyline or polygon coordinates.
 						 */
-						nParts = readLittleEndianInt(mShapeStream);
-						nPoints = readLittleEndianInt(mShapeStream);
+						nParts = readLittleEndianInt(m_shapeStream);
+						nPoints = readLittleEndianInt(m_shapeStream);
 						nBytes += 2 * 4;
 
 						int []parts = new int[nParts];
 						for (i = 0; i < nParts; i++)
-							parts[i] = readLittleEndianInt(mShapeStream);
+							parts[i] = readLittleEndianInt(m_shapeStream);
 						nBytes += nParts * 4;
 
 						/*
 						 * Skip part type information in multi-patch files.
 						 */
-						if (mShapeFileType == MULTIPATCH)
+						if (m_shapeFileType == MULTIPATCH)
 						{
-							mShapeStream.skipBytes(nParts * 4);
+							m_shapeStream.skipBytes(nParts * 4);
 							nBytes += nParts * 4;
 						}
 						path = new double[2 + nParts * 2 + nPoints * 3];
 						int counter = 0;
 						int counterIndex = 0;
-						boolean isPolyline = (mShapeFileType == POLYLINE ||
-							mShapeFileType == POLYLINE_M || mShapeFileType == POLYLINE_Z);
+						boolean isPolyline = (m_shapeFileType == POLYLINE ||
+							m_shapeFileType == POLYLINE_M || m_shapeFileType == POLYLINE_Z);
 
 						/*
 						 * Polylines in shape file may be separate LINESTRING geometries.
@@ -746,8 +746,8 @@ public class ShapefileDataset implements GeographicDataset
 							/*
 							 * Add next coordinates, as either a moveto or lineto.
 							 */
-							x = readLittleEndianDouble(mShapeStream);
-							y = readLittleEndianDouble(mShapeStream);
+							x = readLittleEndianDouble(m_shapeStream);
+							y = readLittleEndianDouble(m_shapeStream);
 							nBytes += 2 * 8;
 							if (partIndex < nParts && parts[partIndex] == i)
 							{
@@ -806,22 +806,22 @@ public class ShapefileDataset implements GeographicDataset
 						 */
 					}
 				}
-				else if (mShapeFileType == MULTIPOINT || mShapeFileType == MULTIPOINT_Z ||
-					mShapeFileType == MULTIPOINT_M)
+				else if (m_shapeFileType == MULTIPOINT || m_shapeFileType == MULTIPOINT_Z ||
+					m_shapeFileType == MULTIPOINT_M)
 				{
 					/*
 					 * Read bounding box of points.
 					 * Find if it intersects with query extents.
 					 */
-					xMin = readLittleEndianDouble(mShapeStream);
-					yMin = readLittleEndianDouble(mShapeStream);
-					xMax = readLittleEndianDouble(mShapeStream);
-					yMax = readLittleEndianDouble(mShapeStream);
+					xMin = readLittleEndianDouble(m_shapeStream);
+					yMin = readLittleEndianDouble(m_shapeStream);
+					xMax = readLittleEndianDouble(m_shapeStream);
+					yMax = readLittleEndianDouble(m_shapeStream);
 					nBytes += 4 * 8;
-					shapeInExtents = overlaps(mQueryExtents, xMin, yMin, xMax, yMax);
+					shapeInExtents = overlaps(m_queryExtents, xMin, yMin, xMax, yMax);
 					if (shapeInExtents)
 					{
-						nPoints = readLittleEndianInt(mShapeStream);
+						nPoints = readLittleEndianInt(m_shapeStream);
 						nBytes += 4;
 
 						/*
@@ -837,8 +837,8 @@ public class ShapefileDataset implements GeographicDataset
 							path[pathIndex] = Argument.GEOMETRY_POINT;
 							path[pathIndex + 1] = 1;
 							path[pathIndex + 2] = Argument.MOVETO;
-							path[pathIndex + 3] = readLittleEndianDouble(mShapeStream);
-							path[pathIndex + 4] = readLittleEndianDouble(mShapeStream);
+							path[pathIndex + 3] = readLittleEndianDouble(m_shapeStream);
+							path[pathIndex + 4] = readLittleEndianDouble(m_shapeStream);
 							pathIndex += 5;
 							nBytes += 16;
 						}
@@ -849,52 +849,52 @@ public class ShapefileDataset implements GeographicDataset
 				 * Skip until end of this record in shape file.
 				 */		
 				if (nBytes < recordLength)
-					mShapeStream.skipBytes(recordLength - nBytes);
+					m_shapeStream.skipBytes(recordLength - nBytes);
 
-				mBytesRead += recordLength + 8;
+				m_BytesRead += recordLength + 8;
 
 				/*
 				 * If user wants any attribute fields then read them for this shape.
 				 * Don't bother unpacking them if we are skipping this shape.
 				 */
-				if (mNDBFFieldsToFetch > 0)
+				if (m_nDBFFieldsToFetch > 0)
 				{
-					mDBFStream.read(mDBFRecord);
-					while (mDBFRecord[0] == DBF_DELETED_RECORD)
+					m_DBFStream.read(m_DBFRecord);
+					while (m_DBFRecord[0] == DBF_DELETED_RECORD)
 					{
 						/*
 						 * Skip deleted records.
 						 */
-						mDBFStream.read(mDBFRecord);
+						m_DBFStream.read(m_DBFRecord);
 					}
 				}
 
 				if (shapeInExtents)
 				{
-					if (mNDBFFieldsToFetch > 0)
+					if (m_nDBFFieldsToFetch > 0)
 					{
 						int recordOffset = 1;
-						for (i = 0; i < mDBFFieldTypes.length; i++)
+						for (i = 0; i < m_DBFFieldTypes.length; i++)
 						{
 							Argument arg = null;
 	
 							/*
 							 * Only unpack fields that user asked for.
 							 */
-							if (((Boolean)mDBFFieldsToFetch.get(i)).booleanValue())
+							if (((Boolean)m_DBFFieldsToFetch.get(i)).booleanValue())
 							{
-								if (mDBFFieldTypes[i] == DBF_CHARACTER ||
-									mDBFFieldTypes[i] == DBF_DATE)
+								if (m_DBFFieldTypes[i] == DBF_CHARACTER ||
+									m_DBFFieldTypes[i] == DBF_DATE)
 								{
 									arg = new Argument(Argument.STRING,
-										unpackString(mDBFRecord, recordOffset,
-										mDBFFieldLengths[i]));
+										unpackString(m_DBFRecord, recordOffset,
+										m_DBFFieldLengths[i]));
 								}
-								else if (mDBFFieldTypes[i] == DBF_NUMBER ||
-									mDBFFieldTypes[i] == DBF_FLOATING)
+								else if (m_DBFFieldTypes[i] == DBF_NUMBER ||
+									m_DBFFieldTypes[i] == DBF_FLOATING)
 								{
-									String s = unpackString(mDBFRecord,
-										recordOffset, mDBFFieldLengths[i]);
+									String s = unpackString(m_DBFRecord,
+										recordOffset, m_DBFFieldLengths[i]);
 									try
 									{
 										fieldValue = Double.parseDouble(s);
@@ -905,9 +905,9 @@ public class ShapefileDataset implements GeographicDataset
 									}
 									arg = new Argument(fieldValue);
 								}
-								else if (mDBFFieldTypes[i] == DBF_LOGICAL)
+								else if (m_DBFFieldTypes[i] == DBF_LOGICAL)
 								{
-									switch ((char)mDBFRecord[recordOffset])
+									switch ((char)m_DBFRecord[recordOffset])
 									{
 										case 'y':
 										case 'Y':
@@ -923,14 +923,14 @@ public class ShapefileDataset implements GeographicDataset
 								row.add(arg);
 							}
 	
-							recordOffset += mDBFFieldLengths[i];
+							recordOffset += m_DBFFieldLengths[i];
 						}
 					}
 
 					/*
 					 * Add geometry as final field.
 					 */
-					row.add(new Argument(mGeometryType, path));
+					row.add(new Argument(m_geometryType, path));
 				}
 			}
 		}
@@ -958,7 +958,7 @@ public class ShapefileDataset implements GeographicDataset
 		 */
 		try
 		{
-			mShapeStream.close();
+			m_shapeStream.close();
 		}
 		catch (IOException e)
 		{
@@ -968,8 +968,8 @@ public class ShapefileDataset implements GeographicDataset
 		{
 			try
 			{
-				if (mDBFStream != null)
-					mDBFStream.close();
+				if (m_DBFStream != null)
+					m_DBFStream.close();
 			}
 			catch (IOException e)
 			{

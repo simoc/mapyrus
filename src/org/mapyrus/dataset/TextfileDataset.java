@@ -42,28 +42,28 @@ public class TextfileDataset implements GeographicDataset
 	 * File we are reading from.
 	 * Process handle to external process we are reading from.
 	 */
-	private LineNumberReader mReader;
-	private String mFilename;
-	private Process mProcess;
+	private LineNumberReader m_reader;
+	private String m_filename;
+	private Process m_process;
 	
 	/*
 	 * Field separator.  Normally a comma or keyword 'whitespace' (meaning anything
 	 * blank).
 	 */
-	private Character mDelimiter;
+	private Character m_delimiter;
 
 	/*
 	 * String that denotes comment lines in text file.  These lines
 	 * are ignored.
 	 */
-	private String mComment;
+	private String m_comment;
 
 	/*
 	 * Maximum number of fields found on one line so far.
 	 * Later lines with fewer fields will be padded to this number of fields
 	 * with empty fields.
 	 */
-	private int mMaxFields;
+	private int m_maxFields;
 
 	/*
 	 * Read next line from file, skipping comment lines.
@@ -74,9 +74,9 @@ public class TextfileDataset implements GeographicDataset
 
 		do
 		{
-			s = mReader.readLine();
+			s = m_reader.readLine();
 		}
-		while (s != null && (mComment.length() > 0 && s.startsWith(mComment)));
+		while (s != null && (m_comment.length() > 0 && s.startsWith(m_comment)));
 
 		return(s);
 	}
@@ -99,7 +99,7 @@ public class TextfileDataset implements GeographicDataset
 		 */
 		if (filename.equals("-"))
 		{
-			mReader = new LineNumberReader(new InputStreamReader(stdin));
+			m_reader = new LineNumberReader(new InputStreamReader(stdin));
 		}
 		else if (filename.endsWith("|"))
 		{
@@ -109,31 +109,31 @@ public class TextfileDataset implements GeographicDataset
 				cmdArray = new String[]{command};
 			else
 				cmdArray = new String[]{"sh", "-c", command};
-			mProcess = Runtime.getRuntime().exec(cmdArray);
-			mReader = new LineNumberReader(new InputStreamReader(mProcess.getInputStream()));
+			m_process = Runtime.getRuntime().exec(cmdArray);
+			m_reader = new LineNumberReader(new InputStreamReader(m_process.getInputStream()));
 		}
 		else
 		{
 			FileOrURL f = new FileOrURL(filename);
-			mReader = f.getReader();
+			m_reader = f.getReader();
 		}
-		mFilename = filename;
+		m_filename = filename;
 
 		/*
 		 * Set default options.  Then see if user wants to override any of them.
 		 */
-		mDelimiter = null;
-		mComment = "#";
-		mMaxFields = 0;
+		m_delimiter = null;
+		m_comment = "#";
+		m_maxFields = 0;
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
 		{
 			token = st.nextToken();
 			if (token.startsWith("comment="))
-				mComment = token.substring(8);
+				m_comment = token.substring(8);
 			else if (token.startsWith("delimiter=") && token.length() == 11)
-				mDelimiter = new Character(token.charAt(10));
+				m_delimiter = new Character(token.charAt(10));
 		}
 	}
 
@@ -190,7 +190,7 @@ public class TextfileDataset implements GeographicDataset
 		}
 		catch (IOException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " + mFilename);
+			throw new MapyrusException(e.getMessage() + ": " + m_filename);
 		}
 
 		/*
@@ -209,7 +209,7 @@ public class TextfileDataset implements GeographicDataset
 		/*
 		 * Split line into fields and build a row to be returned.
 		 */
-		if (mDelimiter == null)
+		if (m_delimiter == null)
 		{
 			st = new StringTokenizer(nextLine);
 			while (st.hasMoreTokens())
@@ -220,7 +220,7 @@ public class TextfileDataset implements GeographicDataset
 		}
 		else
 		{
-			char delim = mDelimiter.charValue();
+			char delim = m_delimiter.charValue();
 			int lastIndex = 0;
 			int nextIndex = nextLine.indexOf(delim);
 			if (nextIndex < 0)
@@ -251,7 +251,7 @@ public class TextfileDataset implements GeographicDataset
 		 * This ensures that fields from earlier lines are overwritten by fields
 		 * from later lines.
 		 */
-		int nPaddingFields = mMaxFields - row.size();
+		int nPaddingFields = m_maxFields - row.size();
 		if (nPaddingFields > 0)
 		{
 			while (nPaddingFields-- > 0)
@@ -262,7 +262,7 @@ public class TextfileDataset implements GeographicDataset
 			/*
 			 * This is the longest
 			 */
-			mMaxFields = row.size();
+			m_maxFields = row.size();
 		}
 		return(true);
 	}
@@ -296,9 +296,9 @@ public class TextfileDataset implements GeographicDataset
 			/*
 			 * Read any remaining output from external program.
 			 */
-			if (mProcess != null)
+			if (m_process != null)
 			{
-				while (mReader.read() > 0)
+				while (m_reader.read() > 0)
 					;
 			}
 
@@ -306,15 +306,15 @@ public class TextfileDataset implements GeographicDataset
 			 * We've read all of external program's output, now wait for
 			 * it to terminate.
 			 */
-			if (mProcess != null)
+			if (m_process != null)
 			{
 				try
 				{
-					int status = mProcess.waitFor();
+					int status = m_process.waitFor();
 					if (status != 0)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
-							": " + mFilename);
+							": " + m_filename);
 					}
 				}
 				catch (InterruptedException e)
@@ -334,7 +334,7 @@ public class TextfileDataset implements GeographicDataset
 			 */
 			try
 			{
-				mReader.close();
+				m_reader.close();
 			}
 			catch (IOException e)
 			{

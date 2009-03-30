@@ -42,24 +42,24 @@ public class GrassDataset implements GeographicDataset
 	/*
 	 * GRASS sites file being read.
 	 */
-	private String mFilename;
+	private String m_filename;
 
-	private Hashtable<String, String> mMetadata;
-	private String[] mFieldNames;
-	private Rectangle2D.Double mExtents;
+	private Hashtable<String, String> m_metadata;
+	private String[] m_fieldNames;
+	private Rectangle2D.Double m_extents;
 
 	/*
 	 * Indicates whether file containing 2D or 3D point data.
 	 */
-	private boolean mIsThreed;
+	private boolean m_isThreed;
 
-	private ArrayList<Row> mAllRows;
-	int mRowFetchIndex;
+	private ArrayList<Row> m_allRows;
+	int m_rowFetchIndex;
 
 	/*
 	 * Buffer to copy variable length attribute values into.
 	 */
-	private StringBuffer mAttributeBuffer;
+	private StringBuffer m_attributeBuffer;
 
 	/*
 	 * Read next line from file, skipping comment lines.
@@ -91,10 +91,10 @@ public class GrassDataset implements GeographicDataset
 		{	
 			FileOrURL f = new FileOrURL(filename);
 			reader = f.getReader();
-			mFilename = filename;
-			mMetadata = new Hashtable<String, String>();
-			mAttributeBuffer = new StringBuffer();
-			mRowFetchIndex = 0;
+			m_filename = filename;
+			m_metadata = new Hashtable<String, String>();
+			m_attributeBuffer = new StringBuffer();
+			m_rowFetchIndex = 0;
 
 			/*
 			 * Parse all of the optional header lines in sites file.
@@ -110,7 +110,7 @@ public class GrassDataset implements GeographicDataset
 				{
 					String keyword = st.nextToken();
 					String value = st.nextToken();
-					mMetadata.put(keyword, value);
+					m_metadata.put(keyword, value);
 				}
 				line = readLine(reader);
 			}
@@ -136,7 +136,7 @@ public class GrassDataset implements GeographicDataset
 					break;
 				c = line.charAt(index);
 			}
-			mIsThreed = (nDimensions > 2);
+			m_isThreed = (nDimensions > 2);
 
 			/*
 			 * GRASS sites lists are normally not too large so read it all
@@ -149,11 +149,11 @@ public class GrassDataset implements GeographicDataset
 			double yMax = Float.MIN_VALUE;
 
 			Row row;
-			mAllRows = new ArrayList<Row>();
+			m_allRows = new ArrayList<Row>();
 			do
 			{
 				row = parseRow(reader, line);
-				mAllRows.add(row);
+				m_allRows.add(row);
 
 				Argument pt = row.get(0);
 				double[] els = pt.getGeometryValue();
@@ -172,17 +172,17 @@ public class GrassDataset implements GeographicDataset
 			}
 			while (line != null);
 
-			mExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
+			m_extents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 
-			mFieldNames = new String[row.size()];
+			m_fieldNames = new String[row.size()];
 			int i = 0, fieldCounter = 1;
-			mFieldNames[i++] = "GEOMETRY";
-			if (mIsThreed)
-				mFieldNames[i++] = "Z";
+			m_fieldNames[i++] = "GEOMETRY";
+			if (m_isThreed)
+				m_fieldNames[i++] = "Z";
 
-			while (i < mFieldNames.length)
+			while (i < m_fieldNames.length)
 			{
-				mFieldNames[i++] = DefaultFieldNames.get(fieldCounter++);
+				m_fieldNames[i++] = DefaultFieldNames.get(fieldCounter++);
 			}
 		}
 		finally
@@ -206,7 +206,7 @@ public class GrassDataset implements GeographicDataset
 	 */
 	public Hashtable getMetadata()
 	{
-		return(mMetadata);
+		return(m_metadata);
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class GrassDataset implements GeographicDataset
 	 */
 	public String[] getFieldNames()
 	{
-		return(mFieldNames);
+		return(m_fieldNames);
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class GrassDataset implements GeographicDataset
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
-		return(mExtents);
+		return(m_extents);
 	}
 
 	/**
@@ -284,7 +284,7 @@ public class GrassDataset implements GeographicDataset
 		if (pipe1Index >= 0)
 		{
 			pipe2Index = line.indexOf('|', pipe1Index + 1);
-			if (mIsThreed && pipe2Index >= 0)
+			if (m_isThreed && pipe2Index >= 0)
 			{
 				pipe3Index = line.indexOf('|', pipe2Index + 1);
 			}
@@ -293,7 +293,7 @@ public class GrassDataset implements GeographicDataset
 		if (pipe1Index < 0 || pipe2Index < 0 || pipe3Index < 0)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GRASS_FILE) +
-				": " + mFilename + ":" + reader.getLineNumber() + ": " + line);
+				": " + m_filename + ":" + reader.getLineNumber() + ": " + line);
 		}
 
 		/*
@@ -308,7 +308,7 @@ public class GrassDataset implements GeographicDataset
 			double []els = {Argument.GEOMETRY_POINT, 1, Argument.MOVETO, x, y};
 			row.add(new Argument(Argument.GEOMETRY_POINT, els));
 
-			if (mIsThreed)
+			if (m_isThreed)
 			{
 				String zs = line.substring(pipe2Index + 1, pipe3Index);
 				z = parseDMS(zs);
@@ -325,7 +325,7 @@ public class GrassDataset implements GeographicDataset
 			 */
 			while (nextIndex < lineLength)
 			{
-				mAttributeBuffer.setLength(0);
+				m_attributeBuffer.setLength(0);
 				char c;
 				char firstChar = line.charAt(nextIndex);
 				nextIndex++;
@@ -335,7 +335,7 @@ public class GrassDataset implements GeographicDataset
 					 * Got a category integer or floating point value.
 					 */
 					if (Character.isDigit(firstChar))
-						mAttributeBuffer.append(firstChar);
+						m_attributeBuffer.append(firstChar);
 
 					while (nextIndex < lineLength)
 					{
@@ -343,9 +343,9 @@ public class GrassDataset implements GeographicDataset
 						nextIndex++;
 						if (Character.isWhitespace(c))
 							break;
-						mAttributeBuffer.append(c);
+						m_attributeBuffer.append(c);
 					}
-					row.add(new Argument(Double.parseDouble(mAttributeBuffer.toString())));
+					row.add(new Argument(Double.parseDouble(m_attributeBuffer.toString())));
 				}
 				else if (firstChar == '@')
 				{
@@ -371,11 +371,11 @@ public class GrassDataset implements GeographicDataset
 							if (c == '"')
 							{
 								if (lastC == '\\')
-									mAttributeBuffer.deleteCharAt(mAttributeBuffer.length() - 1);
+									m_attributeBuffer.deleteCharAt(m_attributeBuffer.length() - 1);
 								else
 									break;
 							}
-							mAttributeBuffer.append(c);
+							m_attributeBuffer.append(c);
 						}
 					}
 					else
@@ -389,17 +389,17 @@ public class GrassDataset implements GeographicDataset
 							nextIndex++;
 							if (Character.isWhitespace(c))
 								break;
-							mAttributeBuffer.append(c);
+							m_attributeBuffer.append(c);
 						}
 					}
-					row.add(new Argument(Argument.STRING, mAttributeBuffer.toString()));
+					row.add(new Argument(Argument.STRING, m_attributeBuffer.toString()));
 				}		
 			}
 		}
 		catch (NumberFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GRASS_FILE) +
-				": " + mFilename + ":" + reader.getLineNumber() + ": " + line);
+				": " + m_filename + ":" + reader.getLineNumber() + ": " + line);
 		}
 
 		return(row);
@@ -413,8 +413,8 @@ public class GrassDataset implements GeographicDataset
 	{
 		Row retval;
 
-		if (mRowFetchIndex < mAllRows.size())
-			retval = mAllRows.get(mRowFetchIndex++);
+		if (m_rowFetchIndex < m_allRows.size())
+			retval = m_allRows.get(m_rowFetchIndex++);
 		else
 			retval = null;
 
@@ -426,6 +426,6 @@ public class GrassDataset implements GeographicDataset
 	 */
 	public void close() throws MapyrusException
 	{
-		mAllRows = null;
+		m_allRows = null;
 	}
 }

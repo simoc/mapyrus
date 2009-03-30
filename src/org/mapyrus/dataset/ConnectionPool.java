@@ -40,7 +40,7 @@ import org.mapyrus.Constants;
  */
 public class ConnectionPool
 {
-	private static HashMap<String, LinkedList<TimeStampedConnection>> mPool =
+	private static HashMap<String, LinkedList<TimeStampedConnection>> m_pool =
 		new HashMap<String, LinkedList<TimeStampedConnection>>();
 
 	/**
@@ -52,7 +52,7 @@ public class ConnectionPool
 	public static synchronized Connection get(String url, Properties properties)
 		throws SQLException
 	{
-		LinkedList<TimeStampedConnection> connections = mPool.get(url);
+		LinkedList<TimeStampedConnection> connections = m_pool.get(url);
 		if (connections != null)
 		{
 			/*
@@ -84,7 +84,7 @@ public class ConnectionPool
 		if (connections == null)
 		{
 			connections = new LinkedList<TimeStampedConnection>();
-			mPool.put(url, connections);
+			m_pool.put(url, connections);
 		}
 
 		Connection retval;
@@ -135,7 +135,7 @@ public class ConnectionPool
 			/*
 			 * Place connection back in the pool for reuse.
 			 */
-			LinkedList<TimeStampedConnection> connections = mPool.get(url);
+			LinkedList<TimeStampedConnection> connections = m_pool.get(url);
 			connections.add(new TimeStampedConnection(connection));
 		}
 		else

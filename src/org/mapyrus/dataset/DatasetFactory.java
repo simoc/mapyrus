@@ -69,8 +69,8 @@ public class DatasetFactory
 				retval = new OGRDataset(name, extras, stdin);
 			else if (type.equalsIgnoreCase("osm"))
 				retval = new OpenStreetMapDataset(name, extras, stdin);
-			else if (type.equalsIgnoreCase("countries") || type.equalsIgnoreCase("capitals"))
-				retval = new WorldMapDataset(type, extras);
+			else if (type.equalsIgnoreCase("internal"))
+				retval = new InternalDataset(name, extras);
 			else
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_DATASET_TYPE) +

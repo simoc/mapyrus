@@ -29,8 +29,8 @@ import java.sql.Connection;
  */
 public class TimeStampedConnection
 {
-	private Connection mConnection;
-	private long mLastUseTimeStamp;
+	private Connection m_connection;
+	private long m_lastUseTimeStamp;
 
 	/**
 	 * Create new timestamped connection.
@@ -38,8 +38,8 @@ public class TimeStampedConnection
 	 */
 	public TimeStampedConnection(Connection connection)
 	{
-		mConnection = connection;
-		mLastUseTimeStamp = System.currentTimeMillis();
+		m_connection = connection;
+		m_lastUseTimeStamp = System.currentTimeMillis();
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class TimeStampedConnection
 	 */
 	public Connection getConnection()
 	{
-		return(mConnection);
+		return(m_connection);
 	}
 	
 	/**
@@ -57,6 +57,6 @@ public class TimeStampedConnection
 	 */
 	public long getLastUseTimeStamp()
 	{
-		return(mLastUseTimeStamp);
+		return(m_lastUseTimeStamp);
 	}
 }

@@ -47,19 +47,19 @@ public class JDBCDataset implements GeographicDataset
 	/*
 	 * SQL query being executed and it's result.
 	 */
-	private Connection mConnection = null;
-	private Statement mStatement = null;
-	private ResultSet mResultSet = null;
-	private String mSql;
+	private Connection m_connection = null;
+	private Statement m_statement = null;
+	private ResultSet m_resultSet = null;
+	private String m_sql;
 
-	private String mUrl;
-	private String mJndiName = null;
+	private String m_url;
+	private String m_jndiName = null;
 
 	/*
 	 * Names and types of fields returned from SQL query.
 	 */
-	private String []mFieldNames;
-	private int []mFieldTypes;
+	private String []m_fieldNames;
+	private int []m_fieldTypes;
 
 	/**
 	 * Open connection to RDBMS and make SQL query, returning geographic data.
@@ -75,7 +75,7 @@ public class JDBCDataset implements GeographicDataset
 		String driver = null;
 		Properties properties = new Properties();
 
-		mSql = filename;
+		m_sql = filename;
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -90,9 +90,9 @@ public class JDBCDataset implements GeographicDataset
 				if (key.equals("driver"))
 					driver = value;
 				else if (key.equals("url"))
-					mUrl = value;
+					m_url = value;
 				else if (key.equals("jndiname"))
-					mJndiName = value;
+					m_jndiName = value;
 				else
 				{
 					properties.put(key, value);
@@ -113,7 +113,7 @@ public class JDBCDataset implements GeographicDataset
 
 		try
 		{
-			if (mJndiName != null)
+			if (m_jndiName != null)
 			{
 				/*
 			 	 * Connect to database using JNDI.
@@ -125,16 +125,16 @@ public class JDBCDataset implements GeographicDataset
 				/*
 				 * Look up our data source.
 				 */
-				DataSource ds = (DataSource)envCtx.lookup(mJndiName);
+				DataSource ds = (DataSource)envCtx.lookup(m_jndiName);
 
 				/*
 				 * Allocate and use a connection from the pool.
 				 */
-				mConnection = ds.getConnection();
+				m_connection = ds.getConnection();
 			}
 			else
 			{
-				mConnection = ConnectionPool.get(mUrl, properties);
+				m_connection = ConnectionPool.get(m_url, properties);
 			}
 		}
 		catch (SQLException e)
@@ -144,14 +144,14 @@ public class JDBCDataset implements GeographicDataset
 				state = ": " + state;
 			else
 				state = "";
-			if (mUrl == null)
-				mUrl = "";
+			if (m_url == null)
+				m_url = "";
 			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
-				 state + ": " + mUrl);
+				 state + ": " + m_url);
 		}
 		catch (NamingException e)
 		{
-			throw new MapyrusException(e.getMessage() + ": " + mJndiName);
+			throw new MapyrusException(e.getMessage() + ": " + m_jndiName);
 		}
 
 		try
@@ -160,7 +160,7 @@ public class JDBCDataset implements GeographicDataset
 			 * Send SQL query to database so we can immediately find the
 			 * field names and types it returns.
 			 */
-			mStatement = mConnection.createStatement();
+			m_statement = m_connection.createStatement();
 
 			try
 			{
@@ -168,34 +168,34 @@ public class JDBCDataset implements GeographicDataset
 				 * Set timeout for SQL statement execution but just continue
 				 * anyway if database does not support it.
 				 */
-				mStatement.setQueryTimeout(Constants.DB_CONNECTION_TIMEOUT);
+				m_statement.setQueryTimeout(Constants.DB_CONNECTION_TIMEOUT);
 			}
 			catch (SQLException e)
 			{
 			}
 
-			mResultSet = mStatement.executeQuery(mSql);
-			ResultSetMetaData resultSetMetadata = mResultSet.getMetaData();
+			m_resultSet = m_statement.executeQuery(m_sql);
+			ResultSetMetaData resultSetMetadata = m_resultSet.getMetaData();
 
 			int columnCount = resultSetMetadata.getColumnCount();
-			mFieldNames = new String[columnCount];
-			mFieldTypes = new int[columnCount];
+			m_fieldNames = new String[columnCount];
+			m_fieldTypes = new int[columnCount];
 			for (int i = 0; i < columnCount; i++)
 			{
-				mFieldNames[i] = resultSetMetadata.getColumnName(i + 1);
+				m_fieldNames[i] = resultSetMetadata.getColumnName(i + 1);
 
 				/*
 				 * Check that field name is acceptable for defining as variable name.
 				 */
-				char c = mFieldNames[i].charAt(0);
+				char c = m_fieldNames[i].charAt(0);
 				boolean isValidName = (Character.isLetter((char)c) || c == '$');
 
 				if (isValidName)
 				{
 					int j = 1;
-					while (isValidName && j < mFieldNames[i].length())
+					while (isValidName && j < m_fieldNames[i].length())
 					{
-						c = mFieldNames[i].charAt(j);
+						c = m_fieldNames[i].charAt(j);
 						isValidName = (c == '.' || c == '_' ||
 							Character.isLetterOrDigit((char)c));
 						j++;
@@ -204,10 +204,10 @@ public class JDBCDataset implements GeographicDataset
 				if (!isValidName)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FIELD_NAME) +
-						": " + mFieldNames[i]);
+						": " + m_fieldNames[i]);
 				}
 
-				mFieldTypes[i] = resultSetMetadata.getColumnType(i + 1);
+				m_fieldTypes[i] = resultSetMetadata.getColumnType(i + 1);
 			}
 		}
 		catch (SQLException e1)
@@ -229,7 +229,7 @@ public class JDBCDataset implements GeographicDataset
 			else
 				state = "";
 			throw new MapyrusException(e1.getErrorCode() + ": " + e1.getMessage() +
-				state + ": " + mSql);
+				state + ": " + m_sql);
 		}
 		catch (MapyrusException e2)
 		{
@@ -271,7 +271,7 @@ public class JDBCDataset implements GeographicDataset
 	 */
 	public String[] getFieldNames()
 	{
-		return mFieldNames;
+		return m_fieldNames;
 	}
 
 	/**
@@ -295,56 +295,56 @@ public class JDBCDataset implements GeographicDataset
 
 		try
 		{		
-			if (mResultSet.next())
+			if (m_resultSet.next())
 			{
 				/*
 				 * Convert row returned by JDBC to row expected by Mapyrus.
 				 */
 				retval = new Row();
-				for (int i = 0; i < mFieldTypes.length; i++)
+				for (int i = 0; i < m_fieldTypes.length; i++)
 				{
-					if (mFieldTypes[i] == Types.TINYINT)
-						arg = new Argument(mResultSet.getByte(i + 1));
-					else if (mFieldTypes[i] == Types.SMALLINT)
-						arg = new Argument(mResultSet.getShort(i + 1));
-					else if (mFieldTypes[i] == Types.INTEGER)
-						arg = new Argument(mResultSet.getInt(i + 1));
-					else if (mFieldTypes[i] == Types.BIGINT)
-						arg = new Argument(mResultSet.getLong(i + 1));
-					else if (mFieldTypes[i] == Types.REAL)
-						arg = new Argument(mResultSet.getFloat(i + 1));
-					else if (mFieldTypes[i] == Types.FLOAT ||
-						mFieldTypes[i] == Types.DOUBLE)
+					if (m_fieldTypes[i] == Types.TINYINT)
+						arg = new Argument(m_resultSet.getByte(i + 1));
+					else if (m_fieldTypes[i] == Types.SMALLINT)
+						arg = new Argument(m_resultSet.getShort(i + 1));
+					else if (m_fieldTypes[i] == Types.INTEGER)
+						arg = new Argument(m_resultSet.getInt(i + 1));
+					else if (m_fieldTypes[i] == Types.BIGINT)
+						arg = new Argument(m_resultSet.getLong(i + 1));
+					else if (m_fieldTypes[i] == Types.REAL)
+						arg = new Argument(m_resultSet.getFloat(i + 1));
+					else if (m_fieldTypes[i] == Types.FLOAT ||
+						m_fieldTypes[i] == Types.DOUBLE)
 					{
-						arg = new Argument(mResultSet.getDouble(i + 1));
+						arg = new Argument(m_resultSet.getDouble(i + 1));
 					}
-					else if (mFieldTypes[i] == Types.DECIMAL ||
-						mFieldTypes[i] == Types.NUMERIC)
+					else if (m_fieldTypes[i] == Types.DECIMAL ||
+						m_fieldTypes[i] == Types.NUMERIC)
 					{
-						arg = new Argument(mResultSet.getDouble(i + 1));
+						arg = new Argument(m_resultSet.getDouble(i + 1));
 					}
-					else if (mFieldTypes[i] == Types.BIT)
+					else if (m_fieldTypes[i] == Types.BIT)
 					{
-						bool = mResultSet.getBoolean(i + 1);
+						bool = m_resultSet.getBoolean(i + 1);
 						arg = (bool ? Argument.numericOne : Argument.numericZero);
 					}
-					else if (mFieldTypes[i] == Types.CHAR ||
-						mFieldTypes[i] == Types.VARCHAR ||
-						mFieldTypes[i] == Types.LONGVARCHAR ||
-						mFieldTypes[i] == Types.CLOB)
+					else if (m_fieldTypes[i] == Types.CHAR ||
+						m_fieldTypes[i] == Types.VARCHAR ||
+						m_fieldTypes[i] == Types.LONGVARCHAR ||
+						m_fieldTypes[i] == Types.CLOB)
 					{
-						String fieldValue = mResultSet.getString(i + 1);
+						String fieldValue = m_resultSet.getString(i + 1);
 						if (fieldValue == null)
 							arg = Argument.emptyString;
 						else
 							arg = new Argument(Argument.STRING, fieldValue);
 					}
-					else if (mFieldTypes[i] == Types.BINARY ||
-						mFieldTypes[i] == Types.VARBINARY ||
-						mFieldTypes[i] == Types.LONGVARBINARY ||
-						mFieldTypes[i] == Types.BLOB)
+					else if (m_fieldTypes[i] == Types.BINARY ||
+						m_fieldTypes[i] == Types.VARBINARY ||
+						m_fieldTypes[i] == Types.LONGVARBINARY ||
+						m_fieldTypes[i] == Types.BLOB)
 					{
-						byte []b = mResultSet.getBytes(i + 1);
+						byte []b = m_resultSet.getBytes(i + 1);
 						if (b == null)
 						{
 							arg = Argument.emptyGeometry;
@@ -355,19 +355,19 @@ public class JDBCDataset implements GeographicDataset
 							arg = new Argument((int)geometry[0], geometry);
 						}
 					}
-					else if (mFieldTypes[i] == Types.DATE ||
-						mFieldTypes[i] == Types.TIME ||
-						mFieldTypes[i] == Types.TIMESTAMP)
+					else if (m_fieldTypes[i] == Types.DATE ||
+						m_fieldTypes[i] == Types.TIME ||
+						m_fieldTypes[i] == Types.TIMESTAMP)
 					{
-						String fieldValue = mResultSet.getString(i + 1);
+						String fieldValue = m_resultSet.getString(i + 1);
 						if (fieldValue == null)
 							arg = Argument.emptyString;
 						else
 							arg = new Argument(Argument.STRING, fieldValue);
 					}
-					else if (mFieldTypes[i] == Types.OTHER)
+					else if (m_fieldTypes[i] == Types.OTHER)
 					{
-						byte b[] = mResultSet.getBytes(i + 1);
+						byte b[] = m_resultSet.getBytes(i + 1);
 						if (b == null || b.length == 0)
 						{
 							arg = Argument.emptyString;
@@ -398,9 +398,9 @@ public class JDBCDataset implements GeographicDataset
 							}
 						}
 					}
-					else if (mFieldTypes[i] == 2002)
+					else if (m_fieldTypes[i] == 2002)
 					{
-						Object obj = mResultSet.getObject(i + 1);
+						Object obj = m_resultSet.getObject(i + 1);
 						if (obj == null)
 						{
 							arg = Argument.emptyString;
@@ -413,7 +413,7 @@ public class JDBCDataset implements GeographicDataset
 					else
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNKNOWN_FIELD_TYPE) +
-							": " + mFieldTypes[i]);
+							": " + m_fieldTypes[i]);
 					}
 					retval.add(arg);
 				}
@@ -431,7 +431,7 @@ public class JDBCDataset implements GeographicDataset
 			else
 				state = "";
 			throw new MapyrusException(e.getErrorCode() + ": " + e.getMessage() +
-				state + ": " + mSql);
+				state + ": " + m_sql);
 		}
 		return(retval);
 	}
@@ -479,8 +479,8 @@ public class JDBCDataset implements GeographicDataset
 	{
 		try
 		{
-			if (mStatement != null)
-				mStatement.close();
+			if (m_statement != null)
+				m_statement.close();
 		}
 		catch (SQLException e)
 		{
@@ -494,16 +494,16 @@ public class JDBCDataset implements GeographicDataset
 		}
 		finally
 		{
-			if (mConnection != null)
+			if (m_connection != null)
 			{
-				if (mJndiName != null)
+				if (m_jndiName != null)
 				{
 					try
 					{
 						/*
 						 * Return JDBC connection that we have finished with.
 						 */
-						mConnection.close();
+						m_connection.close();
 					}
 					catch (SQLException e)
 					{
@@ -511,11 +511,11 @@ public class JDBCDataset implements GeographicDataset
 				}
 				else
 				{
-					ConnectionPool.put(mUrl, mConnection, succeeded);
+					ConnectionPool.put(m_url, m_connection, succeeded);
 				}
 			}
-			mConnection = null;
-			mStatement = null;
+			m_connection = null;
+			m_statement = null;
 		}
 	}
 

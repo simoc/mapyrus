@@ -53,26 +53,26 @@ public class OGRDataset implements GeographicDataset
 	 * File we are reading from.
 	 * Process handle to external process we are reading from.
 	 */
-	private LineNumberReader mReader;
-	private String mFilename;
-	private Process mProcess;
+	private LineNumberReader m_reader;
+	private String m_filename;
+	private Process m_process;
 
 	/*
 	 * Extents of dataset.  Can only be found by scanning all records in
 	 * dataset.
 	 */
-	private double mXMin;
-	private double mYMin;
-	private double mXMax;
-	private double mYMax;
+	private double m_xMin;
+	private double m_yMin;
+	private double m_xMax;
+	private double m_yMax;
 
 	/*
 	 * Next line to read from ogrinfo output.
 	 */
-	private String mNextLine;
+	private String m_nextLine;
 
-	private String mProjection;
-	private String []mFieldNames;
+	private String m_projection;
+	private String []m_fieldNames;
 
 	/**
 	 * Read WKT projection from file.
@@ -128,10 +128,10 @@ public class OGRDataset implements GeographicDataset
 		/*
 		 * Open file or process to read from.
 		 */
-		mFilename = filename;
+		m_filename = filename;
 		if (filename.equals("-"))
 		{
-			mReader = new LineNumberReader(new InputStreamReader(stdin));
+			m_reader = new LineNumberReader(new InputStreamReader(stdin));
 		}
 		else if (filename.endsWith("|"))
 		{
@@ -141,19 +141,19 @@ public class OGRDataset implements GeographicDataset
 				cmdArray = new String[]{command};
 			else
 				cmdArray = new String[]{"sh", "-c", command};
-			mProcess = Runtime.getRuntime().exec(cmdArray);
-			mReader = new LineNumberReader(new InputStreamReader(mProcess.getInputStream()));
+			m_process = Runtime.getRuntime().exec(cmdArray);
+			m_reader = new LineNumberReader(new InputStreamReader(m_process.getInputStream()));
 		}
 		else
 		{
-			mReader = new LineNumberReader(new FileReader(filename));
+			m_reader = new LineNumberReader(new FileReader(filename));
 		}
 
 		/*
 		 * Read and parse header of ogrinfo program output.
 		 */
 		boolean parsedHeader = false;
-		String nextLine = mReader.readLine();
+		String nextLine = m_reader.readLine();
 		while (nextLine != null && (!parsedHeader))
 		{
 			if (nextLine.startsWith("Extent:"))
@@ -162,25 +162,25 @@ public class OGRDataset implements GeographicDataset
 				if (st.countTokens() >= 6)
 				{
 					st.nextToken();
-					mXMin = Double.parseDouble(st.nextToken());
-					mYMin = Double.parseDouble(st.nextToken());
+					m_xMin = Double.parseDouble(st.nextToken());
+					m_yMin = Double.parseDouble(st.nextToken());
 					String token = st.nextToken();
 					while (!token.equals("-"))
 						token = st.nextToken();
-					mXMax = Double.parseDouble(st.nextToken());
-					mYMax = Double.parseDouble(st.nextToken());
+					m_xMax = Double.parseDouble(st.nextToken());
+					m_yMax = Double.parseDouble(st.nextToken());
 					
-					nextLine = mReader.readLine();
+					nextLine = m_reader.readLine();
 				}
 			}
 			else if (nextLine.startsWith("Layer SRS"))
 			{
-				mProjection = readWKTProjection(mReader);
+				m_projection = readWKTProjection(m_reader);
 				
 				/*
 				 * Parse attribute field names following projection definition.
 				 */
-				nextLine = mReader.readLine();
+				nextLine = m_reader.readLine();
 				ArrayList<String> fieldNames = new ArrayList<String>();
 				while (nextLine != null && (!nextLine.startsWith("OGRFeature")))
 				{
@@ -190,18 +190,18 @@ public class OGRDataset implements GeographicDataset
 						String fieldName = nextLine.substring(0, colonIndex); 
 						fieldNames.add(fieldName);
 					}
-					nextLine = mReader.readLine();
+					nextLine = m_reader.readLine();
 				}
 				fieldNames.add("STYLE");
 				fieldNames.add("GEOMETRY");
-				mFieldNames = new String[fieldNames.size()];
-				fieldNames.toArray(mFieldNames);
+				m_fieldNames = new String[fieldNames.size()];
+				fieldNames.toArray(m_fieldNames);
 				
 				parsedHeader = true;
 			}
 			else
 			{
-				nextLine = mReader.readLine();
+				nextLine = m_reader.readLine();
 			}
 		}
 
@@ -210,10 +210,10 @@ public class OGRDataset implements GeographicDataset
 		 */
 		if (!parsedHeader)
 		{
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGR_HEADER) + ": " + mFilename);
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGR_HEADER) + ": " + m_filename);
 		}
 
-		mNextLine = nextLine;
+		m_nextLine = nextLine;
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class OGRDataset implements GeographicDataset
 	 */
 	public String getProjection()
 	{
-		return(mProjection);
+		return(m_projection);
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class OGRDataset implements GeographicDataset
 	 */
 	public String[] getFieldNames()
 	{
-		return(mFieldNames);
+		return(m_fieldNames);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class OGRDataset implements GeographicDataset
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
-		return new Rectangle2D.Double(mXMin, mYMin, mXMax - mXMin, mYMax - mYMin);
+		return new Rectangle2D.Double(m_xMin, m_yMin, m_xMax - m_xMin, m_yMax - m_yMin);
 	}
 
 	/**
@@ -263,36 +263,36 @@ public class OGRDataset implements GeographicDataset
 
 		try
 		{
-			if (mNextLine != null)
+			if (m_nextLine != null)
 			{
 				/*
 				 * Skip blank lines.
 				 */
-				if (mNextLine.length() == 0)
-					mNextLine = mReader.readLine();
+				if (m_nextLine.length() == 0)
+					m_nextLine = m_reader.readLine();
 
-				if (mNextLine != null && mNextLine.startsWith("OGRFeature"))
+				if (m_nextLine != null && m_nextLine.startsWith("OGRFeature"))
 				{
-					row = new Row(mFieldNames.length);
+					row = new Row(m_fieldNames.length);
 
 					/*
 					 * Read each field value and add it to row.
 					 */
-					for (int i = 0; i < mFieldNames.length - 2; i++)
+					for (int i = 0; i < m_fieldNames.length - 2; i++)
 					{
-						mNextLine = mReader.readLine();
-						if (mNextLine == null)
+						m_nextLine = m_reader.readLine();
+						if (m_nextLine == null)
 						{
 							throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
-								": " + mFilename);
+								": " + m_filename);
 						}
 
-						if ((equalsIndex = mNextLine.indexOf('=')) < 0)
+						if ((equalsIndex = m_nextLine.indexOf('=')) < 0)
 						{
-							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGR_FEATURE) + ": " + mNextLine);
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGR_FEATURE) + ": " + m_nextLine);
 						}
 
-						String field = mNextLine.substring(equalsIndex + 2);
+						String field = m_nextLine.substring(equalsIndex + 2);
 						if (field.length() == 0)
 							row.add(Argument.emptyString);
 						else
@@ -302,39 +302,39 @@ public class OGRDataset implements GeographicDataset
 					/*
 					 * If style value is given then add it, otherwise set an empty value.
 					 */
-					mNextLine = mReader.readLine();
-					if (mNextLine == null)
+					m_nextLine = m_reader.readLine();
+					if (m_nextLine == null)
 					{
 						throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
-							": " + mFilename);
+							": " + m_filename);
 					}
 
-					int styleIndex = mNextLine.indexOf("Style =");
+					int styleIndex = m_nextLine.indexOf("Style =");
 					if (styleIndex >= 0)
 					{
-						row.add(new Argument(Argument.STRING, mNextLine.substring(styleIndex + 8)));
-						mNextLine = mReader.readLine();
+						row.add(new Argument(Argument.STRING, m_nextLine.substring(styleIndex + 8)));
+						m_nextLine = m_reader.readLine();
 					}
 					else
 					{
 						row.add(Argument.emptyString);
 					}
 
-					if (mNextLine == null)
+					if (m_nextLine == null)
 					{
 						throw new EOFException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
-							": " + mFilename);
+							": " + m_filename);
 					}
 
 					/*
 					 * Read geometry and add it to row.
 					 */
-					row.add(new Argument(Argument.STRING, mNextLine.trim()));
+					row.add(new Argument(Argument.STRING, m_nextLine.trim()));
 					
 					/*
 					 * Read first line of next feature.
 					 */
-					mNextLine = mReader.readLine();
+					m_nextLine = m_reader.readLine();
 				}
 			}
 		}
@@ -356,9 +356,9 @@ public class OGRDataset implements GeographicDataset
 			/*
 			 * Read any remaining output from external program.
 			 */
-			if (mProcess != null)
+			if (m_process != null)
 			{
-				while (mReader.read() > 0)
+				while (m_reader.read() > 0)
 					;
 			}
 
@@ -366,15 +366,15 @@ public class OGRDataset implements GeographicDataset
 			 * We've read all of external program's output, now wait for
 			 * it to terminate.
 			 */
-			if (mProcess != null)
+			if (m_process != null)
 			{
 				try
 				{
-					int status = mProcess.waitFor();
+					int status = m_process.waitFor();
 					if (status != 0)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
-							": " + mFilename);
+							": " + m_filename);
 					}
 				}
 				catch (InterruptedException e)
@@ -394,7 +394,7 @@ public class OGRDataset implements GeographicDataset
 			 */
 			try
 			{
-				mReader.close();
+				m_reader.close();
 			}
 			catch (IOException e)
 			{
