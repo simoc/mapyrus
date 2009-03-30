@@ -45,17 +45,17 @@ public class AdobeFontMetrics
 	 */
 	private static final int FULL_CHAR_WIDTH = 1000;
 
-	private String mFontName;
+	private String m_fontName;
 
-	private short []mCharWidths;
-	private int mFirstChar, mLastChar;
-	private boolean mIsFixedPitch;
-	private int mItalicAngle;
-	private int mCapHeight;
-	private int mAscender;
-	private int mDescender;
-	private Rectangle mFontBBox;
-	private int mFlags;
+	private short []m_charWidths;
+	private int m_firstChar, m_lastChar;
+	private boolean m_isFixedPitch;
+	private int m_italicAngle;
+	private int m_capHeight;
+	private int m_ascender;
+	private int m_descender;
+	private Rectangle m_fontBBox;
+	private int m_flags;
 
 	/*
 	 * Lookup table of ISOLatin1 character indexes for named extended characters.
@@ -186,11 +186,11 @@ public class AdobeFontMetrics
 		boolean convertToISOLatin1 = false;
 
 		// TODO handle fonts with more than 256 characters.
-		mCharWidths = new short[256];
-		mIsFixedPitch = false;
-		mFirstChar = Integer.MAX_VALUE;
-		mLastChar = Integer.MIN_VALUE;
-		mFlags = 32; /* Nonsymbolic font for PDF */
+		m_charWidths = new short[256];
+		m_isFixedPitch = false;
+		m_firstChar = Integer.MAX_VALUE;
+		m_lastChar = Integer.MIN_VALUE;
+		m_flags = 32; /* Nonsymbolic font for PDF */
 
 		try
 		{
@@ -229,13 +229,13 @@ public class AdobeFontMetrics
 							charIndex = i.intValue();
 					}
 
-					if (charIndex >= 0 && charIndex < mCharWidths.length)
+					if (charIndex >= 0 && charIndex < m_charWidths.length)
 					{
-						mCharWidths[charIndex] = charWidth;
-						if (charIndex < mFirstChar)
-							mFirstChar = charIndex;
-						if (charIndex > mLastChar)
-							mLastChar = charIndex;
+						m_charWidths[charIndex] = charWidth;
+						if (charIndex < m_firstChar)
+							m_firstChar = charIndex;
+						if (charIndex > m_lastChar)
+							m_lastChar = charIndex;
 					}
 				}
 				else if (line.startsWith("FontName"))
@@ -247,13 +247,13 @@ public class AdobeFontMetrics
 							": " + afmFilename + ": " + line);
 					}
 					st.nextToken();	/* FontName */
-					mFontName = st.nextToken();
-					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(mFontName);
+					m_fontName = st.nextToken();
+					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(m_fontName);
 				}
 				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
 				{
-					mIsFixedPitch = true;
-					mFlags |= 1;
+					m_isFixedPitch = true;
+					m_flags |= 1;
 				}
 				else if (line.startsWith("ItalicAngle"))
 				{
@@ -264,7 +264,7 @@ public class AdobeFontMetrics
 							": " + afmFilename + ": " + line);
 					}
 					st.nextToken(); /* "ItalicAngle" */
-					mItalicAngle = (int)Math.round(Double.parseDouble(st.nextToken()));
+					m_italicAngle = (int)Math.round(Double.parseDouble(st.nextToken()));
 				}
 				else if (line.startsWith("CapHeight"))
 				{
@@ -275,7 +275,7 @@ public class AdobeFontMetrics
 							": " + afmFilename + ": " + line);
 					}
 					st.nextToken(); /* "CapHeight" */
-					mCapHeight = Integer.parseInt(st.nextToken());
+					m_capHeight = Integer.parseInt(st.nextToken());
 				}
 				else if (line.startsWith("Ascender"))
 				{
@@ -286,7 +286,7 @@ public class AdobeFontMetrics
 							": " + afmFilename + ": " + line);
 					}
 					st.nextToken(); /* "Ascender" */
-					mAscender = Integer.parseInt(st.nextToken());
+					m_ascender = Integer.parseInt(st.nextToken());
 				}
 				else if (line.startsWith("Descender"))
 				{
@@ -297,7 +297,7 @@ public class AdobeFontMetrics
 							": " + afmFilename + ": " + line);
 					}
 					st.nextToken(); /* "Descender" */
-					mDescender = Integer.parseInt(st.nextToken());
+					m_descender = Integer.parseInt(st.nextToken());
 				}
 				else if (line.startsWith("FontBBox"))
 				{
@@ -312,7 +312,7 @@ public class AdobeFontMetrics
 					int y1 = Integer.parseInt(st.nextToken());
 					int x2 = Integer.parseInt(st.nextToken());
 					int y2 = Integer.parseInt(st.nextToken());
-					mFontBBox = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+					m_fontBBox = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 				}
 				else if (line.startsWith("Weight"))
 				{
@@ -321,7 +321,7 @@ public class AdobeFontMetrics
 					{
 						String token = st.nextToken();
 						if (token.equalsIgnoreCase("italic"))
-							mFlags |= 64;
+							m_flags |= 64;
 					}
 				}
 				else if (line.startsWith("StartCharMetrics"))
@@ -350,7 +350,7 @@ public class AdobeFontMetrics
 	 */
 	public String getFontName()
 	{
-		return(mFontName);
+		return(m_fontName);
 	}
 
 	/**
@@ -359,7 +359,7 @@ public class AdobeFontMetrics
 	 */
 	public int getFirstChar()
 	{
-		return(mFirstChar);
+		return(m_firstChar);
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class AdobeFontMetrics
 	 */
 	public int getLastChar()
 	{
-		return(mLastChar);
+		return(m_lastChar);
 	}
 
 	/**
@@ -378,7 +378,7 @@ public class AdobeFontMetrics
 	 */
 	public int getCharWidth(int index)
 	{
-		return(mCharWidths[index]);
+		return(m_charWidths[index]);
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class AdobeFontMetrics
 	 */
 	public int getItalicAngle()
 	{
-		return(mItalicAngle);
+		return(m_italicAngle);
 	}
 
 	/**
@@ -396,7 +396,7 @@ public class AdobeFontMetrics
 	 */
 	public int getCapHeight()
 	{
-		return(mCapHeight);
+		return(m_capHeight);
 	}
 
 	/**
@@ -405,7 +405,7 @@ public class AdobeFontMetrics
 	 */
 	public Rectangle getFontBBox()
 	{
-		return(mFontBBox);
+		return(m_fontBBox);
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class AdobeFontMetrics
 	 */
 	public int getFlags()
 	{
-		return(mFlags);
+		return(m_flags);
 	}
 	
 	/**
@@ -423,7 +423,7 @@ public class AdobeFontMetrics
 	 */
 	public int getAscender()
 	{
-		return(mAscender);
+		return(m_ascender);
 	}
 
 	/**
@@ -432,7 +432,7 @@ public class AdobeFontMetrics
 	 */
 	public int getDescender()
 	{
-		return(mDescender);
+		return(m_descender);
 	}
 
 	/**
@@ -441,7 +441,7 @@ public class AdobeFontMetrics
 	 */
 	public String toString()
 	{
-		return("Adobe Font Metrics for " + mFontName);
+		return("Adobe Font Metrics for " + m_fontName);
 	}
 
 	/**
@@ -457,14 +457,14 @@ public class AdobeFontMetrics
 		int c;
 		double pointLen;
 
-		if (mIsFixedPitch)
+		if (m_isFixedPitch)
 		{
 			/*
 			 * All characters are same width so width of string
 			 * depends only on length of string.
 			 */
 			int spaceIndex = 32;
-			pointLen = s.length() * ((double)mCharWidths[spaceIndex] / FULL_CHAR_WIDTH) * pointSize;
+			pointLen = s.length() * ((double)m_charWidths[spaceIndex] / FULL_CHAR_WIDTH) * pointSize;
 		}
 		else
 		{
@@ -474,8 +474,8 @@ public class AdobeFontMetrics
 			for (int i = 0; i < sLength; i++)
 			{
 				c = s.charAt(i);
-				if (c >= 0 && c < mCharWidths.length)
-					total += mCharWidths[c];
+				if (c >= 0 && c < m_charWidths.length)
+					total += m_charWidths[c];
 				else
 					total += FULL_CHAR_WIDTH;
 			}

@@ -28,15 +28,15 @@ package org.mapyrus.font;
  */
 public class StringDimension
 {
-	private double mHeight;
-	private double mWidth;
+	private double m_height;
+	private double m_width;
 	
 	/**
 	 * Create new dimension, with zero height and width.
 	 */
 	public StringDimension()
 	{
-		mHeight = mWidth = 0.0; 
+		m_height = m_width = 0.0; 
 	}
 
 	/**
@@ -46,8 +46,8 @@ public class StringDimension
 	 */
 	public void setSize(double width, double height)
 	{
-		mHeight = height;
-		mWidth = width;
+		m_height = height;
+		m_width = width;
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class StringDimension
 	 */
 	public double getHeight()
 	{
-		return(mHeight);
+		return(m_height);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class StringDimension
 	 */
 	public double getWidth()
 	{
-		return(mWidth);
+		return(m_width);
 	}
 
 	/**
@@ -74,6 +74,6 @@ public class StringDimension
 	 */
 	public String toString()
 	{
-		return(mWidth + " x " + mHeight);
+		return(m_width + " x " + m_height);
 	}
 }

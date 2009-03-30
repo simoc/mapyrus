@@ -44,11 +44,11 @@ public class AdobeFontMetricsManager
 	 * List of AFM files included as java resources
 	 * for the 35 standard PostScript fonts.
 	 */
-	private static String []mStdFontMetricResources;
+	private static String []m_stdFontMetricResources;
 
 	static
 	{
-		mStdFontMetricResources = new String []
+		m_stdFontMetricResources = new String []
 		{
 			"agd.afm",
 			"agdo.afm",
@@ -107,9 +107,9 @@ public class AdobeFontMetricsManager
 		 * Load font metrics information for standard PostScript fonts
 		 * from .afm files included as resources.
 		 */
-		for (int i = 0; i < mStdFontMetricResources.length; i++)
+		for (int i = 0; i < m_stdFontMetricResources.length; i++)
 		{
-			String res = "org/mapyrus/font/" + mStdFontMetricResources[i];
+			String res = "org/mapyrus/font/" + m_stdFontMetricResources[i];
 			InputStream inStream =
 				this.getClass().getClassLoader().getResourceAsStream(res);
 

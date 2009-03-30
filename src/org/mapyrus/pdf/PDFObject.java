@@ -40,11 +40,11 @@ import org.mapyrus.io.ASCII85Writer;
  */
 public class PDFObject
 {
-	private String mValue = null;
-	private int mReference = -1;
-	private PDFObject[] mArray = null;
-	private HashMap<String, PDFObject> mDictionary = null;
-	private long mStreamOffset = -1;
+	private String m_value = null;
+	private int m_reference = -1;
+	private PDFObject[] m_array = null;
+	private HashMap<String, PDFObject> m_dictionary = null;
+	private long m_streamOffset = -1;
 
 	/**
 	 * Create new PDF object.
@@ -52,7 +52,7 @@ public class PDFObject
 	 */
 	public PDFObject(String value)
 	{
-		mValue = value;
+		m_value = value;
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class PDFObject
 	 */
 	public PDFObject(PDFObject []array)
 	{
-		mArray = array;
+		m_array = array;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class PDFObject
 	 */
 	public PDFObject(HashMap<String, PDFObject> dictionary)
 	{
-		mDictionary = dictionary;
+		m_dictionary = dictionary;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class PDFObject
 	 */
 	public PDFObject(int reference)
 	{
-		mReference = reference;
+		m_reference = reference;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class PDFObject
 	 */
 	public void setStreamOffset(long offset)
 	{
-		mStreamOffset = offset;
+		m_streamOffset = offset;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class PDFObject
 	 */
 	public String getValue()
 	{
-		return(mValue);
+		return(m_value);
 	}
 
 	/**
@@ -106,11 +106,11 @@ public class PDFObject
 	 */
 	public void setValue(PDFObject otherObject)
 	{
-		mValue = otherObject.mValue;
-		mReference = otherObject.mReference;
-		mArray = otherObject.mArray;
-		mDictionary = otherObject.mDictionary;
-		mStreamOffset = otherObject.mStreamOffset;
+		m_value = otherObject.m_value;
+		m_reference = otherObject.m_reference;
+		m_array = otherObject.m_array;
+		m_dictionary = otherObject.m_dictionary;
+		m_streamOffset = otherObject.m_streamOffset;
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class PDFObject
 	 */
 	public boolean isArray()
 	{
-		return(mArray != null);
+		return(m_array != null);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class PDFObject
 	 */
 	public PDFObject[] getArray()
 	{
-		return(mArray);
+		return(m_array);
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class PDFObject
 	 */
 	public boolean isDictionary()
 	{
-		return(mDictionary != null);
+		return(m_dictionary != null);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class PDFObject
 	 */
 	public HashMap<String, PDFObject> getDictionary()
 	{
-		return(mDictionary);
+		return(m_dictionary);
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class PDFObject
 	 */
 	public boolean isReference()
 	{
-		return(mReference != -1);
+		return(m_reference != -1);
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class PDFObject
 	 */
 	public int getReference()
 	{
-		return(mReference);
+		return(m_reference);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class PDFObject
 	 */
 	public long getStreamOffset()
 	{
-		return(mStreamOffset);
+		return(m_streamOffset);
 	}
 
 	/**
@@ -198,16 +198,16 @@ public class PDFObject
 			sb.append(objectNumber).append(" 0 obj\r\n");
 			objectNumber++;
 		}
-		if (mValue != null)
+		if (m_value != null)
 		{
-			sb.append(mValue).append("\r\n");
+			sb.append(m_value).append("\r\n");
 		}
-		else if (mArray != null)
+		else if (m_array != null)
 		{
 			sb.append("[");
-			for (int i = 0; i < mArray.length; i++)
+			for (int i = 0; i < m_array.length; i++)
 			{
-				ArrayList<StringBuffer> referencedObjects = mArray[i].toPDFString(objectNumber + retval.size(),
+				ArrayList<StringBuffer> referencedObjects = m_array[i].toPDFString(objectNumber + retval.size(),
 					false, true, pdfObjects, pdfFile, filename);
 
 				sb.append(referencedObjects.get(0).toString());
@@ -222,13 +222,13 @@ public class PDFObject
 			}
 			sb.append("]\r\n");
 		}
-		else if (mDictionary != null)
+		else if (m_dictionary != null)
 		{
 			if (addDictionaryMarkers)
 				sb.append("<<\r\n");
-			for (String key : mDictionary.keySet())
+			for (String key : m_dictionary.keySet())
 			{
-				PDFObject value = (PDFObject)mDictionary.get(key);
+				PDFObject value = (PDFObject)m_dictionary.get(key);
 				if (!(key.equals("/Length") || key.equals("/Filter")))
 				{
 					sb.append(key);
@@ -249,13 +249,13 @@ public class PDFObject
 				}
 			}
 		}
-		else if (mReference >= 0)
+		else if (m_reference >= 0)
 		{
 			/*
 			 * Add reference to object and then add the referenced object.
 			 */
 			sb.append(objectNumber + retval.size()).append(" 0 R\r\n");
-			PDFObject referencedObject = (PDFObject)pdfObjects.get(Integer.valueOf(mReference));
+			PDFObject referencedObject = (PDFObject)pdfObjects.get(Integer.valueOf(m_reference));
 			ArrayList<StringBuffer> referencedObjects = referencedObject.toPDFString(objectNumber + retval.size(),
 				true, true, pdfObjects, pdfFile, filename);
 			retval.addAll(referencedObjects);
@@ -264,7 +264,7 @@ public class PDFObject
 		/*
 		 * Include any stream for the object too.
 		 */
-		if (mStreamOffset >= 0)
+		if (m_streamOffset >= 0)
 		{
 			byte []buf = getStream(pdfFile, filename, pdfObjects);
 			StringWriter sw = new StringWriter(buf.length);
@@ -286,7 +286,7 @@ public class PDFObject
 			sb.append(encodedBuf);
 			sb.append("endstream\r\n");
 		}
-		else if (mDictionary != null)
+		else if (m_dictionary != null)
 		{
 			if (addDictionaryMarkers)
 				sb.append(">>\r\n");
@@ -308,17 +308,17 @@ public class PDFObject
 	public byte[] getStream(RandomAccessFile pdfFile, String filename,
 		HashMap<Integer, PDFObject> pdfObjects) throws IOException, MapyrusException
 	{
-		PDFObject value = (PDFObject)mDictionary.get("/Length");
+		PDFObject value = (PDFObject)m_dictionary.get("/Length");
 		if (value.isReference())
-			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.mReference));
-		int streamLength = Integer.parseInt(value.mValue);
+			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.m_reference));
+		int streamLength = Integer.parseInt(value.m_value);
 
-		PDFObject filter = (PDFObject)mDictionary.get("/Filter");
+		PDFObject filter = (PDFObject)m_dictionary.get("/Filter");
 		if (value.isReference())
-			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.mReference));
+			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.m_reference));
 
 		byte []buf = new byte[streamLength];
-		pdfFile.seek(mStreamOffset);
+		pdfFile.seek(m_streamOffset);
 		pdfFile.readFully(buf);
 
 		if (filter != null)

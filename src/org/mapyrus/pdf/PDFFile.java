@@ -37,10 +37,10 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PDFFile
 {
-	private String mFilename;
-	private RandomAccessFile mPdfFile;
-	private HashMap<Integer, PDFObject> mObjects;
-	private ArrayList mPageObjects;
+	private String m_filename;
+	private RandomAccessFile m_pdfFile;
+	private HashMap<Integer, PDFObject> m_objects;
+	private ArrayList m_pageObjects;
 
 	public PDFFile(String filename) throws IOException, MapyrusException
 	{
@@ -50,45 +50,45 @@ public class PDFFile
 			 * Open file, find and read the 'xref' table at the end of the
 			 * file giving the file offset of each object.
 			 */
-			mFilename = filename;
-			mPdfFile = new RandomAccessFile(filename, "r");
-			String header = mPdfFile.readLine();
+			m_filename = filename;
+			m_pdfFile = new RandomAccessFile(filename, "r");
+			String header = m_pdfFile.readLine();
 			if (!header.startsWith("%PDF-"))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-					": " + mFilename);
+					": " + m_filename);
 			}
 	
 			byte []xrefBuf = new byte[20];
-			mPdfFile.seek(mPdfFile.length() - xrefBuf.length);
-			mPdfFile.readLine();	/* skip line with 'startxref' keyword */
-			String line = mPdfFile.readLine();
+			m_pdfFile.seek(m_pdfFile.length() - xrefBuf.length);
+			m_pdfFile.readLine();	/* skip line with 'startxref' keyword */
+			String line = m_pdfFile.readLine();
 			long xrefOffset = Long.parseLong(line);
 
 			HashMap<Integer, Long> objectOffsets = new HashMap<Integer, Long>();
-			mPdfFile.seek(xrefOffset);
+			m_pdfFile.seek(xrefOffset);
 			PDFObject trailer = readXrefSection(objectOffsets);
 
 			/*
 			 * Read each of the objects in the PDF file. 
 			 */
-			mObjects = new HashMap<Integer, PDFObject>(objectOffsets.size());
+			m_objects = new HashMap<Integer, PDFObject>(objectOffsets.size());
 			for (Integer key : objectOffsets.keySet())
 			{
 				Long objectOffset = objectOffsets.get(key);
-				mPdfFile.seek(objectOffset.longValue());
+				m_pdfFile.seek(objectOffset.longValue());
 
 				int id = readObjectBegin();
 				if (id != key.intValue())
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-						": " + mFilename);
+						": " + m_filename);
 				}
 				PDFObject obj = readObject();
 				long streamOffset = readObjectEnd();
 				obj.setStreamOffset(streamOffset);
 	
-				mObjects.put(key, obj);
+				m_objects.put(key, obj);
 			}
 
 			/*
@@ -100,7 +100,7 @@ public class PDFFile
 			/*
 			 * Make list of objects for each page.
 			 */
-			mPageObjects = buildPageObjectList(pagesObject);
+			m_pageObjects = buildPageObjectList(pagesObject);
 		}
 		catch(IOException e)
 		{
@@ -132,7 +132,7 @@ public class PDFFile
 		{
 			PDFObject kidObject = kidsArray[i];
 			if (kidObject.isReference())
-				kidObject = (PDFObject)mObjects.get(Integer.valueOf(kidObject.getReference()));
+				kidObject = (PDFObject)m_objects.get(Integer.valueOf(kidObject.getReference()));
 			PDFObject objectType = getDictionaryValue(kidObject, "/Type");
 			if (objectType.getValue().equals("/Page"))
 			{
@@ -153,8 +153,8 @@ public class PDFFile
 	private PDFObject readXrefSection(HashMap<Integer, Long> objectOffsets)
 		throws IOException, MapyrusException
 	{
-		String line = mPdfFile.readLine();	/* skip line with 'xref' keyword */
-		line = mPdfFile.readLine();
+		String line = m_pdfFile.readLine();	/* skip line with 'xref' keyword */
+		line = m_pdfFile.readLine();
 
 		while (!line.equals("trailer"))
 		{
@@ -163,19 +163,19 @@ public class PDFFile
 			if (st.countTokens() < 2)
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-					": " + mFilename);
+					": " + m_filename);
 			}
 			int startIndex = Integer.parseInt(st.nextToken());
 			int count = Integer.parseInt(st.nextToken());
 			
 			for (int i = 0; i < count; i++)
 			{
-				line = mPdfFile.readLine();
+				line = m_pdfFile.readLine();
 				st = new StringTokenizer(line);
 				if (st.countTokens() < 3)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-						": " + mFilename);
+						": " + m_filename);
 				}
 				Long objOffset = Long.valueOf(st.nextToken());
 				st.nextToken();	/* skip generation number */
@@ -192,7 +192,7 @@ public class PDFFile
 						objectOffsets.put(key, objOffset);
 				}
 			}
-			line = mPdfFile.readLine();
+			line = m_pdfFile.readLine();
 		}
 
 		/*
@@ -207,7 +207,7 @@ public class PDFFile
 			 */
 			String s = prevObject.getValue();
 			long offset = Long.parseLong(s);
-			mPdfFile.seek(offset);
+			m_pdfFile.seek(offset);
 			readXrefSection(objectOffsets);
 		}
 		return(trailer);
@@ -218,16 +218,16 @@ public class PDFFile
 	 */
 	public void close()
 	{
-		if (mPdfFile != null)
+		if (m_pdfFile != null)
 		{
 			try
 			{
-				mPdfFile.close();
+				m_pdfFile.close();
 			}
 			catch (IOException e)
 			{
 			}
-			mPdfFile = null;
+			m_pdfFile = null;
 		}
 	}
 
@@ -237,7 +237,7 @@ public class PDFFile
 	 */
 	public int getPageCount()
 	{
-		return(mPageObjects.size());
+		return(m_pageObjects.size());
 	}
 
 	/**
@@ -247,7 +247,7 @@ public class PDFFile
 	 */
 	private PDFObject getResources(int page) throws MapyrusException
 	{
-		PDFObject pageObject = (PDFObject)mPageObjects.get(page - 1);
+		PDFObject pageObject = (PDFObject)m_pageObjects.get(page - 1);
 		PDFObject resourcesObject = getDictionaryValue(pageObject, "/Resources");
 		return(resourcesObject);
 	}
@@ -260,7 +260,7 @@ public class PDFFile
 	public byte[] getContents(int page) throws IOException, MapyrusException
 	{
 		byte[] retval = null;
-		PDFObject pageObject = (PDFObject)mPageObjects.get(page - 1);
+		PDFObject pageObject = (PDFObject)m_pageObjects.get(page - 1);
 		PDFObject contentsObject = getDictionaryValue(pageObject, "/Contents");
 		if (contentsObject != null)
 		{
@@ -275,7 +275,7 @@ public class PDFFile
 				int totalLength = 0;
 				for (int i = 0; i < objs.length; i++)
 				{
-					buf[i] = objs[i].getStream(mPdfFile, mFilename, mObjects);
+					buf[i] = objs[i].getStream(m_pdfFile, m_filename, m_objects);
 					totalLength += buf[i].length;
 				}
 				retval = new byte[totalLength];
@@ -288,7 +288,7 @@ public class PDFFile
 			}
 			else
 			{
-				retval = contentsObject.getStream(mPdfFile, mFilename, mObjects);
+				retval = contentsObject.getStream(m_pdfFile, m_filename, m_objects);
 			}
 		}
 		return(retval);
@@ -309,7 +309,7 @@ public class PDFFile
 		PDFObject obj = getDictionaryValue(resourcesObject, dictKey);
 		if (obj != null)
 		{
-			retval = obj.toPDFString(objectNumber, false, false, mObjects, mPdfFile, mFilename);
+			retval = obj.toPDFString(objectNumber, false, false, m_objects, m_pdfFile, m_filename);
 		}
 		return(retval);
 	}
@@ -398,7 +398,7 @@ public class PDFFile
 	 */
 	public int[] getMediaBox(int page) throws MapyrusException
 	{
-		PDFObject pageObject = (PDFObject)mPageObjects.get(page - 1);
+		PDFObject pageObject = (PDFObject)m_pageObjects.get(page - 1);
 		PDFObject boxObject = getDictionaryValue(pageObject, "/MediaBox");
 		PDFObject[] boxArray = boxObject.getArray();
 		int retval[] = new int[4];
@@ -406,7 +406,7 @@ public class PDFFile
 		{
 			PDFObject obj = boxArray[i];
 			if (obj.isReference())
-				obj = (PDFObject)mObjects.get(Integer.valueOf(obj.getReference()));
+				obj = (PDFObject)m_objects.get(Integer.valueOf(obj.getReference()));
 			String s = obj.getValue();
 			retval[i] = (int)Math.round(Double.parseDouble(s));
 		}
@@ -420,11 +420,11 @@ public class PDFFile
 	 */
 	private int readChar(boolean skipComments) throws IOException, MapyrusException
 	{
-		int c = mPdfFile.read();
+		int c = m_pdfFile.read();
 		if (c == -1)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
-				": " + mFilename);
+				": " + m_filename);
 		}
 		else if (skipComments && c == '%')
 		{
@@ -442,9 +442,9 @@ public class PDFFile
 	 */
 	private int peekChar(boolean skipComments) throws IOException, MapyrusException
 	{
-		long offset = mPdfFile.getFilePointer();
+		long offset = m_pdfFile.getFilePointer();
 		int c = readChar(skipComments);
-		mPdfFile.seek(offset);
+		m_pdfFile.seek(offset);
 		return(c);
 	}
 
@@ -578,7 +578,7 @@ public class PDFFile
 				sb.append((char)c);
 				c = peekChar(false);
 			}
-			long offset = mPdfFile.getFilePointer();
+			long offset = m_pdfFile.getFilePointer();
 			
 			/*
 			 * Check if this is a reference of the form '12 0 R'.
@@ -600,13 +600,13 @@ public class PDFFile
 				else
 				{
 					retval = new PDFObject(sb.toString());
-					mPdfFile.seek(offset);
+					m_pdfFile.seek(offset);
 				}
 			}
 			else
 			{
 				retval = new PDFObject(sb.toString());
-				mPdfFile.seek(offset);
+				m_pdfFile.seek(offset);
 			}
 		}
 		return(retval);
@@ -636,7 +636,7 @@ public class PDFFile
 		catch (NumberFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-				": " + mFilename + ": " + sb.toString());
+				": " + m_filename + ": " + sb.toString());
 		}
 
 		for (int i = 0; i < 2; i++)
@@ -681,7 +681,7 @@ public class PDFFile
 			readChar(false);
 		long retval = -1;
 		if (sb.toString().equals("stream"))
-			retval = mPdfFile.getFilePointer();
+			retval = m_pdfFile.getFilePointer();
 		return(retval);
 	}
 
@@ -699,12 +699,12 @@ public class PDFFile
 		if (dict == null)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
-				": " + mFilename);
+				": " + m_filename);
 		}
 		PDFObject value = (PDFObject)dict.get(key);
 		if (value != null && value.isReference())
 		{
-			value = (PDFObject)mObjects.get(Integer.valueOf(value.getReference()));
+			value = (PDFObject)m_objects.get(Integer.valueOf(value.getReference()));
 		}
 		return(value);
 	}
@@ -733,7 +733,7 @@ public class PDFFile
 		}
 		else if (obj.isReference())
 		{
-			PDFObject value = (PDFObject)mObjects.get(Integer.valueOf(obj.getReference()));
+			PDFObject value = (PDFObject)m_objects.get(Integer.valueOf(obj.getReference()));
 			resolveAllReferences(value);
 			obj.setValue(value);
 		}
@@ -741,7 +741,7 @@ public class PDFFile
 
 	public String getFilename()
 	{
-		return(mFilename);
+		return(m_filename);
 	}
 
 	public static void main(String []args)

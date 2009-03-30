@@ -48,12 +48,12 @@ public class PostScriptFont
 	/*
 	 * Name of font given in header of font file.
 	 */
-	private String mFontName;
+	private String m_fontName;
 
 	/*
 	 * Contents of font file.
 	 */
-	private StringBuffer mFileContents;
+	private StringBuffer m_fileContents;
 
 	/**
 	 * Create PostScript Type 1 font from a .pfa or .pfb file.
@@ -149,22 +149,22 @@ public class PostScriptFont
 			 * Create embedded Type 1 font object as described in section 5.8
 			 * of Adobe PDF Reference Manual. 
 			 */
-			mFileContents = new StringBuffer(128 * 1024);
-			mFileContents.append("<< /Type /FontFile /Length ");
+			m_fileContents = new StringBuffer(128 * 1024);
+			m_fileContents.append("<< /Type /FontFile /Length ");
 			long hexEncodedLength = totalLength * 2 + Constants.LINE_SEPARATOR.length();
 			hexEncodedLength += totalLength / LINE_LENGTH * Constants.LINE_SEPARATOR.length();
-			mFileContents.append(hexEncodedLength);
-			mFileContents.append(Constants.LINE_SEPARATOR);
-			mFileContents.append("/Length1 ");
-			mFileContents.append(((byte [])segments.get(0)).length);
-			mFileContents.append(" /Length2 ");
-			mFileContents.append(((byte [])segments.get(1)).length);
-			mFileContents.append(" /Length3 ");
-			mFileContents.append(((byte [])segments.get(2)).length);
-			mFileContents.append(" /Filter /ASCIIHexDecode >>");
-			mFileContents.append(Constants.LINE_SEPARATOR);
-			mFileContents.append("stream");
-			mFileContents.append(Constants.LINE_SEPARATOR);
+			m_fileContents.append(hexEncodedLength);
+			m_fileContents.append(Constants.LINE_SEPARATOR);
+			m_fileContents.append("/Length1 ");
+			m_fileContents.append(((byte [])segments.get(0)).length);
+			m_fileContents.append(" /Length2 ");
+			m_fileContents.append(((byte [])segments.get(1)).length);
+			m_fileContents.append(" /Length3 ");
+			m_fileContents.append(((byte [])segments.get(2)).length);
+			m_fileContents.append(" /Filter /ASCIIHexDecode >>");
+			m_fileContents.append(Constants.LINE_SEPARATOR);
+			m_fileContents.append("stream");
+			m_fileContents.append(Constants.LINE_SEPARATOR);
 
 			/*
 			 * Add all segments to PDF object as a hex encoded stream.
@@ -185,8 +185,8 @@ public class PostScriptFont
 						if (buf[j] == '\r' || buf[j] == '\n')
 						{
 							onFirstLine = false;
-							mFontName = parseFontName(firstLine.toString());
-							if (mFontName == null)
+							m_fontName = parseFontName(firstLine.toString());
+							if (m_fontName == null)
 							{
 								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 									": " + pfbFilename);
@@ -199,18 +199,18 @@ public class PostScriptFont
 					}
 					String s = Integer.toHexString(buf[j] & 0xff);
 					if (s.length() < 2)
-						mFileContents.append('0');
-					mFileContents.append(s);
+						m_fileContents.append('0');
+					m_fileContents.append(s);
 
 					/*
 					 * Add regular line breaks.
 					 */
 					if ((++nBytesAdded) % LINE_LENGTH == 0)
-						mFileContents.append(Constants.LINE_SEPARATOR);
+						m_fileContents.append(Constants.LINE_SEPARATOR);
 				}
 			}
-			mFileContents.append(Constants.LINE_SEPARATOR);
-			mFileContents.append("endstream");
+			m_fileContents.append(Constants.LINE_SEPARATOR);
+			m_fileContents.append("endstream");
 		}
 		finally
 		{
@@ -247,8 +247,8 @@ public class PostScriptFont
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 					": " + pfaFilename);
 	
-			mFontName = parseFontName(firstLine);
-			if (mFontName == null)
+			m_fontName = parseFontName(firstLine);
+			if (m_fontName == null)
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 					": " + pfaFilename);
@@ -257,15 +257,15 @@ public class PostScriptFont
 			/*
 			 * Read entire .pfa file into memory, most files are about 100kb in size.
 			 */
-			mFileContents = new StringBuffer(128 * 1024);
-			mFileContents.append(firstLine);
-			mFileContents.append(Constants.LINE_SEPARATOR);
+			m_fileContents = new StringBuffer(128 * 1024);
+			m_fileContents.append(firstLine);
+			m_fileContents.append(Constants.LINE_SEPARATOR);
 			
 			String line;
 			while ((line = bufferedReader.readLine()) != null)
 			{
-				mFileContents.append(line);
-				mFileContents.append(Constants.LINE_SEPARATOR);
+				m_fileContents.append(line);
+				m_fileContents.append(Constants.LINE_SEPARATOR);
 			}
 		}
 		finally
@@ -300,7 +300,7 @@ public class PostScriptFont
 	 */
 	public String getName()
 	{
-		return(mFontName);
+		return(m_fontName);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class PostScriptFont
 	 */
 	public String toString()
 	{
-		return("PostScript Font " + mFontName);
+		return("PostScript Font " + m_fontName);
 	}
 
 	/**
@@ -319,6 +319,6 @@ public class PostScriptFont
 	 */	
 	public String getFontDefinition()
 	{
-		return(mFileContents.toString());
+		return(m_fileContents.toString());
 	}
 }

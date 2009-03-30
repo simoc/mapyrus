@@ -38,12 +38,12 @@ public class TrueTypeFont
 	/*
 	 * Name of font given in TTF font file.
 	 */
-	private String mFontName;
+	private String m_fontName;
 
 	/*
 	 * Font filename.
 	 */
-	private String mFilename;
+	private String m_filename;
 
 	/**
 	 * Create TrueType 1 font from a .ttf file.
@@ -58,13 +58,13 @@ public class TrueTypeFont
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_TTF_FILE) +
 				": " + filename);
 
-		mFilename = filename;
+		m_filename = filename;
 		Font f = getFont();
 		
 		/*
 		 * Use PostScript name for this font so we have a name without spaces.
 		 */
-		mFontName = f.getPSName();
+		m_fontName = f.getPSName();
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class TrueTypeFont
 	 */
 	public String getName()
 	{
-		return(mFontName);
+		return(m_fontName);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class TrueTypeFont
 	 */
 	public String toString()
 	{
-		return("TrueType Font " + mFontName);
+		return("TrueType Font " + m_fontName);
 	}
 
 	/**
@@ -97,13 +97,13 @@ public class TrueTypeFont
 
 		try
 		{
-			f = new FileInputStream(mFilename);
+			f = new FileInputStream(m_filename);
 			font = Font.createFont(Font.TRUETYPE_FONT, f);
 		}
 		catch (FontFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_TTF_FILE) +
-				": " + mFilename);
+				": " + m_filename);
 		}
 		finally
 		{
