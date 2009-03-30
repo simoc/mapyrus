@@ -36,8 +36,8 @@ import org.mapyrus.MapyrusMessages;
  */
 public class PostScriptFile
 {
-	private int mNPages;
-	Rectangle mBoundingBox;
+	private int m_nPages;
+	Rectangle m_boundingBox;
 
 	/**
 	 * Open PostScript file and parse header information.
@@ -94,7 +94,7 @@ public class PostScriptFile
 				/*
 				 * Assume a single page if not defined in PostScript file.
 				 */
-				mNPages = 0;
+				m_nPages = 0;
 			}
 			else
 			{
@@ -102,7 +102,7 @@ public class PostScriptFile
 				if (st.countTokens() == 2)
 				{
 					st.nextToken();
-					mNPages = Integer.parseInt(st.nextToken());
+					m_nPages = Integer.parseInt(st.nextToken());
 				}
 				else
 				{
@@ -127,7 +127,7 @@ public class PostScriptFile
 				x2 = Integer.parseInt(st.nextToken());
 				y2 = Integer.parseInt(st.nextToken());
 
-				mBoundingBox = new Rectangle(x1, y1, x2 - x1, y2 - y1); 
+				m_boundingBox = new Rectangle(x1, y1, x2 - x1, y2 - y1); 
 			}
 			else
 			{
@@ -157,7 +157,7 @@ public class PostScriptFile
 	 */
 	public int getNumberOfPages()
 	{
-		return(mNPages);
+		return(m_nPages);
 	}
 
 	/**
@@ -169,6 +169,6 @@ public class PostScriptFile
 	 */
 	public Rectangle getBoundingBox()
 	{
-		return(mBoundingBox);
+		return(m_boundingBox);
 	}
 }
