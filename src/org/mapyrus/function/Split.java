@@ -38,7 +38,7 @@ public class Split implements Function
 	/*
 	 * Pre-defined hashmap keys for split function.
 	 */
-	private static String mSplitIndexes[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+	private static String m_splitIndexes[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 	private static Argument WHITESPACE_PATTERN = new Argument(Argument.STRING, " ");
 
@@ -86,8 +86,8 @@ public class Split implements Function
 			/*
 			 * Use pre-allocated strings to reduce object creation.
 			 */
-			if (i < mSplitIndexes.length)
-				key = mSplitIndexes[i];
+			if (i < m_splitIndexes.length)
+				key = m_splitIndexes[i];
 			else
 				key = String.valueOf(i + 1);
 			retval.addHashMapEntry(key, new Argument(Argument.STRING, split[i]));

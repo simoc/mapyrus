@@ -35,11 +35,11 @@ import org.mapyrus.MapyrusMessages;
  */
 public class DummyFunction implements Function
 {
-	private String mFunctionName;
+	private String m_functionName;
 
 	public DummyFunction(String name)
 	{
-		mFunctionName = name;
+		m_functionName = name;
 	}
 
 	/**
@@ -72,6 +72,6 @@ public class DummyFunction implements Function
 	 */
 	public String getName()
 	{
-		return(mFunctionName);
+		return(m_functionName);
 	}
 }

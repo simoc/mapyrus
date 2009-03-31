@@ -36,10 +36,10 @@ import org.mapyrus.Statement;
  */
 public class UserFunction implements Function
 {
-	private String mFuncName;
-	private ArrayList mFormalParameters;
-	private ArrayList mStatements;
-	private Interpreter mInterpreter;
+	private String m_funcName;
+	private ArrayList m_formalParameters;
+	private ArrayList m_statements;
+	private Interpreter m_interpreter;
 
 	/**
 	 * Create user-defined function.
@@ -52,10 +52,10 @@ public class UserFunction implements Function
 	public UserFunction(String funcName, ArrayList formalParameters,
 		ArrayList statements, Interpreter interpreter)
 	{
-		mFuncName = funcName;
-		mFormalParameters = formalParameters;
-		mStatements = statements;
-		mInterpreter = interpreter;
+		m_funcName = funcName;
+		m_formalParameters = formalParameters;
+		m_statements = statements;
+		m_interpreter = interpreter;
 	}
 
 	/**
@@ -69,11 +69,11 @@ public class UserFunction implements Function
 
 		try
 		{
-			context.saveState(mFuncName);
+			context.saveState(m_funcName);
 			savedState = true;
 			for (int i = 0; i < args.size(); i++)
 			{
-				String parameterName = (String)mFormalParameters.get(i);
+				String parameterName = (String)m_formalParameters.get(i);
 				context.setLocalScope(parameterName);
 				Argument arg = (Argument)args.get(i);
 				context.defineVariable(parameterName, arg);
@@ -82,10 +82,10 @@ public class UserFunction implements Function
 			/*
 			 * Execute each of the statements.
 			 */	
-			for (int i = 0; i < mStatements.size(); i++)
+			for (int i = 0; i < m_statements.size(); i++)
 			{
-				Statement statement = (Statement)mStatements.get(i);
-				retval = mInterpreter.executeStatement(statement);
+				Statement statement = (Statement)m_statements.get(i);
+				retval = m_interpreter.executeStatement(statement);
 		
 				/*
 				 * Found return statement so stop executing.
@@ -121,7 +121,7 @@ public class UserFunction implements Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(mFormalParameters.size());
+		return(m_formalParameters.size());
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class UserFunction implements Function
 	 */
 	public int getMinArgumentCount()
 	{
-		return(mFormalParameters.size());
+		return(m_formalParameters.size());
 	}
 
 	/**
@@ -137,18 +137,18 @@ public class UserFunction implements Function
 	 */
 	public String getName()
 	{
-		return(mFuncName);
+		return(m_funcName);
 	}
 	
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer(mFuncName);
+		StringBuffer sb = new StringBuffer(m_funcName);
 		sb.append(" ");
-		for (int i = 0; i < mFormalParameters.size(); i++)
+		for (int i = 0; i < m_formalParameters.size(); i++)
 		{
 			if (i > 0)
 				sb.append(", ");
-			sb.append(mFormalParameters.get(i));
+			sb.append(m_formalParameters.get(i));
 		}
 		return(sb.toString());
 	}
@@ -159,7 +159,7 @@ public class UserFunction implements Function
 	 */
 	public void setStatements(ArrayList statements)
 	{
-		mStatements = statements;
+		m_statements = statements;
 	}
 
 	/**
@@ -169,8 +169,8 @@ public class UserFunction implements Function
 	 */
 	public UserFunction clone(Interpreter interpreter)
 	{
-		UserFunction retval = new UserFunction(mFuncName, mFormalParameters,
-			mStatements, interpreter);
+		UserFunction retval = new UserFunction(m_funcName, m_formalParameters,
+			m_statements, interpreter);
 		return(retval);
 	}
 }

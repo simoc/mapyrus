@@ -47,7 +47,7 @@ public class Match implements Function
 	/*
 	 * Static table of frequently used regular expressions.
 	 */
-	private static LRUCache<String, Pattern> mRegexCache =
+	private static LRUCache<String, Pattern> m_regexCache =
 		new LRUCache<String, Pattern>(MAX_COMPILED_REGEX);
 
 	/**
@@ -59,7 +59,7 @@ public class Match implements Function
 	 */
 	public static synchronized Pattern compileRegex(String regex) throws MapyrusException
 	{
-		Pattern retval = mRegexCache.get(regex);
+		Pattern retval = m_regexCache.get(regex);
 
 		if (retval == null)
 		{
@@ -76,7 +76,7 @@ public class Match implements Function
 			/*
 			 * Cache newly compiled regular expression.
 			 */
-			mRegexCache.put(regex, retval);
+			m_regexCache.put(regex, retval);
 		}
 		return(retval);
 	}
