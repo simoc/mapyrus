@@ -154,141 +154,141 @@ public class OutputFormat
 	/*
 	 * Prefixes for SVG and PDF objects containing fonts, images and graphics states.
 	 */
-	private String mPDFFontPrefix;
-	private String mPDFImagePrefix;
-	private String mPDFGstatePrefix;
-	private String mSVGClipPathPrefix;
+	private String m_PDFFontPrefix;
+	private String m_PDFImagePrefix;
+	private String m_PDFGstatePrefix;
+	private String m_SVGClipPathPrefix;
 
 	/*
 	 * File or image that drawing commands are
 	 * writing to.
 	 */
-	private int mOutputType;
-	private String mFormatName;
-	private BufferedImage mImage;
-	private String mFilename;
-	private PrintWriter mWriter;
-	private OutputStream mOutputStream;
-	private Graphics2D mGraphics2D;
-	private boolean mIsPipedOutput;	
-	private boolean mIsStandardOutput;
-	private boolean mIsUpdatingFile;
-	private Process mOutputProcess;
-	private File mTempFile;
-	private PrintWriter mImageMapWriter;
-	private String mUniqueKey;
+	private int m_outputType;
+	private String m_formatName;
+	private BufferedImage m_image;
+	private String m_filename;
+	private PrintWriter m_writer;
+	private OutputStream m_outputStream;
+	private Graphics2D m_graphics2D;
+	private boolean m_isPipedOutput;	
+	private boolean m_isStandardOutput;
+	private boolean m_isUpdatingFile;
+	private Process m_outputProcess;
+	private File m_tempFile;
+	private PrintWriter m_imageMapWriter;
+	private String m_uniqueKey;
 
 	/*
 	 * Frequently used fonts.
 	 */
-	private FontCache mFontCache;
+	private FontCache m_fontCache;
 
 	/*
 	 * List of font definitions included in this PostScript file and list of fonts
 	 * used in this file but not defined.
 	 */
-	private HashSet<String> mSuppliedFontResources;
-	private HashSet<String> mNeededFontResources;
+	private HashSet<String> m_suppliedFontResources;
+	private HashSet<String> m_neededFontResources;
 
 	/*
 	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
 	 * This is normally done so that extended symbols (such as degree symbol)
 	 * can be used.
 	 */
-	private HashSet<String> mEncodeAsISOLatin1;
+	private HashSet<String> m_encodeAsISOLatin1;
 
 	/*
 	 * Adobe Font Metrics files containing character width information for all fonts.
 	 */
-	private AdobeFontMetricsManager mAdobeFontMetrics;
-	private ArrayList<String> mAfmFiles;
-	private ArrayList<PostScriptFont> mPfbFiles;
-	private ArrayList<AdobeFontMetrics> mPDFFonts;
+	private AdobeFontMetricsManager m_adobeFontMetrics;
+	private ArrayList<String> m_afmFiles;
+	private ArrayList<PostScriptFont> m_pfbFiles;
+	private ArrayList<AdobeFontMetrics> m_PDFFonts;
 	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
 	 */
-	private HashMap<String, TrueTypeFont> mTTFFonts;
+	private HashMap<String, TrueTypeFont> m_TTFFonts;
 
 	/*
 	 * Page dimensions and resolution.
 	 */
-	private double mPageWidth;
-	private double mPageHeight;
-	private double mResolution;
-	private String mMediaBox;
+	private double m_pageWidth;
+	private double m_pageHeight;
+	private double m_resolution;
+	private String m_mediaBox;
 
 	/*
 	 * Minimum line width.
 	 */
-	private double mMinimumLineWidth;
+	private double m_minimumLineWidth;
 
 	/*
 	 * Selected font and size.
 	 */
-	private String mFontName;
-	private double mFontSize;
+	private String m_fontName;
+	private double m_fontSize;
 
 	/*
 	 * Justification for labels in X and Y directions.
 	 */
-	private int mJustificationShiftX;
-	private int mJustificationShiftY;
+	private int m_justificationShiftX;
+	private int m_justificationShiftY;
 
 	/*
 	 * Rotation of current font in radians, with 0 horizontal,
 	 * measured counter-clockwise.
 	 */
-	private double mFontRotation;
+	private double m_fontRotation;
 
 	/*
 	 * If non-zero, gives linewidth to use for drawing outlines of
 	 * each character of labels.
 	 */
-	private double mFontOutlineWidth;
+	private double m_fontOutlineWidth;
 
 	/*
 	 * Spacing between lines in multi-line labels, as a factor
 	 * of the font size.
 	 */
-	private double mFontLineSpacing;
+	private double m_fontLineSpacing;
 
-	private Font mBaseFont;
+	private Font m_baseFont;
 
 	/*
 	 * Mask containing protected areas of the page.
 	 */
-	private PageMask mPageMask;
+	private PageMask m_pageMask;
 
 	/*
 	 * Counts clip paths and gradient fills set for SVG output
 	 * so each clip path and gradient can be given a unique id.
 	 */
-	private int mClipPathCounter;
-	private Stack<Integer> mSVGOpenGTags;
-	private int mGradientCounter;
+	private int m_clipPathCounter;
+	private Stack<Integer> m_SVGOpenGTags;
+	private int m_gradientCounter;
 
 	/*
 	 * File offset of each object in PDF file and buffers containing
 	 * all geometry and additional objects (images and graphics
 	 * states) to be included in PDF file. 
 	 */
-	private ArrayList<Integer> mPDFFileOffsets;
-	private StringWriter mPDFGeometryStringWriter;
-	private PrintWriter mPDFGeometryWriter;
-	private HashMap<String, String> mPDFExtGStateObjects;
-	private HashMap<String, StringWriter> mPDFImageObjects;
+	private ArrayList<Integer> m_PDFFileOffsets;
+	private StringWriter m_PDFGeometryStringWriter;
+	private PrintWriter m_PDFGeometryWriter;
+	private HashMap<String, String> m_PDFExtGStateObjects;
+	private HashMap<String, StringWriter> m_PDFImageObjects;
 
 	/*
 	 * Pages in external PDF files to be included in this one.
 	 */
-	private ArrayList<PDFFile> mPDFIncludedFiles;
-	private ArrayList<ArrayList<Integer>> mPDFIncludedPages;
+	private ArrayList<PDFFile> m_PDFIncludedFiles;
+	private ArrayList<ArrayList<Integer>> m_PDFIncludedPages;
 
 	/*
 	 * Format for writing coordinate values.
 	 */
-	private DecimalFormat mCoordinateDecimal = new DecimalFormat("#.###",
+	private DecimalFormat m_coordinateDecimal = new DecimalFormat("#.###",
 			Constants.US_DECIMAL_FORMAT_SYMBOLS);
 
 	/**
@@ -310,33 +310,33 @@ public class OutputFormat
 			Constants.POINTS_PER_INCH);
 
 		StringBuffer sb = new StringBuffer("%!PS-Adobe-3.0");
-		if (mFormatName.equals("eps") || mFormatName.equals("epsimage"))
+		if (m_formatName.equals("eps") || m_formatName.equals("epsimage"))
 			sb.append(" EPSF-3.0");
-		writeLine(mWriter, sb.toString());
+		writeLine(m_writer, sb.toString());
 
 		if (turnPage)
-			writeLine(mWriter, "%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
+			writeLine(m_writer, "%%BoundingBox: 0 0 " + heightInPoints + " " + widthInPoints);
 		else
-			writeLine(mWriter, "%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
+			writeLine(m_writer, "%%BoundingBox: 0 0 " + widthInPoints + " " + heightInPoints);
 
-		if ((!mFormatName.equals("eps")) && (!mFormatName.equals("epsimage")))
-			writeLine(mWriter, "%%Pages: 1");
+		if ((!m_formatName.equals("eps")) && (!m_formatName.equals("epsimage")))
+			writeLine(m_writer, "%%Pages: 1");
 
-		writeLine(mWriter, "%%DocumentData: Clean7Bit");
-		writeLine(mWriter, "%%LanguageLevel: 2");
-		writeLine(mWriter, "%%Creator: (" + Constants.PROGRAM_NAME +
+		writeLine(m_writer, "%%DocumentData: Clean7Bit");
+		writeLine(m_writer, "%%LanguageLevel: 2");
+		writeLine(m_writer, "%%Creator: (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
-		writeLine(mWriter, "%%OperatorMessage: (Mapyrus Output...)");
+		writeLine(m_writer, "%%OperatorMessage: (Mapyrus Output...)");
 		Date now = new Date();
-		writeLine(mWriter, "%%CreationDate: (" + now.toString() + ")");
+		writeLine(m_writer, "%%CreationDate: (" + now.toString() + ")");
 		String username = System.getProperty("user.name");
 		if (username != null)
-			writeLine(mWriter, "%%For: (" + username + ")");
+			writeLine(m_writer, "%%For: (" + username + ")");
 
 		/*
 		 * List fonts included in this PostScript file.
 		 */
-		writeLine(mWriter, "%%DocumentRequiredResources: (atend)");
+		writeLine(m_writer, "%%DocumentRequiredResources: (atend)");
 		if (fontList.size() > 0)
 		{
 			sb = new StringBuffer("%%DocumentSuppliedResources: font");
@@ -345,37 +345,37 @@ public class OutputFormat
 			{
 				PostScriptFont psFont = (PostScriptFont)(it.next());
 				sb.append(" ").append(psFont.getName());
-				mSuppliedFontResources.add(psFont.getName());
+				m_suppliedFontResources.add(psFont.getName());
 			}
-			writeLine(mWriter, sb.toString());
+			writeLine(m_writer, sb.toString());
 		}
-		writeLine(mWriter, "%%EndComments");
-		writeLine(mWriter, "");
-		writeLine(mWriter, "% Resolution " + resolution + " DPI");
+		writeLine(m_writer, "%%EndComments");
+		writeLine(m_writer, "");
+		writeLine(m_writer, "% Resolution " + resolution + " DPI");
 
 		/*
 		 * Inline font definitions.
 		 */
-		writeLine(mWriter, "%%BeginSetup");
+		writeLine(m_writer, "%%BeginSetup");
 		Iterator it = fontList.iterator();
 		while (it.hasNext())
 		{
 			PostScriptFont psFont = (PostScriptFont)(it.next());
 
-			writeLine(mWriter, "%%BeginResource: font " + psFont.getName());
+			writeLine(m_writer, "%%BeginResource: font " + psFont.getName());
 			String fontDefinition = psFont.getFontDefinition();
-			writeLine(mWriter, fontDefinition);
-			writeLine(mWriter, "%%EndResource");			
+			writeLine(m_writer, fontDefinition);
+			writeLine(m_writer, "%%EndResource");			
 		}
-		writeLine(mWriter, "%%EndSetup");
+		writeLine(m_writer, "%%EndSetup");
 
 		/*
 		 * Set color and linestyle to reasonable default values.
 		 * Taken from 'initgraphics' operator example in PostScript Language
 		 * Reference Manual.
 		 */
-		writeLine(mWriter, "1 setlinewidth 0 setlinecap 0 setlinejoin");
-		writeLine(mWriter, "[] 0 setdash 0 setgray 10 setmiterlimit");
+		writeLine(m_writer, "1 setlinewidth 0 setlinecap 0 setlinejoin");
+		writeLine(m_writer, "[] 0 setdash 0 setgray 10 setmiterlimit");
 
 		if (turnPage)
 		{
@@ -383,28 +383,28 @@ public class OutputFormat
 			 * Turn page 90 degrees so that a landscape orientation page appears
 			 * on a portrait page.
 			 */
-			writeLine(mWriter, "% Turn page 90 degrees.");
-			writeLine(mWriter, "90 rotate 0 " + heightInPoints + " neg translate");
+			writeLine(m_writer, "% Turn page 90 degrees.");
+			writeLine(m_writer, "90 rotate 0 " + heightInPoints + " neg translate");
 		}
 
 		/* 
 		 * Prevent anything being displayed outside bounding box we've just defined.
 		 */
-		writeLine(mWriter, "0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
+		writeLine(m_writer, "0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
 
 		/*
 		 * Set background color for page.
 		 */
-		writeLine(mWriter, "/RG { setrgbcolor } bind def");
+		writeLine(m_writer, "/RG { setrgbcolor } bind def");
 		if (backgroundColor != null)
 		{
 			float c[] = backgroundColor.getRGBColorComponents(null);
-			writeLine(mWriter, "gsave");
-			writeLine(mWriter, mCoordinateDecimal.format(c[0]) + " " +
-				mCoordinateDecimal.format(c[1]) + " " +
-				mCoordinateDecimal.format(c[2]) + " RG");
-			writeLine(mWriter, "0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
-			writeLine(mWriter, "grestore");
+			writeLine(m_writer, "gsave");
+			writeLine(m_writer, m_coordinateDecimal.format(c[0]) + " " +
+				m_coordinateDecimal.format(c[1]) + " " +
+				m_coordinateDecimal.format(c[2]) + " RG");
+			writeLine(m_writer, "0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
+			writeLine(m_writer, "grestore");
 		}
 
 		/*
@@ -412,23 +412,23 @@ public class OutputFormat
 		 * Bind all operators names to improve performance (see 3.11 of
 		 * PostScript Language Reference Manual).
 		 */
-		writeLine(mWriter, "/m { moveto } bind def /l { lineto } bind def");
-		writeLine(mWriter, "/c { curveto } bind def /h { closepath } bind def");
-		writeLine(mWriter, "/S { stroke } bind def /f { fill } bind def");
-		writeLine(mWriter, "/W { clip } bind def /n { newpath } bind def");
-		writeLine(mWriter, "/ju { /fjy exch def /fjx exch def } bind def");
+		writeLine(m_writer, "/m { moveto } bind def /l { lineto } bind def");
+		writeLine(m_writer, "/c { curveto } bind def /h { closepath } bind def");
+		writeLine(m_writer, "/S { stroke } bind def /f { fill } bind def");
+		writeLine(m_writer, "/W { clip } bind def /n { newpath } bind def");
+		writeLine(m_writer, "/ju { /fjy exch def /fjx exch def } bind def");
 
 		/*
 		 * Define font and dictionary entries for font size and justification.
 		 * Don't bind these as font loading operators may be overridden in
 		 * interpreter.
 		 */
-		writeLine(mWriter, "/font {");
-		writeLine(mWriter, "/foutline exch def");
-		writeLine(mWriter, "/flinespacing exch def");
-		writeLine(mWriter, "/frot exch radtodeg def");
-		writeLine(mWriter, "/fsize exch def findfont fsize scalefont setfont } def");
-		writeLine(mWriter, "/radtodeg { 180 mul 3.1415629 div } bind def");
+		writeLine(m_writer, "/font {");
+		writeLine(m_writer, "/foutline exch def");
+		writeLine(m_writer, "/flinespacing exch def");
+		writeLine(m_writer, "/frot exch radtodeg def");
+		writeLine(m_writer, "/fsize exch def findfont fsize scalefont setfont } def");
+		writeLine(m_writer, "/radtodeg { 180 mul 3.1415629 div } bind def");
 
 		/*
 		 * Draw text string, after setting correct position, rotation,
@@ -438,46 +438,46 @@ public class OutputFormat
 		 * Line number (starting at 0) and string to show are passed
 		 * to this procedure.
 		 */
-		writeLine(mWriter, "/t {");
-		writeLine(mWriter, "/str exch def");
-		writeLine(mWriter, "/nlines exch def");
-		writeLine(mWriter, "/linenum exch def");
-		writeLine(mWriter, "gsave currentpoint translate frot rotate");
+		writeLine(m_writer, "/t {");
+		writeLine(m_writer, "/str exch def");
+		writeLine(m_writer, "/nlines exch def");
+		writeLine(m_writer, "/linenum exch def");
+		writeLine(m_writer, "gsave currentpoint translate frot rotate");
 
-		writeLine(mWriter, "% Shift label to correct justification");
-		writeLine(mWriter, JUSTIFY_LEFT + " fjx eq {0} if");
-		writeLine(mWriter, JUSTIFY_CENTER + " fjx eq {str stringwidth pop neg 2 div} if");
-		writeLine(mWriter, JUSTIFY_RIGHT + " fjx eq {str stringwidth pop neg} if");
+		writeLine(m_writer, "% Shift label to correct justification");
+		writeLine(m_writer, JUSTIFY_LEFT + " fjx eq {0} if");
+		writeLine(m_writer, JUSTIFY_CENTER + " fjx eq {str stringwidth pop neg 2 div} if");
+		writeLine(m_writer, JUSTIFY_RIGHT + " fjx eq {str stringwidth pop neg} if");
 
-		writeLine(mWriter, JUSTIFY_BOTTOM + " fjy eq {nlines 1 sub fsize mul flinespacing mul} if");
-		writeLine(mWriter, JUSTIFY_MIDDLE + " fjy eq {nlines fsize mul " +
+		writeLine(m_writer, JUSTIFY_BOTTOM + " fjy eq {nlines 1 sub fsize mul flinespacing mul} if");
+		writeLine(m_writer, JUSTIFY_MIDDLE + " fjy eq {nlines fsize mul " +
 			"nlines 1 sub fsize mul flinespacing 1 sub mul add 2 div fsize sub} if");
-		writeLine(mWriter, JUSTIFY_TOP + " fjy eq {fsize neg} if");
+		writeLine(m_writer, JUSTIFY_TOP + " fjy eq {fsize neg} if");
 
-		writeLine(mWriter, "% Shift multi-line labels down");
-		writeLine(mWriter, "linenum fsize mul flinespacing mul sub");
-		writeLine(mWriter, "rmoveto");
-		writeLine(mWriter, "% Draw label or label outline");
-		writeLine(mWriter, "foutline 0 gt");
-		writeLine(mWriter, "{str false charpath foutline w 0 j 0 J " + FONT_OUTLINE_MITER_LIMIT + " M stroke}");
-		writeLine(mWriter, "{str show}");
-		writeLine(mWriter, "ifelse");
-		writeLine(mWriter, "grestore newpath");
-		writeLine(mWriter, "} bind def");
+		writeLine(m_writer, "% Shift multi-line labels down");
+		writeLine(m_writer, "linenum fsize mul flinespacing mul sub");
+		writeLine(m_writer, "rmoveto");
+		writeLine(m_writer, "% Draw label or label outline");
+		writeLine(m_writer, "foutline 0 gt");
+		writeLine(m_writer, "{str false charpath foutline w 0 j 0 J " + FONT_OUTLINE_MITER_LIMIT + " M stroke}");
+		writeLine(m_writer, "{str show}");
+		writeLine(m_writer, "ifelse");
+		writeLine(m_writer, "grestore newpath");
+		writeLine(m_writer, "} bind def");
 
-		writeLine(mWriter, "/w { setlinewidth } bind def");
-		writeLine(mWriter, "/J { setlinecap } bind def");
-		writeLine(mWriter, "/j { setlinejoin } bind def");
-		writeLine(mWriter, "/M { setmiterlimit } bind def");
-		writeLine(mWriter, "/d { setdash } bind def");
+		writeLine(m_writer, "/w { setlinewidth } bind def");
+		writeLine(m_writer, "/J { setlinecap } bind def");
+		writeLine(m_writer, "/j { setlinejoin } bind def");
+		writeLine(m_writer, "/M { setmiterlimit } bind def");
+		writeLine(m_writer, "/d { setdash } bind def");
 
 		/*
 		 * Use new dictionary in saved state so that variables we define
 		 * do not overwrite variables in parent state.
 		 */
-		writeLine(mWriter, "/q { gsave 12 dict begin } bind def");
-		writeLine(mWriter, "/Q { end grestore } bind def");
-		writeLine(mWriter, "");
+		writeLine(m_writer, "/q { gsave 12 dict begin } bind def");
+		writeLine(m_writer, "/Q { end grestore } bind def");
+		writeLine(m_writer, "");
 	}
 
 	/**
@@ -498,69 +498,69 @@ public class OutputFormat
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *	Constants.POINTS_PER_INCH);
 		long heightInPoints = Math.round(height / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH);
 
-		mPfbFiles = fontList;
+		m_pfbFiles = fontList;
 
-		mPDFFileOffsets = new ArrayList<Integer>();
+		m_PDFFileOffsets = new ArrayList<Integer>();
 
-		int nChars = writeLine(mWriter, "%PDF-1.4");
+		int nChars = writeLine(m_writer, "%PDF-1.4");
 
-		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "1 0 obj % Document Catalog");
-		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "/Type /Catalog");
-		nChars += writeLine(mWriter, "/Outlines 3 0 R");
-		nChars += writeLine(mWriter, "/Pages 4 0 R");
-		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(m_writer, "1 0 obj % Document Catalog");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/Type /Catalog");
+		nChars += writeLine(m_writer, "/Outlines 3 0 R");
+		nChars += writeLine(m_writer, "/Pages 4 0 R");
+		nChars += writeLine(m_writer, ">>");
+		nChars += writeLine(m_writer, "endobj");
 
-		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "2 0 obj % Document Metadata");
-		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "/Creator (" + Constants.PROGRAM_NAME +
+		m_PDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(m_writer, "2 0 obj % Document Metadata");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/Creator (" + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + ")");
 		String author = System.getProperty("user.name");
 		if (author != null)
-			nChars += writeLine(mWriter, "/Author (" + author + ")");
+			nChars += writeLine(m_writer, "/Author (" + author + ")");
 		
 		StringBuffer date = new StringBuffer("D:");
 		date.append(new SimpleDateFormat("yyyyMMddHHmmssZZZZZ").format(new Date()));
 		date.insert(date.length() - 2, '\'');
 		date.append('\'');
-		nChars += writeLine(mWriter, "/CreationDate (" + date.toString() + ")");
-		nChars += writePostScriptString(mWriter, "/Title", filename);
-		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "endobj");
+		nChars += writeLine(m_writer, "/CreationDate (" + date.toString() + ")");
+		nChars += writePostScriptString(m_writer, "/Title", filename);
+		nChars += writeLine(m_writer, ">>");
+		nChars += writeLine(m_writer, "endobj");
 
-		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "3 0 obj % Document");
-		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "/Type /Outlines");
-		nChars += writeLine(mWriter, "/Count 0");
-		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(m_writer, "3 0 obj % Document");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/Type /Outlines");
+		nChars += writeLine(m_writer, "/Count 0");
+		nChars += writeLine(m_writer, ">>");
+		nChars += writeLine(m_writer, "endobj");
 
-		mPDFFileOffsets.add(new Integer(nChars));
-		nChars += writeLine(mWriter, "4 0 obj % Page Tree Node");
-		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "/Type /Pages");
-		nChars += writeLine(mWriter, "/Kids [5 0 R]");
-		nChars += writeLine(mWriter, "/Count 1");
-		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "endobj");
-		mPDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(new Integer(nChars));
+		nChars += writeLine(m_writer, "4 0 obj % Page Tree Node");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/Type /Pages");
+		nChars += writeLine(m_writer, "/Kids [5 0 R]");
+		nChars += writeLine(m_writer, "/Count 1");
+		nChars += writeLine(m_writer, ">>");
+		nChars += writeLine(m_writer, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
 
 		if (turnPage)
-			mMediaBox = "[0 0 " + heightInPoints + " " + widthInPoints + "]";
+			m_mediaBox = "[0 0 " + heightInPoints + " " + widthInPoints + "]";
 		else
-			mMediaBox = "[0 0 " + widthInPoints + " " + heightInPoints + "]";
-		mWriter.flush();
+			m_mediaBox = "[0 0 " + widthInPoints + " " + heightInPoints + "]";
+		m_writer.flush();
 
-		mPDFExtGStateObjects = new HashMap<String, String>();
-		mPDFImageObjects = new HashMap<String, StringWriter>();
-		mPDFIncludedFiles = new ArrayList<PDFFile>();
-		mPDFIncludedPages = new ArrayList<ArrayList<Integer>>();
-		mPDFGeometryStringWriter = new StringWriter();
-		mPDFGeometryWriter = new PrintWriter(mPDFGeometryStringWriter);
+		m_PDFExtGStateObjects = new HashMap<String, String>();
+		m_PDFImageObjects = new HashMap<String, StringWriter>();
+		m_PDFIncludedFiles = new ArrayList<PDFFile>();
+		m_PDFIncludedPages = new ArrayList<ArrayList<Integer>>();
+		m_PDFGeometryStringWriter = new StringWriter();
+		m_PDFGeometryWriter = new PrintWriter(m_PDFGeometryStringWriter);
 
 		if (turnPage)
 		{
@@ -568,8 +568,8 @@ public class OutputFormat
 			 * Turn page 90 degrees so that a landscape orientation page appears
 			 * on a portrait page.
 			 */
-			writeLine(mPDFGeometryWriter, "0 1 -1 0 0 0 cm");
-			writeLine(mPDFGeometryWriter, "1 0 0 1 0 " + (-heightInPoints) + " cm");
+			writeLine(m_PDFGeometryWriter, "0 1 -1 0 0 0 cm");
+			writeLine(m_PDFGeometryWriter, "1 0 0 1 0 " + (-heightInPoints) + " cm");
 		}
 
 		if (backgroundColor != null)
@@ -578,33 +578,33 @@ public class OutputFormat
 			 * Write object to set page background.
 			 */
 			float components[] = backgroundColor.getColorComponents(null);
-			writeLine(mPDFGeometryWriter, "q");
-			writeLine(mPDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
+			writeLine(m_PDFGeometryWriter, "q");
+			writeLine(m_PDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
 			for (int i = 0; i < components.length; i++)
-				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(components[i]));
-			writeLine(mPDFGeometryWriter, "rg f Q");
+				writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(components[i]));
+			writeLine(m_PDFGeometryWriter, "rg f Q");
 		}
-		writeLine(mPDFGeometryWriter, "0 0 0 RG 0 0 0 rg");
+		writeLine(m_PDFGeometryWriter, "0 0 0 RG 0 0 0 rg");
 
 		/*
 		 * Set scale so that we can give all coordinate positions in millimetres.
 		 */
 		double scale = Constants.POINTS_PER_INCH / Constants.MM_PER_INCH;
-		writeLine(mPDFGeometryWriter, scale + " 0 0 " + scale + " 0 0 cm");
+		writeLine(m_PDFGeometryWriter, scale + " 0 0 " + scale + " 0 0 cm");
 
-		for (int i = 0; i < mAfmFiles.size(); i++)
+		for (int i = 0; i < m_afmFiles.size(); i++)
 		{
 			/*
 			 * Read .afm file for each additional font file given by user.
 			 */
-			String afmFilename = (String)mAfmFiles.get(i);
+			String afmFilename = (String)m_afmFiles.get(i);
 			BufferedReader reader = null;
 			AdobeFontMetrics afm = null;
 			try
 			{
 				reader = new BufferedReader(new FileReader(afmFilename));
-				afm = new AdobeFontMetrics(reader, afmFilename, mEncodeAsISOLatin1);
-				mPDFFonts.add(afm);
+				afm = new AdobeFontMetrics(reader, afmFilename, m_encodeAsISOLatin1);
+				m_PDFFonts.add(afm);
 			}
 			finally
 			{
@@ -631,12 +631,12 @@ public class OutputFormat
 			/*
 			 * Define names for each of the standard PDF fonts.
 			 */
-			fontDictionary.append("/" + mPDFFontPrefix + i);
+			fontDictionary.append("/" + m_PDFFontPrefix + i);
 			fontDictionary.append(newline);
 			fontDictionary.append("<< /Type /Font /Subtype /Type1");
 			fontDictionary.append(" /BaseFont /" + PDF_FONTS[i] +
-				" /Name /" + mPDFFontPrefix + i);
-			if (mEncodeAsISOLatin1.contains(PDF_FONTS[i]))
+				" /Name /" + m_PDFFontPrefix + i);
+			if (m_encodeAsISOLatin1.contains(PDF_FONTS[i]))
 			{
 				fontDictionary.append(" /Encoding /WinAnsiEncoding");
 			}
@@ -644,9 +644,9 @@ public class OutputFormat
 			fontDictionary.append(newline);
 		}
 
-		for (int i = 0; i < mPDFFonts.size(); i++)
+		for (int i = 0; i < m_PDFFonts.size(); i++)
 		{
-			AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(i);
+			AdobeFontMetrics afm = (AdobeFontMetrics)m_PDFFonts.get(i);
 
 			/*
 			 * Add each user defined font, given by a .pfa file.
@@ -655,9 +655,9 @@ public class OutputFormat
 			boolean foundPfbFile = false;
 			int j = 0;
 			PostScriptFont font = null;
-			while (j < mPfbFiles.size() && (!foundPfbFile))
+			while (j < m_pfbFiles.size() && (!foundPfbFile))
 			{
-				font = (PostScriptFont)mPfbFiles.get(j);
+				font = (PostScriptFont)m_pfbFiles.get(j);
 				if (font.getName().equals(afm.getFontName()))
 					foundPfbFile = true;
 				else
@@ -667,7 +667,7 @@ public class OutputFormat
 			/*
 			 * Add font dictionary for this font file.
 			 */
-			fontDictionary.append("/" + mPDFFontPrefix + (PDF_FONTS.length + i));
+			fontDictionary.append("/" + m_PDFFontPrefix + (PDF_FONTS.length + i));
 			fontDictionary.append(newline);
 			fontDictionary.append("<< /Type /Font /Subtype /Type1");
 			fontDictionary.append(" /BaseFont /").append(afm.getFontName());
@@ -741,15 +741,15 @@ public class OutputFormat
 				pdfFontObjects.add(sb);
 			}
 
-			if (mEncodeAsISOLatin1.contains(afm.getFontName()))
+			if (m_encodeAsISOLatin1.contains(afm.getFontName()))
 				fontDictionary.append("/Encoding /WinAnsiEncoding");
 			fontDictionary.append(" >>").append(newline);
 		}
 
-		for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+		for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 		{
-			PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-			ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
+			PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+			ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 			for (int j = 0; j < pageNumbers.size(); j++)
 			{
 				Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -771,44 +771,44 @@ public class OutputFormat
 		}
 		fontDictionary.append(">>").append(newline);
 
-		Integer offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
+		Integer offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
 		int nChars = offset.intValue();
-		nChars += writeLine(mWriter, "5 0 obj % Single Page");
-		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "/Type /Page");
-		nChars += writeLine(mWriter, "/Parent 4 0 R");
-		nChars += writeLine(mWriter, "/MediaBox " + mMediaBox);
-		nChars += writeLine(mWriter, "/Contents " + objectCounter + " 0 R");
+		nChars += writeLine(m_writer, "5 0 obj % Single Page");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/Type /Page");
+		nChars += writeLine(m_writer, "/Parent 4 0 R");
+		nChars += writeLine(m_writer, "/MediaBox " + m_mediaBox);
+		nChars += writeLine(m_writer, "/Contents " + objectCounter + " 0 R");
 		objectCounter++;
-		nChars += writeLine(mWriter, "/Resources");
-		nChars += writeLine(mWriter, "<<");
-		nChars += writeLine(mWriter, "/ProcSet [/PDF /Text /ImageB /ImageC]");
-		nChars += writeLine(mWriter, "/ExtGState " + objectCounter + " 0 R");
+		nChars += writeLine(m_writer, "/Resources");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/ProcSet [/PDF /Text /ImageB /ImageC]");
+		nChars += writeLine(m_writer, "/ExtGState " + objectCounter + " 0 R");
 		objectCounter++;
-		nChars += writeLine(mWriter, "/ColorSpace " + objectCounter + " 0 R");
+		nChars += writeLine(m_writer, "/ColorSpace " + objectCounter + " 0 R");
 		objectCounter++;
-		nChars += writeLine(mWriter, "/Pattern " + objectCounter + " 0 R");
+		nChars += writeLine(m_writer, "/Pattern " + objectCounter + " 0 R");
 		objectCounter++;
-		nChars += writeLine(mWriter, "/Shading " + objectCounter + " 0 R");
+		nChars += writeLine(m_writer, "/Shading " + objectCounter + " 0 R");
 		objectCounter++;
-		nChars += writeLine(mWriter, "/XObject " + objectCounter + " 0 R");
+		nChars += writeLine(m_writer, "/XObject " + objectCounter + " 0 R");
 		objectCounter++;
 
-		nChars += writeLine(mWriter, "/Font");
-		nChars += writeLine(mWriter, fontDictionary.toString());
+		nChars += writeLine(m_writer, "/Font");
+		nChars += writeLine(m_writer, fontDictionary.toString());
 
-		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, ">>");
-		nChars += writeLine(mWriter, "endobj");
+		nChars += writeLine(m_writer, ">>");
+		nChars += writeLine(m_writer, ">>");
+		nChars += writeLine(m_writer, "endobj");
 
 		/*
 		 * Now add font width, font descriptor and font file objects.
 		 */
-		mPDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(new Integer(nChars));
 		for (int i = 0; i < pdfFontObjects.size(); i++)
 		{
-			nChars += writeLine(mWriter, pdfFontObjects.get(i).toString());
-			mPDFFileOffsets.add(new Integer(nChars));
+			nChars += writeLine(m_writer, pdfFontObjects.get(i).toString());
+			m_PDFFileOffsets.add(new Integer(nChars));
 		}
 	}
 
@@ -821,8 +821,8 @@ public class OutputFormat
 		/*
 		 * Set plotting units to millimetres.
 		 */
-		writeLine(mWriter, "% Set scaling so that (x, y) coordinates are given in millimetres");
-		writeLine(mWriter, Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
+		writeLine(m_writer, "% Set scaling so that (x, y) coordinates are given in millimetres");
+		writeLine(m_writer, Constants.POINTS_PER_INCH + " " + Constants.MM_PER_INCH +
 			" div dup scale");
 	}
 
@@ -836,22 +836,22 @@ public class OutputFormat
 	private void writeSVGHeader(double width, double height, String scriptFilename, Color backgroundColor)
 		throws IOException, MapyrusException
 	{
-		writeLine(mWriter, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
+		writeLine(m_writer, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>");
 
 		Date now = new Date();
-		writeLine(mWriter, "<!-- Created by " + Constants.PROGRAM_NAME +
+		writeLine(m_writer, "<!-- Created by " + Constants.PROGRAM_NAME +
 			" " + Constants.getVersion() + " on " + now.toString() + " -->");
 
 		double pxPerMM = Constants.getScreenResolution() / Constants.MM_PER_INCH;
 
-		writeLine(mWriter, "<svg width=\"" +
-			mCoordinateDecimal.format(width * pxPerMM) + "\"");
-		writeLine(mWriter, "  height=\"" +
-			mCoordinateDecimal.format(height * pxPerMM) + "\"");
-		writeLine(mWriter, "  version=\"1.1\"");
-		writeLine(mWriter, "  overflow=\"hidden\"");
-		writeLine(mWriter, "  xml:space=\"preserve\"");
-		writeLine(mWriter, "  xmlns=\"http://www.w3.org/2000/svg\">");
+		writeLine(m_writer, "<svg width=\"" +
+			m_coordinateDecimal.format(width * pxPerMM) + "\"");
+		writeLine(m_writer, "  height=\"" +
+			m_coordinateDecimal.format(height * pxPerMM) + "\"");
+		writeLine(m_writer, "  version=\"1.1\"");
+		writeLine(m_writer, "  overflow=\"hidden\"");
+		writeLine(m_writer, "  xml:space=\"preserve\"");
+		writeLine(m_writer, "  xmlns=\"http://www.w3.org/2000/svg\">");
 
 		if (scriptFilename != null)
 		{
@@ -865,7 +865,7 @@ public class OutputFormat
 				reader = new FileOrURL(scriptFilename).getReader();
 				while ((line = reader.readLine()) != null)
 				{
-					writeLine(mWriter, line);
+					writeLine(m_writer, line);
 				}
 			}
 			finally
@@ -877,9 +877,9 @@ public class OutputFormat
 
 		if (backgroundColor != null)
 		{
-			writeLine(mWriter, "<rect x=\"0\" y=\"0\" width=\"100%\"");
-			writeLine(mWriter, "  height=\"100%\" stroke=\"none\"");
-			writeLine(mWriter, "  fill=\"" +
+			writeLine(m_writer, "<rect x=\"0\" y=\"0\" width=\"100%\"");
+			writeLine(m_writer, "  height=\"100%\" stroke=\"none\"");
+			writeLine(m_writer, "  fill=\"" +
 				ColorDatabase.toHexString(backgroundColor) + "\" fill-opacity=\"1\"/>");
 		}
 
@@ -888,23 +888,23 @@ public class OutputFormat
 		 * Set reasonable default values for rarely used settings that are
 		 * not given each time a shape is displayed.
 		 */
-		writeLine(mWriter, "<g transform=\"scale(" + pxPerMM + ")\"");
-		writeLine(mWriter, "  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
-		writeLine(mWriter, "  clip-rule=\"nonzero\">");
-		mSVGOpenGTags.push(Integer.valueOf(1));
+		writeLine(m_writer, "<g transform=\"scale(" + pxPerMM + ")\"");
+		writeLine(m_writer, "  style=\"fill-rule:nonzero;fill-opacity:1;stroke-opacity:1;stroke-dasharray:none;\"");
+		writeLine(m_writer, "  clip-rule=\"nonzero\">");
+		m_SVGOpenGTags.push(Integer.valueOf(1));
 
 		/*
 		 * Define filters for all possible transparent color blending modes.
 		 */
-		writeLine(mWriter, "<defs>");
+		writeLine(m_writer, "<defs>");
 		String []blends = {"normal", "multiply", "screen", "darken", "lighten"};
 		for (int i = 0; i < blends.length; i++)
 		{
-			writeLine(mWriter, "<filter id=\"" + blends[i] + "\">");
-			writeLine(mWriter, "<feBlend mode=\"" + blends[i] + "\" in2=\"BackgroundImage\" in=\"SourceGraphic\"/>");
-			writeLine(mWriter, "</filter>");
+			writeLine(m_writer, "<filter id=\"" + blends[i] + "\">");
+			writeLine(m_writer, "<feBlend mode=\"" + blends[i] + "\" in2=\"BackgroundImage\" in=\"SourceGraphic\"/>");
+			writeLine(m_writer, "</filter>");
 		}
-		writeLine(mWriter, "</defs>");
+		writeLine(m_writer, "</defs>");
 	}
 
 	/**
@@ -928,52 +928,52 @@ public class OutputFormat
 		 */
 		if (backgroundColor != null)
 		{
-			Color originalColor = mGraphics2D.getColor();
-			mGraphics2D.setColor(backgroundColor);
-			mGraphics2D.fillRect(0, 0, mImage.getWidth(), mImage.getHeight());
-			mGraphics2D.setColor(originalColor);
+			Color originalColor = m_graphics2D.getColor();
+			m_graphics2D.setColor(backgroundColor);
+			m_graphics2D.fillRect(0, 0, m_image.getWidth(), m_image.getHeight());
+			m_graphics2D.setColor(originalColor);
 		}
 
 		/*
 		 * Set transform with origin in lower-left corner and
 		 * Y axis increasing upwards.
 		 */
-		mGraphics2D.translate(0, mImage.getHeight());
-		mGraphics2D.scale(scale, -scale);
+		m_graphics2D.translate(0, m_image.getHeight());
+		m_graphics2D.scale(scale, -scale);
 		
 		/*
 		 * Set anti-aliasing for labels and lines if the user wants it.
 		 */
 		if (lineAntiAliasing)
 		{
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+			m_graphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON));
 		}
 		else
 		{
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+			m_graphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_OFF));
 		}
 
 		if (labelAntiAliasing)
 		{
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+			m_graphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
 		}
 		else
 		{
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
+			m_graphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF));
 		}
 
 		if (fractionalFontMetrics)
 		{
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
+			m_graphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
 				RenderingHints.VALUE_FRACTIONALMETRICS_ON));
 		}
 		else
 		{
-			mGraphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
+			m_graphics2D.addRenderingHints(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
 				RenderingHints.VALUE_FRACTIONALMETRICS_OFF));
 		}
 	}
@@ -1042,12 +1042,12 @@ public class OutputFormat
 		 * Parse list of additional options given by caller.
 		 */
 		ArrayList<PostScriptFont> fontList = new ArrayList<PostScriptFont>();
-		mEncodeAsISOLatin1 = new HashSet<String>();
-		mTTFFonts = new HashMap<String, TrueTypeFont>();
-		mPDFFonts = new ArrayList<AdobeFontMetrics>();
-		mAfmFiles = new ArrayList<String>();
-		mSVGOpenGTags = new Stack<Integer>();
-		mIsUpdatingFile = false;
+		m_encodeAsISOLatin1 = new HashSet<String>();
+		m_TTFFonts = new HashMap<String, TrueTypeFont>();
+		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
+		m_afmFiles = new ArrayList<String>();
+		m_SVGOpenGTags = new Stack<Integer>();
+		m_isUpdatingFile = false;
 		int resolution;
 		boolean turnPage = false;
 		Color backgroundColor = null;
@@ -1057,15 +1057,15 @@ public class OutputFormat
 		boolean compressOutput = false;
 		String scriptFilename = null;
 		Rectangle2D existingBoundingBox = null;
-		mUniqueKey = getUniqueKey();
-		mPDFFontPrefix =  mUniqueKey + "F";
-		mPDFImagePrefix = mUniqueKey + "Img";
-		mPDFGstatePrefix = mUniqueKey + "Gstate";
-		mSVGClipPathPrefix = mUniqueKey + "C";
+		m_uniqueKey = getUniqueKey();
+		m_PDFFontPrefix =  m_uniqueKey + "F";
+		m_PDFImagePrefix = m_uniqueKey + "Img";
+		m_PDFGstatePrefix = m_uniqueKey + "Gstate";
+		m_SVGClipPathPrefix = m_uniqueKey + "C";
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (m_outputType == POSTSCRIPT_GEOMETRY)
 			resolution = 300;
-		else if (mOutputType == PDF)
+		else if (m_outputType == PDF)
 			resolution = 72;
 		else
 			resolution = Constants.getScreenResolution();
@@ -1074,18 +1074,18 @@ public class OutputFormat
 		 * Reading all font metrics information takes some time.
 		 * Wait until we really need it before loading it.
 		 */
-		mAdobeFontMetrics = null;
+		m_adobeFontMetrics = null;
 
-		mMinimumLineWidth = 0;
+		m_minimumLineWidth = 0;
 
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
 		{
 			String token = st.nextToken();
-			if ((token.startsWith("pfafiles=") && mOutputType != PDF) ||
-				(token.startsWith("pfbfiles=") && mOutputType == PDF))
+			if ((token.startsWith("pfafiles=") && m_outputType != PDF) ||
+				(token.startsWith("pfbfiles=") && m_outputType == PDF))
 			{
-				boolean isBinary = (mOutputType == PDF);
+				boolean isBinary = (m_outputType == PDF);
 
 				/*
 				 * Build list of font filenames user wants
@@ -1122,7 +1122,7 @@ public class OutputFormat
 						Iterator<String> it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
 						{
-							mAfmFiles.add(it.next());
+							m_afmFiles.add(it.next());
 						}
 										
 					}
@@ -1138,7 +1138,7 @@ public class OutputFormat
 				{
 					String fontName = st2.nextToken();
 					if (fontName.length() > 0)
-						mEncodeAsISOLatin1.add(fontName);
+						m_encodeAsISOLatin1.add(fontName);
 				}
 			}
 			else if (token.startsWith("resolution="))
@@ -1182,9 +1182,9 @@ public class OutputFormat
 							String s = (String)it.next();
 							TrueTypeFont ttf = new TrueTypeFont(s);
 							String fontName = ttf.getName();
-							mTTFFonts.put(fontName, ttf);
-							mTTFFonts.put(fontName.toLowerCase(), ttf);
-							mTTFFonts.put(fontName.toUpperCase(), ttf);
+							m_TTFFonts.put(fontName, ttf);
+							m_TTFFonts.put(fontName.toLowerCase(), ttf);
+							m_TTFFonts.put(fontName.toUpperCase(), ttf);
 						}
 					}
 				}
@@ -1209,19 +1209,19 @@ public class OutputFormat
 				String flag = token.substring(22);
 				fractionalFontMetrics = flag.equalsIgnoreCase("true");
 			}
-			else if (token.startsWith("update=") && mOutputType != SVG && mOutputType != PDF)
+			else if (token.startsWith("update=") && m_outputType != SVG && m_outputType != PDF)
 			{
 				String flag = token.substring(7);
-				mIsUpdatingFile = flag.equalsIgnoreCase("true");
+				m_isUpdatingFile = flag.equalsIgnoreCase("true");
 			}
 			else if (token.startsWith("compress="))
 			{
 				String flag = token.substring(9);
 				compressOutput = flag.equalsIgnoreCase("true");
 			}
-			else if (token.startsWith("imagemap=") && mOutputType == IMAGE_FILE)
+			else if (token.startsWith("imagemap=") && m_outputType == IMAGE_FILE)
 			{
-				mImageMapWriter = new PrintWriter(new FileWriter(token.substring(9)));
+				m_imageMapWriter = new PrintWriter(new FileWriter(token.substring(9)));
 			}
 			else if (token.startsWith("background="))
 			{
@@ -1242,7 +1242,7 @@ public class OutputFormat
 				String lineWidth = token.substring(17);
 				try
 				{
-					mMinimumLineWidth = Double.parseDouble(lineWidth);
+					m_minimumLineWidth = Double.parseDouble(lineWidth);
 				}
 				catch (NumberFormatException e)
 				{
@@ -1252,24 +1252,24 @@ public class OutputFormat
 			}
 		}
 
-		if ((mOutputType == POSTSCRIPT_GEOMETRY ||
-			mOutputType == POSTSCRIPT_IMAGE ||
-			mOutputType == PDF ||
-			mOutputType == IMAGE_FILE ||
-			mOutputType == SVG) && (!mIsUpdatingFile))
+		if ((m_outputType == POSTSCRIPT_GEOMETRY ||
+			m_outputType == POSTSCRIPT_IMAGE ||
+			m_outputType == PDF ||
+			m_outputType == IMAGE_FILE ||
+			m_outputType == SVG) && (!m_isUpdatingFile))
 		{
 			/*
 			 * Should we pipe the output to another program
 			 * instead of writing a file?
 			 */
-			mIsPipedOutput = filename.startsWith("|");
+			m_isPipedOutput = filename.startsWith("|");
 
 			/*
 			 * Are we writing to standard output instead of to a file?
 			 */
-			mIsStandardOutput = filename.equals("-");
+			m_isStandardOutput = filename.equals("-");
 
-			if (mIsPipedOutput)
+			if (m_isPipedOutput)
 			{
 				String pipeCommand = filename.substring(1).trim();
 				String []cmdArray;
@@ -1277,26 +1277,26 @@ public class OutputFormat
 					cmdArray = new String[]{pipeCommand};
 				else
 					cmdArray = new String[]{"sh", "-c", pipeCommand};
-				mOutputProcess = Runtime.getRuntime().exec(cmdArray);
-				mOutputStream = mOutputProcess.getOutputStream();
+				m_outputProcess = Runtime.getRuntime().exec(cmdArray);
+				m_outputStream = m_outputProcess.getOutputStream();
 			}
 			else
 			{
-				if (mIsStandardOutput)
-					mOutputStream = stdoutStream;
+				if (m_isStandardOutput)
+					m_outputStream = stdoutStream;
 				else
-					mOutputStream = new FileOutputStream(filename);
+					m_outputStream = new FileOutputStream(filename);
 			}
 
 			/*
 			 * Compress output too if the user wants it.
 			 */
 			if (compressOutput)
-				mOutputStream = new GZIPOutputStream(mOutputStream);
+				m_outputStream = new GZIPOutputStream(m_outputStream);
 		}
 
 		File f = new File(filename);
-		if (mIsUpdatingFile)
+		if (m_isUpdatingFile)
 		{
 			if (!f.canWrite())
 			{
@@ -1307,11 +1307,11 @@ public class OutputFormat
 		/*
 		 * Setup file we are writing to.
 		 */
-		if (mOutputType == POSTSCRIPT_GEOMETRY ||
-			mOutputType == POSTSCRIPT_IMAGE ||
-			mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY ||
+			m_outputType == POSTSCRIPT_IMAGE ||
+			m_outputType == PDF)
 		{
-			if (mIsUpdatingFile)
+			if (m_isUpdatingFile)
 			{
 				PostScriptFile ps = new PostScriptFile(filename);
 				if (ps.getNumberOfPages() > 1)
@@ -1332,31 +1332,31 @@ public class OutputFormat
 				 * Start writing to a temporary file in same directory.  We'll replace the
 				 * original file at the end when the file is successfully completed.
 				 */
-				mTempFile = File.createTempFile(Constants.PROGRAM_NAME, null,
+				m_tempFile = File.createTempFile(Constants.PROGRAM_NAME, null,
 					new File(filename).getAbsoluteFile().getParentFile());
-				mOutputStream = new FileOutputStream(mTempFile);
+				m_outputStream = new FileOutputStream(m_tempFile);
 			}
 
-			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
+			m_writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_outputStream)));
 
-			mSuppliedFontResources = new HashSet<String>();
+			m_suppliedFontResources = new HashSet<String>();
 
-			if (mOutputType == PDF)
+			if (m_outputType == PDF)
 				writePDFHeader(filename, width, height, resolution, turnPage, fontList, backgroundColor);
 			else
 				writePostScriptHeader(width, height, resolution, turnPage, fontList, backgroundColor);
 
-			mNeededFontResources = new HashSet<String>();
+			m_neededFontResources = new HashSet<String>();
 
-			if (mIsUpdatingFile)
+			if (m_isUpdatingFile)
 			{
 				/*
 				 * Append contents of existing file as an included document
 				 * to the new file we are creating.
 				 */
-				writeLine(mWriter, "save");
-				writeLine(mWriter, "/showpage {} def");
-				writeLine(mWriter, "%%BeginDocument: " + filename);
+				writeLine(m_writer, "save");
+				writeLine(m_writer, "/showpage {} def");
+				writeLine(m_writer, "%%BeginDocument: " + filename);
 				BufferedReader r = null;
 
 				try
@@ -1365,7 +1365,7 @@ public class OutputFormat
 					String line;
 					while ((line = r.readLine()) != null)
 					{
-						writeLine(mWriter, line);
+						writeLine(m_writer, line);
 					}
 				}
 				finally
@@ -1379,15 +1379,15 @@ public class OutputFormat
 					{
 					}
 				}
-				writeLine(mWriter, "%%EndDocument");
-				writeLine(mWriter, "restore");
+				writeLine(m_writer, "%%EndDocument");
+				writeLine(m_writer, "restore");
 			}
-			if (mOutputType != PDF)
+			if (m_outputType != PDF)
 				writePostScriptScaling();
 		}
-		else if (mOutputType == SVG)
+		else if (m_outputType == SVG)
 		{
-			mWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mOutputStream)));
+			m_writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_outputStream)));
 			writeSVGHeader(width, height, scriptFilename, backgroundColor);
 
 			/*
@@ -1395,32 +1395,32 @@ public class OutputFormat
 			 * state whilst drawing.
 			 */
 			BufferedImage anyImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-			mGraphics2D = (Graphics2D)anyImage.getGraphics();
+			m_graphics2D = (Graphics2D)anyImage.getGraphics();
 		}
 
-		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != SVG && mOutputType != PDF)
+		if (m_outputType != POSTSCRIPT_GEOMETRY && m_outputType != SVG && m_outputType != PDF)
 		{
 			/*
 			 * Create image to draw into.
 			 */
-			if (mOutputType == IMAGE_FILE ||
-				mOutputType == SCREEN_WINDOW ||
-				mOutputType == POSTSCRIPT_IMAGE)
+			if (m_outputType == IMAGE_FILE ||
+				m_outputType == SCREEN_WINDOW ||
+				m_outputType == POSTSCRIPT_IMAGE)
 			{
-				if (mIsUpdatingFile && mOutputType == IMAGE_FILE)
+				if (m_isUpdatingFile && m_outputType == IMAGE_FILE)
 				{
 					/*
 					 * Read existing image for editing.
 					 * Set page width and height to size of existing image.
 					 */
-					mImage = ImageIOWrapper.read(f, Color.BLACK);
-					if (mImage == null)
+					m_image = ImageIOWrapper.read(f, Color.BLACK);
+					if (m_image == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) + ": " + filename);
 					}
 
-					width = mImage.getWidth() / (resolution / Constants.MM_PER_INCH);
-					height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
+					width = m_image.getWidth() / (resolution / Constants.MM_PER_INCH);
+					height = m_image.getHeight() / (resolution / Constants.MM_PER_INCH);
 				}
 				else
 				{
@@ -1436,58 +1436,58 @@ public class OutputFormat
 					 * Create images with transparency for all formats except
 					 * JPEG and PPM (which do not support it).
 					 */
-					if (mFormatName.equals("jpg") || mFormatName.equals("jpeg") || mFormatName.equals("ppm") || mFormatName.equals("bmp"))
+					if (m_formatName.equals("jpg") || m_formatName.equals("jpeg") || m_formatName.equals("ppm") || m_formatName.equals("bmp"))
 						imageType = BufferedImage.TYPE_3BYTE_BGR;
 					else
 						imageType = BufferedImage.TYPE_INT_ARGB;
 
-					mImage = new BufferedImage(widthInPixels, heightInPixels,
+					m_image = new BufferedImage(widthInPixels, heightInPixels,
 						imageType);
 				}
 			}
-			else if (mOutputType == INTERNAL_IMAGE)
+			else if (m_outputType == INTERNAL_IMAGE)
 			{
 				/*
 				 * Calculate width of page, based on image and resolution given
 				 * by user.
 				 */
-				width = mImage.getWidth() / (resolution / Constants.MM_PER_INCH);
-				height = mImage.getHeight() / (resolution / Constants.MM_PER_INCH);
+				width = m_image.getWidth() / (resolution / Constants.MM_PER_INCH);
+				height = m_image.getHeight() / (resolution / Constants.MM_PER_INCH);
 			}
-			mGraphics2D = (Graphics2D)(mImage.getGraphics());
+			m_graphics2D = (Graphics2D)(m_image.getGraphics());
 			setupBufferedImage(resolution, backgroundColor, lineAntiAliasing, labelAntiAliasing, fractionalFontMetrics);
 		}
 
-		if (mImageMapWriter != null)
+		if (m_imageMapWriter != null)
 		{
 			/*
 		 	 * Create image map.
 		 	 */
-			mImageMapWriter.println("<!-- HTML Imagemap created by Mapyrus for image " + filename + " -->");
-			mImageMapWriter.println("<!-- Surround contents of this file with <map name=\"foo\"> ... </map> and -->");
-			mImageMapWriter.println("<!-- combine it with the image using HTML like <img src=\"" + filename + "\" usemap=\"#foo\"> -->");
+			m_imageMapWriter.println("<!-- HTML Imagemap created by Mapyrus for image " + filename + " -->");
+			m_imageMapWriter.println("<!-- Surround contents of this file with <map name=\"foo\"> ... </map> and -->");
+			m_imageMapWriter.println("<!-- combine it with the image using HTML like <img src=\"" + filename + "\" usemap=\"#foo\"> -->");
 		}
 
-		mFilename = filename;
-		mPageWidth = width;
-		mPageHeight = height;
-		mResolution = Constants.MM_PER_INCH / resolution;
-		mFontCache = new FontCache();
-		mJustificationShiftX = JUSTIFY_LEFT;
-		mJustificationShiftY = JUSTIFY_BOTTOM;
-		mFontOutlineWidth = 0.0;
-		mFontLineSpacing = 1;
+		m_filename = filename;
+		m_pageWidth = width;
+		m_pageHeight = height;
+		m_resolution = Constants.MM_PER_INCH / resolution;
+		m_fontCache = new FontCache();
+		m_justificationShiftX = JUSTIFY_LEFT;
+		m_justificationShiftY = JUSTIFY_BOTTOM;
+		m_fontOutlineWidth = 0.0;
+		m_fontLineSpacing = 1;
 
 		/*
 		 * Set impossible current font rotation so first font
 		 * accessed will be loaded.
 		 */
-		mFontRotation = Double.MAX_VALUE;
+		m_fontRotation = Double.MAX_VALUE;
 
 		/*
 		 * Do not allocate page mask until needed to save memory.
 		 */
-		mPageMask = null;
+		m_pageMask = null;
 	}
 
 	/*
@@ -1496,7 +1496,7 @@ public class OutputFormat
 	 */
 	public void setImageMapWriter(PrintWriter imageMapWriter)
 	{
-		mImageMapWriter = imageMapWriter;
+		m_imageMapWriter = imageMapWriter;
 	}
 
 	/**
@@ -1515,54 +1515,54 @@ public class OutputFormat
 		PrintStream stdoutStream)
 		throws IOException, MapyrusException
 	{
-		mFormatName = format.toLowerCase();
+		m_formatName = format.toLowerCase();
 
 		/*
 		 * Check that Java can write this image format to a file.
 		 */				
-		if (mFormatName.equals("ps") ||
-			mFormatName.equals("postscript") ||
-			mFormatName.equals("application/postscript"))
+		if (m_formatName.equals("ps") ||
+			m_formatName.equals("postscript") ||
+			m_formatName.equals("application/postscript"))
 		{
-			mFormatName = "ps";
-			mOutputType = POSTSCRIPT_GEOMETRY;
+			m_formatName = "ps";
+			m_outputType = POSTSCRIPT_GEOMETRY;
 		}
-		else if (mFormatName.equals("eps"))
+		else if (m_formatName.equals("eps"))
 		{
-			mOutputType = POSTSCRIPT_GEOMETRY;
+			m_outputType = POSTSCRIPT_GEOMETRY;
 		}
-		else if (mFormatName.equals("epsimage"))
+		else if (m_formatName.equals("epsimage"))
 		{
-			mOutputType = POSTSCRIPT_IMAGE;
+			m_outputType = POSTSCRIPT_IMAGE;
 		}
-		else if (mFormatName.equals("pdf") || mFormatName.equals("application/pdf"))
+		else if (m_formatName.equals("pdf") || m_formatName.equals("application/pdf"))
 		{
-			mOutputType = PDF;
+			m_outputType = PDF;
 		}
-		else if (mFormatName.equals("svg") ||
-			mFormatName.equals("image/svg+xml"))
+		else if (m_formatName.equals("svg") ||
+			m_formatName.equals("image/svg+xml"))
 		{
-			mFormatName = "svg";
-			mOutputType = SVG;
+			m_formatName = "svg";
+			m_outputType = SVG;
 		}
-		else if (mFormatName.equals("screen"))
+		else if (m_formatName.equals("screen"))
 		{
-			mOutputType = SCREEN_WINDOW;
+			m_outputType = SCREEN_WINDOW;
 		}
 		else
 		{
-			if (mFormatName.equals("image/x-portable-pixmap"))
-				mFormatName = "ppm";
-			else if (mFormatName.startsWith("image/"))
-				mFormatName = mFormatName.substring(6);
+			if (m_formatName.equals("image/x-portable-pixmap"))
+				m_formatName = "ppm";
+			else if (m_formatName.startsWith("image/"))
+				m_formatName = m_formatName.substring(6);
 
-			if (!isSupportedImageFormat(mFormatName))
+			if (!isSupportedImageFormat(m_formatName))
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
 					": " + format);
 			}
 		
-			mOutputType = IMAGE_FILE;
+			m_outputType = IMAGE_FILE;
 		}
 		setOutput(filename, width, height, extras, stdoutStream);
 	}
@@ -1575,9 +1575,9 @@ public class OutputFormat
 	public OutputFormat(BufferedImage image, String extras)
 		throws IOException, MapyrusException
 	{
-		mOutputType = INTERNAL_IMAGE;
-		mImage = image;
-		mFormatName = "png";
+		m_outputType = INTERNAL_IMAGE;
+		m_image = image;
+		m_formatName = "png";
 		PrintStream dummyStdout = new PrintStream(new ByteArrayOutputStream());
 		setOutput("", 0, 0, extras, dummyStdout);
 	}
@@ -1588,7 +1588,7 @@ public class OutputFormat
 	 */
 	public double getPageWidth()
 	{
-		return(mPageWidth);
+		return(m_pageWidth);
 	}
 	
 	/**
@@ -1597,7 +1597,7 @@ public class OutputFormat
 	 */
 	public double getPageHeight()
 	{
-		return(mPageHeight);
+		return(m_pageHeight);
 	}
 
 	/**
@@ -1606,7 +1606,7 @@ public class OutputFormat
 	 */
 	public String getPageFormat()
 	{
-		return(mFormatName);
+		return(m_formatName);
 	}
 	
 	/**
@@ -1615,7 +1615,7 @@ public class OutputFormat
 	 */
 	public double getResolution()
 	{
-		return(mResolution);
+		return(m_resolution);
 	}
 
 	/**
@@ -1641,16 +1641,16 @@ public class OutputFormat
 		 */
 		while ((token = stringReader.readLine()) != null)
 		{
-			if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
+			if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 			{
 				/*
 				 * Load Font Metrics information only when it is needed.
 				 */
-				if (mAdobeFontMetrics == null)
-					mAdobeFontMetrics = new AdobeFontMetricsManager(mAfmFiles, mEncodeAsISOLatin1);
+				if (m_adobeFontMetrics == null)
+					m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1);
 	
 				double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
-				tokenWidth = mAdobeFontMetrics.getStringWidth(fontName, pointSize, token);
+				tokenWidth = m_adobeFontMetrics.getStringWidth(fontName, pointSize, token);
 				tokenWidth = tokenWidth / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
 				if (tokenWidth > width)
 					width = tokenWidth;
@@ -1665,8 +1665,8 @@ public class OutputFormat
 				 * Use Java2D calculation for bounding box of string displayed with
 				 * horizontal font.
 				 */
-				FontRenderContext frc = mGraphics2D.getFontRenderContext();
-				Rectangle2D bounds = mBaseFont.getStringBounds(token, frc);
+				FontRenderContext frc = m_graphics2D.getFontRenderContext();
+				Rectangle2D bounds = m_baseFont.getStringBounds(token, frc);
 				tokenWidth = bounds.getWidth();
 				if (tokenWidth > width)
 					width = tokenWidth;
@@ -1688,12 +1688,12 @@ public class OutputFormat
 	 */
 	public PageMask getPageMask()
 	{
-		if (mPageMask == null)
+		if (m_pageMask == null)
 		{
-			mPageMask = new PageMask((int)Math.round(mPageWidth),
-				(int)Math.round(mPageHeight));
+			m_pageMask = new PageMask((int)Math.round(m_pageWidth),
+				(int)Math.round(m_pageHeight));
 		}
-		return(mPageMask);
+		return(m_pageMask);
 	}
 
 	/*
@@ -1723,14 +1723,14 @@ public class OutputFormat
 		int pixelWidth, pixelHeight;
 		int step;
 		String imageKey = null;
-		if (mPDFImageObjects != null)
-			imageKey = mPDFImagePrefix + mPDFImageObjects.size();
+		if (m_PDFImageObjects != null)
+			imageKey = m_PDFImagePrefix + m_PDFImageObjects.size();
 		StringWriter sw = null;
 		PrintWriter pw;
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 			pw = new PrintWriter(sw = new StringWriter());
 		else
-			pw = mWriter;
+			pw = m_writer;
 
 		pixelWidth = image.getWidth();
 		pixelHeight = image.getHeight();
@@ -1745,8 +1745,8 @@ public class OutputFormat
 		}
 		else
 		{
-			double bestPixelWidth = width / mResolution;
-			double bestPixelHeight = height / mResolution;
+			double bestPixelWidth = width / m_resolution;
+			double bestPixelHeight = height / m_resolution;
 
 			/*
 			 * Keep reducing image 1/2, 1/3, 1/4, ... until it reaches the
@@ -1776,26 +1776,26 @@ public class OutputFormat
 		 * Taken from Adobe PostScript Language Reference Manual
 		 * (2nd Edition), p. 234.
 		 */
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
-			writeLine(mPDFGeometryWriter, "q");
-			writeLine(mPDFGeometryWriter, "1 0 0 1 " +
-				mCoordinateDecimal.format(x) + " " +
-				mCoordinateDecimal.format(y) + " cm % translate");
+			writeLine(m_PDFGeometryWriter, "q");
+			writeLine(m_PDFGeometryWriter, "1 0 0 1 " +
+				m_coordinateDecimal.format(x) + " " +
+				m_coordinateDecimal.format(y) + " cm % translate");
 
 			double sin = Math.sin(rotation);
 			double cos = Math.cos(rotation);
-			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(cos) + " " +
-				mCoordinateDecimal.format(sin) + " " +
-				mCoordinateDecimal.format(-sin) + " " +
-				mCoordinateDecimal.format(cos) +
+			writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(cos) + " " +
+				m_coordinateDecimal.format(sin) + " " +
+				m_coordinateDecimal.format(-sin) + " " +
+				m_coordinateDecimal.format(cos) +
 				" 0 0 cm % rotate " +
-				mCoordinateDecimal.format(rotation));
+				m_coordinateDecimal.format(rotation));
 
-			writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(width) +
-				" 0 0 " + mCoordinateDecimal.format(height) +
+			writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(width) +
+				" 0 0 " + m_coordinateDecimal.format(height) +
 				" 0 0 cm % scale");
-			writeLine(mPDFGeometryWriter, "1 0 0 1 -0.5 -0.5 cm % translate");
+			writeLine(m_PDFGeometryWriter, "1 0 0 1 -0.5 -0.5 cm % translate");
 
 			/*
 		 	 * Set color for drawing single color images.
@@ -1803,14 +1803,14 @@ public class OutputFormat
 			if (singleColor != null)
 			{
 				float []c = singleColor.getColorComponents(null);
-				writeLine(mPDFGeometryWriter,
-					mCoordinateDecimal.format(c[0]) + " " +
-					mCoordinateDecimal.format(c[1]) + " " +
-					mCoordinateDecimal.format(c[2]) + " rg");
+				writeLine(m_PDFGeometryWriter,
+					m_coordinateDecimal.format(c[0]) + " " +
+					m_coordinateDecimal.format(c[1]) + " " +
+					m_coordinateDecimal.format(c[2]) + " rg");
 			}
 
-			writeLine(mPDFGeometryWriter, "/" + imageKey + " Do");
-			writeLine(mPDFGeometryWriter, "Q");
+			writeLine(m_PDFGeometryWriter, "/" + imageKey + " Do");
+			writeLine(m_PDFGeometryWriter, "Q");
 		}
 		else
 		{
@@ -1833,16 +1833,16 @@ public class OutputFormat
 			if (singleColor != null)
 			{
 				float []c = singleColor.getColorComponents(null);
-				writeLine(pw, mCoordinateDecimal.format(c[0]) + " " +
-					mCoordinateDecimal.format(c[1]) + " " +
-					mCoordinateDecimal.format(c[2]) + " RG");
+				writeLine(pw, m_coordinateDecimal.format(c[0]) + " " +
+					m_coordinateDecimal.format(c[1]) + " " +
+					m_coordinateDecimal.format(c[2]) + " RG");
 			}
 		}
 
 
 		writeLine(pw, "% original image size " + pixelWidth + "x" + pixelHeight + " with reduction factor " + step);
 		writeLine(pw, "<<");
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
 			writeLine(pw, "/Type /XObject /Subtype /Image");
 			if (singleColor == null)
@@ -1858,7 +1858,7 @@ public class OutputFormat
 		{
 			writeLine(pw, "/BitsPerComponent 1");
 			writeLine(pw, "/Decode [0 1]");
-			if (mOutputType == PDF)
+			if (m_outputType == PDF)
 				writeLine(pw, "/ImageMask true");
 		}
 		else
@@ -1866,7 +1866,7 @@ public class OutputFormat
 			writeLine(pw, "/BitsPerComponent 8");
 			writeLine(pw, "/Decode [0 1 0 1 0 1]");
 		}
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
 			writeLine(pw, "/Filter [/ASCII85Decode /FlateDecode]");
 		}
@@ -1888,7 +1888,7 @@ public class OutputFormat
 		 */
 		StringWriter ascii85sw = null;
 		PrintWriter ascii85pw = null;
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
 			/*
 			 * Writing 3 RGB bytes per pixel.  Many images compress
@@ -1902,7 +1902,7 @@ public class OutputFormat
 		{
 			ascii85pw = pw;
 		}
-		ASCII85Writer ascii85 = new ASCII85Writer(ascii85pw, mOutputType == PDF);
+		ASCII85Writer ascii85 = new ASCII85Writer(ascii85pw, m_outputType == PDF);
 		int byteValue = 0;
 		int bitCounter = 0;
 		for (int row = 0; row < pixelHeight; row += step)
@@ -1956,7 +1956,7 @@ public class OutputFormat
 		 * Write ASCII85 end-of-data marker.
 		 */
 		writeLine(ascii85pw, "~>");
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
 			ascii85pw.flush();
 			String s = ascii85sw.toString();
@@ -1966,7 +1966,7 @@ public class OutputFormat
 			writeLine(pw, s);
 			writeLine(pw, "endstream");
 			pw.flush();
-			mPDFImageObjects.put(imageKey, sw);
+			m_PDFImageObjects.put(imageKey, sw);
 		}
 		else
 		{
@@ -1980,20 +1980,20 @@ public class OutputFormat
 	 */
 	public void saveState()
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
-			writeLine(mWriter, "q");
-		else if (mOutputType == PDF)
-			writeLine(mPDFGeometryWriter, "q");
-		else if (mOutputType == SVG)
+		if (m_outputType == POSTSCRIPT_GEOMETRY)
+			writeLine(m_writer, "q");
+		else if (m_outputType == PDF)
+			writeLine(m_PDFGeometryWriter, "q");
+		else if (m_outputType == SVG)
 		{
-			writeLine(mWriter, "<g>");
+			writeLine(m_writer, "<g>");
 			
 			/*
 			 * We will use <g> tags for clipping too.  Keep track
 			 * of how many we open so that we can close them all when
 			 * we restore the state.
 			 */
-			mSVGOpenGTags.push(Integer.valueOf(1));
+			m_SVGOpenGTags.push(Integer.valueOf(1));
 		}
 	}
 
@@ -2007,26 +2007,26 @@ public class OutputFormat
 	{
 		boolean retval;
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (m_outputType == POSTSCRIPT_GEOMETRY)
 		{
-			writeLine(mWriter, "Q");
+			writeLine(m_writer, "Q");
 			retval = true;
 		}
-		else if (mOutputType == PDF)
+		else if (m_outputType == PDF)
 		{
-			writeLine(mPDFGeometryWriter, "Q");
+			writeLine(m_PDFGeometryWriter, "Q");
 			retval = false;
 		}
 		else 
 		{
-			if (mOutputType == SVG)
+			if (m_outputType == SVG)
 			{
 				/*
 				 * Close all the <g> tags that we opened.
 				 */
-				int nStates = mSVGOpenGTags.pop().intValue();
+				int nStates = m_SVGOpenGTags.pop().intValue();
 				for (int i = 0; i < nStates; i++)
-					writeLine(mWriter, "</g>");
+					writeLine(m_writer, "</g>");
 			}
 
 			/*
@@ -2043,52 +2043,52 @@ public class OutputFormat
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == POSTSCRIPT_IMAGE)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == POSTSCRIPT_IMAGE)
 		{
-			if (mOutputType == POSTSCRIPT_IMAGE)
+			if (m_outputType == POSTSCRIPT_IMAGE)
 			{
 				/*
 				 * Write image file containing page.
 				 */
-				writePostScriptOrPDFImage(mImage, mPageWidth / 2, mPageHeight / 2,
-					mPageWidth, mPageHeight, 0);
+				writePostScriptOrPDFImage(m_image, m_pageWidth / 2, m_pageHeight / 2,
+					m_pageWidth, m_pageHeight, 0);
 			}
 
 			/*
 			 * Finish off PostScript file.
 			 */
-			if (mFormatName.equals("ps"))
+			if (m_formatName.equals("ps"))
 			{
 				/*
 				 * showpage is not included in Encapsulated PostScript files.
 				 */
-				writeLine(mWriter, "showpage");
+				writeLine(m_writer, "showpage");
 			}
 
-			writeLine(mWriter, "%%Trailer");
+			writeLine(m_writer, "%%Trailer");
 			
 			/*
 			 * Included list of fonts we used in this file but did
 			 * not include in the header.
 			 */	
-			writeLine(mWriter, "%%DocumentNeededResources:");
-			Iterator it = mNeededFontResources.iterator();
+			writeLine(m_writer, "%%DocumentNeededResources:");
+			Iterator it = m_neededFontResources.iterator();
 			while (it.hasNext())
 			{
 				String fontName = (String)(it.next());
-				if (!mSuppliedFontResources.contains(fontName))
-					writeLine(mWriter, "%%+ font " + fontName);
+				if (!m_suppliedFontResources.contains(fontName))
+					writeLine(m_writer, "%%+ font " + fontName);
 			}
-			writeLine(mWriter, "%%EOF");
+			writeLine(m_writer, "%%EOF");
 
-			if (mIsStandardOutput)
-				mWriter.flush();
+			if (m_isStandardOutput)
+				m_writer.flush();
 			else
-				mWriter.close();
+				m_writer.close();
 
-			if (mWriter.checkError())
+			if (m_writer.checkError())
 			{
-				throw new MapyrusException(mFilename +
+				throw new MapyrusException(m_filename +
 					": " + MapyrusMessages.get(MapyrusMessages.ERROR_PS));
 			}
 
@@ -2096,16 +2096,16 @@ public class OutputFormat
 			 * If updating file then replace existing file with completed
 			 * temporary file now.
 			 */
-			if (mTempFile != null)
+			if (m_tempFile != null)
 			{
-				if ((!new File(mFilename).delete()) || (!mTempFile.renameTo(new File(mFilename))))
+				if ((!new File(m_filename).delete()) || (!m_tempFile.renameTo(new File(m_filename))))
 				{
-					mTempFile.delete();
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + mFilename);
+					m_tempFile.delete();
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + m_filename);
 				}
 			}
 		}
-		else if (mOutputType == PDF)
+		else if (m_outputType == PDF)
 		{
 			/*
 			 * Now we have finished the page we know all needed resources
@@ -2117,8 +2117,8 @@ public class OutputFormat
 			 * Now that we have the complete geometry, we can compress it
 			 * and write it to the PDF file.
 			 */
-			mPDFGeometryWriter.flush();
-			StringBuffer sb2 = mPDFGeometryStringWriter.getBuffer();
+			m_PDFGeometryWriter.flush();
+			StringBuffer sb2 = m_PDFGeometryStringWriter.getBuffer();
 			int stringLength = sb2.length();
 			StringWriter sw = new StringWriter(stringLength);
 			ASCII85Writer ascii85 = new ASCII85Writer(sw, true);
@@ -2129,42 +2129,42 @@ public class OutputFormat
 			StringBuffer compressedGeometry = sw.getBuffer();
 			int geometryLength = compressedGeometry.length() + 2;
 
-			int objIndex = mPDFFileOffsets.size();
-			int nChars = writeLine(mWriter, objIndex + " 0 obj % Geometry Object");
+			int objIndex = m_PDFFileOffsets.size();
+			int nChars = writeLine(m_writer, objIndex + " 0 obj % Geometry Object");
 			objIndex++;
-			nChars += writeLine(mWriter, "<< /Length " + geometryLength);
-			nChars += writeLine(mWriter, "/Filter [/ASCII85Decode /FlateDecode] >>");
-			nChars += writeLine(mWriter, "stream");
-			nChars += writeLine(mWriter, compressedGeometry.toString());
-			nChars += writeLine(mWriter, "endstream");
-			nChars += writeLine(mWriter, "endobj");
+			nChars += writeLine(m_writer, "<< /Length " + geometryLength);
+			nChars += writeLine(m_writer, "/Filter [/ASCII85Decode /FlateDecode] >>");
+			nChars += writeLine(m_writer, "stream");
+			nChars += writeLine(m_writer, compressedGeometry.toString());
+			nChars += writeLine(m_writer, "endstream");
+			nChars += writeLine(m_writer, "endobj");
 
 			/*
 			 * Write dictionary containing graphics states defining
 			 * blend modes and alpha values.
 			 */
-			Integer offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, objIndex + " 0 obj % Graphics States");
+			Integer offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(m_writer, objIndex + " 0 obj % Graphics States");
 			objIndex++;
-			nChars += writeLine(mWriter, "<<");
+			nChars += writeLine(m_writer, "<<");
 
-			Object []pdfExtGStateObjs = mPDFExtGStateObjects.keySet().toArray();
+			Object []pdfExtGStateObjs = m_PDFExtGStateObjects.keySet().toArray();
 			Arrays.sort(pdfExtGStateObjs);
 			int counter = 0;
 			for (int i = 0; i < pdfExtGStateObjs.length; i++)
 			{
 				String key = pdfExtGStateObjs[i].toString();
-				nChars += writeLine(mWriter, "/" + key +
+				nChars += writeLine(m_writer, "/" + key +
 					" " + (objIndex + counter + 4) + " 0 R");
 				counter++;
 			}
 
 			ArrayList<StringBuffer> includedExtGstateObjects = new ArrayList<StringBuffer>();
-			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-				ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
+				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -2176,7 +2176,7 @@ public class OutputFormat
 						 * Include dictionary keys from external PDF files
 						 * and any other objects that the keys refer to.
 						 */
-						nChars += writeLine(mWriter, list.get(0).toString());
+						nChars += writeLine(m_writer, list.get(0).toString());
 						for (int k = 1; k < list.size(); k++)
 						{
 							includedExtGstateObjects.add(list.get(k));
@@ -2185,23 +2185,23 @@ public class OutputFormat
 					}
 				}
 			}
-			nChars += writeLine(mWriter, ">>");
-			nChars += writeLine(mWriter, "endobj");
+			nChars += writeLine(m_writer, ">>");
+			nChars += writeLine(m_writer, "endobj");
 
 			/*
 			 * Write dictionary containing colorspaces used in external
 			 * PDF files.
 			 */
-			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, objIndex + " 0 obj % ColorSpace");
+			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(m_writer, objIndex + " 0 obj % ColorSpace");
 			objIndex++;
-			nChars += writeLine(mWriter, "<<");
+			nChars += writeLine(m_writer, "<<");
 			ArrayList<StringBuffer> includedColorSpaceObjects = new ArrayList<StringBuffer>();
-			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-				ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
+				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -2213,7 +2213,7 @@ public class OutputFormat
 						 * Include dictionary keys from external PDF files
 						 * and any other objects that the keys refer to.
 						 */
-						nChars += writeLine(mWriter, list.get(0).toString());
+						nChars += writeLine(m_writer, list.get(0).toString());
 						for (int k = 1; k < list.size(); k++)
 						{
 							includedColorSpaceObjects.add(list.get(k));
@@ -2222,56 +2222,56 @@ public class OutputFormat
 					}
 				}
 			}
-			nChars += writeLine(mWriter, ">>");
-			nChars += writeLine(mWriter, "endobj");
+			nChars += writeLine(m_writer, ">>");
+			nChars += writeLine(m_writer, "endobj");
 			
 			/*
 			 * Write dictionary containing patterns used in external
 			 * PDF files.
 			 */
-			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, objIndex + " 0 obj % Pattern");
+			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(m_writer, objIndex + " 0 obj % Pattern");
 			objIndex++;
-			nChars += writeLine(mWriter, "<<");
-			nChars += writeLine(mWriter, ">>");
-			nChars += writeLine(mWriter, "endobj");
+			nChars += writeLine(m_writer, "<<");
+			nChars += writeLine(m_writer, ">>");
+			nChars += writeLine(m_writer, "endobj");
 
 			/*
 			 * Write dictionary containing shading used in external
 			 * PDF files.
 			 */
-			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, objIndex + " 0 obj % Shading");
+			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(m_writer, objIndex + " 0 obj % Shading");
 			objIndex++;
-			nChars += writeLine(mWriter, "<<");
-			nChars += writeLine(mWriter, ">>");
-			nChars += writeLine(mWriter, "endobj");
+			nChars += writeLine(m_writer, "<<");
+			nChars += writeLine(m_writer, ">>");
+			nChars += writeLine(m_writer, "endobj");
 
 			/*
 			 * Write dictionary containing each image used in file.
 			 */
-			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
-			nChars = writeLine(mWriter, objIndex + " 0 obj % Image Dictionary");
+			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			nChars = writeLine(m_writer, objIndex + " 0 obj % Image Dictionary");
 			objIndex++;
-			nChars += writeLine(mWriter, "<<");
+			nChars += writeLine(m_writer, "<<");
 
-			Object []pdfImageObjs = mPDFImageObjects.keySet().toArray();
+			Object []pdfImageObjs = m_PDFImageObjects.keySet().toArray();
 			Arrays.sort(pdfImageObjs);
 			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
 				String key = pdfImageObjs[i].toString();
-				nChars += writeLine(mWriter, "/" + key +
+				nChars += writeLine(m_writer, "/" + key +
 					" " + (objIndex + counter) + " 0 R");
 				counter++;
 			}
 			ArrayList<StringBuffer> includedImageObjects = new ArrayList<StringBuffer>();
-			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
-				ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(i);
+				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
 					Integer pageNumber = (Integer)pageNumbers.get(j);
@@ -2283,7 +2283,7 @@ public class OutputFormat
 						 * Include dictionary keys from external PDF files
 						 * and any other objects that the keys refer to.
 						 */
-						nChars += writeLine(mWriter, list.get(0).toString());
+						nChars += writeLine(m_writer, list.get(0).toString());
 						for (int k = 1; k < list.size(); k++)
 						{
 							includedImageObjects.add(list.get(k));
@@ -2292,59 +2292,59 @@ public class OutputFormat
 					}
 				}
 			}
-			nChars += writeLine(mWriter, ">>");
-			nChars += writeLine(mWriter, "endobj");
+			nChars += writeLine(m_writer, ">>");
+			nChars += writeLine(m_writer, "endobj");
 
 			/*
 			 * Write each graphics state and each image to PDF file.
 			 */
 			for (int i = 0; i < pdfExtGStateObjs.length; i++)
 			{
-				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				Object key = pdfExtGStateObjs[i];
-				nChars = writeLine(mWriter, objIndex + " 0 obj % " + key);
-				nChars += writeLine(mWriter, mPDFExtGStateObjects.get(key).toString());
-				nChars += writeLine(mWriter, "endobj");
+				nChars = writeLine(m_writer, objIndex + " 0 obj % " + key);
+				nChars += writeLine(m_writer, m_PDFExtGStateObjects.get(key).toString());
+				nChars += writeLine(m_writer, "endobj");
 				objIndex++;
 			}
 			for (int i = 0; i < includedExtGstateObjects.size(); i++)
 			{
-				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				String extGState = includedExtGstateObjects.get(i).toString();
-				nChars = writeLine(mWriter, extGState);
+				nChars = writeLine(m_writer, extGState);
 				objIndex++;
 			}
 			for (int i = 0; i < includedColorSpaceObjects.size(); i++)
 			{
-				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				String colorSpace = includedColorSpaceObjects.get(i).toString();
-				nChars = writeLine(mWriter, colorSpace);
+				nChars = writeLine(m_writer, colorSpace);
 				objIndex++;
 			}
 			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
-				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				Object key = pdfImageObjs[i];
-				nChars = writeLine(mWriter, objIndex + " 0 obj % " + key);
-				nChars += writeLine(mWriter, mPDFImageObjects.get(key).toString());
-				nChars += writeLine(mWriter, "endobj");
+				nChars = writeLine(m_writer, objIndex + " 0 obj % " + key);
+				nChars += writeLine(m_writer, m_PDFImageObjects.get(key).toString());
+				nChars += writeLine(m_writer, "endobj");
 				objIndex++;
 			}
 			for (int i = 0; i < includedImageObjects.size(); i++)
 			{
-				offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-				mPDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
 
 				String image = includedImageObjects.get(i).toString();
-				nChars = writeLine(mWriter, image);
+				nChars = writeLine(m_writer, image);
 				objIndex++;
 			}
 
@@ -2352,10 +2352,10 @@ public class OutputFormat
 			 * Write cross reference table giving file offset of each
 			 * object in PDF file.
 			 */
-			writeLine(mWriter, "xref");
-			writeLine(mWriter, "0 " + (mPDFFileOffsets.size() + 1));
-			writeLine(mWriter, "0000000000 65535 f");
-			Iterator it = mPDFFileOffsets.iterator();
+			writeLine(m_writer, "xref");
+			writeLine(m_writer, "0 " + (m_PDFFileOffsets.size() + 1));
+			writeLine(m_writer, "0000000000 65535 f");
+			Iterator it = m_PDFFileOffsets.iterator();
 			while (it.hasNext())
 			{
 				String fileOffset = it.next().toString();
@@ -2365,121 +2365,121 @@ public class OutputFormat
 					sb.append('0');
 				sb.append(fileOffset);
 				sb.append(" 00000 n");
-				writeLine(mWriter, sb.toString());
+				writeLine(m_writer, sb.toString());
 			}
 
-			writeLine(mWriter, "trailer");
-			writeLine(mWriter, "<<");
-			writeLine(mWriter, "/Size " + (mPDFFileOffsets.size() + 1));
-			writeLine(mWriter, "/Root 1 0 R");
-			writeLine(mWriter, "/Info 2 0 R");
-			writeLine(mWriter, ">>");
+			writeLine(m_writer, "trailer");
+			writeLine(m_writer, "<<");
+			writeLine(m_writer, "/Size " + (m_PDFFileOffsets.size() + 1));
+			writeLine(m_writer, "/Root 1 0 R");
+			writeLine(m_writer, "/Info 2 0 R");
+			writeLine(m_writer, ">>");
 
 			/*
 			 * Write file offset of start of cross reference table.
 			 */
-			writeLine(mWriter, "startxref");
-			offset = mPDFFileOffsets.get(mPDFFileOffsets.size() - 1);
-			writeLine(mWriter, Integer.toString(offset.intValue() + nChars));
-			writeLine(mWriter, "%%EOF");
+			writeLine(m_writer, "startxref");
+			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
+			writeLine(m_writer, Integer.toString(offset.intValue() + nChars));
+			writeLine(m_writer, "%%EOF");
 
-			if (mIsStandardOutput)
-				mWriter.flush();
+			if (m_isStandardOutput)
+				m_writer.flush();
 			else
-				mWriter.close();
+				m_writer.close();
 
-			for (int i = 0; i < mPDFIncludedFiles.size(); i++)
+			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)mPDFIncludedFiles.get(i);
+				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
 				pdfFile.close();
 			}
 
-			if (mWriter.checkError())
+			if (m_writer.checkError())
 			{
-				throw new MapyrusException(mFilename +
+				throw new MapyrusException(m_filename +
 					": " + MapyrusMessages.get(MapyrusMessages.ERROR_PS));
 			}
 		}
-		else if (mOutputType == SVG)
+		else if (m_outputType == SVG)
 		{
-			int nStates = mSVGOpenGTags.pop().intValue();
+			int nStates = m_SVGOpenGTags.pop().intValue();
 			for (int i = 0; i < nStates; i++)
-				writeLine(mWriter, "</g>");
-			writeLine(mWriter, "</svg>");
+				writeLine(m_writer, "</g>");
+			writeLine(m_writer, "</svg>");
 
-			if (mIsStandardOutput)
-				mWriter.flush();
+			if (m_isStandardOutput)
+				m_writer.flush();
 			else
-				mWriter.close();
+				m_writer.close();
 
-			if (mWriter.checkError())
+			if (m_writer.checkError())
 			{
-				throw new MapyrusException(mFilename +
+				throw new MapyrusException(m_filename +
 					": " + MapyrusMessages.get(MapyrusMessages.ERROR_SVG));
 			}
 		}
-		else if (mOutputType == IMAGE_FILE)
+		else if (m_outputType == IMAGE_FILE)
 		{
 			/*
 			 * If updating file then overwrite it now with new image.
 			 */
-			if (mIsUpdatingFile)
-				mOutputStream = new FileOutputStream(mFilename);
+			if (m_isUpdatingFile)
+				m_outputStream = new FileOutputStream(m_filename);
 
 			/*
 			 * Write image buffer to file.
 			 */
-			ImageIOWrapper.write(mImage, mFormatName, mOutputStream);
+			ImageIOWrapper.write(m_image, m_formatName, m_outputStream);
 
-			if (mIsStandardOutput)
-				mOutputStream.flush();
+			if (m_isStandardOutput)
+				m_outputStream.flush();
 			else
-				mOutputStream.close();
+				m_outputStream.close();
 		}
-		else if (mOutputType == SCREEN_WINDOW)
+		else if (m_outputType == SCREEN_WINDOW)
 		{
 			/*
 			 * Show image we have created in a window.
 			 * Then wait for user to close the window.
 			 */
-			String title = Constants.PROGRAM_NAME + ": " + mFilename;
-			MapyrusFrame frame = new MapyrusFrame(title, mImage);
+			String title = Constants.PROGRAM_NAME + ": " + m_filename;
+			MapyrusFrame frame = new MapyrusFrame(title, m_image);
 			frame.waitForClose();
 		}
 
-		mImage = null;
-		mGraphics2D = null;
+		m_image = null;
+		m_graphics2D = null;
 
-		if (mOutputType != INTERNAL_IMAGE)
+		if (m_outputType != INTERNAL_IMAGE)
 		{
 			/*
 			 * If we are piping output to another program then wait for
 			 * that program to finish.  Then check that it succeeded.
 			 */
-			if (mIsPipedOutput)
+			if (m_isPipedOutput)
 			{
 				int retval = 0;
 
 				try
 				{
-					retval = mOutputProcess.waitFor();
+					retval = m_outputProcess.waitFor();
 				}
 				catch (InterruptedException e)
 				{
-					throw new MapyrusException(mFilename + ": " + e.getMessage());
+					throw new MapyrusException(m_filename + ": " + e.getMessage());
 				}
 
 				if (retval != 0)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.PROCESS_ERROR) +
-						": " + retval + ": " + mFilename);
+						": " + retval + ": " + m_filename);
 				}
 			}
 		}
 
-		if (mImageMapWriter != null)
+		if (m_imageMapWriter != null)
 		{
-			mImageMapWriter.close();
+			m_imageMapWriter.close();
 		}
 	}
 
@@ -2498,29 +2498,29 @@ public class OutputFormat
 		double fontRotation, double outlineWidth, double lineSpacing)
 		throws IOException, MapyrusException
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (m_outputType == POSTSCRIPT_GEOMETRY)
 		{
-			if (mEncodeAsISOLatin1.contains(fontName))
+			if (m_encodeAsISOLatin1.contains(fontName))
 			{
 				/*
 				 * Re-encode font from StandardEncoding to ISOLatin1Encoding
 				 * before it is used.
 				 */
-				writeLine(mWriter, isoLatinEncode(fontName));
-				mEncodeAsISOLatin1.remove(fontName);
+				writeLine(m_writer, isoLatinEncode(fontName));
+				m_encodeAsISOLatin1.remove(fontName);
 			}
 
 			/*
 			 * Set font and size for labelling.
 			 */
-			writeLine(mWriter, "/" + fontName + " " +
+			writeLine(m_writer, "/" + fontName + " " +
 				fontSize + " " +
 				fontRotation + " " +
 				lineSpacing + " " +
 				outlineWidth + " font");
-			mNeededFontResources.add(fontName);
+			m_neededFontResources.add(fontName);
 		}
-		else if (mOutputType == PDF)
+		else if (m_outputType == PDF)
 		{
 
 		}
@@ -2552,34 +2552,34 @@ public class OutputFormat
 			 * Check that new font is actually different to current font
 			 * before defining it.
 			 */
-			Font currentFont = mGraphics2D.getFont();
+			Font currentFont = m_graphics2D.getFont();
 			float newSize = (float)fontSize;
 			float currentSize = currentFont.getSize2D();
 			String currentFontName = currentFont.getName();
 			if (newSize != currentSize ||
 				style != currentFont.getStyle() ||
 				(!fontName.equals(currentFontName)) ||
-				fontRotation != mFontRotation)
+				fontRotation != m_fontRotation)
 			{
 				/*
 				 * We need a base font that is not rotated for calculating
 				 * string widths for justifying text.
 				 * Get base font from cache, or create it if we don't find it there.
 				 */
-				mBaseFont = mFontCache.get(fontName, style, newSize, 0);
-				if (mBaseFont == null)
+				m_baseFont = m_fontCache.get(fontName, style, newSize, 0);
+				if (m_baseFont == null)
 				{
 					/*
 					 * If this is a font for which user provided a TTF file then
 					 * use that, else expect the operating system to be able to
 					 * open the font.
 					 */
-					TrueTypeFont ttf = (TrueTypeFont)mTTFFonts.get(fontName);
+					TrueTypeFont ttf = (TrueTypeFont)m_TTFFonts.get(fontName);
 					if (ttf != null)
-						mBaseFont = ttf.getFont().deriveFont(style, newSize);
+						m_baseFont = ttf.getFont().deriveFont(style, newSize);
 					else
-						mBaseFont = new Font(fontName, style, (int)newSize).deriveFont(newSize);
-					mFontCache.put(fontName, style, newSize, 0, mBaseFont);
+						m_baseFont = new Font(fontName, style, (int)newSize).deriveFont(newSize);
+					m_fontCache.put(fontName, style, newSize, 0, m_baseFont);
 				}
 
 				/*
@@ -2589,17 +2589,17 @@ public class OutputFormat
 				 *
 				 * Look it up in cache too.
 				 */
-				Font font = mFontCache.get(fontName, style, -newSize, fontRotation);
+				Font font = m_fontCache.get(fontName, style, -newSize, fontRotation);
 				if (font == null)
 				{
 					AffineTransform fontTransform;
 					fontTransform = AffineTransform.getRotateInstance(fontRotation);
 					fontTransform.scale(1, -1);
-					font = mBaseFont.deriveFont(fontTransform);
-					mFontCache.put(fontName, style, -newSize, fontRotation, font);
+					font = m_baseFont.deriveFont(fontTransform);
+					m_fontCache.put(fontName, style, -newSize, fontRotation, font);
 				}
 
-				mGraphics2D.setFont(font);
+				m_graphics2D.setFont(font);
 			}
 		}
 
@@ -2607,11 +2607,11 @@ public class OutputFormat
 		 * Some Font settings not easily held in a Graphics2D
 		 * or PDF graphics state so keep track of current values ourselves.
 		 */
-		mFontRotation = fontRotation;
-		mFontOutlineWidth = outlineWidth;
-		mFontLineSpacing = lineSpacing;
-		mFontName = fontName;
-		mFontSize = fontSize;
+		m_fontRotation = fontRotation;
+		m_fontOutlineWidth = outlineWidth;
+		m_fontLineSpacing = lineSpacing;
+		m_fontName = fontName;
+		m_fontSize = fontSize;
 	}
 
 	/**
@@ -2625,26 +2625,26 @@ public class OutputFormat
 		 * justification.
 		 */
 		if ((justify & JUSTIFY_LEFT) != 0)
-			mJustificationShiftX = JUSTIFY_LEFT;
+			m_justificationShiftX = JUSTIFY_LEFT;
 		else if ((justify & JUSTIFY_CENTER) != 0)
-			mJustificationShiftX = JUSTIFY_CENTER;
+			m_justificationShiftX = JUSTIFY_CENTER;
 		else
-			mJustificationShiftX = JUSTIFY_RIGHT;
+			m_justificationShiftX = JUSTIFY_RIGHT;
 
 		if ((justify & JUSTIFY_BOTTOM) != 0)
-			mJustificationShiftY = JUSTIFY_BOTTOM;
+			m_justificationShiftY = JUSTIFY_BOTTOM;
 		else if ((justify & JUSTIFY_MIDDLE) != 0)
-			mJustificationShiftY = JUSTIFY_MIDDLE;
+			m_justificationShiftY = JUSTIFY_MIDDLE;
 		else
-			mJustificationShiftY = JUSTIFY_TOP;
+			m_justificationShiftY = JUSTIFY_TOP;
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (m_outputType == POSTSCRIPT_GEOMETRY)
 		{
 			/*
 			 * Define dictionary entries for justification settings for PostScript
 			 * procedure to use for aligning text correctly itself.
 			 */
-			writeLine(mWriter, mJustificationShiftX + " " + mJustificationShiftY + " ju");
+			writeLine(m_writer, m_justificationShiftX + " " + m_justificationShiftY + " ju");
 		}
 	}
 
@@ -2654,24 +2654,24 @@ public class OutputFormat
 	 */
 	public void setColorAttribute(Color color)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
 			float c[] = color.getRGBColorComponents(null);
 			PrintWriter pw;
 			
-			if (mOutputType == PDF)
-				pw = mPDFGeometryWriter;
+			if (m_outputType == PDF)
+				pw = m_PDFGeometryWriter;
 			else
-				pw = mWriter;
+				pw = m_writer;
 
 			StringBuffer sb = new StringBuffer();
-			sb.append(mCoordinateDecimal.format(c[0]));
+			sb.append(m_coordinateDecimal.format(c[0]));
 			sb.append(' ');
-			sb.append(mCoordinateDecimal.format(c[1]));
+			sb.append(m_coordinateDecimal.format(c[1]));
 			sb.append(' ');
-			sb.append(mCoordinateDecimal.format(c[2]));
+			sb.append(m_coordinateDecimal.format(c[2]));
 			writeLine(pw, sb.toString() + " RG");
-			if (mOutputType == PDF)
+			if (m_outputType == PDF)
 			{
 				writeLine(pw, sb.toString() + " rg");
 
@@ -2684,9 +2684,9 @@ public class OutputFormat
 				 * the same dictionary value being used.
 				 */
 				int alpha = color.getAlpha();
-				String as = mCoordinateDecimal.format(alpha / 255.0);
-				String gsKey = mPDFGstatePrefix + alpha;
-				mPDFExtGStateObjects.put(gsKey, "<< /Type /ExtGState /CA " +
+				String as = m_coordinateDecimal.format(alpha / 255.0);
+				String gsKey = m_PDFGstatePrefix + alpha;
+				m_PDFExtGStateObjects.put(gsKey, "<< /Type /ExtGState /CA " +
 					as + " /ca " + as + " >>");
 
 				/*
@@ -2697,7 +2697,7 @@ public class OutputFormat
 		}
 		else
 		{
-			mGraphics2D.setColor(color);
+			m_graphics2D.setColor(color);
 		}
 	}
 
@@ -2708,7 +2708,7 @@ public class OutputFormat
 	public void setBlendAttribute(String blend)
 	{
 		blend = blend.toLowerCase().trim();
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
 			/*
 			 * Ensure correct capitalisation of name.
@@ -2732,16 +2732,16 @@ public class OutputFormat
 			 * repeated use of the same blend results in
 			 * the same dictionary value being used.
 			 */
-			String gsKey = mPDFGstatePrefix + blend;
-			mPDFExtGStateObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
-			writeLine(mPDFGeometryWriter, "/" + gsKey + " gs");
+			String gsKey = m_PDFGstatePrefix + blend;
+			m_PDFExtGStateObjects.put(gsKey, "<< /Type /ExtGState /BM /" + blend + " >>");
+			writeLine(m_PDFGeometryWriter, "/" + gsKey + " gs");
 		}
-		else if (mOutputType != POSTSCRIPT_GEOMETRY)
+		else if (m_outputType != POSTSCRIPT_GEOMETRY)
 		{
 			Composite comp = BlendComposite.getBlendComposite(blend);
 			if (comp == null)
 				comp = AlphaComposite.SrcOver;
-			mGraphics2D.setComposite(comp);
+			m_graphics2D.setComposite(comp);
 		}
 	}
 
@@ -2752,13 +2752,13 @@ public class OutputFormat
 	public void setLinestyleAttribute(BasicStroke linestyle)
 	{
 		double width = linestyle.getLineWidth();
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
 			PrintWriter pw;
-			if (mOutputType == PDF)
-				pw = mPDFGeometryWriter;
+			if (m_outputType == PDF)
+				pw = m_PDFGeometryWriter;
 			else
-				pw = mWriter;
+				pw = m_writer;
 
 			/*
 			 * Convert BasicStroke end cap and line join values to PostScript.
@@ -2779,11 +2779,11 @@ public class OutputFormat
 			else /* BEVEL */
 				join = 2;
 
-			if (width < mMinimumLineWidth)
-				width = mMinimumLineWidth;
-			writeLine(pw, mCoordinateDecimal.format(width) + " w " +
+			if (width < m_minimumLineWidth)
+				width = m_minimumLineWidth;
+			writeLine(pw, m_coordinateDecimal.format(width) + " w " +
 				cap + " J " + join + " j " +
-				mCoordinateDecimal.format(linestyle.getMiterLimit()) + " M");
+				m_coordinateDecimal.format(linestyle.getMiterLimit()) + " M");
 
 			/*
 			 * If there a dash pattern then set that too.
@@ -2796,7 +2796,7 @@ public class OutputFormat
 				{
 					if (i > 0)
 						s.append(" ");
-					s.append(mCoordinateDecimal.format(dashes[i]));
+					s.append(m_coordinateDecimal.format(dashes[i]));
 				}
 				s.append("] ");
 				s.append(linestyle.getDashPhase());
@@ -2813,22 +2813,22 @@ public class OutputFormat
 		}
 		else
 		{
-			if (width < mMinimumLineWidth)
+			if (width < m_minimumLineWidth)
 			{
 				float []dashes = linestyle.getDashArray();
 				if (dashes == null)
 				{
-					linestyle = new BasicStroke((float)mMinimumLineWidth, linestyle.getEndCap(),
+					linestyle = new BasicStroke((float)m_minimumLineWidth, linestyle.getEndCap(),
 						linestyle.getLineJoin(), linestyle.getMiterLimit());
 				}
 				else
 				{
-					linestyle = new BasicStroke((float)mMinimumLineWidth, linestyle.getEndCap(),
+					linestyle = new BasicStroke((float)m_minimumLineWidth, linestyle.getEndCap(),
 							linestyle.getLineJoin(), linestyle.getMiterLimit(), dashes,
 							linestyle.getDashPhase());
 				}
 			}
-			mGraphics2D.setStroke(linestyle);
+			m_graphics2D.setStroke(linestyle);
 		}
 	}
 
@@ -2839,16 +2839,16 @@ public class OutputFormat
 	 */
 	public void setClipAttribute(ArrayList clipPaths)
 	{
-		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF && mOutputType != SVG)
+		if (m_outputType != POSTSCRIPT_GEOMETRY && m_outputType != PDF && m_outputType != SVG)
 		{
-			mGraphics2D.setClip(null);
+			m_graphics2D.setClip(null);
 			boolean isClipPathActive = (clipPaths != null && clipPaths.size() > 0);
 			if (isClipPathActive)
 			{
 				for (int i = 0; i < clipPaths.size(); i++)
 				{
 					GeometricPath clipPath = (GeometricPath)(clipPaths.get(i));
-					mGraphics2D.clip(clipPath.getShape());
+					m_graphics2D.clip(clipPath.getShape());
 				}
 			}
 		}
@@ -2863,7 +2863,7 @@ public class OutputFormat
 
 		if (outputType == IMAGEMAP)
 		{
-			pi = shape.getPathIterator(null, mResolution);
+			pi = shape.getPathIterator(null, m_resolution);
 		}
 		else
 		{
@@ -2875,7 +2875,7 @@ public class OutputFormat
 		float moveX = 0.0f, moveY = 0.0f;
 		float x = 0.0f, y = 0.0f;
 		float distSquared;
-		float resolutionSquared = (float)(mResolution * mResolution);
+		float resolutionSquared = (float)(m_resolution * m_resolution);
 		int segmentType = PathIterator.SEG_CLOSE;
 		boolean skippedLastSegment = false;
 		int moveCounter = 0;
@@ -2892,23 +2892,23 @@ public class OutputFormat
 					if (outputType == SVG)
 					{
 						writeLine(pw,
-							"M " + mCoordinateDecimal.format(lastX) +
-							" " + mCoordinateDecimal.format(mPageHeight - lastY));
+							"M " + m_coordinateDecimal.format(lastX) +
+							" " + m_coordinateDecimal.format(m_pageHeight - lastY));
 					}
 					else if (outputType == IMAGEMAP)
 					{
 						if (moveCounter == 1)
-							mImageMapWriter.print("<area shape=\"polygon\" coords=\"");
+							m_imageMapWriter.print("<area shape=\"polygon\" coords=\"");
 						else
-							mImageMapWriter.print(",");
-						mImageMapWriter.println(Math.round(lastX / mResolution) + "," +
-							Math.round((mPageHeight - lastY) / mResolution));
+							m_imageMapWriter.print(",");
+						m_imageMapWriter.println(Math.round(lastX / m_resolution) + "," +
+							Math.round((m_pageHeight - lastY) / m_resolution));
 					}
 					else
 					{
 						writeLine(pw,
-							mCoordinateDecimal.format(lastX) +
-							" " + mCoordinateDecimal.format(lastY) + " m");
+							m_coordinateDecimal.format(lastX) +
+							" " + m_coordinateDecimal.format(lastY) + " m");
 					}
 					skippedLastSegment = false;
 					break;
@@ -2921,8 +2921,8 @@ public class OutputFormat
 					{
 						if (outputType == SVG)
 						{
-							String sx = mCoordinateDecimal.format(x);
-							String sy = mCoordinateDecimal.format(mPageHeight - y);
+							String sx = m_coordinateDecimal.format(x);
+							String sy = m_coordinateDecimal.format(m_pageHeight - y);
 
 							/*
 							 * Use shortcut path types for horizontal
@@ -2937,13 +2937,13 @@ public class OutputFormat
 						}
 						else if (outputType == IMAGEMAP)
 						{
-							mImageMapWriter.println("," + Math.round(x / mResolution) +
-								"," + Math.round((mPageHeight - y) / mResolution));
+							m_imageMapWriter.println("," + Math.round(x / m_resolution) +
+								"," + Math.round((m_pageHeight - y) / m_resolution));
 						}
 						else
 						{
-							writeLine(pw, mCoordinateDecimal.format(x) +
-								" " + mCoordinateDecimal.format(y) + " l");
+							writeLine(pw, m_coordinateDecimal.format(x) +
+								" " + m_coordinateDecimal.format(y) + " l");
 						}
 						lastX = x;
 						lastY = y;
@@ -2963,21 +2963,21 @@ public class OutputFormat
 					{
 						if (outputType == SVG)
 						{
-							writeLine(pw, "L " + mCoordinateDecimal.format(x) +
-								" " + mCoordinateDecimal.format(mPageHeight - y));
+							writeLine(pw, "L " + m_coordinateDecimal.format(x) +
+								" " + m_coordinateDecimal.format(m_pageHeight - y));
 						}
 						else if (outputType == IMAGEMAP)
 						{
 							if (moveCounter > 0)
 							{
-								mImageMapWriter.println("," + Math.round(x / mResolution) +
-									"," + Math.round((mPageHeight - y) / mResolution));
+								m_imageMapWriter.println("," + Math.round(x / m_resolution) +
+									"," + Math.round((m_pageHeight - y) / m_resolution));
 							}
 						}
 						else
 						{
-							writeLine(pw, mCoordinateDecimal.format(x) + " " +
-								mCoordinateDecimal.format(y) + " l");
+							writeLine(pw, m_coordinateDecimal.format(x) + " " +
+								m_coordinateDecimal.format(y) + " l");
 						}
 					}
 
@@ -2992,8 +2992,8 @@ public class OutputFormat
 							/*
 							 * Add first point of polygon again.
 							 */
-							mImageMapWriter.println("," + Math.round(moveX / mResolution) +
-								"," + Math.round((mPageHeight - moveY) / mResolution));
+							m_imageMapWriter.println("," + Math.round(moveX / m_resolution) +
+								"," + Math.round((m_pageHeight - moveY) / m_resolution));
 						}
 					}
 					else
@@ -3006,21 +3006,21 @@ public class OutputFormat
 				case PathIterator.SEG_CUBICTO:
 					if (outputType == SVG)
 					{
-						writeLine(pw, "C " + mCoordinateDecimal.format(coords[0]) + " " +
-							mCoordinateDecimal.format(mPageHeight - coords[1]) + " " +
-							mCoordinateDecimal.format(coords[2]) + " " +
-							mCoordinateDecimal.format(mPageHeight - coords[3]) + " " +
-							mCoordinateDecimal.format(coords[4]) + " " +
-							mCoordinateDecimal.format(mPageHeight - coords[5]));
+						writeLine(pw, "C " + m_coordinateDecimal.format(coords[0]) + " " +
+							m_coordinateDecimal.format(m_pageHeight - coords[1]) + " " +
+							m_coordinateDecimal.format(coords[2]) + " " +
+							m_coordinateDecimal.format(m_pageHeight - coords[3]) + " " +
+							m_coordinateDecimal.format(coords[4]) + " " +
+							m_coordinateDecimal.format(m_pageHeight - coords[5]));
 					}
 					else
 					{
-						writeLine(pw, mCoordinateDecimal.format(coords[0]) + " " +
-							mCoordinateDecimal.format(coords[1]) + " " +
-							mCoordinateDecimal.format(coords[2]) + " " +
-							mCoordinateDecimal.format(coords[3]) + " " +
-							mCoordinateDecimal.format(coords[4]) + " " +
-							mCoordinateDecimal.format(coords[5]) + " " +
+						writeLine(pw, m_coordinateDecimal.format(coords[0]) + " " +
+							m_coordinateDecimal.format(coords[1]) + " " +
+							m_coordinateDecimal.format(coords[2]) + " " +
+							m_coordinateDecimal.format(coords[3]) + " " +
+							m_coordinateDecimal.format(coords[4]) + " " +
+							m_coordinateDecimal.format(coords[5]) + " " +
 							"c");
 					}
 					lastX = coords[4];
@@ -3039,21 +3039,21 @@ public class OutputFormat
 			 */
 			if (outputType == SVG)
 			{
-				writeLine(pw, "L " + mCoordinateDecimal.format(x) + " " +
-					mCoordinateDecimal.format(mPageHeight - y));
+				writeLine(pw, "L " + m_coordinateDecimal.format(x) + " " +
+					m_coordinateDecimal.format(m_pageHeight - y));
 			}
 			else if (outputType == IMAGEMAP)
 			{
 				if (moveCounter > 0)
 				{
-					mImageMapWriter.println("," + Math.round(x / mResolution) +
-						"," + Math.round((mPageHeight - y) / mResolution));
+					m_imageMapWriter.println("," + Math.round(x / m_resolution) +
+						"," + Math.round((m_pageHeight - y) / m_resolution));
 				}
 			}
 			else
 			{
-				writeLine(pw, mCoordinateDecimal.format(x) +
-					" " + mCoordinateDecimal.format(y) + " l");
+				writeLine(pw, m_coordinateDecimal.format(x) +
+					" " + m_coordinateDecimal.format(y) + " l");
 			}
 		}
 
@@ -3063,7 +3063,7 @@ public class OutputFormat
 		if (outputType == IMAGEMAP && moveCounter > 0)
 		{
 			String imageMapString = "\" " + scriptCommands + " >";
-			mImageMapWriter.println(imageMapString);
+			m_imageMapWriter.println(imageMapString);
 		}
 	}
 
@@ -3160,7 +3160,7 @@ public class OutputFormat
 			mmWidth = size * ((double)pixelWidth / pixelHeight);
 		}
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
 			/*
 			 * Draw icon at each position in list.
@@ -3174,14 +3174,14 @@ public class OutputFormat
 				/*
 				 * Skip points that are outside page.
 				 */
-				if (x + mmWidth >= 0 && x - mmWidth <= mPageWidth &&
-					y + mmHeight >= 0.0 && y - mmHeight <= mPageHeight)
+				if (x + mmWidth >= 0 && x - mmWidth <= m_pageWidth &&
+					y + mmHeight >= 0.0 && y - mmHeight <= m_pageHeight)
 				{
 					writePostScriptOrPDFImage(image, x, y, mmWidth, mmHeight, rotation);
 				}
 			}
 		}
-		else if (mOutputType != SVG)
+		else if (m_outputType != SVG)
 		{
 			double mmPerPixel = Constants.MM_PER_INCH / Constants.getScreenResolution();
 			double xScale = (mmWidth / mmPerPixel) / pixelWidth;
@@ -3251,7 +3251,7 @@ public class OutputFormat
 					 * Sun JVM throws NullPointerException if image is
 					 * too big to fit in memory.
 					 */
-					mGraphics2D.drawImage(imageToDisplay, affine, null);
+					m_graphics2D.drawImage(imageToDisplay, affine, null);
 				}
 				catch (NullPointerException e)
 				{
@@ -3273,7 +3273,7 @@ public class OutputFormat
 		double x, double y, double width, double height)
 		throws MapyrusException, IOException
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
 			writePostScriptOrPDFImage(image, x + width / 2,
 				y + height / 2, width, height, 0);
@@ -3287,15 +3287,15 @@ public class OutputFormat
 			AffineTransform affine = AffineTransform.getTranslateInstance(x, y + height);
 			affine.scale(1, -1);
 			affine.scale(width / image.getWidth(), height / image.getHeight());
-			mGraphics2D.drawImage(image, affine, null);
+			m_graphics2D.drawImage(image, affine, null);
 		}
 	}
 
 	private void drawBoundingBoxes(ArrayList pointList, double size, double rotation)
 	{
 		GeneralPath path = new GeneralPath();
-		Color currentColor = mGraphics2D.getColor();
-		mGraphics2D.setColor(new Color(127, 127, 127, 127));
+		Color currentColor = m_graphics2D.getColor();
+		m_graphics2D.setColor(new Color(127, 127, 127, 127));
 
 		for (int i = 0; i < pointList.size(); i++)
 		{
@@ -3320,7 +3320,7 @@ public class OutputFormat
 			path.closePath();
 			fill(path, null);
 		}
-		mGraphics2D.setColor(currentColor);	
+		m_graphics2D.setColor(currentColor);	
 	}
 
 	/**
@@ -3353,7 +3353,7 @@ public class OutputFormat
 		}
 		size *= scaling;
 
-		if (mOutputType == POSTSCRIPT_GEOMETRY)
+		if (m_outputType == POSTSCRIPT_GEOMETRY)
 		{
 			/*
 			 * Include EPS file at each position in list.
@@ -3367,39 +3367,39 @@ public class OutputFormat
 				/*
 				 * Skip points that are outside page.
 				 */
-				if (x + size >= 0 && x - size <= mPageWidth &&
-					y + size >= 0.0 && y - size <= mPageHeight)
+				if (x + size >= 0 && x - size <= m_pageWidth &&
+					y + size >= 0.0 && y - size <= m_pageHeight)
 				{
-					writeLine(mWriter, "save");
-					writeLine(mWriter, x + " " + y + " translate");
-					writeLine(mWriter, rotation + " radtodeg rotate");
+					writeLine(m_writer, "save");
+					writeLine(m_writer, x + " " + y + " translate");
+					writeLine(m_writer, rotation + " radtodeg rotate");
 
 					/*
 					 * EPS file is centred at each point.
 					 * Shift position left and down half it's size
 					 * so that it is displayed centered.
 					 */
-					writeLine(mWriter, -(size / 2) + " " + -(size / 2) + " translate");
+					writeLine(m_writer, -(size / 2) + " " + -(size / 2) + " translate");
 
 					double scale = size / Math.max(pointWidth, pointHeight);
-					writeLine(mWriter, scale + " dup scale");
+					writeLine(m_writer, scale + " dup scale");
 
 					/*
 					 * Shift EPS file so that lower-left corner of EPS file is in
 					 * lower left corner of our box on the page.
 					 */
-					writeLine(mWriter, -boundingBox.getMinX() + " " + -boundingBox.getMinY() +
+					writeLine(m_writer, -boundingBox.getMinX() + " " + -boundingBox.getMinY() +
 						" translate");
 						
 					/*
 					 * Set graphics attributes to initial values, as described
 					 * on page 728 of PostScript Language Reference Manual.
 					 */
-					writeLine(mWriter, "/showpage {} def");
-					writeLine(mWriter, "0 setgray 0 setlinecap 1 setlinewidth");
-					writeLine(mWriter, "0 setlinejoin 10 setmiterlimit [] 0 setdash newpath");
+					writeLine(m_writer, "/showpage {} def");
+					writeLine(m_writer, "0 setgray 0 setlinecap 1 setlinewidth");
+					writeLine(m_writer, "0 setlinejoin 10 setmiterlimit [] 0 setdash newpath");
 
-					writeLine(mWriter, "%%BeginDocument: (" + filename + ")");
+					writeLine(m_writer, "%%BeginDocument: (" + filename + ")");
 					BufferedReader reader = null;
 					try
 					{
@@ -3408,10 +3408,10 @@ public class OutputFormat
 						String line;
 						while ((line = reader.readLine()) != null)
 						{
-							writeLine(mWriter, line);
+							writeLine(m_writer, line);
 						}
-						writeLine(mWriter, "%%EndDocument");
-						writeLine(mWriter, "restore");
+						writeLine(m_writer, "%%EndDocument");
+						writeLine(m_writer, "restore");
 					}
 					finally
 					{
@@ -3464,7 +3464,7 @@ public class OutputFormat
 		}
 		size *= scaling;
 
-		if (mOutputType == SVG)
+		if (m_outputType == SVG)
 		{
 			/*
 			 * Include SVG file at each position in list.
@@ -3478,29 +3478,29 @@ public class OutputFormat
 				/*
 				 * Skip points that are outside page.
 				 */
-				if (x + size >= 0 && x - size <= mPageWidth &&
-					y + size >= 0.0 && y - size <= mPageHeight)
+				if (x + size >= 0 && x - size <= m_pageWidth &&
+					y + size >= 0.0 && y - size <= m_pageHeight)
 				{
-					writeLine(mWriter, "<!-- begin " + filename + " -->");
-					writeLine(mWriter, "<g");
-					writeLine(mWriter, svgfile.getSVGAttributes());
-					writeLine(mWriter, "transform=\"translate(" + x + "," + (mPageHeight - y) + ")");
-					writeLine(mWriter, "rotate(" + Math.toDegrees(-rotation) + ")");
+					writeLine(m_writer, "<!-- begin " + filename + " -->");
+					writeLine(m_writer, "<g");
+					writeLine(m_writer, svgfile.getSVGAttributes());
+					writeLine(m_writer, "transform=\"translate(" + x + "," + (m_pageHeight - y) + ")");
+					writeLine(m_writer, "rotate(" + Math.toDegrees(-rotation) + ")");
 
 					/*
 					 * SVG file is centred at each point.
 					 * Shift position left and down half it's size
 					 * so that it is displayed centered.
 					 */
-					writeLine(mWriter, "translate(" + mCoordinateDecimal.format(-size / 2) +
-						"," + mCoordinateDecimal.format(-size / 2) + ")");
+					writeLine(m_writer, "translate(" + m_coordinateDecimal.format(-size / 2) +
+						"," + m_coordinateDecimal.format(-size / 2) + ")");
 
 					double scale = size / Math.max(pointWidth, pointHeight);
-					writeLine(mWriter, "scale(" + scale + ")\">");
+					writeLine(m_writer, "scale(" + scale + ")\">");
 
-					writeLine(mWriter, svgfile.toString());
-					writeLine(mWriter, "<!-- end " + filename + " -->");
-					writeLine(mWriter, "</g>");
+					writeLine(m_writer, svgfile.toString());
+					writeLine(m_writer, "<!-- end " + filename + " -->");
+					writeLine(m_writer, "</g>");
 				}
 			}
 		}
@@ -3521,10 +3521,10 @@ public class OutputFormat
 	public void addSVGCode(String xml)
 		throws IOException, MapyrusException
 	{
-		if (mOutputType == SVG)
+		if (m_outputType == SVG)
 		{
-			writeLine(mWriter, "<!-- svgcode -->");
-			writeLine(mWriter, xml);
+			writeLine(m_writer, "<!-- svgcode -->");
+			writeLine(m_writer, xml);
 		}
 	}
 
@@ -3547,9 +3547,9 @@ public class OutputFormat
 		 */
 		PDFFile pdfFile = null;
 		int index = 0;
-		while (index < mPDFIncludedFiles.size() && pdfFile == null)
+		while (index < m_PDFIncludedFiles.size() && pdfFile == null)
 		{
-			PDFFile p = (PDFFile)mPDFIncludedFiles.get(index);
+			PDFFile p = (PDFFile)m_PDFIncludedFiles.get(index);
 			if (p.getFilename().equals(filename))
 				pdfFile = p;
 			else
@@ -3558,9 +3558,9 @@ public class OutputFormat
 		if (pdfFile == null)
 		{
 			pdfFile = new PDFFile(filename);
-			mPDFIncludedFiles.add(pdfFile);
-			mPDFIncludedPages.add(new ArrayList<Integer>());
-			index = mPDFIncludedFiles.size() - 1;
+			m_PDFIncludedFiles.add(pdfFile);
+			m_PDFIncludedPages.add(new ArrayList<Integer>());
+			index = m_PDFIncludedFiles.size() - 1;
 		}
 
 		if (page < 1 || page > pdfFile.getPageCount())
@@ -3572,7 +3572,7 @@ public class OutputFormat
 		/*
 		 * Add this page to the list of pages to display from the PDF file.
 		 */
-		ArrayList<Integer> pageNumbers = mPDFIncludedPages.get(index);
+		ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(index);
 		Integer pageNumber = new Integer(page);
 		if (!pageNumbers.contains(pageNumber))
 			pageNumbers.add(pageNumber);
@@ -3594,7 +3594,7 @@ public class OutputFormat
 		}
 		size *= scaling;
 
-		if (mOutputType == PDF)
+		if (m_outputType == PDF)
 		{
 			/*
 			 * Include PDF file at each position in list.
@@ -3609,42 +3609,42 @@ public class OutputFormat
 				/*
 				 * Skip points that are outside page.
 				 */
-				if (x + size >= 0 && x - size <= mPageWidth &&
-					y + size >= 0.0 && y - size <= mPageHeight)
+				if (x + size >= 0 && x - size <= m_pageWidth &&
+					y + size >= 0.0 && y - size <= m_pageHeight)
 				{
 					/*
 					 * PDF file is centred at each point.
 					 * Shift position left and down half it's size
 					 * so that it is displayed centered.
 					 */
-					writeLine(mPDFGeometryWriter, "% " + filename);
-					writeLine(mPDFGeometryWriter, "q");
+					writeLine(m_PDFGeometryWriter, "% " + filename);
+					writeLine(m_PDFGeometryWriter, "q");
 					setColorAttribute(Color.BLACK);
-					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
-						mCoordinateDecimal.format(x) + " " +
-						mCoordinateDecimal.format(y) + " cm");
+					writeLine(m_PDFGeometryWriter, "1 0 0 1 " +
+						m_coordinateDecimal.format(x) + " " +
+						m_coordinateDecimal.format(y) + " cm");
 
 					double cosRotation = Math.cos(rotation);
 					double sinRotation = Math.sin(rotation);
-					writeLine(mPDFGeometryWriter, cosRotation + " " + sinRotation +
+					writeLine(m_PDFGeometryWriter, cosRotation + " " + sinRotation +
 						" " + (-sinRotation) + " " + cosRotation + " 0 0 cm");
-					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
+					writeLine(m_PDFGeometryWriter, "1 0 0 1 " +
 						-(size / 2) + " " + -(size / 2) + " cm");
 
 					double scale = size / Math.max(pointWidth, pointHeight);
-					writeLine(mPDFGeometryWriter,
+					writeLine(m_PDFGeometryWriter,
 						scale + " 0 0 " + scale + " 0 0 cm");
 
 					/*
 					 * Shift EPS file so that lower-left corner of EPS file is in
 					 * lower left corner of our box on the page.
 					 */
-					writeLine(mPDFGeometryWriter, "1 0 0 1 " +
+					writeLine(m_PDFGeometryWriter, "1 0 0 1 " +
 						-boundingBox[0] + " " + -boundingBox[1] + " cm");
 
 					for (int j = 0; j < contentsBuf.length; j++)
-						mPDFGeometryWriter.write(contentsBuf[j]);
-					writeLine(mPDFGeometryWriter, " Q");
+						m_PDFGeometryWriter.write(contentsBuf[j]);
+					writeLine(m_PDFGeometryWriter, " Q");
 				}
 			}
 		}
@@ -3666,17 +3666,17 @@ public class OutputFormat
 	 */
 	public void stroke(Shape shape, String xmlAttributes)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == SVG || m_outputType == PDF)
 		{
-			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			if (shape.intersects(0.0, 0.0, m_pageWidth, m_pageHeight))
 			{
-				if (mOutputType == SVG)
+				if (m_outputType == SVG)
 				{
-					writeLine(mWriter, "<path d=\"");
-					writeShape(shape, mOutputType, mWriter, null);
-					writeLine(mWriter, "\"");
-					Color color = mGraphics2D.getColor();
-					BasicStroke stroke = (BasicStroke)mGraphics2D.getStroke();
+					writeLine(m_writer, "<path d=\"");
+					writeShape(shape, m_outputType, m_writer, null);
+					writeLine(m_writer, "\"");
+					Color color = m_graphics2D.getColor();
+					BasicStroke stroke = (BasicStroke)m_graphics2D.getStroke();
 					float width = stroke.getLineWidth();
 					int endCap = stroke.getEndCap();
 					int lineJoin = stroke.getLineJoin();
@@ -3698,7 +3698,7 @@ public class OutputFormat
 					else
 						joinString = "round";
 
-					writeLine(mWriter, "  style=\"stroke:" + ColorDatabase.toHexString(color) +
+					writeLine(m_writer, "  style=\"stroke:" + ColorDatabase.toHexString(color) +
 						";stroke-width:" + width +
 						";stroke-linecap:" + capString +
 						";stroke-linejoin:" + joinString);
@@ -3709,38 +3709,38 @@ public class OutputFormat
 						{
 							if (i > 0)
 								dashes.append(",");
-							dashes.append(mCoordinateDecimal.format(dashArray[i]));
+							dashes.append(m_coordinateDecimal.format(dashArray[i]));
 						}
-						writeLine(mWriter, dashes.toString());
-						writeLine(mWriter, ";stroke-dashoffset:" + dashPhase);
+						writeLine(m_writer, dashes.toString());
+						writeLine(m_writer, ";stroke-dashoffset:" + dashPhase);
 					}
 					int alpha = color.getAlpha();
 					if (alpha != 255)
 					{
-						writeLine(mWriter, ";stroke-opacity:" + (alpha / 255.0f));
+						writeLine(m_writer, ";stroke-opacity:" + (alpha / 255.0f));
 					}
 
-					writeLine(mWriter, ";fill:none\"");
-					Composite comp = mGraphics2D.getComposite();
+					writeLine(m_writer, ";fill:none\"");
+					Composite comp = m_graphics2D.getComposite();
 					if (comp instanceof BlendComposite)
 					{
 						BlendComposite blendComposite = (BlendComposite)comp;
-						writeLine(mWriter, "filter=\"url(#" +
+						writeLine(m_writer, "filter=\"url(#" +
 							blendComposite.getName() + ")\"");
 					}
 
 					if (xmlAttributes != null)
-						writeLine(mWriter, xmlAttributes);
-					writeLine(mWriter, "/>");
+						writeLine(m_writer, xmlAttributes);
+					writeLine(m_writer, "/>");
 				}
 				else
 				{
 					PrintWriter pw;
-					if (mOutputType == PDF)
-						pw = mPDFGeometryWriter;
+					if (m_outputType == PDF)
+						pw = m_PDFGeometryWriter;
 					else
-						pw = mWriter;
-					writeShape(shape, mOutputType, pw, null);
+						pw = m_writer;
+					writeShape(shape, m_outputType, pw, null);
 					writeLine(pw, "S");
 				}
 			}
@@ -3750,7 +3750,7 @@ public class OutputFormat
 			/*
 			 * Draw path into image.
 			 */
-			mGraphics2D.draw(shape);
+			m_graphics2D.draw(shape);
 		}
 	}
 
@@ -3762,16 +3762,16 @@ public class OutputFormat
 	 */
 	public void fill(Shape shape, String xmlAttributes)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == SVG || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == SVG || m_outputType == PDF)
 		{
-			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			if (shape.intersects(0.0, 0.0, m_pageWidth, m_pageHeight))
 			{
-				if (mOutputType == SVG)
+				if (m_outputType == SVG)
 				{
-					writeLine(mWriter, "<path d=\"");
-					writeShape(shape, mOutputType, mWriter, null);
-					writeLine(mWriter, "\"");
-					Color color = mGraphics2D.getColor();
+					writeLine(m_writer, "<path d=\"");
+					writeShape(shape, m_outputType, m_writer, null);
+					writeLine(m_writer, "\"");
+					Color color = m_graphics2D.getColor();
 					int alpha = color.getAlpha();
 
 					StringBuffer sb = new StringBuffer("  style=\"fill:");
@@ -3781,27 +3781,27 @@ public class OutputFormat
 						sb.append(";fill-opacity:" + (alpha / 255.0f));
 					}
 					sb.append(";stroke:none\" ");
-					Composite comp = mGraphics2D.getComposite();
+					Composite comp = m_graphics2D.getComposite();
 					if (comp instanceof BlendComposite)
 					{
 						BlendComposite blendComposite = (BlendComposite)comp;
-						writeLine(mWriter, "filter=\"url(#" +
+						writeLine(m_writer, "filter=\"url(#" +
 							blendComposite.getName() + ")\"");
 					}
 
 					if (xmlAttributes != null)
 						sb.append(xmlAttributes);
 					sb.append("/>");
-					writeLine(mWriter, sb.toString());
+					writeLine(m_writer, sb.toString());
 				}
 				else
 				{
 					PrintWriter pw;
-					if (mOutputType == PDF)
-						pw = mPDFGeometryWriter;
+					if (m_outputType == PDF)
+						pw = m_PDFGeometryWriter;
 					else
-						pw = mWriter;
-					writeShape(shape, mOutputType, pw, null);
+						pw = m_writer;
+					writeShape(shape, m_outputType, pw, null);
 					writeLine(pw, "f");
 				}
 			}
@@ -3811,7 +3811,7 @@ public class OutputFormat
 			/*
 			 * Fill path in image.
 			 */
-			mGraphics2D.fill(shape);
+			m_graphics2D.fill(shape);
 		}
 	}
 
@@ -3823,23 +3823,23 @@ public class OutputFormat
 	 */
 	public void setEventScript(Shape shape, String scriptCommands)
 	{
-		if (mImageMapWriter != null)
+		if (m_imageMapWriter != null)
 		{
 			/*
 			 * Write shape to image map together with script commands.
 			 */
-			writeShape(shape, IMAGEMAP, mWriter, scriptCommands);
+			writeShape(shape, IMAGEMAP, m_writer, scriptCommands);
 		}
-		else if (mOutputType == SVG)
+		else if (m_outputType == SVG)
 		{
 			/*
 			 * Embed script commands in SVG file.
 			 */
-			writeLine(mWriter, "<path d=\"");
-			writeShape(shape, mOutputType, mWriter, scriptCommands);
-			writeLine(mWriter, "\"");
-			writeLine(mWriter, scriptCommands);
-			writeLine(mWriter, "/>");
+			writeLine(m_writer, "<path d=\"");
+			writeShape(shape, m_outputType, m_writer, scriptCommands);
+			writeLine(m_writer, "\"");
+			writeLine(m_writer, scriptCommands);
+			writeLine(m_writer, "/>");
 		}
 	}
 
@@ -3853,40 +3853,40 @@ public class OutputFormat
 	 */
 	public void gradientFill(Shape shape, boolean isVerticalGradient, Color c1, Color c2)
 	{
-		if (mOutputType == SVG)
+		if (m_outputType == SVG)
 		{
-			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			if (shape.intersects(0.0, 0.0, m_pageWidth, m_pageHeight))
 			{
-				String uniqueId = "gradient" + mGradientCounter++;
-				writeLine(mWriter, "<defs>");
-				writeLine(mWriter, "<linearGradient id=\"" + uniqueId + "\"");
+				String uniqueId = "gradient" + m_gradientCounter++;
+				writeLine(m_writer, "<defs>");
+				writeLine(m_writer, "<linearGradient id=\"" + uniqueId + "\"");
 
 				/*
 				 * SVG supports only horizontal gradients (default) or vertical
 				 * gradients.
 				 */
 				if (isVerticalGradient)
-					writeLine(mWriter, "x1=\"0%\" y1=\"100%\" x2=\"0%\" y2=\"0%\"");
+					writeLine(m_writer, "x1=\"0%\" y1=\"100%\" x2=\"0%\" y2=\"0%\"");
 
-				writeLine(mWriter, ">");
-				writeLine(mWriter, "<stop offset=\"0%\" stop-color=\"" +
+				writeLine(m_writer, ">");
+				writeLine(m_writer, "<stop offset=\"0%\" stop-color=\"" +
 					ColorDatabase.toHexString(c1) + "\"/>");
-				writeLine(mWriter, "<stop offset=\"100%\" stop-color=\"" +
+				writeLine(m_writer, "<stop offset=\"100%\" stop-color=\"" +
 						ColorDatabase.toHexString(c2) + "\"/>");
-				writeLine(mWriter, "</linearGradient>");
-				writeLine(mWriter, "</defs>");
-				writeLine(mWriter, "<path d=\"");
-				writeShape(shape, mOutputType, mWriter, null);
-				writeLine(mWriter, "\"");
+				writeLine(m_writer, "</linearGradient>");
+				writeLine(m_writer, "</defs>");
+				writeLine(m_writer, "<path d=\"");
+				writeShape(shape, m_outputType, m_writer, null);
+				writeLine(m_writer, "\"");
 
-				Composite comp = mGraphics2D.getComposite();
+				Composite comp = m_graphics2D.getComposite();
 				if (comp instanceof BlendComposite)
 				{
 					BlendComposite blendComposite = (BlendComposite)comp;
-					writeLine(mWriter, "filter=\"url(#" +
+					writeLine(m_writer, "filter=\"url(#" +
 						blendComposite.getName() + ")\"");
 				}
-				writeLine(mWriter, "  fill=\"url(#" + uniqueId + ")\" stroke=\"none\"/>");
+				writeLine(m_writer, "  fill=\"url(#" + uniqueId + ")\" stroke=\"none\"/>");
 			}
 		}
 	}
@@ -3896,21 +3896,21 @@ public class OutputFormat
 	 */
 	public void clip(Shape shape)
 	{
-		if (mOutputType == POSTSCRIPT_GEOMETRY || mOutputType == PDF)
+		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
 			PrintWriter pw;
-			if (mOutputType == PDF)
-				pw = mPDFGeometryWriter;
+			if (m_outputType == PDF)
+				pw = m_PDFGeometryWriter;
 			else
-				pw = mWriter;
+				pw = m_writer;
 
 			/*
 			 * Set clip path now, then it stays in effect until previous
 			 * state is restored.
 			 */
-			if (shape.intersects(0.0, 0.0, mPageWidth, mPageHeight))
+			if (shape.intersects(0.0, 0.0, m_pageWidth, m_pageHeight))
 			{
-				writeShape(shape, mOutputType, pw, null);
+				writeShape(shape, m_outputType, pw, null);
 			}
 			else
 			{
@@ -3919,29 +3919,29 @@ public class OutputFormat
 				 * outside page instead so that nothing is shown.
 				 */
 				writeShape(new Rectangle2D.Float(-1.0f, -1.0f, 0.1f, 0.1f),
-					mOutputType, pw, null);
+					m_outputType, pw, null);
 			}
 			writeLine(pw, "W n");
 		}
-		else if (mOutputType == SVG)
+		else if (m_outputType == SVG)
 		{
 			/*
 			 * Ensure that each clip path gets a unique name.
 			 */
-			mClipPathCounter++;
-			writeLine(mWriter, "<clipPath id=\"" + mSVGClipPathPrefix + mClipPathCounter + "\">");
-			writeLine(mWriter, "<path d=\"");
-			writeShape(shape, mOutputType, mWriter, null);
-			writeLine(mWriter, "\"/>");
-			writeLine(mWriter, "</clipPath>");
-			writeLine(mWriter, "<g clip-path=\"url(#" + mSVGClipPathPrefix + mClipPathCounter + ")\">");
+			m_clipPathCounter++;
+			writeLine(m_writer, "<clipPath id=\"" + m_SVGClipPathPrefix + m_clipPathCounter + "\">");
+			writeLine(m_writer, "<path d=\"");
+			writeShape(shape, m_outputType, m_writer, null);
+			writeLine(m_writer, "\"/>");
+			writeLine(m_writer, "</clipPath>");
+			writeLine(m_writer, "<g clip-path=\"url(#" + m_SVGClipPathPrefix + m_clipPathCounter + ")\">");
 
 			/*
 			 * Increment number of "<g>" graphics states we have written so we
 			 * know how many to remove later in the SVG file. 
 			 */
-			Integer nStates = mSVGOpenGTags.pop();
-			mSVGOpenGTags.push(Integer.valueOf(nStates + 1));
+			Integer nStates = m_SVGOpenGTags.pop();
+			m_SVGOpenGTags.push(Integer.valueOf(nStates + 1));
 		}
 	}
 
@@ -4025,19 +4025,19 @@ public class OutputFormat
 		while (st.hasMoreTokens())
 			lines.add(st.nextToken());
 
-		if (mOutputType != POSTSCRIPT_GEOMETRY && mOutputType != PDF)
+		if (m_outputType != POSTSCRIPT_GEOMETRY && m_outputType != PDF)
 		{
-			frc = mGraphics2D.getFontRenderContext();
+			frc = m_graphics2D.getFontRenderContext();
 			
-			if (mFontOutlineWidth > 0)
+			if (m_fontOutlineWidth > 0)
 			{
 				/*
 				 * Save existing linestyle and create new one for drawing outlines of each letter.
 				 */
-				originalStroke = mGraphics2D.getStroke();
-				BasicStroke outlineStroke = new BasicStroke((float)mFontOutlineWidth,
+				originalStroke = m_graphics2D.getStroke();
+				BasicStroke outlineStroke = new BasicStroke((float)m_fontOutlineWidth,
 					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, (float)FONT_OUTLINE_MITER_LIMIT);
-				mGraphics2D.setStroke(outlineStroke);
+				m_graphics2D.setStroke(outlineStroke);
 			}
 		}
 
@@ -4045,20 +4045,20 @@ public class OutputFormat
 		 * Calculate vertical shift to give label correct alignment.
 		 */
 		double yShift = 0;
-		if (mJustificationShiftY == JUSTIFY_TOP)
+		if (m_justificationShiftY == JUSTIFY_TOP)
 		{
-			yShift = -mFontSize;
+			yShift = -m_fontSize;
 		}
-		else if (mJustificationShiftY == JUSTIFY_MIDDLE)
+		else if (m_justificationShiftY == JUSTIFY_MIDDLE)
 		{
-			yShift = lines.size() * mFontSize +
-				(lines.size() - 1) * mFontSize *
-				(mFontLineSpacing - 1);
-			yShift = yShift / 2 - mFontSize;
+			yShift = lines.size() * m_fontSize +
+				(lines.size() - 1) * m_fontSize *
+				(m_fontLineSpacing - 1);
+			yShift = yShift / 2 - m_fontSize;
 		}
 		else
 		{
-			yShift = (lines.size() - 1) * mFontSize * mFontLineSpacing;
+			yShift = (lines.size() - 1) * m_fontSize * m_fontLineSpacing;
 		}
 
 		/*
@@ -4070,30 +4070,30 @@ public class OutputFormat
 			x = pt.getX();
 			y = pt.getY();
 
-			if (mOutputType == PDF)
+			if (m_outputType == PDF)
 			{
 				/*
 				 * Set transformation with text rotated and origin
 				 * moved to positions for text.
 				 */
 				lastX = lastY = 0;
-				writeLine(mPDFGeometryWriter, "q");
-				double cos = Math.cos(mFontRotation);
-				double sin = Math.sin(mFontRotation);
-				writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(cos) + " " +
-					mCoordinateDecimal.format(sin) + " " +
-					mCoordinateDecimal.format(-sin) + " " +
-					mCoordinateDecimal.format(cos) + " " +
-					mCoordinateDecimal.format(x) + " " +
-					mCoordinateDecimal.format(y) + " cm");
-				writeLine(mPDFGeometryWriter, "BT");
+				writeLine(m_PDFGeometryWriter, "q");
+				double cos = Math.cos(m_fontRotation);
+				double sin = Math.sin(m_fontRotation);
+				writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(cos) + " " +
+					m_coordinateDecimal.format(sin) + " " +
+					m_coordinateDecimal.format(-sin) + " " +
+					m_coordinateDecimal.format(cos) + " " +
+					m_coordinateDecimal.format(x) + " " +
+					m_coordinateDecimal.format(y) + " cm");
+				writeLine(m_PDFGeometryWriter, "BT");
 				int j = 0, index = -1;
 				while (j < PDF_FONTS.length && index < 0)
 				{
 					/*
 					 * Is it one of the standard PDF fonts?
 					 */
-					if (PDF_FONTS[j].equals(mFontName))
+					if (PDF_FONTS[j].equals(m_fontName))
 						index = j;
 					else
 						j++;
@@ -4103,10 +4103,10 @@ public class OutputFormat
 					/*
 					 * Or is it a font given by the user?
 					 */
-					for (int k = 0; k < mPDFFonts.size() && index < 0; k++)
+					for (int k = 0; k < m_PDFFonts.size() && index < 0; k++)
 					{
-						AdobeFontMetrics afm = (AdobeFontMetrics)mPDFFonts.get(k);
-						if (afm.getFontName().equals(mFontName))
+						AdobeFontMetrics afm = (AdobeFontMetrics)m_PDFFonts.get(k);
+						if (afm.getFontName().equals(m_fontName))
 						{
 							index = k + PDF_FONTS.length;
 						}
@@ -4114,16 +4114,16 @@ public class OutputFormat
 					if (index < 0)
 						index = 4;
 				}
-				writeLine(mPDFGeometryWriter, "/" + mPDFFontPrefix + index +
-					" " + mCoordinateDecimal.format(mFontSize) + " Tf");
-				if (mFontOutlineWidth > 0)
+				writeLine(m_PDFGeometryWriter, "/" + m_PDFFontPrefix + index +
+					" " + m_coordinateDecimal.format(m_fontSize) + " Tf");
+				if (m_fontOutlineWidth > 0)
 				{
-					writeLine(mPDFGeometryWriter, "1 Tr " +
-						mCoordinateDecimal.format(mFontOutlineWidth) + " w " + FONT_OUTLINE_MITER_LIMIT + " M 2 J 0 j [] 0 d");
+					writeLine(m_PDFGeometryWriter, "1 Tr " +
+						m_coordinateDecimal.format(m_fontOutlineWidth) + " w " + FONT_OUTLINE_MITER_LIMIT + " M 2 J 0 j [] 0 d");
 				}
 				else
 				{
-					writeLine(mPDFGeometryWriter, "0 Tr");
+					writeLine(m_PDFGeometryWriter, "0 Tr");
 				}
 			}
 
@@ -4136,66 +4136,66 @@ public class OutputFormat
 			{
 				nextLine = (String)it.next();
 
-				if (mOutputType == POSTSCRIPT_GEOMETRY)
+				if (m_outputType == POSTSCRIPT_GEOMETRY)
 				{
-					writeLine(mWriter, mCoordinateDecimal.format(x) + " " +
-						mCoordinateDecimal.format(y) + " m");
+					writeLine(m_writer, m_coordinateDecimal.format(x) + " " +
+						m_coordinateDecimal.format(y) + " m");
 
 					/*
 					 * Pass counter and line to PostScript procedure for
 					 * drawing each line of the label.
 					 */
-					writeLine(mWriter, mCoordinateDecimal.format(lineNumber));
-					writeLine(mWriter, Integer.toString(lines.size()));
-					writePostScriptString(mWriter, null, nextLine);
-					writeLine(mWriter, "t");
+					writeLine(m_writer, m_coordinateDecimal.format(lineNumber));
+					writeLine(m_writer, Integer.toString(lines.size()));
+					writePostScriptString(m_writer, null, nextLine);
+					writeLine(m_writer, "t");
 				}
-				else if (mOutputType == PDF)
+				else if (m_outputType == PDF)
 				{
-					StringDimension dim = getStringDimension(nextLine, mFontName, mFontSize, 1);
+					StringDimension dim = getStringDimension(nextLine, m_fontName, m_fontSize, 1);
 					double x2 = 0;
-					if (mJustificationShiftX == JUSTIFY_RIGHT)
+					if (m_justificationShiftX == JUSTIFY_RIGHT)
 						x2 = -dim.getWidth();
-					else if (mJustificationShiftX == JUSTIFY_CENTER)
+					else if (m_justificationShiftX == JUSTIFY_CENTER)
 						x2 = -dim.getWidth() / 2.0;
 
-					double y2 = yShift - lineNumber * mFontSize * mFontLineSpacing;
-					writeLine(mPDFGeometryWriter, mCoordinateDecimal.format(x2 - lastX) + " " +
-						mCoordinateDecimal.format(y2 - lastY) + " Td");
+					double y2 = yShift - lineNumber * m_fontSize * m_fontLineSpacing;
+					writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(x2 - lastX) + " " +
+						m_coordinateDecimal.format(y2 - lastY) + " Td");
 					lastX = x2;
 					lastY = y2;
 
 					/*
 					 * Draw each line of the label to PDF file.
 					 */
-					writePostScriptString(mPDFGeometryWriter, null, nextLine);
-					writeLine(mPDFGeometryWriter, "Tj");
+					writePostScriptString(m_PDFGeometryWriter, null, nextLine);
+					writeLine(m_PDFGeometryWriter, "Tj");
 				}
-				else if (mOutputType == SVG)
+				else if (m_outputType == SVG)
 				{
 					String anchor;
-					if (mJustificationShiftX == JUSTIFY_RIGHT)
+					if (m_justificationShiftX == JUSTIFY_RIGHT)
 						anchor = "end";
-					else if (mJustificationShiftX == JUSTIFY_LEFT)
+					else if (m_justificationShiftX == JUSTIFY_LEFT)
 						anchor = "start";
 					else
 						anchor = "middle";
 
-					Color color = mGraphics2D.getColor();
+					Color color = m_graphics2D.getColor();
 					int alpha = color.getAlpha();
-					Font font = mGraphics2D.getFont();
+					Font font = m_graphics2D.getFont();
 
 					StringBuffer extras = new StringBuffer();
 					if (font.isBold())
 						extras.append(" font-weight=\"bold\" ");
 					if (font.isItalic())
 						extras.append(" font-style=\"italic\" ");
-					if (mFontOutlineWidth > 0)
+					if (m_fontOutlineWidth > 0)
 					{
 						extras.append(" stroke=\"");
 						extras.append(ColorDatabase.toHexString(color));
 						extras.append("\" stroke-width=\"");
-						extras.append(mFontOutlineWidth);
+						extras.append(m_fontOutlineWidth);
 						extras.append("\" stroke-miterlimit=\"" + FONT_OUTLINE_MITER_LIMIT + "\" ");
 
 						if (alpha != 255)
@@ -4220,31 +4220,31 @@ public class OutputFormat
 					}
 
 					double px, py;
-					double y2 = y + yShift - lineNumber * mFontSize * mFontLineSpacing;
+					double y2 = y + yShift - lineNumber * m_fontSize * m_fontLineSpacing;
 
-					if (mFontRotation != 0)
+					if (m_fontRotation != 0)
 					{
 						/*
 						 * Rotate text around origin point.
 						 * Rotation is negative sense because Y axis
 						 * decreases downwards.
 						 */
-						writeLine(mWriter, "<g transform=\"translate(" +
-							mCoordinateDecimal.format(x) + ", " +
-							mCoordinateDecimal.format(mPageHeight - y2) +
+						writeLine(m_writer, "<g transform=\"translate(" +
+							m_coordinateDecimal.format(x) + ", " +
+							m_coordinateDecimal.format(m_pageHeight - y2) +
 							") rotate(" +
-							mCoordinateDecimal.format(Math.toDegrees(-mFontRotation)) +
+							m_coordinateDecimal.format(Math.toDegrees(-m_fontRotation)) +
 							")\">");
 						px = py = 0;
 					}
 					else
 					{
 						px = x;
-						py = mPageHeight - y2;
+						py = m_pageHeight - y2;
 					}
 
-					writeLine(mWriter, "<text x=\"" + mCoordinateDecimal.format(px) +
-						"\" y=\"" + mCoordinateDecimal.format(py) +
+					writeLine(m_writer, "<text x=\"" + m_coordinateDecimal.format(px) +
+						"\" y=\"" + m_coordinateDecimal.format(py) +
 						"\" text-anchor=\"" + anchor + "\"");
 
 					String fontName = font.getName();
@@ -4258,7 +4258,7 @@ public class OutputFormat
 						fontName = "Courier";
 					}
 
-					Composite comp = mGraphics2D.getComposite();
+					Composite comp = m_graphics2D.getComposite();
 					if (comp instanceof BlendComposite)
 					{
 						BlendComposite blendComposite = (BlendComposite)comp;
@@ -4267,7 +4267,7 @@ public class OutputFormat
 						extras.append(")\" ");
 					}
 
-					writeLine(mWriter, "  font-family=\"" + fontName + "\" " +
+					writeLine(m_writer, "  font-family=\"" + fontName + "\" " +
 						"font-size=\"" + font.getSize2D() + "\" " +
 						extras.toString());
 
@@ -4290,31 +4290,31 @@ public class OutputFormat
 								sb.append(c);
 						}
 					}
-					writeLine(mWriter, ">" + sb.toString() + "</text>");
+					writeLine(m_writer, ">" + sb.toString() + "</text>");
 
-					if (mFontRotation != 0)
-						writeLine(mWriter, "</g>");
+					if (m_fontRotation != 0)
+						writeLine(m_writer, "</g>");
 				}
 				else
 				{
 					/*
 					 * Reposition label from original point so it has correct justification.
 					 */
-					if (mJustificationShiftX != JUSTIFY_LEFT ||
-						mJustificationShiftY != JUSTIFY_BOTTOM ||
-						lines.size() > 1 || mFontRotation != 0)
+					if (m_justificationShiftX != JUSTIFY_LEFT ||
+						m_justificationShiftY != JUSTIFY_BOTTOM ||
+						lines.size() > 1 || m_fontRotation != 0)
 					{
-						Rectangle2D bounds = mBaseFont.getStringBounds(nextLine, frc);
+						Rectangle2D bounds = m_baseFont.getStringBounds(nextLine, frc);
 						affine = AffineTransform.getTranslateInstance(x, y);
-						affine.rotate(mFontRotation);
+						affine.rotate(m_fontRotation);
 						double x2 = 0;
-						if (mJustificationShiftX == JUSTIFY_RIGHT)
+						if (m_justificationShiftX == JUSTIFY_RIGHT)
 							x2 = -bounds.getWidth();
-						else if (mJustificationShiftX == JUSTIFY_CENTER)
+						else if (m_justificationShiftX == JUSTIFY_CENTER)
 							x2 = -bounds.getWidth() / 2.0;
 
 	   					startPt = new Point2D.Double(x2, yShift -
-	   						lineNumber * mFontSize * mFontLineSpacing);
+	   						lineNumber * m_fontSize * m_fontLineSpacing);
 	   					affine.transform(startPt, startPt);
 					}
 					else
@@ -4325,14 +4325,14 @@ public class OutputFormat
 					float fx = (float)startPt.getX();
 					float fy = (float)startPt.getY();
 					
-					if (mFontOutlineWidth > 0)
+					if (m_fontOutlineWidth > 0)
 					{
 						/*
 						 * Draw only outline of letters in label as lines.
 						 */
-						GlyphVector glyphs = mGraphics2D.getFont().createGlyphVector(frc, nextLine);
+						GlyphVector glyphs = m_graphics2D.getFont().createGlyphVector(frc, nextLine);
 						Shape outline = glyphs.getOutline(fx, fy);						
-						mGraphics2D.draw(outline);
+						m_graphics2D.draw(outline);
 						
 					}
 					else
@@ -4340,14 +4340,14 @@ public class OutputFormat
 						/*
 						 * Draw plain label.
 						 */
-						mGraphics2D.drawString(nextLine, fx, fy);
+						m_graphics2D.drawString(nextLine, fx, fy);
 					}
 				}
 				lineNumber++;
 			}
 			
-			if (mOutputType == PDF)
-				writeLine(mPDFGeometryWriter, "ET Q");
+			if (m_outputType == PDF)
+				writeLine(m_PDFGeometryWriter, "ET Q");
 		}
 
 		if (originalStroke != null)
@@ -4355,7 +4355,7 @@ public class OutputFormat
 			/*
 			 * Restore line style.
 			 */
-			mGraphics2D.setStroke(originalStroke);
+			m_graphics2D.setStroke(originalStroke);
 		}
 	}
 }
