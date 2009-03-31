@@ -102,54 +102,54 @@ public class Context
 	/*
 	 * Graphical attributes
 	 */	
-	private Color mColor;
-	private String mBlend;
-	private BasicStroke mLinestyle;
-	private int mJustify;
-	private String mFontName;
-	private double mFontSize;
-	private double mFontRotation;
-	private double mFontOutlineWidth;
-	private double mFontLineSpacing;
+	private Color m_color;
+	private String m_blend;
+	private BasicStroke m_linestyle;
+	private int m_justify;
+	private String m_fontName;
+	private double m_fontSize;
+	private double m_fontRotation;
+	private double m_fontOutlineWidth;
+	private double m_fontLineSpacing;
 
 	/*
 	 * Bit flags of graphical attributes that have been changed by caller
 	 * but not set yet.
 	 */
-	private int mAttributesPending;
+	private int m_attributesPending;
 
 	/*
 	 * Bit flags of graphical attributes that have been changed in this context.
 	 */
-	private int mAttributesChanged;
+	private int m_attributesChanged;
 	
 	/*
 	 * Transformation matrix and cumulative scaling factors and rotation.
 	 */
-	private AffineTransform mCtm;
-	private double mScaling;
-	private double mRotation;
+	private AffineTransform m_ctm;
+	private double m_scaling;
+	private double m_rotation;
 
 	/*
 	 * Transformation matrix from world coordinates to page coordinates
 	 * and the units of world coordinates.
 	 */
-	private AffineTransform mWorldCtm;
-	private Rectangle2D.Double mWorldExtents;
-	private Rectangle2D.Double mPageWorldExtents;
-	private int mWorldUnits;
+	private AffineTransform m_worldCtm;
+	private Rectangle2D.Double m_worldExtents;
+	private Rectangle2D.Double m_pageWorldExtents;
+	private int m_worldUnits;
 
 	/*
 	 * Coordinates making up path.
 	 */
-	private GeometricPath mPath;
+	private GeometricPath m_path;
 
 	/*
 	 * Path in context from which this context was created.
 	 * Used when path is not modified in this context to avoid
 	 * needlessly copying paths from one context to another.
 	 */
-	private GeometricPath mExistingPath;
+	private GeometricPath m_existingPath;
 
 	/*
 	 * List of clip polygons making up the complete clipping path.
@@ -157,50 +157,50 @@ public class Context
 	 * polygon to preserve the inside/outside of each individual
 	 * clip polygon.
 	 */
-	private ArrayList<GeometricPath> mClippingPaths;
+	private ArrayList<GeometricPath> m_clippingPaths;
 	
 	/*
 	 * Currently defined variables and variables that are local
 	 * to this context.
 	 */
-	private HashMap<String, Argument> mVars;
-	private HashSet<String> mLocalVars;
+	private HashMap<String, Argument> m_vars;
+	private HashSet<String> m_localVars;
 
 	/*
 	 * Output device we are drawing to.
 	 */
-	private OutputFormat mOutputFormat;
+	private OutputFormat m_outputFormat;
 	
 	/*
 	 * Flag true if output and dataset defined in this context.  In this case
 	 * we must close the output file and dataset when this context is finished.
 	 */
-	private boolean mOutputDefined;
-	private boolean mDatasetDefined;
+	private boolean m_outputDefined;
+	private boolean m_datasetDefined;
 
 	/*
 	 * Dataset currently being read from, the next row to provide to caller
 	 * and the number of rows already fetched from it.
 	 */
-	private Dataset mDataset;
+	private Dataset m_dataset;
 
 	/*
 	 * Stream that standard output is writing to.
 	 */
-	private PrintStream mStdoutStream;
-	private boolean mStdoutStreamDefined;
+	private PrintStream m_stdoutStream;
+	private boolean m_stdoutStreamDefined;
 	
 	/*
 	 * Name of procedure block that this context is executing in.
 	 */
-	private String mBlockName;
+	private String m_blockName;
 
 	/*
 	 * Cache of image extents we have read previously from .tfw files and.
 	 * OGC WMS requests.  Avoid re-reading images which will be outside
 	 * page area and not visible.
 	 */
-	private static Hashtable<String, GeoImageBoundingBox> mImageBoundsCache =
+	private static Hashtable<String, GeoImageBoundingBox> m_imageBoundsCache =
 		new Hashtable<String, GeoImageBoundingBox>();
 
 	/**
@@ -209,29 +209,29 @@ public class Context
 	 */
 	private void initialiseContext(Context c)
 	{
-		mColor = Color.BLACK;
-		mBlend = "Normal";
-		mLinestyle = new BasicStroke(0.1f);
-		mJustify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
-		mFontName = "SansSerif";
-		mFontSize = 5;
-		mFontRotation = 0;
-		mFontOutlineWidth = 0;
-		mFontLineSpacing = 1;
+		m_color = Color.BLACK;
+		m_blend = "Normal";
+		m_linestyle = new BasicStroke(0.1f);
+		m_justify = OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_BOTTOM;
+		m_fontName = "SansSerif";
+		m_fontSize = 5;
+		m_fontRotation = 0;
+		m_fontOutlineWidth = 0;
+		m_fontLineSpacing = 1;
 
-		mPath = mExistingPath = null;
-		mClippingPaths = null;
-		mCtm = new AffineTransform();
-		mScaling =  1.0;
-		mRotation = 0.0;
+		m_path = m_existingPath = null;
+		m_clippingPaths = null;
+		m_ctm = new AffineTransform();
+		m_scaling =  1.0;
+		m_rotation = 0.0;
 
-		mAttributesPending = (ATTRIBUTE_CLIP | ATTRIBUTE_COLOR |
+		m_attributesPending = (ATTRIBUTE_CLIP | ATTRIBUTE_COLOR |
 			ATTRIBUTE_BLEND |
 			ATTRIBUTE_FONT | ATTRIBUTE_JUSTIFY | ATTRIBUTE_LINESTYLE);
-		mAttributesChanged = 0;
+		m_attributesChanged = 0;
 
-		mWorldCtm = null;
-		mPageWorldExtents = null;
+		m_worldCtm = null;
+		m_pageWorldExtents = null;
 	}
 
 	/**
@@ -239,20 +239,20 @@ public class Context
 	 */		
 	public Context()
 	{
-		mVars = null;
-		mLocalVars = null;
+		m_vars = null;
+		m_localVars = null;
 
-		mOutputFormat = null;
-		mOutputDefined = false;
-		mDatasetDefined = false;
-		mDataset = null;
-		mStdoutStream = null;
-		mStdoutStreamDefined = false;
+		m_outputFormat = null;
+		m_outputDefined = false;
+		m_datasetDefined = false;
+		m_dataset = null;
+		m_stdoutStream = null;
+		m_stdoutStreamDefined = false;
 
 		/*
 		 * First context is outside of any procedure block.
 		 */
-		mBlockName = null;
+		m_blockName = null;
 
 		initialiseContext(this);
 	}
@@ -264,28 +264,28 @@ public class Context
 	 */
 	public Context(Context existing, String blockName)
 	{
-		mColor = existing.mColor;
-		mBlend = existing.mBlend;
-		mLinestyle = existing.mLinestyle;
-		mJustify = existing.mJustify;
-		mFontName = existing.mFontName;
-		mFontSize = existing.mFontSize;
-		mFontRotation = existing.mFontRotation;
-		mFontOutlineWidth = existing.mFontOutlineWidth;
-		mFontLineSpacing = existing.mFontLineSpacing;
+		m_color = existing.m_color;
+		m_blend = existing.m_blend;
+		m_linestyle = existing.m_linestyle;
+		m_justify = existing.m_justify;
+		m_fontName = existing.m_fontName;
+		m_fontSize = existing.m_fontSize;
+		m_fontRotation = existing.m_fontRotation;
+		m_fontOutlineWidth = existing.m_fontOutlineWidth;
+		m_fontLineSpacing = existing.m_fontLineSpacing;
 
-		mCtm = new AffineTransform(existing.mCtm);
-		mWorldCtm = null;
-		mScaling = existing.mScaling;
-		mRotation = existing.mRotation;
-		mDataset = existing.mDataset;
+		m_ctm = new AffineTransform(existing.m_ctm);
+		m_worldCtm = null;
+		m_scaling = existing.m_scaling;
+		m_rotation = existing.m_rotation;
+		m_dataset = existing.m_dataset;
 
 		/*
 		 * Only create variable lookup tables when some values are
 		 * defined locally.
 		 */
-		mVars = null;
-		mLocalVars = null;
+		m_vars = null;
+		m_localVars = null;
 
 		/*
 		 * Don't copy path -- it can be large.
@@ -296,40 +296,40 @@ public class Context
 		 *
 		 * This saves unnecessary copying of paths when contexts are created.
 		 */
-		mPath = null;
-		if (existing.mPath != null)
-			mExistingPath = existing.mPath;
+		m_path = null;
+		if (existing.m_path != null)
+			m_existingPath = existing.m_path;
 		else
-			mExistingPath = existing.mExistingPath;
+			m_existingPath = existing.m_existingPath;
 
 		/*
 		 * Copy list of paths we must clip against.
 		 */
-		if (existing.mClippingPaths != null)			
-			mClippingPaths = new ArrayList<GeometricPath>(existing.mClippingPaths);
+		if (existing.m_clippingPaths != null)			
+			m_clippingPaths = new ArrayList<GeometricPath>(existing.m_clippingPaths);
 		else
-			mClippingPaths = null;
+			m_clippingPaths = null;
 
-		mOutputFormat = existing.mOutputFormat;
-		mOutputDefined = false;
+		m_outputFormat = existing.m_outputFormat;
+		m_outputDefined = false;
 
 		/*
 		 * Save state in parent context so it won't be disturbed by anything
 		 * that gets changed in this new context.
 		 */		
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
-			mOutputFormat.saveState();
+			m_outputFormat.saveState();
 		}
-		mDatasetDefined = false;
+		m_datasetDefined = false;
 
-		mStdoutStream = existing.mStdoutStream;
-		mStdoutStreamDefined = false;
+		m_stdoutStream = existing.m_stdoutStream;
+		m_stdoutStreamDefined = false;
 
-		mAttributesPending = existing.mAttributesPending;
-		mAttributesChanged = 0;
+		m_attributesPending = existing.m_attributesPending;
+		m_attributesChanged = 0;
 		
-		mBlockName = blockName;
+		m_blockName = blockName;
 	}
 
 	private GeometricPath getDefinedPath()
@@ -340,10 +340,10 @@ public class Context
 		 * Return path defined in this context, or one defined
 		 * in previous context if nothing set here.
 		 */
-		if (mPath != null)
-			retval = mPath;
+		if (m_path != null)
+			retval = m_path;
 		else
-			retval = mExistingPath;
+			retval = m_existingPath;
 		return(retval);
 	}
 
@@ -355,10 +355,10 @@ public class Context
 	{
 		double retval;
 		
-		if (mOutputFormat == null)
+		if (m_outputFormat == null)
 			retval = 0.0;
 		else
-			retval = mOutputFormat.getPageWidth();
+			retval = m_outputFormat.getPageWidth();
 		
 		return(retval);
 	}
@@ -371,10 +371,10 @@ public class Context
 	{
 		double retval;
 		
-		if (mOutputFormat == null)
+		if (m_outputFormat == null)
 			retval = 0.0;
 		else
-			retval = mOutputFormat.getPageHeight();
+			retval = m_outputFormat.getPageHeight();
 		
 		return(retval);
 	}
@@ -387,10 +387,10 @@ public class Context
 	{
 		String retval;
 		
-		if (mOutputFormat == null)
+		if (m_outputFormat == null)
 			retval = "";
 		else
-			retval = mOutputFormat.getPageFormat();
+			retval = m_outputFormat.getPageFormat();
 		
 		return(retval);
 	}
@@ -403,10 +403,10 @@ public class Context
 	{
 		double retval;
 		
-		if (mOutputFormat == null)
+		if (m_outputFormat == null)
 			retval = Constants.MM_PER_INCH / DEFAULT_RESOLUTION;
 		else
-			retval = mOutputFormat.getResolution();
+			retval = m_outputFormat.getResolution();
 
 		return(retval);
 	}
@@ -421,23 +421,23 @@ public class Context
 	{
 		int maskComplement = (~attributeMask);
 
-		if ((mAttributesPending & ATTRIBUTE_FONT & attributeMask) != 0)
-			mOutputFormat.setFontAttribute(mFontName, mFontSize, mFontRotation, mFontOutlineWidth, mFontLineSpacing);
-		if ((mAttributesPending & ATTRIBUTE_JUSTIFY & attributeMask) != 0)
-			mOutputFormat.setJustifyAttribute(mJustify);
-		if ((mAttributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
-			mOutputFormat.setColorAttribute(mColor);
-		if ((mAttributesPending & ATTRIBUTE_BLEND & attributeMask) != 0)
-			mOutputFormat.setBlendAttribute(mBlend);
-		if ((mAttributesPending & ATTRIBUTE_LINESTYLE & attributeMask) != 0)
-			mOutputFormat.setLinestyleAttribute(mLinestyle);
-		if ((mAttributesPending & ATTRIBUTE_CLIP & attributeMask) != 0)
-			mOutputFormat.setClipAttribute(mClippingPaths);
+		if ((m_attributesPending & ATTRIBUTE_FONT & attributeMask) != 0)
+			m_outputFormat.setFontAttribute(m_fontName, m_fontSize, m_fontRotation, m_fontOutlineWidth, m_fontLineSpacing);
+		if ((m_attributesPending & ATTRIBUTE_JUSTIFY & attributeMask) != 0)
+			m_outputFormat.setJustifyAttribute(m_justify);
+		if ((m_attributesPending & ATTRIBUTE_COLOR & attributeMask) != 0)
+			m_outputFormat.setColorAttribute(m_color);
+		if ((m_attributesPending & ATTRIBUTE_BLEND & attributeMask) != 0)
+			m_outputFormat.setBlendAttribute(m_blend);
+		if ((m_attributesPending & ATTRIBUTE_LINESTYLE & attributeMask) != 0)
+			m_outputFormat.setLinestyleAttribute(m_linestyle);
+		if ((m_attributesPending & ATTRIBUTE_CLIP & attributeMask) != 0)
+			m_outputFormat.setClipAttribute(m_clippingPaths);
 
 		/*
 		 * Clear attributes we've just set -- they are no longer pending.
 		 */
-		mAttributesPending = (mAttributesPending & maskComplement);
+		m_attributesPending = (m_attributesPending & maskComplement);
 	}
 
 	/**
@@ -446,8 +446,8 @@ public class Context
 	 */
 	public void setAttributesChanged(int attributes)
 	{
-		mAttributesPending |= attributes;
-		mAttributesChanged |= attributes;
+		m_attributesPending |= attributes;
+		m_attributesChanged |= attributes;
 	}
 
 	/**
@@ -471,9 +471,9 @@ public class Context
 		 */
 		initialiseContext(this);
 
-		mOutputFormat = new OutputFormat(filename, format,
+		m_outputFormat = new OutputFormat(filename, format,
 			width, height, extras, stdoutStream);
-		mOutputDefined = true;
+		m_outputDefined = true;
 	}
 
     /**
@@ -488,7 +488,7 @@ public class Context
     {
 		setOutputFormat(image, extras);
 		if (imageMapWriter != null)
-			mOutputFormat.setImageMapWriter(imageMapWriter);
+			m_outputFormat.setImageMapWriter(imageMapWriter);
     }
 
 	/**
@@ -506,8 +506,8 @@ public class Context
 		 */
 		initialiseContext(this);
 
-		mOutputFormat = new OutputFormat(image, extras);
-		mOutputDefined = true;
+		m_outputFormat = new OutputFormat(image, extras);
+		m_outputDefined = true;
 	}
 
 	/**
@@ -515,22 +515,22 @@ public class Context
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
-		if (mOutputFormat != null && !mOutputDefined)
+		if (m_outputFormat != null && !m_outputDefined)
 		{
 			/*
 			 * If state could be restored then no need for caller to set
 			 * graphical attributes back to their old values again.
 			 */
-			boolean restoredState = mOutputFormat.restoreState();
+			boolean restoredState = m_outputFormat.restoreState();
 			if (restoredState)
-				mAttributesChanged = 0;
+				m_attributesChanged = 0;
 		}
 
-		if (mOutputDefined)
+		if (m_outputDefined)
 		{
-			mOutputFormat.closeOutputFormat();
-			mOutputFormat = null;
-			mOutputDefined = false;
+			m_outputFormat.closeOutputFormat();
+			m_outputFormat = null;
+			m_outputDefined = false;
 		}		
 	}
 
@@ -548,30 +548,30 @@ public class Context
 		/*
 		 * Close any dataset we opened in this context.
 		 */
-		if (mDatasetDefined)
+		if (m_datasetDefined)
 		{
-			mDataset.close();
+			m_dataset.close();
 		}
 
-		mDataset = null;
+		m_dataset = null;
 
 		/*
 		 * Close any file we opened for standard output in this context.
 		 */
-		if (mStdoutStreamDefined)
+		if (m_stdoutStreamDefined)
 		{
-			if (mStdoutStream == System.out)
-				mStdoutStream.flush();
+			if (m_stdoutStream == System.out)
+				m_stdoutStream.flush();
 			else
-				mStdoutStream.close();
-			mStdoutStreamDefined = false;
-			mStdoutStream = null;
+				m_stdoutStream.close();
+			m_stdoutStreamDefined = false;
+			m_stdoutStream = null;
 		}
-		mPath = mExistingPath = null;
-		mClippingPaths = null;
-		mVars = null;
-		mLocalVars = null;
-		return(mAttributesChanged);
+		m_path = m_existingPath = null;
+		m_clippingPaths = null;
+		m_vars = null;
+		m_localVars = null;
+		return(m_attributesChanged);
 	}
 
 	/**
@@ -590,19 +590,19 @@ public class Context
 		 */
 		if (dashes == null)
 		{
-			mLinestyle = new BasicStroke((float)(width * mScaling),
+			m_linestyle = new BasicStroke((float)(width * m_scaling),
 				cap, join, MITER_LIMIT);
 		}
 		else
 		{
 			for (int i = 0; i < dashes.length; i++)
-				dashes[i] *= mScaling;
+				dashes[i] *= m_scaling;
 
-			mLinestyle = new BasicStroke((float)(width * mScaling), cap, join,
+			m_linestyle = new BasicStroke((float)(width * m_scaling), cap, join,
 				MITER_LIMIT, dashes, (float)phase);
 		}
-		mAttributesPending |= ATTRIBUTE_LINESTYLE;
-		mAttributesChanged |= ATTRIBUTE_LINESTYLE;
+		m_attributesPending |= ATTRIBUTE_LINESTYLE;
+		m_attributesChanged |= ATTRIBUTE_LINESTYLE;
 	}
 
 	/**
@@ -611,7 +611,7 @@ public class Context
 	 */
 	public Color getColor()
 	{
-		return(mColor);
+		return(m_color);
 	}
 
 	/**
@@ -620,9 +620,9 @@ public class Context
 	 */
 	public void setColor(Color color)
 	{
-		mColor = color;
-		mAttributesPending |= ATTRIBUTE_COLOR;
-		mAttributesChanged |= ATTRIBUTE_COLOR;
+		m_color = color;
+		m_attributesPending |= ATTRIBUTE_COLOR;
+		m_attributesChanged |= ATTRIBUTE_COLOR;
 	}
 
 	/**
@@ -631,9 +631,9 @@ public class Context
 	 */
 	public void setBlend(String blend)
 	{
-		mBlend = blend;
-		mAttributesPending |= ATTRIBUTE_BLEND;
-		mAttributesChanged |= ATTRIBUTE_BLEND;
+		m_blend = blend;
+		m_attributesPending |= ATTRIBUTE_BLEND;
+		m_attributesChanged |= ATTRIBUTE_BLEND;
 	}
 
 	/**
@@ -648,13 +648,13 @@ public class Context
 	public void setFont(String fontName, double fontSize,
 		double fontOutlineWidth, double fontLineSpacing)
 	{
-		mFontName = fontName;
-		mFontSize = fontSize * mScaling;
-		mFontRotation = mRotation;
-		mFontOutlineWidth = fontOutlineWidth * mScaling;
-		mFontLineSpacing = fontLineSpacing;
-		mAttributesChanged |= ATTRIBUTE_FONT;
-		mAttributesPending |= ATTRIBUTE_FONT;
+		m_fontName = fontName;
+		m_fontSize = fontSize * m_scaling;
+		m_fontRotation = m_rotation;
+		m_fontOutlineWidth = fontOutlineWidth * m_scaling;
+		m_fontLineSpacing = fontLineSpacing;
+		m_attributesChanged |= ATTRIBUTE_FONT;
+		m_attributesPending |= ATTRIBUTE_FONT;
 	}
 
 	/**
@@ -664,10 +664,10 @@ public class Context
 	 */
 	private double addFontRotation(double rotation)
 	{
-		double retval = mFontRotation;
-		mFontRotation += rotation;
-		mAttributesChanged |= ATTRIBUTE_FONT;
-		mAttributesPending |= ATTRIBUTE_FONT;
+		double retval = m_fontRotation;
+		m_fontRotation += rotation;
+		m_attributesChanged |= ATTRIBUTE_FONT;
+		m_attributesPending |= ATTRIBUTE_FONT;
 		return(retval);
 	}
 
@@ -678,10 +678,10 @@ public class Context
 	 */
 	public int setJustify(int code)
 	{
-		int previous = mJustify;
-		mJustify = code;
-		mAttributesChanged |= ATTRIBUTE_JUSTIFY;
-		mAttributesPending |= ATTRIBUTE_JUSTIFY;
+		int previous = m_justify;
+		m_justify = code;
+		m_attributesChanged |= ATTRIBUTE_JUSTIFY;
+		m_attributesPending |= ATTRIBUTE_JUSTIFY;
 		return(previous);
 	}
 
@@ -691,8 +691,8 @@ public class Context
 	 */
 	public void setScaling(double factor)
 	{
-		mCtm.scale(factor, factor);
-		mScaling *= factor;
+		m_ctm.scale(factor, factor);
+		m_scaling *= factor;
 	}
 	
 	/**
@@ -702,7 +702,7 @@ public class Context
 	 */
 	public void setTranslation(double x, double y)
 	{
-		mCtm.translate(x, y);
+		m_ctm.translate(x, y);
 	}
 	
 	/**
@@ -711,9 +711,9 @@ public class Context
 	 */
 	public void setRotation(double angle)
 	{
-		mCtm.rotate(angle);
-		mRotation += angle;
-		mRotation = Math.IEEEremainder(mRotation, Math.PI * 2);
+		m_ctm.rotate(angle);
+		m_rotation += angle;
+		m_rotation = Math.IEEEremainder(m_rotation, Math.PI * 2);
 	}
 
 	/**
@@ -734,7 +734,7 @@ public class Context
 		int units, boolean allowDistortion)
 		throws MapyrusException
 	{
-		if (mOutputFormat == null)
+		if (m_outputFormat == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_OUTPUT));		
 
 		double wxDiff = wx2 - wx1;
@@ -746,8 +746,8 @@ public class Context
 			/*
 			 * Use whole page.
 			 */
-			px2 = mOutputFormat.getPageWidth();
-			py2 = mOutputFormat.getPageHeight();
+			px2 = m_outputFormat.getPageWidth();
+			py2 = m_outputFormat.getPageHeight();
 		}
 
 		double pxDiff = px2 - px1;
@@ -797,7 +797,7 @@ public class Context
 			}
 		}
 
-		mWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
+		m_worldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
 				Math.min(wy1, wy2),
 				Math.abs(wx2 - wx1), Math.abs(wy2 - wy1));
 
@@ -807,21 +807,21 @@ public class Context
 		wxDiff = wx2 - wx1;
 		wyDiff = wy2 - wy1;
 		wx1 -= wxDiff / pxDiff * px1;
-		wx2 += wxDiff / pxDiff * (mOutputFormat.getPageWidth() - px2);
+		wx2 += wxDiff / pxDiff * (m_outputFormat.getPageWidth() - px2);
 		wy1 -= wyDiff / pyDiff * py1;
-		wy2 += wyDiff / pyDiff * (mOutputFormat.getPageHeight() - py2);
+		wy2 += wyDiff / pyDiff * (m_outputFormat.getPageHeight() - py2);
 
 		/*
 		 * Setup CTM from world coordinates to page coordinates.
 		 */
-		mWorldCtm = new AffineTransform();
-		mWorldCtm.scale(mOutputFormat.getPageWidth() / (wx2 - wx1),
-			mOutputFormat.getPageHeight() / (wy2 - wy1));
-		mWorldCtm.translate(-wx1, -wy1);
-		mPageWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
+		m_worldCtm = new AffineTransform();
+		m_worldCtm.scale(m_outputFormat.getPageWidth() / (wx2 - wx1),
+			m_outputFormat.getPageHeight() / (wy2 - wy1));
+		m_worldCtm.translate(-wx1, -wy1);
+		m_pageWorldExtents = new Rectangle2D.Double(Math.min(wx1, wx2),
 			Math.min(wy1, wy2),
 			Math.abs(wx2 - wx1), Math.abs(wy2 - wy1));
-		mWorldUnits = units;
+		m_worldUnits = units;
 	}
 
 	/**
@@ -836,9 +836,9 @@ public class Context
 
 		try
 		{
-			if (mWorldCtm != null)
+			if (m_worldCtm != null)
 			{
-				affine = mWorldCtm.createInverse();
+				affine = m_worldCtm.createInverse();
 				retval = arg.transformGeometry(affine);
 			}
 		}
@@ -856,8 +856,8 @@ public class Context
 	public Argument transformToPage(Argument arg) throws MapyrusException
 	{
 		Argument retval = arg;
-		if (mWorldCtm != null)
-			retval = arg.transformGeometry(mWorldCtm);
+		if (m_worldCtm != null)
+			retval = arg.transformGeometry(m_worldCtm);
 		return(retval);
 	}
 
@@ -870,10 +870,10 @@ public class Context
 		/*
 		 * Clear any previous dataset defined in this context.
 		 */
-		if (mDataset != null && mDatasetDefined)
-			mDataset.close();
-		mDataset = new Dataset(dataset);
-		mDatasetDefined = true;
+		if (m_dataset != null && m_datasetDefined)
+			m_dataset.close();
+		m_dataset = new Dataset(dataset);
+		m_datasetDefined = true;
 	}
 
 	/**
@@ -886,15 +886,15 @@ public class Context
 		/*
 		 * Close any existing standard output opened in this context.
 		 */
-		if (mStdoutStream != null && mStdoutStreamDefined)
+		if (m_stdoutStream != null && m_stdoutStreamDefined)
 		{
-			if (mStdoutStream == System.out)
-				mStdoutStream.flush();
+			if (m_stdoutStream == System.out)
+				m_stdoutStream.flush();
 			else
-				mStdoutStream.close();
+				m_stdoutStream.close();
 		}
-		mStdoutStream = stdout;
-		mStdoutStreamDefined = true;
+		m_stdoutStream = stdout;
+		m_stdoutStreamDefined = true;
 	}
 
 	/**
@@ -903,7 +903,7 @@ public class Context
 	 */
 	public double getScaling()
 	{
-		return(mScaling);
+		return(m_scaling);
 	}
 
 	/**
@@ -912,7 +912,7 @@ public class Context
 	 */
 	public double getRotation()
 	{
-		return(mRotation);
+		return(m_rotation);
 	}
 
 	/**
@@ -923,14 +923,14 @@ public class Context
 	{
 		Rectangle2D.Double retval;
 
-		if (mWorldExtents != null)
+		if (m_worldExtents != null)
 		{
-			retval = mWorldExtents;
+			retval = m_worldExtents;
 		}
-		else if (mOutputFormat != null)
+		else if (m_outputFormat != null)
 		{
 			retval = new Rectangle2D.Double(0, 0,
-				mOutputFormat.getPageWidth(), mOutputFormat.getPageHeight());
+				m_outputFormat.getPageWidth(), m_outputFormat.getPageHeight());
 				
 		}
 		else
@@ -950,17 +950,17 @@ public class Context
 		double scale;
 		double worldWidthInMM;
 
-		if (mOutputFormat != null && mWorldCtm != null)
+		if (m_outputFormat != null && m_worldCtm != null)
 		{
-			worldWidthInMM = mPageWorldExtents.width;
-			if (mWorldUnits == WORLD_UNITS_METRES)
+			worldWidthInMM = m_pageWorldExtents.width;
+			if (m_worldUnits == WORLD_UNITS_METRES)
 				worldWidthInMM *= 1000.0;
-			else if (mWorldUnits == WORLD_UNITS_FEET)
+			else if (m_worldUnits == WORLD_UNITS_FEET)
 				worldWidthInMM *= (1000.0 * 0.3048);
 			else
 				worldWidthInMM *= (110000 * 1000.0);
 
-			scale = worldWidthInMM / mOutputFormat.getPageWidth();
+			scale = worldWidthInMM / m_outputFormat.getPageWidth();
 		}
 		else
 		{
@@ -975,7 +975,7 @@ public class Context
 	 */
 	public Dataset getDataset()
 	{
-		return(mDataset);
+		return(m_dataset);
 	}
 
 	/**
@@ -984,7 +984,7 @@ public class Context
 	 */
 	public PrintStream getStdout()
 	{
-		return(mStdoutStream);
+		return(m_stdoutStream);
 	}
 
 	/**
@@ -993,7 +993,7 @@ public class Context
 	 */
 	public String getBlockName()
 	{
-		return(mBlockName);
+		return(m_blockName);
 	}
 
 	/**
@@ -1013,16 +1013,16 @@ public class Context
 		 * Transform point from world coordinates
 		 * to millimetre position on page.
 		 */		
-		if (mWorldCtm != null)
-			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
-		mCtm.transform(srcPts, 0, dstPts, 0, 1);
-		if (mPath == null)
-			mPath = new GeometricPath();
+		if (m_worldCtm != null)
+			m_worldCtm.transform(srcPts, 0, srcPts, 0, 1);
+		m_ctm.transform(srcPts, 0, dstPts, 0, 1);
+		if (m_path == null)
+			m_path = new GeometricPath();
 
 		/*
 		 * Set no rotation for point.
 		 */
-		mPath.moveTo(dstPts[0], dstPts[1], 0.0f);
+		m_path.moveTo(dstPts[0], dstPts[1], 0.0f);
 	}
 
 	/**
@@ -1041,19 +1041,19 @@ public class Context
 		/*
 		 * Make sure that a start point for path was defined.
 		 */
-		if (mPath == null || mPath.getMoveToCount() == 0)
+		if (m_path == null || m_path.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MOVETO));
 
 		/*
 		 * Transform point from world coordinates
 		 * to millimetre position on page.
 		 */
-		if (mWorldCtm != null)
-			mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
-		mCtm.transform(srcPts, 0, dstPts, 0, 1);
-		if (mPath == null)
-			mPath = new GeometricPath();
-		mPath.lineTo(dstPts[0], dstPts[1]);
+		if (m_worldCtm != null)
+			m_worldCtm.transform(srcPts, 0, srcPts, 0, 1);
+		m_ctm.transform(srcPts, 0, dstPts, 0, 1);
+		if (m_path == null)
+			m_path = new GeometricPath();
+		m_path.lineTo(dstPts[0], dstPts[1]);
 	}
 
 	/**
@@ -1066,7 +1066,7 @@ public class Context
 		/*
 		 * Make sure that a previous point in path is defined.
 		 */
-		if (mPath == null || mPath.getMoveToCount() == 0)
+		if (m_path == null || m_path.getMoveToCount() == 0)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_MOVETO));
 
 		try
@@ -1075,15 +1075,15 @@ public class Context
 			 * Calculate position of last point in path in current
 			 * coordinate system.
 			 */
-			Point2D currentPoint = mPath.getShape().getCurrentPoint();
+			Point2D currentPoint = m_path.getShape().getCurrentPoint();
 
 			/*
 			 * Transform back to current world coordinate system.
 			 */
 // TODO should transform through mProjection too if it is not null.
-			if (mWorldCtm != null)
-				mWorldCtm.inverseTransform(currentPoint, currentPoint);
-			mCtm.inverseTransform(currentPoint, currentPoint);
+			if (m_worldCtm != null)
+				m_worldCtm.inverseTransform(currentPoint, currentPoint);
+			m_ctm.inverseTransform(currentPoint, currentPoint);
 
 			/*
 			 * Work out absolute position, based on last point.  Then draw
@@ -1126,22 +1126,22 @@ public class Context
 		/*
 		 * Make sure that a start point for arc was defined.
 		 */
-		if (mPath == null || mPath.getMoveToCount() == 0)
+		if (m_path == null || m_path.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ARC_START));
 
 		/*
 		 * Transform points from world coordinates
 		 * to millimetre position on page.
 		 */
-		if (mWorldCtm != null)
+		if (m_worldCtm != null)
 		{
-			mWorldCtm.transform(centrePts, 0, centrePts, 0, 1);
-			mWorldCtm.transform(endPts, 0, endPts, 0, 1);
+			m_worldCtm.transform(centrePts, 0, centrePts, 0, 1);
+			m_worldCtm.transform(endPts, 0, endPts, 0, 1);
 		}
-		mCtm.transform(centrePts, 0, dstPts, 0, 1);
-		mCtm.transform(endPts, 0, dstPts, 2, 1);
+		m_ctm.transform(centrePts, 0, dstPts, 0, 1);
+		m_ctm.transform(endPts, 0, dstPts, 2, 1);
 
-		mPath.arcTo(direction, dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
+		m_path.arcTo(direction, dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
 	}
 
 	/**
@@ -1170,20 +1170,20 @@ public class Context
 		/*
 		 * Make sure that a start point for curve was defined.
 		 */
-		if (mPath == null || mPath.getMoveToCount() == 0)
+		if (m_path == null || m_path.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_BEZIER_START));
 
 		/*
 		 * Transform points from world coordinates
 		 * to millimetre position on page.
 		 */
-		if (mWorldCtm != null)
+		if (m_worldCtm != null)
 		{
-			mWorldCtm.transform(pts, 0, pts, 0, pts.length / 2);
+			m_worldCtm.transform(pts, 0, pts, 0, pts.length / 2);
 		}
-		mCtm.transform(pts, 0, dstPts, 0, pts.length / 2);
+		m_ctm.transform(pts, 0, dstPts, 0, pts.length / 2);
 
-		mPath.curveTo(dstPts[0], dstPts[1], dstPts[2], dstPts[3], dstPts[4], dstPts[5]);
+		m_path.curveTo(dstPts[0], dstPts[1], dstPts[2], dstPts[3], dstPts[4], dstPts[5]);
 	}
 
 	/**
@@ -1199,7 +1199,7 @@ public class Context
 		/*
 		 * Make sure that a start point for sine wave was defined.
 		 */
-		if (mPath == null || mPath.getMoveToCount() == 0)
+		if (m_path == null || m_path.getMoveToCount() == 0)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_SINE_WAVE_START));
 
 		try
@@ -1208,15 +1208,15 @@ public class Context
 			 * Calculate position of last point in path in current
 			 * coordinate system.
 			 */
-			Point2D currentPoint = mPath.getShape().getCurrentPoint();
+			Point2D currentPoint = m_path.getShape().getCurrentPoint();
 
 			/*
 			 * Transform back to current world coordinate system.
 			 */
 //TODO should transform through mProjection too if it is not null.
-			if (mWorldCtm != null)
-				mWorldCtm.inverseTransform(currentPoint, currentPoint);
-			mCtm.inverseTransform(currentPoint, currentPoint);
+			if (m_worldCtm != null)
+				m_worldCtm.inverseTransform(currentPoint, currentPoint);
+			m_ctm.inverseTransform(currentPoint, currentPoint);
 
 			double xDiff = x - currentPoint.getX();
 			double yDiff = y - currentPoint.getY();
@@ -1284,17 +1284,17 @@ public class Context
 		 * Transform points from world coordinates
 		 * to millimetre position on page.
 		 */
-		if (mWorldCtm != null)
+		if (m_worldCtm != null)
 		{
-			mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+			m_worldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
 		}
-		mCtm.transform(cornerPts, 0, dstPts, 0, 2);
+		m_ctm.transform(cornerPts, 0, dstPts, 0, 2);
 
-		if (mPath == null)
-			mPath = new GeometricPath();
-		mPath.ellipseTo((dstPts[0] + dstPts[2]) / 2, (dstPts[1] + dstPts[3]) / 2,
-			(cornerPts[2] - cornerPts[0]) * mScaling,
-			(cornerPts[3] - cornerPts[1]) * mScaling, mRotation);
+		if (m_path == null)
+			m_path = new GeometricPath();
+		m_path.ellipseTo((dstPts[0] + dstPts[2]) / 2, (dstPts[1] + dstPts[3]) / 2,
+			(cornerPts[2] - cornerPts[0]) * m_scaling,
+			(cornerPts[3] - cornerPts[1]) * m_scaling, m_rotation);
 	}
 
 	/**
@@ -1307,10 +1307,10 @@ public class Context
 		 * If no path then clear any path we are using from another
 		 * context too.
 		 */
-		if (mPath != null)
-			mPath.reset();
+		if (m_path != null)
+			m_path.reset();
 		else
-			mExistingPath = null;
+			m_existingPath = null;
 	}
 
 	/**
@@ -1318,14 +1318,14 @@ public class Context
 	 */
 	public void closePath()
 	{
-		if (mPath != null)
+		if (m_path != null)
 		{
-			mPath.closePath();
+			m_path.closePath();
 		}
-		else if (mExistingPath != null)
+		else if (m_existingPath != null)
 		{
-			mPath = new GeometricPath(mExistingPath);
-			mPath.closePath();
+			m_path = new GeometricPath(m_existingPath);
+			m_path.closePath();
 		}
 	}
 
@@ -1341,8 +1341,8 @@ public class Context
 
 		if (path != null)
 		{
-			mPath = path.samplePath(spacing * mScaling,
-				offset * mScaling, resolution);
+			m_path = path.samplePath(spacing * m_scaling,
+				offset * m_scaling, resolution);
 		}
 	}
 
@@ -1358,8 +1358,8 @@ public class Context
 
 		if (path != null)
 		{
-			mPath = path.stripePath(spacing * mScaling,
-				angle + mRotation);
+			m_path = path.stripePath(spacing * m_scaling,
+				angle + m_rotation);
 		}
 	}
 
@@ -1373,8 +1373,8 @@ public class Context
 		if (path != null)
 		{
 			Point2D pt = Sinkhole.calculate(path.getShape());
-			mPath = new GeometricPath();
-			mPath.moveTo((float)pt.getX(), (float)pt.getY(), 0);
+			m_path = new GeometricPath();
+			m_path.moveTo((float)pt.getX(), (float)pt.getY(), 0);
 		}
 	}
 
@@ -1401,9 +1401,9 @@ public class Context
 			 * Transform rectangle from world coordinates
 			 * to millimetre position on page.
 			 */
-			if (mWorldCtm != null)
-				mWorldCtm.transform(srcPts, 0, srcPts, 0, 2);
-			mCtm.transform(srcPts, 0, dstPts, 0, 2);
+			if (m_worldCtm != null)
+				m_worldCtm.transform(srcPts, 0, srcPts, 0, 2);
+			m_ctm.transform(srcPts, 0, dstPts, 0, 2);
 
 			double resolution = getResolution();
 			x1 = Math.min(dstPts[0], dstPts[2]);
@@ -1420,14 +1420,14 @@ public class Context
 			{
 				ArrayList moveTos = path.getMoveTos();
 				ArrayList<Double> moveToRotations = path.getMoveToRotations();
-				mPath = new GeometricPath();
+				m_path = new GeometricPath();
 				for (int i = 0; i < moveTos.size(); i++)
 				{
 					Point2D.Float pt = (Point2D.Float)(moveTos.get(i));
 					if (rect.outcode(pt) == 0)
 					{
 						Double rotation = moveToRotations.get(i);
-						mPath.moveTo(pt.x, pt.y, rotation.doubleValue());
+						m_path.moveTo(pt.x, pt.y, rotation.doubleValue());
 					}
 				}
 				return;
@@ -1443,7 +1443,7 @@ public class Context
 				return;
 			if (!rect.intersects(bounds))
 			{
-				mPath = new GeometricPath();
+				m_path = new GeometricPath();
 				return;
 			}
 
@@ -1452,21 +1452,21 @@ public class Context
 			/*
 			 * Copy clipped path back to current path.
 			 */
-			if (mPath == path)
-				mPath.reset();
+			if (m_path == path)
+				m_path.reset();
 			else
-				mPath = new GeometricPath();
+				m_path = new GeometricPath();
 			float []coords = dstPts;
 			PathIterator pi = p.getPathIterator(Constants.IDENTITY_MATRIX);
 			while (!pi.isDone())
 			{
 				int segmentType = pi.currentSegment(coords);
 				if (segmentType == PathIterator.SEG_MOVETO)
-					mPath.moveTo(coords[0], coords[1], 0);
+					m_path.moveTo(coords[0], coords[1], 0);
 				else if (segmentType == PathIterator.SEG_LINETO)
-					mPath.lineTo(coords[0], coords[1]);
+					m_path.lineTo(coords[0], coords[1]);
 				else if (segmentType == PathIterator.SEG_CLOSE)
-					mPath.closePath();
+					m_path.closePath();
 				pi.next();
 			}
 		}
@@ -1496,16 +1496,16 @@ public class Context
 		 * Transform rectangle from world coordinates
 		 * to millimetre position on page.
 		 */
-		if (mWorldCtm != null)
-			mWorldCtm.transform(srcPts, 0, srcPts, 0, 2);
-		mCtm.transform(srcPts, 0, dstPts, 0, 2);
+		if (m_worldCtm != null)
+			m_worldCtm.transform(srcPts, 0, srcPts, 0, 2);
+		m_ctm.transform(srcPts, 0, dstPts, 0, 2);
 
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
 			/*
 			 * Get mask for this page and mark area as protected/unprotected.
 			 */
-			PageMask pageMask = mOutputFormat.getPageMask();
+			PageMask pageMask = m_outputFormat.getPageMask();
 
 			pageMask.setValue(Math.round(dstPts[0]), Math.round(dstPts[1]),
 				Math.round(dstPts[2]), Math.round(dstPts[3]), maskValue);
@@ -1521,12 +1521,12 @@ public class Context
 	public void setPageMask(Argument geometry, int maskValue)
 		throws MapyrusException
 	{
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
 			/*
 			 * Get mask for this page and mark area as protected/unprotected.
 			 */
-			PageMask pageMask = mOutputFormat.getPageMask();
+			PageMask pageMask = m_outputFormat.getPageMask();
 			GeometricPath path = new GeometricPath();
 			double []coords = geometry.getGeometryValue();
 			addGeometryToPath(coords, 0, path);
@@ -1540,12 +1540,12 @@ public class Context
 	 */
 	public void setPageMask(int maskValue) throws MapyrusException
 	{
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
 			GeometricPath path = getDefinedPath();
 			if (path != null)
 			{
-				PageMask pageMask = mOutputFormat.getPageMask();
+				PageMask pageMask = m_outputFormat.getPageMask();
 				pageMask.setValue(path.getShape(), maskValue);
 			}
 		}
@@ -1556,7 +1556,7 @@ public class Context
 	{
 		boolean retval = true;
 
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
 			double srcPts[] = new double[4];
 			float dstPts[] = new float[4];
@@ -1571,14 +1571,14 @@ public class Context
 			 * Transform rectangle from world coordinates
 			 * to millimetre position on page.
 			 */
-			if (mWorldCtm != null)
-				mWorldCtm.transform(srcPts, 0, srcPts, 0, 2);
-			mCtm.transform(srcPts, 0, dstPts, 0, 2);
+			if (m_worldCtm != null)
+				m_worldCtm.transform(srcPts, 0, srcPts, 0, 2);
+			m_ctm.transform(srcPts, 0, dstPts, 0, 2);
 
 			/*
 			 * Get mask for this page and check whether area is protected.
 			 */
-			PageMask pageMask = mOutputFormat.getPageMask();
+			PageMask pageMask = m_outputFormat.getPageMask();
 
 			retval = pageMask.isAllZero(Math.round(dstPts[0]), Math.round(dstPts[1]),
 				Math.round(dstPts[2]), Math.round(dstPts[3]));
@@ -1614,9 +1614,9 @@ public class Context
 					 * Transform rectangle from world coordinates
 					 * to millimetre position on page.
 					 */
-					if (mWorldCtm != null)
-						mWorldCtm.transform(srcPts, 0, srcPts, 0, 1);
-					mCtm.transform(srcPts, 0, dstPts, 0, 1);
+					if (m_worldCtm != null)
+						m_worldCtm.transform(srcPts, 0, srcPts, 0, 1);
+					m_ctm.transform(srcPts, 0, dstPts, 0, 1);
 
 					if (coords[index] == Argument.MOVETO)
 						path.moveTo(dstPts[0], dstPts[1], 0);
@@ -1647,7 +1647,7 @@ public class Context
 	{
 		boolean retval = true;
 
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
 			double coords[] = geometry.getGeometryValue();
 			GeometricPath path = new GeometricPath();
@@ -1656,7 +1656,7 @@ public class Context
 			/*
 			 * Get mask for this page and check whether area is protected.
 			 */
-			PageMask pageMask = mOutputFormat.getPageMask();
+			PageMask pageMask = m_outputFormat.getPageMask();
 			retval = pageMask.isAllZero(path.getShape());
 		}
 		return(retval);
@@ -1672,7 +1672,7 @@ public class Context
 		GeometricPath path = getDefinedPath();
 		if (path != null)
 		{
-			PageMask pageMask = mOutputFormat.getPageMask();
+			PageMask pageMask = m_outputFormat.getPageMask();
 			retval = pageMask.isAllZero(path.getShape());
 		}
 		return(retval);
@@ -1693,16 +1693,16 @@ public class Context
 		/*
 		 * Scale and rotate shift to current transformation matrix.
 		 */
-		if (!mCtm.isIdentity())
+		if (!m_ctm.isIdentity())
 		{
-			AffineTransform at = AffineTransform.getRotateInstance(mRotation);
-			at.scale(mScaling, mScaling);
+			AffineTransform at = AffineTransform.getRotateInstance(m_rotation);
+			at.scale(m_scaling, m_scaling);
 		
 			at.transform(coords, 0, coords, 0, 1);
 		}
 
 		if (path != null)
-			mPath = path.translatePath(coords[0], coords[1]);
+			m_path = path.translatePath(coords[0], coords[1]);
 	}
 
 	/**
@@ -1715,10 +1715,10 @@ public class Context
 		double resolution = getResolution();
 
 		for (int i = 0; i < distances.length; i++)
-			distances[i] *= mScaling;
+			distances[i] *= m_scaling;
 
 		if (path != null)
-			mPath = path.parallelPath(distances, resolution);
+			m_path = path.parallelPath(distances, resolution);
 	}
 
 	/**
@@ -1736,11 +1736,11 @@ public class Context
 		{
 			for (int i = 0; i < offsets.length; i++)
 			{
-				offsets[i] *= mScaling;
-				lengths[i] *= mScaling;
+				offsets[i] *= m_scaling;
+				lengths[i] *= m_scaling;
 			}
 
-			mPath = path.selectPath(offsets, lengths, resolution);
+			m_path = path.selectPath(offsets, lengths, resolution);
 		}
 	}
 
@@ -1753,7 +1753,7 @@ public class Context
 		double resolution = getResolution();
 
 		if (path != null)
-			mPath = path.reversePath(resolution);
+			m_path = path.reversePath(resolution);
 	}
 
 	/**
@@ -1766,10 +1766,10 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			setGraphicsAttributes(ATTRIBUTE_CLIP);
-			mOutputFormat.drawIcon(path.getMoveTos(), icon, size, mRotation, mScaling);
+			m_outputFormat.drawIcon(path.getMoveTos(), icon, size, m_rotation, m_scaling);
 		}
 	}
 
@@ -1782,7 +1782,7 @@ public class Context
 		throws IOException, MapyrusException
 	{
 		BufferedImage image;
-		Rectangle2D.Double worldExtents = mPageWorldExtents;
+		Rectangle2D.Double worldExtents = m_pageWorldExtents;
 		if (worldExtents == null)
 			worldExtents = getWorldExtents();
 		GeoImageBoundingBox imageBounds;
@@ -1804,7 +1804,7 @@ public class Context
 			if (token.startsWith("clipfile="))
 			{
 				String clipFilename = token.substring(9);
-				ImageClippingFile clipFile = new ImageClippingFile(clipFilename, mWorldCtm);
+				ImageClippingFile clipFile = new ImageClippingFile(clipFilename, m_worldCtm);
 				clipPolygon = clipFile.getClippingPolygon();
 			}
 			else if (token.startsWith("hue="))
@@ -1872,7 +1872,7 @@ public class Context
 		 * Do not open it for display if it is not visible
 		 * on the page.
 		 */
-		imageBounds = (GeoImageBoundingBox)mImageBoundsCache.get(filename);
+		imageBounds = (GeoImageBoundingBox)m_imageBoundsCache.get(filename);
 		if (imageBounds != null &&
 			(!imageBounds.getBounds().intersects(worldExtents)))
 		{
@@ -1926,7 +1926,7 @@ public class Context
 			 * we have no idea how they operate.
 			 */
 			if (!(isWMSRequest || readerClass != null))
-				mImageBoundsCache.put(filename, imageBounds);
+				m_imageBoundsCache.put(filename, imageBounds);
 		}
 
 		/*
@@ -1939,10 +1939,10 @@ public class Context
 		/*
 		 * Save original path and clipping path.
 		 */
-		GeometricPath pathCopy = mPath;
+		GeometricPath pathCopy = m_path;
 		ArrayList<GeometricPath> clippingPathCopy;
-		if (mClippingPaths != null)
-			clippingPathCopy = new ArrayList<GeometricPath>(mClippingPaths);
+		if (m_clippingPaths != null)
+			clippingPathCopy = new ArrayList<GeometricPath>(m_clippingPaths);
 		else
 			clippingPathCopy = null;
 
@@ -1952,8 +1952,8 @@ public class Context
 			 * Temporarily set path to clip polygon read from file
 			 * and clip to it.
 			 */
-			mOutputFormat.saveState();
-			mPath = clipPolygon;
+			m_outputFormat.saveState();
+			m_path = clipPolygon;
 			clipInside();
 		}
 
@@ -1966,8 +1966,8 @@ public class Context
 			cornerPts[2] = bounds.getMaxX();
 			cornerPts[3] = bounds.getMaxY();
 
-			if (mWorldCtm != null)
-				mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+			if (m_worldCtm != null)
+				m_worldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
 
 			if (hue != 1 || saturation != 1 || brightness != 1)
 			{
@@ -1977,7 +1977,7 @@ public class Context
 			/*
 			 * Entire image is on page.  Draw it all.
 			 */
-			mOutputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
+			m_outputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
 					cornerPts[2] - cornerPts[0],
 					cornerPts[3] - cornerPts[1]);
 		}
@@ -2030,8 +2030,8 @@ public class Context
 			cornerPts[2] = wx2;
 			cornerPts[3] = wy2;
 
-			if (mWorldCtm != null)
-				mWorldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
+			if (m_worldCtm != null)
+				m_worldCtm.transform(cornerPts, 0, cornerPts, 0, 2);
 
 			int iWidth = (int)Math.round(ix2 - ix1);
 			int iHeight = (int)Math.round(iy2 - iy1);
@@ -2059,7 +2059,7 @@ public class Context
 				ImageFilter.filter(image, hue, saturation, brightness);
 			}
 
-			mOutputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
+			m_outputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],
 				cornerPts[2] - cornerPts[0], cornerPts[3] - cornerPts[1]);
 		}
 
@@ -2068,12 +2068,12 @@ public class Context
 		 */
 		if (clipPolygon != null)
 		{
-			mPath = pathCopy;
-			mClippingPaths = clippingPathCopy;
-			if (!mOutputFormat.restoreState())
+			m_path = pathCopy;
+			m_clippingPaths = clippingPathCopy;
+			if (!m_outputFormat.restoreState())
 			{
-				mAttributesChanged |= ATTRIBUTE_CLIP;
-				mAttributesPending |= ATTRIBUTE_CLIP;
+				m_attributesChanged |= ATTRIBUTE_CLIP;
+				m_attributesPending |= ATTRIBUTE_CLIP;
 			}
 		}
 	}
@@ -2088,11 +2088,11 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			setGraphicsAttributes(ATTRIBUTE_CLIP);
-			mOutputFormat.drawEPS(path.getMoveTos(), filename,
-				size, mRotation, mScaling);
+			m_outputFormat.drawEPS(path.getMoveTos(), filename,
+				size, m_rotation, m_scaling);
 		}
 	}
 
@@ -2106,11 +2106,11 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			setGraphicsAttributes(ATTRIBUTE_CLIP);
-			mOutputFormat.drawSVG(path.getMoveTos(), filename,
-				size, mRotation, mScaling);
+			m_outputFormat.drawSVG(path.getMoveTos(), filename,
+				size, m_rotation, m_scaling);
 		}
 	}
 
@@ -2121,7 +2121,7 @@ public class Context
 	public void addSVGCode(String xml)
 		throws IOException, MapyrusException
 	{
-		mOutputFormat.addSVGCode(xml);
+		m_outputFormat.addSVGCode(xml);
 	}
 
 	/**
@@ -2135,11 +2135,11 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			setGraphicsAttributes(ATTRIBUTE_CLIP);
-			mOutputFormat.drawPDF(path.getMoveTos(), filename, page,
-				size, mRotation, mScaling);
+			m_outputFormat.drawPDF(path.getMoveTos(), filename, page,
+				size, m_rotation, m_scaling);
 		}
 	}
 
@@ -2151,10 +2151,10 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_LINESTYLE|ATTRIBUTE_CLIP);
-			mOutputFormat.stroke(path.getShape(), xmlAttributes);
+			m_outputFormat.stroke(path.getShape(), xmlAttributes);
 		}
 	}
 
@@ -2166,10 +2166,10 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 		
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{	
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_CLIP);
-			mOutputFormat.fill(path.getShape(), xmlAttributes);
+			m_outputFormat.fill(path.getShape(), xmlAttributes);
 		}
 	}
 
@@ -2186,15 +2186,15 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
-			if (mOutputFormat.getPageFormat().equals("svg"))
+			if (m_outputFormat.getPageFormat().equals("svg"))
 			{
 				boolean isVertical = c1.equals(c2); 
 				if (isVertical)
-					mOutputFormat.gradientFill(path.getShape(), isVertical, c1, c3);
+					m_outputFormat.gradientFill(path.getShape(), isVertical, c1, c3);
 				else
-					mOutputFormat.gradientFill(path.getShape(), isVertical, c1, c2);
+					m_outputFormat.gradientFill(path.getShape(), isVertical, c1, c2);
 			}
 			else
 			{
@@ -2204,10 +2204,10 @@ public class Context
 				/*
 				 * Temporarily set clipping path to be inside the current path.
 				 */
-				mOutputFormat.saveState();
-				if (mClippingPaths == null)
-					mClippingPaths = new ArrayList<GeometricPath>();
-				ArrayList<GeometricPath> copy = new ArrayList<GeometricPath>(mClippingPaths);
+				m_outputFormat.saveState();
+				if (m_clippingPaths == null)
+					m_clippingPaths = new ArrayList<GeometricPath>();
+				ArrayList<GeometricPath> copy = new ArrayList<GeometricPath>(m_clippingPaths);
 				clipInside();
 				setGraphicsAttributes(ATTRIBUTE_CLIP);
 
@@ -2217,15 +2217,15 @@ public class Context
 				BufferedImage image = GradientFillFactory.getImage(c1, c2, c3, c4, c5);
 				ArrayList<Point2D> coords = new ArrayList<Point2D>();
 				coords.add(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
-				mOutputFormat.drawIcon(coords, image,
+				m_outputFormat.drawIcon(coords, image,
 					Math.max(bounds.getWidth(), bounds.getHeight()), 0.0, 1.0);
 	
 				/*
 				 * Restore original clipping path.
 				 */
-				mClippingPaths = copy;
-				mOutputFormat.setClipAttribute(mClippingPaths);
-				mOutputFormat.restoreState();
+				m_clippingPaths = copy;
+				m_outputFormat.setClipAttribute(m_clippingPaths);
+				m_outputFormat.restoreState();
 			}
 		}
 	}
@@ -2238,9 +2238,9 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 		
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{	
-			mOutputFormat.setEventScript(path.getShape(), script);
+			m_outputFormat.setEventScript(path.getShape(), script);
 		}
 	}
 
@@ -2253,7 +2253,7 @@ public class Context
 		GeometricPath path = getDefinedPath();
 		GeometricPath protectedPath;
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			/*
 			 * Add a rectangle around the edge of the page as the new polygon
@@ -2261,8 +2261,8 @@ public class Context
 			 * opposite direction so winding rule works) and only
 			 * the area outside the path is then visible.
 			 */
-			float width = (float)(mOutputFormat.getPageWidth());
-			float height = (float)(mOutputFormat.getPageHeight());
+			float width = (float)(m_outputFormat.getPageWidth());
+			float height = (float)(m_outputFormat.getPageHeight());
 
 			protectedPath = new GeometricPath();
 			protectedPath.moveTo(0.0f, 0.0f, 0.0);
@@ -2287,16 +2287,16 @@ public class Context
 			protectedPath.closePath();
 			protectedPath.append(path, false);
 
-			mAttributesPending |= ATTRIBUTE_CLIP;
-			mAttributesChanged |= ATTRIBUTE_CLIP;
-			mOutputFormat.clip(protectedPath.getShape());
+			m_attributesPending |= ATTRIBUTE_CLIP;
+			m_attributesChanged |= ATTRIBUTE_CLIP;
+			m_outputFormat.clip(protectedPath.getShape());
 
 			/*
 			 * Add this polygon to list of paths we are clipping against.
 			 */
-			if (mClippingPaths == null)
-				mClippingPaths = new ArrayList<GeometricPath>();
-			mClippingPaths.add(protectedPath);
+			if (m_clippingPaths == null)
+				m_clippingPaths = new ArrayList<GeometricPath>();
+			m_clippingPaths.add(protectedPath);
 		}
 	}
 
@@ -2308,17 +2308,17 @@ public class Context
 		GeometricPath path = getDefinedPath();
 		GeometricPath clipPath;
 
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{
 			clipPath = new GeometricPath(path);
-			if (mClippingPaths == null)
-				mClippingPaths = new ArrayList<GeometricPath>();
-			mClippingPaths.add(clipPath);
-			mAttributesPending |= ATTRIBUTE_CLIP;
-			mAttributesChanged |= ATTRIBUTE_CLIP;
-			if (mOutputFormat != null)
+			if (m_clippingPaths == null)
+				m_clippingPaths = new ArrayList<GeometricPath>();
+			m_clippingPaths.add(clipPath);
+			m_attributesPending |= ATTRIBUTE_CLIP;
+			m_attributesChanged |= ATTRIBUTE_CLIP;
+			if (m_outputFormat != null)
 			{
-				mOutputFormat.clip(clipPath.getShape());
+				m_outputFormat.clip(clipPath.getShape());
 			}
 		}
 	}
@@ -2331,10 +2331,10 @@ public class Context
 	{
 		GeometricPath path = getDefinedPath();
 		
-		if (path != null && mOutputFormat != null)
+		if (path != null && m_outputFormat != null)
 		{	
 			setGraphicsAttributes(ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP);
-			mOutputFormat.label(path.getMoveTos(), label);
+			m_outputFormat.label(path.getMoveTos(), label);
 		}
 	}
 
@@ -2352,10 +2352,10 @@ public class Context
 		GeometricPath path = getDefinedPath();
 		Point2D.Double startPt, endPt;
 
-		if (path != null && path.getMoveToCount() > 0 && mOutputFormat != null)
+		if (path != null && path.getMoveToCount() > 0 && m_outputFormat != null)
 		{
-			spacing *= mScaling;
-			offset *= mScaling;
+			spacing *= m_scaling;
+			offset *= m_scaling;
 			int nLetters = label.length();
 
 			/*
@@ -2375,9 +2375,9 @@ public class Context
 				totalStringWidth += stringWidths[i];
 			}
 
-			if ((mJustify & OutputFormat.JUSTIFY_RIGHT) != 0)
+			if ((m_justify & OutputFormat.JUSTIFY_RIGHT) != 0)
 				offset -= totalStringWidth;
-			if ((mJustify & OutputFormat.JUSTIFY_CENTER) != 0)
+			if ((m_justify & OutputFormat.JUSTIFY_CENTER) != 0)
 				offset -= totalStringWidth / 2;
 
 			/*
@@ -2394,8 +2394,8 @@ public class Context
 			{
 				Point2D.Float pt = (Point2D.Float)path.getMoveTos().get(0);
 				startPt = new Point2D.Double(pt.getX(), pt.getY());
-				endPt = new Point2D.Double(startPt.x + Math.cos(mRotation) * totalStringWidth,
-					startPt.y + Math.sin(mRotation) * totalStringWidth);
+				endPt = new Point2D.Double(startPt.x + Math.cos(m_rotation) * totalStringWidth,
+					startPt.y + Math.sin(m_rotation) * totalStringWidth);
 				pathPoints.add(startPt);
 				pathPoints.add(endPt);
 			}
@@ -2411,7 +2411,7 @@ public class Context
 			int step;
 			int justify;
 
-			if (startPt.distanceSq(endPt) > 0 && Math.abs(angle + mRotation) > Math.PI / 2)
+			if (startPt.distanceSq(endPt) > 0 && Math.abs(angle + m_rotation) > Math.PI / 2)
 			{
 				startIndex = pathPoints.size() - 1;
 				endIndex = 0;
@@ -2468,7 +2468,7 @@ public class Context
 					pointPath.clear();
 					pointPath.add(new Point2D.Double(x, y));
 
-					mOutputFormat.label(pointPath, letters[letterIndex]);
+					m_outputFormat.label(pointPath, letters[letterIndex]);
 					offset += stringWidths[letterIndex] + spacing;
 					letterIndex++;
 				}
@@ -2493,7 +2493,7 @@ public class Context
 	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
-		if (path == null || mOutputFormat == null)
+		if (path == null || m_outputFormat == null)
 			return;
 
 		double columnWidths[];
@@ -2629,7 +2629,7 @@ public class Context
 		/*
 		 * Save state so we can temporarily change label justification.
 		 */
-		mOutputFormat.saveState();
+		m_outputFormat.saveState();
 		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_TOP);
 		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|
 			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
@@ -2684,18 +2684,18 @@ public class Context
 
 					if (!bgColors.isEmpty())
 					{
-						mOutputFormat.saveState();
+						m_outputFormat.saveState();
 						int slotIndex = k * columns.size() + j;
 						Color c = (Color)bgColors.get(slotIndex % bgColors.size());
-						mOutputFormat.setColorAttribute(c);
-						mOutputFormat.fill(box.getShape(), null);
-						mOutputFormat.restoreState();
-						mAttributesChanged |= ATTRIBUTE_COLOR;
-						mAttributesPending |= ATTRIBUTE_COLOR;
+						m_outputFormat.setColorAttribute(c);
+						m_outputFormat.fill(box.getShape(), null);
+						m_outputFormat.restoreState();
+						m_attributesChanged |= ATTRIBUTE_COLOR;
+						m_attributesPending |= ATTRIBUTE_COLOR;
 						setGraphicsAttributes(ATTRIBUTE_COLOR);
 					}
 					if (drawBorders)
-						mOutputFormat.stroke(box.getShape(), null);
+						m_outputFormat.stroke(box.getShape(), null);
 
 					String s = arg.getHashMapEntry(primaryKeys[k].toString()).toString();
 					Point2D.Float labelPt = new Point2D.Float();
@@ -2710,7 +2710,7 @@ public class Context
 
 					ArrayList<Point2D> ptList = new ArrayList<Point2D>();
 					ptList.add(labelPt);
-					mOutputFormat.label(ptList, s);
+					m_outputFormat.label(ptList, s);
 
 					ptCopy.y -= (yPadding + rowHeights[k] + yPadding); 
 				}
@@ -2718,10 +2718,10 @@ public class Context
 			}
 		}
 
-		mOutputFormat.restoreState();
+		m_outputFormat.restoreState();
 		setJustify(oldJustify);
-		mAttributesChanged |= attributeMask;
-		mAttributesPending |= attributeMask;
+		m_attributesChanged |= attributeMask;
+		m_attributesPending |= attributeMask;
 	}
 
 	/**
@@ -2732,7 +2732,7 @@ public class Context
 	public void drawTree(String extras, Argument tree) throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
-		if (path == null || mOutputFormat == null)
+		if (path == null || m_outputFormat == null)
 			return;
 
 		StringDimension dim = getStringDimension("X", false);
@@ -2756,7 +2756,7 @@ public class Context
 		/*
 		 * Save state so we can temporarily change label justification.
 		 */
-		mOutputFormat.saveState();
+		m_outputFormat.saveState();
 		int oldJustify = setJustify(OutputFormat.JUSTIFY_LEFT | OutputFormat.JUSTIFY_TOP);
 		int attributeMask = ATTRIBUTE_COLOR|ATTRIBUTE_BLEND|ATTRIBUTE_FONT|
 			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
@@ -2822,7 +2822,7 @@ public class Context
 					box.lineTo(x1, y2);
 					box.lineTo(x2, y2);
 					if (k > 0)
-						mOutputFormat.stroke(box.getShape(), null);
+						m_outputFormat.stroke(box.getShape(), null);
 
 					Point2D.Float labelPt = new Point2D.Float();
 					labelPt.x = (float)(ptCopy.x + dim.getWidth() * k);
@@ -2832,7 +2832,7 @@ public class Context
 
 					ArrayList<Point2D> ptList = new ArrayList<Point2D>();
 					ptList.add(labelPt);
-					mOutputFormat.label(ptList, s);
+					m_outputFormat.label(ptList, s);
 					StringDimension sDim = getStringDimension(s, false);
 
 					ptCopy.y -= Math.max(sDim.getHeight(), dim.getHeight());
@@ -2842,10 +2842,10 @@ public class Context
 			}
 		}
 
-		mOutputFormat.restoreState();
+		m_outputFormat.restoreState();
 		setJustify(oldJustify);
-		mAttributesChanged |= attributeMask;
-		mAttributesPending |= attributeMask;
+		m_attributesChanged |= attributeMask;
+		m_attributesPending |= attributeMask;
 	}
 
 	/**
@@ -3031,13 +3031,13 @@ public class Context
 				 * coordinates, otherwise we must convert all coordinates to be relative
 				 * to the current transformation matrix and build a new list.
 				 */
-				if (mCtm.isIdentity())
+				if (m_ctm.isIdentity())
 				{
 					retval = path.getMoveTos();
 				}
 				else
 				{
-					inverse = mCtm.createInverse();
+					inverse = m_ctm.createInverse();
 					moveTos = path.getMoveTos();
 					retval = new ArrayList<Point2D>(moveTos.size());
 
@@ -3098,10 +3098,10 @@ public class Context
 		/*
 		 * Variable is not set if no lookup table is defined.
 		 */
-		if (mVars == null)
+		if (m_vars == null)
 			retval = null;
 		else		
-			retval = (Argument)mVars.get(varName);
+			retval = (Argument)m_vars.get(varName);
 			
 		return(retval);
 	}
@@ -3116,9 +3116,9 @@ public class Context
 		/*
 		 * Record that variable is local.
 		 */
-		if (mLocalVars == null)
-			mLocalVars = new HashSet<String>();
-		mLocalVars.add(varName);
+		if (m_localVars == null)
+			m_localVars = new HashSet<String>();
+		m_localVars.add(varName);
 	}
 
 	/**
@@ -3129,7 +3129,7 @@ public class Context
 	 */
 	public boolean hasLocalScope(String varName)
 	{
-		return(mLocalVars != null && mLocalVars.contains(varName));
+		return(m_localVars != null && m_localVars.contains(varName));
 	}
 
 	/**
@@ -3143,8 +3143,8 @@ public class Context
 		/*
 		 * Create new variable.
 		 */
-		if (mVars == null)
-			mVars = new HashMap<String, Argument>();
+		if (m_vars == null)
+			m_vars = new HashMap<String, Argument>();
 
 		/*
 		 * Clone hashmap variables to avoid changes to entries
@@ -3152,7 +3152,7 @@ public class Context
 		 */
 		if (value.getType() == Argument.HASHMAP)
 			value = (Argument)value.clone();
-		mVars.put(varName, value);
+		m_vars.put(varName, value);
 	}
 
 	/**
@@ -3164,13 +3164,13 @@ public class Context
 	 */
 	public void defineHashMapEntry(String hashMapName, String key, Argument value)
 	{
-		if (mVars == null)
-			mVars = new HashMap<String, Argument>();
+		if (m_vars == null)
+			m_vars = new HashMap<String, Argument>();
 
 		/*
 		 * Create new entry in a hash map.
 		 */
-		Argument arg = (Argument)mVars.get(hashMapName);
+		Argument arg = (Argument)m_vars.get(hashMapName);
 		if (arg == null || arg.getType() != Argument.HASHMAP)
 		{
 			/*
@@ -3178,7 +3178,7 @@ public class Context
 			 * create new one.
 			 */
 			arg = new Argument();
-			mVars.put(hashMapName, arg);
+			m_vars.put(hashMapName, arg);
 			
 		}
 		arg.addHashMapEntry(key, value);
@@ -3195,7 +3195,7 @@ public class Context
 	{
 		StringDimension retval;
 
-		if (mOutputFormat != null)
+		if (m_outputFormat != null)
 		{
 			/*
 			 * Make sure current font is set *and* pass current font
@@ -3203,17 +3203,17 @@ public class Context
 			 * the font and then forget it.
 			 */
 			setGraphicsAttributes(ATTRIBUTE_FONT);
-			retval = mOutputFormat.getStringDimension(s, mFontName, mFontSize, mFontLineSpacing);
+			retval = m_outputFormat.getStringDimension(s, m_fontName, m_fontSize, m_fontLineSpacing);
 			double w = retval.getWidth();
 			double h = retval.getHeight();
 
-			if (mPageWorldExtents != null && scaleToWorlds)
+			if (m_pageWorldExtents != null && scaleToWorlds)
 			{
-				w = w / mOutputFormat.getPageWidth() * mPageWorldExtents.getWidth();
-				h = h / mOutputFormat.getPageHeight() * mPageWorldExtents.getHeight();
+				w = w / m_outputFormat.getPageWidth() * m_pageWorldExtents.getWidth();
+				h = h / m_outputFormat.getPageHeight() * m_pageWorldExtents.getHeight();
 			}
-			w = w / mScaling;
-			h = h / mScaling;
+			w = w / m_scaling;
+			h = h / m_scaling;
 			retval.setSize(w, h);
 		}
 		else

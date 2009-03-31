@@ -76,32 +76,32 @@ public class ContextStack
 	/*
 	 * Stack of contexts, with current context in last slot.
 	 */
-	private LinkedList<Context> mStack;
+	private LinkedList<Context> m_stack;
 
 	/*
 	 * List of legend keys encountered whilst interpreting statements.
 	 */
-	private LegendEntryList mLegendEntries;
+	private LegendEntryList m_legendEntries;
 
 	/*
 	 * Cache of icons we've already used and are likely to use again.
 	 */
-	private LRUCache<String, BufferedImage> mIconCache;
+	private LRUCache<String, BufferedImage> m_iconCache;
 
 	/*
 	 * Time at which this context was allocated.
 	 */
-	private long mStartTime;
+	private long m_startTime;
 
 	/*
 	 * Point clicked in HTML imagemap and passed in HTTP request we are processing.
 	 */
-	private Point mImagemapPoint;
+	private Point m_imagemapPoint;
 
 	/*
 	 * HTTP header to return to HTTP client.
 	 */
-	private String mHTTPResponse;
+	private String m_HTTPResponse;
 
 	/**
 	 * Create new stack of contexts to manage state as procedure blocks
@@ -109,13 +109,13 @@ public class ContextStack
 	 */
 	public ContextStack()
 	{
-		mStack = new LinkedList<Context>();
-		mStack.add(new Context());
-		mStartTime = System.currentTimeMillis();
-		mImagemapPoint = null;
-		mLegendEntries = new LegendEntryList();
-		mIconCache = new LRUCache<String, BufferedImage>(Constants.ICON_CACHE_SIZE);
-		mHTTPResponse = HTTPRequest.HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
+		m_stack = new LinkedList<Context>();
+		m_stack.add(new Context());
+		m_startTime = System.currentTimeMillis();
+		m_imagemapPoint = null;
+		m_legendEntries = new LegendEntryList();
+		m_iconCache = new LRUCache<String, BufferedImage>(Constants.ICON_CACHE_SIZE);
+		m_HTTPResponse = HTTPRequest.HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
 			HTTPRequest.CONTENT_TYPE_KEYWORD + ": " + MimeTypes.get("html") +
 			Constants.LINE_SEPARATOR;
 	}
@@ -126,7 +126,7 @@ public class ContextStack
 	 */
 	private Context getCurrentContext()
 	{
-		return((Context)mStack.getLast());
+		return((Context)m_stack.getLast());
 	}
 
 	/**
@@ -136,14 +136,14 @@ public class ContextStack
 	private int popContext()
 		throws IOException, MapyrusException
 	{
-		int i = mStack.size();
+		int i = m_stack.size();
 
 		if (i > 0)
 		{
 			/*
 			 * Finish off current context, remove it from stack.
 			 */
-			Context context = (Context)mStack.removeLast();
+			Context context = (Context)m_stack.removeLast();
 			i--;
 			int attributesSet = context.closeContext();
 
@@ -165,11 +165,11 @@ public class ContextStack
 	 */
 	private void pushContext(String blockName) throws MapyrusException
 	{
-		if (mStack.size() == MAX_STACK_LENGTH)
+		if (m_stack.size() == MAX_STACK_LENGTH)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.RECURSION));
 		}
-		mStack.add(new Context(getCurrentContext(), blockName));
+		m_stack.add(new Context(getCurrentContext(), blockName));
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class ContextStack
 	 */
 	public void setImagemapPoint(Point pt)
 	{
-		mImagemapPoint = pt;				
+		m_imagemapPoint = pt;				
 	}
 
 	/**
@@ -519,7 +519,7 @@ public class ContextStack
 		/*
 		 * Have we opened icon before and cached it?
 		 */
-		icon = (BufferedImage)mIconCache.get(filename);
+		icon = (BufferedImage)m_iconCache.get(filename);
 		if (icon == null)
 		{
 			URL url;
@@ -596,7 +596,7 @@ public class ContextStack
 			 * it in a different color next time.
 			 */
 			if ((!isDigits) && icon.getHeight() * icon.getWidth() <= 128 * 128)
-				mIconCache.put(filename, icon);
+				m_iconCache.put(filename, icon);
 		}
 		getCurrentContext().drawIcon(icon, size);
 	}
@@ -1140,7 +1140,7 @@ public class ContextStack
 				 * The elapsed time in seconds since this context was created
 				 * at the beginning of interpreting a file.
 				 */
-				retval = new Argument((System.currentTimeMillis() - mStartTime) / 1000.0);
+				retval = new Argument((System.currentTimeMillis() - m_startTime) / 1000.0);
 			}
 			else if (c == 't' && varName.startsWith(INTERNAL_VARIABLE_PREFIX + "time."))
 			{
@@ -1227,11 +1227,11 @@ public class ContextStack
 			}
 			else if (c == 'k' && varName.equals(INTERNAL_VARIABLE_PREFIX + "key.count"))
 			{
-				retval = new Argument(mLegendEntries.size());
+				retval = new Argument(m_legendEntries.size());
 			}
 			else if (c == 'k' && varName.equals(INTERNAL_VARIABLE_PREFIX + "key.next"))
 			{
-				LegendEntry top = mLegendEntries.first();
+				LegendEntry top = m_legendEntries.first();
 				if (top == null)
 					retval = Argument.emptyString;
 				else
@@ -1368,23 +1368,23 @@ public class ContextStack
 			}
 			else if (varName.equals(INTERNAL_VARIABLE_PREFIX + IMAGEMAP_VARIABLE + ".x"))
 			{
-				if (mImagemapPoint == null)
+				if (m_imagemapPoint == null)
 					retval = Argument.numericMinusOne;
 				else
-					retval = new Argument(mImagemapPoint.x);
+					retval = new Argument(m_imagemapPoint.x);
 			}
 			else if (varName.equals(INTERNAL_VARIABLE_PREFIX + IMAGEMAP_VARIABLE + ".y"))
 			{
-				if (mImagemapPoint == null)
+				if (m_imagemapPoint == null)
 					retval = Argument.numericMinusOne;
 				else
-					retval = new Argument(mImagemapPoint.y);
+					retval = new Argument(m_imagemapPoint.y);
 			}
 		}
 		else
 		{
-			Context context = (Context)(mStack.getLast());
-			if (mStack.size() > 1 && context.hasLocalScope(varName))
+			Context context = (Context)(m_stack.getLast());
+			if (m_stack.size() > 1 && context.hasLocalScope(varName))
 			{
 				/*
 				 * Lookup local variable in current context.
@@ -1397,7 +1397,7 @@ public class ContextStack
 				 * Variable not defined in current context, is
 				 * it set as a global in the first context instead?
 				 */
-				context = (Context)(mStack.getFirst());
+				context = (Context)(m_stack.getFirst());
 				retval = context.getVariableValue(varName);
 			
 				String property = null;
@@ -1484,7 +1484,7 @@ public class ContextStack
 		if (currentContext.hasLocalScope(varName))
 			c = currentContext;
 		else
-			c = (Context)(mStack.getFirst());
+			c = (Context)(m_stack.getFirst());
 
 		c.defineVariable(varName, value);
 	}
@@ -1508,7 +1508,7 @@ public class ContextStack
 		if (currentContext.hasLocalScope(hashMapName))
 			c = currentContext;
 		else
-			c = (Context)(mStack.getFirst());
+			c = (Context)(m_stack.getFirst());
 
 		c.defineHashMapEntry(hashMapName, key, value);
 	}
@@ -1531,7 +1531,7 @@ public class ContextStack
 		 */
 		if (blockName != null)
 		{
-			mLegendEntries.add(blockName, legendArgs, legendArgIndex,
+			m_legendEntries.add(blockName, legendArgs, legendArgIndex,
 				nLegendArgs, type, description);
 		}
 	}
@@ -1542,7 +1542,7 @@ public class ContextStack
 	 */
 	public LegendEntryList getLegendEntries()
 	{
-		return(mLegendEntries);
+		return(m_legendEntries);
 	}
 
 	/**
@@ -1551,7 +1551,7 @@ public class ContextStack
 	 */
 	public void setHTTPReponse(String response)
 	{
-		mHTTPResponse = response;
+		m_HTTPResponse = response;
 	}
 
 	/**
@@ -1560,7 +1560,7 @@ public class ContextStack
 	 */
 	public String getHTTPResponse()
 	{
-		return(mHTTPResponse);
+		return(m_HTTPResponse);
 	}
 
 	/**

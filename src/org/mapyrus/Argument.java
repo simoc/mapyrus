@@ -93,13 +93,13 @@ public class Argument implements Comparable<Argument>, Cloneable
 		new Argument(Argument.GEOMETRY_POINT,
 			new double[]{Argument.GEOMETRY_POINT, 0});
 
-	private int mType;
-	private double mNumericValue;
-	private String mStringValue;
-	private String mVarname;
-	private double []mGeometryValue;
-	private Rectangle2D.Double mGeometryBoundingBox;
-	private HashMap<String, Argument> mHashMap;
+	private int m_type;
+	private double m_numericValue;
+	private String m_stringValue;
+	private String m_varname;
+	private double []m_geometryValue;
+	private Rectangle2D.Double m_geometryBoundingBox;
+	private HashMap<String, Argument> m_hashMap;
 
 	/**
 	 * Create a new numeric argument.
@@ -107,8 +107,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Argument(double d)
 	{
-		mType = NUMERIC;
-		mNumericValue = d;
+		m_type = NUMERIC;
+		m_numericValue = d;
 	}
 
 	/**
@@ -120,18 +120,18 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Argument(int type, String s)
 	{
-		mType = type;
+		m_type = type;
 
 		if (type == STRING)
-			mStringValue = s;
+			m_stringValue = s;
 		else
-			mVarname = s;
+			m_varname = s;
 
 		/*
 		 * We don't know the numeric or geometry value of this argument.
 		 */
-		mNumericValue = Double.NaN;
-		mGeometryValue = null;
+		m_numericValue = Double.NaN;
+		m_geometryValue = null;
 	}
 
 	/**
@@ -140,8 +140,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Argument()
 	{
-		mType = HASHMAP;
-		mHashMap = new HashMap<String, Argument>();	
+		m_type = HASHMAP;
+		m_hashMap = new HashMap<String, Argument>();	
 	}
 
 	/**
@@ -182,8 +182,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Argument(int geometryType, double []coords)
 	{
-		mType = geometryType;
-		mGeometryValue = coords;
+		m_type = geometryType;
+		m_geometryValue = coords;
 	}
 
 	/**
@@ -240,9 +240,9 @@ public class Argument implements Comparable<Argument>, Cloneable
 								 * Set each point in multipoint geometry as
 								 * a separate point geometry.
 								 */
-								mGeometryValue[index] = GEOMETRY_POINT;
-								mGeometryValue[index + 1] = 1;
-								mGeometryValue[index + 2] = MOVETO;
+								m_geometryValue[index] = GEOMETRY_POINT;
+								m_geometryValue[index + 1] = 1;
+								m_geometryValue[index + 2] = MOVETO;
 								index += 3;
 							}
 							else if (counter == 0)
@@ -251,22 +251,22 @@ public class Argument implements Comparable<Argument>, Cloneable
 								 * Move to first coordinate pair, then add a
 								 * line to each subsequent pair.
 								 */
-								mGeometryValue[index] = MOVETO;
+								m_geometryValue[index] = MOVETO;
 								index++;
 							}
 							else
 							{
-								mGeometryValue[index] = LINETO;
+								m_geometryValue[index] = LINETO;
 								index++;
 							}
 
-							mGeometryValue[index] = Double.parseDouble(token);
+							m_geometryValue[index] = Double.parseDouble(token);
 							index++;
 							foundX = true;
 						}
 						else if (foundY == false)
 						{
-							mGeometryValue[index] = Double.parseDouble(token);
+							m_geometryValue[index] = Double.parseDouble(token);
 							index++;
 							foundY = true;
 							counter++;
@@ -364,10 +364,10 @@ public class Argument implements Comparable<Argument>, Cloneable
 				 */
 				if (isMultiLinestring)
 				{
-					mGeometryValue[index] = GEOMETRY_LINESTRING;
+					m_geometryValue[index] = GEOMETRY_LINESTRING;
 					index++;
 					nCoords = parseCoordinateList(wktGeometry, st, index + 1, false);
-					mGeometryValue[index] = nCoords;
+					m_geometryValue[index] = nCoords;
 					index++;
 					counter++;
 				}
@@ -406,7 +406,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 		 * Set number of coordinate pairs for POLYGON,
 		 * number of sub-geometries for MULTILINESTRING. 
 		 */
-		mGeometryValue[geometryIndex] = counter;  
+		m_geometryValue[geometryIndex] = counter;  
 		return(index);
 	}
 
@@ -441,52 +441,52 @@ public class Argument implements Comparable<Argument>, Cloneable
 			 */
 			if (ogcType.equals("POINT"))
 			{
-				mGeometryValue[index] = GEOMETRY_POINT;
+				m_geometryValue[index] = GEOMETRY_POINT;
 				index++;
 				nCoords = parseCoordinateList(wktGeometry, st, index + 1, false);
-				mGeometryValue[index] = nCoords;
+				m_geometryValue[index] = nCoords;
 				index++;
 				index += nCoords * 3;
 			}
 			else if (ogcType.equals("LINESTRING"))
 			{
-				mGeometryValue[index] = GEOMETRY_LINESTRING;
+				m_geometryValue[index] = GEOMETRY_LINESTRING;
 				index++;
 				nCoords = parseCoordinateList(wktGeometry, st, index + 1, false);
-				mGeometryValue[index] = nCoords;
+				m_geometryValue[index] = nCoords;
 				index++;
 				index += nCoords * 3;
 			}
 			else if (ogcType.equals("MULTIPOINT"))
 			{
-				mGeometryValue[index] = GEOMETRY_MULTIPOINT;
+				m_geometryValue[index] = GEOMETRY_MULTIPOINT;
 				index++;
 				nCoords = parseCoordinateList(wktGeometry, st, index + 1, true);
-				mGeometryValue[index] = nCoords;
+				m_geometryValue[index] = nCoords;
 				index++;
 				index += nCoords * 5; /* 5 values for each POINT sub-geometry */
 			}
 			else
 			{
 				if (ogcType.equals("POLYGON"))
-					mGeometryValue[index] = GEOMETRY_POLYGON;
+					m_geometryValue[index] = GEOMETRY_POLYGON;
 				else if (ogcType.equals("MULTILINESTRING"))
-					mGeometryValue[index] = GEOMETRY_MULTILINESTRING;
+					m_geometryValue[index] = GEOMETRY_MULTILINESTRING;
 				else if (ogcType.equals("MULTIPOLYGON"))
-					mGeometryValue[index] = GEOMETRY_MULTIPOLYGON;
+					m_geometryValue[index] = GEOMETRY_MULTIPOLYGON;
 				else if (ogcType.equals("GEOMETRYCOLLECTION"))
-					mGeometryValue[index] = GEOMETRY_COLLECTION;
+					m_geometryValue[index] = GEOMETRY_COLLECTION;
 				else
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
 						": " + wktGeometry);
 				}
 
-				if (mGeometryValue[index] == GEOMETRY_POLYGON)
+				if (m_geometryValue[index] == GEOMETRY_POLYGON)
 				{
 					index = parseRing(wktGeometry, st, index + 1, false);
 				}
-				else if (mGeometryValue[index] == GEOMETRY_MULTILINESTRING)
+				else if (m_geometryValue[index] == GEOMETRY_MULTILINESTRING)
 				{
 					index = parseRing(wktGeometry, st, index + 1, true);
 				}
@@ -504,7 +504,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 						foundEmptyList = token.equals("EMPTY");
 					}
 
-					int geometryType = (int)mGeometryValue[index];
+					int geometryType = (int)m_geometryValue[index];
 					int counter = 0;
 					int counterIndex = index + 1;
 					index += 2;
@@ -513,7 +513,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 					{
 						if (geometryType == GEOMETRY_MULTIPOLYGON)
 						{
-							mGeometryValue[index] = GEOMETRY_POLYGON;
+							m_geometryValue[index] = GEOMETRY_POLYGON;
 							index = parseRing(wktGeometry, st, index + 1, false);
 						}
 						else
@@ -539,7 +539,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 					 * Set number of sub-geometries in
 					 * MULTIPOLYGON or GEOMETRYCOLLECTION. 
 					 */
-					mGeometryValue[counterIndex] = counter;
+					m_geometryValue[counterIndex] = counter;
 
 					if (foundOpenParen && foundCloseParen == false)
 					{
@@ -564,9 +564,9 @@ public class Argument implements Comparable<Argument>, Cloneable
 	public Argument(String wktGeometry) throws MapyrusException
 	{
 		StringTokenizer st = new StringTokenizer(wktGeometry, ",() ", true);
-		mGeometryValue = new double[st.countTokens() + 1];
+		m_geometryValue = new double[st.countTokens() + 1];
 		parseGeometry(wktGeometry, st, 0);
-		mType = (int)mGeometryValue[0];
+		m_type = (int)m_geometryValue[0];
 	}
 
 	/**
@@ -576,8 +576,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	public int getType()
 	{
 		int retval;
-		if (mType == NUMERIC || mType == STRING || mType == VARIABLE || mType == HASHMAP)
-			retval = mType;
+		if (m_type == NUMERIC || m_type == STRING || m_type == VARIABLE || m_type == HASHMAP)
+			retval = m_type;
 		else
 			retval = GEOMETRY;
 		return(retval);
@@ -590,9 +590,9 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public double getNumericValue() throws MapyrusException
 	{
-		if (mType == STRING)
+		if (m_type == STRING)
 		{
-			if (Double.isNaN(mNumericValue))
+			if (Double.isNaN(m_numericValue))
 			{
 				/*
 				 * Argument is a string that we've not tried
@@ -601,23 +601,23 @@ public class Argument implements Comparable<Argument>, Cloneable
 				 */
 				try
 				{
-					mNumericValue = Double.parseDouble(mStringValue);
+					m_numericValue = Double.parseDouble(m_stringValue);
 				}
 				catch (NumberFormatException e)
 				{
-					mNumericValue = 0;
+					m_numericValue = 0;
 				}
 			}
 		}
-		else if (mType == HASHMAP)
+		else if (m_type == HASHMAP)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.HASHMAP_NOT_NUMERIC));
 		}
-		else if (mType != NUMERIC)
+		else if (m_type != NUMERIC)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.GEOMETRY_NOT_NUMERIC));
 		}
-		return(mNumericValue);
+		return(m_numericValue);
 	}
 
 	/**
@@ -635,7 +635,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */	
 	public String getVariableName()
 	{
-		return(mVarname);
+		return(m_varname);
 	}
 
 	/**
@@ -644,20 +644,20 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */	
 	public double []getGeometryValue() throws MapyrusException
 	{
-		if (mType == NUMERIC || mType == HASHMAP || mType == VARIABLE)
+		if (m_type == NUMERIC || m_type == HASHMAP || m_type == VARIABLE)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_GEOMETRY));
 
-		if (mGeometryValue == null)
+		if (m_geometryValue == null)
 		{
 			/*
 			 * Try to convert string argument to a geometry, then store it so
 			 * we don't have to do conversion again for this argument.
 			 */
-			StringTokenizer st = new StringTokenizer(mStringValue, ",() ", true);
-			mGeometryValue = new double[st.countTokens() + 1];
-			parseGeometry(mStringValue, st, 0);
+			StringTokenizer st = new StringTokenizer(m_stringValue, ",() ", true);
+			m_geometryValue = new double[st.countTokens() + 1];
+			parseGeometry(m_stringValue, st, 0);
 		}
-		return(mGeometryValue);
+		return(m_geometryValue);
 	}
 
 	/**
@@ -752,7 +752,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Rectangle2D.Double getGeometryBoundingBox() throws MapyrusException
 	{
-		Rectangle2D.Double retval = mGeometryBoundingBox;
+		Rectangle2D.Double retval = m_geometryBoundingBox;
 
 		if (retval == null)
 		{
@@ -767,7 +767,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 			index[0] = 0;
 			retval = getGeometryBoundingBox(geometry, index, null);
 			if (geometry[0] != GEOMETRY_POINT)
-				mGeometryBoundingBox = retval;
+				m_geometryBoundingBox = retval;
 		}
 		return(retval);
 	}
@@ -857,7 +857,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */	
 	public Argument getHashMapEntry(String key)
 	{
-		Argument retval = mHashMap.get(key);
+		Argument retval = m_hashMap.get(key);
 		if (retval == null)
 			retval = emptyString;
 		return(retval);
@@ -870,7 +870,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public void addHashMapEntry(String key, Argument value)
 	{
-		mHashMap.put(key, value);
+		m_hashMap.put(key, value);
 	}
 
 	/**
@@ -908,8 +908,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Object[] getHashMapKeys()
 	{
-		String []keys = new String[mHashMap.size()];
-		Iterator<String> it = mHashMap.keySet().iterator();
+		String []keys = new String[m_hashMap.size()];
+		Iterator<String> it = m_hashMap.keySet().iterator();
 		int i = 0;
 		while (it.hasNext())
 			keys[i++] = it.next();
@@ -927,7 +927,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public Object[] getHashMapKeysSortedByValue()
 	{
-		Object []keys = mHashMap.keySet().toArray();
+		Object []keys = m_hashMap.keySet().toArray();
 
 		/*
 		 * Bubble sort keys into order based on value stored for each key.
@@ -936,8 +936,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 		{
 			for (int j = i + 1; j < keys.length; j++)
 			{
-				Argument arg1 = mHashMap.get(keys[i]);
-				Argument arg2 = mHashMap.get(keys[j]);
+				Argument arg1 = m_hashMap.get(keys[i]);
+				Argument arg2 = m_hashMap.get(keys[j]);
 				if (arg1.compareTo(arg2) > 0)
 				{
 					/*
@@ -958,7 +958,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	public int getHashMapSize()
 	{
-		return(mHashMap.size());
+		return(m_hashMap.size());
 	}
 
 	/**
@@ -1037,9 +1037,9 @@ public class Argument implements Comparable<Argument>, Cloneable
 				{
 					s.append(", ");
 				}
-				s.append(mGeometryValue[nextIndex + 1]);
+				s.append(m_geometryValue[nextIndex + 1]);
 				s.append(" ");
-				s.append(mGeometryValue[nextIndex + 2]);
+				s.append(m_geometryValue[nextIndex + 2]);
 				nextIndex += 3;
 			}
 
@@ -1076,13 +1076,13 @@ public class Argument implements Comparable<Argument>, Cloneable
 		DecimalFormat format;
 		StringBuffer sb;
 
-		if (mType == STRING)
-			retval = mStringValue;
-		else if (mType == VARIABLE)
-			retval = mVarname;
-		else if (mType == NUMERIC)
+		if (m_type == STRING)
+			retval = m_stringValue;
+		else if (m_type == VARIABLE)
+			retval = m_varname;
+		else if (m_type == NUMERIC)
 		{
-			double absValue = (mNumericValue >= 0) ? mNumericValue : -mNumericValue;
+			double absValue = (m_numericValue >= 0) ? m_numericValue : -m_numericValue;
 
 			/*
 			 * Print large or small numbers in scientific notation
@@ -1093,9 +1093,9 @@ public class Argument implements Comparable<Argument>, Cloneable
 			else
 				format = new DecimalFormat("#.################", Constants.US_DECIMAL_FORMAT_SYMBOLS);
 
-			retval = format.format(mNumericValue);
+			retval = format.format(m_numericValue);
 		}
-		else if (mType == HASHMAP)
+		else if (m_type == HASHMAP)
 		{
 			/*
 			 * Build string of all key, value pairs in the hash map.
@@ -1106,7 +1106,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 			{
 				sb.append(keys[i]);
 				sb.append(' ');
-				Argument value = mHashMap.get(keys[i]);
+				Argument value = m_hashMap.get(keys[i]);
 				sb.append(value.getStringValue());
 				sb.append(Constants.LINE_SEPARATOR);
 			}
@@ -1115,7 +1115,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 		else
 		{
 			sb = new StringBuffer();
-			createOGCWKT(mGeometryValue, 0, sb, true);
+			createOGCWKT(m_geometryValue, 0, sb, true);
 			retval = sb.toString().trim();
 		}
 		return(retval);
@@ -1132,11 +1132,11 @@ public class Argument implements Comparable<Argument>, Cloneable
 		/*
 		 * Create new argument that is a copy of existing one.
 		 */
-		if (mType == STRING || mType == VARIABLE)
-			retval = new Argument(mType, mStringValue);
-		else if (mType == NUMERIC)
-			retval = new Argument(mNumericValue);
-		else if (mType == HASHMAP)
+		if (m_type == STRING || m_type == VARIABLE)
+			retval = new Argument(m_type, m_stringValue);
+		else if (m_type == NUMERIC)
+			retval = new Argument(m_numericValue);
+		else if (m_type == HASHMAP)
 		{
 			retval = new Argument();
 			
@@ -1145,17 +1145,17 @@ public class Argument implements Comparable<Argument>, Cloneable
 			 * we do not want changes in the hashmap copy appearing
 			 * in the original hashmap.
 			 */
-			retval.mHashMap = new HashMap<String, Argument>(mHashMap.size());
-			Iterator<String> it = mHashMap.keySet().iterator();
+			retval.m_hashMap = new HashMap<String, Argument>(m_hashMap.size());
+			Iterator<String> it = m_hashMap.keySet().iterator();
 			while (it.hasNext())
 			{
 				String key = it.next();
-				retval.mHashMap.put(key, mHashMap.get(key));
+				retval.m_hashMap.put(key, m_hashMap.get(key));
 			}
 		}
 		else
 		{
-			retval = new Argument(mType, mGeometryValue);
+			retval = new Argument(m_type, m_geometryValue);
 		}
 		return(retval);
 	}

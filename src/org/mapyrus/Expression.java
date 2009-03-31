@@ -91,14 +91,14 @@ public class Expression
 	 */
 	private class ExpressionTreeNode
 	{
-		boolean mIsLeaf;
-		Argument mLeafArg;
+		boolean m_isLeaf;
+		Argument m_leafArg;
 
-		int mOperation;
-		ArrayList<ExpressionTreeNode> mBranches;
+		int m_operation;
+		ArrayList<ExpressionTreeNode> m_branches;
 
-		boolean mIsFunction;
-		Function mFunction;
+		boolean m_isFunction;
+		Function m_function;
 
 		/**
 		 * Create a leaf value containing either a number,
@@ -107,9 +107,9 @@ public class Expression
 		 */
 		public ExpressionTreeNode(Argument arg)
 		{
-			mIsLeaf = true;
-			mIsFunction = false;
-			mLeafArg = arg;
+			m_isLeaf = true;
+			m_isFunction = false;
+			m_leafArg = arg;
 		}
 	
 		/**
@@ -123,11 +123,11 @@ public class Expression
 			int operation,
 			ExpressionTreeNode right)
 		{
-			mIsLeaf = mIsFunction = false;			
-			mBranches = new ArrayList<ExpressionTreeNode>(2);
-			mBranches.add(left);
-			mBranches.add(right);
-			mOperation = operation;
+			m_isLeaf = m_isFunction = false;			
+			m_branches = new ArrayList<ExpressionTreeNode>(2);
+			m_branches.add(left);
+			m_branches.add(right);
+			m_operation = operation;
 		}
 
 		/**
@@ -142,12 +142,12 @@ public class Expression
 			int operation,
 			ExpressionTreeNode right, ExpressionTreeNode third)
 		{
-			mIsLeaf = mIsFunction = false;
-			mBranches = new ArrayList<ExpressionTreeNode>(3);
-			mBranches.add(left);
-			mBranches.add(right);
-			mBranches.add(third);
-			mOperation = operation;
+			m_isLeaf = m_isFunction = false;
+			m_branches = new ArrayList<ExpressionTreeNode>(3);
+			m_branches.add(left);
+			m_branches.add(right);
+			m_branches.add(third);
+			m_operation = operation;
 		}
 
 		/**
@@ -157,10 +157,10 @@ public class Expression
 		 */
 		public ExpressionTreeNode(Function func, ArrayList<ExpressionTreeNode> args)
 		{
-			mIsLeaf = false;
-			mIsFunction = true;
-			mFunction = func;
-			mBranches = args;
+			m_isLeaf = false;
+			m_isFunction = true;
+			m_function = func;
+			m_branches = args;
 		}
 
 		/**
@@ -185,7 +185,7 @@ public class Expression
 			String interpreterFilename)
 			throws MapyrusException
 		{
-			int nArgs = mBranches.size();
+			int nArgs = m_branches.size();
 			ArrayList<Argument> values = new ArrayList<Argument>(nArgs);
 			Argument retval;
 
@@ -194,7 +194,7 @@ public class Expression
 			 */
 			for (int i = 0; i < nArgs; i++)
 			{
-				ExpressionTreeNode branch = (ExpressionTreeNode)mBranches.get(i);
+				ExpressionTreeNode branch = (ExpressionTreeNode)m_branches.get(i);
 				values.add(traverse(branch, context, interpreterFilename));
 			}
 
@@ -203,14 +203,14 @@ public class Expression
 			 */
 			try
 			{
-				retval = mFunction.evaluate(context, values);
+				retval = m_function.evaluate(context, values);
 			}
 			catch (MapyrusException e)
 			{
 				/*
 				 * Prepend function name to error message.
 				 */
-				throw new MapyrusException(mFunction.getName() + ": " + e.getMessage());
+				throw new MapyrusException(m_function.getName() + ": " + e.getMessage());
 			}
 
 			return(retval);
@@ -229,34 +229,34 @@ public class Expression
 			double l, r, d = 0.0;
 			String s = null;
 
-			if (t.mIsLeaf)
+			if (t.m_isLeaf)
 			{
 				/*
 				 * Evaluate any variable name.  Variables that are not assigned
 				 * are given the value of an empty string (which converts to the
 				 * numeric value 0), like in awk(1) and Perl.
 				 */
-				if (t.mLeafArg.getType() == Argument.VARIABLE)
+				if (t.m_leafArg.getType() == Argument.VARIABLE)
 				{
-					retval = context.getVariableValue(t.mLeafArg.getVariableName(), interpreterFilename);
+					retval = context.getVariableValue(t.m_leafArg.getVariableName(), interpreterFilename);
 					if (retval == null)
 						retval = Argument.emptyString;
 				}
 				else
 				{
-					retval = t.mLeafArg;
+					retval = t.m_leafArg;
 				}
 			}
-			else if (t.mIsFunction)
+			else if (t.m_isFunction)
 			{
 				retval = t.evaluateFunction(context, interpreterFilename);
 			}
-			else if (t.mOperation == NOT_OPERATION)
+			else if (t.m_operation == NOT_OPERATION)
 			{
 				/*
 				 * Negation operates on a single expression.
 				 */
-				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.m_branches.get(0);
 				leftValue = traverse(leftBranch, context, interpreterFilename);
 				if (leftValue.getType() == Argument.NUMERIC)
 				{
@@ -270,31 +270,31 @@ public class Expression
 						Argument.numericOne : Argument.numericZero;
 				}
 			}
-			else if (t.mOperation == ASSIGN_OPERATION || t.mOperation == PRE_INCREMENT_OPERATION ||
-				t.mOperation == PRE_DECREMENT_OPERATION || t.mOperation == POST_INCREMENT_OPERATION ||
-				t.mOperation == POST_DECREMENT_OPERATION)
+			else if (t.m_operation == ASSIGN_OPERATION || t.m_operation == PRE_INCREMENT_OPERATION ||
+				t.m_operation == PRE_DECREMENT_OPERATION || t.m_operation == POST_INCREMENT_OPERATION ||
+				t.m_operation == POST_DECREMENT_OPERATION)
 			{
-				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.m_branches.get(0);
 				Argument varValue = null;
 
-				if (t.mOperation == PRE_INCREMENT_OPERATION)
+				if (t.m_operation == PRE_INCREMENT_OPERATION)
 				{
 					rightValue = traverse(leftBranch, context, interpreterFilename);
 					rightValue = new Argument(rightValue.getNumericValue() + 1);
 				}
-				else if (t.mOperation == PRE_DECREMENT_OPERATION)
+				else if (t.m_operation == PRE_DECREMENT_OPERATION)
 				{
 					rightValue = traverse(leftBranch, context, interpreterFilename);
 					rightValue = new Argument(rightValue.getNumericValue() - 1);
 				}
-				else if (t.mOperation == POST_INCREMENT_OPERATION)
+				else if (t.m_operation == POST_INCREMENT_OPERATION)
 				{
 					varValue = traverse(leftBranch, context, interpreterFilename);
 					if (varValue == Argument.emptyString)
 						varValue = Argument.numericZero;
 					rightValue = new Argument(varValue.getNumericValue() + 1);
 				}
-				else if (t.mOperation == POST_DECREMENT_OPERATION)
+				else if (t.m_operation == POST_DECREMENT_OPERATION)
 				{
 					varValue = traverse(leftBranch, context, interpreterFilename);
 					if (varValue == Argument.emptyString)
@@ -303,29 +303,29 @@ public class Expression
 				}
 				else
 				{
-					ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+					ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.m_branches.get(1);
 					rightValue = traverse(rightBranch, context, interpreterFilename);
 				}
-				if (leftBranch.mIsLeaf)
+				if (leftBranch.m_isLeaf)
 				{
 					/*
 					 * Simple assignment: a = b.
 					 */
-					String varName = leftBranch.mLeafArg.getVariableName();
+					String varName = leftBranch.m_leafArg.getVariableName();
 					context.defineVariable(varName, rightValue);
 				}
-				else if (leftBranch.mOperation == HASHMAP_REFERENCE &&
-					((ExpressionTreeNode)leftBranch.mBranches.get(0)).mIsLeaf)
+				else if (leftBranch.m_operation == HASHMAP_REFERENCE &&
+					((ExpressionTreeNode)leftBranch.m_branches.get(0)).m_isLeaf)
 				{
 					/*
 					 * Assign value as entry in a hashmap: a[55] = "foo".
 					 */
-					String hashMapName = ((ExpressionTreeNode)leftBranch.mBranches.get(0)).mLeafArg.getVariableName();
+					String hashMapName = ((ExpressionTreeNode)leftBranch.m_branches.get(0)).m_leafArg.getVariableName();
 					if (hashMapName == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE));
 					}
-					Argument key = traverse(((ExpressionTreeNode)leftBranch.mBranches.get(1)), context,
+					Argument key = traverse(((ExpressionTreeNode)leftBranch.m_branches.get(1)), context,
 						interpreterFilename);
 					if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
 					{
@@ -342,12 +342,12 @@ public class Expression
 				/*
 				 * Return value assigned.
 				 */
-				if (t.mOperation == POST_INCREMENT_OPERATION || t.mOperation == POST_DECREMENT_OPERATION)
+				if (t.m_operation == POST_INCREMENT_OPERATION || t.m_operation == POST_DECREMENT_OPERATION)
 					retval = varValue;
 				else
 					retval = rightValue;
 			}
-			else if (t.mOperation == HASHMAP_REFERENCE)
+			else if (t.m_operation == HASHMAP_REFERENCE)
 			{
 				Argument hashMapVar;
 
@@ -355,14 +355,14 @@ public class Expression
 				 * Lookup an individual entry in a hash map from a hash map
 				 * variable name and key.
 				 */
-				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
-				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
-				if (leftBranch.mIsLeaf && leftBranch.mLeafArg.getType() == Argument.VARIABLE)
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.m_branches.get(0);
+				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.m_branches.get(1);
+				if (leftBranch.m_isLeaf && leftBranch.m_leafArg.getType() == Argument.VARIABLE)
 				{
-					String varName = leftBranch.mLeafArg.getVariableName();
+					String varName = leftBranch.m_leafArg.getVariableName();
 					hashMapVar = context.getVariableValue(varName, interpreterFilename);
 				}
-				else if (leftBranch.mIsFunction)
+				else if (leftBranch.m_isFunction)
 				{
 					hashMapVar = traverse(leftBranch, context, interpreterFilename);
 				}
@@ -392,22 +392,22 @@ public class Expression
 					retval = hashMapVar.getHashMapEntry(key.getStringValue());
 				}
 			}
-			else if (t.mOperation == CONDITIONAL_OPERATION)
+			else if (t.m_operation == CONDITIONAL_OPERATION)
 			{
 				/*
 				 * Test condition and return value for true, or value for false.
 				 */
-				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.m_branches.get(0);
 				
 				leftValue = traverse(leftBranch, context, interpreterFilename);
 				if (leftValue.getNumericValue() != 0)
 				{
-					ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+					ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.m_branches.get(1);
 					retval = traverse(rightBranch, context, interpreterFilename);
 				}
 				else
 				{
-					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)t.mBranches.get(2);
+					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)t.m_branches.get(2);
 					retval = traverse(thirdBranch, context, interpreterFilename);
 				}
 			}
@@ -416,12 +416,12 @@ public class Expression
 				/*
 				 * Either expression can be a number or a string.
 				 */
-				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.mBranches.get(0);
-				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.mBranches.get(1);
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.m_branches.get(0);
+				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.m_branches.get(1);
 				leftValue = traverse(leftBranch, context, interpreterFilename);
 				rightValue = traverse(rightBranch, context, interpreterFilename);
 
-				switch (t.mOperation)
+				switch (t.m_operation)
 				{
 				case PLUS_OPERATION:
 					d = leftValue.getNumericValue() + rightValue.getNumericValue();
@@ -568,14 +568,14 @@ public class Expression
 			String retval;
 			StringBuffer sb;
 			
-			if (mIsLeaf)
+			if (m_isLeaf)
 			{
-				retval = mLeafArg.toString();
+				retval = m_leafArg.toString();
 			}
 			else
 			{
 				String operation = "";
-				switch (mOperation)
+				switch (m_operation)
 				{
 					case PLUS_OPERATION:
 						operation = "+";
@@ -663,8 +663,8 @@ public class Expression
 				}
 				
 				sb = new StringBuffer();
-				ExpressionTreeNode leftBranch = (ExpressionTreeNode)mBranches.get(0);
-				if (mOperation == PRE_INCREMENT_OPERATION || mOperation == PRE_DECREMENT_OPERATION)
+				ExpressionTreeNode leftBranch = (ExpressionTreeNode)m_branches.get(0);
+				if (m_operation == PRE_INCREMENT_OPERATION || m_operation == PRE_DECREMENT_OPERATION)
 				{
 					sb.append(operation);
 					operation = "";
@@ -674,16 +674,16 @@ public class Expression
 				sb.append(operation);
 				sb.append(' ');
 
-				if (!(mOperation == NOT_OPERATION || mOperation == PRE_INCREMENT_OPERATION || mOperation == PRE_DECREMENT_OPERATION))
+				if (!(m_operation == NOT_OPERATION || m_operation == PRE_INCREMENT_OPERATION || m_operation == PRE_DECREMENT_OPERATION))
 				{
-					ExpressionTreeNode rightBranch = (ExpressionTreeNode)mBranches.get(1);
+					ExpressionTreeNode rightBranch = (ExpressionTreeNode)m_branches.get(1);
 					sb.append(rightBranch.toString());
 				}
-				if (mOperation == HASHMAP_REFERENCE)
+				if (m_operation == HASHMAP_REFERENCE)
 					sb.append(']');
-				if (mOperation == CONDITIONAL_OPERATION)
+				if (m_operation == CONDITIONAL_OPERATION)
 				{
-					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)mBranches.get(2);
+					ExpressionTreeNode thirdBranch = (ExpressionTreeNode)m_branches.get(2);
 					sb.append(" : ").append(thirdBranch.toString());
 				}
 				retval = sb.toString();
@@ -692,7 +692,7 @@ public class Expression
 		}
 	}
 
-	ExpressionTreeNode mExprTree;
+	private ExpressionTreeNode m_exprTree;
 
 	/*
 	 * Parse expression including assignment to variables.
@@ -721,15 +721,15 @@ public class Expression
 					 * Check that lefthandside of an assignment is a variable name,
 					 * or an element in a hashmap.
 					 */
-					if (expr.mIsLeaf)
+					if (expr.m_isLeaf)
 					{
-						if (expr.mLeafArg.getType() != Argument.VARIABLE)
+						if (expr.m_leafArg.getType() != Argument.VARIABLE)
 						{
 							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 						}
 					}
-					else if (expr.mOperation != HASHMAP_REFERENCE)
+					else if (expr.m_operation != HASHMAP_REFERENCE)
 					{
 						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
@@ -1210,8 +1210,8 @@ public class Expression
 			/*
 			 * Make sure expression is a variable.  Things like '++5' are not allowed.
 			 */
-			if (!((expr.mIsLeaf && expr.mLeafArg.getType() == Argument.VARIABLE) ||
-				expr.mOperation == HASHMAP_REFERENCE))
+			if (!((expr.m_isLeaf && expr.m_leafArg.getType() == Argument.VARIABLE) ||
+				expr.m_operation == HASHMAP_REFERENCE))
 			{
 				throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 					MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
@@ -1583,7 +1583,7 @@ public class Expression
 	public Expression(Preprocessor p, HashMap userFunctions)
 		throws IOException, MapyrusException
 	{
-		mExprTree = parseAssignment(p, userFunctions);
+		m_exprTree = parseAssignment(p, userFunctions);
 	}
 
 	/**
@@ -1592,7 +1592,7 @@ public class Expression
 	 */
 	public Expression(double d)
 	{
-		mExprTree = new ExpressionTreeNode(new Argument(d));
+		m_exprTree = new ExpressionTreeNode(new Argument(d));
 	}
 
 	/**
@@ -1601,7 +1601,7 @@ public class Expression
 	 */
 	public Expression(String s)
 	{
-		mExprTree = new ExpressionTreeNode(new Argument(Argument.STRING, s));
+		m_exprTree = new ExpressionTreeNode(new Argument(Argument.STRING, s));
 	}
 
 	/**
@@ -1611,7 +1611,7 @@ public class Expression
 	 */
 	public Argument evaluate(ContextStack context, String interpreterFilename) throws MapyrusException
 	{
-		return(mExprTree.evaluate(context, interpreterFilename));
+		return(m_exprTree.evaluate(context, interpreterFilename));
 	}
 
 	/**
@@ -1620,8 +1620,8 @@ public class Expression
 	 */
 	public String getVariableName()
 	{
-		if (mExprTree.mIsLeaf && mExprTree.mLeafArg.getType() == Argument.VARIABLE)
-			return(mExprTree.mLeafArg.getVariableName());
+		if (m_exprTree.m_isLeaf && m_exprTree.m_leafArg.getType() == Argument.VARIABLE)
+			return(m_exprTree.m_leafArg.getVariableName());
 		else
 			return(null);
 	}

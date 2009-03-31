@@ -40,11 +40,11 @@ import java.util.zip.ZipInputStream;
  */
 public class FileOrURL
 {
-	private String mName;
-	private URL mURL;
-	private BufferedInputStream mInputStream;
-	private LineNumberReader mReader;
-	private boolean mIsURL;
+	private String m_name;
+	private URL m_URL;
+	private BufferedInputStream m_inputStream;
+	private LineNumberReader m_reader;
+	private boolean m_isURL;
 
 	/**
 	 * Open file or URL.
@@ -60,10 +60,10 @@ public class FileOrURL
 			/*
 			 * First try opening as an URL.
 			 */
-			mURL = new URL(name);
+			m_URL = new URL(name);
 			try
 			{
-				in = mURL.openStream();
+				in = m_URL.openStream();
 			}
 			catch (IOException e)
 			{
@@ -71,9 +71,9 @@ public class FileOrURL
 				 * The IOException error message is not very helpful.  Throw our own exception.
 				 */
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) +
-					": " +	mURL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
+					": " +	m_URL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
 			}
-			mIsURL = true;
+			m_isURL = true;
 		}
 		catch (MalformedURLException e)
 		{
@@ -81,7 +81,7 @@ public class FileOrURL
 			 * It is not a valid URL, try opening it as a plain file instead.
 			 */
 			in = new FileInputStream(name);
-			mIsURL = false;
+			m_isURL = false;
 		}
 		
 		/*
@@ -96,14 +96,14 @@ public class FileOrURL
 			boolean isZipped = lowerName.endsWith(".zip");
 			
 			if (isGzipped)
-				mInputStream = new BufferedInputStream(new GZIPInputStream(in));
+				m_inputStream = new BufferedInputStream(new GZIPInputStream(in));
 			else if (isZipped)
-				mInputStream = new BufferedInputStream(new ZipInputStream(in));
+				m_inputStream = new BufferedInputStream(new ZipInputStream(in));
 			else
-				mInputStream = new BufferedInputStream(in);
+				m_inputStream = new BufferedInputStream(in);
 	
-			mReader = new LineNumberReader(new InputStreamReader(mInputStream));
-			mName = name;
+			m_reader = new LineNumberReader(new InputStreamReader(m_inputStream));
+			m_name = name;
 		}
 		catch (IOException e)
 		{
@@ -129,13 +129,13 @@ public class FileOrURL
 		try
 		{
 			if (contextURL != null)
-				mURL = new URL(contextURL.mURL, name);
+				m_URL = new URL(contextURL.m_URL, name);
 			else
-				mURL = new URL(name);
+				m_URL = new URL(name);
 
 			try
 			{
-				in = mURL.openStream();
+				in = m_URL.openStream();
 			}
 			catch (IOException e)
 			{
@@ -144,24 +144,24 @@ public class FileOrURL
 				 * The IOException error message is not very helpful.  Throw our own exception.
 				 */
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CANNOT_OPEN_URL) + ": " +
-					mURL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
+					m_URL.toString() + Constants.LINE_SEPARATOR + e.getMessage());
 			}
-			mIsURL = true;
-			mName = mURL.toString();
+			m_isURL = true;
+			m_name = m_URL.toString();
 		}
 		catch (MalformedURLException e)
 		{
-			mURL = null;
+			m_URL = null;
 		}
 
-		if (mURL == null)
+		if (m_URL == null)
 		{
 			/*
 			 * It is not a valid URL, try opening it as a plain file instead.
 			 */
 			in = new FileInputStream(name);
-			mIsURL = false;
-			mName = name;
+			m_isURL = false;
+			m_name = name;
 		}
 
 		try
@@ -177,13 +177,13 @@ public class FileOrURL
 			 * Create buffered stream and reader from this input stream.
 			 */
 			if (isGzipped)
-				mInputStream = new BufferedInputStream(new GZIPInputStream(in));
+				m_inputStream = new BufferedInputStream(new GZIPInputStream(in));
 			else if (isZipped)
-				mInputStream = new BufferedInputStream(new ZipInputStream(in));
+				m_inputStream = new BufferedInputStream(new ZipInputStream(in));
 			else
-				mInputStream = new BufferedInputStream(in);
+				m_inputStream = new BufferedInputStream(in);
 	
-			mReader = new LineNumberReader(new InputStreamReader(mInputStream));
+			m_reader = new LineNumberReader(new InputStreamReader(m_inputStream));
 		}
 		catch (IOException e)
 		{
@@ -202,14 +202,14 @@ public class FileOrURL
 	 */
 	public FileOrURL(Reader reader, String name)
 	{
-		mIsURL = false;
-		mName = name;
-		mReader = new LineNumberReader(reader);
+		m_isURL = false;
+		m_name = name;
+		m_reader = new LineNumberReader(reader);
 		
 		/*
 		 * Text file reader cannot be converted for reading as a java.io.InputStream.
 		 */
-		mInputStream = null;
+		m_inputStream = null;
 		
 	}
 
@@ -219,7 +219,7 @@ public class FileOrURL
 	 */	
 	public boolean isURL()
 	{
-		return(mIsURL);
+		return(m_isURL);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class FileOrURL
 	 */
 	public String getURLContentType() throws IOException
 	{	
-		return(mURL.openConnection().getContentType());
+		return(m_URL.openConnection().getContentType());
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class FileOrURL
 	 */
 	public BufferedInputStream getInputStream()
 	{
-		return(mInputStream);
+		return(m_inputStream);
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class FileOrURL
 	 */
 	public LineNumberReader getReader()
 	{
-		return(mReader);
+		return(m_reader);
 	}
 	
 	/**
@@ -255,6 +255,6 @@ public class FileOrURL
 	 */
 	public String toString()
 	{
-		return(mName);
+		return(m_name);
 	}
 }

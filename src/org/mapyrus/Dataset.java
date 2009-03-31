@@ -32,9 +32,9 @@ import org.mapyrus.dataset.GeographicDataset;
  */
 public class Dataset
 {
-	private GeographicDataset mDataset;
-	private Row mDatasetRow;
-	private int mDatasetRowCount;
+	private GeographicDataset m_dataset;
+	private Row m_datasetRow;
+	private int m_datasetRowCount;
 
 	/**
 	 * Setup a new dataset for reading.
@@ -42,9 +42,9 @@ public class Dataset
 	 */
 	public Dataset(GeographicDataset dataset) throws MapyrusException
 	{
-		mDataset = dataset;
-		mDatasetRow = dataset.fetch();
-		mDatasetRowCount = 0;
+		m_dataset = dataset;
+		m_datasetRow = dataset.fetch();
+		m_datasetRowCount = 0;
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class Dataset
 	 */	
 	public String getProjection()
 	{
-		return(mDataset.getProjection());
+		return(m_dataset.getProjection());
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class Dataset
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
-		return(mDataset.getWorlds());
+		return(m_dataset.getWorlds());
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Dataset
 	 */
 	public String []getFieldNames()
 	{
-		return(mDataset.getFieldNames());
+		return(m_dataset.getFieldNames());
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Dataset
 	 */	
 	public boolean hasMoreRows()
 	{
-		return(mDatasetRow != null);
+		return(m_datasetRow != null);
 	}
 
 	/**
@@ -86,15 +86,15 @@ public class Dataset
 	 */
 	public Row fetchRow() throws MapyrusException
 	{
-		if (mDatasetRow == null)
+		if (m_datasetRow == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ROWS));
 
 		/*
 		 * Return row we've already fetched, then fetch another.
 		 */		
-		Row retval = mDatasetRow;
-		mDatasetRow = mDataset.fetch();
-		mDatasetRowCount++;
+		Row retval = m_datasetRow;
+		m_datasetRow = m_dataset.fetch();
+		m_datasetRowCount++;
 
 		return(retval);
 	}
@@ -105,7 +105,7 @@ public class Dataset
 	 */
 	public int getFetchCount()
 	{
-		return(mDatasetRowCount);
+		return(m_datasetRowCount);
 	}
 	
 	/**
@@ -115,8 +115,8 @@ public class Dataset
 	{
 		try
 		{
-			if (mDataset != null)
-				mDataset.close();
+			if (m_dataset != null)
+				m_dataset.close();
 		}
 		catch (MapyrusException e)
 		{
@@ -128,9 +128,9 @@ public class Dataset
 			 * Always clear dataset after attempting to close it
 			 * so that we will never try to close it again.
 			 */
-			mDataset = null;
-			mDatasetRow = null;
-			mDatasetRowCount = 0;
+			m_dataset = null;
+			m_datasetRow = null;
+			m_datasetRowCount = 0;
 		}
 	}
 }
