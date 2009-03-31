@@ -50,16 +50,16 @@ public class Mapyrus
 {
 	private static final String OUT_OF_MEMORY_MESSAGE = "Out of memory.  Use Java -Xmx option to increase memory\navailable to Mapyrus.  For example, java -Xmx256m -classpath ...\n";
 
-	private Interpreter mInterpreter;
-	private ContextStack mContext;
+	private Interpreter m_interpreter;
+	private ContextStack m_context;
 
 	/**
 	 * Create new interpreter.
 	 */
 	public Mapyrus()
 	{
-		mInterpreter = new Interpreter();
-		mContext = new ContextStack();
+		m_interpreter = new Interpreter();
+		m_context = new ContextStack();
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class Mapyrus
 		StringReader sr = makeStringReader(commands);
 		FileOrURL f = new FileOrURL(sr, "commands");
 
-		mInterpreter.interpret(mContext, f, stdin, stdout);
+		m_interpreter.interpret(m_context, f, stdin, stdout);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class Mapyrus
 	{
 		if (extras == null)
 			extras = "";
-		mContext.setOutputFormat(image, extras);
+		m_context.setOutputFormat(image, extras);
 	}
 
 	/**
@@ -131,8 +131,8 @@ public class Mapyrus
 	{
 		try
 		{
-			if (mContext != null)
-				mContext.closeContextStack();
+			if (m_context != null)
+				m_context.closeContextStack();
 		}
 		catch (IOException e)
 		{
@@ -147,8 +147,8 @@ public class Mapyrus
 			/*
 			 * Always clears fields so we only attempt a close once.
 			 */	
-			mContext = null;
-			mInterpreter = null;
+			m_context = null;
+			m_interpreter = null;
 		}
 	}
 

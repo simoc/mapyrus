@@ -27,16 +27,16 @@ package org.mapyrus;
  */
 public class Throttle
 {
-	static private long mStartTime;
+	static private long m_startTime;
 	static
 	{
-		mStartTime = System.currentTimeMillis();
+		m_startTime = System.currentTimeMillis();
 	};
 
 	/*
 	 * Number of milliseconds to run in each second.
 	 */
-	static private long mMillisToUse = 1000;
+	static private long m_millisToUse = 1000;
 
 	/**
 	 * Set maximum percentage of CPU to use.
@@ -48,7 +48,7 @@ public class Throttle
 			percent = 5;
 		else if (percent > 100)
 			percent = 100;
-		mMillisToUse = percent * 10;
+		m_millisToUse = percent * 10;
 	}
 
 	/**
@@ -58,16 +58,16 @@ public class Throttle
 	 */
 	public static void sleep() throws MapyrusException
 	{
-		if (mMillisToUse != 1000)
+		if (m_millisToUse != 1000)
 		{
 			long now = System.currentTimeMillis();
-			long elapsed = now - mStartTime;
+			long elapsed = now - m_startTime;
 			long millis = (elapsed % 1000);
-			if (millis > mMillisToUse)
+			if (millis > m_millisToUse)
 			{
 				try
 				{
-					Thread.sleep(1000 - mMillisToUse);
+					Thread.sleep(1000 - m_millisToUse);
 				}
 				catch (InterruptedException e)
 				{

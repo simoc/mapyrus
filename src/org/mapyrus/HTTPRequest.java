@@ -72,34 +72,34 @@ public class HTTPRequest extends Thread
 	 */
 	public static final String HTTP_HEADER_ARRAY = Constants.PROGRAM_NAME + ".http.header";
 
-	private Pool<Interpreter> mPool;
-	private Interpreter mInterpreter;
-	private Socket mSocket;
+	private Pool<Interpreter> m_pool;
+	private Interpreter m_interpreter;
+	private Socket m_socket;
 
 	/*
 	 * The MIME type, filename, image map coordinates and Mapyrus commands
 	 * parsed for this request.
 	 */
-	private String mMimeType;
-	private String mFilename;
-	private Point mImagemapPoint;
-	private String mVariables, mCommands;
+	private String m_mimeType;
+	private String m_filename;
+	private Point m_imagemapPoint;
+	private String m_variables, m_commands;
 
 	/*
 	 * Holds return status and any error message from running this thread.
 	 */
-	private int mReturnStatus;
-	private String mErrorMessage;
+	private int m_returnStatus;
+	private String m_errorMessage;
 
 	/*
 	 * Logger to write log messages to.
 	 */
-	private Logger mLogger;
+	private Logger m_logger;
 
 	/*
 	 * Timestamp at which this thread was created.
 	 */
-	private long mCreationTimeMillis;
+	private long m_creationTimeMillis;
 
 	/**
 	 * Create new HTTP request.
@@ -113,13 +113,13 @@ public class HTTPRequest extends Thread
 	{
 		super();
 		
-		mSocket = socket;
-		mInterpreter = interpreter;
-		mPool = interpreterPool;
-		mImagemapPoint = null;
-		mReturnStatus = HTTP_OK_CODE;
-		mLogger = logger;
-		mCreationTimeMillis = System.currentTimeMillis();
+		m_socket = socket;
+		m_interpreter = interpreter;
+		m_pool = interpreterPool;
+		m_imagemapPoint = null;
+		m_returnStatus = HTTP_OK_CODE;
+		m_logger = logger;
+		m_creationTimeMillis = System.currentTimeMillis();
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class HTTPRequest extends Thread
 				{
 					int x = Integer.parseInt(st.nextToken());
 					int y = Integer.parseInt(st.nextToken());
-					mImagemapPoint = new Point(x, y);
+					m_imagemapPoint = new Point(x, y);
 				}
 			}
 			catch (NumberFormatException e)
@@ -269,12 +269,12 @@ public class HTTPRequest extends Thread
 		String firstLine = reader.readLine();
 		if (firstLine == null)
 			firstLine = "";
-		if (mLogger.isLoggable(Level.INFO))
+		if (m_logger.isLoggable(Level.INFO))
 		{
 			String logMessage = getName() + ": " +
 				MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) +
 				": " + firstLine;
-			mLogger.info(logMessage);
+			m_logger.info(logMessage);
 		}
 
 		StringTokenizer st = new StringTokenizer(firstLine);
@@ -312,22 +312,22 @@ public class HTTPRequest extends Thread
 		int questionIndex = url.indexOf('?');
 		if (questionIndex >= 0)
 		{	
-			mFilename = url.substring(1, questionIndex);
+			m_filename = url.substring(1, questionIndex);
 		}
 		else
 		{
-			mFilename = url.substring(1);
+			m_filename = url.substring(1);
 		}
 
 		/*
 		 * Block access to all files except those in current directory.
 		 */
-		File f = new File(mFilename);
-		if(mFilename.indexOf(File.separatorChar) >= 0 || mFilename.indexOf('/') >= 0 ||
-			mFilename.indexOf('\\') >= 0 || (!f.exists()))
+		File f = new File(m_filename);
+		if(m_filename.indexOf(File.separatorChar) >= 0 || m_filename.indexOf('/') >= 0 ||
+			m_filename.indexOf('\\') >= 0 || (!f.exists()))
 		{
 			throw new FileNotFoundException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
-				": " + mFilename);
+				": " + m_filename);
 		}
 
 		/*
@@ -335,18 +335,18 @@ public class HTTPRequest extends Thread
 		 * we should just send back the file instead of trying to
 		 * interpret it as commands.
 		 */
-		int dotIndex = mFilename.lastIndexOf('.');
+		int dotIndex = m_filename.lastIndexOf('.');
 		if (dotIndex > 0)
 		{
-			String suffix = mFilename.substring(dotIndex + 1);
-			mMimeType = MimeTypes.get(suffix);
+			String suffix = m_filename.substring(dotIndex + 1);
+			m_mimeType = MimeTypes.get(suffix);
 		}
 		else
 		{
-			mMimeType = null;
+			m_mimeType = null;
 		}
 
-		if (mMimeType == null && questionIndex >= 0 && requestType == GET_REQUEST)
+		if (m_mimeType == null && questionIndex >= 0 && requestType == GET_REQUEST)
 		{
 			/*
 			 * Parse GET request arguments given after question mark in URL.
@@ -360,9 +360,9 @@ public class HTTPRequest extends Thread
 		String nextLine = reader.readLine();
 		while (nextLine != null && nextLine.length() > 0)
 		{
-			if (mLogger.isLoggable(Level.FINER))
+			if (m_logger.isLoggable(Level.FINER))
 			{
-				mLogger.finer(getName() + ": " +
+				m_logger.finer(getName() + ": " +
 					MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + nextLine);
 			}
 
@@ -416,24 +416,24 @@ public class HTTPRequest extends Thread
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.MISSING_HTTP_POST));
 				sb.append((char)c);
 			}
-			if (mLogger.isLoggable(Level.FINE))
+			if (m_logger.isLoggable(Level.FINE))
 			{
-				mLogger.fine(getName() + ": " +
+				m_logger.fine(getName() + ": " +
 					MapyrusMessages.get(MapyrusMessages.HTTP_HEADER) + ": " + sb.toString());
 			}
 			variables.append(parseForm(sb.toString()));
 		}
-		mVariables = variables.toString();
+		m_variables = variables.toString();
 
-		if (mMimeType == null)
+		if (m_mimeType == null)
 		{
 			/*
 			 * File type not known, so interpret the file with Mapyrus.
 			 */
 			commands.append("include ");
-			commands.append(mFilename);
+			commands.append(m_filename);
 			commands.append(Constants.LINE_SEPARATOR);
-			mCommands = commands.toString();
+			m_commands = commands.toString();
 		}
 	}
 
@@ -477,7 +477,7 @@ public class HTTPRequest extends Thread
 		 */
 		try
 		{
-			inReader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+			inReader = new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
 			try
 			{
 				parseRequest(inReader);
@@ -488,25 +488,25 @@ public class HTTPRequest extends Thread
 				 * User asked for a file that does not exist, or is
 				 * outside directories being served.
 				 */
-				mReturnStatus = HTTP_NOT_FOUND_CODE;
-				mErrorMessage = e.getMessage();
+				m_returnStatus = HTTP_NOT_FOUND_CODE;
+				m_errorMessage = e.getMessage();
 			}
 
-			if (mReturnStatus == HTTP_NOT_FOUND_CODE)
+			if (m_returnStatus == HTTP_NOT_FOUND_CODE)
 			{
 
 			}
-			else if (mMimeType == null)
+			else if (m_mimeType == null)
 			{
 				/*
 				 * Send commands to Mapyrus to interpret and capture their output.
 				 */
-				FileOrURL f1 = new FileOrURL(new StringReader(mVariables), getName());
-				FileOrURL f2 = new FileOrURL(new StringReader(mCommands), getName());
+				FileOrURL f1 = new FileOrURL(new StringReader(m_variables), getName());
+				FileOrURL f2 = new FileOrURL(new StringReader(m_commands), getName());
 				ContextStack context = new ContextStack();
-				if (mImagemapPoint != null)
+				if (m_imagemapPoint != null)
 				{
-					context.setImagemapPoint(mImagemapPoint);
+					context.setImagemapPoint(m_imagemapPoint);
 				}
 				PrintStream printStream = new PrintStream(byteArrayStream);
 
@@ -518,8 +518,8 @@ public class HTTPRequest extends Thread
 					/*
 					 * Run commands to set variables, then run commands to generate output.
 					 */
-					mInterpreter.interpret(context, f1, emptyStdin, null);
-					mInterpreter.interpret(context, f2, emptyStdin, printStream);
+					m_interpreter.interpret(context, f1, emptyStdin, null);
+					m_interpreter.interpret(context, f2, emptyStdin, printStream);
 					httpResponse = context.getHTTPResponse().trim() +
 						Constants.LINE_SEPARATOR + Constants.LINE_SEPARATOR;
 					context.closeContextStack();
@@ -550,18 +550,18 @@ public class HTTPRequest extends Thread
 				/*
 				 * Open plain file to be returned to client.
 				 */
-				inStream = new BufferedInputStream(new FileInputStream(mFilename));
+				inStream = new BufferedInputStream(new FileInputStream(m_filename));
 			}
 		}
 		catch (IOException e)
 		{
-			mReturnStatus = HTTP_BAD_CODE;
-			mErrorMessage = e.getMessage();
+			m_returnStatus = HTTP_BAD_CODE;
+			m_errorMessage = e.getMessage();
 		}
 		catch (MapyrusException e)
 		{
-			mReturnStatus = HTTP_BAD_CODE;
-			mErrorMessage = e.getMessage();
+			m_returnStatus = HTTP_BAD_CODE;
+			m_errorMessage = e.getMessage();
 		}
 		catch (Exception e)
 		{
@@ -570,8 +570,8 @@ public class HTTPRequest extends Thread
 			 * indicates a bug.  Return all information to client so
 			 * problem can be pinpointed.
 			 */
-			mReturnStatus = HTTP_BAD_CODE;
-			mErrorMessage = exceptionToString(e);
+			m_returnStatus = HTTP_BAD_CODE;
+			m_errorMessage = exceptionToString(e);
 		}
 
 		try
@@ -580,22 +580,22 @@ public class HTTPRequest extends Thread
 			 * Now send output from request (or an error message
 			 * explaining why it could be completed) to the HTTP client.
 			 */
-			outStream = new BufferedOutputStream(mSocket.getOutputStream());
-			if (mReturnStatus == HTTP_OK_CODE)
+			outStream = new BufferedOutputStream(m_socket.getOutputStream());
+			if (m_returnStatus == HTTP_OK_CODE)
 			{
-				if (mMimeType == null)
+				if (m_mimeType == null)
 				{
 					reply = httpResponse;
 				}
 				else
 				{
 					reply = HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
-						CONTENT_TYPE_KEYWORD + ": " + mMimeType +
+						CONTENT_TYPE_KEYWORD + ": " + m_mimeType +
 						Constants.LINE_SEPARATOR +
 						Constants.LINE_SEPARATOR;
 				}
 
-				if (mLogger.isLoggable(Level.FINE))
+				if (m_logger.isLoggable(Level.FINE))
 				{
 					/*
 					 * Log each line of HTTP header.
@@ -604,23 +604,23 @@ public class HTTPRequest extends Thread
 					while (st.hasMoreTokens())
 					{
 						String token = st.nextToken();
-						mLogger.fine(getName() + ": " +
+						m_logger.fine(getName() + ": " +
 							MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + token);
 					}
 				}
 
 				outStream.write(reply.getBytes());
 
-				if (mMimeType == null)
+				if (m_mimeType == null)
 				{
 					/*
 					 * Write output of interpreter back to HTTP client.
 					 */
 					byteArrayStream.writeTo(outStream);
 
-					if (mLogger.isLoggable(Level.FINE))
+					if (m_logger.isLoggable(Level.FINE))
 					{
-						mLogger.fine(getName() + ": " +
+						m_logger.fine(getName() + ": " +
 							MapyrusMessages.get(MapyrusMessages.HTTP_RETURNED) +
 							": " + byteArrayStream.size());
 					}
@@ -641,9 +641,9 @@ public class HTTPRequest extends Thread
 						nBytes = inStream.read(buf);
 					}
 
-					if (mLogger.isLoggable(Level.FINE))
+					if (m_logger.isLoggable(Level.FINE))
 					{
-						mLogger.fine(getName() + ": " +
+						m_logger.fine(getName() + ": " +
 							MapyrusMessages.get(MapyrusMessages.HTTP_RETURNED) + ": " + counter);
 					}
 				}
@@ -652,12 +652,12 @@ public class HTTPRequest extends Thread
 			{
 				String contentType = MimeTypes.get("txt");
 
-				String result = (mReturnStatus == HTTP_NOT_FOUND_CODE) ? HTTP_NOT_FOUND_KEYWORD : HTTP_BAD_KEYWORD;
-				if (mLogger.isLoggable(Level.FINE))
+				String result = (m_returnStatus == HTTP_NOT_FOUND_CODE) ? HTTP_NOT_FOUND_KEYWORD : HTTP_BAD_KEYWORD;
+				if (m_logger.isLoggable(Level.FINE))
 				{
-					mLogger.fine(getName() + ": " +
+					m_logger.fine(getName() + ": " +
 						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " + result);
-					mLogger.fine(getName() + ": " +
+					m_logger.fine(getName() + ": " +
 						MapyrusMessages.get(MapyrusMessages.HTTP_RETURN) + ": " +
 						CONTENT_TYPE_KEYWORD + ": " + contentType);
 				}
@@ -665,17 +665,17 @@ public class HTTPRequest extends Thread
 				reply = result + Constants.LINE_SEPARATOR +
 					CONTENT_TYPE_KEYWORD + ": " + contentType + Constants.LINE_SEPARATOR +
 					Constants.LINE_SEPARATOR +
-					mErrorMessage + Constants.LINE_SEPARATOR;
+					m_errorMessage + Constants.LINE_SEPARATOR;
 				outStream.write(reply.getBytes());
 			}
 			outStream.flush();
 		}
 		catch (IOException e)
 		{
-			if (mReturnStatus == HTTP_OK_CODE)
+			if (m_returnStatus == HTTP_OK_CODE)
 			{
-				mReturnStatus = HTTP_BAD_CODE;
-				mErrorMessage = e.toString();
+				m_returnStatus = HTTP_BAD_CODE;
+				m_errorMessage = e.toString();
 			}
 		}
 		finally
@@ -703,8 +703,8 @@ public class HTTPRequest extends Thread
 
 			try
 			{
-				if (mSocket != null)
-					mSocket.close();
+				if (m_socket != null)
+					m_socket.close();
 			}
 			catch (IOException e2)
 			{
@@ -727,7 +727,7 @@ public class HTTPRequest extends Thread
 		/*
 		 * Return interpreter to the pool for use by someone else.
 		 */
-		mPool.put(mInterpreter);
+		m_pool.put(m_interpreter);
 	}
 
 	/**
@@ -736,7 +736,7 @@ public class HTTPRequest extends Thread
 	 */
 	public boolean getStatus()
 	{
-		return(mReturnStatus == HTTP_OK_CODE);
+		return(m_returnStatus == HTTP_OK_CODE);
 	}
 
 	/**
@@ -745,7 +745,7 @@ public class HTTPRequest extends Thread
 	 */
 	public String getErrorMessage()
 	{
-		return(mErrorMessage);
+		return(m_errorMessage);
 	}
 
 
@@ -755,6 +755,6 @@ public class HTTPRequest extends Thread
 	 */
 	public long getCreationTime()
 	{
-		return(mCreationTimeMillis);
+		return(m_creationTimeMillis);
 	}
 }

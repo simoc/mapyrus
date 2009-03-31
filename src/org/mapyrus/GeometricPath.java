@@ -54,34 +54,34 @@ public class GeometricPath
 	/*
 	 * An identity matrix results in no transformation.
 	 */
-	static AffineTransform mIdentityMatrix = new AffineTransform();
+	private static AffineTransform m_identityMatrix = new AffineTransform();
 
 	/*
 	 * Coordinates of path.
 	 */
-	private GeneralPath mPath;
+	private GeneralPath m_path;
 	
 	/*
 	 * Coordinates and rotation angle at each moveTo point.  GeneralPath
 	 * ignores successive moveTo points so we _must_ save them ourselves.
 	 */
-	private ArrayList<Double> mRotations;
-	private ArrayList<Point2D> mMoveTos;
+	private ArrayList<Double> m_rotations;
+	private ArrayList<Point2D> m_moveTos;
 
 	/*
 	 * Count of number of lineTos in path.
 	 */
-	private int mNLineTos;
+	private int m_nLineTos;
 
 	/**
 	 * Create new, empty geometric path.
 	 */
 	public GeometricPath()
 	{
-		mPath = new GeneralPath();
-		mRotations = new ArrayList<Double>();
-		mMoveTos = new ArrayList<Point2D>();
-		mNLineTos = 0;
+		m_path = new GeneralPath();
+		m_rotations = new ArrayList<Double>();
+		m_moveTos = new ArrayList<Point2D>();
+		m_nLineTos = 0;
 	}
 
 	/**
@@ -90,18 +90,18 @@ public class GeometricPath
 	 */
 	public GeometricPath(GeometricPath path)
 	{
-		mPath = (GeneralPath)(path.mPath.clone());	
-		mNLineTos = path.mNLineTos;
+		m_path = (GeneralPath)(path.m_path.clone());	
+		m_nLineTos = path.m_nLineTos;
 
 		/*
 		 * Copy the list of moveTo points and rotations.
 		 */
-		mMoveTos = new ArrayList<Point2D>(path.mMoveTos.size());
-		for (Point2D p : path.mMoveTos)
-			mMoveTos.add(p);
-		mRotations = new ArrayList<Double>(path.mRotations.size());
-		for (Double d : path.mRotations)
-			mRotations.add(d);
+		m_moveTos = new ArrayList<Point2D>(path.m_moveTos.size());
+		for (Point2D p : path.m_moveTos)
+			m_moveTos.add(p);
+		m_rotations = new ArrayList<Double>(path.m_rotations.size());
+		for (Double d : path.m_rotations)
+			m_rotations.add(d);
 	}
 
 	/**
@@ -112,9 +112,9 @@ public class GeometricPath
 	 */
 	public void moveTo(float x, float y, double rotation)
 	{
-		mPath.moveTo(x, y);
-		mMoveTos.add(new Point2D.Float(x, y));
-		mRotations.add(new Double(rotation));
+		m_path.moveTo(x, y);
+		m_moveTos.add(new Point2D.Float(x, y));
+		m_rotations.add(new Double(rotation));
 	}
 
 	/**
@@ -123,8 +123,8 @@ public class GeometricPath
 	 */	
 	public void lineTo(float x, float y)
 	{
-		mPath.lineTo(x, y);
-		mNLineTos++;
+		m_path.lineTo(x, y);
+		m_nLineTos++;
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class GeometricPath
 		float xEnd, float yEnd) throws MapyrusException
 	{
 		double radius;
-		Point2D lastPt = mPath.getCurrentPoint();
+		Point2D lastPt = m_path.getCurrentPoint();
 		if (lastPt == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_ARC_START));
 
@@ -172,8 +172,8 @@ public class GeometricPath
 			arc.setAngleExtent(arc.getAngleExtent() - 360.0);
 		}
 	
-		mPath.append(arc, true);
-		mNLineTos++;
+		m_path.append(arc, true);
+		m_nLineTos++;
 	}
 
 	/**
@@ -188,12 +188,12 @@ public class GeometricPath
 	public void curveTo(float xControl1, float yControl1,
 		float xControl2, float yControl2, float xEnd, float yEnd) throws MapyrusException
 	{
-		Point2D lastPt = mPath.getCurrentPoint();
+		Point2D lastPt = m_path.getCurrentPoint();
 		if (lastPt == null)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_BEZIER_START));
 
-		mPath.curveTo(xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
-		mNLineTos++;
+		m_path.curveTo(xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
+		m_nLineTos++;
 	}
 
 	/**
@@ -221,17 +221,17 @@ public class GeometricPath
 			GeneralPath g = new GeneralPath(ellipse);
 			AffineTransform affine = AffineTransform.getRotateInstance(rotation, xCenter, yCenter);
 			g.transform(affine);
-			mPath.append(g, false);
+			m_path.append(g, false);
 			pt = g.getCurrentPoint();
 		}
 		else
 		{
-			mPath.append(ellipse, false); 
+			m_path.append(ellipse, false); 
 			pt = new Point2D.Float((float)(xCenter + xDiameter), (float)yCenter);
 		}
 
-		mMoveTos.add(pt);
-		mNLineTos++;
+		m_moveTos.add(pt);
+		m_nLineTos++;
 	}
 
 	/**
@@ -239,8 +239,8 @@ public class GeometricPath
 	 */
 	public void closePath()
 	{
-		mPath.closePath();
-		mNLineTos++;
+		m_path.closePath();
+		m_nLineTos++;
 	}
 
 	/**
@@ -250,14 +250,14 @@ public class GeometricPath
 	 */
 	public void append(GeometricPath path, boolean connect)
 	{
-		mPath.append(path.getShape(), connect);
+		m_path.append(path.getShape(), connect);
 		ArrayList<Point2D> moveTos = path.getMoveTos();
 		ArrayList<Double> rotations = path.getMoveToRotations();
 
 		for (int i = 0; i < moveTos.size(); i++)
 		{		
-			mMoveTos.add(moveTos.get(i));
-			mRotations.add(rotations.get(i));
+			m_moveTos.add(moveTos.get(i));
+			m_rotations.add(rotations.get(i));
 		}
 	}
 
@@ -267,7 +267,7 @@ public class GeometricPath
 	 */
 	public int getMoveToCount()
 	{
-		return(mMoveTos.size());
+		return(m_moveTos.size());
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class GeometricPath
 	 */
 	public int getLineToCount()
 	{
-		return(mNLineTos);
+		return(m_nLineTos);
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class GeometricPath
 	 */
 	public ArrayList<Point2D> getMoveTos()
 	{
-		return(mMoveTos);
+		return(m_moveTos);
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class GeometricPath
 	 */
 	public ArrayList<Double> getMoveToRotations()
 	{
-		return(mRotations);
+		return(m_rotations);
 	}
 
 	/**
@@ -305,19 +305,19 @@ public class GeometricPath
 	{
 		Rectangle2D retval;
 		
-		if (mMoveTos.size() > 0 && mNLineTos == 0)
+		if (m_moveTos.size() > 0 && m_nLineTos == 0)
 		{
 			/*
 			 * Path is just a series of points.
 			 * Find rectangle containing all points.
 			 */
 			double xMin, yMin, xMax, yMax;
-			Point2D pt = mMoveTos.get(0);
+			Point2D pt = m_moveTos.get(0);
 			xMin = xMax = pt.getX();
 			yMin = yMax = pt.getY();
-			for (int i = 1; i < mMoveTos.size(); i++)
+			for (int i = 1; i < m_moveTos.size(); i++)
 			{
-				pt = mMoveTos.get(i);
+				pt = m_moveTos.get(i);
 				if (pt.getX() < xMin)
 					xMin = pt.getX();
 				if (pt.getY() < yMin)
@@ -331,7 +331,7 @@ public class GeometricPath
 		}
 		else
 		{
-			retval = mPath.getBounds2D();
+			retval = m_path.getBounds2D();
 		}
 		return retval;
 	}
@@ -342,7 +342,7 @@ public class GeometricPath
 	 */
 	public GeneralPath getShape()
 	{
-		return(mPath);
+		return(m_path);
 	}
 
 	/**
@@ -363,7 +363,7 @@ public class GeometricPath
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
 		double angle = 0.0;
 
-		PathIterator pi = mPath.getPathIterator(Constants.IDENTITY_MATRIX,
+		PathIterator pi = m_path.getPathIterator(Constants.IDENTITY_MATRIX,
 			Constants.MM_PER_INCH / Constants.getScreenResolution());
 
 		while (!pi.isDone())
@@ -470,10 +470,10 @@ public class GeometricPath
 	 */
 	public void reset()
 	{
-		mPath.reset();
-		mRotations.clear();
-		mMoveTos.clear();
-		mNLineTos = 0;
+		m_path.reset();
+		m_rotations.clear();
+		m_moveTos.clear();
+		m_nLineTos = 0;
 	}
 
 	/**
@@ -568,10 +568,10 @@ public class GeometricPath
 		/*
 		 * If path is only points then return the last point.
 		 */
-		if (mMoveTos.size() > 0 && mNLineTos == 0) 
-			return(mMoveTos.get(0));
+		if (m_moveTos.size() > 0 && m_nLineTos == 0) 
+			return(m_moveTos.get(0));
 
-		PathIterator pi = mPath.getPathIterator(mIdentityMatrix);
+		PathIterator pi = m_path.getPathIterator(m_identityMatrix);
 		float coords[] = new float[6];
 		Point2D retval = null;
 		if (!pi.isDone())
@@ -594,11 +594,11 @@ public class GeometricPath
 		/*
 		 * If path is only points then return the last point.
 		 */
-		if (mMoveTos.size() > 0 && mNLineTos == 0) 
-			return(mMoveTos.get(mMoveTos.size() - 1));
+		if (m_moveTos.size() > 0 && m_nLineTos == 0) 
+			return(m_moveTos.get(m_moveTos.size() - 1));
 
 		Point2D retval = null;
-		PathIterator pi = mPath.getPathIterator(mIdentityMatrix);
+		PathIterator pi = m_path.getPathIterator(m_identityMatrix);
 		float coords[] = new float[6];
 		int segmentType;
 		float xMoveTo = 0, yMoveTo = 0;
@@ -647,7 +647,7 @@ public class GeometricPath
 	private double []walkPath(int attributeToCalculate, double resolution)
 	{
 		int segmentType;
-		PathIterator pi = mPath.getPathIterator(mIdentityMatrix, resolution);
+		PathIterator pi = m_path.getPathIterator(m_identityMatrix, resolution);
 		float coords[] = new float[6];
 		float xStart = 0.0f, yStart = 0.0f;
 		float xEnd = 0, yEnd = 0;
@@ -766,7 +766,7 @@ public class GeometricPath
 	public Argument toArgument(double resolution)
 	{
 		Argument retval;
-		int moveCount = mMoveTos.size();
+		int moveCount = m_moveTos.size();
 		double []coords;
 
 		if (moveCount == 0)
@@ -776,7 +776,7 @@ public class GeometricPath
 			 */
 			retval = Argument.emptyGeometry;
 		}
-		else if (mNLineTos == 0)
+		else if (m_nLineTos == 0)
 		{
 			/*
 			 * Path with only move points.
@@ -784,7 +784,7 @@ public class GeometricPath
 			Point2D.Float pt;
 			if (moveCount == 1)
 			{
-				pt = (Point2D.Float)mMoveTos.get(0);
+				pt = (Point2D.Float)m_moveTos.get(0);
 				coords = new double[]{Argument.GEOMETRY_POINT, 1,
 					Argument.MOVETO, pt.x, pt.y};
 			}
@@ -799,7 +799,7 @@ public class GeometricPath
 				int index = 2;
 				for (int i = 0; i < moveCount; i++)
 				{
-					pt = (Point2D.Float)mMoveTos.get(i);
+					pt = (Point2D.Float)m_moveTos.get(i);
 					coords[index++] = Argument.GEOMETRY_POINT;
 					coords[index++] = 1;
 					coords[index++] = Argument.MOVETO;
@@ -816,7 +816,7 @@ public class GeometricPath
 			 */
 			int segmentType;
 			float pathCoords[] = new float[6];
-			PathIterator pi = mPath.getPathIterator(mIdentityMatrix, resolution);
+			PathIterator pi = m_path.getPathIterator(m_identityMatrix, resolution);
 
 			/*
 			 * Walk through path and find number of slots needed
@@ -846,7 +846,7 @@ public class GeometricPath
 			int nLinestrings = 0;
 			coordCounter = 0;
 			int index = 0, startIndex = 0;
-			pi = mPath.getPathIterator(mIdentityMatrix, resolution);
+			pi = m_path.getPathIterator(m_identityMatrix, resolution);
 			while (!pi.isDone())
 			{
 				segmentType = pi.currentSegment(pathCoords);
@@ -961,24 +961,24 @@ public class GeometricPath
 		/*
 		 * Create translated copy of path.
 		 */
-		retval.mPath = (GeneralPath)(mPath.clone());
+		retval.m_path = (GeneralPath)(m_path.clone());
 		AffineTransform translateTransform =
 			AffineTransform.getTranslateInstance(xShift, yShift);
-		retval.mPath.transform(translateTransform);
+		retval.m_path.transform(translateTransform);
 		
 		/*
 		 * Replace list of moveto points and rotations too.
 		 */
-		for (int i = 0; i < mMoveTos.size(); i++)
+		for (int i = 0; i < m_moveTos.size(); i++)
 		{
-			Point2D.Float pt = (Point2D.Float)mMoveTos.get(i);
+			Point2D.Float pt = (Point2D.Float)m_moveTos.get(i);
 			pt = new Point2D.Float((float)(pt.x + xShift), (float)(pt.y + yShift));
-			retval.mMoveTos.add(pt);
+			retval.m_moveTos.add(pt);
 		}
-		retval.mNLineTos = mNLineTos;
-		retval.mRotations = new ArrayList<Double>(mRotations.size());
-		for (Double d : mRotations)
-			retval.mRotations.add(d);
+		retval.m_nLineTos = m_nLineTos;
+		retval.m_rotations = new ArrayList<Double>(m_rotations.size());
+		for (Double d : m_rotations)
+			retval.m_rotations.add(d);
 
 		return(retval);
 	}
@@ -1223,7 +1223,7 @@ public class GeometricPath
 		 * Flatten arcs in path and make list of line equations
 		 * for each segment of path.
 		 */
-		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		pi = m_path.getPathIterator(m_identityMatrix, resolution);	
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);
@@ -1335,7 +1335,7 @@ public class GeometricPath
 			stepDirection = 1;
 		}
 		
-		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		pi = m_path.getPathIterator(m_identityMatrix, resolution);	
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);
@@ -1641,7 +1641,7 @@ public class GeometricPath
 		 */
 		int nParts = mergeSelectedParts(offsets, lengths);
 
-		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		pi = m_path.getPathIterator(m_identityMatrix, resolution);	
 		while (!pi.isDone() && partIndex < nParts)
 		{
 			segmentType = pi.currentSegment(coords);
@@ -1790,10 +1790,10 @@ public class GeometricPath
 			 * Path is just a series of points so we can simply
 			 * reverse the point order.
 			 */
-			for (int i = mMoveTos.size() - 1; i >= 0; i--)
+			for (int i = m_moveTos.size() - 1; i >= 0; i--)
 			{
-				Point2D pt = mMoveTos.get(i);
-				Double rotation = mRotations.get(i);
+				Point2D pt = m_moveTos.get(i);
+				Double rotation = m_rotations.get(i);
 				retval.moveTo((float)pt.getX(), (float)pt.getY(), rotation.doubleValue());
 			}
 			return(retval);
@@ -1802,7 +1802,7 @@ public class GeometricPath
 		/*
 		 * Build stack with current path.
 		 */
-		pi = mPath.getPathIterator(mIdentityMatrix, resolution);	
+		pi = m_path.getPathIterator(m_identityMatrix, resolution);	
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);

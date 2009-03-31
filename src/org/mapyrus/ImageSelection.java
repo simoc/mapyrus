@@ -34,11 +34,11 @@ import java.io.IOException;
  */
 public class ImageSelection implements Transferable
 {
-	private Image mImage;
+	private Image m_image;
 	
 	public ImageSelection(Image image)
 	{
-		mImage = image;
+		m_image = image;
 	}
 	
 	public DataFlavor []getTransferDataFlavors()
@@ -58,6 +58,6 @@ public class ImageSelection implements Transferable
 		{
 			throw new UnsupportedFlavorException(flavor);
 		}
-		return(mImage);
+		return(m_image);
 	}	
 }

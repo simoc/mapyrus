@@ -38,7 +38,7 @@ public class LRUCache<K,V> extends LinkedHashMap<K,V>
 	/*
 	 * The maximum number of elements to hold in the cache.
 	 */
-	private int mMaximumSize;
+	private int m_maximumSize;
 
 	/**
 	 * Create a new least recently used (LRU) cache.
@@ -51,7 +51,7 @@ public class LRUCache<K,V> extends LinkedHashMap<K,V>
 		 * It can grow larger if necessary.
 		 */
 		super(Math.min(16, size), 0.75f, true);
-		mMaximumSize = size;
+		m_maximumSize = size;
 	}
 
 	/*
@@ -60,6 +60,6 @@ public class LRUCache<K,V> extends LinkedHashMap<K,V>
 	 */
 	protected boolean removeEldestEntry(Map.Entry eldest)
 	{
-		return(size() > mMaximumSize);
+		return(size() > m_maximumSize);
 	}
 }

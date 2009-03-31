@@ -40,18 +40,18 @@ class Preprocessor
 	 * Files we are reading from and their names.
 	 * Built up as a stack as we include nested files.
 	 */
-	private LinkedList<FileOrURL> mFileStack;
+	private LinkedList<FileOrURL> m_fileStack;
 	
 	/*
 	 * First file we are reading from.
 	 */
-	private FileOrURL mInitialFile;
+	private FileOrURL m_initialFile;
 	
 	/*
 	 * Line we are currently reading from.
 	 */
-	private StringBuffer mCurrentLine = null;
-	private int mCurrentLineIndex = 0;
+	private StringBuffer m_currentLine = null;
+	private int m_currentLineIndex = 0;
 
 	/**
 	 * Create stack of files being read.
@@ -59,9 +59,9 @@ class Preprocessor
 	 */
 	private void initFileStack(FileOrURL f)
 	{
-		mFileStack = new LinkedList<FileOrURL>();
-		mFileStack.add(f);
-		mInitialFile = f;
+		m_fileStack = new LinkedList<FileOrURL>();
+		m_fileStack.add(f);
+		m_initialFile = f;
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Preprocessor
 	{
 		FileOrURL f;
 
-		FileOrURL includingFile = (FileOrURL)mFileStack.getLast();
+		FileOrURL includingFile = (FileOrURL)m_fileStack.getLast();
 
 		if (includingFile.isURL())
 			f = new FileOrURL(filename, includingFile);
@@ -120,7 +120,7 @@ class Preprocessor
 					": " + f.toString());
 			}
 		}
-		mFileStack.add(f);
+		m_fileStack.add(f);
 	}
 
 
@@ -154,17 +154,17 @@ class Preprocessor
 		/*
 		 * Return next character from current line.
 		 */
-		if (mCurrentLine != null && mCurrentLineIndex < mCurrentLine.length())
+		if (m_currentLine != null && m_currentLineIndex < m_currentLine.length())
 		{
-			c = mCurrentLine.charAt(mCurrentLineIndex++);
+			c = m_currentLine.charAt(m_currentLineIndex++);
 			return(c);
 		}
 
 		/*
 		 * Need to read a new line.
 		 */
-		mCurrentLineIndex = 0;
-		FileOrURL f = (FileOrURL)mFileStack.getLast();
+		m_currentLineIndex = 0;
+		FileOrURL f = (FileOrURL)m_fileStack.getLast();
 		reader = f.getReader();
 		String s = reader.readLine();
 		if (s == null)
@@ -173,11 +173,11 @@ class Preprocessor
 			 * Got end-of-file.  Close file and continue reading any file that included
 			 * this one.
 			 */
-			mFileStack.removeLast();
+			m_fileStack.removeLast();
 			reader.close();
-			if (mFileStack.size() > 0)
+			if (m_fileStack.size() > 0)
 			{
-				mCurrentLine = null;
+				m_currentLine = null;
 				return(read());
 			}
 			else
@@ -189,26 +189,26 @@ class Preprocessor
 		/*
 		 * Join line with next line if it ends with '\'.
 		 */
-		mCurrentLine = new StringBuffer(s);
+		m_currentLine = new StringBuffer(s);
 		while (s != null && s.endsWith("\\"))
 		{
 			/*
 			 * Remove '\' at end of buffer, read and append next line
 			 * to buffer.
 			 */
-			int len = mCurrentLine.length();
-			mCurrentLine.deleteCharAt(len - 1);
+			int len = m_currentLine.length();
+			m_currentLine.deleteCharAt(len - 1);
 
 			s = reader.readLine();
 			if (s != null)
-				mCurrentLine.append(s);
+				m_currentLine.append(s);
 		}
-		mCurrentLine.append('\n');
+		m_currentLine.append('\n');
 
 		/*
 		 * Check if this line includes another file.
 		 */
-		String trimmed = mCurrentLine.toString().trim();
+		String trimmed = m_currentLine.toString().trim();
 		if (trimmed.toLowerCase().startsWith(INCLUDE_KEYWORD))
 		{
 			if (trimmed.length() == INCLUDE_KEYWORD.length())
@@ -248,12 +248,12 @@ class Preprocessor
 						": " + e.getMessage());
 				}
 
-				mCurrentLine = null;
+				m_currentLine = null;
 				return(read());
 			}
 		}
 
-		c = mCurrentLine.charAt(mCurrentLineIndex++);
+		c = m_currentLine.charAt(m_currentLineIndex++);
 		return(c);
 	}
 
@@ -271,11 +271,11 @@ class Preprocessor
 			 * Don't allow EOF sentinel to be pushed back.
 			 */
 		}
-		if (mCurrentLine == null)
+		if (m_currentLine == null)
 		{
 			Character cs = new Character((char)c);
-			mCurrentLine = new StringBuffer(cs.toString());
-			mCurrentLineIndex = 0;
+			m_currentLine = new StringBuffer(cs.toString());
+			m_currentLineIndex = 0;
 		}
 		else
 		{
@@ -284,15 +284,15 @@ class Preprocessor
 			 * we read (it should be).  If so, we can just
 			 * step back one character so it can be read again.
 			 */
-			if (mCurrentLineIndex > 0 &&
-				c == mCurrentLine.charAt(mCurrentLineIndex - 1))
+			if (m_currentLineIndex > 0 &&
+				c == m_currentLine.charAt(m_currentLineIndex - 1))
 			{
-				mCurrentLineIndex--;
+				m_currentLineIndex--;
 			}
 			else
 			{
 				Character cs = new Character((char)c);
-				mCurrentLine.insert(mCurrentLineIndex, cs.toString());
+				m_currentLine.insert(m_currentLineIndex, cs.toString());
 			}
 		}
 	}
@@ -305,16 +305,16 @@ class Preprocessor
 	{
 		FileOrURL retval;
 
-		if (mFileStack.size() > 0)
+		if (m_fileStack.size() > 0)
 		{
-			retval = (FileOrURL)mFileStack.getLast();
+			retval = (FileOrURL)m_fileStack.getLast();
 		}
 		else
 		{
 			/*
 			 * Already read to EOF and stack of files is empty.
 			 */
-			retval = mInitialFile;
+			retval = m_initialFile;
 		}
 		return(retval);
 	}
@@ -354,9 +354,9 @@ class Preprocessor
 	 */
 	public void close()
 	{
-		while (!mFileStack.isEmpty())
+		while (!m_fileStack.isEmpty())
 		{
-			FileOrURL f = (FileOrURL)mFileStack.removeLast();
+			FileOrURL f = (FileOrURL)m_fileStack.removeLast();
 			Reader reader = f.getReader();
 			try
 			{
@@ -369,6 +369,6 @@ class Preprocessor
 				 */
 			}
 		}
-		mFileStack = null;
+		m_fileStack = null;
 	}
 }

@@ -53,9 +53,9 @@ import javax.swing.filechooser.FileFilter;
  */
 public class MapyrusFrame
 {
-	private Mutex mMutex;
-	JFrame mFrame;
-	BufferedImage mImage;
+	private Mutex m_mutex;
+	JFrame m_frame;
+	BufferedImage m_image;
 
 	/**
 	 * Create new window displaying image.
@@ -64,13 +64,13 @@ public class MapyrusFrame
 	 */
 	public MapyrusFrame(String title, BufferedImage image)
 	{
-		mImage = image;
-		mFrame = new JFrame(title);
+		m_image = image;
+		m_frame = new JFrame(title);
 
 		ImageIcon icon = new ImageIcon(image);
 		final JLabel label = new JLabel(icon);
 
-		Container contentPane = mFrame.getContentPane();
+		Container contentPane = m_frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 
 		/*
@@ -92,8 +92,8 @@ public class MapyrusFrame
 			contentPane.add(label, BorderLayout.CENTER);
 		}
 
-		mMutex = new Mutex();
-		mMutex.lock();
+		m_mutex = new Mutex();
+		m_mutex.lock();
 
 		/*
 		 * Add menubar and menu options.
@@ -121,7 +121,7 @@ public class MapyrusFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				mMutex.unlock();
+				m_mutex.unlock();
 			}
 		});
 
@@ -133,7 +133,7 @@ public class MapyrusFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				ImageSelection imageSelection = new ImageSelection(mImage);
+				ImageSelection imageSelection = new ImageSelection(m_image);
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clipboard.setContents(imageSelection, null);
 			}
@@ -144,16 +144,16 @@ public class MapyrusFrame
 		menubar.add(editMenu);
 		contentPane.add(menubar, BorderLayout.NORTH);
 
-		mFrame.addWindowListener(new WindowAdapter()
+		m_frame.addWindowListener(new WindowAdapter()
 		{
 			public void windowClosing(WindowEvent e)
 			{
-				mMutex.unlock();
+				m_mutex.unlock();
 			}
 		});
 
-		mFrame.pack();
-		mFrame.setVisible(true);
+		m_frame.pack();
+		m_frame.setVisible(true);
 	}
 
 	/*
@@ -187,18 +187,18 @@ public class MapyrusFrame
 		fileChooser.setMultiSelectionEnabled(false);
 		fileChooser.setFileFilter(new PNGImageFilter());
 
-		int retval = fileChooser.showSaveDialog(mFrame);
+		int retval = fileChooser.showSaveDialog(m_frame);
 		if (retval == JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
 				File selectedFile = fileChooser.getSelectedFile();
 				FileOutputStream outStream = new FileOutputStream(selectedFile);
-				ImageIO.write(mImage, "png", outStream);
+				ImageIO.write(m_image, "png", outStream);
 			}
 			catch (IOException e)
 			{
-				JOptionPane.showMessageDialog(mFrame, e.getMessage(), Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -211,6 +211,6 @@ public class MapyrusFrame
 		/*
 		 * Wait for window to be closed and lock to be released.
 		 */
-		mMutex.lock();
+		m_mutex.lock();
 	}
 }

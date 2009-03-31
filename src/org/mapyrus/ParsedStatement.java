@@ -47,8 +47,8 @@ public class ParsedStatement
 	public static final int PARSED_DONE = 8;
 	public static final int PARSED_IN = 9;
 
-	private Statement mStatement;	/* statement that was parsed */
-	private int mKeywordType;	/* type of keyword parsed */
+	private Statement m_statement;	/* statement that was parsed */
+	private int m_keywordType;	/* type of keyword parsed */
 
 	/**
 	 * Sets regular statement as parsed statement.
@@ -56,7 +56,7 @@ public class ParsedStatement
 	 */
 	public ParsedStatement(Statement statement)
 	{
-		mStatement = statement;
+		m_statement = statement;
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class ParsedStatement
 	 */
 	public ParsedStatement(int keywordType)
 	{
-		mStatement = null;
-		mKeywordType = keywordType;
+		m_statement = null;
+		m_keywordType = keywordType;
 	}
 
 	/*
@@ -75,7 +75,7 @@ public class ParsedStatement
 	 */
 	public boolean isStatement()
 	{
-		return(mStatement != null);
+		return(m_statement != null);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class ParsedStatement
 	 */
 	public Statement getStatement()
 	{
-		return(mStatement);
+		return(m_statement);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class ParsedStatement
 	 */
 	public int getKeywordType()
 	{
-		return(mKeywordType);
+		return(m_keywordType);
 	}
 }
 

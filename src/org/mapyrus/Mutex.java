@@ -27,14 +27,14 @@ package org.mapyrus;
  */
 public class Mutex
 {
-	private boolean mLocked = false;
+	private boolean m_locked = false;
 
 	/**
 	 * Releases lock on mutex.
 	 */
 	public synchronized void unlock()
 	{
-		mLocked = false;
+		m_locked = false;
 		notifyAll();
 	}
 
@@ -44,7 +44,7 @@ public class Mutex
 	 */
 	public synchronized void lock()
 	{
-		while (mLocked)
+		while (m_locked)
 		{
 			try
 			{
@@ -54,6 +54,6 @@ public class Mutex
 			{
 			}
 		}
-		mLocked = true;
+		m_locked = true;
 	}
 }

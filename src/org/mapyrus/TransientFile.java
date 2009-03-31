@@ -30,8 +30,8 @@ import java.io.File;
  */
 public class TransientFile
 {
-	String mFilename;
-	long mExpiryTimestamp;
+	String m_filename;
+	long m_expiryTimestamp;
 	
 	/**
 	 * Create new transient file.
@@ -40,8 +40,8 @@ public class TransientFile
 	 */
 	public TransientFile(String filename, long expiry)
 	{
-		mFilename = filename;
-		mExpiryTimestamp = expiry;	
+		m_filename = filename;
+		m_expiryTimestamp = expiry;	
 
 		File f = new File(filename);
 		f.deleteOnExit();
@@ -53,7 +53,7 @@ public class TransientFile
 	 */
 	public String getFilename()
 	{
-		return(mFilename);
+		return(m_filename);
 	}
 
 	/**
@@ -62,11 +62,11 @@ public class TransientFile
 	 */
 	public long getExpiry()
 	{
-		return(mExpiryTimestamp);
+		return(m_expiryTimestamp);
 	}
 	
 	public String toString()
 	{
-		return(mFilename + " expiring at " + mExpiryTimestamp);
+		return(m_filename + " expiring at " + m_expiryTimestamp);
 	}
 }

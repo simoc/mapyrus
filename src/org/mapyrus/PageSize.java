@@ -36,7 +36,7 @@ public class PageSize extends MediaSizeName
 {
 	private static final long serialVersionUID = 0x4a510002;
 
-	private Point2D mDimension;
+	private Point2D m_dimension;
 
 	/**
 	 * Create page size from name.
@@ -55,7 +55,7 @@ public class PageSize extends MediaSizeName
 		String names[] = getStringTable();
 		EnumSyntax enums[] = getEnumValueTable();
 		int i = 0;
-		while (i < names.length && mDimension == null)
+		while (i < names.length && m_dimension == null)
 		{
 			if
 			(
@@ -66,12 +66,12 @@ public class PageSize extends MediaSizeName
 			)
 			{
 				MediaSize m = MediaSize.getMediaSizeForName((MediaSizeName)enums[i]);
-				mDimension = new Point2D.Double(m.getX(Size2DSyntax.MM),
+				m_dimension = new Point2D.Double(m.getX(Size2DSyntax.MM),
 					m.getY(Size2DSyntax.MM));
 			}
 			i++;
 		}
-		if (mDimension == null)
+		if (m_dimension == null)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_SIZE) +
 				": " + name);
@@ -84,6 +84,6 @@ public class PageSize extends MediaSizeName
 	 */
 	public Point2D getDimension()
 	{
-		return(mDimension);
+		return(m_dimension);
 	}
 }

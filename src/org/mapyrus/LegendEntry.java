@@ -37,11 +37,11 @@ public class LegendEntry implements Comparable
 	public static final int ZIGZAG_ENTRY = 3;
 	public static final int BOX_ENTRY = 4;
 
-	private String mBlockName;
-	private Argument[] mBlockArgs;
-	private int mType;
-	private String mDescription;
-	private int mReferenceCount;
+	private String m_blockName;
+	private Argument[] m_blockArgs;
+	private int m_type;
+	private String m_description;
+	private int m_referenceCount;
 
 	/**
 	 * Create new legend entry.
@@ -52,11 +52,11 @@ public class LegendEntry implements Comparable
 	 */
 	public LegendEntry(String blockName, Argument []blockArgs, int type, String description)
 	{
-		mBlockName = blockName;
-		mBlockArgs = blockArgs;
-		mType = type;
-		mDescription = description;
-		mReferenceCount = 1;
+		m_blockName = blockName;
+		m_blockArgs = blockArgs;
+		m_type = type;
+		m_description = description;
+		m_referenceCount = 1;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class LegendEntry implements Comparable
 	 */
 	public void addReference()
 	{
-		mReferenceCount++;
+		m_referenceCount++;
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class LegendEntry implements Comparable
 	 */
 	public int getReferenceCount()
 	{
-		return(mReferenceCount);
+		return(m_referenceCount);
 	}
 
 	/**
@@ -108,9 +108,9 @@ public class LegendEntry implements Comparable
 		/*
 		 * Sort by legend type, then by description.
 		 */
-		int retval = this.mType - entry.mType;
+		int retval = this.m_type - entry.m_type;
 		if (retval == 0)
-			retval = this.mDescription.compareTo(entry.mDescription);
+			retval = this.m_description.compareTo(entry.m_description);
 		return(retval);
 	}
 
@@ -120,7 +120,7 @@ public class LegendEntry implements Comparable
 	 */
 	public String getBlockName()
 	{
-		return(mBlockName);
+		return(m_blockName);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class LegendEntry implements Comparable
 	 */
 	public Argument []getBlockArgs()
 	{
-		return(mBlockArgs);
+		return(m_blockArgs);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class LegendEntry implements Comparable
 	 */
 	public int getType()
 	{
-		return(mType);
+		return(m_type);
 	}
 	
 	/**
@@ -148,11 +148,11 @@ public class LegendEntry implements Comparable
 	public String getTypeString()
 	{
 		String retval;
-		if (mType == POINT_ENTRY)
+		if (m_type == POINT_ENTRY)
 			retval = "point";
-		else if (mType == LINE_ENTRY)
+		else if (m_type == LINE_ENTRY)
 			retval = "line";
-		else if (mType == ZIGZAG_ENTRY)
+		else if (m_type == ZIGZAG_ENTRY)
 			retval = "zigzag";
 		else
 			retval = "box";
@@ -166,7 +166,7 @@ public class LegendEntry implements Comparable
 	 */
 	public String getDescription()
 	{
-		return(mDescription);
+		return(m_description);
 	}
 
 	/**
@@ -175,6 +175,6 @@ public class LegendEntry implements Comparable
 	 */
 	public String toString()
 	{
-		return(mBlockName + " " + mDescription);
+		return(m_blockName + " " + m_description);
 	}
 }

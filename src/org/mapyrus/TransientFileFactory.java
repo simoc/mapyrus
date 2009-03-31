@@ -36,13 +36,13 @@ public class TransientFileFactory
 	/*
 	 * Sequence number used in each unique filename.
 	 */
-	private static int mCounter = 0;
+	private static int m_counter = 0;
 
 	/*
 	 * List of generated filenames, sorted by expiry date (with
 	 * file that is next to expire at start of list).
 	 */
-	private static LinkedList<TransientFile> mGeneratedFilenames = new LinkedList<TransientFile>();
+	private static LinkedList<TransientFile> m_generatedFilenames = new LinkedList<TransientFile>();
 
 	/**
 	 * Generate unique filename for use as temporary filename
@@ -62,20 +62,20 @@ public class TransientFileFactory
 		/*
 		 * Delete any previously generated temporary files that have expired.
 		 */
-		if (!mGeneratedFilenames.isEmpty())
+		if (!m_generatedFilenames.isEmpty())
 		{
-			TransientFile expired = mGeneratedFilenames.getFirst();
-			while (expired != null && now >= expired.mExpiryTimestamp)
+			TransientFile expired = m_generatedFilenames.getFirst();
+			while (expired != null && now >= expired.m_expiryTimestamp)
 			{
-				File f = new File(expired.mFilename);
+				File f = new File(expired.m_filename);
 				f.delete();
 	
-				mGeneratedFilenames.removeFirst();
+				m_generatedFilenames.removeFirst();
 	
-				if (mGeneratedFilenames.isEmpty())
+				if (m_generatedFilenames.isEmpty())
 					expired = null;
 				else
-					expired = mGeneratedFilenames.getFirst();
+					expired = m_generatedFilenames.getFirst();
 			}
 		}
 
@@ -85,7 +85,7 @@ public class TransientFileFactory
 		 */
 		random += (now % 397);
 		StringBuffer sb = new StringBuffer("tmp");
-		sb.append(mCounter);
+		sb.append(m_counter);
 		sb.append("a");
 		sb.append(Long.toString(random, Character.MAX_RADIX));
 		if (suffix.length() > 0)
@@ -95,34 +95,34 @@ public class TransientFileFactory
 			sb.append(suffix);
 		}
 		retval = sb.toString();
-		mCounter++;
+		m_counter++;
 
 		/*
 		 * Insert newly created filename into list,
 		 * maintaining the list in order of expiry.
 		 */
-		ListIterator li = mGeneratedFilenames.listIterator();
+		ListIterator li = m_generatedFilenames.listIterator();
 		int insertIndex = 0;
 		boolean found = false;
 
-		if (!mGeneratedFilenames.isEmpty())
+		if (!m_generatedFilenames.isEmpty())
 		{
 			/*
 			 * If entry expires at a later time than all other files we've
 			 * generated then we can just add it to end of list.
 			 */
-			TransientFile t = mGeneratedFilenames.getLast();
-			if (t.mExpiryTimestamp <= expiry)
+			TransientFile t = m_generatedFilenames.getLast();
+			if (t.m_expiryTimestamp <= expiry)
 			{
 				found = true;
-				insertIndex = mGeneratedFilenames.size();
+				insertIndex = m_generatedFilenames.size();
 			}
 		}
 
 		while (found == false && li.hasNext())
 		{
 			TransientFile t = (TransientFile)(li.next());
-			if (t.mExpiryTimestamp > expiry)
+			if (t.m_expiryTimestamp > expiry)
 			{
 				insertIndex = li.nextIndex() - 1;
 				found = true;
@@ -131,9 +131,9 @@ public class TransientFileFactory
 
 		TransientFile t = new TransientFile(retval, expiry);
 		if (found)
-			mGeneratedFilenames.add(insertIndex, t);
+			m_generatedFilenames.add(insertIndex, t);
 		else
-			mGeneratedFilenames.addLast(t);
+			m_generatedFilenames.addLast(t);
 
 		return(retval);
 	}

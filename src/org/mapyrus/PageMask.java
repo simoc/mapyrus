@@ -39,10 +39,10 @@ public class PageMask
 	 * The mask as a 0/1 array (corresponding to values false/true)
 	 * and its width and height.
 	 */
-	BufferedImage mMask;
-	private Graphics2D mMaskGraphics;
-	private int mMaskWidth;
-	private int mMaskHeight;
+	BufferedImage m_mask;
+	private Graphics2D m_maskGraphics;
+	private int m_maskWidth;
+	private int m_maskHeight;
 
 	/*
 	 * Number of pixels in mask for each millimetre on page.
@@ -57,16 +57,16 @@ public class PageMask
 	 */
 	public PageMask(int maskWidth, int maskHeight)
 	{
-		mMask = new BufferedImage(maskWidth * PIXELS_PER_MM,
+		m_mask = new BufferedImage(maskWidth * PIXELS_PER_MM,
 			maskHeight * PIXELS_PER_MM,
 			BufferedImage.TYPE_BYTE_BINARY);
-		mMaskGraphics = (Graphics2D)mMask.getGraphics();
-		mMaskGraphics.scale(PIXELS_PER_MM, PIXELS_PER_MM);
-		mMaskGraphics.setColor(Color.BLACK);
-		mMaskGraphics.fillRect(0, 0, maskWidth, maskHeight);
+		m_maskGraphics = (Graphics2D)m_mask.getGraphics();
+		m_maskGraphics.scale(PIXELS_PER_MM, PIXELS_PER_MM);
+		m_maskGraphics.setColor(Color.BLACK);
+		m_maskGraphics.fillRect(0, 0, maskWidth, maskHeight);
 
-		mMaskWidth = maskWidth;
-		mMaskHeight = maskHeight;
+		m_maskWidth = maskWidth;
+		m_maskHeight = maskHeight;
 	}
 
 	/**
@@ -85,8 +85,8 @@ public class PageMask
 		int yMax = Math.max(y1, y2);
 		int width = Math.max(xMax - xMin, 1);
 		int height = Math.max(yMax - yMin, 1);
-		mMaskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
-		mMaskGraphics.fillRect(xMin, yMin, width, height);
+		m_maskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
+		m_maskGraphics.fillRect(xMin, yMin, width, height);
 	}
 
 	/**
@@ -96,12 +96,12 @@ public class PageMask
 	 */
 	public void setValue(Shape s, int value)
 	{
-		mMaskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
+		m_maskGraphics.setColor(value != 0 ? Color.WHITE : Color.BLACK);
 		Rectangle2D bounds = s.getBounds2D();
 		if (bounds.getWidth() == 0 && bounds.getHeight() == 0)
-			mMaskGraphics.fillRect((int)bounds.getMinX(), (int)bounds.getMinY(), 1, 1);
+			m_maskGraphics.fillRect((int)bounds.getMinX(), (int)bounds.getMinY(), 1, 1);
 		else
-			mMaskGraphics.fill(s);
+			m_maskGraphics.fill(s);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class PageMask
 		 * Therefore if any part of the rectangle falls outside the
 		 * mask then the test for all zeroes fails.
 		 */
-		boolean foundNonZero = (xMin < 0 || yMin < 0 || xMax >= mMaskWidth || yMax >= mMaskHeight);
+		boolean foundNonZero = (xMin < 0 || yMin < 0 || xMax >= m_maskWidth || yMax >= m_maskHeight);
 
 		int y = yMin * PIXELS_PER_MM;
 		while ((!foundNonZero) && y <= yMax * PIXELS_PER_MM)
@@ -132,7 +132,7 @@ public class PageMask
 			int x = xMin * PIXELS_PER_MM;
 			while ((!foundNonZero) && x <= xMax * PIXELS_PER_MM)
 			{
-				int pixel = (mMask.getRGB(x, y) & 0xffffff);
+				int pixel = (m_mask.getRGB(x, y) & 0xffffff);
 				foundNonZero = (pixel != 0); 
 				x++;
 			}
@@ -150,7 +150,7 @@ public class PageMask
 	{
 		Rectangle2D bounds = s.getBounds2D();
 		boolean foundNonZero = (bounds.getMinX() < 0 || bounds.getMinY() < 0 ||
-			bounds.getMaxX() >= mMaskWidth || bounds.getMaxY() >= mMaskHeight);
+			bounds.getMaxX() >= m_maskWidth || bounds.getMaxY() >= m_maskHeight);
 		if (!foundNonZero)
 		{
 			/*
@@ -159,13 +159,13 @@ public class PageMask
 			 * If any pixels are set in this buffer and in the mask then
 			 * there is an overlap.
 			 */
-			BufferedImage shapeBuffer = new BufferedImage(mMaskWidth * PIXELS_PER_MM,
-				mMaskHeight * PIXELS_PER_MM,
+			BufferedImage shapeBuffer = new BufferedImage(m_maskWidth * PIXELS_PER_MM,
+				m_maskHeight * PIXELS_PER_MM,
 				BufferedImage.TYPE_BYTE_BINARY);
 			Graphics2D shapeGraphics = (Graphics2D)shapeBuffer.getGraphics();
 			shapeGraphics.scale(PIXELS_PER_MM, PIXELS_PER_MM);
 			shapeGraphics.setColor(Color.BLACK);
-			shapeGraphics.fillRect(0, 0, mMaskWidth, mMaskHeight);
+			shapeGraphics.fillRect(0, 0, m_maskWidth, m_maskHeight);
 			shapeGraphics.setColor(Color.WHITE);
 
 			if (bounds.getWidth() == 0 && bounds.getHeight() == 0)
@@ -187,7 +187,7 @@ public class PageMask
 						/*
 						 * Is shape overlapping part of the mask that is set to 1?
 						 */
-						int maskPixel = (mMask.getRGB(x, y) & 0xffffff);
+						int maskPixel = (m_mask.getRGB(x, y) & 0xffffff);
 						foundNonZero = (maskPixel != 0);
 					}
 					x++;

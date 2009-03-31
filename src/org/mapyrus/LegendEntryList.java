@@ -37,20 +37,20 @@ public class LegendEntryList
 	/*
 	 * All legend entries.
 	 */
-	private HashMap<String, LegendEntry> mLegendHashMap;
+	private HashMap<String, LegendEntry> m_legendHashMap;
 
 	/*
 	 * Flag true when further additions to list are accepted.
 	 */
-	private boolean mAcceptAdditions;
+	private boolean m_acceptAdditions;
 
 	/**
 	 * Create new legend entry list.
 	 */
 	public LegendEntryList()
 	{
-		mLegendHashMap = new HashMap<String, LegendEntry>();
-		mAcceptAdditions = true;
+		m_legendHashMap = new HashMap<String, LegendEntry>();
+		m_acceptAdditions = true;
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class LegendEntryList
 	 */
 	public void ignoreAdditions()
 	{
-		mAcceptAdditions = false;
+		m_acceptAdditions = false;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class LegendEntryList
 	 */
 	public void acceptAdditions()
 	{
-		mAcceptAdditions = true;
+		m_acceptAdditions = true;
 	}
 
 	/**
@@ -92,14 +92,14 @@ public class LegendEntryList
 	public void add(String blockName, Argument []blockArgs, int blockArgIndex,
 		int nBlockArgs, int type, String description)
 	{
-		if (mAcceptAdditions)
+		if (m_acceptAdditions)
 		{
 			/*
 			 * If we've already added this legend entry then increment the reference count,
 			 * otherwise make a new legend entry.
 			 */
 			String hashValue = hash(blockName, description);
-			LegendEntry entry = mLegendHashMap.get(hashValue);
+			LegendEntry entry = m_legendHashMap.get(hashValue);
 			if (entry != null)
 			{
 				entry.addReference();
@@ -109,7 +109,7 @@ public class LegendEntryList
 				Argument args[] = new Argument[nBlockArgs];
 				for (int i = 0; i < nBlockArgs; i++)
 					args[i] = blockArgs[blockArgIndex + i];
-				mLegendHashMap.put(hashValue, new LegendEntry(blockName, args, type, description));
+				m_legendHashMap.put(hashValue, new LegendEntry(blockName, args, type, description));
 			}
 		}
 	}
@@ -120,7 +120,7 @@ public class LegendEntryList
 	 */
 	public int size()
 	{
-		return(mLegendHashMap.size());
+		return(m_legendHashMap.size());
 	}
 
 	/**
@@ -134,14 +134,14 @@ public class LegendEntryList
 		/*
 		 * Ensure that entries are returned in alphabetical order.
 		 */
-		if (mLegendHashMap.size() > 0)
+		if (m_legendHashMap.size() > 0)
 		{
-			Collection<LegendEntry> values = mLegendHashMap.values();
+			Collection<LegendEntry> values = m_legendHashMap.values();
 			LegendEntry[] entries = new LegendEntry[values.size()];
 			values.toArray(entries);
 			Arrays.sort(entries);
 			retval = entries[0];
-			mLegendHashMap.remove(hash(retval.getBlockName(), retval.getDescription()));
+			m_legendHashMap.remove(hash(retval.getBlockName(), retval.getDescription()));
 		}
 		return(retval);
 	}
@@ -157,9 +157,9 @@ public class LegendEntryList
 		/*
 		 * Ensure that entries are returned in alphabetical order.
 		 */
-		if (mLegendHashMap.size() > 0)
+		if (m_legendHashMap.size() > 0)
 		{
-			Collection<LegendEntry> values = mLegendHashMap.values();
+			Collection<LegendEntry> values = m_legendHashMap.values();
 			LegendEntry[] entries = new LegendEntry[values.size()];
 			values.toArray(entries);
 			Arrays.sort(entries);

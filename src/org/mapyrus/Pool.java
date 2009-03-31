@@ -33,14 +33,14 @@ import java.util.LinkedList;
  */
 public class Pool<E>
 {
-	private LinkedList<E> mList;
+	private LinkedList<E> m_list;
 
 	/**
 	 * Create new pool.
 	 */
 	public Pool()
 	{
-		mList = new LinkedList<E>();
+		m_list = new LinkedList<E>();
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class Pool<E>
 		 * Add object to pool and notify anyone who is waiting on this pool for
 		 * an object that a new one is available.
 		 */
-		mList.add(o);
+		m_list.add(o);
 		notifyAll();
 	}
 
@@ -67,7 +67,7 @@ public class Pool<E>
 	public synchronized E get(long timeout)
 	{
 		E retval;
-		while (mList.size() == 0)
+		while (m_list.size() == 0)
 		{
 			try
 			{
@@ -81,8 +81,8 @@ public class Pool<E>
 			}
 		}
 
-		if (mList.size() > 0)
-			retval = mList.removeLast();
+		if (m_list.size() > 0)
+			retval = m_list.removeLast();
 		else
 			retval = null;
 		return(retval);
