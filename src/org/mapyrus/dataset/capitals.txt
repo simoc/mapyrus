@@ -1,0 +1,632 @@
+# COUNTRYNAME CAPITAL POP2008
+# @(#) $Id$
+POINT
+Afghanistan,Kabul,32700000
+6918 3446
+POINT
+Albania,Tirana,3620000
+1981 4130
+POINT
+Algeria,Algiers,33800000
+313 3670
+POINT
+American Samoa,Pago Pago,64000
+-17071 -1426
+POINT
+Andorra,Andorra la Vella,82000
+153 4251
+POINT
+Angola,Luanda,12500000
+1325 -883
+POINT
+Antigua and Barbuda,85000
+-6180 1733
+POINT
+Argentina,Buenos Aires,40500000
+-6000 -3650
+POINT
+Armenia,Yerevan,3000000
+4451 4016
+POINT
+Aruba,Oranjestad,102000
+-7003 1253
+POINT
+Australia,Canberra,21000000
+14913 -3525
+POINT
+Austria,Vienna,8200000
+1636 4820
+POINT
+Azerbaijan,Baku,8200000
+4993 4048
+POINT
+Bahamas,Nassau,307000
+-7733 2508
+POINT
+Bahrain,Manama,720000
+5050 2616
+POINT
+Bangladesh,Dhaka,154000000
+9043 2371
+POINT
+Barbados,Bridgetown,280000
+-5950 1308
+POINT
+Belarus,Minsk,9700000
+2750 5386
+POINT
+Belgium,Brussels,10400000
+434 5085
+POINT
+Belize,Belmopan,301000
+-8850 1730
+POINT
+Benin,Porto-Novo,8500000
+648 262
+POINT
+Bermuda,Hamilton,67000
+-6468 3230
+POINT
+Bhutan,Thimphu,680000
+8975 2751
+POINT
+Bolivia,La Paz,9600000
+-6816 -1633
+POINT
+Bosnia And Herzegovina,Sarajevo,4600000
+1843 4386
+POINT
+Botswana,Gaborone,1950000
+2595 -2475
+POINT
+Brazil,Brasilia,196000000
+-4791 -1578
+POINT
+British Virgin Islands,Road Town,24000
+-6461 1845
+POINT
+Brunei,Bandar Seri Begawan,381000
+11500 486
+POINT
+Bulgaria,Sofia,7200000
+2333 4275
+POINT
+Burkina Faso,Ouagadougou,15200000
+-150 1225
+POINT
+Burundi,Bujumbura,8700000
+2930 -326
+POINT
+Cambodia,Phnom Penh,14200000
+10491 1155
+POINT
+Cameroon,Yaounde,18500000
+1158 383
+POINT
+Canada,Ottawa,33000000
+-7570 -4545
+POINT
+Cape Verde,Praia,430000
+-2356 1503
+POINT
+Cayman Islands,George Town,48000
+-8140 1933
+POINT
+Central African Republic,Bangui,4400000
+1858 438
+POINT
+Chad,N'Djamena,10100000
+1498 1216
+POINT
+Chile,Santiago,16500000
+-7066 -3340
+POINT
+China,Beijing,1330000000
+11633 3991
+POINT
+Colombia,Bogota,45000000
+-7400 456
+POINT
+Comoros,Moroni,730000
+4326 -1166
+POINT
+Congo,Brazzaville,3900000
+1520 -415
+POINT
+Costa Rica,San Jose,4200000
+-8403 991
+POINT
+Ivory Coast,Yamoussoukro,20000000
+-528 681
+POINT
+Croatia,Zagreb,4490000
+1596 4583
+POINT
+Cuba,Havana,11400000
+-8236 2313
+POINT
+Cyprus,Nicosia,790000
+3341 3516
+POINT
+Czech Republic,Prague,10200000
+1436 5008
+POINT
+Democratic Republic Of The Congo,Kinshasa,66000000
+1525 -433
+POINT
+Denmark,Copenhagen,5500000
+1256 5568
+POINT
+Djibouti,Djibouti,506000
+4233 1113
+POINT
+Dominica,Roseau,73000
+-6140 1533
+POINT
+Dominican Republic,Santo Domingo,9510000
+-6998 1850
+POINT
+East Timor,Dili,1108000
+12556 -848
+POINT
+Ecuador,Quito,14400000
+-7858 -25
+POINT
+Egypt,Cairo,81000000
+3123 3001
+POINT
+El Salvador,San Salvador,7070000
+-8916 1366
+POINT
+Equatorial Guinea,Malabo,616000
+883 375
+POINT
+Eritrea,Asmara,5500000
+3891 1531
+POINT
+Estonia,Tallinn,1307000
+2480 5936
+POINT
+Ethiopia,Addis Ababa,83000000
+3870 903
+POINT
+Falkland Islands,Stanley,3000
+-5985 -5166
+POINT
+Faroe Islands,Torshavn,49000
+-693 6208
+POINT
+Federated States Of Micronesia,Palikir,108000
+15815 691
+POINT
+Fiji,Suva,930000
+17850 -1810
+POINT
+Finland,Helsinki,5200000
+2505 6025
+POINT
+France,Paris,64000000
+233 4883
+POINT
+French Guiana,Cayenne,
+-5230 508
+POINT
+French Polynesia,Papeete,280000
+-14956 -1753
+POINT
+Gabon,Libreville,1500000
+943 41
+POINT
+Gambia,Banjul,1700000
+-1666 1346
+POINT
+Georgia,Tbilisi,4600000
+4483 4171
+POINT
+Germany,Berlin,82000000
+1341 5250
+POINT
+Ghana,Accra,23000000
+-10 558
+POINT
+Gibraltar,Gibraltar
+-535 3615
+POINT
+Greece,Athens,10700000
+2376 3796
+POINT
+Greenland,Nuuk,58000
+-5158 6416
+POINT
+Guadeloupe,Basse-Terre,450000
+-6173 1600
+POINT
+Guam,Hagatna,176000
+14478 1347
+POINT
+Guatemala,Guatemala,13000000
+-9036 1466
+POINT
+Guinea,Conakry,9800000
+-1381 948
+POINT
+Guinea Bissau,Bissau,1500000
+-1575 1175
+POINT
+Guyana,Georgetown,770000
+-5820 683
+POINT
+Haiti,Port-au-Prince,8900000
+-7233 1866
+POINT
+Honduras,Tegucigalpa,7600000
+-8723 1408
+POINT
+Hong Kong,Hong Kong,7000000
+11417 2225
+POINT
+Hungary,Budapest,9900000
+1908 4748
+POINT
+Iceland,Reykjavik,300000
+-2195 6416
+POINT
+India,New Delhi,1150000000
+7721 2861
+POINT
+Indonesia,Jakarta,238000000
+10681 -615
+POINT
+Iran,Tehran,66000000
+5150 3573
+POINT
+Iraq,Baghdad,28000000
+4450 3333
+POINT
+Ireland,Dublin,4200000
+-625 5335
+POINT
+Israel,Jerusalem,7100000
+3516 3200
+POINT
+Italy,Rome,58000000
+1248 4190
+POINT
+Jamaica,Kingston,2800000
+-7683 1800
+POINT
+Japan,Tokyo,127000000
+TODO TODO
+POINT
+Jordan,Amman,6200000
+3586 3195
+POINT
+Kazakhstan,Astana,15000000
+7150 5116
+POINT
+Kenya,Nairobi,38000000
+3679 -128
+POINT
+Kiribati,Tarawa,110000
+17300 150
+POINT
+Kuwait,Kuwait City,2600000
+4800 2950
+POINT
+Kyrgyzstan,Bishkek,5400000
+7476 4290
+POINT
+Latvia,Riga,2200000
+2413 5688
+POINT
+Lebanon,Beirut,4000000
+3551 3388
+POINT
+Lesotho,Maseru,2100000
+2750 -2930
+POINT
+Liberia,Monrovia,3300000
+-1078 630
+POINT
+Libya,Tripoli,6200000
+2004 3290
+POINT
+Liechtenstein,Vaduz,34000
+951 4713
+POINT
+Lithuania,Vilnius,3600000
+2531 5463
+POINT
+Luxembourg,Luxembourg,490000
+615 4961
+POINT
+Macedonia,Skopje,2100000
+2150 4158
+POINT
+Macau,Macau,550000
+2220 0
+POINT
+Madagascar,Antananarivo,20000000
+4751 -1891
+POINT
+Malawi,Lilongwe,14000000
+3379 -1400
+POINT
+Malaysia,Kuala Lumpur,25000000
+10168 315
+POINT
+Maldives,Male,390000
+7346 400
+POINT
+Mali,Bamako,12000000
+-791 1256
+POINT
+Malta,Valletta,400000
+1451 3590
+POINT
+Martinique,Fort-de-France,410000
+-6103 1460
+POINT
+Mauritania,Nouakchott,3100000
+5750 -2016
+POINT
+Mayotte,Mamoudzou,220000
+4523 -1280
+POINT
+Mexico,Mexico City,110000000
+-9916 1933
+POINT
+Moldova,Chisinau,4300000
+2883 4703
+POINT
+Monaco,Monaco,33000
+745 4380
+POINT
+Mongolia,Ulaanbaatar,3000000
+10688 4792
+POINT
+Morocco,Rabat,34000000
+-685 3403
+POINT
+Mozambique,Maputo,21000000
+3253 -2596
+POINT
+Myanmar (Burma),Yangon,48000000
+9633 1675
+POINT
+Namibia,Windhoek,2100000
+1706 -2258
+POINT
+Nauru,Yaren,14000
+16692 -530
+POINT
+Nepal,Kathmandu,28000000
+8533 2775
+POINT
+Netherlands,Amsterdam,17000000
+490 5238
+POINT
+Netherlands Antilles,Willemstad,230000
+-6900 1208
+POINT
+New Caledonia,Noumea,220000
+16650 -2228
+POINT
+New Zealand,Wellington,4200000
+17476 -4131
+POINT
+Nicaragua,Managua,5800000
+-8633 1210
+POINT
+Niger,Niamey,15000000
+210 1345
+POINT
+Nigeria,Abuja,146000000
+753 908
+POINT
+Norfolk Island,Kingston,2600
+16871 -4533
+POINT
+North Korea,Pyong Yang,22000000
+3900 12578
+POINT
+Northern Mariana Islands,Saipan,87000
+14575 1520
+POINT
+Norway,Oslo,4600000
+1075 5991
+POINT
+Oman,Muscat,3300000
+5860 2361
+POINT
+Pakistan,Islamabad,173000000
+7316 3366
+POINT
+Palau,Melekeok,21000
+13463 749
+POINT
+Panama,Panama City,3300000
+-7941 900
+POINT
+Papua New Guinea,Port Moresby,5900000
+14713 -940
+POINT
+Paraguay,Asuncion,6800000
+-5750 -2516
+POINT
+Peru,Lima,29000000
+-7700 -1200
+POINT
+Philippines,Manila,96000000
+12105 1466
+POINT
+Poland,Warsaw,39000000
+2100 5221
+POINT
+Portugal,Lisbon,11000000
+-916 3870
+POINT
+Puerto Rico,San Juan,4000000
+-6611 1846
+POINT
+Qatar,Doha,820000
+5158 2525
+POINT
+Romania,Bucharest,22000000
+2616 4445
+POINT
+Russian Federation,Moscow,141000000
+3758 5575
+POINT
+Rwanda,Kigali,10000000
+3006 -198
+POINT
+Saint Kitts and Nevis,Basseterre,40000
+-6271 1728
+POINT
+Saint Lucia,Castries,160000
+-6096 1403
+POINT
+St. Pierre and Miquelon,Saint-Pierre,7000
+-5620 4676
+POINT
+Samoa,Apia,217000
+-17183 -1383
+POINT
+San Marino,San Marino,30000
+1250 4391
+POINT
+Sao Tome And Principe,Sao Tome,206000
+665 16
+POINT
+Saudi Arabia,Riyadh,28000000
+4670 2468
+POINT
+Senegal,Dakar,13000000
+-1748 1456
+POINT
+Seychelles,Victoria,87000
+5567 -458
+POINT
+Sierra Leone,Freetown,6300000
+-1328 850
+POINT
+Singapore,Singapore,4600000
+10380 137
+POINT
+Slovakia,Bratislava,5500000
+1711 4816
+POINT
+Slovenia,Ljubljana,2000000
+1455 4606
+POINT
+Solomon Islands,Honiara,580000
+15994 -944
+POINT
+Somalia,Mogadishu,9600000
+4541 203
+POINT
+South Africa,Pretoria,49000000
+2820 -2573
+POINT
+South Korea,Seoul,48000000
+12696 3751
+POINT
+Spain,Madrid,40000000
+-375 4041
+POINT
+Sri Lanka,Colombo,21000000
+7987 690
+POINT
+Sudan,Khartoum,40000000
+3258 1551
+POINT
+Suriname,Paramaribo,480000
+-5516 583
+POINT
+Swaziland,Mbabane,1100000
+3110 -2630
+POINT
+Sweden,Stockholm,9000000
+1805 5933
+POINT
+Switzerland,Bern,7600000
+746 4695
+POINT
+Syria,Damascus,20000000
+3629 3350
+POINT
+Taiwan,Taipei,23000000
+12152 2303
+POINT
+Tajikistan,Dushanbe,7000000
+6880 3854
+POINT
+Thailand,Bangkok,65000000
+10058 1375
+POINT
+Togo,Lome,5900000
+133 615
+POINT
+Tonga,Nuku'alofa,120000
+-17400 -2116
+POINT
+Trinidad And Tobago,Port Of Spain,1200000
+-6152 1067
+POINT
+Tunisia,Tunis,10000000
+1018 3683
+POINT
+Turkey,Ankara,78000000
+3290 3995
+POINT
+Turkmenistan,Ashgabat,4800000
+5783 3800
+POINT
+Tuvalu,Funafuti,12000
+17921 -851
+POINT
+Uganda,Kampala,31000000
+3250 33
+POINT
+Ukraine,Kiev,46000000
+3046 5050
+POINT
+United Arab Emirates,Abu Dhabi,4600000
+5436 2446
+POINT
+United Kingdom,London,61000000
+-8 5160
+POINT
+Tanzania,Dodoma,40000000
+3575 -613
+POINT
+United States of America,Washington DC,304000000
+-7703 3888
+POINT
+Uruguay,Montevideo,3500000
+-5618 -3483
+POINT
+Uzbekistan,Tashkent,27000000
+6916 4133
+POINT
+Vanuatu,Port-Vila,215000
+16830 -1775
+POINT
+Venezuela,Caracas,26000000
+-6691 1050
+POINT
+Vietnam,Hanoi,86000000
+10591 2108
+POINT
+Yemen,Sana'a,23000000
+4418 1532
+POINT
+Yugoslavia,Belgrade,TODO
+2061 4483
+POINT
+Zambia,Lusaka,12000000
+2826 -1546
+POINT
+Zimbabwe,Harare,11000000
+3103 -1771
