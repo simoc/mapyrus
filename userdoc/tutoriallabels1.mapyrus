@@ -1,18 +1,18 @@
 newpage "eps", "tutoriallabels1.eps", 125, 30, \
   "isolatinfonts=Times-Roman"
 
-# Draw a label containing o with umlaut and degree symbol.
-# These octal character codes entered in ISO encoding so
-# font is marked for ISO encoding in newpage command above.
-#
+// Draw a label containing o with umlaut and degree symbol.
+// These octal character codes entered in ISO encoding so
+// font is marked for ISO encoding in newpage command above.
+//
 color "black"
 font 'Times-Roman', 10
 clearpath
 move 2, 5
 label 'M\374nchen 17\260'
 
-# Draw a three line centered label.
-#
+// Draw a three line centered label.
+//
 clearpath
 move 67, 18
 color "red"
@@ -20,8 +20,8 @@ font 'Helvetica', 4
 justify 'center'
 label 'For Free Advice Call\n1-800-HOTLINE\n24 hours a day'
 
-# Draw the same label at several points.
-#
+// Draw the same label at several points.
+//
 clearpath
 justify 'left'
 color "Orange"
@@ -30,8 +30,8 @@ move 90, 15
 move 95, 25
 label 'READY'
 
-# Draw symbols from ZapfDingbats font.
-#
+// Draw symbols from ZapfDingbats font.
+//
 color "black"
 font 'ZapfDingbats', 12
 clearpath

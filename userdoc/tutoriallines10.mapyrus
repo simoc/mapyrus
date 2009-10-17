@@ -9,8 +9,9 @@ move 30, 5
 draw 55, 25
 stroke
 
-# Draw lines a second time as sine wave curves.
-#
+/*
+ * Draw lines a second time as sine wave curves.
+ */
 color "red"
 linestyle 2
 clearpath

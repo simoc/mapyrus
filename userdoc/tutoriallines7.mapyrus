@@ -9,8 +9,8 @@ draw 60, 35, 60.3, 30, 60.6, 30, 60.9, 35, 70, 35
 color "blue"
 stroke
 
-# Show dashed lines to the left and right of original line.
-#
+// Show dashed lines to the left and right of original line.
+//
 parallelpath 1, -1
 color "indigo"
 linestyle 0.1, "round", "round", 0, 2, 1
