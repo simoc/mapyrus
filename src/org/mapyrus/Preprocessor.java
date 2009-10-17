@@ -35,6 +35,12 @@ import java.lang.String;
 class Preprocessor
 {
 	private static final String INCLUDE_KEYWORD = "include";
+	
+	/*
+	 * Characters starting a comment on a line.
+	 */
+	private static final char COMMENT_CHAR_HASH = '#';
+	private static final char COMMENT_CHAR_SLASH = '/';
 
 	/*
 	 * Files we are reading from and their names.
@@ -52,6 +58,11 @@ class Preprocessor
 	 */
 	private StringBuffer m_currentLine = null;
 	private int m_currentLineIndex = 0;
+
+	/*
+	 * Are we currently reading a comment?
+	 */
+	private boolean mInComment = false;
 
 	/**
 	 * Create stack of files being read.
@@ -123,9 +134,65 @@ class Preprocessor
 		m_fileStack.add(f);
 	}
 
+	/*
+	 * Read next character, ignoring comments.
+	 */
+	private int readSkipComments() throws IOException, MapyrusException
+	{
+		int c;
+
+		c = read();
+
+		while (mInComment == true || c == COMMENT_CHAR_HASH || c == COMMENT_CHAR_SLASH)
+		{
+			if (c == COMMENT_CHAR_HASH)
+			{
+				/*
+				 * Start of "#" comment, skip characters until the end of the line.
+				 */
+				mInComment = true;
+				c = read();
+			}
+			else if (c == COMMENT_CHAR_SLASH && (!mInComment))
+			{
+				int c2 = read();
+				if (c2 == COMMENT_CHAR_SLASH)
+				{
+					/*
+					 * Start of "//" comment, skip characters until the end of the line.
+					 */
+					mInComment = true;
+					c = read();
+				}
+				else
+				{
+					/*
+					 * Just a plain "/", not a "//" comment.
+					 */
+					unread(c2);
+					break;
+				}
+			}
+			else if (c == '\n' || c == -1)
+			{
+				/*
+				 * End of file or end of line is end of comment.
+				 */
+				mInComment = false;
+			}
+			else
+			{
+				/*
+				 * Skip character in comment.
+				 */
+				c = read();
+			}
+		}
+		return(c);
+	}
 
 	/**
-	 * Reads next character that is not a space.
+	 * Reads next character that is not a space, skipping comments too.
 	 * @return next non-space character.
 	 */
 	public int readNonSpace() throws IOException, MapyrusException
@@ -134,7 +201,7 @@ class Preprocessor
 
 		do
 		{
-			c = read();
+			c = readSkipComments();
 		}
 		while (c != -1 && Character.isWhitespace((char)c) && c != '\n');
 		return(c);

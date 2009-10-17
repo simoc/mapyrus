@@ -48,11 +48,9 @@ import org.mapyrus.function.UserFunction;
 public class Interpreter implements Cloneable
 {
 	/*
-	 * Character starting a comment on a line.
 	 * Character separating arguments to a statement.
 	 * Tokens around definition of a procedure.
 	 */
-	private static final char COMMENT_CHAR = '#';
 	private static final char ARGUMENT_SEPARATOR = ',';
 	private static final char PARAM_SEPARATOR = ',';
 	private static final String BEGIN_KEYWORD = "begin";
@@ -2184,48 +2182,6 @@ public class Interpreter implements Cloneable
 		return(word.toString());
 	}
 
-	/*
-	 * Are we currently reading a comment?
-	 */
-	private boolean mInComment = false;
-
-	/*
-	 * Read next character, ignoring comments.
-	 */
-	private int readSkipComments(Preprocessor preprocessor)
-		throws IOException, MapyrusException
-	{
-		int c;
-
-		c = preprocessor.read();
-		while (mInComment == true || c == COMMENT_CHAR)
-		{
-			if (c == COMMENT_CHAR)
-			{
-				/*
-				 * Start of comment, skip characters until the end of the line.
-				 */
-				mInComment = true;
-				c = preprocessor.read();
-			}
-			else if (c == '\n' || c == -1)
-			{
-				/*
-				 * End of file or end of line is end of comment.
-				 */
-				mInComment = false;
-			}
-			else
-			{
-				/*
-				 * Skip character in comment.
-				 */
-				c = preprocessor.read();
-			}
-		}
-		return(c);
-	}
-
 	/**
 	 * Reads, parses and returns next statement.
 	 * @param preprocessor is source to read statement from.
@@ -2244,7 +2200,7 @@ public class Interpreter implements Cloneable
 		int c;
 
 		state = AT_ARGUMENT;
-		c = readSkipComments(preprocessor);
+		c = preprocessor.readNonSpace();
 
 		/*
 		 * Keep parsing statement until we get to the end of the
@@ -2261,7 +2217,7 @@ public class Interpreter implements Cloneable
 				/*
 				 * Ignore any whitespace.
 				 */
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 			}
 			else if (state == AT_SEPARATOR)
 			{
@@ -2275,7 +2231,7 @@ public class Interpreter implements Cloneable
 						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) +
 						": '" + ARGUMENT_SEPARATOR + "'");
 				}
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 				state = AT_ARGUMENT;
 			}
 			else
@@ -2287,7 +2243,7 @@ public class Interpreter implements Cloneable
 				expr = new Expression(preprocessor, m_userFunctions);
 				expressions.add(expr);
 
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 				state = AT_SEPARATOR;
 			}
 		}
@@ -2335,7 +2291,7 @@ public class Interpreter implements Cloneable
 		 * Read parameter names separated by ',' characters.
 		 */
 		state = AT_PARAM;
-		c = readSkipComments(preprocessor);
+		c = preprocessor.readNonSpace();
 		while (c != -1 && c != '\n')
 		{
 			if (Character.isWhitespace((char)c))
@@ -2343,7 +2299,7 @@ public class Interpreter implements Cloneable
 				/*
 				 * Ignore whitespace.
 				 */
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 			}
 			else if (state == AT_PARAM)
 			{
@@ -2352,7 +2308,7 @@ public class Interpreter implements Cloneable
 				 */
 				parameters.add(parseWord(c, preprocessor));
 				state = AT_PARAM_SEPARATOR;
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 			}
 			else
 			{
@@ -2366,7 +2322,7 @@ public class Interpreter implements Cloneable
 						": '" + PARAM_SEPARATOR + "'");
 				}
 				state = AT_PARAM;
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 			}
 		}
 		return(parameters);
@@ -2394,9 +2350,9 @@ public class Interpreter implements Cloneable
 		/*
 		 * Skip whitespace between "begin" and block name.
 		 */		
-		c = readSkipComments(preprocessor);
+		c = preprocessor.readNonSpace();
 		while (Character.isWhitespace((char)c))
-			c = readSkipComments(preprocessor);
+			c = preprocessor.readNonSpace();
 
 		blockName = parseWord(c, preprocessor);
 		parameters = parseParameters(preprocessor);
@@ -2824,7 +2780,7 @@ public class Interpreter implements Cloneable
 		ParsedStatement retval = null;
 		boolean finishedStatement = false;
 
-		c = readSkipComments(preprocessor);
+		c = preprocessor.readNonSpace();
 		finishedStatement = false;
 		while (!finishedStatement)
 		{
@@ -2841,7 +2797,7 @@ public class Interpreter implements Cloneable
 				/*
 				 * Skip whitespace
 				 */
-				c = readSkipComments(preprocessor);
+				c = preprocessor.readNonSpace();
 			}
 			else
 			{
@@ -2938,7 +2894,6 @@ public class Interpreter implements Cloneable
 	{
 		Statement st;
 		Preprocessor preprocessor = new Preprocessor(f);
-		mInComment = false;
 		m_stdinStream = stdin;
 		m_stdoutStream = stdout;
 		m_context = context;
@@ -3344,7 +3299,6 @@ public class Interpreter implements Cloneable
 		Interpreter retval = new Interpreter();
 		retval.m_executeArgs = null;
 		retval.m_context = null;
-		retval.mInComment = false;
 		retval.m_statementBlocks = new HashMap<String, Statement>(this.m_statementBlocks.size());
 		retval.m_statementBlocks.putAll(this.m_statementBlocks);
 
