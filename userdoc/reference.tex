@@ -124,9 +124,13 @@ option when starting Mapyrus. \\
 Mapyrus interprets commands read from one or more plain text files.
 Each command begins on a separate line.
 
-Any part of a line following a hash (\texttt{\#}) character that is not part of
-a literal string is interpreted as a comment and is ignored.  Leading and
-trailing spaces or tabs on a line are also ignored.  A backslash
+Any part of a line following a hash (\texttt{\#}) or
+a pair of slashes (\texttt{//}) that is not part of
+a literal string is interpreted as a comment and is ignored.
+C programming \texttt{/*} \ldots \texttt{*/} style
+comments are also ignored.
+Leading and
+trailing spaces or tabs on a line are ignored too.  A backslash
 (\texttt{\textbackslash}) character at the end of a line is interpreted as a
 line continuation and the line and next line are joined into a single line.
 
