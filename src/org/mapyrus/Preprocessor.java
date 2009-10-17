@@ -41,6 +41,7 @@ class Preprocessor
 	 */
 	private static final char COMMENT_CHAR_HASH = '#';
 	private static final char COMMENT_CHAR_SLASH = '/';
+	private static final char COMMENT_CHAR_ASTERISK = '*';
 
 	/*
 	 * Files we are reading from and their names.
@@ -62,7 +63,8 @@ class Preprocessor
 	/*
 	 * Are we currently reading a comment?
 	 */
-	private boolean mInComment = false;
+	private boolean m_InSingleLineComment = false;
+	private boolean m_InMultiLineComment = false;
 
 	/**
 	 * Create stack of files being read.
@@ -143,17 +145,47 @@ class Preprocessor
 
 		c = read();
 
-		while (mInComment == true || c == COMMENT_CHAR_HASH || c == COMMENT_CHAR_SLASH)
+		while (m_InSingleLineComment || m_InMultiLineComment || c == COMMENT_CHAR_HASH || c == COMMENT_CHAR_SLASH)
 		{
-			if (c == COMMENT_CHAR_HASH)
+			if (m_InSingleLineComment && (c == '\n' || c == -1))
+			{
+				/*
+				 * Newline ends single line comment.
+				 */
+				m_InSingleLineComment = false;
+			}
+			else if (m_InMultiLineComment && c == -1)
+			{
+				/*
+				 * End of file is end of comment.
+				 */
+				m_InMultiLineComment = false;
+			}
+			else if (m_InMultiLineComment && c == COMMENT_CHAR_ASTERISK)
+			{
+				c = read();
+				if (c == COMMENT_CHAR_SLASH)
+				{
+					m_InMultiLineComment = false;
+					c = read();
+				}
+			}
+			else if (m_InSingleLineComment || m_InMultiLineComment)
+			{
+				/*
+				 * Skip character in comment.
+				 */
+				c = read();
+			}
+			else if (c == COMMENT_CHAR_HASH)
 			{
 				/*
 				 * Start of "#" comment, skip characters until the end of the line.
 				 */
-				mInComment = true;
+				m_InSingleLineComment = true;
 				c = read();
 			}
-			else if (c == COMMENT_CHAR_SLASH && (!mInComment))
+			else if (c == COMMENT_CHAR_SLASH)
 			{
 				int c2 = read();
 				if (c2 == COMMENT_CHAR_SLASH)
@@ -161,7 +193,15 @@ class Preprocessor
 					/*
 					 * Start of "//" comment, skip characters until the end of the line.
 					 */
-					mInComment = true;
+					m_InSingleLineComment = true;
+					c = read();
+				}
+				else if (c2 == COMMENT_CHAR_ASTERISK)
+				{
+					/*
+					 * Start of "/*" comment, skip characters until matching closing comment.
+					 */
+					m_InMultiLineComment = true;
 					c = read();
 				}
 				else
@@ -172,13 +212,6 @@ class Preprocessor
 					unread(c2);
 					break;
 				}
-			}
-			else if (c == '\n' || c == -1)
-			{
-				/*
-				 * End of file or end of line is end of comment.
-				 */
-				mInComment = false;
 			}
 			else
 			{
