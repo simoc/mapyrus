@@ -157,9 +157,10 @@ class Preprocessor
 			else if (m_InMultiLineComment && c == -1)
 			{
 				/*
-				 * End of file is end of comment.
+				 * Should not reach end of file in middle of comment.
 				 */
 				m_InMultiLineComment = false;
+				
 			}
 			else if (m_InMultiLineComment && c == COMMENT_CHAR_ASTERISK)
 			{
@@ -275,6 +276,16 @@ class Preprocessor
 			 */
 			m_fileStack.removeLast();
 			reader.close();
+			
+			/*
+			 * Should not reach end-of-file in middle of comment.
+			 */
+			if (m_InMultiLineComment)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
+					": " + f.toString());
+			}
+
 			if (m_fileStack.size() > 0)
 			{
 				m_currentLine = null;
