@@ -1587,24 +1587,6 @@ public class Expression
 	}
 
 	/**
-	 * Create an expression containing a simple numeric value.
-	 * @param d is value to store as expression.
-	 */
-	public Expression(double d)
-	{
-		m_exprTree = new ExpressionTreeNode(new Argument(d));
-	}
-
-	/**
-	 * Create an expression containing a simple string value.
-	 * @param s is string to store as expression.
-	 */
-	public Expression(String s)
-	{
-		m_exprTree = new ExpressionTreeNode(new Argument(Argument.STRING, s));
-	}
-
-	/**
 	 * Evaluate an expression.
 	 * @param vars are all currently defined variables and their values.
 	 * @return the evaluated expression, either a string or a number.
