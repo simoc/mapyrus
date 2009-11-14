@@ -19,7 +19,7 @@ POINT
 Angola,Luanda,12500000
 1325 -883
 POINT
-Antigua and Barbuda,85000
+Antigua And Barbuda,85000
 -6180 1733
 POINT
 Argentina,Buenos Aires,40500000
@@ -79,6 +79,9 @@ POINT
 Botswana,Gaborone,1950000
 2595 -2475
 POINT
+Bouvet Island,Bouvet Island,0
+605 -5010
+POINT
 Brazil,Brasilia,196000000
 -4791 -1578
 POINT
@@ -132,6 +135,9 @@ Comoros,Moroni,730000
 POINT
 Congo,Brazzaville,3900000
 1520 -415
+POINT
+Cook Islands,Avarua,12000
+-15776 -2120
 POINT
 Costa Rica,San Jose,4200000
 -8403 991
@@ -316,6 +322,9 @@ POINT
 Kyrgyzstan,Bishkek,5400000
 7476 4290
 POINT
+Laos,Vientiane,6700000
+10260 1797
+POINT
 Latvia,Riga,2200000
 2413 5688
 POINT
@@ -370,6 +379,9 @@ POINT
 Mauritania,Nouakchott,3100000
 5750 -2016
 POINT
+Mauritius,Port Louis,1200000
+5750 -2028
+POINT
 Mayotte,Mamoudzou,220000
 4523 -1280
 POINT
@@ -384,6 +396,9 @@ Monaco,Monaco,33000
 POINT
 Mongolia,Ulaanbaatar,3000000
 10688 4792
+POINT
+Montserrat,Plymouth,5000
+-6220 1675
 POINT
 Morocco,Rabat,34000000
 -685 3403
@@ -460,6 +475,9 @@ POINT
 Philippines,Manila,96000000
 12105 1466
 POINT
+Pitcairn,Adamstown,800
+-13008 -2506
+POINT
 Poland,Warsaw,39000000
 2100 5221
 POINT
@@ -481,13 +499,13 @@ POINT
 Rwanda,Kigali,10000000
 3006 -198
 POINT
-Saint Kitts and Nevis,Basseterre,40000
+Saint Kitts And Nevis,Basseterre,40000
 -6271 1728
 POINT
 Saint Lucia,Castries,160000
 -6096 1403
 POINT
-St. Pierre and Miquelon,Saint-Pierre,7000
+Saint Pierre And Miquelon,Saint-Pierre,7000
 -5620 4676
 POINT
 Samoa,Apia,217000
@@ -529,6 +547,9 @@ POINT
 South Africa,Pretoria,49000000
 2820 -2573
 POINT
+South Georgia And South Sandwich,King Edward Point,TODO
+-3650 -5428
+POINT
 South Korea,Seoul,48000000
 12696 3751
 POINT
@@ -557,7 +578,7 @@ Syria,Damascus,20000000
 3629 3350
 POINT
 Taiwan,Taipei,23000000
-12152 2303
+12152 2503
 POINT
 Tajikistan,Dushanbe,7000000
 6880 3854
@@ -567,6 +588,9 @@ Thailand,Bangkok,65000000
 POINT
 Togo,Lome,5900000
 133 615
+POINT
+Tokelau,Tokelau,1400
+-17195 -890
 POINT
 Tonga,Nuku'alofa,120000
 -17400 -2116
@@ -601,11 +625,14 @@ POINT
 Tanzania,Dodoma,40000000
 3575 -613
 POINT
-United States of America,Washington DC,304000000
+United States Of America,Washington DC,304000000
 -7703 3888
 POINT
 Uruguay,Montevideo,3500000
 -5618 -3483
+POINT
+U.S. Virgin Islands,Charlotte Amalie,110000
+-6483 1833
 POINT
 Uzbekistan,Tashkent,27000000
 6916 4133
@@ -619,11 +646,17 @@ POINT
 Vietnam,Hanoi,86000000
 10591 2108
 POINT
+Wallis And Futuna Islands,Mata-Utu,15000
+17617 -1330
+POINT
 Yemen,Sana'a,23000000
 4418 1532
 POINT
 Yugoslavia,Belgrade,TODO
 2061 4483
+POINT
+Western Sahara,Laayoune,390000
+-1320 2717
 POINT
 Zambia,Lusaka,12000000
 2826 -1546
