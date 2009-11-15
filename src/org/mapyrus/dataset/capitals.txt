@@ -1,4 +1,4 @@
-# COUNTRYNAME CAPITAL POP2008
+# COUNTRYNAME CAPITAL POPULATION
 # @(#) $Id$
 POINT
 Afghanistan,Kabul,32700000
@@ -16,10 +16,16 @@ POINT
 Andorra,Andorra la Vella,82000
 153 4251
 POINT
+Anguilla,The Valley,13500
+-6308 1835
+POINT
 Angola,Luanda,12500000
 1325 -883
 POINT
-Antigua And Barbuda,85000
+Antarctica,,0
+6290 -6760
+POINT
+Antigua And Barbuda,Saint Johns,85000
 -6180 1733
 POINT
 Argentina,Buenos Aires,40500000
@@ -85,6 +91,9 @@ POINT
 Brazil,Brasilia,196000000
 -4791 -1578
 POINT
+British Indian Ocean Territory,,0
+7300 -800
+POINT
 British Virgin Islands,Road Town,24000
 -6461 1845
 POINT
@@ -126,6 +135,12 @@ Chile,Santiago,16500000
 POINT
 China,Beijing,1330000000
 11633 3991
+POINT
+Christmas Island,The Settlement,1500
+10565 -1050
+POINT
+Cocos (Keeling) Islands,West Island,600
+-9686 -1218
 POINT
 Colombia,Bogota,45000000
 -7400 456
@@ -214,11 +229,14 @@ POINT
 France,Paris,64000000
 233 4883
 POINT
-French Guiana,Cayenne,
+French Guiana,Cayenne,TODO
 -5230 508
 POINT
 French Polynesia,Papeete,280000
 -14956 -1753
+POINT
+French Southern Territories,Port-aux-Francais,140
+7021 -4935
 POINT
 Gabon,Libreville,1500000
 943 41
@@ -235,7 +253,7 @@ POINT
 Ghana,Accra,23000000
 -10 558
 POINT
-Gibraltar,Gibraltar
+Gibraltar,Gibraltar,30000
 -535 3615
 POINT
 Greece,Athens,10700000
@@ -243,6 +261,9 @@ Greece,Athens,10700000
 POINT
 Greenland,Nuuk,58000
 -5158 6416
+POINT
+Grenada,Saint George's,89000
+-6175 1205
 POINT
 Guadeloupe,Basse-Terre,450000
 -6173 1600
@@ -264,6 +285,9 @@ Guyana,Georgetown,770000
 POINT
 Haiti,Port-au-Prince,8900000
 -7233 1866
+POINT
+Heard And McDonald Islands,,0
+5880 -5145
 POINT
 Honduras,Tegucigalpa,7600000
 -8723 1408
@@ -302,7 +326,7 @@ Jamaica,Kingston,2800000
 -7683 1800
 POINT
 Japan,Tokyo,127000000
-TODO TODO
+13975 3566
 POINT
 Jordan,Amman,6200000
 3586 3195
@@ -373,6 +397,9 @@ POINT
 Malta,Valletta,400000
 1451 3590
 POINT
+Marshall Islands,Majuro,59000
+17120 715
+POINT
 Martinique,Fort-de-France,410000
 -6103 1460
 POINT
@@ -439,11 +466,14 @@ POINT
 Nigeria,Abuja,146000000
 753 908
 POINT
+Niue,Alofi,2000
+16991 1903
+POINT
 Norfolk Island,Kingston,2600
 16871 -4533
 POINT
 North Korea,Pyong Yang,22000000
-3900 12578
+12578 3900
 POINT
 Northern Mariana Islands,Saipan,87000
 14575 1520
@@ -490,6 +520,9 @@ POINT
 Qatar,Doha,820000
 5158 2525
 POINT
+Reunion,Saint-Denis,830000
+5546 -2087
+POINT
 Romania,Bucharest,22000000
 2616 4445
 POINT
@@ -499,6 +532,9 @@ POINT
 Rwanda,Kigali,10000000
 3006 -198
 POINT
+Saint Helena,Jamestown,4200
+-571 -1593
+POINT
 Saint Kitts And Nevis,Basseterre,40000
 -6271 1728
 POINT
@@ -507,6 +543,9 @@ Saint Lucia,Castries,160000
 POINT
 Saint Pierre And Miquelon,Saint-Pierre,7000
 -5620 4676
+POINT
+Saint Vincent,Kingstown,120000
+-6136 1328
 POINT
 Samoa,Apia,217000
 -17183 -1383
@@ -565,6 +604,9 @@ POINT
 Suriname,Paramaribo,480000
 -5516 583
 POINT
+Svalbard And Jan Mayen,Longyearbyen,2700
+1563 7822
+POINT
 Swaziland,Mbabane,1100000
 3110 -2630
 POINT
@@ -606,6 +648,9 @@ Turkey,Ankara,78000000
 POINT
 Turkmenistan,Ashgabat,4800000
 5783 3800
+POINT
+Turks And Caicos Islands,Cockburn Town,18000
+7113 2146
 POINT
 Tuvalu,Funafuti,12000
 17921 -851
@@ -652,7 +697,7 @@ POINT
 Yemen,Sana'a,23000000
 4418 1532
 POINT
-Yugoslavia,Belgrade,TODO
+Serbia,Belgrade,7500000
 2061 4483
 POINT
 Western Sahara,Laayoune,390000
