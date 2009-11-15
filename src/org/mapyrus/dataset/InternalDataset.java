@@ -23,15 +23,16 @@
 package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 import org.mapyrus.Row;
 
 /**
@@ -39,18 +40,20 @@ import org.mapyrus.Row;
  */
 public class InternalDataset implements GeographicDataset
 {
-	private BufferedReader m_reader;
+	private String m_filename;
+	private LineNumberReader m_reader;
 	private String []m_fieldNames;
 
 	/**
 	 * Open dataset stored inside this software.
-	 * @param name is name of data to read.
+	 * @param filename is name of data to read.
 	 * @param extras options for reading data.
 	 */
-	public InternalDataset(String name, String extras) throws IOException
+	public InternalDataset(String filename, String extras) throws IOException
 	{
-		URL url = this.getClass().getResource(name);
-		m_reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		URL url = this.getClass().getResource(filename);
+		m_reader = new LineNumberReader(new InputStreamReader(url.openStream()));
+		m_filename = filename;
 		String headerLine = m_reader.readLine();
 		if (headerLine != null)
 		{
@@ -71,7 +74,7 @@ public class InternalDataset implements GeographicDataset
 
 	public String getProjection()
 	{
-		return "GEOGCS[\"wgs84\",DATUM[\"WGS_1984\",SPHEROID[\"wgs84\",6378137,298.257223563],TOWGS84[0.000,0.000,0.000]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
+		return "GEOGCS[\"wgs84\",DATUM[\"WGS_1984\",SPHEROID[\"wgs84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
 	}
 
 	public Hashtable getMetadata()
@@ -95,7 +98,7 @@ public class InternalDataset implements GeographicDataset
 	 * @param reader file to read from.
 	 * @return line read from file, or null if EOF.
 	 */
-	private String readLine(BufferedReader reader) throws IOException
+	private String readLine(LineNumberReader reader) throws IOException
 	{
 		String line = reader.readLine();
 		while (line != null && line.startsWith("#"))
@@ -153,7 +156,7 @@ public class InternalDataset implements GeographicDataset
 		return(retval);
 	}
 
-	private Row readRow(String headerLine) throws IOException
+	private Row readRow(String headerLine) throws MapyrusException, IOException
 	{
 		Row retval = new Row();
 		StringTokenizer st = new StringTokenizer(headerLine);
@@ -194,11 +197,15 @@ public class InternalDataset implements GeographicDataset
 		 * Read field values for row.
 		 */
 		String line = readLine(m_reader);
-		st = new StringTokenizer(line, ",");
-		for (int i = 0; i < m_fieldNames.length - 1; i++)
+		String []fieldValues = line.split(",");
+		if (fieldValues.length != m_fieldNames.length - 1)
 		{
-			String fieldValue = st.nextToken();
-			retval.add(new Argument(Argument.STRING, fieldValue));
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.MISSING_FIELD) +
+				": " + m_filename + ":" + m_reader.getLineNumber());
+		}
+		for (int i = 0; i < fieldValues.length; i++)
+		{
+			retval.add(new Argument(Argument.STRING, fieldValues[i]));
 		}
 
 		Argument geometry = readGeometry(geometryType, nPoints, islandIndexes);
