@@ -229,7 +229,7 @@ POINT
 France,Paris,64000000
 233 4883
 POINT
-French Guiana,Cayenne,TODO
+French Guiana,Cayenne,220000
 -5240 485
 POINT
 French Polynesia,Papeete,280000
@@ -586,7 +586,7 @@ POINT
 South Africa,Pretoria,49000000
 2820 -2573
 POINT
-South Georgia And South Sandwich,King Edward Point,TODO
+South Georgia And South Sandwich,King Edward Point,20
 -3650 -5428
 POINT
 South Korea,Seoul,48000000
