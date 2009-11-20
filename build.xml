@@ -60,8 +60,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <mkdir dir="build/classes"/>
 <javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
 
-<!-- Copy resource files into built directory -->
+<!-- Copy resource, font and data files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
+<copy todir="build/classes/org/mapyrus/dataset">
+<fileset dir="src/org/mapyrus/dataset" includes="*.txt"/>
+</copy>
 <copy todir="build/classes/org/mapyrus/font">
 <fileset dir="src/org/mapyrus/font" includes="*.afm"/>
 </copy>
