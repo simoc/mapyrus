@@ -1,9 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2009 Simon Chenery <simoc@users.sourceforge.net>
 
-0.901, January 2009
+0.901, November 2009
 
 * Allow database connection through JNDI.
+* Include map of world countries and capital cities datasets.
+* Allow C "/* comment */" and C++ "// comment" style comments.
 
 0.807, December 2008
 
