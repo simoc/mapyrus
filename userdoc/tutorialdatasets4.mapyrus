@@ -1,34 +1,38 @@
-newpage "eps", "tutorialdatasets4.eps", 210, 297
-let x1 = 151.1, y1 = -34, x2 = 151.2, y2 = -33.9
-let url = "http://api.openstreetmap.org/api/0.5/map?bbox=" . \
-  x1 . "," . y1 . "," . x2 . "," . y2
-dataset "osm", url, ""
+newpage "eps", "tutorialdatasets4.eps", 160, 100, "background=lightblue"
+worlds -20, 30, 30, 68
 
-worlds x1, y1, x2, y2
+let c[1] = "red", c[2] = "orange", c[3] = "yellow"
+let c[4] = "gold", c[5] = "orangered", c[6] = "indianred1"
 
+linestyle 0.1, "round", "round"
+dataset "internal", "countries.txt", ""
 while Mapyrus.fetch.more
 do
   fetch
-  if TYPE eq "way"
-  then
-    if TAGS["highway"] eq "primary"
-    then
-      linestyle 0.7
-      color "red"
-    elif TAGS["highway"] eq "secondary"
-    then
-      linestyle 0.4
-      color "orange"
-    elif TAGS["natural"] eq "coastline"
-    then
-      linestyle 0.1
-      color "lightgreen"
-    else
-      linestyle 0.1
-      color "black"
-    endif
-    clearpath
-    addpath GEOMETRY
-    stroke
-  endif
+  clearpath
+  addpath GEOMETRY
+
+  # Lookup color for country from color code number.
+  #
+  color c[COLORCODE]
+  fill
+  color "grey"
+  stroke
+done
+
+begin capitaldot
+  box -0.5, -0.5, 0.5, 0.5
+  fill
+end
+
+color "black"
+font "Helvetica", 3
+dataset "internal", "capitals.txt", ""
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath GEOMETRY
+  capitaldot
+  label " " . CAPITAL
 done

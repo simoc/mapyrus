@@ -1,16 +1,18 @@
-let allFiles = dir("H:\\data\\shape\\*\\*.shp")
+# Display the spatial data held in an Oracle database
+# in a PostScript file.
+newpage "eps", "tutorialdatasets7.eps", 85, 85
+worlds 0, 0, 20, 20
 
-newpage "eps", "tutorialdatasets7.eps", 180, 260
-worlds 1600000, 610000, 1770000, 710000
+let sql = "select C.Shape.Get_WKB() AS WKB \
+  from COLA_MARKETS C where C.Name<>'cola_d'"
 
-for i in allFiles
+dataset "jdbc", sql, "driver=oracle.jdbc.OracleDriver \
+  url=jdbc:oracle:oci:@DEMO user=system password=manager"
+
+while Mapyrus.fetch.more
 do
-  dataset "shapefile", allFiles[i], "dbffields="
-  while Mapyrus.fetch.more
-  do
-    fetch
-    clearpath
-    addpath GEOMETRY
-    stroke
-  done
+  fetch
+  clearpath
+  addpath WKB
+  stroke
 done

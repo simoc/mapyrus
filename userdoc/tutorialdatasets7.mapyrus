@@ -1,18 +1,26 @@
-# Display the spatial data held in an Oracle database
+# Display the geographic data held in a PostGIS database
 # in a PostScript file.
-newpage "eps", "tutorialdatasets7.eps", 85, 85
-worlds 0, 0, 20, 20
+#
+newpage "eps", "tutorialdatasets6.eps", 85, 85
 
-let sql = "select C.Shape.Get_WKB() AS WKB \
-  from COLA_MARKETS C where C.Name<>'cola_d'"
+let x1 = 191232, y1 = 243117, x2 = 191234, y2 = 243119
 
-dataset "jdbc", sql, "driver=oracle.jdbc.OracleDriver \
-  url=jdbc:oracle:oci:@DEMO user=system password=manager"
+# Build spatially extended SQL statement to fetch
+# road network data inside an area of interest.
+#
+let sql = "SELECT AsText(GEOM) AS GEOM FROM ROADS_GEOM \
+WHERE GEOM && GeometryFromText('BOX3D(" . x1 . " " . y1 . \
+"," . x2 . " " . y2 . ")'::box3d,-1)"
 
+# Fetch each road as an OGC WKT geometry string and draw it.
+#
+dataset "jdbc", sql, "driver=org.postgresql.Driver \
+url=jdbc:postgresql:pogo user=postgres password=postgres"
+worlds x1, y1, x2, y2
 while Mapyrus.fetch.more
 do
-  fetch
   clearpath
-  addpath WKB
+  fetch
+  addpath geom
   stroke
 done
