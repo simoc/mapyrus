@@ -670,6 +670,24 @@ symbols.
 \label{tutorialdatasets3}
 \end{figure}
 
+\subsection{Displaying Mapyrus World Map}
+
+Mapyrus includes a map of world countries named \texttt{countries.txt}
+and a map of capital cities named \texttt{capitals.txt} internally.
+
+The following example demonstrates displaying a map of Europe
+and European capital cities.  Countries are assigned a color code
+in the dataset, with neighbouring countries having different colors.
+The output is shown in Figure \ref{tutorialdatasets4}.
+
+\verbatiminput{tutorialdatasets4.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialdatasets4.eps}
+\caption{Displaying Mapyrus World Map}
+\label{tutorialdatasets4}
+\end{figure}
+
 \subsection{Displaying OpenStreetMap Data}
 
 The OpenStreetMap Protocol enables street map data to be fetched
@@ -678,7 +696,7 @@ using HTTP requests.
 The following example demonstrates reading and displaying
 street data from the OpenStreetMap server.
 
-\verbatiminput{tutorialdatasets4.mapyrus}
+\verbatiminput{tutorialdatasets5.mapyrus}
 
 To avoid repeated requests to the OpenStreetMap server it is also
 possible to save the OpenStreetMap server output to a file and give
@@ -746,7 +764,7 @@ installed and use a command like:
 
 \begin{alltt}
 java -classpath mapyrus.jar:/usr/share/pgsql/pg73b1jdbc1.jar \textbackslash
-  org.mapyrus.Mapyrus tutorialdataset5.mapyrus
+  org.mapyrus.Mapyrus tutorialdataset6.mapyrus
 \end{alltt}
 
 The JDBC driver for PostgreSQL is available from
@@ -770,7 +788,7 @@ row and assigned to variables named
 An SQL where clause is used to limit data read from
 the database to inside the area of interest.
 
-\verbatiminput{tutorialdatasets5.mapyrus}
+\verbatiminput{tutorialdatasets6.mapyrus}
 
 For databases supporting the \textit{OpenGIS Simple Features Specification For
 SQL}, add fields containing OGC WKT geometry strings or WKB geometry values
@@ -781,14 +799,14 @@ must be converted to a text string and then back to a geometry.
 The following example demonstrates fetching a geometry field named \texttt{geom}
 from a PostGIS database as a WKT string and displaying it.
 
-\verbatiminput{tutorialdatasets6.mapyrus}
+\verbatiminput{tutorialdatasets7.mapyrus}
 
 The next example demonstrates fetching geometry from an
 Oracle database as WKB geometry values and displaying it.
 The \texttt{Get\_WKB} function is used to convert Oracle
 Spatial geometry to WKB geometry values.
 
-\verbatiminput{tutorialdatasets7.mapyrus}
+\verbatiminput{tutorialdatasets8.mapyrus}
 
 Mapyrus is also able to read Oracle Spatial
 columns with type \texttt{MDSYS.SDO\_GEOMETRY} directly
@@ -863,7 +881,7 @@ a filename pattern.  Then display each dataset in a loop.
 Displaying from many ESRI Shape files is demonstrated in the following
 example.
 
-\verbatiminput{tutorialdatasets8.mapyrus}
+\verbatiminput{tutorialdatasets9.mapyrus}
 
 A common method of efficiently selecting the data that overlaps the page from
 hundreds of possible datasets and geo-referenced images is to create an index
@@ -884,7 +902,7 @@ library is used to create an ESRI Shape file index.
 The following example demonstrates searching an ESRI Shape file index
 for images to display.
 
-\verbatiminput{tutorialdatasets9.mapyrus}
+\verbatiminput{tutorialdatasets10.mapyrus}
 
 \subsection{Updating Existing Output Files}
 
