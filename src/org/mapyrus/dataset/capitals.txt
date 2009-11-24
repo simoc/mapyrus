@@ -1,713 +1,713 @@
-# COUNTRY CAPITAL POP2005
+# COUNTRY CAPITAL
 # @(#) $Id$
 POINT
-Afghanistan,Kabul,32700000
+Afghanistan,Kabul
 6918 3446
 POINT
-Albania,Tirana,3130000
+Albania,Tirana
 1981 4130
 POINT
-Algeria,Algiers,33800000
+Algeria,Algiers
 313 3670
 POINT
-American Samoa,Pago Pago,65000
+American Samoa,Pago Pago
 -17071 -1426
 POINT
-Andorra,Andorra la Vella,67000
+Andorra,Andorra la Vella
 153 4251
 POINT
-Anguilla,The Valley,12000
+Anguilla,The Valley
 -6308 1835
 POINT
-Angola,Luanda,12500000
+Angola,Luanda
 1325 -883
 POINT
-Antarctica,,0
+Antarctica,-
 6290 -6760
 POINT
-Antigua And Barbuda,Saint Johns,81000
+Antigua And Barbuda,Saint Johns
 -6180 1733
 POINT
-Argentina,Buenos Aires,40500000
+Argentina,Buenos Aires
 -5850 -3460
 POINT
-Armenia,Yerevan,3016000
+Armenia,Yerevan
 4451 4016
 POINT
-Aruba,Oranjestad,99000
+Aruba,Oranjestad
 -7003 1253
 POINT
-Australia,Canberra,21000000
+Australia,Canberra
 14913 -3525
 POINT
-Austria,Vienna,8189000
+Austria,Vienna
 1636 4820
 POINT
-Azerbaijan,Baku,8411000
+Azerbaijan,Baku
 4993 4048
 POINT
-Bahamas,Nassau,323000
+Bahamas,Nassau
 -7733 2508
 POINT
-Bahrain,Manama,727000
+Bahrain,Manama
 5050 2616
 POINT
-Bangladesh,Dhaka,154000000
+Bangladesh,Dhaka
 9043 2371
 POINT
-Barbados,Bridgetown,270000
+Barbados,Bridgetown
 -5950 1308
 POINT
-Belarus,Minsk,9755000
+Belarus,Minsk
 2750 5386
 POINT
-Belgium,Brussels,10419000
+Belgium,Brussels
 434 5085
 POINT
-Belize,Belmopan,270000
+Belize,Belmopan
 -8920 1730
 POINT
-Benin,Porto-Novo,8439000
+Benin,Porto-Novo
 262 648
 POINT
-Bermuda,Hamilton,64000
+Bermuda,Hamilton
 -6470 3230
 POINT
-Bhutan,Thimphu,2163000
+Bhutan,Thimphu
 8975 2751
 POINT
-Bolivia,La Paz,9182000
+Bolivia,La Paz
 -6816 -1633
 POINT
-Bosnia And Herzegovina,Sarajevo,3907000
+Bosnia And Herzegovina,Sarajevo
 1843 4386
 POINT
-Botswana,Gaborone,1765000
+Botswana,Gaborone
 2595 -2475
 POINT
-Bouvet Island,Bouvet Island,0
+Bouvet Island,Bouvet Island
 605 -5010
 POINT
-Brazil,Brasilia,196000000
+Brazil,Brasilia
 -4791 -1578
 POINT
-British Indian Ocean Territory,,0
+British Indian Ocean Territory,-
 7300 -800
 POINT
-British Virgin Islands,Road Town,22000
+British Virgin Islands,Road Town
 -6461 1845
 POINT
-Brunei,Bandar Seri Begawan,374000
+Brunei,Bandar Seri Begawan
 11500 486
 POINT
-Bulgaria,Sofia,7726000
+Bulgaria,Sofia
 2333 4275
 POINT
-Burkina Faso,Ouagadougou,15200000
+Burkina Faso,Ouagadougou
 -150 1225
 POINT
-Burundi,Bujumbura,7548000
+Burundi,Bujumbura
 2930 -326
 POINT
-Cambodia,Phnom Penh,14200000
+Cambodia,Phnom Penh
 10491 1155
 POINT
-Cameroon,Yaounde,18500000
+Cameroon,Yaounde
 1158 383
 POINT
-Canada,Ottawa,33000000
+Canada,Ottawa
 -7570 4545
 POINT
-Cape Verde,Praia,507000
+Cape Verde,Praia
 -2376 1503
 POINT
-Cayman Islands,George Town,45000
+Cayman Islands,George Town
 -8140 1933
 POINT
-Central African Republic,Bangui,4038000
+Central African Republic,Bangui
 1858 438
 POINT
-Chad,N'Djamena,9749000
+Chad,N'Djamena
 1498 1216
 POINT
-Chile,Santiago,16500000
+Chile,Santiago
 -7066 -3340
 POINT
-China,Beijing,1330000000
+China,Beijing
 11633 3991
 POINT
-Christmas Island,The Settlement,1500
+Christmas Island,The Settlement
 10565 -1170
 POINT
-Cocos (Keeling) Islands,West Island,600
+Cocos (Keeling) Islands,West Island
 -9686 -1218
 POINT
-Colombia,Bogota,45000000
+Colombia,Bogota
 -7400 456
 POINT
-Comoros,Moroni,798000
+Comoros,Moroni
 4355 -1155
 POINT
-Congo,Brazzaville,3999000
+Congo,Brazzaville
 1520 -415
 POINT
-Cook Islands,Avarua,18000
+Cook Islands,Avarua
 -15776 -2120
 POINT
-Costa Rica,San Jose,4327000
+Costa Rica,San Jose
 -8403 991
 POINT
-Ivory Coast,Yamoussoukro,20000000
+Ivory Coast,Yamoussoukro
 -528 681
 POINT
-Croatia,Zagreb,4551000
+Croatia,Zagreb
 1596 4583
 POINT
-Cuba,Havana,11400000
+Cuba,Havana
 -8236 2313
 POINT
-Cyprus,Nicosia,835000
+Cyprus,Nicosia
 3341 3516
 POINT
-Czech Republic,Prague,10220000
+Czech Republic,Prague
 1436 5008
 POINT
-Democratic Republic Of The Congo,Kinshasa,66000000
+Democratic Republic Of The Congo,Kinshasa
 1525 -433
 POINT
-Denmark,Copenhagen,5431000
+Denmark,Copenhagen
 1256 5568
 POINT
-Djibouti,Djibouti,793000
+Djibouti,Djibouti
 4233 1113
 POINT
-Dominica,Roseau,79000
+Dominica,Roseau
 -6140 1533
 POINT
-Dominican Republic,Santo Domingo,8895000
+Dominican Republic,Santo Domingo
 -6998 1850
 POINT
-East Timor,Dili,947000
+East Timor,Dili
 12596 -848
 POINT
-Ecuador,Quito,14400000
+Ecuador,Quito
 -7858 -25
 POINT
-Egypt,Cairo,81000000
+Egypt,Cairo
 3123 3001
 POINT
-El Salvador,San Salvador,6881000
+El Salvador,San Salvador
 -8916 1366
 POINT
-Equatorial Guinea,Malabo,504000
+Equatorial Guinea,Malabo
 883 375
 POINT
-Eritrea,Asmara,4401000
+Eritrea,Asmara
 3891 1531
 POINT
-Estonia,Tallinn,1330000
+Estonia,Tallinn
 2480 5946
 POINT
-Ethiopia,Addis Ababa,83000000
+Ethiopia,Addis Ababa
 3870 903
 POINT
-Falkland Islands,Stanley,3000
+Falkland Islands,Stanley
 -5985 -5166
 POINT
-Faroe Islands,Torshavn,47000
+Faroe Islands,Torshavn
 -730 6180
 POINT
-Federated States Of Micronesia,Palikir,110000
+Federated States Of Micronesia,Palikir
 15815 691
 POINT
-Fiji,Suva,848000
+Fiji,Suva
 17850 -1810
 POINT
-Finland,Helsinki,5249000
+Finland,Helsinki
 2505 6025
 POINT
-France,Paris,64000000
+France,Paris
 233 4883
 POINT
-French Guiana,Cayenne,187000
+French Guiana,Cayenne
 -5240 485
 POINT
-French Polynesia,Papeete,257000
+French Polynesia,Papeete
 -14956 -1753
 POINT
-French Southern Territories,Port-aux-Francais,140
+French Southern Territories,Port-aux-Francais
 7021 -4935
 POINT
-Gabon,Libreville,1384000
+Gabon,Libreville
 943 41
 POINT
-Gambia,Banjul,1517000
+Gambia,Banjul
 -1666 1346
 POINT
-Georgia,Tbilisi,4600000
+Georgia,Tbilisi
 4483 4171
 POINT
-Germany,Berlin,82000000
+Germany,Berlin
 1341 5250
 POINT
-Ghana,Accra,23000000
+Ghana,Accra
 -10 558
 POINT
-Gibraltar,Gibraltar,28000
+Gibraltar,Gibraltar
 -535 3615
 POINT
-Greece,Athens,11120000
+Greece,Athens
 2376 3796
 POINT
-Greenland,Nuuk,57000
+Greenland,Nuuk
 -5158 6416
 POINT
-Grenada,Saint George's,103000
+Grenada,Saint George's
 -6175 1205
 POINT
-Guadeloupe,Basse-Terre,448000
+Guadeloupe,Basse-Terre
 -6173 1600
 POINT
-Guam,Hagatna,170000
+Guam,Hagatna
 14478 1347
 POINT
-Guatemala,Guatemala,13000000
+Guatemala,Guatemala
 -9036 1466
 POINT
-Guinea,Conakry,9402000
+Guinea,Conakry
 -1361 948
 POINT
-Guinea Bissau,Bissau,1586000
+Guinea Bissau,Bissau
 -1565 1175
 POINT
-Guyana,Georgetown,751000
+Guyana,Georgetown
 -5820 660
 POINT
-Haiti,Port-au-Prince,8528000
+Haiti,Port-au-Prince
 -7233 1866
 POINT
-Heard And McDonald Islands,,0
+Heard And McDonald Islands,-
 5880 -5145
 POINT
-Honduras,Tegucigalpa,7205000
+Honduras,Tegucigalpa
 -8723 1408
 POINT
-Hong Kong,Hong Kong,7041000
+Hong Kong,Hong Kong
 11417 2225
 POINT
-Hungary,Budapest,10098000
+Hungary,Budapest
 1908 4748
 POINT
-Iceland,Reykjavik,295000
+Iceland,Reykjavik
 -2160 6416
 POINT
-India,New Delhi,1150000000
+India,New Delhi
 7721 2861
 POINT
-Indonesia,Jakarta,238000000
+Indonesia,Jakarta
 10681 -615
 POINT
-Iran,Tehran,66000000
+Iran,Tehran
 5150 3573
 POINT
-Iraq,Baghdad,28000000
+Iraq,Baghdad
 4450 3333
 POINT
-Ireland,Dublin,4148000
+Ireland,Dublin
 -625 5335
 POINT
-Israel,Jerusalem,6725000
+Israel,Jerusalem
 3510 3200
 POINT
-Italy,Rome,58000000
+Italy,Rome
 1248 4190
 POINT
-Jamaica,Kingston,2651000
+Jamaica,Kingston
 -7683 1800
 POINT
-Japan,Tokyo,127000000
+Japan,Tokyo
 13975 3566
 POINT
-Jordan,Amman,5703000
+Jordan,Amman
 3586 3195
 POINT
-Kazakhstan,Astana,15000000
+Kazakhstan,Astana
 7150 5116
 POINT
-Kenya,Nairobi,38000000
+Kenya,Nairobi
 3679 -128
 POINT
-Kiribati,Tarawa,99000
+Kiribati,Tarawa
 17300 150
 POINT
-Kuwait,Kuwait City,2687000
+Kuwait,Kuwait City
 4800 2930
 POINT
-Kyrgyzstan,Bishkek,5264000
+Kyrgyzstan,Bishkek
 7476 4290
 POINT
-Laos,Vientiane,5924000
+Laos,Vientiane
 10260 1797
 POINT
-Latvia,Riga,2307000
+Latvia,Riga
 2413 5688
 POINT
-Lebanon,Beirut,3577000
+Lebanon,Beirut
 3551 3388
 POINT
-Lesotho,Maseru,1795000
+Lesotho,Maseru
 2750 -2930
 POINT
-Liberia,Monrovia,3283000
+Liberia,Monrovia
 -1078 630
 POINT
-Libya,Tripoli,5853000
+Libya,Tripoli
 1317 3280
 POINT
-Liechtenstein,Vaduz,35000
+Liechtenstein,Vaduz
 951 4713
 POINT
-Lithuania,Vilnius,3431000
+Lithuania,Vilnius
 2531 5463
 POINT
-Luxembourg,Luxembourg,465000
+Luxembourg,Luxembourg
 615 4961
 POINT
-Macedonia,Skopje,2034000
+Macedonia,Skopje
 2150 4158
 POINT
-Macau,Macau,460000
+Macau,Macau
 11355 2220
 POINT
-Madagascar,Antananarivo,20000000
+Madagascar,Antananarivo
 4751 -1891
 POINT
-Malawi,Lilongwe,14000000
+Malawi,Lilongwe
 3379 -1400
 POINT
-Malaysia,Kuala Lumpur,25000000
+Malaysia,Kuala Lumpur
 10168 315
 POINT
-Maldives,Male,329000
+Maldives,Male
 7346 400
 POINT
-Mali,Bamako,12000000
+Mali,Bamako
 -791 1256
 POINT
-Malta,Valletta,402000
+Malta,Valletta
 1451 3590
 POINT
-Marshall Islands,Majuro,62000
+Marshall Islands,Majuro
 17120 715
 POINT
-Martinique,Fort-de-France,396000
+Martinique,Fort-de-France
 -6103 1460
 POINT
-Mauritania,Nouakchott,3069000
+Mauritania,Nouakchott
 -1615 1785
 POINT
-Mauritius,Port Louis,1245000
+Mauritius,Port Louis
 5770 -2028
 POINT
-Mayotte,Mamoudzou,160000
+Mayotte,Mamoudzou
 4375 -1270
 POINT
-Mexico,Mexico City,110000000
+Mexico,Mexico City
 -9916 1933
 POINT
-Moldova,Chisinau,4206000
+Moldova,Chisinau
 2883 4703
 POINT
-Monaco,Monaco,35000
+Monaco,Monaco
 745 4380
 POINT
-Mongolia,Ulaanbaatar,2646000
+Mongolia,Ulaanbaatar
 10688 4792
 POINT
-Montserrat,Plymouth,4000
+Montserrat,Plymouth
 -6220 1675
 POINT
-Morocco,Rabat,34000000
+Morocco,Rabat
 -685 3403
 POINT
-Mozambique,Maputo,21000000
+Mozambique,Maputo
 3253 -2596
 POINT
-Myanmar (Burma),Yangon,48000000
+Myanmar (Burma),Yangon
 9633 1675
 POINT
-Namibia,Windhoek,2031000
+Namibia,Windhoek
 1706 -2258
 POINT
-Nauru,Yaren,14000
+Nauru,Yaren
 16695 -55
 POINT
-Nepal,Kathmandu,28000000
+Nepal,Kathmandu
 8533 2775
 POINT
-Netherlands,Amsterdam,17000000
+Netherlands,Amsterdam
 490 5238
 POINT
-Netherlands Antilles,Willemstad,183000
+Netherlands Antilles,Willemstad
 -6900 1208
 POINT
-New Caledonia,Noumea,237000
+New Caledonia,Noumea
 16650 -2228
 POINT
-New Zealand,Wellington,4028000
+New Zealand,Wellington
 17476 -4131
 POINT
-Nicaragua,Managua,5487000
+Nicaragua,Managua
 -8633 1210
 POINT
-Niger,Niamey,15000000
+Niger,Niamey
 210 1345
 POINT
-Nigeria,Abuja,146000000
+Nigeria,Abuja
 753 908
 POINT
-Niue,Alofi,1000
+Niue,Alofi
 16991 1903
 POINT
-Norfolk Island,Kingston,1800
+Norfolk Island,Kingston
 16510 -2805
 POINT
-North Korea,Pyong Yang,22000000
+North Korea,Pyong Yang
 12578 3900
 POINT
-Northern Mariana Islands,Saipan,81000
+Northern Mariana Islands,Saipan
 14575 1520
 POINT
-Norway,Oslo,4620000
+Norway,Oslo
 1075 5991
 POINT
-Oman,Muscat,2567000
+Oman,Muscat
 5860 2361
 POINT
-Pakistan,Islamabad,173000000
+Pakistan,Islamabad
 7316 3366
 POINT
-Palau,Melekeok,20000
+Palau,Melekeok
 13463 749
 POINT
-Panama,Panama City,3232000
+Panama,Panama City
 -7941 910
 POINT
-Papua New Guinea,Port Moresby,5887000
+Papua New Guinea,Port Moresby
 14713 -940
 POINT
-Paraguay,Asuncion,6158000
+Paraguay,Asuncion
 -5750 -2516
 POINT
-Peru,Lima,29000000
+Peru,Lima
 -7700 -1200
 POINT
-Philippines,Manila,96000000
+Philippines,Manila
 12105 1466
 POINT
-Pitcairn,Adamstown,67
+Pitcairn,Adamstown
 -12995 -2510
 POINT
-Poland,Warsaw,39000000
+Poland,Warsaw
 2100 5221
 POINT
-Portugal,Lisbon,10495000
+Portugal,Lisbon
 -910 3870
 POINT
-Puerto Rico,San Juan,3955000
+Puerto Rico,San Juan
 -6611 1846
 POINT
-Qatar,Doha,813000
+Qatar,Doha
 5158 2525
 POINT
-Reunion,Saint-Denis,785000
+Reunion,Saint-Denis
 5546 -2110
 POINT
-Romania,Bucharest,22000000
+Romania,Bucharest
 2616 4445
 POINT
-Russian Federation,Moscow,141000000
+Russian Federation,Moscow
 3758 5575
 POINT
-Rwanda,Kigali,9038000
+Rwanda,Kigali
 3006 -198
 POINT
-Saint Helena,Jamestown,5000
+Saint Helena,Jamestown
 -690 -1800
 POINT
-Saint Kitts And Nevis,Basseterre,43000
+Saint Kitts And Nevis,Basseterre
 -6271 1728
 POINT
-Saint Lucia,Castries,161000
+Saint Lucia,Castries
 -6096 1403
 POINT
-Saint Pierre And Miquelon,Saint-Pierre,6000
+Saint Pierre And Miquelon,Saint-Pierre
 -5655 4680
 POINT
-Saint Vincent,Kingstown,119000
+Saint Vincent,Kingstown
 -6130 1328
 POINT
-Samoa,Apia,185000
+Samoa,Apia
 -17183 -1383
 POINT
-San Marino,San Marino,28000
+San Marino,San Marino
 1250 4391
 POINT
-Sao Tome And Principe,Sao Tome,157000
+Sao Tome And Principe,Sao Tome
 665 16
 POINT
-Saudi Arabia,Riyadh,28000000
+Saudi Arabia,Riyadh
 4670 2468
 POINT
-Senegal,Dakar,13000000
+Senegal,Dakar
 -1730 1456
 POINT
-Seychelles,Victoria,81000
+Seychelles,Victoria
 5555 -465
 POINT
-Sierra Leone,Freetown,5525000
+Sierra Leone,Freetown
 -1328 850
 POINT
-Singapore,Singapore,4326000
+Singapore,Singapore
 10380 137
 POINT
-Slovakia,Bratislava,5401000
+Slovakia,Bratislava
 1711 4816
 POINT
-Slovenia,Ljubljana,1967000
+Slovenia,Ljubljana
 1455 4606
 POINT
-Solomon Islands,Honiara,478000
+Solomon Islands,Honiara
 15994 -944
 POINT
-Somalia,Mogadishu,8228000
+Somalia,Mogadishu
 4541 203
 POINT
-South Africa,Pretoria,49000000
+South Africa,Pretoria
 2820 -2573
 POINT
-South Georgia And South Sandwich,King Edward Point,20
+South Georgia And South Sandwich,King Edward Point
 -3650 -5428
 POINT
-South Korea,Seoul,48000000
+South Korea,Seoul
 12696 3751
 POINT
-Spain,Madrid,40000000
+Spain,Madrid
 -375 4041
 POINT
-Sri Lanka,Colombo,21000000
+Sri Lanka,Colombo
 7987 690
 POINT
-Sudan,Khartoum,40000000
+Sudan,Khartoum
 3258 1551
 POINT
-Suriname,Paramaribo,449000
+Suriname,Paramaribo
 -5516 573
 POINT
-Svalbard And Jan Mayen,Longyearbyen,2700
+Svalbard And Jan Mayen,Longyearbyen
 2115 7970
 POINT
-Swaziland,Mbabane,1032000
+Swaziland,Mbabane
 3110 -2630
 POINT
-Sweden,Stockholm,9041000
+Sweden,Stockholm
 1805 5933
 POINT
-Switzerland,Bern,7252000
+Switzerland,Bern
 746 4695
 POINT
-Syria,Damascus,20000000
+Syria,Damascus
 3629 3350
 POINT
-Taiwan,Taipei,23000000
+Taiwan,Taipei
 12152 2503
 POINT
-Tajikistan,Dushanbe,6507000
+Tajikistan,Dushanbe
 6880 3854
 POINT
-Thailand,Bangkok,65000000
+Thailand,Bangkok
 10058 1375
 POINT
-Togo,Lome,6145000
+Togo,Lome
 133 625
 POINT
-Tokelau,Tokelau,1000
+Tokelau,Tokelau
 -17195 -890
 POINT
-Tonga,Nuku'alofa,102000
+Tonga,Nuku'alofa
 -17400 -2116
 POINT
-Trinidad And Tobago,Port Of Spain,1305000
+Trinidad And Tobago,Port Of Spain
 -6152 1067
 POINT
-Tunisia,Tunis,10102000
+Tunisia,Tunis
 1018 3683
 POINT
-Turkey,Ankara,78000000
+Turkey,Ankara
 3290 3995
 POINT
-Turkmenistan,Ashgabat,4833000
+Turkmenistan,Ashgabat
 5783 3800
 POINT
-Turks And Caicos Islands,Cockburn Town,26000
+Turks And Caicos Islands,Cockburn Town
 -7113 2146
 POINT
-Tuvalu,Funafuti,10000
+Tuvalu,Funafuti
 17921 -851
 POINT
-Uganda,Kampala,31000000
+Uganda,Kampala
 3250 33
 POINT
-Ukraine,Kiev,46000000
+Ukraine,Kiev
 3046 5050
 POINT
-United Arab Emirates,Abu Dhabi,4600000
+United Arab Emirates,Abu Dhabi
 5436 2426
 POINT
-United Kingdom,London,61000000
+United Kingdom,London
 -8 5160
 POINT
-Tanzania,Dodoma,40000000
+Tanzania,Dodoma
 3575 -613
 POINT
-United States Minor Outlying Islands,,0
+United States Minor Outlying Islands,-
 -17730 2815
 POINT
-United States Of America,Washington DC,304000000
+United States Of America,Washington DC
 -7703 3888
 POINT
-Uruguay,Montevideo,3463000
+Uruguay,Montevideo
 -5618 -3470
 POINT
-U.S. Virgin Islands,Charlotte Amalie,112000
+U.S. Virgin Islands,Charlotte Amalie
 -6483 1833
 POINT
-Uzbekistan,Tashkent,27000000
+Uzbekistan,Tashkent
 6916 4113
 POINT
-Vanuatu,Port-Vila,211000
+Vanuatu,Port-Vila
 16830 -1775
 POINT
-Venezuela,Caracas,26000000
+Venezuela,Caracas
 -6691 1040
 POINT
-Vietnam,Hanoi,86000000
+Vietnam,Hanoi
 10591 2108
 POINT
-Wallis And Futuna Islands,Mata-Utu,15000
+Wallis And Futuna Islands,Mata-Utu
 17617 -1330
 POINT
-Yemen,Sana'a,23000000
+Yemen,Sana'a
 4418 1532
 POINT
-Serbia,Belgrade,9778991
+Serbia,Belgrade
 2061 4483
 POINT
-Western Sahara,Laayoune,341000
+Western Sahara,Laayoune
 -1320 2717
 POINT
-Zambia,Lusaka,12000000
+Zambia,Lusaka
 2826 -1546
 POINT
-Zimbabwe,Harare,11000000
+Zimbabwe,Harare
 3103 -1771
