@@ -1300,18 +1300,6 @@ Dataset Format & Description and Extras \\
 \hline
 \endhead
 
-\texttt{grass} &
-Reads from GRASS site list file with filename \textit{name}.
-A GRASS site list is stored in a \texttt{site\_lists}
-directory in a GRASS mapset.
-The geometry for each site point is assigned to a variable named
-\texttt{GEOMETRY}, attribute field values are assigned to variables
-\texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots
-If the site file contains three dimensional data then the
-third dimension is assigned to a variable named \texttt{Z}.  \\
-
-\hline
-
 \texttt{jdbc} &
 Accesses data held in a relational database with
 an SQL \texttt{select} statement via JDBC.
@@ -1376,28 +1364,6 @@ files \texttt{WEB-INF/web.xml} and \texttt{META-INF/context.xml}.
 
 \vspace{10pt}
 Other values are set as properties for the JDBC driver. \\
-
-\hline
-
-\texttt{ogrinfo} &
-Reads the output of the \texttt{ogrinfo} program, part of
-the freely-available OGR library.
-The filename \textit{name} contains either,
-\begin{enumerate}
-\item
-An \texttt{ogrinfo} program command followed by a pipe (\texttt{|}) character.
-Mapyrus runs this command and reads the output.  Use \texttt{ogrinfo}
-command options to limit the data to an area of interest, or to data
-matching an SQL-like where clause.
-\item
-(\texttt{-}) to read standard input to Mapyrus.
-\item
-The name of a file containing \texttt{ogrinfo} output.
-\end{enumerate}
-
-The geometry for each fetched record is assigned to a variable named
-\texttt{GEOMETRY}, attribute field values are assigned to
-variables with attribute field names. \\
 
 \hline
 
