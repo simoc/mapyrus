@@ -1300,6 +1300,39 @@ Dataset Format & Description and Extras \\
 \hline
 \endhead
 
+\texttt{internal} &
+Reads a dataset included inside Mapyrus.
+Available dataset names are \texttt{countries}
+and \texttt{capitals}.
+
+Dataset \texttt{countries} contains the following
+fields for each record:
+
+\begin{itemize}
+\item
+\texttt{GEOMETRY} Polygon with country border
+\item
+\texttt{ISOCODE} Country ISO code
+\item
+\texttt{COUNTRY} Country name
+\item
+\texttt{POP2005} Population in year 2005
+\end{itemize}
+
+Dataset \texttt{capitals} contains the following
+fields for each record:
+
+\begin{itemize}
+\item
+\texttt{GEOMETRY} Point with capital
+\item
+\texttt{COUNTRY} Country name
+\item
+\texttt{CAPITAL} Capital city name
+\end{itemize} \\
+
+\hline
+
 \texttt{jdbc} &
 Accesses data held in a relational database with
 an SQL \texttt{select} statement via JDBC.
