@@ -6,6 +6,8 @@ Copyright (C) 2003 - 2009 Simon Chenery <simoc@users.sourceforge.net>
 * Allow database connection through JNDI.
 * Include map of world countries and capital cities datasets.
 * Allow C "/* comment */" and C++ "// comment" style comments.
+* Remove grass and ogrinfo dataset types from documentation.  They
+  will be removed from software in a future version.
 
 0.807, December 2008
 
