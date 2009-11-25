@@ -5,7 +5,7 @@ let c[1] = "red", c[2] = "orange", c[3] = "yellow"
 let c[4] = "gold", c[5] = "orangered", c[6] = "indianred1"
 
 linestyle 0.1, "round", "round"
-dataset "internal", "countries.txt", ""
+dataset "internal", "countries", ""
 while Mapyrus.fetch.more
 do
   fetch
@@ -27,7 +27,7 @@ end
 
 color "black"
 font "Helvetica", 3
-dataset "internal", "capitals.txt", ""
+dataset "internal", "capitals", ""
 while Mapyrus.fetch.more
 do
   fetch
