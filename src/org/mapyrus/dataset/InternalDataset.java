@@ -49,9 +49,11 @@ public class InternalDataset implements GeographicDataset
 	 * @param filename is name of data to read.
 	 * @param extras options for reading data.
 	 */
-	public InternalDataset(String filename, String extras) throws IOException
+	public InternalDataset(String filename, String extras) throws MapyrusException, IOException
 	{
-		URL url = this.getClass().getResource(filename);
+		URL url = this.getClass().getResource(filename + ".txt");
+		if (url == null)
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.OPEN_DATASET_ERROR) + ": " + filename);
 		m_reader = new LineNumberReader(new InputStreamReader(url.openStream()));
 		m_filename = filename;
 		String headerLine = m_reader.readLine();
