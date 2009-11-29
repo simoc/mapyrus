@@ -39,6 +39,7 @@ import org.mapyrus.Argument;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 import org.mapyrus.Row;
+import org.mapyrus.geom.Geometry;
 
 /**
  * Implements reading of geographic datasets from ESRI shape files.
@@ -184,6 +185,17 @@ public class ShapefileDataset implements GeographicDataset
 					yMax = d;
 			}
 		}
+
+		if (xMin > xMax)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_RANGE) +
+				": " + xMin + " - " + xMax);
+		}
+		if (yMin > yMax)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_RANGE) +
+				": " + yMin + " - " + yMax);
+		}
 		m_queryExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 
 		/*
@@ -258,7 +270,7 @@ public class ShapefileDataset implements GeographicDataset
 			 */
 			readDBFHeader(extrasDBFFields);
 
-			if (overlaps(m_queryExtents, m_extents.getMinX(), m_extents.getMinY(),
+			if (Geometry.overlaps(m_queryExtents, m_extents.getMinX(), m_extents.getMinY(),
 				m_extents.getMaxX(), m_extents.getMaxY()))
 			{
 				m_BytesRead = 0;
@@ -282,27 +294,6 @@ public class ShapefileDataset implements GeographicDataset
 			close();
 			throw e2;
 		}
-	}
-
-	/**
-	 * Find whether two rectangles overlap.
-	 * @param r1 first rectangle.
-	 * @param xMin minimum X coordinate of second rectangle.
-	 * @param yMin minimum Y coordinate of second rectangle.
-	 * @param xMax maximum X coordinate of second rectangle.
-	 * @param yMax maximum Y coordinate of second rectangle.
-	 * @return true if rectangles overlap.
-	 */
-	private boolean overlaps(Rectangle2D.Double r, double xMin, double yMin, double xMax, double yMax)
-	{
-		boolean retval = (xMin >= r.getMinX() && xMin <= r.getMaxX()) ||
-			(r.getMaxX() >= xMin && r.getMaxX() <= xMax);
-		if (retval)
-		{
-			retval = (yMin >= r.getMinY() && yMin <= r.getMaxY()) ||
-				(r.getMaxY() >= yMin && r.getMaxY() <= yMax);
-		}
-		return(retval);
 	}
 
 	/**
@@ -694,7 +685,7 @@ public class ShapefileDataset implements GeographicDataset
 					xMax = readLittleEndianDouble(m_shapeStream);
 					yMax = readLittleEndianDouble(m_shapeStream);
 					nBytes += 4 * 8;
-					shapeInExtents = overlaps(m_queryExtents, xMin, yMin, xMax, yMax);
+					shapeInExtents = Geometry.overlaps(m_queryExtents, xMin, yMin, xMax, yMax);
 					if (shapeInExtents)
 					{
 						/*
@@ -818,7 +809,7 @@ public class ShapefileDataset implements GeographicDataset
 					xMax = readLittleEndianDouble(m_shapeStream);
 					yMax = readLittleEndianDouble(m_shapeStream);
 					nBytes += 4 * 8;
-					shapeInExtents = overlaps(m_queryExtents, xMin, yMin, xMax, yMax);
+					shapeInExtents = Geometry.overlaps(m_queryExtents, xMin, yMin, xMax, yMax);
 					if (shapeInExtents)
 					{
 						nPoints = readLittleEndianInt(m_shapeStream);
