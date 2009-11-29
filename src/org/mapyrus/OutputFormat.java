@@ -73,6 +73,7 @@ import org.mapyrus.font.AdobeFontMetricsManager;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
+import org.mapyrus.gui.MapyrusFrame;
 import org.mapyrus.image.BlendComposite;
 import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.ASCII85Writer;
