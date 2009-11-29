@@ -63,10 +63,6 @@ public class DatasetFactory
 				retval = new ShapefileDataset(name, extras);
 			else if (type.equalsIgnoreCase("jdbc"))
 				retval = new JDBCDataset(name, extras);
-			else if (type.equalsIgnoreCase("grass"))
-				retval = new GrassDataset(name, extras);
-			else if (type.equalsIgnoreCase("ogrinfo"))
-				retval = new OGRDataset(name, extras, stdin);
 			else if (type.equalsIgnoreCase("osm"))
 				retval = new OpenStreetMapDataset(name, extras, stdin);
 			else if (type.equalsIgnoreCase("internal"))
