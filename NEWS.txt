@@ -1,6 +1,13 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2009 Simon Chenery <simoc@users.sourceforge.net>
 
+0.902, December 2009
+
+* Add xmin, ymin, xmax, ymax to allow box when reading world countries
+  and capital cities datasets.
+* Add GUI with command entry and Mapyrus output for easier experimenting.
+* Remove grass and ogrinfo dataset types.
+
 0.901, November 2009
 
 * Allow database connection through JNDI.
