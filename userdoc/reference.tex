@@ -1329,7 +1329,19 @@ fields for each record:
 \texttt{COUNTRY} Country name
 \item
 \texttt{CAPITAL} Capital city name
-\end{itemize} \\
+\end{itemize}
+
+\vspace{10pt}
+Extras:
+
+\texttt{xmin=\textit{x1}},
+\texttt{ymin=\textit{y1}},
+\texttt{xmax=\textit{x2}},
+\texttt{ymax=\textit{y2}}
+
+Bounding rectangle of data to fetch.  Data outside this rectangle is
+not fetched.  Setting bounding rectangle to same values as world
+coordinate values in \texttt{worlds} command improves performance. \\
 
 \hline
 
