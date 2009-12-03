@@ -416,6 +416,7 @@ public class ColorDatabase
 		m_colors.put("magenta3", new Color(205, 0, 205));
 		m_colors.put("magenta4", new Color(139, 0, 139));
 		m_colors.put("manganeseblue", new Color(3, 168, 158));
+		m_colors.put("mapyrusgold", new Color(248, 244, 127));
 		m_colors.put("maroon1", new Color(255, 52, 179));
 		m_colors.put("maroon2", new Color(238, 48, 167));
 		m_colors.put("maroon3", new Color(205, 41, 144));
