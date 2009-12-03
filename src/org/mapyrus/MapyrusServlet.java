@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MapyrusServlet extends HttpServlet
 {
+	static final long serialVersionUID = 0x3303;
 	private static final String COMMANDS_INIT_PARAM_NAME = "c1";
 
 	/**
