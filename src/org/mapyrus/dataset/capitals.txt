@@ -1,5 +1,6 @@
 # COUNTRY CAPITAL
 # @(#) $Id$
+# Data derived from Wikipedia List of national capital cities page.
 POINT
 Afghanistan,Kabul
 6918 3446
