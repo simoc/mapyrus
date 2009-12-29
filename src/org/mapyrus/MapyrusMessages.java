@@ -92,7 +92,6 @@ public class MapyrusMessages
 	public static final String INVALID_GEOIMAGE = "invalidgeoimage";
 	public static final String INVALID_GEOMETRY = "invalidgeometry";
 	public static final String INVALID_GRADIENT_FILL = "invalidgradientfill";
-	public static final String INVALID_GRASS_FILE = "invalidgrassfile";
 	public static final String INVALID_HASHMAP_KEY = "invalidhashmapkey";
 	public static final String INVALID_HEXAGON = "invalidhexagon";
 	public static final String INVALID_HEX_ICON = "invalidhexicon";
@@ -110,9 +109,6 @@ public class MapyrusMessages
 	public static final String INVALID_NUMBER = "invalidnumber";
 	public static final String INVALID_OGC_WKB = "invalidogcwkb";
 	public static final String INVALID_OGC_WKT = "invalidogcwkt";
-	public static final String INVALID_OGR_FEATURE = "invalidogrfeature";
-	public static final String INVALID_OGR_HEADER = "invalidogrheader";
-	public static final String INVALID_OGR_PROJECTION = "invalidogrprojection";
 	public static final String INVALID_OPTION = "invalidoption";
 	public static final String INVALID_PAGE = "invalidpage";
 	public static final String INVALID_PAGE_NUMBER = "invalidpagenumber";
@@ -154,6 +150,7 @@ public class MapyrusMessages
 	public static final String MISSING_VALUE = "missingvalue";
 	public static final String MISSING_XML_ATTRIBUTE = "missingxmlattribute";
 	public static final String NESTED_PROC = "nestedproc";
+	public static final String NEW_TAB = "newtab";
 	public static final String NOT_A_AFM_FILE = "notaafmfile";
 	public static final String NOT_ASCENDING = "notascending";
 	public static final String NOT_A_PAT_FILE = "notapatfile";
@@ -183,14 +180,18 @@ public class MapyrusMessages
 	public static final String NUMERIC_FUNCTION = "numericfunction";
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
+	public static final String OPEN_FILE = "openfile";
+	public static final String OVERWRITE = "overwrite";
 	public static final String PARSE_ERROR = "parseerror";
 	public static final String PNG_IMAGE_FILES = "pngimagefiles";
 	public static final String PROCESS_ERROR = "processerror";
 	public static final String READ_ONLY = "readonly";
 	public static final String RECURSION = "recursion";
 	public static final String ROMAN_CONVERSION = "romanconversion";
+	public static final String SAVE_CHANGES_IN_TAB = "savechangesintab";
 	public static final String SERVLET_INIT_PARAM = "servletinitparam";
 	public static final String STARTED_THREAD = "startedthread";
+	public static final String TO_FILE = "tofile";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
 	public static final String TRANSFORM_ERROR = "transformerror";
 	public static final String UNDEFINED_PROC = "undefinedproc";
@@ -199,6 +200,7 @@ public class MapyrusMessages
 	public static final String UNKNOWN_FIELD_TYPE = "unknownfieldtype";
 	public static final String UNMATCHED_BRACKET = "unmatchedbracket";
 	public static final String UNSUPPORTED_ORACLE = "unsupportedoracle";
+	public static final String UNTITLED = "untitled";
 	public static final String URL_RETURNED = "urlreturned";
 	public static final String VARIABLE_EXPECTED = "variableexpected";
 	public static final String VARIABLE_UNDEFINED = "variableundefined";
