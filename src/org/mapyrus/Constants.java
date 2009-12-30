@@ -59,6 +59,24 @@ public class Constants
 		return("@release_date_token@");
 	}
 
+	/**
+	 * Return license terms of software.
+	 * @return licence terms.
+	 */
+	public static String []getLicense()
+	{
+		String []license =
+		{
+			Constants.PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for MERCHANTABILITY or",
+			"FITNESS FOR A PARTICULAR PURPOSE.  You may redistribute copies of " + Constants.PROGRAM_NAME,
+			"under the terms of the GNU Lesser General Public License.  For more",
+			"information about these matters, see the file named COPYING.",
+			"",
+			"Report bugs to <simoc@users.sourceforge.net>."
+		};
+		return(license);
+	}
+
 	/*
 	 * American number formatting used for all output, with '.'
 	 * as the decimal separator.
