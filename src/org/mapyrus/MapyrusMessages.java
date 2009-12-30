@@ -32,10 +32,12 @@ import java.util.ResourceBundle;
  */
 public class MapyrusMessages
 {
+	public static final String ABOUT = "about";
 	public static final String ACCEPTING_HTTP = "acceptinghttp";
 	public static final String BAD_IMAGE_READER_CLASS = "badimagereaderclass";
 	public static final String CANNOT_OPEN_URL = "cannotopenurl";
 	public static final String CLASS_NOT_FUNCTION = "classnotfunction";
+	public static final String CLOSE_TAB = "closetab";
 	public static final String COLOR_NOT_FOUND = "colornotfound";
 	public static final String COPY = "copy";
 	public static final String DEFINE_TRANSFORM = "definetransform";
@@ -55,6 +57,7 @@ public class MapyrusMessages
 	public static final String FILE_NOT_FOUND = "filenotfound";
 	public static final String GEOMETRY_NOT_NUMERIC = "geometrynotnumeric";
 	public static final String HASHMAP_NOT_NUMERIC = "hashmapnotnumeric";
+	public static final String HELP = "help";
 	public static final String HTTP_HEADER = "httpheader";
 	public static final String HTTP_NOT_FOUND = "httpnotfound";
 	public static final String HTTP_RETURNED = "httpreturned";
@@ -158,7 +161,6 @@ public class MapyrusMessages
 	public static final String NOT_A_PFB_FILE = "notapfbfile";
 	public static final String NOT_A_PPM_FILE = "notappmfile";
 	public static final String NOT_A_TTF_FILE = "notattffile";
-	public static final String NOT_MIF_FILE = "notmiffile";
 	public static final String NOT_NUMERIC_OPERATION = "notnumericoperation";
 	public static final String NOT_PS_FILE = "notpsfile";
 	public static final String NOT_SHAPE_FILE = "notshapefile";
@@ -179,6 +181,7 @@ public class MapyrusMessages
 	public static final String NO_SINE_WAVE_START = "nosinewavestart";
 	public static final String NUMERIC_FUNCTION = "numericfunction";
 	public static final String NUMERIC_OVERFLOW = "numericoverflow";
+	public static final String ONLINE_HELP = "onlinehelp";
 	public static final String OPEN_DATASET_ERROR = "opendataseterror";
 	public static final String OPEN_FILE = "openfile";
 	public static final String OVERWRITE = "overwrite";
@@ -189,6 +192,7 @@ public class MapyrusMessages
 	public static final String RECURSION = "recursion";
 	public static final String ROMAN_CONVERSION = "romanconversion";
 	public static final String SAVE_CHANGES_IN_TAB = "savechangesintab";
+	public static final String SAVE_TAB = "savetab";
 	public static final String SERVLET_INIT_PARAM = "servletinitparam";
 	public static final String STARTED_THREAD = "startedthread";
 	public static final String TO_FILE = "tofile";
