@@ -33,6 +33,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.mapyrus.gui.MapyrusFrame;
 import org.mapyrus.logging.SingleLineFormatter;
 
 /**
@@ -170,6 +171,7 @@ public class Mapyrus
 			"",
 			"Options:",
 			"  -e <commands> runs given commands instead of reading commands from a file",
+			"  -g            starts Mapyrus GUI for each filename",
 			"  -h            print this message",
 			"  -l <level>    sets logging level for HTTP server.  One of ",
 			"                FINEST, FINER, FINE, CONFIG, INFO, WARNING, SEVERE.",
@@ -180,13 +182,7 @@ public class Mapyrus
 			"  -v            print version information and exit",
 		};
 
-		String []license =
-		{
-			Constants.PROGRAM_NAME + " comes with ABSOLUTELY NO WARRANTY, not even for MERCHANTABILITY or",
-			"FITNESS FOR A PARTICULAR PURPOSE.  You may redistribute copies of " + Constants.PROGRAM_NAME,
-			"under the terms of the GNU Lesser General Public License.  For more",
-			"information about these matters, see the file named COPYING."
-		};
+		String []license = Constants.getLicense();
 
 		for (int i = 0; i < usage.length; i++)
 		{
@@ -198,9 +194,6 @@ public class Mapyrus
 		{
 			System.out.println(license[i]);
 		}
-		
-		System.out.println("");
-		System.out.println("Report bugs to <simoc@users.sourceforge.net>.");
 		System.exit(1);
 	}
 
@@ -489,9 +482,10 @@ public class Mapyrus
 		int port = 0;
 		Level logLevel = null;
 		StringBuffer commandsToExecute = new StringBuffer();
+		boolean startGui = false;
 
 		if (args.length == 0)
-			printUsageAndExit();
+			startGui = true;
 
 		/*
 		 * Parse command line arguments -- these are the files and URLs
@@ -552,6 +546,11 @@ public class Mapyrus
 				commandsToExecute.append(Constants.LINE_SEPARATOR);
 				argIndex += 2;
 			}
+			else if (arg.equals("-g"))
+			{
+				startGui = true;
+				argIndex++;
+			}
 			else if (arg.equals("-l"))
 			{
 				/*
@@ -608,6 +607,29 @@ public class Mapyrus
 				System.err.println(MapyrusMessages.get(MapyrusMessages.INVALID_OPTION) + ": " + arg);
 				System.exit(1);
 			}
+		}
+
+		if (startGui)
+		{
+			/*
+			 * Don't run any commands, show GUI instead.
+			 */
+			String []filenames = null; 
+			if (args != null && argIndex < args.length)
+			{
+				filenames = new String[args.length - argIndex];
+				System.arraycopy(args, argIndex, filenames, 0, filenames.length);
+			}
+			try
+			{
+				new MapyrusFrame(filenames);
+			}
+			catch (Exception e)
+			{
+				System.err.println(e.getMessage());
+				System.exit(1);
+			}
+			System.exit(0);
 		}
 
 		context = new ContextStack();
