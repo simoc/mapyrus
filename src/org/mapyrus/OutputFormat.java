@@ -2444,8 +2444,7 @@ public class OutputFormat
 			 * Then wait for user to close the window.
 			 */
 			String title = Constants.PROGRAM_NAME + ": " + m_filename;
-			MapyrusFrame frame = new MapyrusFrame(title, m_image);
-			frame.waitForClose();
+			new MapyrusFrame(title, m_image);
 		}
 
 		m_image = null;
