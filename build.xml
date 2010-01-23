@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <!--
 This file is part of Mapyrus, software for plotting maps.
-Copyright (C) 2003 - 2009 Simon Chenery.
+Copyright (C) 2003 - 2010 Simon Chenery.
 
 Mapyrus is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -62,6 +62,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <!-- Copy resource, font and data files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
+<copy file="src/org/mapyrus/gui/onlinehelp.html" todir="build/classes/org/mapyrus/gui"/>
 <copy todir="build/classes/org/mapyrus/dataset">
 <fileset dir="src/org/mapyrus/dataset" includes="*.txt"/>
 </copy>
@@ -164,7 +165,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Create README file -->
 <echo file="README.txt" level="info">
 Mapyrus Version ${version} README
-Copyright (C) 2003 - 2009 Simon Chenery.
+Copyright (C) 2003 - 2010 Simon Chenery.
 
 User manual is mapyrus.pdf.
 Examples from user manual are in userdoc directory.
