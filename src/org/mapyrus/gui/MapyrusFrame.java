@@ -23,9 +23,9 @@
 package org.mapyrus.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -38,10 +38,12 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -68,11 +70,12 @@ public class MapyrusFrame implements MapyrusEventListener
 {
 	private Mutex m_mutex;
 	private JFrame m_frame;
-	private BufferedImage m_image;
 	private MapyrusEditorPanel m_editorPanel;
 	private JPanel m_displayPanel;
 	private LinkedBlockingQueue<Integer> m_actionQueue = null;
 	private Thread m_actionThread;
+	private BufferedImage m_displayImage;
+	private File m_lastOpenedDirectory;
 
 	public MapyrusFrame(String []filenames)
 	{
@@ -116,9 +119,21 @@ public class MapyrusFrame implements MapyrusEventListener
 		 */
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
-		m_displayPanel = new JPanel();
+		m_displayPanel = new JPanel(){
+			
+			static final long serialVersionUID = 0x3302;
+
+			public void paintComponent(Graphics g)
+			{
+				/*
+				 * Double-buffering.  Redisplay image that Mapyrus has drawn.
+				 */
+				super.paintComponent(g);
+				if (m_displayPanel != null && m_displayImage != null)
+					g.drawImage(m_displayImage, 0, 0, null);
+			}
+		};
 		m_displayPanel.setPreferredSize(screenSize);
-		m_displayPanel.setBackground(Color.RED);
 		splitPane.add(m_displayPanel);
 
 		JPanel toolBarAndEditorPanel = new JPanel();
@@ -134,6 +149,12 @@ public class MapyrusFrame implements MapyrusEventListener
 		splitPane.add(toolBarAndEditorPanel);
 		contentPane.add(splitPane, BorderLayout.CENTER);
 		m_frame.pack();
+		
+		/*
+		 * Show mostly the output panel and only a few lines of the editor.
+		 */
+		splitPane.setDividerLocation(0.70);
+
 		m_frame.setVisible(true);
 
 		/*
@@ -170,7 +191,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	public MapyrusFrame(String title, BufferedImage image)
 	{
 		createActionQueue();
-		m_image = image;
+		m_displayImage = image;
 		m_frame = new JFrame(title);
 
 		Container contentPane = m_frame.getContentPane();
@@ -252,17 +273,13 @@ public class MapyrusFrame implements MapyrusEventListener
 			actionCode == MapyrusEventListener.EXIT_ACTION)
 		{
 			/*
-			 * Interrupt any action that is already running and
-			 * clear queue.
+			 * Interrupt any action that is already running,
+			 * clear queue and restart thread that handles events.
+			 * 
+			 * This ensures that event is handled immediately.
 			 */
 			m_actionThread.interrupt();
-//			try
-//			{
-//				m_actionThread.join();
-//			}
-//			catch (InterruptedException e)
-//			{
-//			}
+
 			createActionQueue();
 		}
 
@@ -302,7 +319,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			}
 			else if (actionCode == MapyrusEventListener.COPY_ACTION)
 			{
-				ImageSelection imageSelection = new ImageSelection(m_image);
+				ImageSelection imageSelection = new ImageSelection(m_displayImage);
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clipboard.setContents(imageSelection, null);
 			}
@@ -321,14 +338,15 @@ public class MapyrusFrame implements MapyrusEventListener
 						FileOrURL f = new FileOrURL(new StringReader(contents), title);
 						
 						Dimension displayDim = m_displayPanel.getSize();
-						BufferedImage image = new BufferedImage((int)displayDim.getWidth(),
+						m_displayImage = new BufferedImage((int)displayDim.getWidth(),
 							(int)displayDim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 						Interpreter interpreter = new Interpreter();
 						ContextStack context = new ContextStack();
-						context.setOutputFormat(image, "");
+						context.setOutputFormat(m_displayImage, "");
 						ByteArrayInputStream stdin = new ByteArrayInputStream(new byte[]{});
 						interpreter.interpret(context, f, stdin, System.out);
-						m_displayPanel.getGraphics().drawImage(image, 0, 0, null);
+
+						m_displayPanel.repaint();
 					}
 					catch (IOException e)
 					{
@@ -379,6 +397,24 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Show HTML GUI help page.
 				 */
+				JFrame helpFrame = new JFrame();
+				try
+				{
+					JEditorPane helpPane = new JEditorPane();
+					helpPane.setEditable(false);
+					URL helpUrl = this.getClass().getResource("onlinehelp.html");
+					helpPane.setPage(helpUrl);
+					helpFrame.getContentPane().add(helpPane);
+					helpFrame.setPreferredSize(new Dimension(600, 500));
+					helpFrame.pack();
+					helpFrame.setVisible(true);
+				}
+				catch (IOException e)
+				{
+					JOptionPane.showMessageDialog(m_frame, e.getMessage(),
+						Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+					helpFrame.dispose();
+				}
 			}
 			else if (actionCode == MapyrusEventListener.ABOUT_ACTION)
 			{
@@ -428,10 +464,12 @@ public class MapyrusFrame implements MapyrusEventListener
 	{
 		JFileChooser chooser = new JFileChooser();
 		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		chooser.setCurrentDirectory(m_lastOpenedDirectory);
 		int status = chooser.showOpenDialog(m_frame);
 		if (status == JFileChooser.APPROVE_OPTION)
 		{
 			File selectedFile = chooser.getSelectedFile();
+			m_lastOpenedDirectory = selectedFile.getParentFile();
 			String filename = selectedFile.getPath();
 			m_editorPanel.createTab(filename, null);
 		}
@@ -445,15 +483,17 @@ public class MapyrusFrame implements MapyrusEventListener
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(false);
 		fileChooser.setFileFilter(new PNGImageFilter());
+		fileChooser.setSelectedFile(m_lastOpenedDirectory);
 
 		int retval = fileChooser.showSaveDialog(m_frame);
 		if (retval == JFileChooser.APPROVE_OPTION)
 		{
 			File selectedFile = fileChooser.getSelectedFile();
+			m_lastOpenedDirectory = selectedFile;
 			try
 			{
 				FileOutputStream outStream = new FileOutputStream(selectedFile);
-				ImageIO.write(m_image, "png", outStream);
+				ImageIO.write(m_displayImage, "png", outStream);
 			}
 			catch (IOException e)
 			{
@@ -513,11 +553,12 @@ public class MapyrusFrame implements MapyrusEventListener
 				{
 					JFileChooser chooser = new JFileChooser();
 					chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-					chooser.setSelectedFile(new File(filename));
+					chooser.setSelectedFile(new File(m_lastOpenedDirectory, filename));
 					status = chooser.showSaveDialog(m_frame);
 					if (status != JFileChooser.APPROVE_OPTION)
 						return(false);
 					File selectedFile = chooser.getSelectedFile();
+					m_lastOpenedDirectory = selectedFile.getParentFile();
 					filename = selectedFile.getPath();
 					if (selectedFile.exists())
 					{
