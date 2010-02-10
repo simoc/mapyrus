@@ -24,6 +24,7 @@ package org.mapyrus.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -59,6 +60,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 	 */
 	private HashMap<JScrollPane, JTextArea> m_textAreas = new HashMap<JScrollPane, JTextArea>();
 	private HashSet<JScrollPane> m_editedScrollPanes = new HashSet<JScrollPane>();
+	private Font m_font = null;
 
 	private int m_tabSequenceNumber = 0;
 
@@ -71,17 +73,27 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 	}
 
 	/**
+	 * Set editor font.
+	 * @font font for text area.
+	 */
+	public void setFont(Font font)
+	{
+		m_font = font;
+	}
+
+	/**
 	 * Create panel with line number information for a text area. 
 	 * @param textArea text area to add line numbering to.
 	 * @return line numbering panel.
 	 */
 	private JComponent createLineNumberingComponent(JScrollPane scrollPane, JTextArea textArea)
 	{
+		final Font finalFont = textArea.getFont();
 		JComponent lineNumberingComponent = new JComponent(){
 			static final long serialVersionUID = 0x1;
 			public void paintComponent(Graphics g)
 			{
-				FontMetrics fontMetrics = getFontMetrics(getFont());
+				FontMetrics fontMetrics = getFontMetrics(finalFont);
                 int lineHeight = fontMetrics.getHeight();
                 int startOffset = 3;
                 Rectangle box = g.getClipBounds();
@@ -126,6 +138,8 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 		if (bgColor != null)
 			textArea.setBackground(bgColor);
 		textArea.addKeyListener(this);
+		if (m_font != null)
+			textArea.setFont(m_font);
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		JComponent lineNumberingComponent = createLineNumberingComponent(scrollPane, textArea);
 		scrollPane.setRowHeaderView(lineNumberingComponent);
