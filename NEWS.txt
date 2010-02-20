@@ -1,7 +1,7 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
-0.902, January 2010
+0.902, February 2010
 
 * Add xmin, ymin, xmax, ymax to allow box when reading world countries
   and capital cities datasets.
