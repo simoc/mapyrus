@@ -191,10 +191,12 @@ public class MapyrusMessages
 	public static final String READ_ONLY = "readonly";
 	public static final String RECURSION = "recursion";
 	public static final String ROMAN_CONVERSION = "romanconversion";
+	public static final String RUN_COMMANDS = "runcommands";
 	public static final String SAVE_CHANGES_IN_TAB = "savechangesintab";
 	public static final String SAVE_TAB = "savetab";
 	public static final String SERVLET_INIT_PARAM = "servletinitparam";
 	public static final String STARTED_THREAD = "startedthread";
+	public static final String STOP_COMMANDS = "stopcommands";
 	public static final String TO_FILE = "tofile";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
 	public static final String TRANSFORM_ERROR = "transformerror";
