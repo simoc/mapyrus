@@ -186,6 +186,10 @@ public class MapyrusServlet extends HttpServlet
 		{
 			throw new ServletException(e.getMessage());
 		}
+		catch (InterruptedException e)
+		{
+			throw new ServletException(e.getMessage());
+		}
 		finally
 		{
 			/*
