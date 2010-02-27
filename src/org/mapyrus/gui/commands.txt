@@ -1,0 +1,26 @@
+# Sample commands to display map of Europe -- try changing colors
+# and numbers, then pressing the green arrow to see what happens.
+worlds -11, 34, 37, 73
+
+# Ocean as blue background.
+box -180, -90, 180, 90
+color "lightblue"
+fill
+
+# Each country has a colorcode number.  Set color to use for each colorcode.
+let c[1] = "yellow3", c[2] = "orange3", c[3] = "yellow", c[4] = "gold"
+let c[5] = "pastelbrown", c[6] = "yellowgreen"
+
+dataset "internal", "countries", ""
+linestyle 0.01, "round", "round"
+while Mapyrus.fetch.more
+do
+	# Display country in color of its colorcode with a black border.
+	fetch
+	clearpath
+	addpath GEOMETRY
+	color c[COLORCODE]
+	fill
+	color "black"
+	stroke
+done
