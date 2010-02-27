@@ -6,6 +6,7 @@ Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 * Add xmin, ymin, xmax, ymax to allow box when reading world countries
   and capital cities datasets.
 * Add GUI with command entry and Mapyrus output for easier experimenting.
+* Java function Mapyrus.interpret() now throws InterruptedException too.
 * Remove grass and ogrinfo dataset types.
 
 0.901, November 2009
