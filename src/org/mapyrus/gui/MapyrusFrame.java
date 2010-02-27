@@ -57,6 +57,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -93,6 +95,7 @@ public class MapyrusFrame implements MapyrusEventListener
 
 	public MapyrusFrame(String []filenames)
 	{
+		setLookAndFeel();
 		createActionQueue();
 
 		/*
@@ -166,6 +169,7 @@ public class MapyrusFrame implements MapyrusEventListener
 		m_outputTextArea = new JTextArea(2, 80);
 		m_outputTextArea.setBackground(Color.WHITE);
 		m_outputTextArea.setFont(m_fixedFont);
+		m_outputTextArea.setEditable(false);
 		JScrollPane outputPane = new JScrollPane(m_outputTextArea);
 		splitPane2.add(outputPane);
 
@@ -214,6 +218,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	 */
 	public MapyrusFrame(String title, BufferedImage image)
 	{
+		setLookAndFeel();
 		createActionQueue();
 		m_displayImage = image;
 		m_frame = new JFrame(title);
@@ -269,13 +274,44 @@ public class MapyrusFrame implements MapyrusEventListener
 		waitForClose();
 	}
 
+	private void setLookAndFeel()
+	{
+		try
+		{
+			/*
+			 * Set operating system specific LookAndFeel.
+			 */
+			String className = UIManager.getSystemLookAndFeelClassName();
+			UIManager.setLookAndFeel(className);
+		}
+		catch (UnsupportedLookAndFeelException e)
+		{
+		}
+		catch (ClassNotFoundException e)
+		{
+		}
+		catch (IllegalAccessException e)
+		{
+		}
+		catch (InstantiationException e)
+		{
+		}
+	}
+
 	private void createActionQueue()
 	{
+		/*
+		 * Create or recreate queue of actions from GUI.
+		 */
 		if (m_actionQueue != null)
 			m_actionQueue.clear();
 		else
 			m_actionQueue = new LinkedBlockingQueue<Integer>();
 
+		/*
+		 * Create another thread to read this queue and process
+		 * actions so that the GUI is not blocked.
+		 */
 		m_actionThread = new Thread(){
 			public void run()
 			{
@@ -285,8 +321,6 @@ public class MapyrusFrame implements MapyrusEventListener
 				}
 				catch (InterruptedException e)
 				{
-					JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
-						JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		};
@@ -305,8 +339,12 @@ public class MapyrusFrame implements MapyrusEventListener
 			 * This ensures that event is handled immediately.
 			 */
 			m_actionThread.interrupt();
+
 			if (m_outputThread != null)
+			{
 				m_outputThread.interrupt();
+				m_outputThread = null;
+			}
 
 			createActionQueue();
 		}
@@ -327,17 +365,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	{
 		while (true)
 		{
-			Integer actionCode = Integer.valueOf(Integer.MAX_VALUE);
-			try
-			{
-				actionCode = m_actionQueue.take().intValue();
-			}
-			catch (InterruptedException e)
-			{
-				/*
-				 * GUI has reset queue.  Just continue reading it.
-				 */
-			}
+			Integer actionCode =  m_actionQueue.take().intValue();
 
 			if (actionCode == MapyrusEventListener.NEW_TAB_ACTION)
 			{
@@ -357,6 +385,9 @@ public class MapyrusFrame implements MapyrusEventListener
 			}
 			else if (actionCode == MapyrusEventListener.COPY_ACTION)
 			{
+				/*
+				 * Copy display panel output to clipboard.
+				 */
 				ImageSelection imageSelection = new ImageSelection(m_displayImage);
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clipboard.setContents(imageSelection, null);
@@ -367,81 +398,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			}
 			else if (actionCode == MapyrusEventListener.RUN_ACTION)
 			{
-				String contents = m_editorPanel.getSelectedTabContents();
-				if (contents.length() > 0)
-				{
-					try
-					{
-						String title = m_editorPanel.getSelectedTabTitle();
-						FileOrURL f = new FileOrURL(new StringReader(contents), title);
-
-						Dimension displayDim = m_displayPanel.getSize();
-						m_displayImage = new BufferedImage((int)displayDim.getWidth(),
-							(int)displayDim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-						Interpreter interpreter = new Interpreter();
-						ContextStack context = new ContextStack();
-						context.setOutputFormat(m_displayImage, "");
-
-						ByteArrayInputStream stdin = new ByteArrayInputStream(new byte[]{});
-						PipedOutputStream outStream = new PipedOutputStream();
-						final PipedInputStream inStream = new PipedInputStream(outStream);
-						m_outputTextArea.setText("");
-						
-						/*
-						 * Create thread to read Mapyrus output and append it
-						 * to the output panel.
-						 */
-						m_outputThread = new Thread(){
-							public void run()
-							{
-								try
-								{
-									byte []buf = new byte[256];
-									int nBytes;
-									while ((nBytes = inStream.read(buf)) > 0)
-									{
-										String s = new String(buf, 0, nBytes);
-										int caretPosition = m_outputTextArea.getCaretPosition();
-										m_outputTextArea.append(s);
-										
-										/*
-										 * Ensure last lines of output are displayed.
-										 */
-										m_outputTextArea.setCaretPosition(caretPosition + s.length());
-										m_outputTextArea.repaint();
-									}
-								}
-								catch (IOException e)
-								{
-									/*
-									 * Reading pipes so should be no IOExceptions.
-									 */
-									m_outputTextArea.append(e.getMessage());
-								}
-							}
-						};
-						m_outputThread.start();
-
-						PrintStream p = new PrintStream(outStream);
-						interpreter.interpret(context, f, stdin, p);
-						p.close();
-						m_outputThread.join();
-						m_outputThread = null;
-
-						m_outputTextArea.repaint();
-						m_displayPanel.repaint();
-					}
-					catch (IOException e)
-					{
-						JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
-							JOptionPane.ERROR_MESSAGE);
-					}
-					catch (MapyrusException e)
-					{
-						JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
-							JOptionPane.ERROR_MESSAGE);
-					}
-				}
+				runCommands();
 			}
 			else if (actionCode == MapyrusEventListener.CLOSE_TAB_ACTION)
 			{
@@ -506,7 +463,9 @@ public class MapyrusFrame implements MapyrusEventListener
 				 */
 				StringBuffer sb = new StringBuffer();
 				sb.append(Constants.PROGRAM_NAME).append(" ").append(Constants.getVersion());
-				sb.append(", ").append(Constants.getReleaseDate()).append(Constants.LINE_SEPARATOR);
+				sb.append(", ").append(Constants.getReleaseDate());
+				sb.append(" ").append(Constants.WEB_SITE);
+				sb.append(Constants.LINE_SEPARATOR);
 				sb.append(Constants.LINE_SEPARATOR);
 	
 				String []license = Constants.getLicense();
@@ -582,6 +541,92 @@ public class MapyrusFrame implements MapyrusEventListener
 			{
 				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 				selectedFile.delete();
+			}
+		}
+	}
+
+	/**
+	 * Run commands in currently selected tab, showing output in display window.
+	 */
+	private void runCommands() throws InterruptedException
+	{
+		String contents = m_editorPanel.getSelectedTabContents();
+		if (contents.length() > 0)
+		{
+			try
+			{
+				String title = m_editorPanel.getSelectedTabTitle();
+				FileOrURL f = new FileOrURL(new StringReader(contents), title);
+
+				Dimension displayDim = m_displayPanel.getSize();
+				m_displayPanel.getGraphics().clearRect(0, 0, displayDim.width, displayDim.height);
+				m_displayImage = new BufferedImage((int)displayDim.getWidth(),
+					(int)displayDim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+				Interpreter interpreter = new Interpreter();
+				ContextStack context = new ContextStack();
+				context.setOutputFormat(m_displayImage, "");
+
+				ByteArrayInputStream stdin = new ByteArrayInputStream(new byte[]{});
+				PipedOutputStream outStream = new PipedOutputStream();
+				final PipedInputStream inStream = new PipedInputStream(outStream);
+				m_outputTextArea.setText("");
+
+				/*
+				 * Create thread to read Mapyrus output and append it
+				 * to the output panel.
+				 */
+				m_outputThread = new Thread(){
+					public void run()
+					{
+						try
+						{
+							byte []buf = new byte[256];
+							int nBytes;
+							while ((nBytes = inStream.read(buf)) > 0)
+							{
+								String s = new String(buf, 0, nBytes);
+								int caretPosition = m_outputTextArea.getCaretPosition();
+								m_outputTextArea.append(s);
+								
+								/*
+								 * Ensure last lines of output are displayed.
+								 */
+								m_outputTextArea.setCaretPosition(caretPosition + s.length());
+								m_outputTextArea.repaint();
+							}
+						}
+						catch (IOException e)
+						{
+							/*
+							 * Reading pipes so should be no IOExceptions.
+							 */
+							m_outputTextArea.append(e.getMessage());
+						}
+					}
+				};
+				m_outputThread.start();
+
+				PrintStream p = new PrintStream(outStream);
+				interpreter.interpret(context, f, stdin, p);
+				p.close();
+				if (m_outputThread != null)
+				{
+					m_outputThread.join();
+					m_outputThread = null;
+				}
+
+				m_outputTextArea.repaint();
+				m_displayPanel.repaint();
+			}
+			catch (IOException e)
+			{
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
+					JOptionPane.ERROR_MESSAGE);
+			}
+			catch (MapyrusException e)
+			{
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
+					JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
