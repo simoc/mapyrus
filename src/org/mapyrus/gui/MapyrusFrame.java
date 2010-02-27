@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
@@ -198,6 +200,42 @@ public class MapyrusFrame implements MapyrusEventListener
 		else
 		{
 			m_editorPanel.createTab(null, null);
+			InputStreamReader r = null;
+			try
+			{
+				/*
+				 * Set some sample commands for the user to experiment with.
+				 */
+				URL commandsUrl = this.getClass().getResource("commands.txt");
+				r = new InputStreamReader(commandsUrl.openConnection().getInputStream());
+				StringBuffer commands = new StringBuffer();
+				int c;
+				while ((c = r.read()) != -1)
+					commands.append((char)c);
+				m_editorPanel.appendToSelectedTextArea(commands.toString());
+				
+				/*
+				 * Run the sample commands too.
+				 */
+				actionPerformed(MapyrusEventListener.RUN_ACTION);
+			}
+			catch (IOException e)
+			{
+				/*
+				 * Oh well, just start with an empty tab then.
+				 */
+			}
+			finally
+			{
+				try
+				{
+					if (r != null)
+						r.close();
+				}
+				catch (IOException e)
+				{
+				}
+			}
 		}
 		m_editorPanel.addChangeListener(new ChangeListener(){
 			public void stateChanged(ChangeEvent e)
