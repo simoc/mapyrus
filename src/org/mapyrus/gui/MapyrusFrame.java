@@ -445,7 +445,7 @@ public class MapyrusFrame implements MapyrusEventListener
 					URL helpUrl = this.getClass().getResource("onlinehelp.html");
 					helpPane.setPage(helpUrl);
 					helpFrame.getContentPane().add(helpPane);
-					helpFrame.setPreferredSize(new Dimension(600, 500));
+					helpFrame.setPreferredSize(new Dimension(600, 600));
 					helpFrame.pack();
 					helpFrame.setVisible(true);
 				}
