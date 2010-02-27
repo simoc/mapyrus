@@ -170,7 +170,7 @@ public class Expression
 		 * @return numeric or string value of the expression.
 		 */
 		public Argument evaluate(ContextStack context, String interpreterFilename)
-			throws MapyrusException
+			throws MapyrusException, InterruptedException
 		{
 			return(traverse(this, context, interpreterFilename));
 		}
@@ -183,7 +183,7 @@ public class Expression
 		 */
 		private Argument evaluateFunction(ContextStack context,
 			String interpreterFilename)
-			throws MapyrusException
+			throws MapyrusException, InterruptedException
 		{
 			int nArgs = m_branches.size();
 			ArrayList<Argument> values = new ArrayList<Argument>(nArgs);
@@ -221,7 +221,7 @@ public class Expression
 		 * determine its value.
 		 */
 		private Argument traverse(ExpressionTreeNode t, ContextStack context,
-			String interpreterFilename) throws MapyrusException
+			String interpreterFilename) throws MapyrusException, InterruptedException
 		{
 			Argument retval;
 			Argument leftValue, rightValue;
@@ -1591,7 +1591,8 @@ public class Expression
 	 * @param vars are all currently defined variables and their values.
 	 * @return the evaluated expression, either a string or a number.
 	 */
-	public Argument evaluate(ContextStack context, String interpreterFilename) throws MapyrusException
+	public Argument evaluate(ContextStack context, String interpreterFilename)
+		throws MapyrusException, InterruptedException
 	{
 		return(m_exprTree.evaluate(context, interpreterFilename));
 	}
@@ -1651,6 +1652,9 @@ public class Expression
 		{
 		}
 		catch (IOException e)
+		{
+		}
+		catch (InterruptedException e)
 		{
 		}
 		catch (MapyrusException e)
