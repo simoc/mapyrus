@@ -66,7 +66,7 @@ public class JavaFunction implements Function
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
 	public Argument evaluate(ContextStack context, ArrayList args)
-		throws MapyrusException
+		throws MapyrusException, InterruptedException
 	{
 		Argument retval = null;
 		int nArgs = args.size();
@@ -178,13 +178,18 @@ public class JavaFunction implements Function
 					catch (InvocationTargetException e)
 					{
 						Throwable cause = e.getCause();
-						String message;
+						StringBuffer message = new StringBuffer();
+						message.append(MapyrusMessages.get(MapyrusMessages.FAILED_JAVA_FUNCTION));
+						message.append(": ");
 						if (cause != null)
-							message = cause.getMessage();
+							message.append(cause.getMessage());
 						else
-							message = e.getMessage();
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_JAVA_FUNCTION) +
-							": " + message);
+							message.append(e.getMessage());
+
+						if (cause instanceof InterruptedException)
+							throw new InterruptedException(message.toString());
+						else
+							throw new MapyrusException(message.toString());
 					}
 				}
 			}
