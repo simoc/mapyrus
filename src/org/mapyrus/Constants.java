@@ -34,6 +34,7 @@ import java.util.Locale;
 public class Constants
 {
 	public static final String PROGRAM_NAME = "Mapyrus";
+	public static final String WEB_SITE = "http://mapyrus.sourceforge.net";
 	
 	/**
 	 * Return version number of software.
