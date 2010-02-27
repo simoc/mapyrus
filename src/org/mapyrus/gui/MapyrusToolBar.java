@@ -59,6 +59,7 @@ public class MapyrusToolBar extends JToolBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				fireEvent(MapyrusEventListener.STOP_ACTION);
 				fireEvent(MapyrusEventListener.RUN_ACTION);
 			}
 		});
