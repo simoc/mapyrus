@@ -62,7 +62,7 @@ public class UserFunction implements Function
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
 	public Argument evaluate(ContextStack context, ArrayList args)
-		throws MapyrusException
+		throws MapyrusException, InterruptedException
 	{
 		Argument retval = null;
 		boolean savedState = false;
