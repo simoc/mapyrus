@@ -89,11 +89,12 @@ public class Mapyrus
 	 * @param stdin standard input stream for interpreter.
 	 * @param stdout stream to write stdout of interpreter into.
 	 * @throws IOException if reading or writing files fails.
+	 * @throws InterruptedException if this thread is interrupted.
 	 * @throws MapyrusException if there is an error interpreting commands.
 	 */
 	public void interpret(String []commands, InputStream stdin,
 		PrintStream stdout)
-		throws IOException, MapyrusException
+		throws IOException, InterruptedException, MapyrusException
 	{
 		/*
 		 * Convert commands into a reader that can be parsed one
