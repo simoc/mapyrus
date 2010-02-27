@@ -63,6 +63,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Copy resource, font and data files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
 <copy file="src/org/mapyrus/gui/onlinehelp.html" todir="build/classes/org/mapyrus/gui"/>
+<copy file="src/org/mapyrus/gui/commands.txt" todir="build/classes/org/mapyrus/gui"/>
 <copy todir="build/classes/org/mapyrus/dataset">
 <fileset dir="src/org/mapyrus/dataset" includes="*.txt"/>
 </copy>
