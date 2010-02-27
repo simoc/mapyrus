@@ -457,7 +457,7 @@ public class Interpreter implements Cloneable
 	 * @param legendEntrySize size of entry in legend.
 	 */
 	private void displayLegend(Statement st, ContextStack context, double legendEntrySize)
-		throws MapyrusException, IOException
+		throws MapyrusException, IOException, InterruptedException
 	{
 		LegendEntryList legendList = context.getLegendEntries();
 		ArrayList moveTos = context.getMoveTos();
@@ -638,7 +638,7 @@ public class Interpreter implements Cloneable
 	 * some output.
 	 */
 	private void execute(Statement st, ContextStack context)
-		throws MapyrusException, IOException
+		throws MapyrusException, IOException, InterruptedException
 	{
 		Expression []expr;
 		int nExpressions;
@@ -656,7 +656,7 @@ public class Interpreter implements Cloneable
 		 * stop execution.
 		 */
 		if (Thread.interrupted())
-			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INTERRUPTED));
+			throw new InterruptedException(MapyrusMessages.get(MapyrusMessages.INTERRUPTED));
 		Throttle.sleep();
 
 		expr = st.getExpressions();
@@ -2890,7 +2890,7 @@ public class Interpreter implements Cloneable
 	 */
 	public void interpret(ContextStack context, FileOrURL f,
 		InputStream stdin, PrintStream stdout)
-		throws IOException, MapyrusException
+		throws IOException, InterruptedException, MapyrusException
 	{
 		Statement st;
 		Preprocessor preprocessor = new Preprocessor(f);
@@ -2921,7 +2921,7 @@ public class Interpreter implements Cloneable
 	}
 
 	private void makeCall(Statement block, ArrayList parameters, Argument []args)
-		throws IOException, MapyrusException
+		throws IOException, InterruptedException, MapyrusException
 	{
 		Statement statement;
 		String parameterName;
@@ -2956,7 +2956,7 @@ public class Interpreter implements Cloneable
 	 * @return type of last statement executed.
 	 */
 	public Argument executeStatement(Statement statement)
-		throws IOException, MapyrusException
+		throws IOException, MapyrusException, InterruptedException
 	{
 		Argument []args;
 		int statementType = statement.getType();
