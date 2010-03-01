@@ -410,7 +410,8 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Create new tab in editor panel.
 				 */
-				m_editorPanel.createTab(null, null);
+				if (m_editorPanel != null)
+					m_editorPanel.createTab(null, null);
 			}
 			else if (actionCode == MapyrusEventListener.OPEN_FILE_ACTION)
 			{
@@ -443,7 +444,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Close currently open tab.
 				 */
-				if (m_editorPanel.getTabCount() > 0)
+				if (m_editorPanel != null && m_editorPanel.getTabCount() > 0)
 				{
 					boolean status = true;
 					if (m_editorPanel.isSelectedTabEdited())
@@ -457,7 +458,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Save currently open tab.
 				 */
-				if (m_editorPanel.getTabCount() > 0)
+				if (m_editorPanel != null && m_editorPanel.getTabCount() > 0)
 				{
 					saveTab(false);
 				}
@@ -542,16 +543,19 @@ public class MapyrusFrame implements MapyrusEventListener
 	 */
 	private void openFile()
 	{
-		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		chooser.setCurrentDirectory(m_lastOpenedDirectory);
-		int status = chooser.showOpenDialog(m_frame);
-		if (status == JFileChooser.APPROVE_OPTION)
+		if (m_editorPanel != null)
 		{
-			File selectedFile = chooser.getSelectedFile();
-			m_lastOpenedDirectory = selectedFile.getParentFile();
-			String filename = selectedFile.getPath();
-			m_editorPanel.createTab(filename, null);
+			JFileChooser chooser = new JFileChooser();
+			chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+			chooser.setCurrentDirectory(m_lastOpenedDirectory);
+			int status = chooser.showOpenDialog(m_frame);
+			if (status == JFileChooser.APPROVE_OPTION)
+			{
+				File selectedFile = chooser.getSelectedFile();
+				m_lastOpenedDirectory = selectedFile.getParentFile();
+				String filename = selectedFile.getPath();
+				m_editorPanel.createTab(filename, null);
+			}
 		}
 	}
 
@@ -777,7 +781,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	private boolean saveAndExit()
 	{
 		boolean retval = true;
-		while (retval && m_editorPanel.getTabCount() > 0)
+		while (retval && m_editorPanel != null && m_editorPanel.getTabCount() > 0)
 		{
 			if (m_editorPanel.isSelectedTabEdited())
 				retval = saveTab(true);
