@@ -23,8 +23,11 @@
 package org.mapyrus.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -47,6 +50,7 @@ public class CrosshairMouseListener implements MouseMotionListener, MouseListene
 
 	private BufferedImage m_displayImage;
 	private Rectangle2D.Double m_displayImageWorlds;
+	private boolean m_isCrosshairCursor = false;
 
 	/**
 	 * Set image being displayed in panel.
@@ -74,54 +78,81 @@ public class CrosshairMouseListener implements MouseMotionListener, MouseListene
 		JPanel displayPanel = (JPanel)e.getComponent();
 
 		/*
-		 * Draw horizontal and vertical crosshairs.
+		 * Clear any background not covered by the image.
 		 */
 		int x = e.getX();
 		int y = e.getY();
-		int panelWidth = displayPanel.getWidth();
-		int panelHeight = displayPanel.getHeight();
-		Graphics g = displayPanel.getGraphics();
-		g.drawImage(m_displayImage, 0, 0, null);
-		g.setColor(Color.BLACK);
-		g.drawLine(0, y, panelWidth, y);
-		g.drawLine(x, 0, x, panelHeight);
-		g.setColor(m_crosshairBgColor);
-		g.setFont(m_fixedFont);
-		double dx = m_displayImageWorlds.getMinX() + (double)x / panelWidth * m_displayImageWorlds.getWidth();
-		double dy = m_displayImageWorlds.getMinY() + (double)(panelHeight - 1 - y) / panelHeight * m_displayImageWorlds.getHeight();
-		
-		StringBuffer label = new StringBuffer();
-		if (Math.abs(dx) < 1000)
-			label.append(m_crosshairFormat.format(dx));
-		else
-			label.append(Math.round(dx));
-
-		label.append(", ");
-
-		if (Math.abs(dy) < 1000)
-			label.append(m_crosshairFormat.format(dy));
-		else
-			label.append(Math.round(dy));
-
-		/*
-		 * Work out if we label is best displayed left or right, and
-		 * above or below crosshairs.  Then display label highlighted
-		 * one pixel all around so it is visible regardless of the
-		 * background.
-		 */
-		Rectangle2D bounds = g.getFontMetrics().getStringBounds(label.toString(), g);
-		int xOffset = (x <= panelWidth / 2) ? 2 : -(int)(bounds.getWidth() + 1);
-		int yOffset = (y <= panelHeight / 2) ? (int)(bounds.getHeight() + 1) : -2;
-		for (int x1 = -1; x1 <= 1; x1++)
+		int imageWidth = m_displayImage.getWidth();
+		int imageHeight = m_displayImage.getHeight();
+		if (x < imageWidth && y < imageHeight)
 		{
-			for (int y1 = -1; y1 <= 1; y1++)
+			if (!m_isCrosshairCursor)
 			{
-				if (x1 != 0 || y1 != 0)
-					g.drawString(label.toString(), x + xOffset + x1, y + yOffset + y1);
+				/*
+				 * Remove standard cursor from display panel so we can show
+				 * our own crosshair cursor instead.
+				 */
+				BufferedImage emptyImage = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
+				Cursor emptyCursor = Toolkit.getDefaultToolkit().createCustomCursor(emptyImage, new Point(0, 0), "null");
+				displayPanel.setCursor(emptyCursor);
+				m_isCrosshairCursor = true;
 			}
+
+			Graphics g = displayPanel.getGraphics();
+
+			/*
+			 * Draw image with horizontal and vertical crosshairs over it.
+			 */
+			g.drawImage(m_displayImage, 0, 0, null);
+			g.setColor(Color.BLACK);
+			g.drawLine(0, y, imageWidth - 1, y);
+			g.drawLine(x, 0, x, imageHeight - 1);
+			g.setColor(m_crosshairBgColor);
+			g.setFont(m_fixedFont);
+			double dx = m_displayImageWorlds.getMinX() + (double)x / imageWidth * m_displayImageWorlds.getWidth();
+			double dy = m_displayImageWorlds.getMaxY() - (double)y / imageHeight * m_displayImageWorlds.getHeight();
+	
+			StringBuffer label = new StringBuffer();
+			if (Math.abs(dx) < 1000)
+				label.append(m_crosshairFormat.format(dx));
+			else
+				label.append(Math.round(dx));
+
+			label.append(", ");
+
+			if (Math.abs(dy) < 1000)
+				label.append(m_crosshairFormat.format(dy));
+			else
+				label.append(Math.round(dy));
+
+			/*
+			 * Work out if we label is best displayed left or right, and
+			 * above or below crosshairs.  Then display label highlighted
+			 * one pixel all around so it is visible regardless of the
+			 * background.
+			 */
+			Rectangle2D bounds = g.getFontMetrics().getStringBounds(label.toString(), g);
+			int xOffset = (x <= imageWidth / 2) ? 2 : -(int)(bounds.getWidth() + 1);
+			int yOffset = (y <= imageHeight / 2) ? (int)(bounds.getHeight() + 1) : -2;
+			for (int x1 = -1; x1 <= 1; x1++)
+			{
+				for (int y1 = -1; y1 <= 1; y1++)
+				{
+					if (x1 != 0 || y1 != 0)
+						g.drawString(label.toString(), x + xOffset + x1, y + yOffset + y1);
+				}
+			}
+			g.setColor(Color.BLACK);
+			g.drawString(label.toString(), x + xOffset, y + yOffset);
 		}
-		g.setColor(Color.BLACK);
-		g.drawString(label.toString(), x + xOffset, y + yOffset);
+		else
+		{
+			/*
+			 * Cursor is outside image so revert to default cursor.
+			 */
+			displayPanel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			m_isCrosshairCursor = false;
+		}
 	}
 
 	public void mouseDragged(MouseEvent e)
