@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -93,6 +92,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	private LinkedBlockingQueue<Integer> m_actionQueue = null;
 	private Thread m_actionThread;
 	private BufferedImage m_displayImage;
+	private CrosshairMouseListener m_displayPanelListener;
 	private File m_lastOpenedDirectory;
 
 	public MapyrusFrame(String []filenames)
@@ -101,9 +101,10 @@ public class MapyrusFrame implements MapyrusEventListener
 		createActionQueue();
 
 		/*
-		 * Create frame maximised to fill the whole screen.
+		 * Create frame maximised to fill nearly the whole screen.
 		 */
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		screenSize = new Dimension((int)screenSize.getWidth(), (int)screenSize.getHeight() - 48);
 		m_frame = new JFrame(Constants.PROGRAM_NAME + " " + Constants.getVersion());
 		m_frame.setPreferredSize(screenSize);
 
@@ -150,9 +151,16 @@ public class MapyrusFrame implements MapyrusEventListener
 				 */
 				super.paintComponent(g);
 				if (m_displayPanel != null && m_displayImage != null)
+				{
 					g.drawImage(m_displayImage, 0, 0, null);
+				}
 			}
 		};
+
+		m_displayPanelListener = new CrosshairMouseListener();
+		m_displayPanel.addMouseMotionListener(m_displayPanelListener);
+		m_displayPanel.addMouseListener(m_displayPanelListener);
+
 		m_displayPanel.setPreferredSize(screenSize);
 		splitPane1.add(m_displayPanel);
 
@@ -650,6 +658,8 @@ public class MapyrusFrame implements MapyrusEventListener
 
 				PrintStream p = new PrintStream(outStream);
 				interpreter.interpret(context, f, stdin, p);
+				m_displayPanelListener.setWorlds(context.getWorlds());
+				m_displayPanelListener.setImage(m_displayImage);
 				p.close();
 				if (m_outputThread != null)
 				{
