@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
+1.001, April 2010
+
+* Add crosshairs in GUI showing world coordinates.
+* Update tutorial to demonstrate Mapyrus using GUI.
+
 0.902, February 2010
 
 * Add xmin, ymin, xmax, ymax to allow box when reading world countries
