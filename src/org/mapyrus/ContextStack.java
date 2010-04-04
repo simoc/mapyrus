@@ -353,6 +353,15 @@ public class ContextStack
 	}
 
 	/**
+	 * Gets real world coordinates of the page.
+	 */
+	public Rectangle2D.Double getWorlds() throws MapyrusException
+	{
+		Rectangle2D.Double retval = getCurrentContext().getWorldExtents();
+		return(retval);
+	}
+
+	/**
 	 * Transform geometry from page coordinates to world coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
