@@ -202,12 +202,12 @@ public class MapyrusFrame implements MapyrusEventListener
 		{
 			for (int i = 0; i < filenames.length; i++)
 			{
-				m_editorPanel.createTab(filenames[i], null);
+				m_editorPanel.createTab(filenames[i], null, null);
 			}
 		}
 		else
 		{
-			m_editorPanel.createTab(null, null);
+			m_editorPanel.createTab(null, "Europe", null);
 			InputStreamReader r = null;
 			try
 			{
@@ -419,7 +419,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				 * Create new tab in editor panel.
 				 */
 				if (m_editorPanel != null)
-					m_editorPanel.createTab(null, null);
+					m_editorPanel.createTab(null, null, null);
 			}
 			else if (actionCode == MapyrusEventListener.OPEN_FILE_ACTION)
 			{
@@ -562,7 +562,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				File selectedFile = chooser.getSelectedFile();
 				m_lastOpenedDirectory = selectedFile.getParentFile();
 				String filename = selectedFile.getPath();
-				m_editorPanel.createTab(filename, null);
+				m_editorPanel.createTab(filename, null, null);
 			}
 		}
 	}
@@ -610,11 +610,17 @@ public class MapyrusFrame implements MapyrusEventListener
 
 				Dimension displayDim = m_displayPanel.getSize();
 				m_displayPanel.getGraphics().clearRect(0, 0, displayDim.width, displayDim.height);
-				m_displayImage = new BufferedImage((int)displayDim.getWidth(),
-					(int)displayDim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+				m_displayImage = new BufferedImage(displayDim.width, displayDim.height,
+					BufferedImage.TYPE_4BYTE_ABGR);
+				m_displayImage.getGraphics().setColor(Color.WHITE);
+				m_displayImage.getGraphics().fillRect(0, 0, displayDim.width, displayDim.height);
+
 				Interpreter interpreter = new Interpreter();
 				ContextStack context = new ContextStack();
 				context.setOutputFormat(m_displayImage, "");
+
+				m_displayPanelListener.setImage(m_displayImage);
+				m_displayPanelListener.setWorlds(context.getWorlds());
 
 				ByteArrayInputStream stdin = new ByteArrayInputStream(new byte[]{});
 				PipedOutputStream outStream = new PipedOutputStream();
@@ -659,7 +665,6 @@ public class MapyrusFrame implements MapyrusEventListener
 				PrintStream p = new PrintStream(outStream);
 				interpreter.interpret(context, f, stdin, p);
 				m_displayPanelListener.setWorlds(context.getWorlds());
-				m_displayPanelListener.setImage(m_displayImage);
 				p.close();
 				if (m_outputThread != null)
 				{
