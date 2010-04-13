@@ -129,10 +129,11 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 
 	/**
 	 * Create new tab in editor.
-	 * @param filename name of file to open in tab, if null then 'Untitled' is used.
+	 * @param filename name of file to open in tab, if null then empty tab created.
+	 * @param tabName name for tab, if null then filename is used.
 	 * @param bgColor panel background color, or null for default color.
 	 */
-	public void createTab(String filename, Color bgColor)
+	public void createTab(String filename, String tabName, Color bgColor)
 	{
 		JTextArea textArea = new JTextArea();
 		if (bgColor != null)
@@ -182,14 +183,17 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 				}
 			}
 
-			/*
-			 * Set tab name to just filename, with any .mapyrus suffix removed.
-			 */
-			File f = new File(filename);
-			String tabName = f.getName();
-			String suffix = "." + Constants.PROGRAM_NAME.toLowerCase();
-			if (tabName.toLowerCase().endsWith(suffix))
-				tabName.substring(0, tabName.length() - suffix.length());
+			if (tabName == null)
+			{
+				/*
+				 * Set tab name to just filename, with any .mapyrus suffix removed.
+				 */
+				File f = new File(filename);
+				tabName = f.getName();
+				String suffix = "." + Constants.PROGRAM_NAME.toLowerCase();
+				if (tabName.toLowerCase().endsWith(suffix))
+					tabName = tabName.substring(0, tabName.length() - suffix.length());
+			}
 			add(tabName, scrollPane);
 			setToolTipTextAt(getTabCount() - 1, filename);
 		}
@@ -198,9 +202,12 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 			/*
 			 * Add empty tab.
 			 */
-			String tabName = MapyrusMessages.get(MapyrusMessages.UNTITLED);
-			if (++m_tabSequenceNumber > 1)
-				tabName += "_" + m_tabSequenceNumber;
+			if (tabName == null)
+			{
+				tabName = MapyrusMessages.get(MapyrusMessages.UNTITLED);
+				if (++m_tabSequenceNumber > 1)
+					tabName += "_" + m_tabSequenceNumber;
+			}
 			add(tabName, scrollPane);
 			setToolTipTextAt(getTabCount() - 1,
 				tabName + "." + Constants.PROGRAM_NAME.toLowerCase());
