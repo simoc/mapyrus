@@ -5,36 +5,28 @@
 The following examples demonstrate how to use Mapyrus.  Each example is also
 included as a file in the \texttt{userdoc} subdirectory.  All example files
 have file suffix \texttt{.mapyrus}.  This suffix is not required but makes
-identification of files that are to be interpreted by Mapyrus easier.
-
-If the Ghostscript program or a printer is not available, then change the
-\texttt{"eps"} arguments in \texttt{newpage} commands in examples to
-\texttt{"screen"}
-to display the output in a window on the screen instead.
+identification of files to be interpreted by Mapyrus easier.
 
 \subsection{First Step}
 
-Enter the following lines into a text file named \texttt{first.mapyrus}.
-
-\verbatiminput{tutorialfirst1.mapyrus}
-
-Each line in the file is a command for Mapyrus.  First, output is set to
-a 30mm square Encapsulated PostScript format file named
-\texttt{tutorialfirst1.eps} with the \texttt{newpage} command, then a
-line is drawn with the given color and linestyle.
-
-Open a terminal window (known as an "MS-DOS Prompt" in MicroSoft Windows)
-and run Mapyrus using following command to execute the
-commands in the file \texttt{first.mapyrus}.
+Start the Mapyrus GUI by double-clicking the icon
+for the file \texttt{mapyrus.jar} to run this file,
+or by entering the following command in a terminal window.
 
 \begin{alltt}
-java -classpath \textit{mapyrus-dir}/mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
+java -classpath \textit{mapyrus-dir}/mapyrus.jar org.mapyrus.Mapyrus
 \end{alltt}
 
-When Mapyrus reaches the end of the file \texttt{first.mapyrus}
-the output file \texttt{tutorialfirst1.eps} is saved and Mapyrus exits.
-When the PostScript file is then printed, it appears as in
-Figure \ref{tutorialfirst1}.
+From the GUI, select the menu option File\textrightarrow{}New Tab to create a
+new tab to enter commands into.
+The new tab is named \texttt{Untitled}.
+Copy the following commands into the new tab.
+These commands draw a line with a given color and linestyle.
+Click the green arrow icon in the GUI to run the commands.
+
+\verbatiminput{tutorialfirst1-no-newpage.mapyrus}
+
+The output will appear in the GUI as in Figure \ref{tutorialfirst1}.
 
 \begin{figure}[htb]
 \includegraphics{tutorialfirst1.eps}
@@ -42,37 +34,19 @@ Figure \ref{tutorialfirst1}.
 \label{tutorialfirst1}
 \end{figure}
 
-To perform these steps on a MicroSoft Windows machine where the
-the ZIP file containing Mapyrus has been unpacked in directory
-\texttt{C:\textbackslash{}temp},
-the following commands are used:
-
-\begin{alltt}
-C:\textbackslash{}>cd temp
-
-C:\textbackslash{}temp>dir /b *.jar \hspace{30pt} \textit{-- Check that Mapyrus is installed here}
-mapyrus.jar
-
-C:\textbackslash{}temp>notepad first.mapyrus \hspace{30pt} \textit{-- Create file with text editor}
-
-C:\textbackslash{}temp>java -classpath mapyrus.jar org.mapyrus.Mapyrus first.mapyrus
-
-C:\textbackslash{}temp>gswin32 tutorialfirst1.eps \hspace{30pt} \textit{-- View output with GhostScript}
-\end{alltt}
-
 \subsection{Second Step}
 
-Change the file \texttt{first.mapyrus} to contain the following lines,
-then run Mapyrus again to create a new output file.
+Replace the Mapyrus commands in the new tab with the following commands,
+then click the green arrow icon to run the new commands.
 
-\verbatiminput{tutorialfirst2.mapyrus}
+\verbatiminput{tutorialfirst2-no-newpage.mapyrus}
 
 In this example, color is set as a hex value instead of a name,
 a rectangle is defined with the \texttt{box} command
 and the \texttt{fill} command is used to
 flood fill it.
-The characters on lines following a hash (\texttt{\#}) character that
-is not enclosed in quotes are ignored by Mapyrus.
+Anything on a line following a hash (\texttt{\#}) character that
+is not in quotes is ignored by Mapyrus.
 Figure \ref{tutorialfirst2} shows the output of these commands.
 
 \begin{figure}[htb]
@@ -81,9 +55,9 @@ Figure \ref{tutorialfirst2} shows the output of these commands.
 \label{tutorialfirst2}
 \end{figure}
 
-Change the file \texttt{first.mapyrus} to contain the following lines.
+Again, replace the commands with the following commands and run them.
 
-\verbatiminput{tutorialfirst3.mapyrus}
+\verbatiminput{tutorialfirst3-no-newpage.mapyrus}
 
 This example demonstrates drawing circular arcs,
 giving the direction (a positive value for clockwise and a negative
@@ -109,15 +83,14 @@ The output of these commands is shown in Figure \ref{tutorialfirst3}.
 \label{tutorialfirst3}
 \end{figure}
 
-Change the file \texttt{first.mapyrus} to contain the following lines.
+The Mapyrus \texttt{newpage} command sends the output to a file instead
+of displaying it in the GUI.
+Replace the commands with the following commands and run them.
 
-\verbatiminput{tutorialfirst4.mapyrus}
+\verbatiminput{tutorialfirst4-pdf.mapyrus}
 
-This example demonstrates setting the page size in
-screen pixels and setting a scale so that coordinates
-are also given as pixels.
-Various shapes
-are drawn using \texttt{circle},
+This example demonstrates drawing various shape using
+\texttt{circle},
 \texttt{hexagon}, \texttt{triangle}, \texttt{star},
 \texttt{wedge}, \texttt{ellipse}, \texttt{bezier},
 \texttt{roundedbox}, \texttt{box3d},
@@ -125,13 +98,32 @@ are drawn using \texttt{circle},
 \texttt{cylinder}, \texttt{raindrop}
 \texttt{sinewave} and \texttt{chessboard}
 commands.
-The output of these commands is shown in Figure \ref{tutorialfirst4}.
+The output is as in Figure \ref{tutorialfirst4} and is
+saved in PDF format in file \texttt{tutorialfirst4.pdf}.
 
 \begin{figure}[htb]
 \includegraphics{tutorialfirst4.eps}
 \caption{Fourth Step}
 \label{tutorialfirst4}
 \end{figure}
+
+Select the menu option File\textrightarrow{}Save Tab to save the commands
+to a file named \texttt{first4.mapyrus}, then
+File\textrightarrow{}Exit to exit from the Mapyrus GUI.
+Open a terminal window and run the following command.
+
+\begin{alltt}
+java -classpath \textit{mapyrus-dir}/mapyrus.jar org.mapyrus.Mapyrus first4.mapyrus
+\end{alltt}
+
+This runs Mapyrus without a GUI, reading commands from file
+\texttt{first4.mapyrus} and creating file \texttt{tutorialfirst4.pdf}
+with the same output as in Figure \ref{tutorialfirst4}.
+
+Examples in following sections create output in Encapsulated
+PostScript (EPS) format for direct inclusion in this manual.
+Remove the \texttt{newpage} command from the examples
+to display the output in the Mapyrus GUI instead.
 
 \subsection{Using Variables}
 
