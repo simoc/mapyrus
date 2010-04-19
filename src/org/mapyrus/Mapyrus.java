@@ -162,13 +162,13 @@ public class Mapyrus
 		String []usage =
 		{
 			"Usage:",
-			"java [-Dvariable=value] ... -classpath " + Constants.PROGRAM_NAME.toLowerCase() + ".jar org.mapyrus.Mapyrus",
+			"java [-D<variable>=<value>] ... -classpath " + Constants.PROGRAM_NAME.toLowerCase() + ".jar org.mapyrus.Mapyrus",
 			"        [options] filename ...",
 			"",
 			Constants.PROGRAM_NAME + " reads each file or URL in turn.",
 			"If filename is '-' then standard input is read.",
 			"",
-			"Variables and configuration are passed to " + Constants.PROGRAM_NAME + " using the Java -D option.",
+			"Variables are passed to " + Constants.PROGRAM_NAME + " using the Java -D option.",
 			"",
 			"Options:",
 			"  -e <commands> runs given commands instead of reading commands from a file",
