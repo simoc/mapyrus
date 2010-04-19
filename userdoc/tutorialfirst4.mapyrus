@@ -1,52 +1,46 @@
-# Set page size to 500x100 screen pixels and set scale
-# so we can work with pixel coordinate values too.
-#
-newpage "eps", "tutorialfirst4.eps", \
-  500 * Mapyrus.screen.resolution.mm, \
-  100 * Mapyrus.screen.resolution.mm
-scale Mapyrus.screen.resolution.mm
+newpage "eps", "tutorialfirst4.eps", 130, 27
 
 clearpath
 color "Firebrick"
-hexagon 25, 75, 25
+hexagon 7, 17, 6
 fill
 
 clearpath
 color "orange"
-triangle 25, 75, 15, 0
+triangle 7, 17, 4, 0
 fill
 
 clearpath
 color "Forest Green"
-circle 90, 75, 22
-star 90, 75, 22, 5
+circle 22, 17, 5.5
+star 22, 17, 5, 5
 stroke
 
 clearpath
 color "indigo"
-wedge 150, 60, 30, 45, 90
+wedge 37, 15, 8, 45, 90
 fill
 
 clearpath
 color "black"
-ellipse 200, 75, 10, 20
-ellipse 200, 75, 20, 10
+ellipse 50, 17, 2.5, 5
+ellipse 50, 17, 5, 2.5
 stroke
 
 clearpath
 color "blue"
-linestyle 2
-move 240, 60
-bezier 280, 100, 280, 80, 260, 60
+linestyle 0.5
+move 60, 15
+bezier 70, 25, 70, 20, 62, 15
 stroke
 
 clearpath
 color "SlateGray"
-roundedbox 300, 60, 340, 90, 10
+roundedbox 75, 15, 85, 22, 2.5
 fill
 
 clearpath
-box3d 360, 60, 380, 80
+box3d 90, 15, 95, 20
 color "yellow"
 fill
 color "black"
@@ -54,17 +48,17 @@ linestyle 0.01
 stroke
 
 clearpath
-pentagon 430, 75, 20
+pentagon 108, 17, 5
 color "orange"
 fill
 
 clearpath
 color "Steel Blue"
-spiral 25, 25, 20, 5, 0
+spiral 6, 6, 5, 5, 0
 stroke
 
 clearpath
-cylinder 90, 20, 25, 10
+cylinder 22, 5, 6, 2.5
 color "yellow"
 fill
 color "black"
@@ -72,17 +66,17 @@ stroke
 
 clearpath
 color "dodgerblue"
-raindrop 150, 20, 10
+raindrop 38, 5, 2.5
 fill
 
 clearpath
 color "crimson"
-move 180, 20
-sinewave 210, 20, 4, 15
+move 45, 5
+sinewave 52, 5, 4, 4
 stroke
 
 clearpath
 color "black"
 move 240, 20
-chessboard 240, 10, 270, 40, 5
+chessboard 60, 2, 66, 8, 1
 fill
