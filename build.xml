@@ -94,6 +94,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <delete>
 <fileset dir="." includes="${ant.project.name}.pdf"/>
 <fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps" excludes="flag.eps"/>
+<fileset dir="userdoc" includes="tutorialfirst*-no-newpage.mapyrus,tutorialfirst4-pdf.mapyrus"/>
 </delete>
 <replace file="userdoc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
 <replace file="userdoc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
@@ -106,6 +107,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst1.mapyrus"/>
 </java>
+
+<!-- Make a copy of the most basic examples without the NEWPAGE -->
+<!-- command so the user does not have to worry about it -->
+<copy file="userdoc/tutorialfirst1.mapyrus" tofile="userdoc/tutorialfirst1-no-newpage.mapyrus"/>
+<replaceregexp file="userdoc/tutorialfirst1-no-newpage.mapyrus" match="^newpage.*$" replace="" flags="i" byline="true"/>
+
+<copy file="userdoc/tutorialfirst2.mapyrus" tofile="userdoc/tutorialfirst2-no-newpage.mapyrus"/>
+<replaceregexp file="userdoc/tutorialfirst2-no-newpage.mapyrus" match="^newpage.*$" replace="" flags="i" byline="true"/>
+
+<copy file="userdoc/tutorialfirst3.mapyrus" tofile="userdoc/tutorialfirst3-no-newpage.mapyrus"/>
+<replaceregexp file="userdoc/tutorialfirst3-no-newpage.mapyrus" match="^newpage.*$" replace="" flags="i" byline="true"/>
+
+<copy file="userdoc/tutorialfirst4.mapyrus" tofile="userdoc/tutorialfirst4-pdf.mapyrus"/>
+<replaceregexp file="userdoc/tutorialfirst4-pdf.mapyrus" match="eps" replace="pdf" flags="ig" byline="true"/>
+
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst2.mapyrus"/>
 </java>
@@ -203,6 +219,7 @@ See file named userdoc/COPYING for details.
 <fileset dir="." includes="${ant.project.name}.jar, ${ant.project.name}.war, manifest, README.txt"/>
 <fileset dir="." includes="${ant.project.name}*.zip, ${ant.project.name}.pdf"/>
 <fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps,*.lof,${ant.project.name}.toc,${ant.project.name}.out" excludes="flag.eps"/>
+<fileset dir="userdoc" includes="tutorialfirst*-no-newpage.mapyrus,tutorialfirst4-pdf.mapyrus"/>
 </delete>
 </target>
 
