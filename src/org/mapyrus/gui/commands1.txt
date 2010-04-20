@@ -1,0 +1,39 @@
+# Draw Mapyrus Logo, filling the whole window.
+
+let w = Mapyrus.page.width
+let h = Mapyrus.page.height
+
+# Draw two rows of boxes in alternating colors.
+#
+let boxw = w / 8
+let boxh = h / 12
+let i = 1
+while (i < 7)
+do
+	clearpath
+	box i * boxw, boxh, (i + 1) * boxw, boxh * 2
+	color (i % 2 == 0) ? "grey10" : "mapyrusgold"
+	fill
+	color "black"
+	linestyle 1
+	stroke
+
+	clearpath
+	box i * boxw, h - boxh, (i + 1) * boxw, h - boxh * 2
+	color (i % 2 == 0) ? "mapyrusgold" : "grey10"
+	fill
+	color "black"
+	linestyle 1
+	stroke
+
+	let i++
+done
+
+# Draw label in middle of window.
+#
+clearpath
+move w / 2, h * 0.55
+justify "center, middle"
+font "Serif", min(h / 2, w / 7)
+color "black"
+label "MAPYRUS"

@@ -207,41 +207,49 @@ public class MapyrusFrame implements MapyrusEventListener
 		}
 		else
 		{
-			m_editorPanel.createTab(null, "Europe", null);
-			InputStreamReader r = null;
-			try
+			/*
+			 * Create some tabs with example commands for the user to
+			 * experiment with.
+			 */
+			String []tabNames = new String[]{"Mapyrus Logo", "Europe"};
+			String []urls = new String[]{"commands1.txt", "commands2.txt"};
+
+			for (int i = 0; i < tabNames.length; i++)
 			{
-				/*
-				 * Set some sample commands for the user to experiment with.
-				 */
-				URL commandsUrl = this.getClass().getResource("commands.txt");
-				r = new InputStreamReader(commandsUrl.openConnection().getInputStream());
-				StringBuffer commands = new StringBuffer();
-				int c;
-				while ((c = r.read()) != -1)
-					commands.append((char)c);
-				m_editorPanel.appendToSelectedTextArea(commands.toString());
-				
-				/*
-				 * Run the sample commands too.
-				 */
-				actionPerformed(MapyrusEventListener.RUN_ACTION);
-			}
-			catch (IOException e)
-			{
-				/*
-				 * Oh well, just start with an empty tab then.
-				 */
-			}
-			finally
-			{
+				m_editorPanel.createTab(null, tabNames[i], null);
+				InputStreamReader r = null;
 				try
 				{
-					if (r != null)
-						r.close();
+					URL commandsUrl = this.getClass().getResource(urls[i]);
+					r = new InputStreamReader(commandsUrl.openConnection().getInputStream());
+					StringBuffer commands = new StringBuffer();
+					int c;
+					while ((c = r.read()) != -1)
+						commands.append((char)c);
+					m_editorPanel.appendToSelectedTextArea(commands.toString());
+					
+					/*
+					 * Run last set of sample commands too.
+					 */
+					if (i == tabNames.length - 1)
+						actionPerformed(MapyrusEventListener.RUN_ACTION);
 				}
 				catch (IOException e)
 				{
+					/*
+					 * Oh well, just start with an empty tab then.
+					 */
+				}
+				finally
+				{
+					try
+					{
+						if (r != null)
+							r.close();
+					}
+					catch (IOException e)
+					{
+					}
 				}
 			}
 		}
