@@ -10,33 +10,33 @@ begin populatedPlace name
   let h = 4
   font "Helvetica", h
   let w = stringwidth(name)
-  color "yellow"
-  if not protected(1, 0, w + 1, h)
+  color "pastelpink"
+  if not protected(1, -1, w + 1, h)
   then
     # Draw label inside a box to right of point.
     # Then mark labelled area as protected.
     #
-    box 1, 0, w + 1, h
+    box 1, -1, w + 1, h
     fill
     clearpath
     move 1, 0
     justify "left"
     color "black"
     label name
-    protect 1, 0, w + 1, h
-  elif not protected(-1, 0, -(w + 1), h)
+    protect 1, -1, w + 1, h
+  elif not protected(-1, -1, -(w + 1), h)
   then
     # Draw label inside a box to left of point.
     # Then mark labelled area as protected.
     #
-    box -1, 0, -(w + 1), h
+    box -1, -1, -(w + 1), h
     fill
     clearpath
     move -1, 0
     justify "right"
     color "black"
     label name
-    protect -1, 0, -(w + 1), h
+    protect -1, -1, -(w + 1), h
   endif
 end
 

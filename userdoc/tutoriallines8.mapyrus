@@ -14,7 +14,7 @@ end
 
 begin voltage_line
   linestyle 2, "square", "bevel"
-  color "gray"
+  color "gray70"
   stroke
   positive_bar
   negative_bar
