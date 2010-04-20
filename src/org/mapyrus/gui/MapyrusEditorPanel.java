@@ -304,13 +304,28 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 		return(retval);
 	}
 
+	/**
+	 * Mark selected tab as edited or not.
+	 * @param isEdited true if tab is to be marked as edited.
+	 */
+	public void setSelectedTabEdited(boolean isEdited)
+	{
+		JScrollPane scrollPane = (JScrollPane)getSelectedComponent();
+		if (scrollPane != null)
+		{
+			if (isEdited)
+				m_editedScrollPanes.add(scrollPane);
+			else
+				m_editedScrollPanes.remove(scrollPane);
+		}
+	}
+
 	public void keyPressed(KeyEvent event)
 	{
 		/*
 		 * User typed in a tab, mark that tab as modified.
 		 */
-		JScrollPane scrollPane = (JScrollPane)getSelectedComponent();
-		m_editedScrollPanes.add(scrollPane);
+		setSelectedTabEdited(true);
 	}
 
 	public void keyReleased(KeyEvent event)

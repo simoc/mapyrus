@@ -617,7 +617,7 @@ public class MapyrusFrame implements MapyrusEventListener
 
 				Interpreter interpreter = new Interpreter();
 				ContextStack context = new ContextStack();
-				context.setOutputFormat(m_displayImage, "");
+				context.setOutputFormat(m_displayImage, "lineantialiasing=true");
 
 				m_displayPanelListener.setImage(m_displayImage);
 				m_displayPanelListener.setWorlds(context.getWorlds());
@@ -768,6 +768,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				String contents = m_editorPanel.getSelectedTabContents();
 				f.write(contents);
 				f.flush();
+				m_editorPanel.setSelectedTabEdited(false);
 			}
 			catch (IOException e)
 			{
