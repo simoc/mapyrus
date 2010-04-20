@@ -193,6 +193,20 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 				String suffix = "." + Constants.PROGRAM_NAME.toLowerCase();
 				if (tabName.toLowerCase().endsWith(suffix))
 					tabName = tabName.substring(0, tabName.length() - suffix.length());
+
+				/*
+				 * Avoid any possibility of two tabs having same name.
+				 */
+				int tabCount = getTabCount();
+				for (int i = 0; i < tabCount; i++)
+				{
+					if (getTitleAt(i).equalsIgnoreCase(tabName))
+					{
+						m_tabSequenceNumber++;
+						tabName += "_" + m_tabSequenceNumber;
+						break;
+					}
+				}
 			}
 			add(tabName, scrollPane);
 			setToolTipTextAt(getTabCount() - 1, filename);
