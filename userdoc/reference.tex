@@ -17,11 +17,6 @@ is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
 The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com/JTS},
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
-\item
-The OGR library from
-\texttt{http://openev.sourceforge.net}
-if reading of GIS data formats other than ESRI Shape format
-and relational database tables is required.
 \end{itemize}
 
 \subsection{Usage}
@@ -1399,7 +1394,7 @@ Password for connecting to the database.
 \texttt{jndiname=\textit{string}}
 
 Java JNDI resource name of DataSource to use for database connection.
-Available when running as a servlet with Apache Tomcat.
+Available when running as a servlet within Apache Tomcat.
 Tomcat provides database connection
 pooling with database connections obtained using a JNDI lookup.
 JNDI resource names are commonly of the form \texttt{java:/comp/env/jdbc/MYDB1}.
