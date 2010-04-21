@@ -80,10 +80,22 @@ public class FileOrURL
 			/*
 			 * It is not a valid URL, try opening it as a plain file instead.
 			 */
-			in = new FileInputStream(name);
+			try
+			{
+				in = new FileInputStream(name);
+			}
+			catch (SecurityException e2)
+			{
+				throw new IOException(e2.getClass().getName() + ": " + e2.getMessage() + ": " + name);
+			}
+
 			m_isURL = false;
 		}
-		
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + name);
+		}
+
 		/*
 		 * Is the file or URL compressed?  If so, we need to add a filter to
 		 * uncompress it.
@@ -153,13 +165,24 @@ public class FileOrURL
 		{
 			m_URL = null;
 		}
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + name);
+		}
 
 		if (m_URL == null)
 		{
 			/*
 			 * It is not a valid URL, try opening it as a plain file instead.
 			 */
-			in = new FileInputStream(name);
+			try
+			{
+				in = new FileInputStream(name);
+			}
+			catch (SecurityException e)
+			{
+				throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + name);
+			}
 			m_isURL = false;
 			m_name = name;
 		}
