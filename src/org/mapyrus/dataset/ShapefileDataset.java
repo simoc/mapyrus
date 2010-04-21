@@ -224,18 +224,25 @@ public class ShapefileDataset implements GeographicDataset
 			dbfFilename = filename + ".dbf";
 			prjFilename = filename + ".prj";
 		}
-			
-		m_shapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
+
 		try
 		{
-			m_DBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
+			m_shapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
+			try
+			{
+				m_DBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
+			}
+			catch (FileNotFoundException e)
+			{
+				/*
+				 * If .dbf file does not exist then just continue without it.
+				 */
+				m_DBFStream = null;
+			}
 		}
-		catch (FileNotFoundException e)
+		catch (SecurityException e)
 		{
-			/*
-			 * If .dbf file does not exist then just continue without it.
-			 */
-			m_DBFStream = null;
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage());
 		}
 
 		/*
