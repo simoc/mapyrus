@@ -1637,36 +1637,43 @@ public class Interpreter implements Cloneable
 			case Statement.SETOUTPUT:
 				if (nExpressions == 1)
 				{
-					PrintStream stdout;
-					String filename = m_executeArgs[0].getStringValue();
-					if (filename.equals("-"))
+					try
 					{
-						/*
-						 * Return output to original standard output.
-						 */
-						stdout = m_stdoutStream;
-					}
-					else if (filename.startsWith("|"))
-					{
-						/*
-						 * Pipe standard output through an external command.
-						 */
-						String pipeCommand = filename.substring(1).trim();
-						String []cmdArray;
-						if (Constants.getOSName().indexOf("WIN") >= 0)
-							cmdArray = new String[]{pipeCommand};
+						PrintStream stdout;
+						String filename = m_executeArgs[0].getStringValue();
+						if (filename.equals("-"))
+						{
+							/*
+							 * Return output to original standard output.
+							 */
+							stdout = m_stdoutStream;
+						}
+						else if (filename.startsWith("|"))
+						{
+							/*
+							 * Pipe standard output through an external command.
+							 */
+							String pipeCommand = filename.substring(1).trim();
+							String []cmdArray;
+							if (Constants.getOSName().indexOf("WIN") >= 0)
+								cmdArray = new String[]{pipeCommand};
+							else
+								cmdArray = new String[]{"sh", "-c", pipeCommand};
+							Process p = Runtime.getRuntime().exec(cmdArray);
+							OutputStream stream = p.getOutputStream();
+							stdout = new PrintStream(stream);
+						}
 						else
-							cmdArray = new String[]{"sh", "-c", pipeCommand};
-						Process p = Runtime.getRuntime().exec(cmdArray);
-						OutputStream stream = p.getOutputStream();
-						stdout = new PrintStream(stream);
+						{
+							OutputStream stream = new FileOutputStream(filename);
+							stdout = new PrintStream(stream);
+						}
+						context.setStdout(stdout);
 					}
-					else
+					catch (SecurityException e)
 					{
-						OutputStream stream = new FileOutputStream(filename);
-						stdout = new PrintStream(stream);
+						throw new IOException(e.getClass().getName() + ": " + e.getMessage());
 					}
-					context.setStdout(stdout);
 				}
 				else
 				{
