@@ -449,7 +449,16 @@ public class MapyrusFrame implements MapyrusEventListener
 			}
 			else if (actionCode == MapyrusEventListener.EXPORT_ACTION)
 			{
-				exportToPNG();
+				try
+				{
+					exportToPNG();
+				}
+				catch (SecurityException e)
+				{
+					JOptionPane.showMessageDialog(m_frame,
+						e.getClass().getName() + ": " + e.getMessage(),
+						Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			else if (actionCode == MapyrusEventListener.RUN_ACTION)
 			{
@@ -744,24 +753,35 @@ public class MapyrusFrame implements MapyrusEventListener
 				 */
 				do
 				{
-					JFileChooser chooser = new JFileChooser();
-					chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-					chooser.setSelectedFile(new File(m_lastOpenedDirectory, filename));
-					status = chooser.showSaveDialog(m_frame);
-					if (status != JFileChooser.APPROVE_OPTION)
-						return(false);
-					File selectedFile = chooser.getSelectedFile();
-					m_lastOpenedDirectory = selectedFile.getParentFile();
-					filename = selectedFile.getPath();
-					if (selectedFile.exists())
+					try
 					{
-						/*
-						 * Check that the user wants to overwrite this file.
-						 */
-						status = JOptionPane.showConfirmDialog(m_frame,
-							MapyrusMessages.get(MapyrusMessages.OVERWRITE) + " " + filename +"?",
-							Constants.PROGRAM_NAME,
-							JOptionPane.YES_NO_OPTION);
+						JFileChooser chooser = new JFileChooser();
+
+						chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+						chooser.setSelectedFile(new File(m_lastOpenedDirectory, filename));
+						status = chooser.showSaveDialog(m_frame);
+						if (status != JFileChooser.APPROVE_OPTION)
+							return(false);
+						File selectedFile = chooser.getSelectedFile();
+						status = JOptionPane.YES_OPTION;
+						m_lastOpenedDirectory = selectedFile.getParentFile();
+						filename = selectedFile.getPath();
+						if (selectedFile.exists())
+						{
+							/*
+							 * Check that the user wants to overwrite this file.
+							 */
+							status = JOptionPane.showConfirmDialog(m_frame,
+								MapyrusMessages.get(MapyrusMessages.OVERWRITE) + " " + filename +"?",
+								Constants.PROGRAM_NAME,
+								JOptionPane.YES_NO_OPTION);
+						}
+					}
+					catch (SecurityException e)
+					{
+						JOptionPane.showMessageDialog(m_frame, e.getMessage(),
+							Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+						status = JOptionPane.NO_OPTION;
 					}
 				}
 				while (status != JOptionPane.YES_OPTION);
@@ -784,11 +804,18 @@ public class MapyrusFrame implements MapyrusEventListener
 					Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 				return(false);
 			}
+			catch (SecurityException e)
+			{
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(),
+					Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+				return(false);
+			}
 			finally
 			{
 				try
 				{
-					f.close();
+					if (f != null)
+						f.close();
 				}
 				catch (IOException e)
 				{
