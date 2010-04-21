@@ -615,7 +615,14 @@ public class ColorDatabase
 		{
 			filename = null;
 		}
-		
+		catch (SecurityException e)
+		{
+			/*
+			 * Not allowed to read files, just use basic colors.
+			 */
+			return;
+		}
+
 		try
 		{
 			/*
