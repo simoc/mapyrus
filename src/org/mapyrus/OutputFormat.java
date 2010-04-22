@@ -1565,7 +1565,14 @@ public class OutputFormat
 		
 			m_outputType = IMAGE_FILE;
 		}
-		setOutput(filename, width, height, extras, stdoutStream);
+		try
+		{
+			setOutput(filename, width, height, extras, stdoutStream);
+		}
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage());
+		}
 	}
 
 	/**
@@ -1580,7 +1587,14 @@ public class OutputFormat
 		m_image = image;
 		m_formatName = "png";
 		PrintStream dummyStdout = new PrintStream(new ByteArrayOutputStream());
-		setOutput("", 0, 0, extras, dummyStdout);
+		try
+		{
+			setOutput("", 0, 0, extras, dummyStdout);
+		}
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage());
+		}
 	}
 
 	/**
