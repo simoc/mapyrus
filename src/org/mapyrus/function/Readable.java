@@ -45,11 +45,19 @@ public class Readable implements Function
 		String filename = arg1.getStringValue();
 		File f = new File(filename);
 		
-		Argument retval;
-		if (f.isFile() && f.canRead())
-			retval = Argument.numericOne;
-		else
-			retval = Argument.numericZero;
+		Argument retval = Argument.numericZero;
+		try
+		{
+			if (f.isFile() && f.canRead())
+				retval = Argument.numericOne;
+		}
+		catch (SecurityException e)
+		{
+			/*
+			 * No access to file so it is not readable.
+			 */
+		}
+
 		return(retval);
 	}
 
