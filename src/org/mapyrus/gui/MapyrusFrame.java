@@ -501,7 +501,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Show HTML GUI help page.
 				 */
-				JFrame helpFrame = new JFrame();
+				JFrame helpFrame = new JFrame(MapyrusMessages.get(MapyrusMessages.ONLINE_HELP));
 				try
 				{
 					JEditorPane helpPane = new JEditorPane();
@@ -781,7 +781,7 @@ public class MapyrusFrame implements MapyrusEventListener
 					{
 						JOptionPane.showMessageDialog(m_frame, e.getMessage(),
 							Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
-						status = JOptionPane.NO_OPTION;
+						return(false);
 					}
 				}
 				while (status != JOptionPane.YES_OPTION);
