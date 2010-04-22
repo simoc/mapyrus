@@ -44,7 +44,18 @@ public class TransientFile
 		m_expiryTimestamp = expiry;	
 
 		File f = new File(filename);
-		f.deleteOnExit();
+		try
+		{
+			f.deleteOnExit();
+		}
+		catch (SecurityException e)
+		{
+			/*
+			 * Ignore this.  If we don't have permission to
+			 * delete the file then we won't have permission
+			 * to create the file either.
+			 */
+		}
 	}
 
 	/**
