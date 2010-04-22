@@ -3561,20 +3561,26 @@ public class OutputFormat
 		 */
 		PDFFile pdfFile = null;
 		int index = 0;
-		while (index < m_PDFIncludedFiles.size() && pdfFile == null)
-		{
-			PDFFile p = (PDFFile)m_PDFIncludedFiles.get(index);
-			if (p.getFilename().equals(filename))
-				pdfFile = p;
-			else
-				index++;
+		if (m_outputType == PDF)
+		{		
+			while (index < m_PDFIncludedFiles.size() && pdfFile == null)
+			{
+				PDFFile p = (PDFFile)m_PDFIncludedFiles.get(index);
+				if (p.getFilename().equals(filename))
+					pdfFile = p;
+				else
+					index++;
+			}
 		}
 		if (pdfFile == null)
 		{
 			pdfFile = new PDFFile(filename);
-			m_PDFIncludedFiles.add(pdfFile);
-			m_PDFIncludedPages.add(new ArrayList<Integer>());
-			index = m_PDFIncludedFiles.size() - 1;
+			if (m_outputType == PDF)
+			{
+				m_PDFIncludedFiles.add(pdfFile);
+				m_PDFIncludedPages.add(new ArrayList<Integer>());
+				index = m_PDFIncludedFiles.size() - 1;
+			}
 		}
 
 		if (page < 1 || page > pdfFile.getPageCount())
@@ -3586,10 +3592,13 @@ public class OutputFormat
 		/*
 		 * Add this page to the list of pages to display from the PDF file.
 		 */
-		ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(index);
-		Integer pageNumber = new Integer(page);
-		if (!pageNumbers.contains(pageNumber))
-			pageNumbers.add(pageNumber);
+		if (m_outputType == PDF)
+		{
+			ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(index);
+			Integer pageNumber = new Integer(page);
+			if (!pageNumbers.contains(pageNumber))
+				pageNumbers.add(pageNumber);
+		}
 
 		int[] boundingBox = pdfFile.getMediaBox(page);
 		int pointWidth = boundingBox[2] - boundingBox[0];
