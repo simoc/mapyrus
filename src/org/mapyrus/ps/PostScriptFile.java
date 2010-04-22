@@ -138,6 +138,10 @@ public class PostScriptFile
 		{
 			throw e;
 		}
+		catch (SecurityException se)
+		{
+			throw new IOException(se.getClass().getName() + ": " + e.getMessage());
+		}
 		finally
 		{
 			try

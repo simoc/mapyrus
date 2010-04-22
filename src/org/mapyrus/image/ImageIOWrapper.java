@@ -55,17 +55,24 @@ public class ImageIOWrapper
 	 */
 	public static BufferedImage read(File f, Color color) throws IOException, MapyrusException
 	{
-		BufferedImage retval;
+		BufferedImage retval = null;
 
-		String filename = f.getName().toLowerCase();
-		if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
-			retval = new PNMImage(f.toString()).getBufferedImage();
-		else if (filename.endsWith(".pat"))
-			retval = new PATImage(f.toString()).getBufferedImage();
-		else if (filename.endsWith(".xbm"))
-			retval = new XBMImage(f.toString(), color.getRGB()).getBufferedImage();
-		else
-			retval = ImageIO.read(f);
+		try
+		{
+			String filename = f.getName().toLowerCase();
+			if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
+				retval = new PNMImage(f.toString()).getBufferedImage();
+			else if (filename.endsWith(".pat"))
+				retval = new PATImage(f.toString()).getBufferedImage();
+			else if (filename.endsWith(".xbm"))
+				retval = new XBMImage(f.toString(), color.getRGB()).getBufferedImage();
+			else
+				retval = ImageIO.read(f);
+		}
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + f.getPath());
+		}
 		return(retval);
 	}
 
@@ -129,6 +136,10 @@ public class ImageIOWrapper
 				retval = ImageIO.read(stream);
 			}
 		}
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + url.toString());
+		}
 		finally
 		{
 			try
@@ -158,6 +169,10 @@ public class ImageIOWrapper
 		{
 			stream = new BufferedOutputStream(new FileOutputStream(f));
 			write(image, format, stream);
+		}
+		catch (SecurityException e)
+		{
+			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + f.getPath());
 		}
 		finally
 		{
