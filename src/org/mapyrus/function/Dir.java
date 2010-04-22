@@ -46,17 +46,24 @@ public class Dir implements Function
 		String pattern = arg1.toString();
 		Argument retval = new Argument();
 
-		WildcardFile wildcard = new WildcardFile(pattern);
-		int counter = 1;
-
-		/*
-		 * Add each matching file to the array.
-		 */
-		for (String next : wildcard.getMatchingFiles())
+		try
 		{
-			retval.addHashMapEntry(Integer.toString(counter),
-				new Argument(Argument.STRING, next));
-			counter++;
+			WildcardFile wildcard = new WildcardFile(pattern);
+			int counter = 1;
+	
+			/*
+			 * Add each matching file to the array.
+			 */
+			for (String next : wildcard.getMatchingFiles())
+			{
+				retval.addHashMapEntry(Integer.toString(counter),
+					new Argument(Argument.STRING, next));
+				counter++;
+			}
+		}
+		catch (SecurityException e)
+		{
+			throw new MapyrusException(e.getClass().getName() + ": " + e.getMessage());
 		}
 
 		return(retval);
