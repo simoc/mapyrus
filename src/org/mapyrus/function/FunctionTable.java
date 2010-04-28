@@ -206,6 +206,19 @@ public class FunctionTable
 			mFunctions.put("overlaps", new DummyFunction("overlaps"));
 			mFunctions.put("union", new DummyFunction("union"));
 		}
+
+		try
+		{	
+			/*
+			 * Reprojection only available if jhlabs.com PROJ.4 JAR file is in classpath.
+			 */
+			f = new Reproject();
+			mFunctions.put(f.getName(), f);
+		}
+		catch (NoClassDefFoundError e)
+		{
+			mFunctions.put("reproject", new DummyFunction("reproject"));
+		}
 	}
 
 	/**
