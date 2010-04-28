@@ -4,6 +4,7 @@ Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 1.002, April 2010
 
 * Avoid SecurityException problems when running GUI with Java Web Start.
+* Add REPROJECT function to transform coords. using jhlabs.com PROJ.4 library.
 
 1.001, April 2010
 
