@@ -33,6 +33,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <available file="${jts.jar}" property="jts.jar.isAvailable"/>
 <fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
 
+<!-- 'Java PROJ.4 library' JAR file required for building some Java classes -->
+<property name="proj4.jar" value="javaproj-1.0.8.jar"/>
+<available file="${proj4.jar}" property="proj4.jar.isAvailable"/>
+<fail message="Java PROJ.4 library JAR file ${proj4.jar} not found.  Download it from http://www.jhlabs.com" unless="proj4.jar.isAvailable"/>
+
 <!-- servlet-api.jar JAR file required for building servlet -->
 <property name="servlet-api.jar" value="servlet-api.jar"/>
 <available file="${servlet-api.jar}" property="servlet-api.jar.isAvailable"/>
@@ -58,7 +63,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <replace dir="src" token="@release_date_token@" value="${today}"/>
 
 <mkdir dir="build/classes"/>
-<javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
+<javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${proj4.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes" excludes="**/CVS/**, **/cvs/**"/>
 
 <!-- Copy resource, font and data files into built directory -->
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
