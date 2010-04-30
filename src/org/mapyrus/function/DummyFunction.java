@@ -56,7 +56,7 @@ public class DummyFunction implements Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(3);
+		return(4);
 	}
 
 	/**
