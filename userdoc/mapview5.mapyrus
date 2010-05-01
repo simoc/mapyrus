@@ -1,0 +1,60 @@
+# @(#) $Id$
+
+newpage "eps", "mapview5.eps", 130, 80, "background=skyblue"
+worlds -2e7, -9900000, 2e7, 9900000
+
+# Draw vertical and horizontal grid lines, adding intermediate
+# points because the lines appear curved due to the reprojection.
+#
+let x = -180
+while x <= 180
+do
+  let wkt = "LINESTRING ("
+  let y = -90
+  while y <= 90
+  do
+    if (y > -90)
+    then
+      let wkt = wkt . ","
+    endif
+    let wkt = wkt . x . " " . y
+    let y = y + 10
+  done
+  let wkt = wkt . ")"
+
+  clearpath
+  addpath reproject("epsg:4326", "esri:54008", wkt)
+  color "white"
+  linestyle 0.1, "round", "round"
+  stroke
+  let x = x + 10
+done
+
+let y = -80
+while y <= 80
+do
+  let wkt = "LINESTRING (-180 " . y . ", 180 " . y . ")"
+  clearpath
+  addpath reproject("epsg:4326", "esri:54008", wkt)
+  color "white"
+  linestyle 0.1, "round", "round"
+  stroke
+  let y = y + 10
+done
+
+let c[1] = "purple", c[2] = "red3", c[3] = "maroon"
+let c[4] = "violet", c[5] = "raspberry", c[6] = "plum4"
+
+dataset "internal", "countries", "xmin=-180 ymin=-90 xmax=180 ymax=90"
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath reproject("epsg:4326", "esri:54008", GEOMETRY)
+  color c[COLORCODE]
+  fill
+  color "black"
+  linestyle 0.1, "round", "round"
+  stroke
+done
+
