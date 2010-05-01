@@ -84,7 +84,7 @@ Scalebars, legends, coordinate grids and north arrows are also available.
 
 %ENDHTML
 See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
-\ref{mapview4}.
+\ref{mapview4}, \ref{mapview5}.
 
 \begin{figure}
 %BEGINHTML
@@ -145,6 +145,23 @@ See Figures \ref{mapview1}, \ref{mapview3}, \ref{mapview2} and
 \label{mapview4}
 \end{figure}
 
+\begin{figure}
+%BEGINHTML
+%HTML <td>
+\includegraphics{mapview5.eps}
+%HTML </td>
+%HTML <tr>
+%HTML <td align="center"><a href="mapview5.svg">SVG</a>
+%HTML <a href="mapview5.pdf">PDF</a></td>
+%HTML <td align="center"><a href="mapview5.svg">SVG</a>
+%HTML <a href="mapview5.pdf">PDF</a></td>
+%HTML </tr>
+%HTML </table>
+%ENDHTML
+\caption{Sinusoidal Projection}
+\label{mapview5}
+\end{figure}
+
 %BEGINHTML
 
 \item
@@ -153,6 +170,11 @@ Java Topology Suite
 \footnote{Available from http://www.vividsolutions.com/JTS}.
 This library provides geometric algorithms
 such as buffering, point-in-polygon test and polygon intersection.
+
+\item
+Integration with the freely-available
+Java port of the PROJ.4 projection library.
+\footnote{Available from http://www.jhlabs.com/java/maps/proj}
 
 \item
 Flexibility.  Running in one of three ways.
@@ -195,10 +217,5 @@ Icons found on the
 internet are another good solution for display in image files.
 For PostScript output, the resolution is higher and using characters
 from a font such as ZapfDingbats produces better output.
-
-\item
-Mapyrus cannot reproject coordinate values in geographic data from
-one projection to another.  However, this functionality
-is available in spatial databases.
 \end{itemize}
 
