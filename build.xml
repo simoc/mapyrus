@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
 
 <!-- 'Java PROJ.4 library' JAR file required for building some Java classes -->
-<property name="proj4.jar" value="javaproj-1.0.8.jar"/>
+<property name="proj4.jar" value="javaproj-1.0.9.jar"/>
 <available file="${proj4.jar}" property="proj4.jar.isAvailable"/>
 <fail message="Java PROJ.4 library JAR file ${proj4.jar} not found.  Download it from http://www.jhlabs.com" unless="proj4.jar.isAvailable"/>
 
@@ -107,8 +107,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <!-- Generate all examples, doing tutorial examples separately so -->
 <!-- it is not necessary to show path being cleared in each example -->
-<java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
-<arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus turtle7.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus"/>
+<java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
+<classpath>
+<pathelement path="${ant.project.name}.jar"/>
+<pathelement path="${proj4.jar}"/>
+</classpath>
+<arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus turtle7.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus mapview5.mapyrus"/>
 </java>
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialfirst1.mapyrus"/>
@@ -158,6 +162,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <pathelement path="${jts.jar}"/>
 </classpath>
 <arg line="tutorialjts1.mapyrus tutorialjts2.mapyrus tutorialjts3.mapyrus"/>
+</java>
+<!-- Run examples using Java PROJ.4 library with that JAR file in classpath -->
+<java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
+<classpath>
+<pathelement path="${ant.project.name}.jar"/>
+<pathelement path="${proj4.jar}"/>
+</classpath>
+<arg line="tutorialproj1.mapyrus"/>
 </java>
 
 <!-- Create PostScript file showing legend for all sample symbols -->
