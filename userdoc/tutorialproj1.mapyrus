@@ -1,0 +1,15 @@
+newpage "eps", "tutorialproj1.eps", 110, 60, "background=skyblue"
+worlds -1.79e7, -8997266, 1.79e7, 8997266
+
+dataset "internal", "countries", "xmin=-180 ymin=-90 xmax=180 ymax=90"
+while Mapyrus.fetch.more
+do
+  fetch
+  clearpath
+  addpath reproject("epsg:4326", "esri:54009", GEOMETRY)
+  color "khaki"
+  fill
+  color "black"
+  linestyle 0.1, "round", "round"
+  stroke
+done
