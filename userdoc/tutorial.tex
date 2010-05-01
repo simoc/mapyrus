@@ -1529,6 +1529,35 @@ polygon.  The output of this example is shown in Figure \ref{tutorialjts3}.
 \label{tutorialjts3}
 \end{figure}
 
+\subsection{Mapyrus and Java PROJ.4 Library}
+
+The \texttt{reproject} function reprojects coordinates using
+the Java PROJ.4 library available from 
+\texttt{http://www.jhlabs.com/java/maps/proj}.
+
+If this function is used then the
+Java PROJ.4 JAR file must be included in the
+classpath when running Mapyrus.  The following command demonstrates this:
+
+\begin{alltt}
+java -classpath \textit{install-dir}/mapyrus.jar:\textit{dir}/javaproj-1.0.8.jar \textbackslash
+  org.mapyrus.Mapyrus tutorialproj1.mapyrus
+\end{alltt}
+
+The following example demonstrates displaying a map of the world,
+with the geometry of each country reprojected from latitude, longitude
+values to Mollweide projection using the \texttt{reproject} function
+and projection names from PROJ.4 control files.
+The output is shown in Figure \ref{tutorialproj1}.
+
+\verbatiminput{tutorialproj1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialproj1.eps}
+\caption{Mollweide Projection}
+\label{tutorialproj1}
+\end{figure}
+
 \subsection{Creating Landscape Output on Portrait Pages}
 
 Many PostScript printers accept only portrait orientation pages.
