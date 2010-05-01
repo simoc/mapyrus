@@ -17,6 +17,9 @@ is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
 The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com/JTS},
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
+\item
+The \textit{Java PROJ.4 library} from \texttt{http://www.jhlabs.com/java/maps/proj},
+if the \texttt{REPROJECT} function is required for reprojecting coordinates.
 \end{itemize}
 
 \subsection{Usage}
@@ -430,6 +433,16 @@ Otherwise 0 is returned. \\
 \texttt{replace(\textit{str}, \textit{regex}, \textit{replacement})} &
 Returns the string \textit{str}, with all occurrences of the regular
 expression \textit{regex} replaced by \textit{replacement}. \\
+
+\hline
+
+\texttt{reproject(\textit{p1}, \textit{p2}, \textit{g})}
+\texttt{reproject(\textit{p1}, \textit{p2}, \textit{x}, \textit{y})} &
+Reprojects the geometry \textit{g} or point (\textit{x}, \textit{y})
+from projection \textit{p1} to projection \textit{p2}.
+Projections are names in the PROJ.4 database
+or a list of PROJ.4 projection parameters separated by whitespace.
+This function requires the \textit{Java PROJ.4 library}. \\
 
 \hline
 
