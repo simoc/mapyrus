@@ -1098,18 +1098,36 @@ public class Argument implements Comparable<Argument>, Cloneable
 		else if (m_type == HASHMAP)
 		{
 			/*
-			 * Build string of all key, value pairs in the hash map.
+			 * Build string of all key, value pairs in the hash map, in a
+			 * format that could be re-interpreted by Mapyrus as an array.
 			 */
-			sb = new StringBuffer();
+			sb = new StringBuffer("[");
 			Object []keys = getHashMapKeys();
+			boolean isSequential = isSequentialKeys(keys);
 			for (int i = 0; i < keys.length; i++)
 			{
-				sb.append(keys[i]);
-				sb.append(' ');
+				if (i > 0)
+					sb.append(", ");
+				if (!isSequential)
+				{
+					sb.append("'");
+					String key = keys[i].toString();
+					sb.append(key.replace("'", "\\'"));
+					sb.append("': ");
+				}
+
 				Argument value = m_hashMap.get(keys[i]);
-				sb.append(value.getStringValue());
-				sb.append(Constants.LINE_SEPARATOR);
+				String sValue = value.getStringValue();
+				int valueType = value.getType();
+				if (valueType == Argument.STRING)
+					sValue = sValue.replaceAll("'", "\\'");
+				if (valueType != Argument.HASHMAP && valueType != Argument.NUMERIC)
+					sb.append("'");
+				sb.append(sValue);
+				if (valueType != Argument.HASHMAP && valueType != Argument.NUMERIC)
+					sb.append("'");
 			}
+			sb.append("]");
 			retval = sb.toString();
 		}
 		else
@@ -1117,6 +1135,22 @@ public class Argument implements Comparable<Argument>, Cloneable
 			sb = new StringBuffer();
 			createOGCWKT(m_geometryValue, 0, sb, true);
 			retval = sb.toString().trim();
+		}
+		return(retval);
+	}
+
+	/**
+	 * Check if list of keys are sequential array indexes starting at 1.
+	 * @param keys array index keys.
+	 * @return true if array indexes are sequential.
+	 */
+	private boolean isSequentialKeys(Object []keys)
+	{
+		boolean retval = true;
+		for (int i = 0; i < keys.length && retval; i++)
+		{
+			if (!keys[i].toString().equals(Integer.toString(i + 1)))
+				retval = false;
 		}
 		return(retval);
 	}
