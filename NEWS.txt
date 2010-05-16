@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
+1.003, June 2010
+
+* Add easier initialisation of arrays: [66, 22, 34] or ["AU":"red", "NZ":"blue"]
+
 1.002, May 2010
 
 * Avoid SecurityException problems when running GUI with Java Web Start.
