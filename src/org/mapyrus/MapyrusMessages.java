@@ -68,6 +68,7 @@ public class MapyrusMessages
 	public static final String INIT_HTTP_FAILED = "inithttpfailed";
 	public static final String INTERRUPTED = "interrupted";
 	public static final String INVALID_ARC = "invalidarc";
+	public static final String INVALID_ARRAY = "invalidarray";
 	public static final String INVALID_BEZIER = "invalidbezier";
 	public static final String INVALID_BLEND = "invalidblend";
 	public static final String INVALID_BOX = "invalidbox";
