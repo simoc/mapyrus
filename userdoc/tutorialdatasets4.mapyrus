@@ -1,8 +1,7 @@
 newpage "eps", "tutorialdatasets4.eps", 160, 100, "background=lightblue"
 worlds -20, 30, 30, 68
 
-let c[1] = "yellow3", c[2] = "orange3", c[3] = "yellow"
-let c[4] = "gold", c[5] = "pastelbrown", c[6] = "yellowgreen"
+let c = ["yellow3", "orange3", "yellow", "gold", "pastelbrown", "yellowgreen"]
 
 linestyle 0.1, "round", "round"
 dataset "internal", "countries", "xmin=-20 ymin=30 xmax=30 ymax=68"

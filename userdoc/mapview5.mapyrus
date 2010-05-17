@@ -42,8 +42,7 @@ do
   let y = y + 10
 done
 
-let c[1] = "purple", c[2] = "red3", c[3] = "maroon"
-let c[4] = "violet", c[5] = "raspberry", c[6] = "plum4"
+let c = ["purple", "red3", "maroon", "violet", "raspberry", "plum4"]
 
 dataset "internal", "countries", "xmin=-180 ymin=-90 xmax=180 ymax=90"
 while Mapyrus.fetch.more

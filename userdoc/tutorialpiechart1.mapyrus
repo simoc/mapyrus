@@ -6,16 +6,13 @@ newpage "eps", "tutorialpiechart1.eps", 90, 40
 
 # Set fixed colors and labels for all pies.
 #
-let colors[1] = "green", colors[2] = "orange"
-let colors[3] = "yellow", colors[4] = "#606c30"
+let colors = ["green", "orange", "yellow", "#606c30"]
 
-let labels[1] = "Apples", labels[2] = "Oranges"
-let labels[3] = "Bananas", labels[4] = "Olives"
+let labels = ["Apples", "Oranges", "Bananas", "Olives"]
 
 # Set production levels for first site.  Then draw piechart.
 #
-let production[1] = 7000, production[2] = 2000
-let production[3] = 1500, production[4] = 500
+let production = [7000, 2000, 1500, 500]
 clearpath
 move 22, 15
 piechart 4, production, labels, colors
@@ -23,16 +20,14 @@ piechart 4, production, labels, colors
 # Set production levels for second site.  Then draw piechart.
 # Pass dummy variable for labels array to demonstrate omitting labels.
 #
-let production[1] = 5000, production[2] = 3000
-let production[3] = 2500, production[4] = 500
+let production = [5000, 3000, 2500, 500]
 clearpath
 move 42, 28
 piechart 4, production, dummy, colors
 
 # Set production levels for third site.  Then draw piechart.
 #
-let production[1] = 8000, production[2] = 2000
-let production[3] = 4500, production[4] = 3500
+let production = [8000, 2000, 4500, 3500]
 clearpath
 move 70, 14
 piechart 4, production, labels, colors
@@ -51,8 +46,7 @@ histogram colors, dummy, production, maxProduction, 6
 
 # Set different production levels and draw another small histogram.
 #
-let production[1] = 6000, production[2] = 4000
-let production[3] = 3500, production[4] = 4500
+let production = [6000, 4000, 3500, 4500]
 clearpath
 move 40, 14
 histogram colors, dummy, production, maxProduction, 6
