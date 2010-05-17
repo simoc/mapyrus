@@ -151,6 +151,18 @@ public class Expression
 		}
 
 		/**
+		 * Create a node containing a hash map.
+		 * @param keyValuePairs is list of key, value pairs in hash map.
+		 */
+		public ExpressionTreeNode(ArrayList<ExpressionTreeNode> keyValuePairs)
+		{
+			m_isFunction = false;
+			m_isLeaf = true;
+			m_leafArg = null;
+			m_branches = keyValuePairs;
+		}
+
+		/**
 		 * Create a node containing a call to a function.
 		 * @param functionType is identifier of function being called.
 		 * @param args list of ExpressionTreeNode arguments to function.
@@ -231,13 +243,17 @@ public class Expression
 
 			if (t.m_isLeaf)
 			{
-				/*
-				 * Evaluate any variable name.  Variables that are not assigned
-				 * are given the value of an empty string (which converts to the
-				 * numeric value 0), like in awk(1) and Perl.
-				 */
-				if (t.m_leafArg.getType() == Argument.VARIABLE)
+				if (t.m_leafArg == null)
 				{
+					retval = traverseArray(t.m_branches, context, interpreterFilename);
+				}
+				else if (t.m_leafArg.getType() == Argument.VARIABLE)
+				{
+					/*
+					 * Evaluate variable name.  Variables that are not assigned
+					 * are given the value of an empty string (which converts to the
+					 * numeric value 0), like in awk(1) and Perl.
+					 */
 					retval = context.getVariableValue(t.m_leafArg.getVariableName(), interpreterFilename);
 					if (retval == null)
 						retval = Argument.emptyString;
@@ -320,7 +336,10 @@ public class Expression
 					/*
 					 * Assign value as entry in a hashmap: a[55] = "foo".
 					 */
-					String hashMapName = ((ExpressionTreeNode)leftBranch.m_branches.get(0)).m_leafArg.getVariableName();
+					ExpressionTreeNode leftBranchVar = leftBranch.m_branches.get(0);
+					String hashMapName = null;
+					if (leftBranchVar != null)
+						hashMapName = leftBranchVar.m_leafArg.getVariableName();
 					if (hashMapName == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE));
@@ -330,6 +349,10 @@ public class Expression
 					if (key.getType() != Argument.NUMERIC && key.getType() != Argument.STRING)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_HASHMAP_KEY));
+					}
+					if (rightValue.getType() == Argument.HASHMAP)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NESTED_HASHMAP));
 					}
 					context.defineHashMapEntry(hashMapName, key.getStringValue(),
 						rightValue);
@@ -559,6 +582,30 @@ public class Expression
 			return(retval);
 		}
 		
+		private Argument traverseArray(ArrayList<ExpressionTreeNode> expressions,
+				ContextStack context,
+				String interpreterFilename) throws MapyrusException, InterruptedException
+		{
+			Argument retval = new Argument();
+			int i = 0;
+			while (i < expressions.size())
+			{
+				/*
+				 * Evaluate all key and value pairs in array.
+				 */
+				ExpressionTreeNode expr =  expressions.get(i);
+				Argument key = traverse(expr, context, interpreterFilename);
+				expr = expressions.get(i + 1);
+				Argument value = traverse(expr, context, interpreterFilename);
+				if (value.getType() == Argument.HASHMAP)
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NESTED_HASHMAP));
+				retval.addHashMapEntry(key.getStringValue(), value);
+
+				i += 2;
+			}
+			return(retval);
+		}
+
 		/**
 		 * String representation of an expression tree.
 		 * @return expression as a string.
@@ -1174,7 +1221,7 @@ public class Expression
 		{	
 			p.unread(op1);
 		}
-		expr = parseHashMapReference(p, userFunctions);
+		expr = parseArray(p, userFunctions);
 
 		/*
 		 * Check for '++' or '--' after variable.
@@ -1217,6 +1264,125 @@ public class Expression
 					MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 			}
 			expr = new ExpressionTreeNode(expr, type, null);
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse array expression: [11, 22, "hello"].
+	 */
+	private ExpressionTreeNode parseArray(Preprocessor p, HashMap userFunctions)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr;
+		int op1;
+
+		/*
+		 * Check for '[' marking start of array.
+		 */
+		op1 = p.readNonSpace();
+		if (op1 == '[')
+		{
+			/*
+			 * Read each entry in array.
+			 */
+			ArrayList<ExpressionTreeNode> keyValuePairs = new ArrayList<ExpressionTreeNode>();
+			op1 = p.readNonSpace();
+			if (op1 == ']')
+			{
+				/*
+				 * Empty array.
+				 */
+			}
+			else
+			{
+				p.unread(op1);
+				int i = 1;
+				boolean hasKeys = true;
+				do
+				{
+					expr = parseAssignment(p, userFunctions);
+					op1 = p.readNonSpace();
+					if (op1 == ':')
+					{
+						/*
+						 * Do not allow array list and key-value pairs to be mixed in one array.
+						 */
+						if (i == 1)
+							hasKeys = true;
+						else if (!hasKeys)
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+								": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
+						}
+
+						if (expr.m_isLeaf && expr.m_leafArg == null)
+						{
+							/*
+							 * Do not allow nested arrays.
+							 */
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+									": " + MapyrusMessages.get(MapyrusMessages.NESTED_HASHMAP));
+						}
+						keyValuePairs.add(expr);
+
+						expr = parseAssignment(p, userFunctions);						
+						if (expr.m_isLeaf && expr.m_leafArg == null)
+						{
+							/*
+							 * Do not allow nested arrays.
+							 */
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+									": " + MapyrusMessages.get(MapyrusMessages.NESTED_HASHMAP));
+						}
+						keyValuePairs.add(expr);
+					}
+					else
+					{
+						if (i == 1)
+							hasKeys = false;
+						else if (hasKeys)
+						{
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+								": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
+						}
+
+						if (expr.m_isLeaf && expr.m_leafArg == null)
+						{
+							/*
+							 * Do not allow nested arrays.
+							 */
+							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+									": " + MapyrusMessages.get(MapyrusMessages.NESTED_HASHMAP));
+						}
+
+						p.unread(op1);
+						String key = Integer.toString(i);
+						keyValuePairs.add(new ExpressionTreeNode(new Argument(Argument.STRING, key)));
+						keyValuePairs.add(expr);
+					}
+
+					i++;
+					op1 = p.readNonSpace();
+				}
+				while (op1 == ',');
+
+				/*
+				 * Check that array ends with ']'.
+				 */
+				if (op1 != ']')
+				{
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
+				}
+			}
+
+			expr = new ExpressionTreeNode(keyValuePairs);
+		}
+		else
+		{
+			p.unread(op1);
+			expr = parseHashMapReference(p, userFunctions);
 		}
 		return(expr);
 	}
