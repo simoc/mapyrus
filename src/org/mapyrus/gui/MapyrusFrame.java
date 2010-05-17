@@ -26,11 +26,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -49,6 +52,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -501,14 +505,33 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Show HTML GUI help page.
 				 */
-				JFrame helpFrame = new JFrame(MapyrusMessages.get(MapyrusMessages.ONLINE_HELP));
+				final JFrame helpFrame = new JFrame(MapyrusMessages.get(MapyrusMessages.ONLINE_HELP));
 				try
 				{
 					JEditorPane helpPane = new JEditorPane();
 					helpPane.setEditable(false);
 					URL helpUrl = this.getClass().getResource("onlinehelp.html");
 					helpPane.setPage(helpUrl);
-					helpFrame.getContentPane().add(helpPane);
+					JButton closeButton = new JButton(MapyrusMessages.get(MapyrusMessages.CLOSE));
+					closeButton.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent e)
+						{
+							/*
+							 * Close window when user clicks 'Close' button.
+							 */
+							helpFrame.setVisible(false);
+							helpFrame.dispose();
+						}
+					});
+
+					JPanel mainPanel = new JPanel();
+					mainPanel.setLayout(new BorderLayout());
+					mainPanel.add(helpPane, BorderLayout.CENTER);
+					JPanel southPanel = new JPanel();
+					southPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+					southPanel.add(closeButton);
+					mainPanel.add(southPanel, BorderLayout.SOUTH);
+					helpFrame.getContentPane().add(mainPanel);
 					helpFrame.setPreferredSize(new Dimension(600, 600));
 					helpFrame.pack();
 					helpFrame.setVisible(true);
