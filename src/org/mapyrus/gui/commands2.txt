@@ -8,8 +8,7 @@ color "lightblue"
 fill
 
 # Each country has a colorcode number.  Set color to use for each colorcode.
-let c[1] = "yellow3", c[2] = "orange3", c[3] = "yellow", c[4] = "gold"
-let c[5] = "pastelbrown", c[6] = "yellowgreen"
+let c = ["yellow3", "orange3", "yellow", "gold", "pastelbrown", "yellowgreen"]
 
 dataset "internal", "countries", ""
 linestyle 0.01, "round", "round"
