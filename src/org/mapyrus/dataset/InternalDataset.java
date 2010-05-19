@@ -287,9 +287,11 @@ public class InternalDataset implements GeographicDataset
 			/*
 			 * Read field values for row.
 			 */
+			String []fieldValues = null;
 			String line = readLine(m_reader);
-			String []fieldValues = line.split(",");
-			if (fieldValues.length != m_fieldNames.length - 1)
+			if (line != null)
+				fieldValues = line.split(",");
+			if (fieldValues == null || fieldValues.length != m_fieldNames.length - 1)
 			{
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.MISSING_FIELD) +
 					": " + m_filename + ":" + m_reader.getLineNumber());
