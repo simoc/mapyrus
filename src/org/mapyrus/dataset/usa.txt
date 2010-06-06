@@ -1,4 +1,4 @@
-# COLORCODE STATE_NAME STATE_ABBR
+# COLORCODE STATE STATECODE
 # @(#) $Id$
 # Data derived from National Atlas of the United States,
 # March 5, 2003, http://nationalatlas.gov
