@@ -1310,8 +1310,8 @@ Dataset Format & Description and Extras \\
 
 \texttt{internal} &
 Reads a dataset included inside Mapyrus.
-Available dataset names are \texttt{countries}
-and \texttt{capitals}.
+Available dataset names are \texttt{countries},
+\texttt{capitals} and \texttt{usa}.
 
 Dataset \texttt{countries} contains the following
 fields for each record:
@@ -1325,6 +1325,9 @@ fields for each record:
 \texttt{COUNTRY} Country name
 \item
 \texttt{POP2005} Population in year 2005
+\item
+\texttt{COLORCODE} number in range 1 - 6, with neighbouring countries
+having different color codes.
 \end{itemize}
 
 Dataset \texttt{capitals} contains the following
@@ -1337,6 +1340,21 @@ fields for each record:
 \texttt{COUNTRY} Country name
 \item
 \texttt{CAPITAL} Capital city name
+\end{itemize}
+
+Dataset \texttt{usa} contains the following
+fields for each record:
+
+\begin{itemize}
+\item
+\texttt{GEOMETRY} Polygon with US state border
+\item
+\texttt{STATE} US state name
+\item
+\texttt{STATECODE} two letter US state code
+\item
+\texttt{COLORCODE} number in range 1 - 6, with neighbouring states
+having different color codes.
 \end{itemize}
 
 \vspace{10pt}
