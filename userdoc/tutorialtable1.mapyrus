@@ -1,6 +1,7 @@
 begin vehiclebox reg, cargo, driver, time
   local a, b
-  let a[1] = reg, a[2] = cargo, b[1] = driver, b[2] = time
+  let a = [reg, cargo]
+  let b = [driver, time]
 
   # Draw vehicle info as two column table with arrow pointing left
   #
