@@ -770,7 +770,8 @@ public class Expression
 					 */
 					if (expr.m_isLeaf)
 					{
-						if (expr.m_leafArg.getType() != Argument.VARIABLE)
+						if (expr.m_leafArg == null ||
+							expr.m_leafArg.getType() != Argument.VARIABLE)
 						{
 							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() + ": " +
 								MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
