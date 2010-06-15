@@ -1,6 +1,6 @@
-# Sample commands to display map of Europe -- try changing colors
+# Sample commands to display map of Asia -- try changing colors
 # and numbers, then pressing the green arrow to see what happens.
-worlds -11, 34, 37, 73
+worlds 110, -15, 130, 30
 
 # Ocean as blue background.
 box -180, -90, 180, 90

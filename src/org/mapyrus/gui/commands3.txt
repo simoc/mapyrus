@@ -1,0 +1,73 @@
+# Sample commands to display map of countries using Euro currency.  Try
+# changing colors and coordinates, then press green arrow to see what happens.
+worlds -11, 33, 37, 73
+
+# Ocean as blue background.
+box -180, -90, 180, 90
+color "lightblue"
+fill
+
+# Make a lookup table of countries in Eurozone.
+let euros = ["Austria":1, "Belgium":1, "Netherlands":1, "Finland":1, \
+"France":1, "Germany":1, "Ireland":1, "Italy":1, "Luxembourg":1, \
+"Portugal":1, "Spain":1, "Greece":1, "Slovenia":1, "Cyprus":1, "Malta":1, \
+"Slovakia":1]
+
+dataset "internal", "countries", ""
+linestyle 0.05, "round", "round"
+while Mapyrus.fetch.more
+do
+	# Display countries in Eurozone in brighter color.
+	fetch
+	clearpath
+	addpath GEOMETRY
+	if euros[COUNTRY] == 1
+	then
+		color "orangered"
+		fill
+		color "black"
+		stroke
+	else
+		color "darkred"
+		fill
+	endif
+done
+
+# Read countries again, this time skipping anything off the page so
+# we do not try and label something outside the page by accident.
+dataset "internal", "countries", "xmin=" . Mapyrus.worlds.min.x . \
+" ymin=" . Mapyrus.worlds.min.y . \
+" xmax=" . Mapyrus.worlds.max.x . \
+" ymax=" . Mapyrus.worlds.max.y
+while Mapyrus.fetch.more
+do
+	fetch
+	if euros[COUNTRY] == 1 and labelled[COUNTRY] != 1
+	then
+		# Label each Eurozone country.
+		clearpath
+		addpath GEOMETRY
+		sinkhole
+
+		# Display label twice to highlight it so it is easier to read.
+		justify "center, middle"
+		font "SansSerif", 3, "outlinewidth=1"
+		color "white"
+		label COUNTRY
+		font "SansSerif", 3
+		color "black"
+		label COUNTRY
+
+		# Mark country as labelled so we don't label another
+		# island that is part of this country.
+		let labelled[COUNTRY] = 1
+	endif
+done
+
+# Add transparent Euros symbol over middle of map.
+clearpath
+move Mapyrus.worlds.center.x, Mapyrus.worlds.center.y
+font "SansSerif", 96
+color "blue", 0.4
+justify "center, middle"
+label "€"
