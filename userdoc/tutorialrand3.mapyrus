@@ -1,33 +1,36 @@
-function randomLetter letters
-  # Return a random letter from a list of letters
+begin placeDot
+  # Place dot in random position.
   #
-  local n
-  let n = substr(letters, random(length(letters)), 1)
-  return n
+  circle random(2), random(2), 1
+  color "orange"
+  fill
 end
-
-begin placeLetter
-  # Place random letter in random position.
+begin fillDots densityPercent
+  clip "inside"
+  stripepath 3 / (densityPercent / 100), 0
+  samplepath 3 / (densityPercent / 100), 0
+  placeDot
+end
+begin dotDensityFill densityPercent
+  # Draw dots inside polygon.
   #
-  move random(2), random(2)
-  color "#0000A0"
-  font "Helvetica", 3
-  label randomLetter("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-end
-begin alphabetSoup
-  # Draw polygon outline, then grid of letters inside polygon.
+  fillDots densityPercent
+  # Draw polygon outline
   #
   color "black"
   linestyle 0.1
   stroke
-  clip "inside"
-  stripepath 4, 0
-  samplepath 4, 0
-  placeLetter
 end
 
-newpage "eps", "tutorialrand3.eps", 40, 40
+newpage "eps", "tutorialrand3.eps", 60, 40
 clearpath
-move 5, 5
-draw 7, 32, 31, 29, 27, 8, 5, 5
-alphabetSoup
+box 3, 3, 20, 38
+dotDensityFill 25
+
+clearpath
+box 23, 3, 40, 38
+dotDensityFill 50
+
+clearpath
+box 43, 3, 59, 38
+dotDensityFill 100
