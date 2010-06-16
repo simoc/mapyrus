@@ -38,6 +38,8 @@ do
   clearpath
   addpath GEOMETRY
   color "lightgray"
+  fill
+  color "gray"
   stroke
 done
 
