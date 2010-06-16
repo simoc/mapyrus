@@ -33,12 +33,8 @@ do
 	endif
 done
 
-# Read countries again, this time skipping anything off the page so
-# we do not try and label something outside the page by accident.
-dataset "internal", "countries", "xmin=" . Mapyrus.worlds.min.x . \
-" ymin=" . Mapyrus.worlds.min.y . \
-" xmax=" . Mapyrus.worlds.max.x . \
-" ymax=" . Mapyrus.worlds.max.y
+# Read countries again.
+dataset "internal", "countries", ""
 while Mapyrus.fetch.more
 do
 	fetch
