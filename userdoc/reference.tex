@@ -609,12 +609,18 @@ function or procedure with the local command are local to that function or
 procedure and not visible outside the function or procedure.  All other
 variables are global.
 
-Array elements are accessed by giving the index between
+Individual array elements are accessed by giving the index between
 square brackets (\texttt{[} and \texttt{]}).
 The index is any string or number value.
 Multi-dimension arrays are available by using
 indexes named \textit{index1}\texttt{."}\textit{c}\texttt{".}\textit{index2},
 where \textit{c} is any character that never appears in an index.
+
+An array with sequential indexes starting at 1 is defined as a single
+argument by surrounding the values by square brackets
+\texttt{[\textit{value1}, \textit{value2}, ... ]}.
+To define both keys and values for an array use
+\texttt{[\textit{key1}: \textit{value1}, \textit{key2}: \textit{value2}, ... ]}.
 
 The \texttt{if}, \texttt{repeat}, \texttt{while}, \texttt{for}
 and \texttt{function} flow control structures
