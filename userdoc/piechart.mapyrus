@@ -9,7 +9,7 @@ begin piechart nSlices, sliceSizes, sliceLabels, sliceColors
 	local sweep, just
 
 	let radius = 8
-	linestyle 0.01
+	linestyle 0.1
 	font "Helvetica", 3
 	rotate 90
 

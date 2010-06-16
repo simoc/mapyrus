@@ -26,7 +26,7 @@ move 5, 5
 draw 45, 5
 arc -1, 45, 15, 55, 15
 draw 55, 25
-linestyle 0.1
+linestyle 0.3
 color '#a020f0'
 stroke
 # Demonstrate drawing a line with arrows at both ends like <---->
