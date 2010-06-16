@@ -1065,7 +1065,26 @@ public class Argument implements Comparable<Argument>, Cloneable
 		}
 		return(nextIndex);
 	}
-	
+
+	/**
+	 * Add backslash before any single quotes in string. 
+	 * @param s string to add backslashes to.
+	 * @return string with backslashes added.
+	 */
+	private String escapeQuotes(String s)
+	{
+		StringBuffer sb = new StringBuffer(s.length());
+		int c;
+		for (int j = 0; j < s.length(); j++)
+		{
+			c = s.charAt(j);
+			if (c == '\'')
+				sb.append('\\');
+			sb.append((char)c);
+		}
+		return(sb.toString());
+	}
+
 	/**
 	 * Return string representation of this argument.
 	 * @return string representation of argument value.
@@ -1112,7 +1131,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 				{
 					sb.append("'");
 					String key = keys[i].toString();
-					sb.append(key.replace("'", "\\'"));
+					sb.append(escapeQuotes(key));
 					sb.append("': ");
 				}
 
@@ -1120,7 +1139,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 				String sValue = value.getStringValue();
 				int valueType = value.getType();
 				if (valueType == Argument.STRING)
-					sValue = sValue.replaceAll("'", "\\'");
+					sValue = escapeQuotes(sValue);
 				if (valueType != Argument.HASHMAP && valueType != Argument.NUMERIC)
 					sb.append("'");
 				sb.append(sValue);
