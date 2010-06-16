@@ -380,10 +380,15 @@ public class Expression
 				 */
 				ExpressionTreeNode leftBranch = (ExpressionTreeNode)t.m_branches.get(0);
 				ExpressionTreeNode rightBranch = (ExpressionTreeNode)t.m_branches.get(1);
-				if (leftBranch.m_isLeaf && leftBranch.m_leafArg.getType() == Argument.VARIABLE)
+				if (leftBranch.m_isLeaf && leftBranch.m_leafArg != null &&
+					leftBranch.m_leafArg.getType() == Argument.VARIABLE)
 				{
 					String varName = leftBranch.m_leafArg.getVariableName();
 					hashMapVar = context.getVariableValue(varName, interpreterFilename);
+				}
+				else if (leftBranch.m_isLeaf && leftBranch.m_leafArg == null)
+				{
+					hashMapVar = traverseArray(leftBranch.m_branches, context, interpreterFilename);
 				}
 				else if (leftBranch.m_isFunction)
 				{
@@ -617,7 +622,34 @@ public class Expression
 			
 			if (m_isLeaf)
 			{
-				retval = m_leafArg.toString();
+				if (m_leafArg != null)
+				{
+					retval = m_leafArg.toString();
+				}
+				else
+				{
+					sb = new StringBuffer("[");
+					String delimiter = "";
+					boolean isKey = true;
+					for (ExpressionTreeNode node : m_branches)
+					{
+						if (isKey)
+						{
+							sb.append(delimiter);
+							delimiter = ",";
+						}
+						else
+						{
+							sb.append(":");
+						}
+						sb.append("'");
+						sb.append(node.toString());
+						sb.append("'");
+						isKey = !isKey;
+					}
+					sb.append("]");
+					return(sb.toString());
+				}
 			}
 			else
 			{
@@ -1222,7 +1254,7 @@ public class Expression
 		{	
 			p.unread(op1);
 		}
-		expr = parseArray(p, userFunctions);
+		expr = parseHashMapReference(p, userFunctions);
 
 		/*
 		 * Check for '++' or '--' after variable.
@@ -1265,6 +1297,49 @@ public class Expression
 					MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED));
 			}
 			expr = new ExpressionTreeNode(expr, type, null);
+		}
+		return(expr);
+	}
+
+	/*
+	 * Parse expression including reference to an element in a hashmap.
+	 */
+	private ExpressionTreeNode parseHashMapReference(Preprocessor p, HashMap userFunctions)
+		throws IOException, MapyrusException
+	{
+		ExpressionTreeNode expr, keyExpr;
+		int op1;
+
+		expr = parseArray(p, userFunctions);
+		while (true)
+		{
+			/*
+			 * If next character is '[' then parse hashmap key, then closing ']'.
+			 */
+			op1 = p.readNonSpace();
+			if (op1 == '[')
+			{
+				keyExpr = parseAssignment(p, userFunctions);
+				op1 = p.readNonSpace();
+				if (op1 != ']')
+				{
+					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": ']'");
+				}
+
+				/*
+				 * Expression tree for the hashmap reference a["foo"] is:
+				 *      []
+				 *     /  \
+				 *    a   "foo"
+				 */
+				expr = new ExpressionTreeNode(expr, HASHMAP_REFERENCE, keyExpr);
+			}
+			else
+			{
+				p.unread(op1);
+				break;
+			}
 		}
 		return(expr);
 	}
@@ -1383,50 +1458,7 @@ public class Expression
 		else
 		{
 			p.unread(op1);
-			expr = parseHashMapReference(p, userFunctions);
-		}
-		return(expr);
-	}
-
-	/*
-	 * Parse expression including reference to an element in a hashmap.
-	 */
-	private ExpressionTreeNode parseHashMapReference(Preprocessor p, HashMap userFunctions)
-		throws IOException, MapyrusException
-	{
-		ExpressionTreeNode expr, keyExpr;
-		int op1;
-
-		expr = parseFactor(p, userFunctions);
-		while (true)
-		{
-			/*
-			 * If next character is '[' then parse hashmap key, then closing ']'.
-			 */
-			op1 = p.readNonSpace();
-			if (op1 == '[')
-			{
-				keyExpr = parseAssignment(p, userFunctions);
-				op1 = p.readNonSpace();
-				if (op1 != ']')
-				{
-					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-						": " + MapyrusMessages.get(MapyrusMessages.EXPECTED) + ": ']'");
-				}
-
-				/*
-				 * Expression tree for the hashmap reference a["foo"] is:
-				 *      []
-				 *     /  \
-				 *    a   "foo"
-				 */
-				expr = new ExpressionTreeNode(expr, HASHMAP_REFERENCE, keyExpr);
-			}
-			else
-			{
-				p.unread(op1);
-				break;
-			}
+			expr = parseFactor(p, userFunctions);
 		}
 		return(expr);
 	}
