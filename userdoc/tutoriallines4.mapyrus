@@ -29,7 +29,7 @@ color 'red'
 linestyle 1.32, 'round', 'round'
 stroke
 color 'yellow'
-linestyle 0.1
+linestyle 0.3
 stroke
 # Draw path one more time as symbols showing name of highway.
 #
