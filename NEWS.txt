@@ -3,6 +3,9 @@ Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
 1.004, August 2010
 
+* Fix EVAL command when running as a servlet so Mapyrus commands can be
+  passed in an HTTP request.
+
 1.003, June 2010
 
 * Add easier initialisation of arrays: [66, 22, 34] or ["AU":"red", "NZ":"blue"]
