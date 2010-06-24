@@ -1730,7 +1730,8 @@ public class Interpreter implements Cloneable
 
 				if (type == Statement.PRINT)
 				{
-					context.getStdout().println(label);
+					PrintStream p = context.getStdout();
+					p.println(label);
 				}
 				else if (nChars > 0)
 				{
@@ -2074,7 +2075,7 @@ public class Interpreter implements Cloneable
 					 */
 					String command = m_executeArgs[0].getStringValue();
 					StringReader stringReader = new StringReader(command);
-					String filename = "(in eval)";
+					String filename = st.getFilename();
 					FileOrURL f = new FileOrURL(stringReader, filename);
 					byte []emptyBuffer = new byte[0];
 					interpret(context, f, new ByteArrayInputStream(emptyBuffer),
