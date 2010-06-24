@@ -883,18 +883,21 @@ public class Context
 	 */
 	public void setStdout(PrintStream stdout) throws IOException
 	{
-		/*
-		 * Close any existing standard output opened in this context.
-		 */
-		if (m_stdoutStream != null && m_stdoutStreamDefined)
+		if (stdout != m_stdoutStream)
 		{
-			if (m_stdoutStream == System.out)
-				m_stdoutStream.flush();
-			else
-				m_stdoutStream.close();
+			/*
+			 * Close any existing standard output opened in this context.
+			 */
+			if (m_stdoutStream != null && m_stdoutStreamDefined)
+			{
+				if (m_stdoutStream == System.out)
+					m_stdoutStream.flush();
+				else
+					m_stdoutStream.close();
+			}
+			m_stdoutStream = stdout;
+			m_stdoutStreamDefined = true;
 		}
-		m_stdoutStream = stdout;
-		m_stdoutStreamDefined = true;
 	}
 
 	/**
