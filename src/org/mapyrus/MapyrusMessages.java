@@ -172,6 +172,7 @@ public class MapyrusMessages
 	public static final String NO_ARC_START = "noarcstart";
 	public static final String NO_BEZIER_START = "nobezierstart";
 	public static final String NO_CLIP_SIDE = "noclipside";
+	public static final String NO_COMMANDS = "nocommands";
 	public static final String NO_DATASET = "nodataset";
 	public static final String NO_DEFAULT_PRINTER = "nodefaultprinter";
 	public static final String NO_EXPRESSION = "noexpression";
@@ -197,7 +198,6 @@ public class MapyrusMessages
 	public static final String RUN_COMMANDS = "runcommands";
 	public static final String SAVE_CHANGES_IN_TAB = "savechangesintab";
 	public static final String SAVE_TAB = "savetab";
-	public static final String SERVLET_INIT_PARAM = "servletinitparam";
 	public static final String STARTED_THREAD = "startedthread";
 	public static final String STOP_COMMANDS = "stopcommands";
 	public static final String TO_FILE = "tofile";
