@@ -39,9 +39,10 @@ public class ImageFilter
 	 * @param hue hue factor.
 	 * @param saturation saturation factor.
 	 * @param brightness brightness factor.
+	 * @param throttle throttle limiting CPU usage.
 	 */
 	public static void filter(BufferedImage image, float hue,
-		float saturation, float brightness) throws MapyrusException
+		float saturation, float brightness, Throttle throttle) throws MapyrusException
 	{
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -56,7 +57,7 @@ public class ImageFilter
 		float hsb[] = new float[3];
 		for (int y = 0; y < height; y++)
 		{
-			Throttle.sleep();
+			throttle.sleep();
 			for (int x = 0; x < width; x++)
 			{
 				int pixel = image.getRGB(x, y);
