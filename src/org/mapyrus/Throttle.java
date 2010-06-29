@@ -100,7 +100,8 @@ public class Throttle
 				/*
 				 * Thread has run for too long.  Interrupt it.
 				 */
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INTERRUPTED));
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.TIMEOUT) +
+					": " + (m_timeLimit / 1000));
 			}
 			else if (millis > m_millisToUse)
 			{
