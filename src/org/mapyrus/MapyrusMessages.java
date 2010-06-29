@@ -200,6 +200,7 @@ public class MapyrusMessages
 	public static final String SAVE_TAB = "savetab";
 	public static final String STARTED_THREAD = "startedthread";
 	public static final String STOP_COMMANDS = "stopcommands";
+	public static final String TIMEOUT = "timeout";
 	public static final String TO_FILE = "tofile";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
 	public static final String TRANSFORM_ERROR = "transformerror";
