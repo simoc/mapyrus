@@ -178,6 +178,7 @@ public class OutputFormat
 	private File m_tempFile;
 	private PrintWriter m_imageMapWriter;
 	private String m_uniqueKey;
+	private Throttle m_throttle;
 
 	/*
 	 * Frequently used fonts.
@@ -1510,13 +1511,15 @@ public class OutputFormat
 	 * @param height is the page height (in mm).
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
+	 * @param throttle throttle limiting CPU usage.
 	 */
 	public OutputFormat(String filename, String format,
 		double width, double height, String extras,
-		PrintStream stdoutStream)
+		PrintStream stdoutStream, Throttle throttle)
 		throws IOException, MapyrusException
 	{
 		m_formatName = format.toLowerCase();
+		m_throttle = throttle;
 
 		/*
 		 * Check that Java can write this image format to a file.
@@ -1586,6 +1589,7 @@ public class OutputFormat
 		m_outputType = INTERNAL_IMAGE;
 		m_image = image;
 		m_formatName = "png";
+		m_throttle = new Throttle();
 		PrintStream dummyStdout = new PrintStream(new ByteArrayOutputStream());
 		try
 		{
@@ -1922,7 +1926,7 @@ public class OutputFormat
 		int bitCounter = 0;
 		for (int row = 0; row < pixelHeight; row += step)
 		{
-			Throttle.sleep();
+			m_throttle.sleep();
 			for (int col = 0; col < pixelWidth; col += step)
 			{
 				int pixel = image.getRGB(col, row);
