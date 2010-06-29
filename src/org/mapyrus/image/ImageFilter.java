@@ -69,7 +69,11 @@ public class ImageFilter
 				Color.RGBtoHSB(red, green, blue, hsb);
 				hsb[0] *= hue;
 				hsb[1] *= saturation;
+				if (hsb[1] > 1)
+					hsb[1] = 1;
 				hsb[2] *= brightness;
+				if (hsb[2] > 1)
+					hsb[2] = 1;
 				pixel = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
 				pixel = (alpha | pixel);
 				image.setRGB(x, y, pixel);
