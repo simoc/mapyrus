@@ -458,10 +458,11 @@ public class Context
 	 * @param height is the page height (in mm).
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
+	 * @param throttle throttle limiting CPU usage.
 	 */
 	public void setOutputFormat(String format, String filename,
 		double width, double height, String extras,
-		PrintStream stdoutStream)
+		PrintStream stdoutStream, Throttle throttle)
 		throws IOException, MapyrusException
 	{
 		closeOutputFormat();
@@ -472,7 +473,7 @@ public class Context
 		initialiseContext(this);
 
 		m_outputFormat = new OutputFormat(filename, format,
-			width, height, extras, stdoutStream);
+			width, height, extras, stdoutStream, throttle);
 		m_outputDefined = true;
 	}
 
@@ -1780,8 +1781,9 @@ public class Context
 	 * Draws geo-referenced image on page.
 	 * @param filename geo-referenced image filename.
 	 * @param extras extra parameters to control display of image.
+	 * @param throttle throttle limiting CPU usage.
 	 */
-	public void drawGeoImage(String filename, String extras)
+	public void drawGeoImage(String filename, String extras, Throttle throttle)
 		throws IOException, MapyrusException
 	{
 		BufferedImage image;
@@ -1974,7 +1976,7 @@ public class Context
 
 			if (hue != 1 || saturation != 1 || brightness != 1)
 			{
-				ImageFilter.filter(image, hue, saturation, brightness);
+				ImageFilter.filter(image, hue, saturation, brightness, throttle);
 			}
 
 			/*
@@ -2059,7 +2061,7 @@ public class Context
 
 			if (hue != 1 || saturation != 1 || brightness != 1)
 			{
-				ImageFilter.filter(image, hue, saturation, brightness);
+				ImageFilter.filter(image, hue, saturation, brightness, throttle);
 			}
 
 			m_outputFormat.drawGeoImage(image, cornerPts[0], cornerPts[1],

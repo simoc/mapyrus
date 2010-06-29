@@ -189,14 +189,15 @@ public class ContextStack
 	 * @param height is the page height (in mm).
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
+	 * @param throttle throttle limiting CPU usage.
 	 */
 	public void setOutputFormat(String format, String filename,
 		double width, double height, String extras,
-		PrintStream stdoutStream)
+		PrintStream stdoutStream, Throttle throttle)
 		throws IOException, MapyrusException
 	{
 		getCurrentContext().setOutputFormat(format, filename,
-			width, height, extras, stdoutStream);
+			width, height, extras, stdoutStream, throttle);
 	}
 
 	/**
@@ -614,11 +615,12 @@ public class ContextStack
 	 * Draws geo-referenced image on page.
 	 * @param filename geo-referenced image filename.
 	 * @param extras extra parameters to control display of image.
+	 * @param throttle throttle limiting CPU usage.
 	 */
-	public void drawGeoImage(String filename, String extras)
+	public void drawGeoImage(String filename, String extras, Throttle throttle)
 		throws IOException, MapyrusException
 	{
-		getCurrentContext().drawGeoImage(filename, extras);
+		getCurrentContext().drawGeoImage(filename, extras, throttle);
 	}
 
 	/**
