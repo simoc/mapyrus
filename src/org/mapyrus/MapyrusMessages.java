@@ -176,6 +176,8 @@ public class MapyrusMessages
 	public static final String NO_DATASET = "nodataset";
 	public static final String NO_DEFAULT_PRINTER = "nodefaultprinter";
 	public static final String NO_EXPRESSION = "noexpression";
+	public static final String NO_IO = "noio";
+	public static final String NO_JAVA_FUNCTIONS = "nojavafunctions";
 	public static final String NO_JDBC_CLASS = "nojdbcclass";
 	public static final String NO_LEGEND_SIZE = "nolegendsize";
 	public static final String NO_MIME_TYPE = "nomimetype";
