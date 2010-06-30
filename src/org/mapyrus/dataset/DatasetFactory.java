@@ -28,6 +28,7 @@ import java.io.InputStream;
 import org.mapyrus.Constants;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
+import org.mapyrus.Throttle;
 
 /**
  * Factory class returning new dataset objects.  Provides single interface to
@@ -44,7 +45,7 @@ public class DatasetFactory
 	 * @param stdin standard input stream of interpreter.
 	 */
 	public static GeographicDataset open(String type, String name,
-		String extras, InputStream stdin) throws MapyrusException
+		String extras, InputStream stdin, Throttle throttle) throws MapyrusException
 	{
 		GeographicDataset retval = null;
 		String errorMessage = null;
@@ -57,6 +58,18 @@ public class DatasetFactory
 		 */		
 		try
 		{
+			if (!(type.equalsIgnoreCase("internal") || type.equalsIgnoreCase("jdbc")))
+			{
+				/*
+				 * Check if file access is allowed.
+				 */
+				if (!throttle.isIOAllowed())
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+						": " + name);
+				}
+			}
+
 			if (type.equalsIgnoreCase("textfile"))
 				retval = new TextfileDataset(name, extras, stdin);
 			else if (type.equalsIgnoreCase("shapefile"))
