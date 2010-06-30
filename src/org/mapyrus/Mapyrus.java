@@ -29,6 +29,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -176,8 +177,11 @@ public class Mapyrus
 			"  -h            print this message",
 			"  -l <level>    sets logging level for HTTP server.  One of ",
 			"                FINEST, FINER, FINE, CONFIG, INFO, WARNING, SEVERE.",
-			"  -r <percent>  a value in range 1-100 giving maximum CPU load.  " + Constants.PROGRAM_NAME,
-			"                runs more slowly giving other processes more CPU time",
+			"  -r <percent>:<maxtime> restricts CPU usage.  percent value in",
+			"                range 1-100 gives maximum CPU load, a lower value gives",
+			"                other processes more time to run.  maxtime defines",
+			"                the maximum number of seconds to run for.  " + Constants.PROGRAM_NAME + " will",
+			"                exit with error if it runs for longer.",
 			"  -s <port>     starts " + Constants.PROGRAM_NAME + " as a self-contained HTTP server on the",
 			"                given port.  Refer to manual for detailed instructions.",
 			"  -v            print version information and exit",
@@ -484,6 +488,7 @@ public class Mapyrus
 		Level logLevel = null;
 		StringBuffer commandsToExecute = new StringBuffer();
 		boolean startGui = false;
+		Throttle throttle = null;
 
 		if (args.length == 0)
 			startGui = true;
@@ -581,8 +586,18 @@ public class Mapyrus
 
 				try
 				{
-					int percentage = Integer.parseInt(args[argIndex + 1]);
-					Throttle.setMaxLoad(percentage);
+					int percentage = 100;
+					int maxTime = -1;
+					StringTokenizer st = new StringTokenizer(args[argIndex + 1], ":");
+					if (st.hasMoreTokens())
+						percentage = Integer.parseInt(st.nextToken());
+					if (st.hasMoreTokens())
+						maxTime = Integer.parseInt(st.nextToken()) * 1000;
+					throttle = new Throttle();
+					if (percentage != 100)
+						throttle.setMaxLoad(percentage);
+					if (maxTime != -1)
+						throttle.setMaxTime(maxTime);
 				}
 				catch (NumberFormatException e)
 				{
@@ -635,6 +650,17 @@ public class Mapyrus
 
 		context = new ContextStack();
 		Interpreter interpreter = new Interpreter();
+		if (throttle != null)
+		{
+			if (isHttpServer && throttle.getMaxTime() < 0)
+			{
+				/*
+				 * Set a reasonable default maximum time for HTTP requests.
+				 */
+				throttle.setMaxTime(Constants.MAX_HTTP_REQUEST_TIME);
+			}
+			interpreter.setThrottle(throttle);
+		}
 
 		if (commandsToExecute.length() > 0)
 		{
