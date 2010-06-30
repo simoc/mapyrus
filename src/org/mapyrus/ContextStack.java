@@ -402,7 +402,7 @@ public class ContextStack
 		String extras, InputStream stdin) throws MapyrusException
 	{
 		GeographicDataset dataset;
-		dataset = DatasetFactory.open(type, name, extras, stdin);
+		dataset = DatasetFactory.open(type, name, extras, stdin, m_throttle);
 		getCurrentContext().setDataset(dataset);
 	}
 
