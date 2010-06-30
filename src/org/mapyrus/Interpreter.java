@@ -3099,7 +3099,7 @@ public class Interpreter implements Cloneable
 			{
 				/*
 				 * Execute each of the statements.
-				 */	
+				 */
 				for (int i = 0; i < v.size(); i++)
 				{
 					Statement st = (Statement)v.get(i);
@@ -3111,6 +3111,12 @@ public class Interpreter implements Cloneable
 					if (returnValue != null)
 						break;
 				}
+
+				/*
+				 * Ensure we can break out of an empty loop.
+				 */
+				if (v.isEmpty())
+					m_throttle.sleep();
 
 				if (loopStatementType == Statement.WHILE_LOOP && (returnValue == null))
 				{
