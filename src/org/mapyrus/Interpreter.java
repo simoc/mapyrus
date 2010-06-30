@@ -1650,25 +1650,34 @@ public class Interpreter implements Cloneable
 							 */
 							stdout = m_stdoutStream;
 						}
-						else if (filename.startsWith("|"))
-						{
-							/*
-							 * Pipe standard output through an external command.
-							 */
-							String pipeCommand = filename.substring(1).trim();
-							String []cmdArray;
-							if (Constants.getOSName().indexOf("WIN") >= 0)
-								cmdArray = new String[]{pipeCommand};
-							else
-								cmdArray = new String[]{"sh", "-c", pipeCommand};
-							Process p = Runtime.getRuntime().exec(cmdArray);
-							OutputStream stream = p.getOutputStream();
-							stdout = new PrintStream(stream);
-						}
 						else
 						{
-							OutputStream stream = new FileOutputStream(filename);
-							stdout = new PrintStream(stream);
+							if (!context.getThrottle().isIOAllowed())
+							{
+								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+									": " + filename);
+							}
+							
+							if (filename.startsWith("|"))
+							{
+								/*
+								 * Pipe standard output through an external command.
+								 */
+								String pipeCommand = filename.substring(1).trim();
+								String []cmdArray;
+								if (Constants.getOSName().indexOf("WIN") >= 0)
+									cmdArray = new String[]{pipeCommand};
+								else
+									cmdArray = new String[]{"sh", "-c", pipeCommand};
+								Process p = Runtime.getRuntime().exec(cmdArray);
+								OutputStream stream = p.getOutputStream();
+								stdout = new PrintStream(stream);
+							}
+							else
+							{
+								OutputStream stream = new FileOutputStream(filename);
+								stdout = new PrintStream(stream);
+							}
 						}
 						context.setStdout(stdout);
 					}
@@ -2908,6 +2917,7 @@ public class Interpreter implements Cloneable
 		m_stdoutStream = stdout;
 		m_context = context;
 		context.setStdout(stdout);
+		context.setThrottle(m_throttle);
 
 		try
 		{
