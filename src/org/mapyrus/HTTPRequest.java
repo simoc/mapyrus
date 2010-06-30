@@ -518,6 +518,7 @@ public class HTTPRequest extends Thread
 					/*
 					 * Run commands to set variables, then run commands to generate output.
 					 */
+					m_interpreter.getThrottle().restart();
 					m_interpreter.interpret(context, f1, emptyStdin, null);
 					m_interpreter.interpret(context, f2, emptyStdin, printStream);
 					httpResponse = context.getHTTPResponse().trim() +
