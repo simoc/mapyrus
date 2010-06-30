@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MapyrusServlet extends HttpServlet
 {
 	static final long serialVersionUID = 0x3303;
-	private static final String COMMANDS_INIT_PARAM_NAME = "c1";
+	private static final String COMMANDS_PARAM_NAME = "commands";
 
 	/**
 	 * Handle HTTP GET request from web browser.
@@ -55,10 +55,10 @@ public class MapyrusServlet extends HttpServlet
 		throws ServletException, IOException
 	{
 		/*
-		 * Mapyrus commands read from servlet initialisation parameter 'c1' unless
-		 * over-ridden.
+		 * Parameter in the HTTP request containing Mapyrus commands.
 		 */
-		String paramName = COMMANDS_INIT_PARAM_NAME;
+		String paramName = COMMANDS_PARAM_NAME;
+		String paramValue = null;
 
 		/*
 		 * Generate Mapyrus commands to set variables from HTTP request parameters,
@@ -79,23 +79,17 @@ public class MapyrusServlet extends HttpServlet
 			}
 			variables = HTTPRequest.addVariable(variables, var.toUpperCase(), value[0]);
 
-			/*
-			 * Special HTTP request parameter giving name of servlet initialisation
-			 * parameter containing commands for this HTTP request.
-			 */
-			if (var.equals("ipn"))
-			{
-				/*
-				 * Ensure that value will be valid as a servlet
-				 * initialisation parameter name.
-				 */
-				if (!HTTPRequest.isLegalVariable(value[0]))
-				{
-					throw new ServletException(MapyrusMessages.get(MapyrusMessages.INVALID_VARIABLE) +
-						": " + value[0]);
-				}
-				paramName = value[0];
-			}
+			if (var.equalsIgnoreCase(paramName))
+				paramValue = value[0];
+		}
+
+		/*
+		 * Check that we have some Mapyrus commands to run.
+		 */
+		if (paramValue == null || paramValue.length() == 0)
+		{
+			throw new ServletException(MapyrusMessages.get(MapyrusMessages.NO_COMMANDS) +
+				": " + paramName);
 		}
 
 		/*
@@ -108,17 +102,6 @@ public class MapyrusServlet extends HttpServlet
 			String value = request.getHeader(var);
 			if (HTTPRequest.isLegalVariable(var))
 				HTTPRequest.addVariable(variables, HTTPRequest.HTTP_HEADER_ARRAY + "['" + var + "']", value);
-		}
-	
-		/*
-		 * Get Mapyrus commands to execute for this request from servlet
-		 * configuration file.
-		 */
-		String paramValue = getInitParameter(paramName);
-		if (paramValue == null || paramValue.length() == 0)
-		{
-			throw new ServletException(MapyrusMessages.get(MapyrusMessages.SERVLET_INIT_PARAM) +
-				": " + paramName);
 		}
 
 		ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
@@ -138,6 +121,9 @@ public class MapyrusServlet extends HttpServlet
 			/*
 			 * Run commands to set variables, then run commands to generate output.
 			 */
+			Throttle throttle = new Throttle();
+			throttle.setMaxTime(Constants.MAX_HTTP_REQUEST_TIME);
+			interpreter.setThrottle(throttle);
 			interpreter.interpret(context, f1, emptyStdin, null);
 			interpreter.interpret(context, f2, emptyStdin, printStream);
 			String responseHeader = context.getHTTPResponse().trim();
