@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 
 /**
  * Function checking if a file exists and is readable.
@@ -43,6 +44,13 @@ public class Readable implements Function
 	{
 		Argument arg1 = (Argument)args.get(0);
 		String filename = arg1.getStringValue();
+
+		if (!context.getThrottle().isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+				": " + filename);
+		}
+
 		File f = new File(filename);
 		
 		Argument retval = Argument.numericZero;

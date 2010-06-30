@@ -31,6 +31,7 @@ import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
 import org.mapyrus.FileOrURL;
 import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
 
 /**
  * Function returning contents of a text file.
@@ -46,6 +47,13 @@ public class Spool implements Function
 	{
 		Argument arg1 = (Argument)args.get(0);
 		String filename = arg1.getStringValue();
+		
+		if (!context.getThrottle().isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+				": " + filename);
+		}
+
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(8 * 1024);
 		InputStream stream = null;
 		int nBytes;

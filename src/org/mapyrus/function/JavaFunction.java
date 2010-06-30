@@ -68,6 +68,11 @@ public class JavaFunction implements Function
 	public Argument evaluate(ContextStack context, ArrayList args)
 		throws MapyrusException, InterruptedException
 	{
+		if (!context.getThrottle().isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_JAVA_FUNCTIONS));
+		}
+
 		Argument retval = null;
 		int nArgs = args.size();
 		Object methodArgs[] = new Object[nArgs];
