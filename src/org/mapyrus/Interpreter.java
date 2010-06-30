@@ -104,6 +104,8 @@ public class Interpreter implements Cloneable
 	private InputStream m_stdinStream;
 	private PrintStream m_stdoutStream;
 
+	private Throttle m_throttle;
+
 	/*
 	 * Evaluted arguments for statement currently being executed.
 	 * A large number of statements will be executed (but only one at a
@@ -657,7 +659,7 @@ public class Interpreter implements Cloneable
 		 */
 		if (Thread.interrupted())
 			throw new InterruptedException(MapyrusMessages.get(MapyrusMessages.INTERRUPTED));
-		Throttle.sleep();
+		m_throttle.sleep();
 
 		expr = st.getExpressions();
 		nExpressions = expr.length;
@@ -1802,7 +1804,7 @@ public class Interpreter implements Cloneable
 						extras = m_executeArgs[1].getStringValue();
 					else
 						extras = "";
-					context.drawGeoImage(filename, extras);
+					context.drawGeoImage(filename, extras, m_throttle);
 				}
 				else
 				{
@@ -2051,7 +2053,7 @@ public class Interpreter implements Cloneable
 					}
 
 					context.setOutputFormat(format, filename, width, height,
-						extras, context.getStdout());
+						extras, context.getStdout(), m_throttle);
 				}
 				else
 				{
@@ -3296,6 +3298,25 @@ public class Interpreter implements Cloneable
 		m_statementBlocks = new HashMap<String, Statement>();
 		m_userFunctions = new HashMap<String, UserFunction>();
 		m_executeArgs = null;
+		m_throttle = new Throttle();
+	}
+
+	/**
+	 * Set throttle limiting CPU usage.
+	 * @param throttle throttle to set.
+	 */
+	public void setThrottle(Throttle throttle)
+	{
+		m_throttle = throttle;
+	}
+
+	/**
+	 * Get throttle limiting CPU usage.
+	 * @return throttle.
+	 */
+	public Throttle getThrottle()
+	{
+		return(m_throttle);
 	}
 
 	/**
@@ -3307,6 +3328,7 @@ public class Interpreter implements Cloneable
 		Interpreter retval = new Interpreter();
 		retval.m_executeArgs = null;
 		retval.m_context = null;
+		retval.m_throttle = m_throttle.clone();
 		retval.m_statementBlocks = new HashMap<String, Statement>(this.m_statementBlocks.size());
 		retval.m_statementBlocks.putAll(this.m_statementBlocks);
 
