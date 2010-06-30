@@ -24,20 +24,26 @@ package org.mapyrus;
 
 /**
  * Limits CPU usage by occasionally sleeping when called.
+ * Limits access to file system to avoid security problems.
  */
 public class Throttle
 {
 	private long m_startTime;
 
-	/*
+	/**
 	 * Number of milliseconds to run in each second.
 	 */
 	private long m_millisToUse = 1000;
 
-	/*
+	/**
 	 * Total number of milliseconds that thread can run for.
 	 */
 	private long m_timeLimit = -1;
+
+	/**
+	 * Flag if access to file system or network should be allowed.
+	 */
+	private boolean m_allowIO = true;
 
 	public Throttle()
 	{
@@ -118,6 +124,24 @@ public class Throttle
 				}
 			}
 		}
+	}
+
+	/**
+	 * Set whether I/O is allowed.
+	 * @param allowed true if I/O should be allowed.
+	 */
+	public void setIOAllowed(boolean allowed)
+	{
+		m_allowIO = allowed;
+	}
+
+	/**
+	 * Check if I/O is allowed.
+	 * @return true if I/O is allowed.
+	 */
+	public boolean isIOAllowed()
+	{
+		return(m_allowIO);
 	}
 
 	/**
