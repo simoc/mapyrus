@@ -94,6 +94,11 @@ public class ContextStack
 	private long m_startTime;
 
 	/*
+	 * Throttle limiting CPU usage.
+	 */
+	private Throttle m_throttle;
+
+	/*
 	 * Point clicked in HTML imagemap and passed in HTTP request we are processing.
 	 */
 	private Point m_imagemapPoint;
@@ -112,6 +117,7 @@ public class ContextStack
 		m_stack = new LinkedList<Context>();
 		m_stack.add(new Context());
 		m_startTime = System.currentTimeMillis();
+		m_throttle = new Throttle();
 		m_imagemapPoint = null;
 		m_legendEntries = new LegendEntryList();
 		m_iconCache = new LRUCache<String, BufferedImage>(Constants.ICON_CACHE_SIZE);
@@ -584,6 +590,12 @@ public class ContextStack
 					}
 					else
 					{
+						if (!m_throttle.isIOAllowed())
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+								": " + filename);
+						}
+
 						url = new URL(filename);
 					}
 					icon = ImageIOWrapper.read(url, getCurrentContext().getColor());
@@ -620,6 +632,11 @@ public class ContextStack
 	public void drawGeoImage(String filename, String extras, Throttle throttle)
 		throws IOException, MapyrusException
 	{
+		if (!m_throttle.isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+				": " + filename);
+		}
 		getCurrentContext().drawGeoImage(filename, extras, throttle);
 	}
 
@@ -631,6 +648,11 @@ public class ContextStack
 	public void drawEPS(String filename, double size)
 		throws IOException, MapyrusException
 	{
+		if (!m_throttle.isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+				": " + filename);
+		}
 		getCurrentContext().drawEPS(filename, size);
 	}
 
@@ -642,6 +664,11 @@ public class ContextStack
 	public void drawSVG(String filename, double size)
 		throws IOException, MapyrusException
 	{
+		if (!m_throttle.isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+				": " + filename);
+		}
 		getCurrentContext().drawSVG(filename, size);
 	}
 
@@ -664,6 +691,11 @@ public class ContextStack
 	public void drawPDF(String filename, int page, double size)
 		throws IOException, MapyrusException
 	{
+		if (!m_throttle.isIOAllowed())
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+				": " + filename);
+		}
 		getCurrentContext().drawPDF(filename, page, size);
 	}
 
@@ -1651,5 +1683,23 @@ public class ContextStack
 			
 			throw e;
 		}
+	}
+
+	/**
+	 * Set throttle limiting CPU usage.
+	 * @param throttle throttle to set.
+	 */
+	public void setThrottle(Throttle throttle)
+	{
+		m_throttle = throttle;
+	}
+
+	/**
+	 * Get throttle limiting CPU usage.
+	 * @return throttle.
+	 */
+	public Throttle getThrottle()
+	{
+		return(m_throttle);
 	}
 }
