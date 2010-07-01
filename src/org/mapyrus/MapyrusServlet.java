@@ -123,6 +123,14 @@ public class MapyrusServlet extends HttpServlet
 			 */
 			Throttle throttle = new Throttle();
 			throttle.setMaxTime(Constants.MAX_HTTP_REQUEST_TIME);
+
+			/*
+			 * Disable file access from servlet for better security unless
+			 * servlet init-param "io" is set.
+			 */
+			String s = getInitParameter("io");
+			boolean isIOAllowed = Boolean.valueOf(s);
+			throttle.setIOAllowed(isIOAllowed);
 			interpreter.setThrottle(throttle);
 			interpreter.interpret(context, f1, emptyStdin, null);
 			interpreter.interpret(context, f2, emptyStdin, printStream);
