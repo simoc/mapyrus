@@ -1099,6 +1099,12 @@ public class OutputFormat
 					String fontFilename = st2.nextToken();
 					if (fontFilename.length() > 0)
 					{
+						if (!m_throttle.isIOAllowed())
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+								": " + fontFilename);
+						}
+
 						/*
 						 * Accept wildcards in filenames.
 						 */
@@ -1117,6 +1123,12 @@ public class OutputFormat
 					String afmFilename = st2.nextToken();
 					if (afmFilename.length() > 0)
 					{
+						if (!m_throttle.isIOAllowed())
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+								": " + afmFilename);
+						}
+
 						/*
 						 * Accept wildcards in filenames.
 						 */
@@ -1177,6 +1189,12 @@ public class OutputFormat
 					 */
 					if (ttfFilename.length() > 0)
 					{
+						if (!m_throttle.isIOAllowed())
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+								": " + ttfFilename);
+						}
+
 						WildcardFile wildcard = new WildcardFile(ttfFilename);
 						Iterator it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
@@ -1223,7 +1241,13 @@ public class OutputFormat
 			}
 			else if (token.startsWith("imagemap=") && m_outputType == IMAGE_FILE)
 			{
-				m_imageMapWriter = new PrintWriter(new FileWriter(token.substring(9)));
+				String imageMapFilename = token.substring(9);
+				if (!m_throttle.isIOAllowed())
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+						": " + imageMapFilename);
+				}
+				m_imageMapWriter = new PrintWriter(new FileWriter(imageMapFilename));
 			}
 			else if (token.startsWith("background="))
 			{
@@ -1238,6 +1262,11 @@ public class OutputFormat
 			else if (token.startsWith("scriptfile="))
 			{
 				scriptFilename = token.substring(11);
+				if (!m_throttle.isIOAllowed())
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+						": " + scriptFilename);
+				}
 			}
 			else if (token.startsWith("minimumlinewidth="))
 			{
@@ -1273,6 +1302,12 @@ public class OutputFormat
 
 			if (m_isPipedOutput)
 			{
+				if (!m_throttle.isIOAllowed())
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+						": " + filename);
+				}
+
 				String pipeCommand = filename.substring(1).trim();
 				String []cmdArray;
 				if (Constants.getOSName().indexOf("WIN") >= 0)
@@ -1287,7 +1322,14 @@ public class OutputFormat
 				if (m_isStandardOutput)
 					m_outputStream = stdoutStream;
 				else
+				{
+					if (!m_throttle.isIOAllowed())
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+							": " + filename);
+					}
 					m_outputStream = new FileOutputStream(filename);
+				}
 			}
 
 			/*
@@ -1300,6 +1342,11 @@ public class OutputFormat
 		File f = new File(filename);
 		if (m_isUpdatingFile)
 		{
+			if (!m_throttle.isIOAllowed())
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+					": " + filename);
+			}
 			if (!f.canWrite())
 			{
 				throw new IOException(MapyrusMessages.get(MapyrusMessages.READ_ONLY) + ": " + filename);
@@ -1494,7 +1541,7 @@ public class OutputFormat
 
 	/*
 	 * Set writer for HTML image map.
-     	 * @param imageMapWriter is HTML image map to write to.
+     * @param imageMapWriter is HTML image map to write to.
 	 */
 	public void setImageMapWriter(PrintWriter imageMapWriter)
 	{
