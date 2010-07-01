@@ -215,7 +215,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			 * Create some tabs with example commands for the user to
 			 * experiment with.
 			 */
-			String []tabNames = new String[]{"Mapyrus Logo", "Asia", "Eurozone"};
+			String []tabNames = new String[]{"Mapyrus Logo", "USA", "Eurozone"};
 			String []urls = new String[]{"commands1.txt", "commands2.txt", "commands3.txt"};
 
 			for (int i = 0; i < tabNames.length; i++)
