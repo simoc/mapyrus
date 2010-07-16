@@ -66,24 +66,33 @@ class Preprocessor
 	private boolean m_InSingleLineComment = false;
 	private boolean m_InMultiLineComment = false;
 
+	/*
+	 * Is inclusion of other files allowed?
+	 * When running as web application it may be blocked for security.
+	 */
+	private boolean m_isIncludeAllowed;
+
 	/**
 	 * Create stack of files being read.
 	 * @param f is the first file to push onto the stack.
+	 * @param isIncludeAllowed true if other files may be included.
 	 */
-	private void initFileStack(FileOrURL f)
+	private void initFileStack(FileOrURL f, boolean isIncludeAllowed)
 	{
 		m_fileStack = new LinkedList<FileOrURL>();
 		m_fileStack.add(f);
 		m_initialFile = f;
+		m_isIncludeAllowed = isIncludeAllowed;
 	}
 
 	/**
 	 * Create new user input producer from an already open Reader.
 	 * @param f is a file or URL to read from.
+	 * @param isIncludeAllowed true if other files may be included.
 	 */
-	public Preprocessor(FileOrURL f)
+	public Preprocessor(FileOrURL f, boolean isIncludeAllowed)
 	{
-		initFileStack(f);
+		initFileStack(f, isIncludeAllowed);
 	}
 
 	/**
@@ -93,7 +102,7 @@ class Preprocessor
 	public Preprocessor(String filename) throws IOException, MapyrusException
 	{
 		FileOrURL f = new FileOrURL(filename);
-		initFileStack(f);
+		initFileStack(f, true);
 	}
 
 	/*
@@ -343,6 +352,11 @@ class Preprocessor
 					{
 						filename = filename.substring(1, filenameLen - 1);
 					}
+				}
+
+				if (!m_isIncludeAllowed)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) + ": " + filename);
 				}
 
 				/*

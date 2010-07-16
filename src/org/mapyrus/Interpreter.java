@@ -2912,7 +2912,8 @@ public class Interpreter implements Cloneable
 		throws IOException, InterruptedException, MapyrusException
 	{
 		Statement st;
-		Preprocessor preprocessor = new Preprocessor(f);
+		boolean isIncludeAllowed = m_throttle.isIOAllowed();
+		Preprocessor preprocessor = new Preprocessor(f, isIncludeAllowed);
 		m_stdinStream = stdin;
 		m_stdoutStream = stdout;
 		m_context = context;
