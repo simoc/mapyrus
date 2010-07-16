@@ -14,6 +14,14 @@
     <servlet>
         <servlet-name>MapyrusServlet</servlet-name>
         <servlet-class>org.mapyrus.MapyrusServlet</servlet-class>
+
+        <!-- Flag defining whether servlet is allowed -->
+        <!-- I/O access to read and write files and access URLs. -->
+	<init-param>
+	    <param-name>io</param-name>
+	    <param-value>false</param-value>
+	</init-param>
+
     </servlet>
 
     <servlet-mapping>
