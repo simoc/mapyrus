@@ -29,7 +29,7 @@ stroke
 
 clearpath
 color "blue"
-linestyle 0.5
+linestyle 0.5, "round", "round"
 move 60, 15
 bezier 70, 25, 70, 20, 62, 15
 stroke
@@ -44,7 +44,6 @@ box3d 90, 15, 95, 20
 color "yellow"
 fill
 color "black"
-linestyle 0.01
 stroke
 
 clearpath

@@ -9,7 +9,7 @@ begin hatchMinus45
   stroke
 end
 begin crosshatch
-  linestyle 0.01
+  linestyle 0.2
   color "red"
   stroke
   hatch45
