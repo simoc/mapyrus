@@ -3145,20 +3145,31 @@ requests to the following URL.
 http://localhost:8080/mapyrus/
 \end{verbatim}
 
-The commands run by Mapyrus servlet when an HTTP request is received
-are defined in a servlet initialisation
-parameter.  Servlet initialisation parameters are set in
+The commands to be run by Mapyrus servlet are passed in
+the URL parameter \texttt{commands} in the HTTP request.
+
+Any other parameters passed in the URL (following the \texttt{?} character
+in the URL or passed in an HTML form) are set as variables in Mapyrus.
+Variable names are converted to uppercase.
+
+The following URLs demonstrate passing commands to Mapyrus servlet.
+
+\begin{alltt}
+http://localhost:8080/mapyrus/?commands=print+Mapyrus.version
+\end{alltt}
+\begin{alltt}
+http://localhost:8080/mapyrus/?commands=mimetype+"image%2Fpng"%0D \textbackslash
+  newpage+"png"%2C"-"%2C50%2C50%2C"background%3Dred"
+\end{alltt}
+
+Normally, the Mapyrus commands in the HTTP request will be generated
+programmatically or entered in an HTML form.
+
+By default, Mapyrus servlet blocks access to files and URLs.
+To enable access, set the servlet initialisation
+parameter \texttt{io} to \texttt{true} in
 the servlet configuration file \texttt{WEB-INF/web.xml}
 contained in the web application file \texttt{mapyrus.war}.
-
-By default, Mapyrus commands are defined in the servlet initialisation
-parameter \texttt{c1}.  If the URL parameter \texttt{ipn} is set to
-a servlet initialisation parameter name then Mapyrus commands are read from
-that initialisation parameter instead.
-
-Any parameters passed in the URL (following the \texttt{?} character in
-the URL or passed in an HTML form) are set as variables in Mapyrus.
-Variable names are converted to uppercase.
 
 The standard output of the Mapyrus commands is returned from
 the HTTP request.  A
@@ -3166,13 +3177,6 @@ the HTTP request.  A
 or
 \texttt{httpresponse}
 command must be used to define the type of output being returned.
-
-Mapyrus commands are not cached.
-If a single \texttt{include} statement is given for the Mapyrus commands
-in the servlet initialisation parameter then it is possible to
-define the Mapyrus commands run by the servlet in a file outside of
-the web server.  It is then not necessary to redeploy
-the servlet after modifying the file.
 
 If a JNDI DataSource is setup in the web server to provide 
 database connection pooling then database connections from the
