@@ -167,12 +167,22 @@ public class HTTPRequest extends Thread
 			if (c == '\'')
 				sb.append('\\');
 			sb.append(c);
+
+			/*
+			 * Escape any 'include' word at start of next line so it does not result
+			 * in a file being included.
+			 */
+			if (c == '\r' || c == '\n')
+			{
+				if (i + 1 < valueLength && value.charAt(i + 1) == 'i')
+					sb.append('\\');
+			}
 		}
 		sb.append("'");
 		sb.append(Constants.LINE_SEPARATOR);
 		return(sb);
 	}
-	
+
 	/**
 	 * Parse variables given in HTML form format: var1=val&va2=val.
 	 * @param form HTML form to parse.
