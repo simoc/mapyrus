@@ -1,0 +1,123 @@
+<html>
+<!-- $Id$ -->
+<head>
+<link rel="stylesheet" href="demo.css" type="text/css">
+<title>Mapyrus Servlet Demo</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function()
+{
+	var tabtext =
+	{
+		1: "print 'tab1'",
+		2: "print 'tab2'",
+		3: "print 'tab3'",
+		4: "print 'tab4'"
+	};
+
+	function setTab(n)
+	{
+		if ($("#tab" + n).hasClass("tabselected"))
+		{
+			// Nothing to do if user clicks on
+			// currently selected tab.
+			return;
+		}
+		for (var i = 1; i <= 4; i++)
+		{
+			if ($("#tab" + i).hasClass("tabselected"))
+			{
+				// Remember text in currently selected tab.
+				tabtext[i] = $('#textarea1').val();
+			}
+		}
+
+		// Highlight selected tab and un-highlight all others.
+		for (var i = 1; i <= 4; i++)
+		{
+			if (i == n)
+			{
+				$("#tab" + i).addClass("tabselected");
+				//alert(n + ": " + tabtext[n]);
+				$('#textarea1').val(tabtext[n]);
+			}
+			else
+			{
+				$("#tab" + i).removeClass("tabselected");
+			}
+		}
+	}
+
+	$('#tab1').click(function() { setTab(1); });
+	$('#tab2').click(function() { setTab(2); });
+	$('#tab3').click(function() { setTab(3); });
+	$('#tab4').click(function() { setTab(4); });
+
+	// First tab is initially selected in HTML page.
+	$('#textarea1').val(tabtext[1]);
+});
+
+</script>                                                               
+</head>                                                                 
+<body>                                                                  
+<p>
+Here is an explanation of how this web page works.
+</p>
+<p>
+&nbsp;
+</p>
+
+<table border="0" margin=0>
+<tr>
+<td><img src="tab_top_left.png"></td>
+<td><img src="tab_horizontal.png"></td>
+<td><img src="tab_top.png"></td>
+<td><img src="tab_horizontal.png"></td>
+<td><img src="tab_top.png"></td>
+<td><img src="tab_horizontal.png"></td>
+<td><img src="tab_top.png"></td>
+<td><img src="tab_horizontal.png"></td>
+<td><img src="tab_top_right.png"></td>
+</tr>
+<tr>
+
+<td><img src="tab_vertical.png"></td>
+
+<td id="tab1" align="center" class="tabselected">
+World Map
+</td>
+
+<td><img src="tab_vertical.png"></td>
+
+<td id="tab2" align="center">
+Molodensky Projection
+</td>
+
+<td><img src="tab_vertical.png"></td>
+
+<td id="tab3" align="center">
+Europe Map
+</td>
+
+<td><img src="tab_vertical.png"></td>
+
+<td id="tab4" align="center">
+Transparency
+</td>
+
+<td><img src="tab_vertical.png"></td>
+
+</tr>
+</table>
+
+<form action="servlet" method="GET" id="searchform">
+<textarea id="textarea1" name="commands" rows="15" cols="72">
+</textarea>
+<br>
+<input class="runbutton" type="submit" value="Run">
+</form>
+
+</body>                                                                 
+</html>
+
