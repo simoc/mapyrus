@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
+1.005, August 2010
+
+* Add HTML page to mapyrus.war demonstrating use of Mapyrus servlet.
+
 1.004, July 2010
 
 * Simplify Mapyrus Servlet so it can be used on internet.
