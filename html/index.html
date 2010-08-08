@@ -12,12 +12,13 @@ $(document).ready(function()
 	{
 		1: "mimetype 'image/png'\nnewpage 'png', '-', 200, 100, 'background=skyblue'\n# Display whole world\nworlds -180, -90, 180, 90\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  color 'khaki'\n  fill\n  linestyle 0.1\n  color 'black'\n  stroke\ndone",
 
-		2: "mimetype 'image/png'\nnewpage 'png', '-', 200, 100, 'background=skyblue'\nworlds -2e7, -9900000, 2e7, 9900000\nlet c = ['purple', 'red3', 'maroon', 'violet', 'raspberry', 'plum4']\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  # Reproject to Sinusoidal Projection\n  addpath reproject('epsg:4326', 'esri:54008', GEOMETRY)\n  color c[COLORCODE]\n  fill\n  color 'black'\n  stroke\ndone",
+		2: "mimetype 'image/png'\nnewpage 'png', '-', 200, 100, 'background=skyblue lineantialiasing=true'\nworlds -2e7, -9900000, 2e7, 9900000\nlet c = ['purple', 'red3', 'maroon', 'violet', 'raspberry', 'plum4']\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  # Reproject to Sinusoidal Projection\n  addpath reproject('epsg:4326', 'esri:54008', GEOMETRY)\n  color c[COLORCODE]\n  fill\n  color 'black'\n  stroke\ndone",
 
 		3: "mimetype 'application/pdf'\nnewpage 'pdf', '-', 210, 147.5, 'background=skyblue'\n# Display only Europe\nworlds -20, 30, 30, 68\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  gradientfill 'red', 'yellow', 'yellow', 'yellow'\n  color 'black'\n  stroke\ndone\n# Now label each country, but only once per country.\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  sinkhole\n  if labelled[COUNTRY] eq '' then\n    font 'Helvetica', 3\n    justify 'center'\n    label COUNTRY\n    let labelled[COUNTRY] = 'yes'\n  endif\ndone",
 
-		4: "print 'tab4'",
-		5: "print 'tab5'"
+		4: "mimetype 'image/svg+xml'\nnewpage 'svg', '-', 200, 100, ''\nworlds -125, 30, -65, 45\ndataset 'internal', 'usa', ''\n\n# Procedures to draw thick border inside polygon\nbegin affectedState\n  key 'box', 'Affected State'\n  clip 'inside'\n  linestyle 4, 'round', 'round'\n  color 'blue'\n  stroke\nend\nbegin unaffectedState\n  key 'box', 'Unaffected State'\n  clip 'inside'\n  linestyle 4, 'round', 'round'\n  color 'orange'\n  stroke\nend\n\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  if STATECODE eq 'TX' or STATECODE eq 'CO' then\n    affectedState\n  else\n    unaffectedState\n  endif\n  linestyle 0.1\n  color 'black'\n  stroke\ndone\n# Finally, add a legend.\nclearpath\nworlds 0, 0, 200, 100\nmove 6, 6\nmove 6, 18\nfont 'Helvetica', 4\nlegend 10",
+
+		5: "mimetype 'image/png'\nnewpage 'png', '-', 200, 100, 'background=grey90 lineantialiasing=true'\nworlds 120, -45, 145, -10\ndataset 'internal', 'countries', ''\n\n# Procedures to draw country outline in dots of alternating colors.\nlet toggle = 0\nbegin dot1\n  if toggle == 0 then\n    color 'green'\n    let toggle = 1\n  else\n    color 'gold'\n    let toggle = 0\n  endif\n  circle 0, 0, 1\n  fill\nend\nbegin dottedLine\n  samplepath 3, 0\n  dot1\nend\n\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  if COUNTRY eq 'Australia' then\n    clearpath\n    addpath GEOMETRY\n    dottedLine\n  endif\ndone"
 	};
 
 	function setTab(n)
@@ -147,7 +148,7 @@ USA Map SVG format
 <td><img src="tab_vertical.png"></td>
 
 <td id="tab5" align="center">
-Transparency
+Australia
 </td>
 
 <td><img src="tab_vertical.png"></td>
