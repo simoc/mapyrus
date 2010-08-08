@@ -10,10 +10,14 @@ $(document).ready(function()
 {
 	var tabtext =
 	{
-		1: "print 'tab1'",
-		2: "print 'tab2'",
-		3: "print 'tab3'",
-		4: "print 'tab4'"
+		1: "mimetype 'image/png'\nnewpage 'png', '-', 200, 100, 'background=skyblue'\n# Display whole world\nworlds -180, -90, 180, 90\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  color 'khaki'\n  fill\n  linestyle 0.1\n  color 'black'\n  stroke\ndone",
+
+		2: "mimetype 'image/png'\nnewpage 'png', '-', 200, 100, 'background=skyblue'\nworlds -2e7, -9900000, 2e7, 9900000\nlet c = ['purple', 'red3', 'maroon', 'violet', 'raspberry', 'plum4']\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  # Reproject to Sinusoidal Projection\n  addpath reproject('epsg:4326', 'esri:54008', GEOMETRY)\n  color c[COLORCODE]\n  fill\n  color 'black'\n  stroke\ndone",
+
+		3: "mimetype 'application/pdf'\nnewpage 'pdf', '-', 210, 147.5, 'background=skyblue'\n# Display only Europe\nworlds -20, 30, 30, 68\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  gradientfill 'red', 'yellow', 'yellow', 'yellow'\n  color 'black'\n  stroke\ndone\n# Now label each country, but only once per country.\ndataset 'internal', 'countries', ''\nwhile Mapyrus.fetch.more\ndo\n  fetch\n  clearpath\n  addpath GEOMETRY\n  sinkhole\n  if labelled[COUNTRY] eq '' then\n    font 'Helvetica', 3\n    justify 'center'\n    label COUNTRY\n    let labelled[COUNTRY] = 'yes'\n  endif\ndone",
+
+		4: "print 'tab4'",
+		5: "print 'tab5'"
 	};
 
 	function setTab(n)
@@ -24,7 +28,7 @@ $(document).ready(function()
 			// currently selected tab.
 			return;
 		}
-		for (var i = 1; i <= 4; i++)
+		for (var i = 1; i <= 5; i++)
 		{
 			if ($("#tab" + i).hasClass("tabselected"))
 			{
@@ -34,7 +38,7 @@ $(document).ready(function()
 		}
 
 		// Highlight selected tab and un-highlight all others.
-		for (var i = 1; i <= 4; i++)
+		for (var i = 1; i <= 5; i++)
 		{
 			if (i == n)
 			{
@@ -53,6 +57,7 @@ $(document).ready(function()
 	$('#tab2').click(function() { setTab(2); });
 	$('#tab3').click(function() { setTab(3); });
 	$('#tab4').click(function() { setTab(4); });
+	$('#tab5').click(function() { setTab(5); });
 
 	// First tab is initially selected in HTML page.
 	$('#textarea1').val(tabtext[1]);
@@ -109,6 +114,8 @@ this web application locally.
 <td><img src="tab_horizontal.png"></td>
 <td><img src="tab_top.png"></td>
 <td><img src="tab_horizontal.png"></td>
+<td><img src="tab_top.png"></td>
+<td><img src="tab_horizontal.png"></td>
 <td><img src="tab_top_right.png"></td>
 </tr>
 <tr>
@@ -122,18 +129,24 @@ World Map
 <td><img src="tab_vertical.png"></td>
 
 <td id="tab2" align="center">
-Molodensky Projection
+Sinusoidal Projection
 </td>
 
 <td><img src="tab_vertical.png"></td>
 
 <td id="tab3" align="center">
-Europe Map
+Europe Map PDF
 </td>
 
 <td><img src="tab_vertical.png"></td>
 
 <td id="tab4" align="center">
+USA Map SVG format
+</td>
+
+<td><img src="tab_vertical.png"></td>
+
+<td id="tab5" align="center">
 Transparency
 </td>
 
@@ -143,7 +156,7 @@ Transparency
 </table>
 
 <form action="servlet" method="GET" id="searchform">
-<textarea id="textarea1" name="commands" rows="20" cols="80">
+<textarea id="textarea1" name="commands" rows="20" cols="90">
 </textarea>
 <br>
 <input class="runbutton" type="submit" value="Run">
