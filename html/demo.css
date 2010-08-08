@@ -5,6 +5,11 @@ body {
 	font-size: 12px;
 }
 
+.pagetext {
+	margin-left: 20px;
+	margin-top: 10px;
+}
+
 table {
 	table-layout: fixed;
         margin-bottom: 0em;

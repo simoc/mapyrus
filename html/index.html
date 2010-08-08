@@ -61,12 +61,43 @@ $(document).ready(function()
 </script>                                                               
 </head>                                                                 
 <body>                                                                  
+
+<div class="pagetext">
+<A href="http://mapyrus.sourceforge.net">
+<img src="mapyrus.png" alt="Mapyrus Logo" border=0/>
+</A>
+
+
 <p>
-Here is an explanation of how this web page works.
+1. Enter Mapyrus commands in the text area below, or click on
+one of the tabs above the text area to set example commands.
 </p>
+
 <p>
-&nbsp;
+2. Click the <b>Run</b> button to
+send the commands to the Mapyrus servlet.
 </p>
+
+<p>
+3. The output of the Mapyrus
+commands is displayed in the web browser.
+If there is an error in the commands then an error message is displayed
+instead.
+</p>
+
+<p>
+4. Click the back arrow in your web browser.
+Experiment with changing colors, sizes and coordinates in the Mapyrus
+commands, then click <b>Run</b> to create the output again.
+</p>
+
+<p>
+5. Deploy the Mapyrus web application archive file
+<code>mapyrus.war</code> in your own web server to run
+this web application locally.
+</p>
+
+<br>
 
 <table border="0" margin=0>
 <tr>
@@ -112,11 +143,13 @@ Transparency
 </table>
 
 <form action="servlet" method="GET" id="searchform">
-<textarea id="textarea1" name="commands" rows="15" cols="72">
+<textarea id="textarea1" name="commands" rows="20" cols="80">
 </textarea>
 <br>
 <input class="runbutton" type="submit" value="Run">
 </form>
+
+</div>
 
 </body>                                                                 
 </html>
