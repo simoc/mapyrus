@@ -3137,12 +3137,21 @@ Logging of HTTP requests is controlled by the \texttt{-l} command line option.
 
 \subsection{Mapyrus Servlet}
 
-The file \texttt{mapyrus.war} contains a web application.  After
-being deployed in a web server, the Mapyrus servlet handles HTTP
+The file \texttt{mapyrus.war} contains a web application.
+
+After being deployed in a web server, the Mapyrus servlet handles HTTP
 requests to the following URL.
 
 \begin{verbatim}
-http://localhost:8080/mapyrus/
+http://localhost:8080/mapyrus/servlet
+\end{verbatim}
+
+An example web page with an HTML form for the user
+to enter Mapyrus commands, submit them to the Mapyrus servlet
+and obtain the output is provided at the following URL.
+
+\begin{verbatim}
+http://localhost:8080/mapyrus
 \end{verbatim}
 
 The commands to be run by Mapyrus servlet are passed in
@@ -3155,15 +3164,18 @@ Variable names are converted to uppercase.
 The following URLs demonstrate passing commands to Mapyrus servlet.
 
 \begin{alltt}
-http://localhost:8080/mapyrus/?commands=print+Mapyrus.version
+http://localhost:8080/mapyrus/servlet?commands=print+Mapyrus.version
 \end{alltt}
 \begin{alltt}
-http://localhost:8080/mapyrus/?commands=mimetype+"image%2Fpng"%0D \textbackslash
-  newpage+"png"%2C"-"%2C50%2C50%2C"background%3Dred"
+http://localhost:8080/mapyrus/servlet?commands= \textbackslash
+  mimetype+"image%2Fpng"%0Dnewpage+"png"%2C"-"%2C50%2C50%2C"background%3Dred"
 \end{alltt}
 
 Normally, the Mapyrus commands in the HTTP request will be generated
-programmatically or entered in an HTML form.
+programmatically or entered in an HTML form.  Mapyrus commands
+passed programmatically must be converted to a form suitable for
+a URL.  In Java, this is done using methods from
+the Java class \texttt{java.net.URLEncoder}.
 
 By default, Mapyrus servlet blocks access to files and URLs.
 To enable access, set the servlet initialisation
