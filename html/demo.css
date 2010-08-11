@@ -5,18 +5,23 @@ body {
 	font-size: 12px;
 }
 
+p {
+	margin: 4px;
+}
+
 .pagetext {
 	margin-left: 20px;
 	margin-top: 10px;
 }
 
 table {
-	table-layout: fixed;
+	table-layout: auto;
         margin-bottom: 0em;
 	margin-top: 0em;
 	border-spacing: 0pt;
 	border: outset 0pt;
 	padding: 0pt;
+	border-collapse: collapse;
 }
 
 td {
