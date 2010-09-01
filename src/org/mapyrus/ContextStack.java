@@ -955,12 +955,14 @@ public class ContextStack
 	 * Draw label along currently defined path.
 	 * @param spacing spacing between letters.
 	 * @param offset offset along path at which to begin label.
+	 * @param rotateInvertedLabels rotate labels that would appear upside down.
 	 * @param label label to draw.
 	 */
 	public void flowLabel(double spacing, double offset,
+		boolean rotateInvertedLabels,
 		String label) throws IOException, MapyrusException
 	{
-		getCurrentContext().flowLabel(spacing, offset, label);
+		getCurrentContext().flowLabel(spacing, offset, rotateInvertedLabels, label);
 	}
 
 	/**

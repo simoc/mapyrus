@@ -1646,7 +1646,7 @@ included in the \texttt{<path>} XML element for the filled path.
 \subsubsection{flowlabel}
 
 \begin{alltt}
-flowlabel \textit{spacing}, \textit{offset}, \textit{string} [, \textit{string} ...]
+flowlabel \textit{spacing}, \textit{offset} [,\textit{extras} ], \textit{string} [, \textit{string} ...]
 \end{alltt}
 
 Draws a label following the current path,
@@ -1657,9 +1657,11 @@ separated by spaces.
 the label, given in millimeters.
 \textit{spacing} is the spacing distance
 between each letter, given in millimeters.
-
-If the label would appear upside down on the page, then it is rotated
-180 degrees so it appears the right way up and is readable.
+\textit{extras} defines whether labels that
+would appear upside down on the page are rotated
+180 degrees so as to be readable.  By default, labels are rotated.
+If \textit{extras} contains \texttt{rotate=false} then labels are
+not rotated.
 
 \subsubsection{font}
 

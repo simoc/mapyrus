@@ -2343,16 +2343,15 @@ public class Context
 		}
 	}
 
-
-
 	/**
 	 * Draw label along currently defined path.
 	 * @param spacing spacing between letters.
 	 * @param offset offset along path at which to begin label.
+	 * @param rotateInvertedLabels rotate labels that would appear upside down.
 	 * @param label label to draw.
 	 */
-	public void flowLabel(double spacing, double offset, String label)
-		throws IOException, MapyrusException
+	public void flowLabel(double spacing, double offset, boolean rotateInvertedLabels,
+		String label) throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		Point2D.Double startPt, endPt;
@@ -2416,7 +2415,8 @@ public class Context
 			int step;
 			int justify;
 
-			if (startPt.distanceSq(endPt) > 0 && Math.abs(angle + m_rotation) > Math.PI / 2)
+			if (rotateInvertedLabels &&
+				startPt.distanceSq(endPt) > 0 && Math.abs(angle + m_rotation) > Math.PI / 2)
 			{
 				startIndex = pathPoints.size() - 1;
 				endIndex = 0;

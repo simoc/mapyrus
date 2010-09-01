@@ -1695,11 +1695,12 @@ public class Interpreter implements Cloneable
 			case Statement.LABEL:
 			case Statement.PRINT:
 			case Statement.FLOWLABEL:
-				String label;
+				String label = "";
 				int nChars = 0;
 				int labelIndex;
 				double offset = 0.0;
 				double spacing = 0.0;
+				boolean rotateInvertedLabels = true;
 
 				if (type == Statement.FLOWLABEL)
 				{
@@ -1709,7 +1710,18 @@ public class Interpreter implements Cloneable
 					}
 					spacing = m_executeArgs[0].getNumericValue();
 					offset = m_executeArgs[1].getNumericValue();
+
 					labelIndex = 2;
+					if (nExpressions > 2)
+					{
+						extras = m_executeArgs[2].getStringValue();
+						int index = extras.indexOf("rotate=");
+						if (index >= 0)
+						{
+							rotateInvertedLabels = extras.substring(index + 7).equalsIgnoreCase("true");
+							labelIndex = 3;
+						}
+					}
 				}
 				else
 				{
@@ -1719,7 +1731,13 @@ public class Interpreter implements Cloneable
 				/*
 				 * Label/print a single argument, or several separated by spaces.
 				 */
-				if (nExpressions == labelIndex + 1)
+				if (labelIndex >= nExpressions)
+				{
+					/*
+					 * Nothing to label.
+					 */
+				}
+				else if (nExpressions == labelIndex + 1)
 				{
 					label = m_executeArgs[labelIndex].toString();
 					nChars += label.length();
@@ -1747,7 +1765,7 @@ public class Interpreter implements Cloneable
 				else if (nChars > 0)
 				{
 					if (type == Statement.FLOWLABEL)
-						context.flowLabel(spacing, offset, label);
+						context.flowLabel(spacing, offset, rotateInvertedLabels, label);
 					else
 						context.label(label);
 				}
