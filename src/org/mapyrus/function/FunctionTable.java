@@ -126,6 +126,12 @@ public class FunctionTable
 		f = new Sqrt();
 		mFunctions.put(f.getName(), f);
 
+		f = new Stringascent();
+		mFunctions.put(f.getName(), f);
+
+		f = new Stringdescent();
+		mFunctions.put(f.getName(), f);
+
 		f = new Stringheight();
 		mFunctions.put(f.getName(), f);
 
