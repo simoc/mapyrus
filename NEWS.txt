@@ -4,6 +4,8 @@ Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 1.006, September 2010
 
 * Change FLOWPATH command syntax to allow disabling of 180 degree label rotation
+* Added STRINGASCENT, STRINGDESCENT functions so label size can be
+  determined more accurately
 
 1.005, August 2010
 

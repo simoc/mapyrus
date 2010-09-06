@@ -493,6 +493,31 @@ Returns square root of \textit{n}. \\
 
 \hline
 
+\texttt{stringascent(\textit{str})} &
+Returns the ascent of the string \textit{str}
+if it were displayed using the \texttt{label} command.
+The ascent is the distance above the label position of
+the tallest character in the string.
+For strings containing several lines, the total ascent of all
+lines is returned.
+The ascent is returned in world coordinate units if set with a
+\texttt{worlds} command, otherwise in page coordinates. \\
+
+\hline
+
+\texttt{stringdescent(\textit{str})} &
+Returns the descent of the string \textit{str}
+if it were displayed using the \texttt{label} command.
+The descent is the distance below the label position
+used by characters such as \textit{g} and \textit{y}
+and is returned as a negative number.
+For strings containing several lines, the descent of the
+first line is returned.
+The descent is returned in world coordinate units if set with a
+\texttt{worlds} command, otherwise in page coordinates. \\
+
+\hline
+
 \texttt{stringheight(\textit{str})} &
 Returns the height of the string \textit{str}
 if it were displayed using the \texttt{label} command.
