@@ -23,20 +23,22 @@
 package org.mapyrus.font;
 
 /**
- * Holds height and width of a string as double precision values.
+ * Holds height, width, ascent and descent of a string as double precision values.
  * Provides get and set methods for these values.
  */
 public class StringDimension
 {
 	private double m_height;
 	private double m_width;
-	
+	private double m_ascent;
+	private double m_descent;
+
 	/**
 	 * Create new dimension, with zero height and width.
 	 */
 	public StringDimension()
 	{
-		m_height = m_width = 0.0; 
+		m_height = m_width = m_ascent = m_descent = 0.0; 
 	}
 
 	/**
@@ -44,10 +46,12 @@ public class StringDimension
 	 * @param width width to set.
 	 * @param height height to set.
 	 */
-	public void setSize(double width, double height)
+	public void setSize(double width, double height, double ascent, double descent)
 	{
 		m_height = height;
 		m_width = width;
+		m_ascent = ascent;
+		m_descent = descent;
 	}
 
 	/**
@@ -66,6 +70,24 @@ public class StringDimension
 	public double getWidth()
 	{
 		return(m_width);
+	}
+
+	/**
+	 * Get string ascent.
+	 * @return string ascent.
+	 */
+	public double getAscent()
+	{
+		return(m_ascent);
+	}
+
+	/**
+	 * Get string descent.
+	 * @return string descent.
+	 */
+	public double getDescent()
+	{
+		return(m_descent);
 	}
 
 	/**
