@@ -43,11 +43,13 @@ public class AdobeFontMetrics
 	 * Full width of a character defined in an AFM file.
 	 * Widths of each character are defined relative to this width.
 	 */
-	private static final int FULL_CHAR_WIDTH = 1000;
+	private static final int FULL_CHAR_SIZE = 1000;
 
 	private String m_fontName;
 
 	private short []m_charWidths;
+	private short []m_charAscents;
+	private short []m_charDescents;
 	private int m_firstChar, m_lastChar;
 	private boolean m_isFixedPitch;
 	private int m_italicAngle;
@@ -187,6 +189,8 @@ public class AdobeFontMetrics
 
 		// TODO handle fonts with more than 256 characters.
 		m_charWidths = new short[256];
+		m_charAscents = new short[256];
+		m_charDescents = new short[256];
 		m_isFixedPitch = false;
 		m_firstChar = Integer.MAX_VALUE;
 		m_lastChar = Integer.MIN_VALUE;
@@ -205,19 +209,50 @@ public class AdobeFontMetrics
 			{
 				if (inCharMetrics && line.startsWith("C"))
 				{
-					st = new StringTokenizer(line, " ;");
-					if (st.countTokens() < 6)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_AFM_FILE) +
-							": " + afmFilename + ": " + line);
-					}
+					st = new StringTokenizer(line);
 
-					st.nextToken();	/* "C" */
-					int charIndex = Integer.parseInt(st.nextToken());
-					st.nextToken();	/* "WX" */
-					short charWidth = Short.parseShort(st.nextToken());
-					st.nextToken(); /* N */
-					String charName = st.nextToken();
+					String token;
+					int charIndex = -1;
+					short charWidth = FULL_CHAR_SIZE;
+					short charAscent = FULL_CHAR_SIZE;
+					short charDescent = 0;
+					String charName = "";
+
+					while (st.hasMoreTokens())
+					{
+						/*
+						 * Extract information that is of interest to us.
+						 */
+						token = st.nextToken();
+						if (token.equals("C"))
+						{
+							charIndex = Integer.parseInt(st.nextToken());
+						}
+						else if (token.equals("WX"))
+						{
+							charWidth = Short.parseShort(st.nextToken());
+						}
+						else if (token.equals("N"))
+						{
+							charName = st.nextToken();
+						}
+						else if (token.equals("B"))
+						{
+							st.nextToken();
+							charDescent = (short)Math.round(Double.parseDouble(st.nextToken()));
+							st.nextToken();
+							charAscent = (short)Math.round(Double.parseDouble(st.nextToken()));
+						}
+
+						token = st.nextToken();
+						while ((!token.equals(";")) && st.hasMoreTokens())
+						{
+							/*
+							 * Skip any unknown information until ';' end marker.
+							 */
+							token = st.nextToken();
+						}
+					}
 					
 					/*
 					 * Lookup index in ISOLatin1 encoding for this character.
@@ -232,6 +267,8 @@ public class AdobeFontMetrics
 					if (charIndex >= 0 && charIndex < m_charWidths.length)
 					{
 						m_charWidths[charIndex] = charWidth;
+						m_charAscents[charIndex] = charAscent;
+						m_charDescents[charIndex] = charDescent;
 						if (charIndex < m_firstChar)
 							m_firstChar = charIndex;
 						if (charIndex > m_lastChar)
@@ -445,17 +482,43 @@ public class AdobeFontMetrics
 	}
 
 	/**
-	 * Calculate the width of string displayed using this font.
-	 * @param s string to calculate width for.
+	 * Calculate size of string displayed using this font.
+	 * @param s string to calculate size for.
 	 * @param pointSize point size in which string is displayed.
-	 * @return width of string in points.
+	 * @return size of string in points.
 	 */
-	public double getStringWidth(String s, double pointSize)
+	public StringDimension getStringDimension(String s, double pointSize)
 	{
 		int total = 0;
 		int sLength = s.length();
 		int c;
 		double pointLen;
+		double maxAscent = 0, minDescent = FULL_CHAR_SIZE;
+		StringDimension retval = new StringDimension();
+
+		/*
+		 * Add up widths of all characters in string and
+		 * find biggest ascent and descent.
+		 */
+		for (int i = 0; i < sLength; i++)
+		{
+			c = s.charAt(i);
+			if (c >= 0 && c < m_charWidths.length)
+			{
+				total += m_charWidths[c];
+				if (m_charAscents[c] > maxAscent)
+					maxAscent = m_charAscents[c];
+				if (m_charDescents[c] < minDescent)
+					minDescent = m_charDescents[c];
+			}
+			else
+			{
+				total += FULL_CHAR_SIZE;
+			}
+		}
+		pointLen = (double)total / FULL_CHAR_SIZE * pointSize;
+		maxAscent = (double)maxAscent / FULL_CHAR_SIZE * pointSize;
+		minDescent = (double)minDescent / FULL_CHAR_SIZE * pointSize;
 
 		if (m_isFixedPitch)
 		{
@@ -464,23 +527,9 @@ public class AdobeFontMetrics
 			 * depends only on length of string.
 			 */
 			int spaceIndex = 32;
-			pointLen = s.length() * ((double)m_charWidths[spaceIndex] / FULL_CHAR_WIDTH) * pointSize;
+			pointLen = s.length() * ((double)m_charWidths[spaceIndex] / FULL_CHAR_SIZE) * pointSize;
 		}
-		else
-		{
-			/*
-			 * Add up widths of all characters in string.
-			 */
-			for (int i = 0; i < sLength; i++)
-			{
-				c = s.charAt(i);
-				if (c >= 0 && c < m_charWidths.length)
-					total += m_charWidths[c];
-				else
-					total += FULL_CHAR_WIDTH;
-			}
-			pointLen = (double)total / FULL_CHAR_WIDTH * pointSize;
-		}
-		return(pointLen);
+		retval.setSize(pointLen, pointSize, maxAscent, minDescent);
+		return(retval);
 	}
 }
