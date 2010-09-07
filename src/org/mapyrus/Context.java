@@ -3211,15 +3211,21 @@ public class Context
 			retval = m_outputFormat.getStringDimension(s, m_fontName, m_fontSize, m_fontLineSpacing);
 			double w = retval.getWidth();
 			double h = retval.getHeight();
+			double a = retval.getAscent();
+			double d = retval.getDescent();
 
 			if (m_pageWorldExtents != null && scaleToWorlds)
 			{
 				w = w / m_outputFormat.getPageWidth() * m_pageWorldExtents.getWidth();
 				h = h / m_outputFormat.getPageHeight() * m_pageWorldExtents.getHeight();
+				a = a / m_outputFormat.getPageHeight() * m_pageWorldExtents.getHeight();
+				d = d / m_outputFormat.getPageHeight() * m_pageWorldExtents.getHeight();
 			}
 			w = w / m_scaling;
 			h = h / m_scaling;
-			retval.setSize(w, h);
+			a = a / m_scaling;
+			d = d / m_scaling;
+			retval.setSize(w, h, a, d);
 		}
 		else
 		{
