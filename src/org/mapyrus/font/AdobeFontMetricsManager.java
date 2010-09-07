@@ -151,20 +151,20 @@ public class AdobeFontMetricsManager
 	}
 
 	/**
-	 * Calculate the displayed width of a string.
+	 * Calculate the displayed size of a string.
 	 * @param fontName font for display.
 	 * @param pointSize point size in which string is displayed.
-	 * @param s string to calculate width for.
-	 * @return width of string in points.
+	 * @param s string to calculate size for.
+	 * @return size of string in points.
 	 */
-	public double getStringWidth(String fontName, double pointSize, String s)
+	public StringDimension getStringDimension(String fontName, double pointSize, String s)
 	{
-		double retval = 0;
+		StringDimension retval = new StringDimension();
 
 		AdobeFontMetrics afm = mFontMetrics.get(fontName);
 		if (afm != null)
 		{
-			retval = afm.getStringWidth(s, pointSize);
+			retval = afm.getStringDimension(s, pointSize);
 		}
 		else
 		{
@@ -172,7 +172,8 @@ public class AdobeFontMetricsManager
 			 * No Font Metric information given for this font.  Just
 			 * calculate approximate length assuming fixed with characters.
 			 */
-			retval = s.length() * pointSize;
+			double width = s.length() * pointSize;
+			retval.setSize(width, pointSize, pointSize, 0);
 		}
 
 		return(retval);
