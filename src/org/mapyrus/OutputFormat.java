@@ -198,6 +198,7 @@ public class OutputFormat
 	 * can be used.
 	 */
 	private HashSet<String> m_encodeAsISOLatin1;
+	private HashSet<String> m_reencodedFonts;
 
 	/*
 	 * Adobe Font Metrics files containing character width information for all fonts.
@@ -1045,6 +1046,7 @@ public class OutputFormat
 		 */
 		ArrayList<PostScriptFont> fontList = new ArrayList<PostScriptFont>();
 		m_encodeAsISOLatin1 = new HashSet<String>();
+		m_reencodedFonts = new HashSet<String>();
 		m_TTFFonts = new HashMap<String, TrueTypeFont>();
 		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
 		m_afmFiles = new ArrayList<String>();
@@ -1696,9 +1698,9 @@ public class OutputFormat
 	{
 		StringDimension retval = new StringDimension();
 		BufferedReader stringReader = new BufferedReader(new StringReader(s));
-		double width = 0, height = 0;
+		double width = 0, height = 0, ascent = 0, descent = fontSize;
 		String token;
-		double tokenWidth;
+		double w, a, d;
 		int lineNumber = 0;
 
 		/*
@@ -1714,16 +1716,30 @@ public class OutputFormat
 				 */
 				if (m_adobeFontMetrics == null)
 					m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1);
-	
+
 				double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
-				tokenWidth = m_adobeFontMetrics.getStringWidth(fontName, pointSize, token);
-				tokenWidth = tokenWidth / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
-				if (tokenWidth > width)
-					width = tokenWidth;
+				StringDimension dim = m_adobeFontMetrics.getStringDimension(fontName, pointSize, token);
+				w = dim.getWidth();
+				a = dim.getAscent();
+				d = dim.getDescent();
+
+				w = w / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
+				a = a / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
+				d = d / Constants.POINTS_PER_INCH * Constants.MM_PER_INCH;
+
+				if (w > width)
+					width = w;
 				if (lineNumber == 0)
+				{
 					height += fontSize;
+					ascent = a;
+				}
 				else
+				{
 					height += fontSize * lineSpacing;
+					ascent += fontSize * lineSpacing;
+				}
+				descent = d;
 			}
 			else
 			{
@@ -1732,19 +1748,29 @@ public class OutputFormat
 				 * horizontal font.
 				 */
 				FontRenderContext frc = m_graphics2D.getFontRenderContext();
-				Rectangle2D bounds = m_baseFont.getStringBounds(token, frc);
-				tokenWidth = bounds.getWidth();
-				if (tokenWidth > width)
-					width = tokenWidth;
+				Rectangle2D stringBounds = m_baseFont.getStringBounds(token, frc);
+				Rectangle2D glyphBounds = m_baseFont.createGlyphVector(frc, token).getVisualBounds();
+				w = stringBounds.getWidth();
+				if (w > width)
+					width = w;
 				if (lineNumber == 0)
-					height += bounds.getHeight();
+				{
+					height += fontSize;
+					ascent = -glyphBounds.getMinY();
+				}
 				else
-					height += bounds.getHeight() * lineSpacing;
+				{
+					height += fontSize * lineSpacing;
+					ascent += fontSize * lineSpacing;	
+				}
+				descent = -(glyphBounds.getMinY() + glyphBounds.getHeight());
 			}
 			lineNumber++;
 		}
 
-		retval.setSize(width, height);
+		if (descent > ascent)
+			descent = ascent;
+		retval.setSize(width, height, ascent, descent);
 		return(retval);
 	}
 
@@ -2565,14 +2591,14 @@ public class OutputFormat
 	{
 		if (m_outputType == POSTSCRIPT_GEOMETRY)
 		{
-			if (m_encodeAsISOLatin1.contains(fontName))
+			if (m_encodeAsISOLatin1.contains(fontName) && (!m_reencodedFonts.contains(fontName)))
 			{
 				/*
 				 * Re-encode font from StandardEncoding to ISOLatin1Encoding
 				 * before it is used.
 				 */
 				writeLine(m_writer, isoLatinEncode(fontName));
-				m_encodeAsISOLatin1.remove(fontName);
+				m_reencodedFonts.add(fontName);
 			}
 
 			/*
