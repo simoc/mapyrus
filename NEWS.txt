@@ -6,6 +6,7 @@ Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 * Change FLOWPATH command syntax to allow disabling of 180 degree label rotation
 * Added STRINGASCENT, STRINGDESCENT functions so label size can be
   determined more accurately
+* Fix calculation of string width for accented characters in PostScript output
 
 1.005, August 2010
 
