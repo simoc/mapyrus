@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
+1.007, November 2010
+
+* Fix labelling of multi-line labels containing blank lines
+
 1.006, September 2010
 
 * Change FLOWPATH command syntax to allow disabling of 180 degree label rotation

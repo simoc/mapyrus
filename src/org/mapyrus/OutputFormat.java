@@ -4113,17 +4113,16 @@ public class OutputFormat
 		Point2D pt, startPt;
 		double x, y;
 		double lastX = 0, lastY = 0;
-		String nextLine;
-		StringTokenizer st;
+		String line, nextLine;
 		double lineNumber;
 		AffineTransform affine;
 		FontRenderContext frc = null;
 		Stroke originalStroke = null;
 		ArrayList<String> lines = new ArrayList<String>();
 
-		st = new StringTokenizer(label, Constants.LINE_SEPARATOR);
-		while (st.hasMoreTokens())
-			lines.add(st.nextToken());
+		BufferedReader stringReader = new BufferedReader(new StringReader(label));
+		while ((line = stringReader.readLine()) != null)
+			lines.add(line);
 
 		if (m_outputType != POSTSCRIPT_GEOMETRY && m_outputType != PDF)
 		{
