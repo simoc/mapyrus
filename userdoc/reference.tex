@@ -3164,7 +3164,8 @@ Logging of HTTP requests is controlled by the \texttt{-l} command line option.
 
 \subsection{Mapyrus Servlet}
 
-The file \texttt{mapyrus.war} contains a web application.
+The file \texttt{mapyrus.war} provided with Mapyrus
+contains a web application.
 
 After being deployed in a web server, the Mapyrus servlet handles HTTP
 requests to the following URL.
@@ -3221,6 +3222,11 @@ If a JNDI DataSource is setup in the web server to provide
 database connection pooling then database connections from the
 pool are available using the \texttt{jndiname} option in
 the \texttt{dataset} command.
+
+If Java Topology Suite functions or a JDBC driver are used then the
+\textit{Java Topology Suite} or JDBC JAR file must be made available
+to the web server by copying it into a directory that the web server
+includes in the Java classpath.
 
 The Mapyrus servlet throws a Java ServletException if there is an error
 in the Mapyrus commands, or an error running the Mapyrus commands.
