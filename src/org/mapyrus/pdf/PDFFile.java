@@ -40,7 +40,7 @@ public class PDFFile
 	private String m_filename;
 	private RandomAccessFile m_pdfFile;
 	private HashMap<Integer, PDFObject> m_objects;
-	private ArrayList m_pageObjects;
+	private ArrayList<PDFObject> m_pageObjects;
 
 	public PDFFile(String filename) throws IOException, MapyrusException
 	{
@@ -247,7 +247,7 @@ public class PDFFile
 	 */
 	private PDFObject getResources(int page) throws MapyrusException
 	{
-		PDFObject pageObject = (PDFObject)m_pageObjects.get(page - 1);
+		PDFObject pageObject = m_pageObjects.get(page - 1);
 		PDFObject resourcesObject = getDictionaryValue(pageObject, "/Resources");
 		return(resourcesObject);
 	}
@@ -260,7 +260,7 @@ public class PDFFile
 	public byte[] getContents(int page) throws IOException, MapyrusException
 	{
 		byte[] retval = null;
-		PDFObject pageObject = (PDFObject)m_pageObjects.get(page - 1);
+		PDFObject pageObject = m_pageObjects.get(page - 1);
 		PDFObject contentsObject = getDictionaryValue(pageObject, "/Contents");
 		if (contentsObject != null)
 		{
@@ -398,7 +398,7 @@ public class PDFFile
 	 */
 	public int[] getMediaBox(int page) throws MapyrusException
 	{
-		PDFObject pageObject = (PDFObject)m_pageObjects.get(page - 1);
+		PDFObject pageObject = m_pageObjects.get(page - 1);
 		PDFObject boxObject = getDictionaryValue(pageObject, "/MediaBox");
 		PDFObject[] boxArray = boxObject.getArray();
 		int retval[] = new int[4];
@@ -694,7 +694,7 @@ public class PDFFile
 	private PDFObject getDictionaryValue(PDFObject dictObj, String key)
 		throws MapyrusException
 	{
-		HashMap dict = dictObj.getDictionary();
+		HashMap<String, PDFObject> dict = dictObj.getDictionary();
 
 		if (dict == null)
 		{
@@ -756,7 +756,7 @@ public class PDFFile
 				int[] box = pdf.getMediaBox(i);
 				System.out.println("[" + box[0] + " " + box[1] + " " + box[2] + " " + box[3] + "]");
 				System.out.println("-- ExtGState");
-				ArrayList objects = pdf.getExtGState(i, 300);
+				ArrayList<StringBuffer> objects = pdf.getExtGState(i, 300);
 				for (int j = 0; j < objects.size(); j++)
 					System.out.println(objects.get(j));
 				System.out.println("-- XObject");
