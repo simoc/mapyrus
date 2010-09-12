@@ -122,13 +122,13 @@ public class Statement
 	/*
 	 * Statements in an if-then-else statement.
 	 */
-	private ArrayList m_thenStatements;
-	private ArrayList m_elseStatements;
+	private ArrayList<Statement> m_thenStatements;
+	private ArrayList<Statement> m_elseStatements;
 
 	/*
 	 * Statements in a while loop statement.
 	 */
-	private ArrayList m_loopStatements;
+	private ArrayList<Statement> m_loopStatements;
 		
 	/*
 	 * Name of procedure block,
@@ -136,8 +136,8 @@ public class Statement
 	 * and block of statements in a procedure in order of execution
 	 */
 	private String m_blockName;
-	private ArrayList m_statementBlock;
-	private ArrayList m_parameters;
+	private ArrayList<Statement> m_statementBlock;
+	private ArrayList<String> m_parameters;
 	
 	private Expression []m_expressions;
 
@@ -272,7 +272,7 @@ public class Statement
 	 * @param parameters variable names of parameters to this procedure.
 	 * @param statements list of statements that make up this procedure block.
 	 */
-	public Statement(String blockName, ArrayList parameters, ArrayList statements)
+	public Statement(String blockName, ArrayList<String> parameters, ArrayList<Statement> statements)
 	{
 		m_blockName = blockName;
 		m_parameters = parameters;
@@ -287,8 +287,8 @@ public class Statement
 	 * @param elseStatements is statements to execute if expression is false,
 	 * or null if there is no statement to execute.
 	 */
-	public Statement(Expression test, ArrayList thenStatements,
-		ArrayList elseStatements)
+	public Statement(Expression test, ArrayList<Statement> thenStatements,
+		ArrayList<Statement> elseStatements)
 	{
 		m_type = CONDITIONAL;
 		m_expressions = new Expression[1];
@@ -303,7 +303,7 @@ public class Statement
 	 * @param loopStatements is statements to execute for each loop iteration.
 	 * @param isWhileLoop true for a while loop, false for a repeat loop.
 	 */
-	public Statement(Expression test, ArrayList loopStatements,
+	public Statement(Expression test, ArrayList<Statement> loopStatements,
 		boolean isWhileLoop)
 	{
 		m_type = isWhileLoop ? WHILE_LOOP : REPEAT_LOOP;
@@ -317,7 +317,7 @@ public class Statement
 	 * @param test is expression to test before each iteration of loop.
 	 * @param loopStatements is statements to execute for each loop iteration.
 	 */
-	public Statement(Expression var, Expression arrayVar, ArrayList loopStatements)
+	public Statement(Expression var, Expression arrayVar, ArrayList<Statement> loopStatements)
 	{
 		m_type = FOR_LOOP;
 		m_expressions = new Expression[1];
@@ -374,7 +374,7 @@ public class Statement
 	 * Returns list of statements in "then" section of "if" statement.
 	 * @return list of statements.
 	 */		
-	public ArrayList getThenStatements()
+	public ArrayList<Statement> getThenStatements()
 	{
 		return(m_thenStatements);
 	}
@@ -383,7 +383,7 @@ public class Statement
 	 * Returns list of statements in "else" section of "if" statement.
 	 * @return list of statements.
 	 */	
-	public ArrayList getElseStatements()
+	public ArrayList<Statement> getElseStatements()
 	{
 		return(m_elseStatements);
 	}
@@ -392,7 +392,7 @@ public class Statement
 	 * Returns list of statements in while or for loop statement.
 	 * @return list of statements.
 	 */	
-	public ArrayList getLoopStatements()
+	public ArrayList<Statement> getLoopStatements()
 	{
 		return(m_loopStatements);
 	}
@@ -419,7 +419,7 @@ public class Statement
 	 * Return variable names of parameters to a procedure.
 	 * @return list of parameter names.
 	 */
-	public ArrayList getBlockParameters()
+	public ArrayList<String> getBlockParameters()
 	{
 		return(m_parameters);
 	}
@@ -428,7 +428,7 @@ public class Statement
 	 * Return statements in a procedure.
 	 * @return ArrayList of statements that make up the procedure.
 	 */
-	public ArrayList getStatementBlock()
+	public ArrayList<Statement> getStatementBlock()
 	{
 		return(m_statementBlock);
 	}

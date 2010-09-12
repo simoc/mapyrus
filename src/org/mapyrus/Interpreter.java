@@ -462,7 +462,7 @@ public class Interpreter implements Cloneable
 		throws MapyrusException, IOException, InterruptedException
 	{
 		LegendEntryList legendList = context.getLegendEntries();
-		ArrayList moveTos = context.getMoveTos();
+		ArrayList<Point2D> moveTos = context.getMoveTos();
 
 		/*
 		 * Drawing legend will itself generate new legend entries.
@@ -490,7 +490,7 @@ public class Interpreter implements Cloneable
 			/*
 			 * Check that correct number of parameters are being passed.
 			 */
-			ArrayList formalParameters = block.getBlockParameters();
+			ArrayList<String> formalParameters = block.getBlockParameters();
 			if (entry.getBlockArgs().length != formalParameters.size())
 			{
 				throw new MapyrusException(st.getFilenameAndLineNumber() +
@@ -2317,7 +2317,7 @@ public class Interpreter implements Cloneable
 	 * @param preprocessor is source to read from.
 	 * @return list of parameter names.
 	 */
-	private ArrayList parseParameters(Preprocessor preprocessor)
+	private ArrayList<String> parseParameters(Preprocessor preprocessor)
 		throws IOException, MapyrusException
 	{
 		int c;
@@ -2376,7 +2376,7 @@ public class Interpreter implements Cloneable
 		boolean isFunction) throws IOException, MapyrusException
 	{
 		String blockName;
-		ArrayList parameters;
+		ArrayList<String> parameters;
 		ArrayList<Statement> procedureStatements = new ArrayList<Statement>();
 		ParsedStatement st;
 		Statement retval;
@@ -2959,7 +2959,7 @@ public class Interpreter implements Cloneable
 		}
 	}
 
-	private void makeCall(Statement block, ArrayList parameters, Argument []args)
+	private void makeCall(Statement block, ArrayList<String> parameters, Argument []args)
 		throws IOException, InterruptedException, MapyrusException
 	{
 		Statement statement;
@@ -2967,7 +2967,7 @@ public class Interpreter implements Cloneable
 
 		for (int i = 0; i < args.length; i++)
 		{
-			parameterName = (String)parameters.get(i);
+			parameterName = parameters.get(i);
 			m_context.setLocalScope(parameterName);
 			m_context.defineVariable(parameterName, args[i]);
 		}
@@ -2975,10 +2975,10 @@ public class Interpreter implements Cloneable
 		/*
 		 * Execute each of the statements in the procedure block.
 		 */
-		ArrayList v = block.getStatementBlock();
+		ArrayList<Statement> v = block.getStatementBlock();
 		for (int i = 0; i < v.size(); i++)
 		{
-			statement = (Statement)v.get(i);
+			statement = v.get(i);
 
 			/*
 			 * Found return statement so stop executing.
@@ -3030,7 +3030,7 @@ public class Interpreter implements Cloneable
 			 * Execute correct part of if statement depending on value of expression.
 			 */
 			Expression []expr = statement.getExpressions();
-			ArrayList v;
+			ArrayList<Statement> v;
 			Argument test;
 			
 			try
@@ -3080,7 +3080,7 @@ public class Interpreter implements Cloneable
 			 */
 			Expression []expr = statement.getExpressions();
 			
-			ArrayList v = statement.getLoopStatements();
+			ArrayList<Statement> v = statement.getLoopStatements();
 			Argument test;
 	
 			try
@@ -3168,7 +3168,7 @@ public class Interpreter implements Cloneable
 			Expression []varExpr = statement.getExpressions();
 			Expression hashMapExpr = statement.getForHashMap();
 
-			ArrayList v = statement.getLoopStatements();
+			ArrayList<Statement> v = statement.getLoopStatements();
 			Argument hashMapVar;
 			String varName = varExpr[0].getVariableName();
 
@@ -3235,7 +3235,7 @@ public class Interpreter implements Cloneable
 			/*
 			 * Check that correct number of parameters are being passed.
 			 */
-			ArrayList formalParameters = block.getBlockParameters();
+			ArrayList<String> formalParameters = block.getBlockParameters();
 			Expression []actualParameters = statement.getExpressions();
 			if (actualParameters.length != formalParameters.size())
 			{
@@ -3274,8 +3274,8 @@ public class Interpreter implements Cloneable
 				 * Step through path, setting origin and rotation for each
 				 * point and then calling procedure block.
 				 */
-				ArrayList moveTos = m_context.getMoveTos();
-				ArrayList rotations = m_context.getMoveToRotations();
+				ArrayList<Point2D> moveTos = m_context.getMoveTos();
+				ArrayList<Double> rotations = m_context.getMoveToRotations();
 
 				for (int i = 0; i < moveToCount; i++)
 				{

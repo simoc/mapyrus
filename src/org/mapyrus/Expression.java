@@ -776,7 +776,7 @@ public class Expression
 	/*
 	 * Parse expression including assignment to variables.
 	 */
-	private ExpressionTreeNode parseAssignment(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseAssignment(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, value;
@@ -835,7 +835,7 @@ public class Expression
 	/*
 	 * Parse expression including "or" boolean operations.
 	 */
-	private ExpressionTreeNode parseOrBoolean(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseOrBoolean(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, b;
@@ -876,7 +876,7 @@ public class Expression
 	/*
 	 * Parse expression including "and" boolean operations.
 	 */
-	private ExpressionTreeNode parseAndBoolean(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseAndBoolean(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, b;
@@ -928,7 +928,7 @@ public class Expression
 	/*
 	 * Parse expression including "not" boolean operations.
 	 */
-	private ExpressionTreeNode parseNotBoolean(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseNotBoolean(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode b, expr = null;
@@ -987,7 +987,7 @@ public class Expression
 	/*
 	 * Parse conditional expression, like: hour < 12 ? "AM" : "PM"
 	 */
-	private ExpressionTreeNode parseConditional(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseConditional(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, trueExpr, falseExpr;
@@ -1029,7 +1029,7 @@ public class Expression
 	/*
 	 * Parse a comparison expression.
 	 */
-	private ExpressionTreeNode parseComparison(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseComparison(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, cond;
@@ -1115,7 +1115,7 @@ public class Expression
 	/*
 	 * Parse expression.
 	 */
-	private ExpressionTreeNode parseExpression(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseExpression(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, term;
@@ -1150,7 +1150,7 @@ public class Expression
 	/*
 	 * Parse term.
 	 */
-	private ExpressionTreeNode parseTerm(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseTerm(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode term, factor;
@@ -1188,7 +1188,7 @@ public class Expression
 	/*
 	 * Parse expression including unary plus or minus.
 	 */
-	private ExpressionTreeNode parseUnary(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseUnary(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr;
@@ -1227,7 +1227,7 @@ public class Expression
 	/*
 	 * Parse expression including '++' increment or '--' decrement.
 	 */
-	private ExpressionTreeNode parsePlusPlus(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parsePlusPlus(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr;
@@ -1304,7 +1304,7 @@ public class Expression
 	/*
 	 * Parse expression including reference to an element in a hashmap.
 	 */
-	private ExpressionTreeNode parseHashMapReference(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseHashMapReference(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr, keyExpr;
@@ -1347,7 +1347,7 @@ public class Expression
 	/*
 	 * Parse array expression: [11, 22, "hello"].
 	 */
-	private ExpressionTreeNode parseArray(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseArray(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		ExpressionTreeNode expr;
@@ -1466,7 +1466,7 @@ public class Expression
 	/*
 	 * Parse a single number, string or variable name.
 	 */
-	private ExpressionTreeNode parseFactor(Preprocessor p, HashMap userFunctions)
+	private ExpressionTreeNode parseFactor(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		boolean parsedDigit;
@@ -1779,7 +1779,7 @@ public class Expression
 	 * @param p is the preprocessed output to read from.
 	 * @param userFunctions user-defined functions.
 	 */
-	public Expression(Preprocessor p, HashMap userFunctions)
+	public Expression(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
 	{
 		m_exprTree = parseAssignment(p, userFunctions);
@@ -1815,7 +1815,7 @@ public class Expression
 			Preprocessor p;
 			Expression e1, e2;
 			ContextStack context = new ContextStack();
-			HashMap userFunctions = new HashMap();
+			HashMap<String, UserFunction> userFunctions = new HashMap<String, UserFunction>();
 			Argument a1, a2;
 
 			context.defineVariable("pi", new Argument(3.1415));
