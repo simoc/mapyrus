@@ -62,10 +62,10 @@ public class ConnectionPool
 			 * and holding idle connections open.
 			 */
 			long now = System.currentTimeMillis();
-			ListIterator it = connections.listIterator();
+			ListIterator<TimeStampedConnection> it = connections.listIterator();
 			while (it.hasNext())
 			{
-				TimeStampedConnection tc = (TimeStampedConnection)it.next();
+				TimeStampedConnection tc = it.next();
 				long age = now - tc.getLastUseTimeStamp();
 				if (age > Constants.DB_IDLE_TIMEOUT * 1000)
 				{

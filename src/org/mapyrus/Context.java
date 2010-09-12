@@ -1422,7 +1422,7 @@ public class Context
 			 */
 			if (path.getLineToCount() == 0 && path.getMoveToCount() > 0)
 			{
-				ArrayList moveTos = path.getMoveTos();
+				ArrayList<Point2D> moveTos = path.getMoveTos();
 				ArrayList<Double> moveToRotations = path.getMoveToRotations();
 				m_path = new GeometricPath();
 				for (int i = 0; i < moveTos.size(); i++)
@@ -2495,7 +2495,8 @@ public class Context
 	 * @param extras options for table.
 	 * @param list of arrays giving values in each column.
 	 */
-	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
+	public void drawTable(String extras, ArrayList<Argument> columns)
+		throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
 		if (path == null || m_outputFormat == null)
@@ -2589,11 +2590,11 @@ public class Context
 
 		if (sortColumn < 0)
 		{
-			primaryKeys = ((Argument)columns.get(0)).getHashMapKeys();
+			primaryKeys = columns.get(0).getHashMapKeys();
 		}
 		else
 		{
-			Argument arg = (Argument)columns.get(sortColumn - 1);
+			Argument arg = columns.get(sortColumn - 1);
 			primaryKeys = arg.getHashMapKeysSortedByValue();
 			if (sortOrder < 0)
 			{
@@ -2618,7 +2619,7 @@ public class Context
 		for (int i = 0; i < columnWidths.length; i++)
 		{
 			columnWidths[i] = 0;
-			Argument arg = (Argument)columns.get(i);
+			Argument arg = columns.get(i);
 
 			for (int j = 0; j < primaryKeys.length; j++)
 			{
@@ -2640,7 +2641,7 @@ public class Context
 			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
 		setGraphicsAttributes(attributeMask);
 
-		ArrayList moveTos = path.getMoveTos();
+		ArrayList<Point2D> moveTos = path.getMoveTos();
 		for (int i = 0; i < moveTos.size(); i++)
 		{
 			Point2D.Float pt = (Point2D.Float)moveTos.get(i);
@@ -2670,7 +2671,7 @@ public class Context
 					setGraphicsAttributes(ATTRIBUTE_JUSTIFY);
 				}
 
-				Argument arg = (Argument)columns.get(j);
+				Argument arg = columns.get(j);
 				for (int k = 0; k < primaryKeys.length; k++)
 				{
 					/*
@@ -2767,7 +2768,7 @@ public class Context
 			ATTRIBUTE_JUSTIFY|ATTRIBUTE_CLIP|ATTRIBUTE_LINESTYLE;
 		setGraphicsAttributes(attributeMask);
 
-		ArrayList moveTos = path.getMoveTos();
+		ArrayList<Point2D> moveTos = path.getMoveTos();
 		for (int i = 0; i < moveTos.size(); i++)
 		{
 			Point2D.Float pt = (Point2D.Float)moveTos.get(i);
@@ -2788,8 +2789,8 @@ public class Context
 					entry.add(st.nextToken());
 
 				int indent = 0;
-				ListIterator it = entry.listIterator();
-				ListIterator lastIt = lastEntry.listIterator();
+				ListIterator<String> it = entry.listIterator();
+				ListIterator<String> lastIt = lastEntry.listIterator();
 				while (it.hasNext() && lastIt.hasNext())
 				{
 					String token = (String)it.next();
@@ -3003,9 +3004,9 @@ public class Context
 	 * @return array of rotation angles relative to rotation in current
 	 * transformation matrix.
 	 */
-	public ArrayList getMoveToRotations()
+	public ArrayList<Double> getMoveToRotations()
 	{
-		ArrayList retval;
+		ArrayList<Double> retval;
 
 		GeometricPath path = getDefinedPath();
 
@@ -3025,7 +3026,7 @@ public class Context
 		ArrayList<Point2D> retval = null;
 		GeometricPath path = getDefinedPath();
 		AffineTransform inverse;
-		ArrayList moveTos;
+		ArrayList<Point2D> moveTos;
 
 		try
 		{

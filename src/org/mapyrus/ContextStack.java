@@ -24,6 +24,7 @@ package org.mapyrus;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -970,7 +971,8 @@ public class ContextStack
 	 * @param extras options for table.
 	 * @param list of arrays giving values in each column.
 	 */
-	public void drawTable(String extras, ArrayList columns) throws IOException, MapyrusException
+	public void drawTable(String extras, ArrayList<Argument> columns)
+		throws IOException, MapyrusException
 	{
 		getCurrentContext().drawTable(extras, columns);
 	}
@@ -1010,7 +1012,7 @@ public class ContextStack
 	 * Returns rotation angle for each moveTo point in current path.
 	 * @return list of rotation angles.
 	 */	
-	public ArrayList getMoveToRotations()
+	public ArrayList<Double> getMoveToRotations()
 	{
 		return(getCurrentContext().getMoveToRotations());
 	}
@@ -1019,7 +1021,7 @@ public class ContextStack
 	 * Returns coordinates for each each moveTo point in current path
 	 * @return list of Point2D.Float objects.
 	 */	
-	public ArrayList getMoveTos() throws MapyrusException
+	public ArrayList<Point2D> getMoveTos() throws MapyrusException
 	{
 		return(getCurrentContext().getMoveTos());
 	}
