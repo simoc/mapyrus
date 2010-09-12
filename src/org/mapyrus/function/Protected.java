@@ -40,7 +40,7 @@ public class Protected implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
@@ -50,7 +50,7 @@ public class Protected implements Function
 		}
 		else if (args.size() == 1)
 		{
-			Argument arg1 = (Argument)args.get(0);
+			Argument arg1 = args.get(0);
 			retval = context.isProtected(arg1) ? Argument.numericOne : Argument.numericZero;
 		}
 		else
@@ -58,10 +58,10 @@ public class Protected implements Function
 			if (args.size() != 4)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.WRONG_FUNCTION_VALUES));
 
-			Argument arg1 = (Argument)args.get(0);
-			Argument arg2 = (Argument)args.get(1);
-			Argument arg3 = (Argument)args.get(2);
-			Argument arg4 = (Argument)args.get(3);
+			Argument arg1 = args.get(0);
+			Argument arg2 = args.get(1);
+			Argument arg3 = args.get(2);
+			Argument arg4 = args.get(3);
 
 			double x1 = arg1.getNumericValue();
 			double y1 = arg2.getNumericValue();

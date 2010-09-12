@@ -42,7 +42,7 @@ public class ConvexHull implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
@@ -52,7 +52,7 @@ public class ConvexHull implements Function
 			/*
 			 * Calculate convex hull for geometry.
 			 */
-			Argument arg1 = (Argument)args.get(0);
+			Argument arg1 = args.get(0);
 			String wkt1 = arg1.toString();
 			Geometry g1 = new WKTReader().read(wkt1);
 			com.vividsolutions.jts.algorithm.ConvexHull hull = new

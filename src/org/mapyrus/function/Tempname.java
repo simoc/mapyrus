@@ -39,13 +39,13 @@ public class Tempname implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		/*
  		 * Generate name for temporary file with given suffix.
  		 */
-		Argument arg1 = (Argument)args.get(0);
+		Argument arg1 = args.get(0);
 		Argument retval = new Argument(Argument.STRING,
 			TransientFileFactory.generate(arg1.toString(), Constants.HTTP_TEMPFILE_LIFESPAN));
 		return(retval);

@@ -45,7 +45,7 @@ public class DummyFunction implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));

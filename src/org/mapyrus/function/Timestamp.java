@@ -40,13 +40,13 @@ public class Timestamp implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		double offsetSeconds = 0;
 		if (!args.isEmpty())
 		{
-			Argument arg1 = (Argument)args.get(0);
+			Argument arg1 = args.get(0);
 			offsetSeconds = arg1.getNumericValue();
 		}
 		long now = System.currentTimeMillis();

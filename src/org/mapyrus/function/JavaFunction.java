@@ -65,7 +65,7 @@ public class JavaFunction implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException, InterruptedException
 	{
 		if (!context.getThrottle().isIOAllowed())
@@ -93,23 +93,23 @@ public class JavaFunction implements Function
 					String paramName = parameters[j].getName();
 					if (paramName.equals("java.lang.Object") || paramName.equals("java.lang.String"))
 					{
-						methodArgs[j] = ((Argument)args.get(j)).toString();
+						methodArgs[j] = args.get(j).toString();
 					}
 					else if (paramName.equals(Argument.class.getSimpleName()))
 					{
-						methodArgs[j] = (Argument)args.get(j);
+						methodArgs[j] = args.get(j);
 					}
 					else if (paramName.equals("boolean") || paramName.equals("java.lang.Boolean"))
 					{
 						boolean isTrue;
-						String s = ((Argument)args.get(j)).toString();
+						String s = args.get(j).toString();
 						if (s.equalsIgnoreCase("true"))
 							isTrue = true;
 						else if (s.equalsIgnoreCase("false"))
 							isTrue = false;
 						else
 						{
-							double d = ((Argument)args.get(j)).getNumericValue();
+							double d = args.get(j).getNumericValue();
 							boolean isZero = NumericalAnalysis.equals(d, 0);
 							isTrue = !isZero;
 						}
@@ -117,12 +117,12 @@ public class JavaFunction implements Function
 					}
 					else if (paramName.equals("byte") || paramName.equals("java.lang.Byte"))
 					{
-						double d = ((Argument)args.get(j)).getNumericValue();
+						double d = args.get(j).getNumericValue();
 						methodArgs[j] = Byte.valueOf((byte)d);
 					}
 					else if (paramName.equals("char") || paramName.equals("java.lang.Character"))
 					{
-						String s = ((Argument)args.get(j)).toString();
+						String s = args.get(j).toString();
 						char c;
 						if (s.length() > 0)
 							c = s.charAt(0);
@@ -132,27 +132,27 @@ public class JavaFunction implements Function
 					}
 					else if (paramName.equals("short") || paramName.equals("java.lang.Short"))
 					{
-						double d = ((Argument)args.get(j)).getNumericValue();
+						double d = args.get(j).getNumericValue();
 						methodArgs[j] = Short.valueOf((short)d);
 					}
 					else if (paramName.equals("int") || paramName.equals("java.lang.Integer"))
 					{
-						double d = ((Argument)args.get(j)).getNumericValue();
+						double d = args.get(j).getNumericValue();
 						methodArgs[j] = Integer.valueOf((int)d);
 					}
 					else if (paramName.equals("long") || paramName.equals("java.lang.Long"))
 					{
-						double d = ((Argument)args.get(j)).getNumericValue();
+						double d = args.get(j).getNumericValue();
 						methodArgs[j] = Long.valueOf((long)d);
 					}
 					else if (paramName.equals("float") || paramName.equals("java.lang.Float"))
 					{
-						double d = ((Argument)args.get(j)).getNumericValue();
+						double d = args.get(j).getNumericValue();
 						methodArgs[j] = Float.valueOf((float)d);
 					}
 					else if (paramName.equals("double") || paramName.equals("java.lang.Double"))
 					{
-						double d = ((Argument)args.get(j)).getNumericValue();
+						double d = args.get(j).getNumericValue();
 						methodArgs[j] = Double.valueOf(d);
 					}
 					else

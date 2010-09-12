@@ -42,10 +42,10 @@ public class Spool implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
-		Argument arg1 = (Argument)args.get(0);
+		Argument arg1 = args.get(0);
 		String filename = arg1.getStringValue();
 		
 		if (!context.getThrottle().isIOAllowed())

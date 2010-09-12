@@ -84,15 +84,15 @@ public class Match implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		/*
 		 * Find index of start of regular expression in string.
 		 */
 		Argument retval;
-		Argument arg1 = (Argument)args.get(0);
-		Argument arg2 = (Argument)args.get(1);
+		Argument arg1 = args.get(0);
+		Argument arg2 = args.get(1);
 		Pattern pattern = compileRegex(arg2.toString());
 		Matcher matcher = pattern.matcher(arg1.toString());
 		if (matcher.find())

@@ -39,13 +39,13 @@ public class Parsegeo implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
 		double degrees = 0, minutes = 0, seconds = 0;
 		int sign = 1;
-		Argument arg1 = (Argument)args.get(0);
+		Argument arg1 = args.get(0);
 		String geo = arg1.toString().toLowerCase().trim();
 
 		try
@@ -68,7 +68,7 @@ public class Parsegeo implements Function
 			 */
 			int dIndex = geo.indexOf('d');
 			if (dIndex < 0)
-				dIndex = geo.indexOf('°');
+				dIndex = geo.indexOf('ï¿½');
 			if (dIndex < 0)
 				dIndex = geo.indexOf('\ufffd');
 			if (dIndex >= 0)

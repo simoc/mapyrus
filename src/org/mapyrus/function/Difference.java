@@ -43,7 +43,7 @@ public class Difference implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
@@ -52,8 +52,8 @@ public class Difference implements Function
 		 * If bounding rectangles of geometries do not overlap
 		 * then difference of arg1 and arg2 must be arg1.
 		 */
-		Argument arg1 = (Argument)args.get(0);
-		Argument arg2 = (Argument)args.get(1);
+		Argument arg1 = args.get(0);
+		Argument arg2 = args.get(1);
 		Rectangle2D.Double rect1 = arg1.getGeometryBoundingBox();
 		Rectangle2D.Double rect2 = arg2.getGeometryBoundingBox();
 		if (rect1 == null || rect2 == null)

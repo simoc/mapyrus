@@ -42,18 +42,18 @@ public class Wordwrap implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
-		Argument arg1 = (Argument)args.get(0);
-		Argument arg2 = (Argument)args.get(1);
+		Argument arg1 = args.get(0);
+		Argument arg2 = args.get(1);
 		String s = arg1.getStringValue();
 		double maxWidth = arg2.getNumericValue();
 		String hyphenation = null;
 		boolean adjustSpacing = false;
 		if (args.size() == 3)
 		{
-			StringTokenizer st = new StringTokenizer(((Argument)args.get(2)).toString());
+			StringTokenizer st = new StringTokenizer(args.get(2).toString());
 			while (st.hasMoreTokens())
 			{
 				String token = st.nextToken();

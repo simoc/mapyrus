@@ -41,13 +41,13 @@ public class Union implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
 
-		Argument arg1 = (Argument)args.get(0);
-		Argument arg2 = (Argument)args.get(1);
+		Argument arg1 = args.get(0);
+		Argument arg2 = args.get(1);
 		String wkt1 = arg1.toString();
 		String wkt2 = arg2.toString();
 

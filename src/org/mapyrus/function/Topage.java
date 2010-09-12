@@ -37,18 +37,18 @@ public class Topage implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
-		Argument arg1 = (Argument)args.get(0);
+		Argument arg1 = args.get(0);
 		if (args.size() == 1)
 		{
 			retval = context.transformToPage(arg1);
 		}
 		else
 		{
-			Argument arg2 = (Argument)args.get(1);
+			Argument arg2 = args.get(1);
 
 			/*
 		 	 * Build point geometry and transform it.

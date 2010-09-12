@@ -43,10 +43,10 @@ public class Log10 implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
-		Argument arg1 = (Argument)args.get(0);
+		Argument arg1 = args.get(0);
 		double d = arg1.getNumericValue();
 		if (d <= 0.0)
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NUMERIC_OVERFLOW));

@@ -61,7 +61,7 @@ public class UserFunction implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException, InterruptedException
 	{
 		Argument retval = null;
@@ -75,7 +75,7 @@ public class UserFunction implements Function
 			{
 				String parameterName = (String)m_formalParameters.get(i);
 				context.setLocalScope(parameterName);
-				Argument arg = (Argument)args.get(i);
+				Argument arg = args.get(i);
 				context.defineVariable(parameterName, arg);
 			}
 		

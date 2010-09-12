@@ -59,6 +59,6 @@ public interface Function
 	 * @return evaluated function value.
 	 * @throws MapyrusException
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException, InterruptedException;
 }

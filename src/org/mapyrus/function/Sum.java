@@ -37,7 +37,7 @@ public class Sum implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		double total = 0;
@@ -47,7 +47,7 @@ public class Sum implements Function
 		 */
 		for (int i = 0; i < args.size(); i++)
 		{
-			Argument arg = (Argument)args.get(i);
+			Argument arg = args.get(i);
 			if (arg.getType() == Argument.HASHMAP)
 			{
 				Object []keys = arg.getHashMapKeys();

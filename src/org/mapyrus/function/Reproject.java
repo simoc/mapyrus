@@ -65,12 +65,12 @@ public class Reproject implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval = null;
-		String srcProjName = ((Argument)args.get(0)).getStringValue();
-		String destProjName = ((Argument)args.get(1)).getStringValue();
+		String srcProjName = args.get(0).getStringValue();
+		String destProjName = args.get(1).getStringValue();
 
 		Projection srcProj = getProjection(srcProjName);
 		Projection destProj = getProjection(destProjName);
@@ -80,8 +80,8 @@ public class Reproject implements Function
 			/*
 			 * Reproject single point.
 			 */
-			double x = ((Argument)args.get(2)).getNumericValue();
-			double y = ((Argument)args.get(3)).getNumericValue();
+			double x = args.get(2).getNumericValue();
+			double y = args.get(3).getNumericValue();
 			Point2D.Double pt = new Point2D.Double(x, y);
 
 			reproject(srcProj, destProj, pt);
@@ -102,7 +102,7 @@ public class Reproject implements Function
 			 * Reproject geometry argument, then reate new geometry
 			 * argument with reprojected coordinates. 
 			 */
-			Argument geometry = (Argument)args.get(2);
+			Argument geometry = args.get(2);
 			double []coords = geometry.getGeometryValue();
 			double []newCoords = new double[coords.length];
 			System.arraycopy(coords, 0, newCoords, 0, coords.length);

@@ -37,11 +37,11 @@ public class Length implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		Argument retval;
-		Argument arg1 = (Argument)args.get(0);
+		Argument arg1 = args.get(0);
 		if (arg1.getType() == Argument.HASHMAP)
 			retval = new Argument(arg1.getHashMapSize());
 		else

@@ -94,15 +94,15 @@ public class Contains implements Function
 	/**
 	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
 	 */
-	public Argument evaluate(ContextStack context, ArrayList args)
+	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
-		Argument arg1 = (Argument)args.get(0);
-		Argument arg2 = (Argument)args.get(1);
+		Argument arg1 = args.get(0);
+		Argument arg2 = args.get(1);
 		if (args.size() == 2)
 			return(evaluate(context, arg1, arg2));
 
-		Argument arg3 = (Argument)args.get(2);
+		Argument arg3 = args.get(2);
 		double x = arg2.getNumericValue();
 		double y = arg3.getNumericValue();
 
