@@ -343,10 +343,10 @@ public class OutputFormat
 		if (fontList.size() > 0)
 		{
 			sb = new StringBuffer("%%DocumentSuppliedResources: font");
-			Iterator it = fontList.iterator();
+			Iterator<PostScriptFont> it = fontList.iterator();
 			while (it.hasNext())
 			{
-				PostScriptFont psFont = (PostScriptFont)(it.next());
+				PostScriptFont psFont = it.next();
 				sb.append(" ").append(psFont.getName());
 				m_suppliedFontResources.add(psFont.getName());
 			}
@@ -360,10 +360,10 @@ public class OutputFormat
 		 * Inline font definitions.
 		 */
 		writeLine(m_writer, "%%BeginSetup");
-		Iterator it = fontList.iterator();
+		Iterator<PostScriptFont> it = fontList.iterator();
 		while (it.hasNext())
 		{
-			PostScriptFont psFont = (PostScriptFont)(it.next());
+			PostScriptFont psFont = it.next();
 
 			writeLine(m_writer, "%%BeginResource: font " + psFont.getName());
 			String fontDefinition = psFont.getFontDefinition();
@@ -1111,9 +1111,9 @@ public class OutputFormat
 						 * Accept wildcards in filenames.
 						 */
 						WildcardFile wildcard = new WildcardFile(fontFilename);
-						Iterator it = wildcard.getMatchingFiles().iterator();
+						Iterator<String> it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
-							fontList.add(new PostScriptFont((String)it.next(), isBinary));
+							fontList.add(new PostScriptFont(it.next(), isBinary));
 					}
 				}
 			}
@@ -1198,10 +1198,10 @@ public class OutputFormat
 						}
 
 						WildcardFile wildcard = new WildcardFile(ttfFilename);
-						Iterator it = wildcard.getMatchingFiles().iterator();
+						Iterator<String> it = wildcard.getMatchingFiles().iterator();
 						while (it.hasNext())
 						{
-							String s = (String)it.next();
+							String s = it.next();
 							TrueTypeFont ttf = new TrueTypeFont(s);
 							String fontName = ttf.getName();
 							m_TTFFonts.put(fontName, ttf);
@@ -2164,10 +2164,10 @@ public class OutputFormat
 			 * not include in the header.
 			 */	
 			writeLine(m_writer, "%%DocumentNeededResources:");
-			Iterator it = m_neededFontResources.iterator();
+			Iterator<String> it = m_neededFontResources.iterator();
 			while (it.hasNext())
 			{
-				String fontName = (String)(it.next());
+				String fontName = it.next();
 				if (!m_suppliedFontResources.contains(fontName))
 					writeLine(m_writer, "%%+ font " + fontName);
 			}
@@ -2447,7 +2447,7 @@ public class OutputFormat
 			writeLine(m_writer, "xref");
 			writeLine(m_writer, "0 " + (m_PDFFileOffsets.size() + 1));
 			writeLine(m_writer, "0000000000 65535 f");
-			Iterator it = m_PDFFileOffsets.iterator();
+			Iterator<Integer> it = m_PDFFileOffsets.iterator();
 			while (it.hasNext())
 			{
 				String fileOffset = it.next().toString();
@@ -2928,7 +2928,7 @@ public class OutputFormat
 	 * @param clipPaths are polygons to clip against, or null if
 	 * there are no clip polygons.
 	 */
-	public void setClipAttribute(ArrayList clipPaths)
+	public void setClipAttribute(ArrayList<GeometricPath> clipPaths)
 	{
 		if (m_outputType != POSTSCRIPT_GEOMETRY && m_outputType != PDF && m_outputType != SVG)
 		{
@@ -2938,7 +2938,7 @@ public class OutputFormat
 			{
 				for (int i = 0; i < clipPaths.size(); i++)
 				{
-					GeometricPath clipPath = (GeometricPath)(clipPaths.get(i));
+					GeometricPath clipPath = clipPaths.get(i);
 					m_graphics2D.clip(clipPath.getShape());
 				}
 			}
@@ -3215,7 +3215,7 @@ public class OutputFormat
 	 * @param rotation rotation angle for icon.
 	 * @param scaling scale factor for icon.
 	 */
-	public void drawIcon(ArrayList pointList, BufferedImage image, double size,
+	public void drawIcon(ArrayList<Point2D> pointList, BufferedImage image, double size,
 		double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
@@ -3258,7 +3258,7 @@ public class OutputFormat
 			 */
 			for (i = 0; i < pointList.size(); i++)
 			{
-				pt = (Point2D)(pointList.get(i));
+				pt = pointList.get(i);
 				x = pt.getX();
 				y = pt.getY();
 
@@ -3382,7 +3382,7 @@ public class OutputFormat
 		}
 	}
 
-	private void drawBoundingBoxes(ArrayList pointList, double size, double rotation)
+	private void drawBoundingBoxes(ArrayList<Point2D> pointList, double size, double rotation)
 	{
 		GeneralPath path = new GeneralPath();
 		Color currentColor = m_graphics2D.getColor();
@@ -3390,7 +3390,7 @@ public class OutputFormat
 
 		for (int i = 0; i < pointList.size(); i++)
 		{
-			Point2D pt = (Point2D)(pointList.get(i));
+			Point2D pt = pointList.get(i);
 			double x = pt.getX();
 			double y = pt.getY();
 			double xDist = Math.cos(rotation) * size / 2;
@@ -3422,7 +3422,7 @@ public class OutputFormat
 	 * @param rotation rotation angle for EPS file.
 	 * @param scaling scale factor for EPS file.
 	 */
-	public void drawEPS(ArrayList pointList, String filename,
+	public void drawEPS(ArrayList<Point2D> pointList, String filename,
 		double size, double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
@@ -3451,7 +3451,7 @@ public class OutputFormat
 			 */
 			for (i = 0; i < pointList.size(); i++)
 			{
-				pt = (Point2D)(pointList.get(i));
+				pt = pointList.get(i);
 				x = pt.getX();
 				y = pt.getY();
 
@@ -3533,7 +3533,7 @@ public class OutputFormat
 	 * @param rotation rotation angle for SVG file.
 	 * @param scaling scale factor for SVG file.
 	 */
-	public void drawSVG(ArrayList pointList, String filename,
+	public void drawSVG(ArrayList<Point2D> pointList, String filename,
 		double size, double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
@@ -3562,7 +3562,7 @@ public class OutputFormat
 			 */
 			for (i = 0; i < pointList.size(); i++)
 			{
-				pt = (Point2D)(pointList.get(i));
+				pt = pointList.get(i);
 				x = pt.getX();
 				y = pt.getY();
 
@@ -3628,7 +3628,7 @@ public class OutputFormat
 	 * @param rotation rotation angle for PDF file.
 	 * @param scaling scale factor for PDF file.
 	 */
-	public void drawPDF(ArrayList pointList, String filename, int page,
+	public void drawPDF(ArrayList<Point2D> pointList, String filename, int page,
 		double size, double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
@@ -3702,7 +3702,7 @@ public class OutputFormat
 			byte []contentsBuf = pdfFile.getContents(page);
 			for (i = 0; i < pointList.size(); i++)
 			{
-				pt = (Point2D)(pointList.get(i));
+				pt = pointList.get(i);
 				x = pt.getX();
 				y = pt.getY();
 
@@ -4229,7 +4229,7 @@ public class OutputFormat
 			/*
 			 * Draw each line of label below the one above.
 			 */
-			Iterator it = lines.iterator();
+			Iterator<String> it = lines.iterator();
 			lineNumber = 0;
 			while (it.hasNext())
 			{

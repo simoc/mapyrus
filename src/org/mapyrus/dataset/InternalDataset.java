@@ -127,7 +127,7 @@ public class InternalDataset implements GeographicDataset
 		return "GEOGCS[\"wgs84\",DATUM[\"WGS_1984\",SPHEROID[\"wgs84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
 	}
 
-	public Hashtable getMetadata()
+	public Hashtable<String, String> getMetadata()
 	{
 		Hashtable<String, String> retval = new Hashtable<String, String>();
 		return retval;

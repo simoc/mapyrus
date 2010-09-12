@@ -260,7 +260,7 @@ public class JDBCDataset implements GeographicDataset
 	 * Return metadata about the dataset.
 	 * @return metadata as (key, value) pairs.
 	 */
-	public Hashtable getMetadata()
+	public Hashtable<String, String> getMetadata()
 	{
 		return null;
 	}

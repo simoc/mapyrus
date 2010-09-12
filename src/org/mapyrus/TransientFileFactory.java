@@ -101,7 +101,7 @@ public class TransientFileFactory
 		 * Insert newly created filename into list,
 		 * maintaining the list in order of expiry.
 		 */
-		ListIterator li = m_generatedFilenames.listIterator();
+		ListIterator<TransientFile> li = m_generatedFilenames.listIterator();
 		int insertIndex = 0;
 		boolean found = false;
 
@@ -121,7 +121,7 @@ public class TransientFileFactory
 
 		while (found == false && li.hasNext())
 		{
-			TransientFile t = (TransientFile)(li.next());
+			TransientFile t = li.next();
 			if (t.m_expiryTimestamp > expiry)
 			{
 				insertIndex = li.nextIndex() - 1;

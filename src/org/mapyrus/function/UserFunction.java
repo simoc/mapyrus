@@ -37,8 +37,8 @@ import org.mapyrus.Statement;
 public class UserFunction implements Function
 {
 	private String m_funcName;
-	private ArrayList m_formalParameters;
-	private ArrayList m_statements;
+	private ArrayList<String> m_formalParameters;
+	private ArrayList<Statement> m_statements;
 	private Interpreter m_interpreter;
 
 	/**
@@ -49,8 +49,8 @@ public class UserFunction implements Function
 	 * @param interpreter interpreter in which statements will execute.
 	 * @return function function that can be executed just like internal functions.
 	 */
-	public UserFunction(String funcName, ArrayList formalParameters,
-		ArrayList statements, Interpreter interpreter)
+	public UserFunction(String funcName, ArrayList<String> formalParameters,
+		ArrayList<Statement> statements, Interpreter interpreter)
 	{
 		m_funcName = funcName;
 		m_formalParameters = formalParameters;
@@ -73,7 +73,7 @@ public class UserFunction implements Function
 			savedState = true;
 			for (int i = 0; i < args.size(); i++)
 			{
-				String parameterName = (String)m_formalParameters.get(i);
+				String parameterName = m_formalParameters.get(i);
 				context.setLocalScope(parameterName);
 				Argument arg = args.get(i);
 				context.defineVariable(parameterName, arg);
@@ -84,7 +84,7 @@ public class UserFunction implements Function
 			 */	
 			for (int i = 0; i < m_statements.size(); i++)
 			{
-				Statement statement = (Statement)m_statements.get(i);
+				Statement statement = m_statements.get(i);
 				retval = m_interpreter.executeStatement(statement);
 		
 				/*
@@ -157,7 +157,7 @@ public class UserFunction implements Function
 	 * Set statements to execute for this function.
 	 * @param statements statements to execute.
 	 */
-	public void setStatements(ArrayList statements)
+	public void setStatements(ArrayList<Statement> statements)
 	{
 		m_statements = statements;
 	}

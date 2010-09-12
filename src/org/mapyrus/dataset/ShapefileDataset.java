@@ -465,7 +465,7 @@ public class ShapefileDataset implements GeographicDataset
 	/*
 	 * Read header from DBF database file
 	 */
-	private void readDBFHeader(HashSet dbfFieldnameList)
+	private void readDBFHeader(HashSet<String> dbfFieldnameList)
 		throws IOException
 	{
 		int headerLength, nTotalFields;
@@ -596,7 +596,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see org.mapyrus.dataset.GeographicDataset#getMetadata()
 	 */
-	public Hashtable getMetadata()
+	public Hashtable<String, String> getMetadata()
 	{
 		return(null);
 	}

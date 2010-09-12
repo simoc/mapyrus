@@ -43,7 +43,7 @@ public interface GeographicDataset
 	 * Return metadata of a dataset in a key-value lookup table.
 	 * @return metadata table.
 	 */
-	public Hashtable getMetadata();
+	public Hashtable<String, String> getMetadata();
 
 	/**
 	 * Return list of names of fields in this dataset.
