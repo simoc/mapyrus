@@ -57,6 +57,7 @@ public class ASCII85Writer
 	 */
 	private Writer m_writer;
 	private int m_nCharsOnLine;
+	private int m_nCharsWritten;
 
 	/*
 	 * Deflater to ZLIB compress data before converting it to ASCII85 stream.
@@ -89,7 +90,7 @@ public class ASCII85Writer
 		 * do not strip any of our ASCII85 characters. 
 		 */
 		m_writer.write(' ');
-		m_nCharsOnLine = 1;
+		m_nCharsOnLine = m_nCharsWritten = 1;
 	}
 
 	/**
@@ -113,6 +114,7 @@ public class ASCII85Writer
 		{
 			m_writer.write('z');
 			m_nCharsOnLine++;
+			m_nCharsWritten++;
 		}
 		else
 		{
@@ -132,11 +134,13 @@ public class ASCII85Writer
 			if (isFinalSet)
 			{
 				m_writer.write(m_encodedChars, 0, m_nUnencodedBytes + 1);
+				m_nCharsWritten += m_nUnencodedBytes + 1;
 			}
 			else
 			{
 				m_writer.write(m_encodedChars);
 				m_nCharsOnLine += m_encodedChars.length;
+				m_nCharsWritten += m_encodedChars.length;
 
 			}
 		}
@@ -148,6 +152,7 @@ public class ASCII85Writer
 		{
 			m_writer.write(Constants.LINE_SEPARATOR + " ");
 			m_nCharsOnLine = 0;
+			m_nCharsWritten += Constants.LINE_SEPARATOR.length() + 1;
 		}
 	}
 
@@ -247,6 +252,15 @@ public class ASCII85Writer
 				m_unencodedBytes[i] = 0;
 			writeEncoded(true);
 		}
+	}
+
+	/**
+	 * Get number of encoded chars written during encoding process.
+	 * @return number of chars.
+	 */
+	public int getEncodedLength()
+	{
+		return(m_nCharsWritten);
 	}
 
 	static public void main(String args[])
