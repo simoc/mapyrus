@@ -669,7 +669,20 @@ public class Mapyrus
 			 */
 			f = new FileOrURL(new StringReader(commandsToExecute.toString()), "-e");
 			if (!processFile(context, f, interpreter, false))
+			{
+				try
+				{
+					context.closeContextStack();
+				}
+				catch (Exception e)
+				{
+					/*
+					 * Something was already reported as going wrong.
+					 * Do not report any further problems.
+					 */
+				}
 				System.exit(1);
+			}
 		}
 		else
 		{
@@ -707,7 +720,20 @@ public class Mapyrus
 
 		
 				if (!processFile(context, f, interpreter, !readingStdin))
+				{
+					try
+					{
+						context.closeContextStack();
+					}
+					catch (Exception e)
+					{
+						/*
+						 * Something was already reported as going wrong.
+						 * Do not report any further problems.
+						 */
+					}
 					System.exit(1);
+				}
 
 				i++;
 			}
