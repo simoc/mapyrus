@@ -227,6 +227,12 @@ public class OutputFormat
 	private double m_minimumLineWidth;
 
 	/*
+	 * Maximum amount of memory to use for holding images when creating PDF output.
+	 */
+	private long m_maxImageMemory;
+	private long m_imageMemory;
+
+	/*
 	 * Selected font and size.
 	 */
 	private String m_fontName;
@@ -280,7 +286,7 @@ public class OutputFormat
 	private StringWriter m_PDFGeometryStringWriter;
 	private PrintWriter m_PDFGeometryWriter;
 	private HashMap<String, String> m_PDFExtGStateObjects;
-	private HashMap<String, StringWriter> m_PDFImageObjects;
+	private HashMap<String, BigString> m_PDFImageObjects;
 
 	/*
 	 * Pages in external PDF files to be included in this one.
@@ -559,7 +565,7 @@ public class OutputFormat
 		m_writer.flush();
 
 		m_PDFExtGStateObjects = new HashMap<String, String>();
-		m_PDFImageObjects = new HashMap<String, StringWriter>();
+		m_PDFImageObjects = new HashMap<String, BigString>();
 		m_PDFIncludedFiles = new ArrayList<PDFFile>();
 		m_PDFIncludedPages = new ArrayList<ArrayList<Integer>>();
 		m_PDFGeometryStringWriter = new StringWriter();
@@ -1082,6 +1088,9 @@ public class OutputFormat
 
 		m_minimumLineWidth = 0;
 
+		m_maxImageMemory = 16 * 1024 * 1024;
+		m_imageMemory = 0;
+
 		StringTokenizer st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
 		{
@@ -1280,6 +1289,19 @@ public class OutputFormat
 				catch (NumberFormatException e)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LINE_WIDTH) +
+						": " + e.getMessage());
+				}
+			}
+			else if (token.startsWith("maximumimagememory="))
+			{
+				String memoryLimit = token.substring(19);
+				try
+				{
+					m_maxImageMemory = Long.parseLong(memoryLimit) * 1024 * 1024;
+				}
+				catch (NumberFormatException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_NUMBER) +
 						": " + e.getMessage());
 				}
 			}
@@ -1799,6 +1821,25 @@ public class OutputFormat
 		return(line.length() + 2);
 	}
 
+	/*
+	 * Write a line to PostScript, PDF or SVG file.
+	 * @return number of characters written to file.
+	 */
+	private int writeLine(PrintWriter writer, StringBuffer sb)
+	{
+		/*
+		 * Write one character at a time to avoid very long strings
+		 * exhausting memory because some Writer classes buffer everything.
+		 */
+		int len = sb.length();
+		for (int i = 0; i < len; i++)
+		{
+			writer.write(sb.charAt(i));
+		}
+		writer.write("\r\n");
+		return(len + 2);
+	}
+
 	/**
 	 * Write image to PostScript file.
 	 * @param image image to write.
@@ -1980,15 +2021,39 @@ public class OutputFormat
 		 */
 		StringWriter ascii85sw = null;
 		PrintWriter ascii85pw = null;
+		BufferedWriter ascii85fw = null;
+		File tempFile = null;
 		if (m_outputType == PDF)
 		{
 			/*
-			 * Writing 3 RGB bytes per pixel.  Many images compress
-			 * with ZLIB to 1/2 size, requiring 1.5 bytes per pixel.
+			 * Writing 3 RGB bytes per pixel.
 			 */
-			int encodedSize = reducedPixelHeight * reducedPixelWidth * 3 / 2;
-			ascii85sw = new StringWriter(encodedSize + 1);
-			ascii85pw = new PrintWriter(ascii85sw);
+			int encodedSize = reducedPixelHeight * reducedPixelWidth * 3;
+
+			if (m_throttle.isIOAllowed() &&
+				m_imageMemory + encodedSize > m_maxImageMemory)
+			{
+				/*
+				 * Write large images to a temporary file that we'll read
+				 * back later to avoid exhausting memory.
+				 */
+				String dir = System.getProperty("java.io.tmpdir");
+				if (dir == null)
+					dir = System.getProperty("user.dir");
+				tempFile = new File(dir, Constants.PROGRAM_NAME + "." + imageKey);
+				ascii85fw = new BufferedWriter(new FileWriter(tempFile));
+				ascii85pw = new PrintWriter(ascii85fw);
+			}
+			else
+			{
+				/*
+				 *  Not sure how well image will compress though so
+				 *  allocate big buffer.
+				 */
+				ascii85sw = new StringWriter(encodedSize + 1);
+				ascii85pw = new PrintWriter(ascii85sw);
+				m_imageMemory += encodedSize;
+			}
 		}
 		else
 		{
@@ -2000,6 +2065,23 @@ public class OutputFormat
 		for (int row = 0; row < pixelHeight; row += step)
 		{
 			m_throttle.sleep();
+			if (tempFile != null && ascii85pw.checkError())
+			{
+				/*
+				 * Ensure temporary file is thrown away before we fail.
+				 */
+				try
+				{
+					ascii85fw.close();
+				}
+				catch (IOException e)
+				{
+				}
+				tempFile.delete();
+				throw new MapyrusException(tempFile.getPath() +
+					": " + MapyrusMessages.get(MapyrusMessages.ERROR_FILE));
+			}
+
 			for (int col = 0; col < pixelWidth; col += step)
 			{
 				int pixel = image.getRGB(col, row);
@@ -2043,22 +2125,60 @@ public class OutputFormat
 			}
 		}
 		ascii85.close();
+		int nEncodedChars = ascii85.getEncodedLength();
 
 		/*
 		 * Write ASCII85 end-of-data marker.
 		 */
-		writeLine(ascii85pw, "~>");
+		nEncodedChars += writeLine(ascii85pw, "~>");
 		if (m_outputType == PDF)
 		{
 			ascii85pw.flush();
-			String s = ascii85sw.toString();
-			writeLine(pw, "/Length " + (s.length() + 2));
+
+			writeLine(pw, "/Length " + nEncodedChars);
 			writeLine(pw, ">>");
 			writeLine(pw, "stream");
-			writeLine(pw, s);
-			writeLine(pw, "endstream");
 			pw.flush();
-			m_PDFImageObjects.put(imageKey, sw);
+			BigString bigs = new BigString();
+			if (ascii85sw != null)
+			{
+				/*
+				 * Everything is held in memory
+				 * in a single string.
+				 */
+				StringBuffer sb = ascii85sw.getBuffer();
+				writeLine(pw, sb);
+				writeLine(pw, "endstream");
+				pw.flush();
+				bigs.append(sw.getBuffer());
+			}
+			else
+			{
+				boolean checkError = ascii85pw.checkError();
+				if (ascii85fw != null)
+					ascii85fw.close();
+
+				if (tempFile != null && checkError)
+				{
+					tempFile.delete();
+					throw new MapyrusException(tempFile.getPath() +
+						": " + MapyrusMessages.get(MapyrusMessages.ERROR_FILE));
+				}
+
+				/*
+				 * Append PDF commands, then large temporary file containing
+				 * image, then more PDF commands. 
+				 */				
+				bigs.append(sw.getBuffer());
+				bigs.append(tempFile);
+
+				StringWriter sw2 = new StringWriter();
+				pw = new PrintWriter(sw2);
+				writeLine(pw, "endstream");
+				pw.flush();
+				bigs.append(sw2.getBuffer());
+			}
+			m_PDFImageObjects.put(imageKey, bigs);
 		}
 		else
 		{
@@ -2134,6 +2254,31 @@ public class OutputFormat
 	 * Writes trailing and buffered information, then closes output file.
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
+	{
+		try
+		{
+			flushOutput();
+		}
+		finally
+		{
+			if (m_outputType == PDF)
+			{
+				/*
+				 * Ensure any temporary image files are deleted.
+				 */
+				Iterator<BigString> it = m_PDFImageObjects.values().iterator();
+				while (it.hasNext())
+				{
+					it.next().deleteFiles();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Write file trailer and buffered data then close file.
+	 */
+	private void flushOutput() throws IOException, MapyrusException
 	{
 		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == POSTSCRIPT_IMAGE)
 		{
@@ -2426,10 +2571,13 @@ public class OutputFormat
 
 				Object key = pdfImageObjs[i];
 				nChars = writeLine(m_writer, objIndex + " 0 obj % " + key);
-				nChars += writeLine(m_writer, m_PDFImageObjects.get(key).toString());
+				BigString bigString = m_PDFImageObjects.get(key);
+				nChars += bigString.writeTo(m_filename, m_writer);
+				nChars += writeLine(m_writer, "");
 				nChars += writeLine(m_writer, "endobj");
 				objIndex++;
 			}
+
 			for (int i = 0; i < includedImageObjects.size(); i++)
 			{
 				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
