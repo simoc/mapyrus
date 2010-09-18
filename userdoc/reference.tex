@@ -104,6 +104,12 @@ with no graphics display. \\
 
 \hline
 
+\texttt{java.io.tmpdir=\textit{dir}} &
+Defines directory to use for temporary files.  Large images in PDF output
+are temporarily saved in this directory until output is complete. \\
+
+\hline
+
 \texttt{jdbc.drivers=\textit{class}} &
 Defines class containing JDBC 1.0 (or higher) driver to load at startup.
 A JDBC driver is required for connecting to a relational database and
@@ -1791,6 +1797,11 @@ for available options.
 
 Images cannot be displayed when creating SVG format output.
 
+For PDF format output, large output images are saved as temporary
+files in the Java temporary directory
+(see Table \ref{startupvariables} on page \pageref{startupvariables})
+until output is complete.
+
 \begin{longtable}{|l|p{7cm}|}
 \hline
 \label{geoimageextras}
@@ -2331,6 +2342,15 @@ or a copyright symbol are to be displayed from the font.
 \texttt{background=\textit{color}}
 
 Background color for page, as a named color or as hex digits.
+
+\vspace{10pt}
+\texttt{maximumimagememory=\textit{value}}
+
+Sets the maximum amount of memory in megabytes
+to use for holding PDF image output.  If images in PDF output
+exceed this limit then further images are stored in temporary files
+until PDF output is complete and the PDF output file is saved.
+By default, a maximum of 16MB of memory is used.
 
 \vspace{10pt}
 \texttt{minimumlinewidth=\textit{value}}
