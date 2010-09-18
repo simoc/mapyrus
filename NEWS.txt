@@ -1,9 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
 
-1.007, November 2010
+1.007, September 2010
 
 * Fix labelling of multi-line labels containing blank lines
+* Add maximumimagememory= option to NEWPAGE command for PDF output
+* Use temporary files instead of memory when creating PDF output containing
+  large images to avoid running out of memory
 
 1.006, September 2010
 
