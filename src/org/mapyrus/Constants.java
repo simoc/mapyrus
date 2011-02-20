@@ -45,7 +45,7 @@ public class Constants
 		/*
 		 * Current software version number set by ant Replace task during build.
 		 */
-		return("1.007");
+		return("@software_version_token@");
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class Constants
 		/*
 		 * Release date set by ant Replace task during build.
 		 */
-		return("12-September-2010");
+		return("@release_date_token@");
 	}
 
 	/**
