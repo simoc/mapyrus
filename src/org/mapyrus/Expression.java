@@ -1,6 +1,6 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
- * Copyright (C) 2003 - 2011 Simon Chenery.
+ * Copyright (C) 2003 - 2010 Simon Chenery.
  *
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -1476,8 +1476,11 @@ public class Expression
 
 		boolean inOctalCode;
 		boolean inEscape;
+		boolean inUnicode;
 		int octalCode;
+		int unicode;
 		int nOctalDigits;
+		int nUnicodeDigits;
 
 		c = p.readNonSpace();
 		if (c == '\'' || c == '"')
@@ -1486,8 +1489,9 @@ public class Expression
 			 * It's a quoted string.  Keep reading up until matching quote.
 			 */
 			quote = c;
-			inOctalCode = inEscape = false;
+			inOctalCode = inEscape = inUnicode = false;
 			octalCode = nOctalDigits = 0;
+			unicode = nUnicodeDigits = 0;
 			while ((c = p.read()) != quote || inEscape)
 			{
 				if (c == -1)
@@ -1519,8 +1523,41 @@ public class Expression
 						inOctalCode = false;
 					}
 				}
+				else if (inUnicode)
+				{
+					/*
+					 * Reading a 4 digit hexadecimal Unicode character code.
+					 */
+					if (nUnicodeDigits < 4)
+					{
+						int hex;
+						if (c >= '0' && c <= '9')
+							hex = c - '0';
+						else if (c >= 'A' && c <= 'F')
+							hex = c - 'A' + 10;
+						else if (c >= 'a' && c <= 'f')
+							hex = c - 'a' + 10;
+						else
+						{
+							String s = "";
+							if (unicode != 0)
+								s = Integer.toHexString(unicode);
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_UNICODE) +
+								": " + s + (char)c);
+						}
 
-				if (!inOctalCode)
+						unicode <<= 4;
+						unicode += hex;
+						nUnicodeDigits++;
+					}
+					else
+					{
+						buf.append((char)unicode);
+						inUnicode = false;
+					}
+				}
+
+				if (!(inOctalCode || inUnicode))
 				{
 					if (inEscape)
 					{
@@ -1530,6 +1567,7 @@ public class Expression
 						 * is not useful since we use Java's line separator internally.
 						 * '\t" is converted to a tab.
 						 * '\367' is converted to character code (3 * 64) + (6 * 8) + 7.
+						 * '\u20AC' is converted to a Unicode character.
 						 * Escaping of other characters is ignored.
 						 */
 						if (c == 'n')
@@ -1545,6 +1583,12 @@ public class Expression
 							inOctalCode = true;
 							octalCode = c - '0';
 							nOctalDigits = 1;
+						}
+						else if (c == 'u')
+						{
+							inUnicode = true;
+							nUnicodeDigits = 0;
+							unicode = 0;
 						}
 						else if (c != 'r')
 						{
@@ -1564,10 +1608,21 @@ public class Expression
 			}
 
 			/*
-			 * Add any character we were building as octal code when quoted string finished.
+			 * Add any character we were building as octal or unicode when quoted string finished.
 			 */
 			if (inOctalCode)
 				buf.append((char)octalCode);
+
+			if (inUnicode)
+			{
+				if (nUnicodeDigits == 4)
+					buf.append((char)unicode);
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_UNICODE) +
+						": " + Integer.toHexString(unicode));
+				}
+			}
 
 			return(new ExpressionTreeNode(new Argument(Argument.STRING, buf.toString())));
 		}

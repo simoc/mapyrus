@@ -1,6 +1,6 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
- * Copyright (C) 2003 - 2011 Simon Chenery.
+ * Copyright (C) 2003 - 2010 Simon Chenery.
  *
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -144,6 +144,7 @@ public class MapyrusMessages
 	public static final String INVALID_TABLE = "invalidtable";
 	public static final String INVALID_TREE = "invalidtree";
 	public static final String INVALID_TRIANGLE = "invalidtriangle";
+	public static final String INVALID_UNICODE = "invalidunicode";
 	public static final String INVALID_VARIABLE = "invalidvariable";
 	public static final String INVALID_WEDGE = "invalidwedge";
 	public static final String INVALID_WMS_REQUEST = "invalidwmsrequest";
