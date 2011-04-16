@@ -61,16 +61,11 @@ do
 done
 
 # Add transparent Euros symbol over middle of map.
-# There is no standard character for Euro symbol so need
-# different character for different operating system types.
+# Unicode character code required because Euros symbol
+# is not a standard character.
 clearpath
 move Mapyrus.worlds.center.x, Mapyrus.worlds.center.y
 font "SansSerif", 96
 color "blue", 0.4
 justify "center, middle"
-if match(os.name, "Windows") > 0
-then
-	label "€"
-else
-	label "â‚¬"
-endif
+label "\u20AC"
