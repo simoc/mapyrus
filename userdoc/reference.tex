@@ -146,9 +146,13 @@ An argument is a number, a string literal in single quotes (\texttt{\'})
 or double quotes (\texttt{\"}), a variable name, an array, an
 array element or an expression.
 
-The character sequence (\texttt{\textbackslash{}\textit{nnn}}) in
-a string literal is interpreted as an octal character code (where
-\texttt{\textit{nnn}} is one to three digits).
+In a string literal,
+the character sequence \texttt{\textbackslash{}\textit{nnn}}
+is interpreted as an octal character code (where
+\texttt{\textit{nnn}} is one to three digits) and the character
+sequence \texttt{\textbackslash{}u\textit{nnnn}} is interpreted
+as a Unicode character (where \textit{nnnn} is four hexadecimal
+digits).
 
 An expression contains arguments and operators and functions
 on those arguments, like in BASIC, C, or Python.
