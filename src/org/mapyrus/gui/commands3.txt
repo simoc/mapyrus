@@ -11,7 +11,7 @@ fill
 let euros = ["Austria":1, "Belgium":1, "Netherlands":1, "Finland":1, \
 "France":1, "Germany":1, "Ireland":1, "Italy":1, "Luxembourg":1, \
 "Portugal":1, "Spain":1, "Greece":1, "Slovenia":1, "Cyprus":1, "Malta":1, \
-"Slovakia":1]
+"Slovakia":1, "Estonia":1]
 
 dataset "internal", "countries", ""
 linestyle 0.05, "round", "round"
