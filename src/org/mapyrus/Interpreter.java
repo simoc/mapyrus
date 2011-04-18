@@ -2048,7 +2048,7 @@ public class Interpreter implements Cloneable
 					double width, height;
 					int extrasIndex;
 
-					if (nExpressions == 3 || m_executeArgs[2].getType() == Argument.STRING)
+					if (nExpressions == 3)
 					{
 						String paperName = m_executeArgs[2].getStringValue();
 						PageSize p = new PageSize(paperName);
@@ -2056,10 +2056,27 @@ public class Interpreter implements Cloneable
 						height = p.getDimension().getY();
 						extrasIndex = 3;
 					}
+					else if (m_executeArgs[2].getType() == Argument.STRING)
+					{
+						try
+						{
+							String paperName = m_executeArgs[2].getStringValue();
+							PageSize p = new PageSize(paperName);
+							width = p.getDimension().getX();
+							height = p.getDimension().getY();
+							extrasIndex = 3;
+						}
+						catch (MapyrusException e)
+						{
+							width = parseDimension(m_executeArgs[2]);
+							height = parseDimension(m_executeArgs[3]);
+							extrasIndex = 4;
+						}
+					}
 					else
 					{
-						width = m_executeArgs[2].getNumericValue();
-						height = m_executeArgs[3].getNumericValue();
+						width = parseDimension(m_executeArgs[2]);
+						height = parseDimension(m_executeArgs[3]);
 						extrasIndex = 4;
 					}
 
@@ -2068,12 +2085,12 @@ public class Interpreter implements Cloneable
 					else
 						extras = "";
 
-					if (width <= 0)
+					if (width <= 1)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_SIZE) +
 							": " + width);
 					}
-					if (height <= 0)
+					if (height <= 1)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_SIZE) +
 							": " + height);
@@ -2179,6 +2196,58 @@ public class Interpreter implements Cloneable
 				context.setHTTPReponse(sb.toString());
 				break;
 		}		
+	}
+
+	/**
+	 * Parse a size, with or without units
+	 * @param dim size which may be a number in millimeters or a string like "15px".
+	 * @return parse size in millimeters.
+	 */
+	private double parseDimension(Argument dim) throws MapyrusException
+	{
+		double retval;
+		double scaling = 1;
+
+		if (dim.getType() != Argument.NUMERIC)
+		{
+			/*
+			 * Check if value ends with units.  For example, "100px".
+			 */
+			String s = dim.getStringValue();
+			int sLength = s.length();
+			if (sLength >= 2)
+			{
+				String suffix = s.substring(sLength - 2, sLength);
+				if (suffix.equals("px"))
+				{
+					scaling = Constants.MM_PER_INCH / Constants.getScreenResolution();
+					dim = new Argument(Argument.STRING, s.substring(0, sLength - 2));
+				}
+				else if (suffix.equals("pt"))
+				{
+					scaling = Constants.MM_PER_INCH / Constants.POINTS_PER_INCH;
+					dim = new Argument(Argument.STRING, s.substring(0, sLength - 2));
+				}
+				else if (suffix.equals("mm"))
+				{
+					scaling = 1;
+					dim = new Argument(Argument.STRING, s.substring(0, sLength - 2));
+				}
+				else if (suffix.equals("cm"))
+				{
+					scaling = 10;
+					dim = new Argument(Argument.STRING, s.substring(0, sLength - 2));
+				}
+				else if (suffix.equals("in"))
+				{
+					scaling = Constants.MM_PER_INCH;
+					dim = new Argument(Argument.STRING, s.substring(0, sLength - 2));
+				}
+			}
+		}
+		retval = dim.getNumericValue();
+		retval *= scaling;
+		return retval;
 	}
 
 	/**
