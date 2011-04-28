@@ -25,7 +25,11 @@ package org.mapyrus.function;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -45,8 +49,36 @@ public class Spool implements Function
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
-		Argument arg1 = args.get(0);
-		String filename = arg1.getStringValue();
+		Argument fileArg = args.get(0);
+		Charset charset = Charset.defaultCharset();
+		if (args.size() == 2)
+		{
+			String extras = args.get(1).getStringValue();
+			StringTokenizer st = new StringTokenizer(extras);
+			while (st.hasMoreTokens())
+			{
+				String token = st.nextToken();
+				if (token.startsWith("encoding="))
+				{
+					String name = token.substring(9);
+					try
+					{
+						charset = Charset.forName(name);
+					}
+					catch (IllegalCharsetNameException e)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
+							": " + name + ": " + e.getMessage());
+					}
+					catch (UnsupportedCharsetException e)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
+							": " + name + ": " + e.getMessage());
+					}
+				}
+			}
+		}
+		String filename = fileArg.getStringValue();
 		
 		if (!context.getThrottle().isIOAllowed())
 		{
@@ -93,7 +125,7 @@ public class Spool implements Function
 			{
 			}
 		}
-		Argument retval = new Argument(Argument.STRING, new String(buf.toByteArray()));
+		Argument retval = new Argument(Argument.STRING, new String(buf.toByteArray(), charset));
 		return(retval);
 	}
 
@@ -102,7 +134,7 @@ public class Spool implements Function
 	 */
 	public int getMaxArgumentCount()
 	{
-		return(1);
+		return(2);
 	}
 
 	/**
