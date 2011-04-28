@@ -490,11 +490,15 @@ second string having index 2, and so on. \\
 
 \hline
 
-\texttt{spool(\textit{filename})} &
+\texttt{spool(\textit{filename})}
+\texttt{spool(\textit{filename}, \textit{extras})} &
 Returns string containing contents of text file \textit{filename}.
 If \textit{filename} has suffix
 \texttt{.gz} or \texttt{.zip}
-then it is automatically decompressed as it is read.  \\
+then it is automatically decompressed as it is read.
+If \textit{extras} contains \texttt{encoding=}\textit{charset}
+then characters in file are interpreted with
+that character set encoding. \\
 
 \hline
 
