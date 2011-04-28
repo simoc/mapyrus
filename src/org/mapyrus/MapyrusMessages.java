@@ -74,6 +74,7 @@ public class MapyrusMessages
 	public static final String INVALID_BEZIER = "invalidbezier";
 	public static final String INVALID_BLEND = "invalidblend";
 	public static final String INVALID_BOX = "invalidbox";
+	public static final String INVALID_CHARSET = "invalidcharset";
 	public static final String INVALID_CIRCLE = "invalidcircle";
 	public static final String INVALID_COLOR = "invalidcolor";
 	public static final String INVALID_COLOR_TYPE = "invalidcolortype";
