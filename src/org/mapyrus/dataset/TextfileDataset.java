@@ -23,14 +23,20 @@
 package org.mapyrus.dataset;
 
 import java.awt.geom.Rectangle2D;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import org.mapyrus.*;
+
+import org.mapyrus.Argument;
+import org.mapyrus.Constants;
+import org.mapyrus.FileOrURL;
+import org.mapyrus.MapyrusException;
+import org.mapyrus.MapyrusMessages;
+import org.mapyrus.Row;
 
 /**
  * Implements reading of geographic datasets from a delimited text file.
@@ -94,12 +100,37 @@ public class TextfileDataset implements GeographicDataset
 		String token;
 
 		/*
+		 * Set default options.  Then see if user wants to override any of them.
+		 */
+		m_delimiter = null;
+		m_comment = "#";
+		m_maxFields = 0;
+		String encoding = null;
+
+		st = new StringTokenizer(extras);
+		while (st.hasMoreTokens())
+		{
+			token = st.nextToken();
+			if (token.startsWith("comment="))
+				m_comment = token.substring(8);
+			else if (token.startsWith("delimiter=") && token.length() == 11)
+				m_delimiter = new Character(token.charAt(10));
+			if (token.startsWith("encoding="))
+				encoding = token.substring(9);
+		}
+
+		/*
 		 * Check if we should read standard input, start a program and
 		 * read its output, or just read a plain file.
 		 */
 		if (filename.equals("-"))
 		{
-			m_reader = new LineNumberReader(new InputStreamReader(stdin));
+			InputStreamReader reader;
+			if (encoding != null)
+				reader = new InputStreamReader(stdin, encoding);
+			else
+				reader = new InputStreamReader(stdin);
+			m_reader = new LineNumberReader(reader);
 		}
 		else if (filename.endsWith("|"))
 		{
@@ -110,31 +141,24 @@ public class TextfileDataset implements GeographicDataset
 			else
 				cmdArray = new String[]{"sh", "-c", command};
 			m_process = Runtime.getRuntime().exec(cmdArray);
-			m_reader = new LineNumberReader(new InputStreamReader(m_process.getInputStream()));
+
+			InputStreamReader reader;
+			if (encoding != null)
+				reader = new InputStreamReader(m_process.getInputStream(), encoding);
+			else
+				reader = new InputStreamReader(m_process.getInputStream());
+			m_reader = new LineNumberReader(reader);
 		}
 		else
 		{
-			FileOrURL f = new FileOrURL(filename);
+			FileOrURL f;
+			if (encoding != null)
+				f = new FileOrURL(filename, encoding);
+			else
+				f = new FileOrURL(filename);
 			m_reader = f.getReader();
 		}
 		m_filename = filename;
-
-		/*
-		 * Set default options.  Then see if user wants to override any of them.
-		 */
-		m_delimiter = null;
-		m_comment = "#";
-		m_maxFields = 0;
-
-		st = new StringTokenizer(extras);
-		while (st.hasMoreTokens())
-		{
-			token = st.nextToken();
-			if (token.startsWith("comment="))
-				m_comment = token.substring(8);
-			else if (token.startsWith("delimiter=") && token.length() == 11)
-				m_delimiter = new Character(token.charAt(10));
-		}
 	}
 
 	/**
