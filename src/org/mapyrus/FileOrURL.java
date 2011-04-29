@@ -53,6 +53,22 @@ public class FileOrURL
 	 */
 	public FileOrURL(String name) throws IOException, MapyrusException
 	{
+		init(name, null);
+	}
+
+	/**
+	 * Open file or URL.
+	 * @param name name of file or URL to open.
+	 * @param charsetName character set encoding of file or URL.
+	 * @throws IOException
+	 */
+	public FileOrURL(String name, String charsetName) throws IOException, MapyrusException
+	{
+		init(name, charsetName);
+	}
+
+	private void init(String name, String charsetName) throws IOException, MapyrusException
+	{
 		InputStream in;
 
 		try
@@ -106,15 +122,20 @@ public class FileOrURL
 			boolean isGzipped = lowerName.endsWith(".gz") ||
 				lowerName.endsWith(".svgz");
 			boolean isZipped = lowerName.endsWith(".zip");
-			
+
 			if (isGzipped)
 				m_inputStream = new BufferedInputStream(new GZIPInputStream(in));
 			else if (isZipped)
 				m_inputStream = new BufferedInputStream(new ZipInputStream(in));
 			else
 				m_inputStream = new BufferedInputStream(in);
-	
-			m_reader = new LineNumberReader(new InputStreamReader(m_inputStream));
+
+			InputStreamReader inputStreamReader;
+			if (charsetName != null)
+				inputStreamReader = new InputStreamReader(m_inputStream, charsetName);
+			else
+				inputStreamReader = new InputStreamReader(m_inputStream);
+			m_reader = new LineNumberReader(inputStreamReader);
 			m_name = name;
 		}
 		catch (IOException e)
