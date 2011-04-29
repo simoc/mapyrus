@@ -1,7 +1,7 @@
 # Open existing file 'tutorialexisting1.eps' for update.
 # New page size is ignored, the page size of existing file is used.
 #
-newpage "eps", "tutorialexisting1.eps", 1, 1, "update=true"
+newpage "eps", "tutorialexisting1.eps", 50, 50, "update=true"
 worlds 150, -45, 180, -5
 
 # Draw vertical grid lines.
