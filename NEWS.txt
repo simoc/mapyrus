@@ -1,5 +1,12 @@
 Mapyrus Change History
-Copyright (C) 2003 - 2010 Simon Chenery <simoc@users.sourceforge.net>
+Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
+
+1.101, May 2011
+
+* Accept Unicode characters in format \u20AC
+* Allow page size in NEWPAGE to be defined with units such as "256px" or "11in"
+* Allow character set to be specified for textfile and shapefile datasets.
+* Allow character set to be specified for SPOOL function.
 
 1.007, September 2010
 
