@@ -25,9 +25,7 @@ package org.mapyrus.function;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -50,7 +48,7 @@ public class Spool implements Function
 		throws MapyrusException
 	{
 		Argument fileArg = args.get(0);
-		Charset charset = Charset.defaultCharset();
+		String encoding = null;
 		if (args.size() == 2)
 		{
 			String extras = args.get(1).getStringValue();
@@ -59,23 +57,7 @@ public class Spool implements Function
 			{
 				String token = st.nextToken();
 				if (token.startsWith("encoding="))
-				{
-					String name = token.substring(9);
-					try
-					{
-						charset = Charset.forName(name);
-					}
-					catch (IllegalCharsetNameException e)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
-							": " + name + ": " + e.getMessage());
-					}
-					catch (UnsupportedCharsetException e)
-					{
-						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
-							": " + name + ": " + e.getMessage());
-					}
-				}
+					encoding = token.substring(9);
 			}
 		}
 		String filename = fileArg.getStringValue();
@@ -125,7 +107,20 @@ public class Spool implements Function
 			{
 			}
 		}
-		Argument retval = new Argument(Argument.STRING, new String(buf.toByteArray(), charset));
+
+		Argument retval;
+		try
+		{
+			if (encoding != null)
+				retval = new Argument(Argument.STRING, new String(buf.toByteArray(), encoding));
+			else
+				retval = new Argument(Argument.STRING, new String(buf.toByteArray()));
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
+				": " + encoding + ": " + e.getMessage());
+		}
 		return(retval);
 	}
 
