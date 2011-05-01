@@ -30,9 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -126,7 +124,7 @@ public class ShapefileDataset implements GeographicDataset
 	private int m_BytesRead;
 	private byte []m_DBFRecord;
 
-	private Charset m_charset;
+	private String m_encoding;
 
 	/**
 	 * Open ESRI shape file containing geographic data for querying.
@@ -148,7 +146,7 @@ public class ShapefileDataset implements GeographicDataset
 		extrasDBFFields = null;
 		xMin = yMin = -Float.MAX_VALUE;
 		xMax = yMax = Float.MAX_VALUE;
-		m_charset = Charset.defaultCharset();
+		m_encoding = null;
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -192,21 +190,7 @@ public class ShapefileDataset implements GeographicDataset
 			}
 			else if (token.startsWith("encoding="))
 			{
-				String name = token.substring(9);
-				try
-				{
-					m_charset = Charset.forName(name);
-				}
-				catch (IllegalCharsetNameException e)
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
-						": " + name);
-				}
-				catch (UnsupportedCharsetException e)
-				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
-						": " + name);
-				}
+				m_encoding = token.substring(9);
 			}
 		}
 
@@ -473,6 +457,7 @@ public class ShapefileDataset implements GeographicDataset
 	 * @return unpacked string
 	 */
 	private String unpackString(byte []buf, int offset, int length)
+		throws MapyrusException
 	{
 		String retval;
 		int i = offset + length - 1;
@@ -481,8 +466,21 @@ public class ShapefileDataset implements GeographicDataset
 
 		if (i < offset)
 			retval = "";
+		else if (m_encoding != null)
+		{
+			try
+			{
+				retval = new String(buf, offset, i - offset + 1, m_encoding);
+			}
+			catch (UnsupportedEncodingException e)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
+					": " + m_encoding + ": " + e.getMessage());
+			}
+		}
 		else
-			retval = new String(buf, offset, i - offset + 1, m_charset);
+			retval = new String(buf, offset, i - offset + 1);
+
 		return(retval);
 	}
 
@@ -490,7 +488,7 @@ public class ShapefileDataset implements GeographicDataset
 	 * Read header from DBF database file
 	 */
 	private void readDBFHeader(HashSet<String> dbfFieldnameList)
-		throws IOException
+		throws IOException, MapyrusException
 	{
 		int headerLength, nTotalFields;
 		String fieldName;
