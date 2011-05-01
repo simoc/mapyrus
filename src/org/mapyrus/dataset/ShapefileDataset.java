@@ -30,6 +30,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -123,6 +126,8 @@ public class ShapefileDataset implements GeographicDataset
 	private int m_BytesRead;
 	private byte []m_DBFRecord;
 
+	private Charset m_charset;
+
 	/**
 	 * Open ESRI shape file containing geographic data for querying.
 	 * @param filename name of shape file to open, with or without shp suffix.
@@ -143,6 +148,7 @@ public class ShapefileDataset implements GeographicDataset
 		extrasDBFFields = null;
 		xMin = yMin = -Float.MAX_VALUE;
 		xMax = yMax = Float.MAX_VALUE;
+		m_charset = Charset.defaultCharset();
 
 		st = new StringTokenizer(extras);
 		while (st.hasMoreTokens())
@@ -183,6 +189,24 @@ public class ShapefileDataset implements GeographicDataset
 					xMax = d;
 				else
 					yMax = d;
+			}
+			else if (token.startsWith("encoding="))
+			{
+				String name = token.substring(9);
+				try
+				{
+					m_charset = Charset.forName(name);
+				}
+				catch (IllegalCharsetNameException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
+						": " + name);
+				}
+				catch (UnsupportedCharsetException e)
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_CHARSET) +
+						": " + name);
+				}
 			}
 		}
 
@@ -458,7 +482,7 @@ public class ShapefileDataset implements GeographicDataset
 		if (i < offset)
 			retval = "";
 		else
-			retval = new String(buf, offset, i - offset + 1);
+			retval = new String(buf, offset, i - offset + 1, m_charset);
 		return(retval);
 	}
 
