@@ -228,6 +228,16 @@ public class AdobeFontMetrics
 						{
 							charIndex = Integer.parseInt(st.nextToken());
 						}
+						else if (token.equals("CH"))
+						{
+							/*
+							 * Parse hex value in format <2126>
+							 */
+							token = st.nextToken();
+							if (token.length() >= 2)
+								token = token.substring(1, token.length() - 1);
+							charIndex = Integer.parseInt(token, 16);
+						}
 						else if (token.equals("WX"))
 						{
 							charWidth = Short.parseShort(st.nextToken());
