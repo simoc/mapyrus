@@ -91,7 +91,7 @@ public class AdobeFontMetricsManager
 	/*
 	 * Font metrics for all fonts.
 	 */
-	private HashMap<String, AdobeFontMetrics> mFontMetrics;
+	private HashMap<String, AdobeFontMetrics> m_fontMetrics;
 
 	/**
 	 * Create font metrics information for PostScript fonts.
@@ -101,7 +101,7 @@ public class AdobeFontMetricsManager
 	public AdobeFontMetricsManager(List<String> afmFilenames, HashSet<String> ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
-		mFontMetrics = new HashMap<String, AdobeFontMetrics>();
+		m_fontMetrics = new HashMap<String, AdobeFontMetrics>();
 
 		/*
 		 * Load font metrics information for standard PostScript fonts
@@ -118,7 +118,7 @@ public class AdobeFontMetricsManager
 			{
 				r = new BufferedReader(new InputStreamReader(inStream));
 				AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts);
-				mFontMetrics.put(afm.getFontName(), afm);
+				m_fontMetrics.put(afm.getFontName(), afm);
 			}
 			finally
 			{
@@ -140,7 +140,7 @@ public class AdobeFontMetricsManager
 			{
 				r = new BufferedReader(new FileReader(filename));
 				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts);
-				mFontMetrics.put(afm.getFontName(), afm);
+				m_fontMetrics.put(afm.getFontName(), afm);
 			}
 			finally
 			{
@@ -161,7 +161,7 @@ public class AdobeFontMetricsManager
 	{
 		StringDimension retval = new StringDimension();
 
-		AdobeFontMetrics afm = mFontMetrics.get(fontName);
+		AdobeFontMetrics afm = m_fontMetrics.get(fontName);
 		if (afm != null)
 		{
 			retval = afm.getStringDimension(s, pointSize);
