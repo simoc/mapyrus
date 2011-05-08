@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -95,8 +96,10 @@ public class AdobeFontMetricsManager
 	/**
 	 * Create font metrics information for PostScript fonts.
 	 * @param afmFilenames names of user-provided .afm file.
+	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
 	 */
-	public AdobeFontMetricsManager(List<String> afmFilenames)
+	public AdobeFontMetricsManager(List<String> afmFilenames,
+		HashSet<String> ISOLatin1EncodedFonts)
 		throws IOException, MapyrusException
 	{
 		m_fontMetrics = new HashMap<String, AdobeFontMetrics>();
@@ -115,7 +118,7 @@ public class AdobeFontMetricsManager
 			try
 			{
 				r = new BufferedReader(new InputStreamReader(inStream));
-				AdobeFontMetrics afm = new AdobeFontMetrics(r, res);
+				AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts);
 				m_fontMetrics.put(afm.getFontName(), afm);
 			}
 			finally
@@ -137,7 +140,7 @@ public class AdobeFontMetricsManager
 			try
 			{
 				r = new BufferedReader(new FileReader(filename));
-				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename);
+				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts);
 				m_fontMetrics.put(afm.getFontName(), afm);
 			}
 			finally
