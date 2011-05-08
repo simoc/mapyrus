@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.mapyrus.MapyrusException;
@@ -65,8 +66,118 @@ public class AdobeFontMetrics
 	 */
 	private static HashMap<Integer, ArrayList<String>> m_glyphNames;
 
+	/*
+	 * Lookup table of ISOLatin1 (ISO-8859-1) character indexes for named extended characters.
+	 * Taken from Adobe PostScript Language Reference Manual (2nd Edition) Appendix E,
+	 * p. 605.
+	 */
+	private static HashMap<String, Integer> m_ISOLatin1CharIndexes;
+	
 	static
 	{
+		m_ISOLatin1CharIndexes = new HashMap<String, Integer>(256);
+		m_ISOLatin1CharIndexes.put("Aacute", Integer.valueOf(193));
+		m_ISOLatin1CharIndexes.put("Acircumflex", Integer.valueOf(194));
+		m_ISOLatin1CharIndexes.put("Adieresis", Integer.valueOf(196));
+		m_ISOLatin1CharIndexes.put("Agrave", Integer.valueOf(192));
+		m_ISOLatin1CharIndexes.put("Aring", Integer.valueOf(197));
+		m_ISOLatin1CharIndexes.put("Atilde", Integer.valueOf(195));
+		m_ISOLatin1CharIndexes.put("Ccedilla", Integer.valueOf(199));
+		m_ISOLatin1CharIndexes.put("Eacute", Integer.valueOf(201));
+		m_ISOLatin1CharIndexes.put("Ecircumflex", Integer.valueOf(202));
+		m_ISOLatin1CharIndexes.put("Edieresis", Integer.valueOf(203));
+		m_ISOLatin1CharIndexes.put("Egrave", Integer.valueOf(200));
+		m_ISOLatin1CharIndexes.put("Eth", Integer.valueOf(0));
+		m_ISOLatin1CharIndexes.put("Iacute", Integer.valueOf(205));
+		m_ISOLatin1CharIndexes.put("Icircumflex", Integer.valueOf(206));
+		m_ISOLatin1CharIndexes.put("Idieresis", Integer.valueOf(207));
+		m_ISOLatin1CharIndexes.put("Igrave", Integer.valueOf(204));
+		m_ISOLatin1CharIndexes.put("Oacute", Integer.valueOf(211));
+		m_ISOLatin1CharIndexes.put("Ocircumflex", Integer.valueOf(212));
+		m_ISOLatin1CharIndexes.put("Odieresis", Integer.valueOf(214));
+		m_ISOLatin1CharIndexes.put("Ograve", Integer.valueOf(210));
+		m_ISOLatin1CharIndexes.put("Oslash", Integer.valueOf(216));
+		m_ISOLatin1CharIndexes.put("Otilde", Integer.valueOf(213));
+		m_ISOLatin1CharIndexes.put("Thorn", Integer.valueOf(222));
+		m_ISOLatin1CharIndexes.put("Uacute", Integer.valueOf(218));
+		m_ISOLatin1CharIndexes.put("Ucircumflex", Integer.valueOf(219));
+		m_ISOLatin1CharIndexes.put("Udieresis", Integer.valueOf(220));
+		m_ISOLatin1CharIndexes.put("Ugrave", Integer.valueOf(217));
+		m_ISOLatin1CharIndexes.put("Yacute", Integer.valueOf(221));
+		m_ISOLatin1CharIndexes.put("acircumflex", Integer.valueOf(226));
+		m_ISOLatin1CharIndexes.put("acute", Integer.valueOf(225));
+		m_ISOLatin1CharIndexes.put("adieresis", Integer.valueOf(228));
+		m_ISOLatin1CharIndexes.put("agrave", Integer.valueOf(224));
+		m_ISOLatin1CharIndexes.put("aring", Integer.valueOf(229));
+		m_ISOLatin1CharIndexes.put("atilde", Integer.valueOf(227));
+		m_ISOLatin1CharIndexes.put("breve", Integer.valueOf(150));
+		m_ISOLatin1CharIndexes.put("brokenbar", Integer.valueOf(166));
+		m_ISOLatin1CharIndexes.put("caron", Integer.valueOf(159));
+		m_ISOLatin1CharIndexes.put("ccedilla", Integer.valueOf(231));
+		m_ISOLatin1CharIndexes.put("cedilla", Integer.valueOf(184));
+		m_ISOLatin1CharIndexes.put("cent", Integer.valueOf(162));
+		m_ISOLatin1CharIndexes.put("circumflex", Integer.valueOf(147));
+		m_ISOLatin1CharIndexes.put("copyright", Integer.valueOf(169));
+		m_ISOLatin1CharIndexes.put("currency", Integer.valueOf(164));
+		m_ISOLatin1CharIndexes.put("degree", Integer.valueOf(176));
+		m_ISOLatin1CharIndexes.put("dieresis", Integer.valueOf(168));
+		m_ISOLatin1CharIndexes.put("divide", Integer.valueOf(247));
+		m_ISOLatin1CharIndexes.put("dotaccent", Integer.valueOf(151));
+		m_ISOLatin1CharIndexes.put("dotlessi", Integer.valueOf(144));
+		m_ISOLatin1CharIndexes.put("eacute", Integer.valueOf(233));
+		m_ISOLatin1CharIndexes.put("ecircumflex", Integer.valueOf(234));
+		m_ISOLatin1CharIndexes.put("edieresis", Integer.valueOf(235));
+		m_ISOLatin1CharIndexes.put("egrave", Integer.valueOf(232));
+		m_ISOLatin1CharIndexes.put("eth", Integer.valueOf(240));
+		m_ISOLatin1CharIndexes.put("exclamdown", Integer.valueOf(161));
+		m_ISOLatin1CharIndexes.put("germandbls", Integer.valueOf(223));
+		m_ISOLatin1CharIndexes.put("grave", Integer.valueOf(145));
+		m_ISOLatin1CharIndexes.put("guillemotleft", Integer.valueOf(171));
+		m_ISOLatin1CharIndexes.put("guillemotright", Integer.valueOf(187));
+		m_ISOLatin1CharIndexes.put("hungarumlaut", Integer.valueOf(157));
+		m_ISOLatin1CharIndexes.put("hyphen", Integer.valueOf(173));
+		m_ISOLatin1CharIndexes.put("iacute", Integer.valueOf(237));
+		m_ISOLatin1CharIndexes.put("icircumflex", Integer.valueOf(238));
+		m_ISOLatin1CharIndexes.put("idieresis", Integer.valueOf(239));
+		m_ISOLatin1CharIndexes.put("igrave", Integer.valueOf(236));
+		m_ISOLatin1CharIndexes.put("logicalnot", Integer.valueOf(172));
+		m_ISOLatin1CharIndexes.put("macron", Integer.valueOf(175));
+		m_ISOLatin1CharIndexes.put("mu", Integer.valueOf(0));
+		m_ISOLatin1CharIndexes.put("multiply", Integer.valueOf(215));
+		m_ISOLatin1CharIndexes.put("ntilde", Integer.valueOf(241));
+		m_ISOLatin1CharIndexes.put("oacute", Integer.valueOf(243));
+		m_ISOLatin1CharIndexes.put("ocircumflex", Integer.valueOf(244));
+		m_ISOLatin1CharIndexes.put("odieresis", Integer.valueOf(246));
+		m_ISOLatin1CharIndexes.put("ogonek", Integer.valueOf(158));
+		m_ISOLatin1CharIndexes.put("ograve", Integer.valueOf(242));
+		m_ISOLatin1CharIndexes.put("onehalf", Integer.valueOf(189));
+		m_ISOLatin1CharIndexes.put("onequarter", Integer.valueOf(188));
+		m_ISOLatin1CharIndexes.put("onesuperior", Integer.valueOf(185));
+		m_ISOLatin1CharIndexes.put("ordfeminine", Integer.valueOf(170));
+		m_ISOLatin1CharIndexes.put("ordmasculine", Integer.valueOf(186));
+		m_ISOLatin1CharIndexes.put("oslash", Integer.valueOf(248));
+		m_ISOLatin1CharIndexes.put("otilde", Integer.valueOf(245));
+		m_ISOLatin1CharIndexes.put("paragraph", Integer.valueOf(182));
+		m_ISOLatin1CharIndexes.put("periodcentered", Integer.valueOf(183));
+		m_ISOLatin1CharIndexes.put("plusminus", Integer.valueOf(177));
+		m_ISOLatin1CharIndexes.put("questiondown", Integer.valueOf(191));
+		m_ISOLatin1CharIndexes.put("registered", Integer.valueOf(174));
+		m_ISOLatin1CharIndexes.put("ring", Integer.valueOf(154));
+		m_ISOLatin1CharIndexes.put("section", Integer.valueOf(167));
+		m_ISOLatin1CharIndexes.put("sterling", Integer.valueOf(163));
+		m_ISOLatin1CharIndexes.put("thorn", Integer.valueOf(254));
+		m_ISOLatin1CharIndexes.put("threequarters", Integer.valueOf(190));
+		m_ISOLatin1CharIndexes.put("threesuperior", Integer.valueOf(179));
+		m_ISOLatin1CharIndexes.put("tilde", Integer.valueOf(148));
+		m_ISOLatin1CharIndexes.put("twosuperior", Integer.valueOf(178));
+		m_ISOLatin1CharIndexes.put("uacute", Integer.valueOf(250));
+		m_ISOLatin1CharIndexes.put("ucircumflex", Integer.valueOf(251));
+		m_ISOLatin1CharIndexes.put("udieresis", Integer.valueOf(252));
+		m_ISOLatin1CharIndexes.put("ugrave", Integer.valueOf(249));
+		m_ISOLatin1CharIndexes.put("yacute", Integer.valueOf(253));
+		m_ISOLatin1CharIndexes.put("ydieresis", Integer.valueOf(255));
+		m_ISOLatin1CharIndexes.put("yen", Integer.valueOf(165));
+
 		/*
 		 * Read lookup table from resource file.
 		 */
@@ -123,8 +234,10 @@ public class AdobeFontMetrics
 	 * Create Adobe Font Metrics for a font by reading an AFM file.
 	 * @param r file to read from.
 	 * @param afmFilename filename being read (for any error message).
+	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
 	 */	
-	public AdobeFontMetrics (BufferedReader r, String afmFilename) throws IOException, MapyrusException
+	public AdobeFontMetrics (BufferedReader r, String afmFilename,
+		HashSet<String> ISOLatin1EncodedFonts) throws IOException, MapyrusException
 	{
 		String line;
 		boolean inCharMetrics = false;
@@ -136,6 +249,7 @@ public class AdobeFontMetrics
 		m_firstChar = Integer.MAX_VALUE;
 		m_lastChar = Integer.MIN_VALUE;
 		m_flags = 32; /* Nonsymbolic font for PDF */
+		boolean convertToISOLatin1 = false;
 
 		try
 		{
@@ -205,6 +319,15 @@ public class AdobeFontMetrics
 						}
 					}
 
+					if (convertToISOLatin1)
+					{
+						/*
+						 * Use ISO-8859-1 character code for glyph regardless of code in AFM file.
+						 */
+						Integer i = m_ISOLatin1CharIndexes.get(charName);
+						if (i != null)
+							charIndex = i.intValue();
+					}
 					if (charIndex >= 0)
 					{
 						CharacterMetrics metrics;
@@ -229,6 +352,7 @@ public class AdobeFontMetrics
 					}
 					st.nextToken();	/* FontName */
 					m_fontName = st.nextToken();
+					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(m_fontName);
 				}
 				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
 				{
