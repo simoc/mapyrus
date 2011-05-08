@@ -4201,6 +4201,7 @@ public class OutputFormat
 	 * @param s is string to convert and write.
 	 */
 	private int writePostScriptString(PrintWriter writer, String prefix, String s)
+		throws MapyrusException, IOException
 	{
 		char c;
 		int nChars = 0;
@@ -4230,6 +4231,15 @@ public class OutputFormat
 			}
 			else if (c == '(' || c == ')' || c == '%' || c < ' ' || c > 'z')
 			{
+				if (c > 'z')
+				{
+					/*
+					 * Find character in PostScript font this character.
+					 */
+					if (m_adobeFontMetrics == null)
+						m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1);
+					c = m_adobeFontMetrics.getEncodedChar(m_fontName, c);
+				}
 				int extendedChar = c;
 				int b1 = extendedChar / (8 * 8);
 				extendedChar -= b1 * (8 * 8);
