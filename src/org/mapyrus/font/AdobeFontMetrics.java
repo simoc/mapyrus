@@ -25,9 +25,10 @@ package org.mapyrus.font;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.mapyrus.MapyrusException;
@@ -45,11 +46,11 @@ public class AdobeFontMetrics
 	 */
 	private static final int FULL_CHAR_SIZE = 1000;
 
+	private static final String SPACE_GLYPH_NAME = "space";
+
 	private String m_fontName;
 
-	private short []m_charWidths;
-	private short []m_charAscents;
-	private short []m_charDescents;
+	private HashMap<String, CharacterMetrics> m_charMetrics;
 	private int m_firstChar, m_lastChar;
 	private boolean m_isFixedPitch;
 	private int m_italicAngle;
@@ -60,137 +61,77 @@ public class AdobeFontMetrics
 	private int m_flags;
 
 	/*
-	 * Lookup table of ISOLatin1 character indexes for named extended characters.
-	 * Taken from Adobe PostScript Language Reference Manual (2nd Edition) Appendix E,
-	 * p. 605.
+	 * Lookup table from Unicode to PostScript glyph name. 
 	 */
-	private static HashMap<String, Integer> mISOLatin1CharIndexes;
-	
+	private static HashMap<Integer, ArrayList<String>> m_glyphNames;
+
 	static
 	{
-		mISOLatin1CharIndexes = new HashMap<String, Integer>(256);
-		mISOLatin1CharIndexes.put("Aacute", Integer.valueOf(193));
-		mISOLatin1CharIndexes.put("Acircumflex", Integer.valueOf(194));
-		mISOLatin1CharIndexes.put("Adieresis", Integer.valueOf(196));
-		mISOLatin1CharIndexes.put("Agrave", Integer.valueOf(192));
-		mISOLatin1CharIndexes.put("Aring", Integer.valueOf(197));
-		mISOLatin1CharIndexes.put("Atilde", Integer.valueOf(195));
-		mISOLatin1CharIndexes.put("Ccedilla", Integer.valueOf(199));
-		mISOLatin1CharIndexes.put("Eacute", Integer.valueOf(201));
-		mISOLatin1CharIndexes.put("Ecircumflex", Integer.valueOf(202));
-		mISOLatin1CharIndexes.put("Edieresis", Integer.valueOf(203));
-		mISOLatin1CharIndexes.put("Egrave", Integer.valueOf(200));
-		mISOLatin1CharIndexes.put("Eth", Integer.valueOf(0));
-		mISOLatin1CharIndexes.put("Iacute", Integer.valueOf(205));
-		mISOLatin1CharIndexes.put("Icircumflex", Integer.valueOf(206));
-		mISOLatin1CharIndexes.put("Idieresis", Integer.valueOf(207));
-		mISOLatin1CharIndexes.put("Igrave", Integer.valueOf(204));
-		mISOLatin1CharIndexes.put("Oacute", Integer.valueOf(211));
-		mISOLatin1CharIndexes.put("Ocircumflex", Integer.valueOf(212));
-		mISOLatin1CharIndexes.put("Odieresis", Integer.valueOf(214));
-		mISOLatin1CharIndexes.put("Ograve", Integer.valueOf(210));
-		mISOLatin1CharIndexes.put("Oslash", Integer.valueOf(216));
-		mISOLatin1CharIndexes.put("Otilde", Integer.valueOf(213));
-		mISOLatin1CharIndexes.put("Thorn", Integer.valueOf(222));
-		mISOLatin1CharIndexes.put("Uacute", Integer.valueOf(218));
-		mISOLatin1CharIndexes.put("Ucircumflex", Integer.valueOf(219));
-		mISOLatin1CharIndexes.put("Udieresis", Integer.valueOf(220));
-		mISOLatin1CharIndexes.put("Ugrave", Integer.valueOf(217));
-		mISOLatin1CharIndexes.put("Yacute", Integer.valueOf(221));
-		mISOLatin1CharIndexes.put("acircumflex", Integer.valueOf(226));
-		mISOLatin1CharIndexes.put("acute", Integer.valueOf(225));
-		mISOLatin1CharIndexes.put("adieresis", Integer.valueOf(228));
-		mISOLatin1CharIndexes.put("agrave", Integer.valueOf(224));
-		mISOLatin1CharIndexes.put("aring", Integer.valueOf(229));
-		mISOLatin1CharIndexes.put("atilde", Integer.valueOf(227));
-		mISOLatin1CharIndexes.put("breve", Integer.valueOf(150));
-		mISOLatin1CharIndexes.put("brokenbar", Integer.valueOf(166));
-		mISOLatin1CharIndexes.put("caron", Integer.valueOf(159));
-		mISOLatin1CharIndexes.put("ccedilla", Integer.valueOf(231));
-		mISOLatin1CharIndexes.put("cedilla", Integer.valueOf(184));
-		mISOLatin1CharIndexes.put("cent", Integer.valueOf(162));
-		mISOLatin1CharIndexes.put("circumflex", Integer.valueOf(147));
-		mISOLatin1CharIndexes.put("copyright", Integer.valueOf(169));
-		mISOLatin1CharIndexes.put("currency", Integer.valueOf(164));
-		mISOLatin1CharIndexes.put("degree", Integer.valueOf(176));
-		mISOLatin1CharIndexes.put("dieresis", Integer.valueOf(168));
-		mISOLatin1CharIndexes.put("divide", Integer.valueOf(247));
-		mISOLatin1CharIndexes.put("dotaccent", Integer.valueOf(151));
-		mISOLatin1CharIndexes.put("dotlessi", Integer.valueOf(144));
-		mISOLatin1CharIndexes.put("eacute", Integer.valueOf(233));
-		mISOLatin1CharIndexes.put("ecircumflex", Integer.valueOf(234));
-		mISOLatin1CharIndexes.put("edieresis", Integer.valueOf(235));
-		mISOLatin1CharIndexes.put("egrave", Integer.valueOf(232));
-		mISOLatin1CharIndexes.put("eth", Integer.valueOf(240));
-		mISOLatin1CharIndexes.put("exclamdown", Integer.valueOf(161));
-		mISOLatin1CharIndexes.put("germandbls", Integer.valueOf(223));
-		mISOLatin1CharIndexes.put("grave", Integer.valueOf(145));
-		mISOLatin1CharIndexes.put("guillemotleft", Integer.valueOf(171));
-		mISOLatin1CharIndexes.put("guillemotright", Integer.valueOf(187));
-		mISOLatin1CharIndexes.put("hungarumlaut", Integer.valueOf(157));
-		mISOLatin1CharIndexes.put("hyphen", Integer.valueOf(173));
-		mISOLatin1CharIndexes.put("iacute", Integer.valueOf(237));
-		mISOLatin1CharIndexes.put("icircumflex", Integer.valueOf(238));
-		mISOLatin1CharIndexes.put("idieresis", Integer.valueOf(239));
-		mISOLatin1CharIndexes.put("igrave", Integer.valueOf(236));
-		mISOLatin1CharIndexes.put("logicalnot", Integer.valueOf(172));
-		mISOLatin1CharIndexes.put("macron", Integer.valueOf(175));
-		mISOLatin1CharIndexes.put("mu", Integer.valueOf(0));
-		mISOLatin1CharIndexes.put("multiply", Integer.valueOf(215));
-		mISOLatin1CharIndexes.put("ntilde", Integer.valueOf(241));
-		mISOLatin1CharIndexes.put("oacute", Integer.valueOf(243));
-		mISOLatin1CharIndexes.put("ocircumflex", Integer.valueOf(244));
-		mISOLatin1CharIndexes.put("odieresis", Integer.valueOf(246));
-		mISOLatin1CharIndexes.put("ogonek", Integer.valueOf(158));
-		mISOLatin1CharIndexes.put("ograve", Integer.valueOf(242));
-		mISOLatin1CharIndexes.put("onehalf", Integer.valueOf(189));
-		mISOLatin1CharIndexes.put("onequarter", Integer.valueOf(188));
-		mISOLatin1CharIndexes.put("onesuperior", Integer.valueOf(185));
-		mISOLatin1CharIndexes.put("ordfeminine", Integer.valueOf(170));
-		mISOLatin1CharIndexes.put("ordmasculine", Integer.valueOf(186));
-		mISOLatin1CharIndexes.put("oslash", Integer.valueOf(248));
-		mISOLatin1CharIndexes.put("otilde", Integer.valueOf(245));
-		mISOLatin1CharIndexes.put("paragraph", Integer.valueOf(182));
-		mISOLatin1CharIndexes.put("periodcentered", Integer.valueOf(183));
-		mISOLatin1CharIndexes.put("plusminus", Integer.valueOf(177));
-		mISOLatin1CharIndexes.put("questiondown", Integer.valueOf(191));
-		mISOLatin1CharIndexes.put("registered", Integer.valueOf(174));
-		mISOLatin1CharIndexes.put("ring", Integer.valueOf(154));
-		mISOLatin1CharIndexes.put("section", Integer.valueOf(167));
-		mISOLatin1CharIndexes.put("sterling", Integer.valueOf(163));
-		mISOLatin1CharIndexes.put("thorn", Integer.valueOf(254));
-		mISOLatin1CharIndexes.put("threequarters", Integer.valueOf(190));
-		mISOLatin1CharIndexes.put("threesuperior", Integer.valueOf(179));
-		mISOLatin1CharIndexes.put("tilde", Integer.valueOf(148));
-		mISOLatin1CharIndexes.put("twosuperior", Integer.valueOf(178));
-		mISOLatin1CharIndexes.put("uacute", Integer.valueOf(250));
-		mISOLatin1CharIndexes.put("ucircumflex", Integer.valueOf(251));
-		mISOLatin1CharIndexes.put("udieresis", Integer.valueOf(252));
-		mISOLatin1CharIndexes.put("ugrave", Integer.valueOf(249));
-		mISOLatin1CharIndexes.put("yacute", Integer.valueOf(253));
-		mISOLatin1CharIndexes.put("ydieresis", Integer.valueOf(255));
-		mISOLatin1CharIndexes.put("yen", Integer.valueOf(165));
+		/*
+		 * Read lookup table from resource file.
+		 */
+		String res = "org/mapyrus/font/glyphlist.txt";
+		InputStream inStream = AdobeFontMetrics.class.getClassLoader().getResourceAsStream(res);
+
+		m_glyphNames = new HashMap<Integer, ArrayList<String>>(4400); 
+		BufferedReader reader = null;
+		try
+		{
+			reader = new BufferedReader(new InputStreamReader(inStream));
+			String line;
+			while ((line = reader.readLine()) != null)
+			{
+				if (!line.startsWith("#"))
+				{
+					int index = line.indexOf(';');
+					if (index >= 0)
+					{
+						String glyphName = line.substring(0, index);
+						String hex = line.substring(index + 1);
+						StringTokenizer st = new StringTokenizer(hex);
+						while (st.hasMoreTokens())
+						{
+							String token = st.nextToken();
+							int unicode = Integer.parseInt(token, 16);
+							ArrayList<String> glyphNames = m_glyphNames.get(Integer.valueOf(unicode));
+							if (glyphNames == null)
+							{
+								glyphNames = new ArrayList<String>(1);
+								m_glyphNames.put(Integer.valueOf(unicode), glyphNames);
+								
+							}
+							glyphNames.add(glyphName);
+						}
+					}
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			try
+			{
+				if (reader != null)
+					reader.close();
+			}
+			catch (IOException e2)
+			{
+			}
+		}
 	}
 
 	/**
 	 * Create Adobe Font Metrics for a font by reading an AFM file.
 	 * @param r file to read from.
 	 * @param afmFilename filename being read (for any error message).
-	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
 	 */	
-	public AdobeFontMetrics (BufferedReader r, String afmFilename,
-		HashSet<String> ISOLatin1EncodedFonts) throws IOException, MapyrusException
+	public AdobeFontMetrics (BufferedReader r, String afmFilename) throws IOException, MapyrusException
 	{
 		String line;
 		boolean inCharMetrics = false;
 		boolean finishedParsing = false;
 		StringTokenizer st;
-		boolean convertToISOLatin1 = false;
 
-		// TODO handle fonts with more than 256 characters.
-		m_charWidths = new short[256];
-		m_charAscents = new short[256];
-		m_charDescents = new short[256];
+		m_charMetrics = new HashMap<String, CharacterMetrics>();
 		m_isFixedPitch = false;
 		m_firstChar = Integer.MAX_VALUE;
 		m_lastChar = Integer.MIN_VALUE;
@@ -263,22 +204,15 @@ public class AdobeFontMetrics
 							token = st.nextToken();
 						}
 					}
-					
-					/*
-					 * Lookup index in ISOLatin1 encoding for this character.
-					 */
-					if (convertToISOLatin1 && (charIndex < 0 || charIndex > 127))
-					{
-						Integer i = mISOLatin1CharIndexes.get(charName);
-						if (i != null)
-							charIndex = i.intValue();
-					}
 
-					if (charIndex >= 0 && charIndex < m_charWidths.length)
+					if (charIndex >= 0)
 					{
-						m_charWidths[charIndex] = charWidth;
-						m_charAscents[charIndex] = charAscent;
-						m_charDescents[charIndex] = charDescent;
+						CharacterMetrics metrics;
+						metrics = new CharacterMetrics((char)charIndex, charWidth, charAscent, charDescent);
+						m_charMetrics.put(charName, metrics);
+						if (charIndex == 32)
+							m_charMetrics.put(SPACE_GLYPH_NAME, metrics);
+
 						if (charIndex < m_firstChar)
 							m_firstChar = charIndex;
 						if (charIndex > m_lastChar)
@@ -295,7 +229,6 @@ public class AdobeFontMetrics
 					}
 					st.nextToken();	/* FontName */
 					m_fontName = st.nextToken();
-					convertToISOLatin1 = ISOLatin1EncodedFonts.contains(m_fontName);
 				}
 				else if (line.startsWith("IsFixedPitch") && line.toLowerCase().indexOf("true") >= 0)
 				{
@@ -425,7 +358,12 @@ public class AdobeFontMetrics
 	 */
 	public int getCharWidth(int index)
 	{
-		return(m_charWidths[index]);
+		for (CharacterMetrics metrics : m_charMetrics.values())
+		{
+			if (metrics.getCode() == index)
+				return metrics.getWidth();
+		}
+		return 0;
 	}
 
 	/**
@@ -512,14 +450,22 @@ public class AdobeFontMetrics
 		 */
 		for (int i = 0; i < sLength; i++)
 		{
+			CharacterMetrics metrics = null;
+
 			c = s.charAt(i);
-			if (c >= 0 && c < m_charWidths.length)
+			ArrayList<String> glyphNames = m_glyphNames.get(Integer.valueOf(c));
+			if (glyphNames != null)
 			{
-				total += m_charWidths[c];
-				if (m_charAscents[c] > maxAscent)
-					maxAscent = m_charAscents[c];
-				if (m_charDescents[c] < minDescent)
-					minDescent = m_charDescents[c];
+				for (int j = 0; j < glyphNames.size() && metrics == null; j++)
+					metrics = m_charMetrics.get(glyphNames.get(j));
+			}
+			if (metrics != null)
+			{
+				total += metrics.getWidth();
+				if (metrics.getAscent() > maxAscent)
+					maxAscent = metrics.getAscent();
+				if (metrics.getDescent() < minDescent)
+					minDescent = metrics.getDescent();
 			}
 			else
 			{
@@ -536,10 +482,31 @@ public class AdobeFontMetrics
 			 * All characters are same width so width of string
 			 * depends only on length of string.
 			 */
-			int spaceIndex = 32;
-			pointLen = s.length() * ((double)m_charWidths[spaceIndex] / FULL_CHAR_SIZE) * pointSize;
+			CharacterMetrics metrics = m_charMetrics.get(SPACE_GLYPH_NAME);
+			if (metrics != null)
+			{
+				pointLen = s.length() * ((double)metrics.getWidth() / FULL_CHAR_SIZE) * pointSize;
+			}
 		}
 		retval.setSize(pointLen, pointSize, maxAscent, minDescent);
 		return(retval);
+	}
+
+	/**
+	 * Get character in PostScript font that character maps to.
+	 * @param c character (in Unicode).
+	 * @return character in PostScript font. 
+	 */
+	public char getEncodedChar(char c)
+	{
+		CharacterMetrics metrics = null;
+		ArrayList<String> glyphNames = m_glyphNames.get(Integer.valueOf(c));
+		if (glyphNames != null)
+		{
+			for (int i = 0; i < glyphNames.size() && metrics == null; i++)
+				metrics = m_charMetrics.get(glyphNames.get(i));
+		}
+		char retval = (metrics != null) ? metrics.getCode() : c;
+		return retval;
 	}
 }
