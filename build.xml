@@ -75,7 +75,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <fileset dir="src/org/mapyrus/dataset" includes="*.txt"/>
 </copy>
 <copy todir="build/classes/org/mapyrus/font">
-<fileset dir="src/org/mapyrus/font" includes="*.afm"/>
+<fileset dir="src/org/mapyrus/font" includes="*.afm,*.txt"/>
 </copy>
 
 </target>
