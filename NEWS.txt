@@ -1,6 +1,11 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 
+1.102, May 2011
+
+* Display extended characters with ISO-8859-2, CP1250 or other European
+font encoding in PostScript and PDF output.
+
 1.101, May 2011
 
 * Accept Unicode characters in format \u20AC
