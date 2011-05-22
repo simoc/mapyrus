@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 
+1.103, June 2011
+
+* Correct display of characters with ISO-8859-2 encoding in PDF output.
+
 1.102, May 2011
 
 * Display extended characters with ISO-8859-2, CP1250 or other European
