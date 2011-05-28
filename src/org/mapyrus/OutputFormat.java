@@ -193,11 +193,12 @@ public class OutputFormat
 	private HashSet<String> m_neededFontResources;
 
 	/*
-	 * Fonts which are to be re-encoded to ISOLatin1 in PostScript file.
+	 * Fonts which are to be re-encoded to ISOLatin1 or ISOLatin2 in PostScript file.
 	 * This is normally done so that extended symbols (such as degree symbol)
 	 * can be used.
 	 */
 	private HashSet<String> m_encodeAsISOLatin1;
+	private HashSet<String> m_encodeAsISOLatin2;
 	private HashSet<String> m_reencodedFonts;
 
 	/*
@@ -649,6 +650,11 @@ public class OutputFormat
 			{
 				fontDictionary.append(" /Encoding /WinAnsiEncoding");
 			}
+			else if (m_encodeAsISOLatin2.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getISOLatin2Encoding() + " ] >>");
+			}
 			fontDictionary.append(" >>");
 			fontDictionary.append(newline);
 		}
@@ -751,7 +757,14 @@ public class OutputFormat
 			}
 
 			if (m_encodeAsISOLatin1.contains(afm.getFontName()))
-				fontDictionary.append("/Encoding /WinAnsiEncoding");
+			{
+				fontDictionary.append(" /Encoding /WinAnsiEncoding");
+			}
+			else if (m_encodeAsISOLatin2.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getISOLatin2Encoding() + " ] >>");
+			}
 			fontDictionary.append(" >>").append(newline);
 		}
 
@@ -1007,20 +1020,21 @@ public class OutputFormat
 	}
 
 	/**
-	 * Return PostScript commands to re-encode a font in ISOLatin1 encoding.
+	 * Return PostScript commands to re-encode a font.
 	 * @param fontName name of font to re-encode.
+	 * @param encoding encoding name or array.
 	 * @return string containing PostScript commands to re-encode font.
 	 */
-	private String isoLatinEncode(String fontName)
+	private String reencodeFont(String fontName, String encoding)
 	{
 		/*
-		 * Re-encoding commands taken from section 5.6.1 of Adobe PostScript
+		 * Re-encoding commands taken from section 5.9.1 of Adobe PostScript
 		 * Language Reference Manual (2nd Edition).
 		 */
 		return("/" + fontName + " findfont" + Constants.LINE_SEPARATOR +
 			"dup length dict begin" + Constants.LINE_SEPARATOR +
 			"{1 index /FID ne {def} {pop pop} ifelse} forall" + Constants.LINE_SEPARATOR +
-			"/Encoding ISOLatin1Encoding def" + Constants.LINE_SEPARATOR +
+			"/Encoding " + encoding + " def" + Constants.LINE_SEPARATOR +
 			"currentdict" + Constants.LINE_SEPARATOR +
 			"end" + Constants.LINE_SEPARATOR +
 			"/" + fontName + " exch definefont pop");
@@ -1052,6 +1066,7 @@ public class OutputFormat
 		 */
 		ArrayList<PostScriptFont> fontList = new ArrayList<PostScriptFont>();
 		m_encodeAsISOLatin1 = new HashSet<String>();
+		m_encodeAsISOLatin2 = new HashSet<String>();
 		m_reencodedFonts = new HashSet<String>();
 		m_TTFFonts = new HashMap<String, TrueTypeFont>();
 		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
@@ -1164,6 +1179,19 @@ public class OutputFormat
 					String fontName = st2.nextToken();
 					if (fontName.length() > 0)
 						m_encodeAsISOLatin1.add(fontName);
+				}
+			}
+			else if (token.startsWith("isolatin2fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in ISOLatin2.
+				 */
+				StringTokenizer st2 = new StringTokenizer(token.substring(15), ",");
+				while (st2.hasMoreTokens())
+				{
+					String fontName = st2.nextToken();
+					if (fontName.length() > 0)
+						m_encodeAsISOLatin2.add(fontName);
 				}
 			}
 			else if (token.startsWith("resolution="))
@@ -2745,7 +2773,7 @@ public class OutputFormat
 				 * Re-encode font from StandardEncoding to ISOLatin1Encoding
 				 * before it is used.
 				 */
-				writeLine(m_writer, isoLatinEncode(fontName));
+				writeLine(m_writer, reencodeFont(fontName, "ISOLatin1Encoding"));
 				m_reencodedFonts.add(fontName);
 			}
 
