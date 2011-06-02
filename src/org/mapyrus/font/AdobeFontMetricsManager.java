@@ -459,4 +459,139 @@ public class AdobeFontMetricsManager
 			"254 /tcommaaccent\n" +
 			"255 /dotaccent\n";
 	}
+
+	/**
+	 * Get character encoding definition for Windows 1251 fonts in PostScript and PDF output.
+	 * @return encoding string.
+	 */
+	public static String getWindows1251Encoding()
+	{
+		return "128 /afii10051\n" +
+			"129 /afii10052\n" +
+			"130 /quotesinglbase\n" +
+			"131 /afii10100\n" +
+			"132 /quotedblbase\n" +
+			"133 /ellipsis\n" +
+			"134 /dagger\n" +
+			"135 /daggerdbl\n" +
+			"136 /Euro\n" +
+			"137 /perthousand\n" +
+			"138 /afii10058\n" +
+			"139 /guilsinglleft\n" +
+			"140 /afii10059\n" +
+			"141 /afii10061\n" +
+			"142 /afii10060\n" +
+			"143 /afii10145\n" +
+			"144 /afii10099\n" +
+			"145 /quoteleft\n" +
+			"146 /quoteright\n" +
+			"147 /quotedblleft\n" +
+			"148 /quotedblright\n" +
+			"149 /bullet\n" +
+			"150 /endash\n" +
+			"151 /emdash\n" +
+			"153 /trademark\n" +
+			"154 /afii10106\n" +
+			"155 /guilsinglright\n" +
+			"156 /afii10107\n" +
+			"157 /afii10109\n" +
+			"158 /afii10108\n" +
+			"159 /afii10193\n" +
+			"160 /space\n" +
+			"161 /afii10062\n" +
+			"162 /afii10110\n" +
+			"163 /afii10057\n" +
+			"164 /currency\n" +
+			"165 /afii10050\n" +
+			"166 /brokenbar\n" +
+			"167 /section\n" +
+			"168 /afii10023\n" +
+			"169 /copyright\n" +
+			"170 /afii10053\n" +
+			"171 /guillemotleft\n" +
+			"172 /logicalnot\n" +
+			"173 /hyphen\n" +
+			"174 /registered\n" +
+			"175 /afii10056\n" +
+			"176 /degree\n" +
+			"177 /plusminus\n" +
+			"178 /afii10055\n" +
+			"179 /afii10103\n" +
+			"180 /afii10098\n" +
+			"181 /mu\n" +
+			"182 /paragraph\n" +
+			"183 /periodcentered\n" +
+			"184 /afii10071\n" +
+			"185 /afii61352\n" +
+			"186 /afii10101\n" +
+			"187 /guillemotright\n" +
+			"188 /afii10105\n" +
+			"189 /afii10054\n" +
+			"190 /afii10102\n" +
+			"191 /afii10104\n" +
+			"192 /afii10017\n" +
+			"193 /afii10018\n" +
+			"194 /afii10019\n" +
+			"195 /afii10020\n" +
+			"196 /afii10021\n" +
+			"197 /afii10022\n" +
+			"198 /afii10024\n" +
+			"199 /afii10025\n" +
+			"200 /afii10026\n" +
+			"201 /afii10027\n" +
+			"202 /afii10028\n" +
+			"203 /afii10029\n" +
+			"204 /afii10030\n" +
+			"205 /afii10031\n" +
+			"206 /afii10032\n" +
+			"207 /afii10033\n" +
+			"208 /afii10034\n" +
+			"209 /afii10035\n" +
+			"210 /afii10036\n" +
+			"211 /afii10037\n" +
+			"212 /afii10038\n" +
+			"213 /afii10039\n" +
+			"214 /afii10040\n" +
+			"215 /afii10041\n" +
+			"216 /afii10042\n" +
+			"217 /afii10043\n" +
+			"218 /afii10044\n" +
+			"219 /afii10045\n" +
+			"220 /afii10046\n" +
+			"221 /afii10047\n" +
+			"222 /afii10048\n" +
+			"223 /afii10049\n" +
+			"224 /afii10065\n" +
+			"225 /afii10066\n" +
+			"226 /afii10067\n" +
+			"227 /afii10068\n" +
+			"228 /afii10069\n" +
+			"229 /afii10070\n" +
+			"230 /afii10072\n" +
+			"231 /afii10073\n" +
+			"232 /afii10074\n" +
+			"233 /afii10075\n" +
+			"234 /afii10076\n" +
+			"235 /afii10077\n" +
+			"236 /afii10078\n" +
+			"237 /afii10079\n" +
+			"238 /afii10080\n" +
+			"239 /afii10081\n" +
+			"240 /afii10082\n" +
+			"241 /afii10083\n" +
+			"242 /afii10084\n" +
+			"243 /afii10085\n" +
+			"244 /afii10086\n" +
+			"245 /afii10087\n" +
+			"246 /afii10088\n" +
+			"247 /afii10089\n" +
+			"248 /afii10090\n" +
+			"249 /afii10091\n" +
+			"250 /afii10092\n" +
+			"251 /afii10093\n" +
+			"252 /afii10094\n" +
+			"253 /afii10095\n" +
+			"254 /afii10096\n" +
+			"255 /afii10097\n";
+	}
 }
