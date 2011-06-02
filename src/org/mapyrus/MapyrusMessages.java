@@ -114,6 +114,7 @@ public class MapyrusMessages
 	public static final String INVALID_LINE_WIDTH = "invalidlinewidth";
 	public static final String INVALID_LINESTYLE = "invalidlinestyle";
 	public static final String INVALID_NUMBER = "invalidnumber";
+	public static final String INVALID_OCTAL = "invalidoctal";
 	public static final String INVALID_OGC_WKB = "invalidogcwkb";
 	public static final String INVALID_OGC_WKT = "invalidogcwkt";
 	public static final String INVALID_OPTION = "invalidoption";
