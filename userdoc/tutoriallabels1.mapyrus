@@ -36,4 +36,4 @@ color "black"
 font 'ZapfDingbats', 12
 clearpath
 move 105, 10
-label '0&'
+label chr(48) . chr(38)
