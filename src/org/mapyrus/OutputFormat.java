@@ -193,12 +193,13 @@ public class OutputFormat
 	private HashSet<String> m_neededFontResources;
 
 	/*
-	 * Fonts which are to be re-encoded to ISOLatin1 or ISOLatin2 in PostScript file.
+	 * Fonts which are to be re-encoded in PostScript file.
 	 * This is normally done so that extended symbols (such as degree symbol)
 	 * can be used.
 	 */
 	private HashSet<String> m_encodeAsISOLatin1;
 	private HashSet<String> m_encodeAsISOLatin2;
+	private HashSet<String> m_encodeAsWindows1250;
 	private HashSet<String> m_reencodedFonts;
 
 	/*
@@ -655,6 +656,11 @@ public class OutputFormat
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getISOLatin2Encoding() + " ] >>");
 			}
+			else if (m_encodeAsWindows1250.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1250Encoding() + " ] >>");
+			}
 			fontDictionary.append(" >>");
 			fontDictionary.append(newline);
 		}
@@ -764,6 +770,11 @@ public class OutputFormat
 			{
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getISOLatin2Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1250.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1250Encoding() + " ] >>");
 			}
 			fontDictionary.append(" >>").append(newline);
 		}
@@ -1067,6 +1078,7 @@ public class OutputFormat
 		ArrayList<PostScriptFont> fontList = new ArrayList<PostScriptFont>();
 		m_encodeAsISOLatin1 = new HashSet<String>();
 		m_encodeAsISOLatin2 = new HashSet<String>();
+		m_encodeAsWindows1250 = new HashSet<String>();
 		m_reencodedFonts = new HashSet<String>();
 		m_TTFFonts = new HashMap<String, TrueTypeFont>();
 		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
@@ -1192,6 +1204,19 @@ public class OutputFormat
 					String fontName = st2.nextToken();
 					if (fontName.length() > 0)
 						m_encodeAsISOLatin2.add(fontName);
+				}
+			}
+			else if (token.startsWith("windows1250fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in Windows 1250.
+				 */
+				StringTokenizer st2 = new StringTokenizer(token.substring(17), ",");
+				while (st2.hasMoreTokens())
+				{
+					String fontName = st2.nextToken();
+					if (fontName.length() > 0)
+						m_encodeAsWindows1250.add(fontName);
 				}
 			}
 			else if (token.startsWith("resolution="))
