@@ -200,6 +200,7 @@ public class OutputFormat
 	private HashSet<String> m_encodeAsISOLatin1;
 	private HashSet<String> m_encodeAsISOLatin2;
 	private HashSet<String> m_encodeAsWindows1250;
+	private HashSet<String> m_encodeAsWindows1251;
 	private HashSet<String> m_reencodedFonts;
 
 	/*
@@ -661,6 +662,11 @@ public class OutputFormat
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getWindows1250Encoding() + " ] >>");
 			}
+			else if (m_encodeAsWindows1251.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1251Encoding() + " ] >>");
+			}
 			fontDictionary.append(" >>");
 			fontDictionary.append(newline);
 		}
@@ -775,6 +781,11 @@ public class OutputFormat
 			{
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getWindows1250Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1251.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1251Encoding() + " ] >>");
 			}
 			fontDictionary.append(" >>").append(newline);
 		}
@@ -1079,6 +1090,7 @@ public class OutputFormat
 		m_encodeAsISOLatin1 = new HashSet<String>();
 		m_encodeAsISOLatin2 = new HashSet<String>();
 		m_encodeAsWindows1250 = new HashSet<String>();
+		m_encodeAsWindows1251 = new HashSet<String>();
 		m_reencodedFonts = new HashSet<String>();
 		m_TTFFonts = new HashMap<String, TrueTypeFont>();
 		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
@@ -1185,39 +1197,28 @@ public class OutputFormat
 				/*
 				 * Build list of fonts to encode in ISOLatin1.
 				 */
-				StringTokenizer st2 = new StringTokenizer(token.substring(14), ",");
-				while (st2.hasMoreTokens())
-				{
-					String fontName = st2.nextToken();
-					if (fontName.length() > 0)
-						m_encodeAsISOLatin1.add(fontName);
-				}
+				addNamesToSet(m_encodeAsISOLatin1, token.substring(14));
 			}
 			else if (token.startsWith("isolatin2fonts="))
 			{
 				/*
 				 * Build list of fonts to encode in ISOLatin2.
 				 */
-				StringTokenizer st2 = new StringTokenizer(token.substring(15), ",");
-				while (st2.hasMoreTokens())
-				{
-					String fontName = st2.nextToken();
-					if (fontName.length() > 0)
-						m_encodeAsISOLatin2.add(fontName);
-				}
+				addNamesToSet(m_encodeAsISOLatin2, token.substring(15));
 			}
 			else if (token.startsWith("windows1250fonts="))
 			{
 				/*
 				 * Build list of fonts to encode in Windows 1250.
 				 */
-				StringTokenizer st2 = new StringTokenizer(token.substring(17), ",");
-				while (st2.hasMoreTokens())
-				{
-					String fontName = st2.nextToken();
-					if (fontName.length() > 0)
-						m_encodeAsWindows1250.add(fontName);
-				}
+				addNamesToSet(m_encodeAsWindows1250, token.substring(17));
+			}
+			else if (token.startsWith("windows1251fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in Windows 1251.
+				 */
+				addNamesToSet(m_encodeAsWindows1251, token.substring(17));
 			}
 			else if (token.startsWith("resolution="))
 			{
@@ -1614,6 +1615,22 @@ public class OutputFormat
 		 * Do not allocate page mask until needed to save memory.
 		 */
 		m_pageMask = null;
+	}
+
+	/**
+	 * Add comma-separated list of names to a set.
+	 * @param set set to add names to.
+	 * @param names comma-separated list.
+	 */
+	private void addNamesToSet(HashSet<String> set, String names)
+	{
+		StringTokenizer st2 = new StringTokenizer(names, ",");
+		while (st2.hasMoreTokens())
+		{
+			String name = st2.nextToken();
+			if (name.length() > 0)
+				set.add(name);
+		}
 	}
 
 	/*
