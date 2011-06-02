@@ -51,6 +51,9 @@ public class FunctionTable
 		f = new Ceil();
 		mFunctions.put(f.getName(), f);
 
+		f = new Chr();
+		mFunctions.put(f.getName(), f);
+
 		f = new Cos();
 		mFunctions.put(f.getName(), f);
 
