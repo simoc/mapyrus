@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 
+1.104, June 2011
+
+* Block invalid octal character codes such as \099.
+* Add CHR function to create string from a Unicode character code.
+* Fix parsing of font names from PostScript .pfa and .pfb files.
+
 1.103, May 2011
 
 * Correct display of characters with ISO-8859-2 (ISO Latin 2) encoding
