@@ -332,6 +332,17 @@ public class AdobeFontMetrics
 					{
 						CharacterMetrics metrics;
 						metrics = new CharacterMetrics((char)charIndex, charWidth, charAscent, charDescent);
+						while (m_charMetrics.containsKey(charName))
+						{
+							/*
+							 * Some fonts define the same character name twice.
+							 * For example, 'space' as char index 32 and 160 and
+							 * 'hyphen' as 45 and 173.
+							 * Include both values with different names so character
+							 * width table will be correct.
+							 */
+							charName = charName + "X";
+						}
 						m_charMetrics.put(charName, metrics);
 						if (charIndex == 32)
 							m_charMetrics.put(SPACE_GLYPH_NAME, metrics);
