@@ -199,6 +199,8 @@ public class OutputFormat
 	 */
 	private HashSet<String> m_encodeAsISOLatin1;
 	private HashSet<String> m_encodeAsISOLatin2;
+	private HashSet<String> m_encodeAsISOLatin9;
+	private HashSet<String> m_encodeAsISOLatin10;
 	private HashSet<String> m_encodeAsWindows1250;
 	private HashSet<String> m_encodeAsWindows1251;
 	private HashSet<String> m_encodeAsWindows1252;
@@ -660,6 +662,16 @@ public class OutputFormat
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getISOLatin2Encoding() + " ] >>");
 			}
+			else if (m_encodeAsISOLatin9.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getISOLatin9Encoding() + " ] >>");
+			}
+			else if (m_encodeAsISOLatin10.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getISOLatin10Encoding() + " ] >>");
+			}
 			else if (m_encodeAsWindows1250.contains(PDF_FONTS[i]))
 			{
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
@@ -794,6 +806,16 @@ public class OutputFormat
 			{
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getISOLatin2Encoding() + " ] >>");
+			}
+			else if (m_encodeAsISOLatin9.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getISOLatin9Encoding() + " ] >>");
+			}
+			else if (m_encodeAsISOLatin10.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getISOLatin10Encoding() + " ] >>");
 			}
 			else if (m_encodeAsWindows1250.contains(afm.getFontName()))
 			{
@@ -1122,6 +1144,8 @@ public class OutputFormat
 		ArrayList<PostScriptFont> fontList = new ArrayList<PostScriptFont>();
 		m_encodeAsISOLatin1 = new HashSet<String>();
 		m_encodeAsISOLatin2 = new HashSet<String>();
+		m_encodeAsISOLatin9 = new HashSet<String>();
+		m_encodeAsISOLatin10 = new HashSet<String>();
 		m_encodeAsWindows1250 = new HashSet<String>();
 		m_encodeAsWindows1251 = new HashSet<String>();
 		m_encodeAsWindows1252 = new HashSet<String>();
@@ -1241,6 +1265,20 @@ public class OutputFormat
 				 * Build list of fonts to encode in ISOLatin2.
 				 */
 				addNamesToSet(m_encodeAsISOLatin2, token.substring(15));
+			}
+			else if (token.startsWith("isolatin9fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in ISOLatin9.
+				 */
+				addNamesToSet(m_encodeAsISOLatin9, token.substring(15));
+			}
+			else if (token.startsWith("isolatin10fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in ISOLatin9.
+				 */
+				addNamesToSet(m_encodeAsISOLatin10, token.substring(16));
 			}
 			else if (token.startsWith("windows1250fonts="))
 			{
