@@ -201,6 +201,9 @@ public class OutputFormat
 	private HashSet<String> m_encodeAsISOLatin2;
 	private HashSet<String> m_encodeAsWindows1250;
 	private HashSet<String> m_encodeAsWindows1251;
+	private HashSet<String> m_encodeAsWindows1252;
+	private HashSet<String> m_encodeAsWindows1253;
+	private HashSet<String> m_encodeAsWindows1254;
 	private HashSet<String> m_reencodedFonts;
 
 	/*
@@ -667,6 +670,21 @@ public class OutputFormat
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getWindows1251Encoding() + " ] >>");
 			}
+			else if (m_encodeAsWindows1252.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1252Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1253.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1253Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1254.contains(PDF_FONTS[i]))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1254Encoding() + " ] >>");
+			}
 			fontDictionary.append(" >>");
 			fontDictionary.append(newline);
 		}
@@ -786,6 +804,21 @@ public class OutputFormat
 			{
 				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
 					AdobeFontMetricsManager.getWindows1251Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1252.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1252Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1253.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1253Encoding() + " ] >>");
+			}
+			else if (m_encodeAsWindows1254.contains(afm.getFontName()))
+			{
+				fontDictionary.append(" /Encoding << /Type /Encoding /Differences [ " +
+					AdobeFontMetricsManager.getWindows1254Encoding() + " ] >>");
 			}
 			fontDictionary.append(" >>").append(newline);
 		}
@@ -1091,6 +1124,9 @@ public class OutputFormat
 		m_encodeAsISOLatin2 = new HashSet<String>();
 		m_encodeAsWindows1250 = new HashSet<String>();
 		m_encodeAsWindows1251 = new HashSet<String>();
+		m_encodeAsWindows1252 = new HashSet<String>();
+		m_encodeAsWindows1253 = new HashSet<String>();
+		m_encodeAsWindows1254 = new HashSet<String>();
 		m_reencodedFonts = new HashSet<String>();
 		m_TTFFonts = new HashMap<String, TrueTypeFont>();
 		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
@@ -1219,6 +1255,27 @@ public class OutputFormat
 				 * Build list of fonts to encode in Windows 1251.
 				 */
 				addNamesToSet(m_encodeAsWindows1251, token.substring(17));
+			}
+			else if (token.startsWith("windows1252fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in Windows 1252.
+				 */
+				addNamesToSet(m_encodeAsWindows1252, token.substring(17));
+			}
+			else if (token.startsWith("windows1253fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in Windows 1253.
+				 */
+				addNamesToSet(m_encodeAsWindows1253, token.substring(17));
+			}
+			else if (token.startsWith("windows1254fonts="))
+			{
+				/*
+				 * Build list of fonts to encode in Windows 1254.
+				 */
+				addNamesToSet(m_encodeAsWindows1254, token.substring(17));
 			}
 			else if (token.startsWith("resolution="))
 			{
