@@ -169,33 +169,16 @@ public class PostScriptFont
 			/*
 			 * Add all segments to PDF object as a hex encoded stream.
 			 */
-			StringBuffer firstLine = new StringBuffer();
+			StringBuffer segBuf = new StringBuffer();
 			int nBytesAdded = 0;
 			for (int i = 0; i < segments.size(); i++)
 			{
-				boolean onFirstLine = true;
 				byte []buf = (byte [])segments.get(i);
 				for (int j = 0; j < buf.length; j++)
 				{
-					if (i == 0 && onFirstLine)
+					if (i == 0 && (buf[j] == '\r' || buf[j] == '\n' || buf[j] == '\t' || buf[j] >= 32))
 					{
-						/*
-						 * Extract font name from first line of first segment.
-						 */
-						if (buf[j] == '\r' || buf[j] == '\n')
-						{
-							onFirstLine = false;
-							m_fontName = parseFontName(firstLine.toString());
-							if (m_fontName == null)
-							{
-								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-									": " + pfbFilename);
-							}
-						}
-						else
-						{
-							firstLine.append((char)(buf[j]));
-						}
+						segBuf.append((char)buf[j]);
 					}
 					String s = Integer.toHexString(buf[j] & 0xff);
 					if (s.length() < 2)
@@ -207,6 +190,27 @@ public class PostScriptFont
 					 */
 					if ((++nBytesAdded) % LINE_LENGTH == 0)
 						m_fileContents.append(Constants.LINE_SEPARATOR);
+				}
+				if (i == 0)
+				{
+					int index = segBuf.indexOf("\n/FontName");
+					if (index < 0)
+						index = segBuf.indexOf("\r/FontName");
+					if (index < 0)
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+							": " + pfbFilename);
+					}
+					String remainder = segBuf.substring(index + 10);
+					StringTokenizer st = new StringTokenizer(remainder);
+					if (!st.hasMoreTokens())
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+							": " + pfbFilename);
+					}
+					m_fontName = st.nextToken();
+					if (m_fontName.startsWith("/"))
+						m_fontName = m_fontName.substring(1);
 				}
 			}
 			m_fileContents.append(Constants.LINE_SEPARATOR);
