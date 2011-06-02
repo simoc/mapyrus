@@ -250,14 +250,7 @@ public class PostScriptFont
 			if (firstLine == null)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
 					": " + pfaFilename);
-	
-			m_fontName = parseFontName(firstLine);
-			if (m_fontName == null)
-			{
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
-					": " + pfaFilename);
-			}
-	
+
 			/*
 			 * Read entire .pfa file into memory, most files are about 100kb in size.
 			 */
@@ -270,6 +263,23 @@ public class PostScriptFont
 			{
 				m_fileContents.append(line);
 				m_fileContents.append(Constants.LINE_SEPARATOR);
+				if (line.startsWith("/FontName"))
+				{
+					StringTokenizer st = new StringTokenizer(line);
+					if (st.countTokens() >= 2)
+					{
+						st.nextToken();
+						m_fontName = st.nextToken();
+						if (m_fontName.startsWith("/"))
+							m_fontName = m_fontName.substring(1);
+					}
+				}
+			}
+
+			if (m_fontName == null)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_PFA_FILE) +
+					": " + pfaFilename);
 			}
 		}
 		finally
@@ -277,25 +287,6 @@ public class PostScriptFont
 			if (bufferedReader != null)
 				bufferedReader.close();
 		}		
-	}
-
-	/**
-	 * Extract font name from first line of PostScript font file.
-	 * @param line first line of font file.
-	 * @return font name or null if it cannot be parsed.
-	 */
-	private String parseFontName(String line)
-	{
-		String fontName = null;
-		String magicToken = null;
-		StringTokenizer st = new StringTokenizer(line);
-		if (st.countTokens() > 1)
-		{
-			magicToken = st.nextToken();
-			if (magicToken.startsWith("%!PS-AdobeFont"))
-				fontName = st.nextToken();
-		}
-		return(fontName);
 	}
 
 	/**
