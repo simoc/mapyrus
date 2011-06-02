@@ -330,6 +330,212 @@ public class AdobeFontMetricsManager
 	}
 
 	/**
+	 * Get character encoding definition for ISO Latin9 fonts in PostScript and PDF output.
+	 * @return encoding string.
+	 */
+	public static String getISOLatin9Encoding()
+	{
+		return "161 /exclamdown\n" +
+			"162 /cent\n" +
+			"163 /sterling\n" +
+			"164 /Euro\n" +
+			"165 /yen\n" +
+			"166 /Scaron\n" +
+			"167 /section\n" +
+			"168 /scaron\n" +
+			"169 /copyright\n" +
+			"170 /ordfeminine\n" +
+			"171 /guillemotleft\n" +
+			"172 /logicalnot\n" +
+			"173 /hyphen\n" +
+			"174 /registered\n" +
+			"175 /macron\n" +
+			"176 /degree\n" +
+			"177 /plusminus\n" +
+			"178 /twosuperior\n" +
+			"179 /threesuperior\n" +
+			"180 /Zcaron\n" +
+			"181 /mu\n" +
+			"182 /paragraph\n" +
+			"183 /periodcentered\n" +
+			"184 /zcaron\n" +
+			"185 /onesuperior\n" +
+			"186 /ordmasculine\n" +
+			"187 /guillemotright\n" +
+			"188 /OE\n" +
+			"189 /oe\n" +
+			"190 /Ydieresis\n" +
+			"191 /questiondown\n" +
+			"192 /Agrave\n" +
+			"193 /Aacute\n" +
+			"194 /Acircumflex\n" +
+			"195 /Atilde\n" +
+			"196 /Adieresis\n" +
+			"197 /Aring\n" +
+			"198 /AE\n" +
+			"199 /Ccedilla\n" +
+			"200 /Egrave\n" +
+			"201 /Eacute\n" +
+			"202 /Ecircumflex\n" +
+			"203 /Edieresis\n" +
+			"204 /Igrave\n" +
+			"205 /Iacute\n" +
+			"206 /Icircumflex\n" +
+			"207 /Idieresis\n" +
+			"208 /Eth\n" +
+			"209 /Ntilde\n" +
+			"210 /Ograve\n" +
+			"211 /Oacute\n" +
+			"212 /Ocircumflex\n" +
+			"213 /Otilde\n" +
+			"214 /Odieresis\n" +
+			"215 /multiply\n" +
+			"216 /Oslash\n" +
+			"217 /Ugrave\n" +
+			"218 /Uacute\n" +
+			"219 /Ucircumflex\n" +
+			"220 /Udieresis\n" +
+			"221 /Yacute\n" +
+			"222 /Thorn\n" +
+			"223 /germandbls\n" +
+			"224 /agrave\n" +
+			"225 /aacute\n" +
+			"226 /acircumflex\n" +
+			"227 /atilde\n" +
+			"228 /adieresis\n" +
+			"229 /aring\n" +
+			"230 /ae\n" +
+			"231 /ccedilla\n" +
+			"232 /egrave\n" +
+			"233 /eacute\n" +
+			"234 /ecircumflex\n" +
+			"235 /edieresis\n" +
+			"236 /igrave\n" +
+			"237 /iacute\n" +
+			"238 /icircumflex\n" +
+			"239 /idieresis\n" +
+			"240 /eth\n" +
+			"241 /ntilde\n" +
+			"242 /ograve\n" +
+			"243 /oacute\n" +
+			"244 /ocircumflex\n" +
+			"245 /otilde\n" +
+			"246 /odieresis\n" +
+			"247 /divide\n" +
+			"248 /oslash\n" +
+			"249 /ugrave\n" +
+			"250 /uacute\n" +
+			"251 /ucircumflex\n" +
+			"252 /udieresis\n" +
+			"253 /yacute\n" +
+			"254 /thorn\n" +
+			"255 /ydieresis\n";
+	}
+
+	/**
+	 * Get character encoding definition for ISO Latin10 fonts in PostScript and PDF output.
+	 * @return encoding string.
+	 */
+	public static String getISOLatin10Encoding()
+	{
+		return "161 /Aogonek\n" +
+			"162 /aogonek\n" +
+			"163 /Lslash\n" +
+			"164 /Euro\n" +
+			"165 /quotedblbase\n" +
+			"166 /Scaron\n" +
+			"167 /section\n" +
+			"168 /scaron\n" +
+			"169 /copyright\n" +
+			"170 /Scommaaccent\n" +
+			"171 /guillemotleft\n" +
+			"172 /Zacute\n" +
+			"173 /hyphen\n" +
+			"174 /zacute\n" +
+			"175 /Zdotaccent\n" +
+			"176 /degree\n" +
+			"177 /plusminus\n" +
+			"178 /Ccaron\n" +
+			"179 /lslash\n" +
+			"180 /Zcaron\n" +
+			"181 /quotedblright\n" +
+			"182 /paragraph\n" +
+			"183 /periodcentered\n" +
+			"184 /zcaron\n" +
+			"185 /ccaron\n" +
+			"186 /scommaaccent\n" +
+			"187 /guillemotright\n" +
+			"188 /OE\n" +
+			"189 /oe\n" +
+			"190 /Ydieresis\n" +
+			"191 /zdotaccent\n" +
+			"192 /Agrave\n" +
+			"193 /Aacute\n" +
+			"194 /Acircumflex\n" +
+			"195 /Abreve\n" +
+			"196 /Adieresis\n" +
+			"197 /Cacute\n" +
+			"198 /AE\n" +
+			"199 /Ccedilla\n" +
+			"200 /Egrave\n" +
+			"201 /Eacute\n" +
+			"202 /Ecircumflex\n" +
+			"203 /Edieresis\n" +
+			"204 /Igrave\n" +
+			"205 /Iacute\n" +
+			"206 /Icircumflex\n" +
+			"207 /Idieresis\n" +
+			"208 /Dcroat\n" +
+			"209 /Nacute\n" +
+			"210 /Ograve\n" +
+			"211 /Oacute\n" +
+			"212 /Ocircumflex\n" +
+			"213 /Ohungarumlaut\n" +
+			"214 /Odieresis\n" +
+			"215 /Sacute\n" +
+			"216 /Uhungarumlaut\n" +
+			"217 /Ugrave\n" +
+			"218 /Uacute\n" +
+			"219 /Ucircumflex\n" +
+			"220 /Udieresis\n" +
+			"221 /Eogonek\n" +
+			"222 /Tcommaaccent\n" +
+			"223 /germandbls\n" +
+			"224 /agrave\n" +
+			"225 /aacute\n" +
+			"226 /acircumflex\n" +
+			"227 /abreve\n" +
+			"228 /adieresis\n" +
+			"229 /cacute\n" +
+			"230 /ae\n" +
+			"231 /ccedilla\n" +
+			"232 /egrave\n" +
+			"233 /eacute\n" +
+			"234 /ecircumflex\n" +
+			"235 /edieresis\n" +
+			"236 /igrave\n" +
+			"237 /iacute\n" +
+			"238 /icircumflex\n" +
+			"239 /idieresis\n" +
+			"240 /dcroat\n" +
+			"241 /nacute\n" +
+			"242 /ograve\n" +
+			"243 /oacute\n" +
+			"244 /ocircumflex\n" +
+			"245 /ohungarumlaut\n" +
+			"246 /odieresis\n" +
+			"247 /sacute\n" +
+			"248 /uhungarumlaut\n" +
+			"249 /ugrave\n" +
+			"250 /uacute\n" +
+			"251 /ucircumflex\n" +
+			"252 /udieresis\n" +
+			"253 /eogonek\n" +
+			"254 /tcommaaccent\n" +
+			"255 /ydieresis\n";
+	}
+
+	/**
 	 * Get character encoding definition for Windows 1250 fonts in PostScript and PDF output.
 	 * @return encoding string.
 	 */
