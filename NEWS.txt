@@ -6,6 +6,9 @@ Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 * Block invalid octal character codes such as \099.
 * Add CHR function to create string from a Unicode character code.
 * Fix parsing of font names from PostScript .pfa and .pfb files.
+* Enable fonts with ISO-8859-15 (ISO Latin 9), ISO-8859-16 (ISO Latin 10),
+  Windows 1250, Windows 1251, Windows 1252, Windows 1253, Windows 1254
+  character encodings to be used in PDF output.
 
 1.103, May 2011
 
