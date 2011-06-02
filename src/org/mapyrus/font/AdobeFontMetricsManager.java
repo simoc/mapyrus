@@ -328,4 +328,135 @@ public class AdobeFontMetricsManager
 			"254 /tcedilla\n" +
 			"255 /dotaccent\n";
 	}
+
+	/**
+	 * Get character encoding definition for Windows 1250 fonts in PostScript and PDF output.
+	 * @return encoding string.
+	 */
+	public static String getWindows1250Encoding()
+	{
+		return "128 /Euro\n" +
+			"130 /quotesinglbase\n" +
+			"132 /quotedblbase\n" +
+			"133 /ellipsis\n" +
+			"134 /dagger\n" +
+			"135 /daggerdbl\n" +
+			"137 /perthousand\n" +
+			"138 /Scaron\n" +
+			"139 /guilsinglleft\n" +
+			"140 /Sacute\n" +
+			"141 /Tcaron\n" +
+			"142 /Zcaron\n" +
+			"143 /Zacute\n" +
+			"145 /quoteleft\n" +
+			"146 /quoteright\n" +
+			"147 /quotedblleft\n" +
+			"148 /quotedblright\n" +
+			"149 /bullet\n" +
+			"150 /endash\n" +
+			"151 /emdash\n" +
+			"153 /trademark\n" +
+			"154 /scaron\n" +
+			"155 /guilsinglright\n" +
+			"156 /sacute\n" +
+			"157 /tcaron\n" +
+			"158 /zcaron\n" +
+			"159 /zacute\n" +
+			"160 /space\n" +
+			"161 /caron\n" +
+			"162 /breve\n" +
+			"163 /Lslash\n" +
+			"164 /currency\n" +
+			"165 /Aogonek\n" +
+			"166 /brokenbar\n" +
+			"167 /section\n" +
+			"168 /dieresis\n" +
+			"169 /copyright\n" +
+			"170 /Scedilla\n" +
+			"171 /guillemotleft\n" +
+			"172 /logicalnot\n" +
+			"173 /hyphen\n" +
+			"174 /registered\n" +
+			"175 /Zdotaccent\n" +
+			"176 /degree\n" +
+			"177 /plusminus\n" +
+			"178 /ogonek\n" +
+			"179 /lslash\n" +
+			"180 /acute\n" +
+			"181 /mu\n" +
+			"182 /paragraph\n" +
+			"183 /periodcentered\n" +
+			"184 /cedilla\n" +
+			"185 /aogonek\n" +
+			"186 /scedilla\n" +
+			"187 /guillemotright\n" +
+			"188 /Lcaron\n" +
+			"189 /hungarumlaut\n" +
+			"190 /lcaron\n" +
+			"191 /zdotaccent\n" +
+			"192 /Racute\n" +
+			"193 /Aacute\n" +
+			"194 /Acircumflex\n" +
+			"195 /Abreve\n" +
+			"196 /Adieresis\n" +
+			"197 /Lacute\n" +
+			"198 /Cacute\n" +
+			"199 /Ccedilla\n" +
+			"200 /Ccaron\n" +
+			"201 /Eacute\n" +
+			"202 /Eogonek\n" +
+			"203 /Edieresis\n" +
+			"204 /Ecaron\n" +
+			"205 /Iacute\n" +
+			"206 /Icircumflex\n" +
+			"207 /Dcaron\n" +
+			"208 /Dcroat\n" +
+			"209 /Nacute\n" +
+			"210 /Ncaron\n" +
+			"211 /Oacute\n" +
+			"212 /Ocircumflex\n" +
+			"213 /Ohungarumlaut\n" +
+			"214 /Odieresis\n" +
+			"215 /multiply\n" +
+			"216 /Rcaron\n" +
+			"217 /Uring\n" +
+			"218 /Uacute\n" +
+			"219 /Uhungarumlaut\n" +
+			"220 /Udieresis\n" +
+			"221 /Yacute\n" +
+			"222 /Tcommaaccent\n" +
+			"223 /germandbls\n" +
+			"224 /racute\n" +
+			"225 /aacute\n" +
+			"226 /acircumflex\n" +
+			"227 /abreve\n" +
+			"228 /adieresis\n" +
+			"229 /lacute\n" +
+			"230 /cacute\n" +
+			"231 /ccedilla\n" +
+			"232 /ccaron\n" +
+			"233 /eacute\n" +
+			"234 /eogonek\n" +
+			"235 /edieresis\n" +
+			"236 /ecaron\n" +
+			"237 /iacute\n" +
+			"238 /icircumflex\n" +
+			"239 /dcaron\n" +
+			"240 /dcroat\n" +
+			"241 /nacute\n" +
+			"242 /ncaron\n" +
+			"243 /oacute\n" +
+			"244 /ocircumflex\n" +
+			"245 /ohungarumlaut\n" +
+			"246 /odieresis\n" +
+			"247 /divide\n" +
+			"248 /rcaron\n" +
+			"249 /uring\n" +
+			"250 /uacute\n" +
+			"251 /uhungarumlaut\n" +
+			"252 /udieresis\n" +
+			"253 /yacute\n" +
+			"254 /tcommaaccent\n" +
+			"255 /dotaccent\n";
+	}
 }
