@@ -1506,7 +1506,7 @@ public class Expression
 					 * If next character is a digit then it is part of a
 					 * a '\nnn' octal character code.
 					 */
-					if (Character.isDigit((char)c) && nOctalDigits < 3)
+					if (Character.isDigit((char)c) && c < '8' && nOctalDigits < 3)
 					{
 						octalCode *= 8;
 						octalCode += c - '0';
@@ -1580,6 +1580,11 @@ public class Expression
 						}
 						else if (Character.isDigit((char)c))
 						{
+							if (c >= '8')
+							{
+								throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OCTAL) +
+									": \\" + (char)c);
+							}
 							inOctalCode = true;
 							octalCode = c - '0';
 							nOctalDigits = 1;
