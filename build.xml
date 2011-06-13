@@ -59,13 +59,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </target>
 
 <target name="compile" depends="init" description="Compile java source code">
-<replace dir="src" token="@software_version_token@" value="${version}"/>
-<replace dir="src" token="@release_date_token@" value="${today}"/>
+<!-- Create version and date stamp files for JAR file and documentation -->
+<echo file="userdoc/version.txt">${version}</echo>
+<echo file="userdoc/timestamp.txt">${today}</echo>
+<echo file="src/org/mapyrus/version.txt">${version}</echo>
+<echo file="src/org/mapyrus/timestamp.txt">${today}</echo>
 
 <mkdir dir="build/classes"/>
 <javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${proj4.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes"/>
 
 <!-- Copy resource, font and data files into built directory -->
+<copy file="src/org/mapyrus/version.txt" todir="build/classes/org/mapyrus"/>
+<copy file="src/org/mapyrus/timestamp.txt" todir="build/classes/org/mapyrus"/>
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
 <copy file="src/org/mapyrus/gui/onlinehelp.html" todir="build/classes/org/mapyrus/gui"/>
 <copy file="src/org/mapyrus/gui/commands1.txt" todir="build/classes/org/mapyrus/gui"/>
@@ -106,8 +111,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <fileset dir="userdoc" includes="*.dvi,*.aux,*.log,*.eps" excludes="flag.eps"/>
 <fileset dir="userdoc" includes="tutorialfirst*-no-newpage.mapyrus,tutorialfirst4-pdf.mapyrus"/>
 </delete>
-<replace file="userdoc/mapyrus.tex" token="@software_version_token@" value="${version}"/>
-<replace file="userdoc/mapyrus.tex" token="@release_date_token@" value="${today}"/>
 
 <!-- Generate all examples, doing tutorial examples separately so -->
 <!-- it is not necessary to show path being cleared in each example -->
