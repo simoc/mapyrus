@@ -1,5 +1,5 @@
 httpresponse "HTTP/1.0 200 OK
-Content-Type: text/html"
+Content-Type: text/html; charset=UTF-8"
 
 # Create image of Australia and imagemap to show a tooltip when
 # mouse moved over Australia.
