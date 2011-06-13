@@ -26,7 +26,11 @@ import java.awt.Toolkit;
 import java.awt.HeadlessException;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormatSymbols;
+import java.net.URL;
 import java.util.Locale;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 /**
  * Globally useful constants including fixed distance measurements.
@@ -35,7 +39,9 @@ public class Constants
 {
 	public static final String PROGRAM_NAME = "Mapyrus";
 	public static final String WEB_SITE = "http://mapyrus.sourceforge.net";
-	
+	private static String m_version = null;
+	private static String m_releaseDate = null;
+
 	/**
 	 * Return version number of software.
 	 * @return version number.
@@ -43,9 +49,13 @@ public class Constants
 	public static String getVersion()
 	{
 		/*
-		 * Current software version number set by ant Replace task during build.
+		 * Current software version number.
 		 */
-		return("@software_version_token@");
+		if (m_version == null)
+		{
+			m_version = readResource("version.txt");
+		}
+		return(m_version);
 	}
 
 	/**
@@ -55,9 +65,43 @@ public class Constants
 	public static String getReleaseDate()
 	{
 		/*
-		 * Release date set by ant Replace task during build.
+		 * Release date of software.
 		 */
-		return("@release_date_token@");
+		if (m_releaseDate == null)
+		{
+			m_releaseDate = readResource("timestamp.txt");
+		}
+		return m_releaseDate;
+	}
+
+	private static String readResource(String filename)
+	{
+		BufferedReader reader = null;
+		String retval = null;
+		try
+		{
+			URL url = new Constants().getClass().getResource(filename);
+			reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			retval = reader.readLine();
+		}
+		catch (IOException e)
+		{
+		}
+		finally
+		{
+			if (retval == null)
+				retval = "";
+
+			try
+			{
+				if (reader != null)
+					reader.close();
+			}
+			catch (IOException e)
+			{
+			}
+		}
+		return retval;
 	}
 
 	/**
