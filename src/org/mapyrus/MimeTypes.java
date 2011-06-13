@@ -38,7 +38,21 @@ public class MimeTypes
 	public static String get(String extension)
 	{
 		String retval;
-		if (extension.equalsIgnoreCase("svg") ||
+		if (extension.equalsIgnoreCase("txt") ||
+			extension.equalsIgnoreCase("text"))
+		{
+			/*
+			 * Ensure UTF-8 so that extended characters
+			 * will be interpreted correctly by client.
+			 */
+			retval = "text/plain; charset=UTF-8";
+		}
+		else if (extension.equalsIgnoreCase("html") ||
+			extension.equalsIgnoreCase("htm"))
+		{
+			retval = "text/html; charset=UTF-8";
+		}
+		else if (extension.equalsIgnoreCase("svg") ||
 			extension.equalsIgnoreCase("svgz"))
 		{
 			/*
