@@ -1,4 +1,3 @@
-<!-- $Id$ -->
 <Context>
   <!-- Example JNDI Resource for connecting to a PostgreSQL database -->
   <Resource name="jdbc/MYDB1" auth="Container"
