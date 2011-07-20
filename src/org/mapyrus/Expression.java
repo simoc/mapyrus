@@ -1345,7 +1345,7 @@ public class Expression
 	}
 
 	/*
-	 * Parse array expression: [11, 22, "hello"].
+	 * Parse array expression: [11, 22, "hello"] or {'name':'fred', 'age': 22}.
 	 */
 	private ExpressionTreeNode parseArray(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
@@ -1354,17 +1354,19 @@ public class Expression
 		int op1;
 
 		/*
-		 * Check for '[' marking start of array.
+		 * Check for '[' or '{' marking start of array.
 		 */
 		op1 = p.readNonSpace();
-		if (op1 == '[')
+		if (op1 == '[' || op1 == '{')
 		{
+			boolean requiresKeys = (op1 == '{');
+
 			/*
 			 * Read each entry in array.
 			 */
 			ArrayList<ExpressionTreeNode> keyValuePairs = new ArrayList<ExpressionTreeNode>();
 			op1 = p.readNonSpace();
-			if (op1 == ']')
+			if (((!requiresKeys) && op1 == ']') || (requiresKeys && op1 == '}'))
 			{
 				/*
 				 * Empty array.
@@ -1374,28 +1376,17 @@ public class Expression
 			{
 				p.unread(op1);
 				int i = 1;
-				boolean hasKeys = true;
+				//boolean hasKeys = true;
 				do
 				{
 					expr = parseAssignment(p, userFunctions);
 					op1 = p.readNonSpace();
-					if (op1 == ':')
+					if (requiresKeys && op1 == ':')
 					{
-						/*
-						 * Do not allow array list and key-value pairs to be mixed in one array.
-						 */
-						if (i == 1)
-							hasKeys = true;
-						else if (!hasKeys)
-						{
-							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-								": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
-						}
-
 						if (expr.m_isLeaf && expr.m_leafArg == null)
 						{
 							/*
-							 * Do not allow nested arrays.
+							 * Key must be a simple value, not an array.
 							 */
 							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
 									": " + MapyrusMessages.get(MapyrusMessages.NESTED_HASHMAP));
@@ -1413,16 +1404,8 @@ public class Expression
 						}
 						keyValuePairs.add(expr);
 					}
-					else
+					else if (!requiresKeys)
 					{
-						if (i == 1)
-							hasKeys = false;
-						else if (hasKeys)
-						{
-							throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
-								": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
-						}
-
 						if (expr.m_isLeaf && expr.m_leafArg == null)
 						{
 							/*
@@ -1437,6 +1420,11 @@ public class Expression
 						keyValuePairs.add(new ExpressionTreeNode(new Argument(Argument.STRING, key)));
 						keyValuePairs.add(expr);
 					}
+					else
+					{
+						throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
+							": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
+					}
 
 					i++;
 					op1 = p.readNonSpace();
@@ -1444,9 +1432,9 @@ public class Expression
 				while (op1 == ',');
 
 				/*
-				 * Check that array ends with ']'.
+				 * Check that array ends with matching ']' or '}'.
 				 */
-				if (op1 != ']')
+				if (((!requiresKeys) && op1 != ']') || (requiresKeys && op1 != '}'))
 				{
 					throw new MapyrusException(p.getCurrentFilenameAndLineNumber() +
 						": " + MapyrusMessages.get(MapyrusMessages.INVALID_ARRAY));
