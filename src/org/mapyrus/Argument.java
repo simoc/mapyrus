@@ -1067,8 +1067,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	}
 
 	/**
-	 * Add backslash before any single quotes in string. 
-	 * @param s string to add backslashes to.
+	 * Add backslashes to escape any special characters in string.
+	 * @param s string to escape.
 	 * @return string with backslashes added.
 	 */
 	private String escapeQuotes(String s)
@@ -1079,8 +1079,21 @@ public class Argument implements Comparable<Argument>, Cloneable
 		{
 			c = s.charAt(j);
 			if (c == '\'')
-				sb.append('\\');
-			sb.append((char)c);
+				sb.append("\\'");
+			else if (c == '"')
+				sb.append("\\\"");
+			else if (c == '\\')
+				sb.append("\\\\");
+			else if (c == '\n')
+				sb.append("\\n");
+			else if (c == '\r')
+				sb.append("\\r");
+			else if (c == '\t')
+				sb.append("\\t");
+			else if (c > 127)
+				sb.append("\\u").append(String.format("%04X", c));
+			else
+				sb.append((char)c);
 		}
 		return(sb.toString());
 	}
@@ -1120,19 +1133,23 @@ public class Argument implements Comparable<Argument>, Cloneable
 			 * Build string of all key, value pairs in the hash map, in a
 			 * format that could be re-interpreted by Mapyrus as an array.
 			 */
-			sb = new StringBuffer("[");
+			sb = new StringBuffer();
 			Object []keys = getHashMapKeys();
 			boolean isSequential = isSequentialKeys(keys);
+			if (isSequential)
+				sb.append("[");
+			else
+				sb.append("{");
 			for (int i = 0; i < keys.length; i++)
 			{
 				if (i > 0)
 					sb.append(", ");
 				if (!isSequential)
 				{
-					sb.append("'");
+					sb.append("\"");
 					String key = keys[i].toString();
 					sb.append(escapeQuotes(key));
-					sb.append("': ");
+					sb.append("\": ");
 				}
 
 				Argument value = m_hashMap.get(keys[i]);
@@ -1141,12 +1158,15 @@ public class Argument implements Comparable<Argument>, Cloneable
 				if (valueType == Argument.STRING)
 					sValue = escapeQuotes(sValue);
 				if (valueType != Argument.HASHMAP && valueType != Argument.NUMERIC)
-					sb.append("'");
+					sb.append("\"");
 				sb.append(sValue);
 				if (valueType != Argument.HASHMAP && valueType != Argument.NUMERIC)
-					sb.append("'");
+					sb.append("\"");
 			}
-			sb.append("]");
+			if (isSequential)
+				sb.append("]");
+			else
+				sb.append("}");
 			retval = sb.toString();
 		}
 		else
