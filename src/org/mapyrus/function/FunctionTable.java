@@ -66,6 +66,9 @@ public class FunctionTable
 		f = new Format();
 		mFunctions.put(f.getName(), f);
 
+		f = new Geojson();
+		mFunctions.put(f.getName(), f);
+
 		f = new Interpolate();
 		mFunctions.put(f.getName(), f);
 
