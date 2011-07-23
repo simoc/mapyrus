@@ -1067,6 +1067,130 @@ public class Argument implements Comparable<Argument>, Cloneable
 	}
 
 	/**
+	 * Get geometry in GeoJSON format.
+	 * @return geometry in GeoJSON format.
+	 */
+	public String getGeoJSONValue() throws MapyrusException
+	{
+		double []coords = getGeometryValue();
+		StringBuffer sb = new StringBuffer();
+		createGeoJSON(coords, 0, sb, true);
+		String retval = sb.toString().trim();
+		return(retval);
+	}
+
+	/**
+	 * Creates GeoJSON geometry string from geometry array.
+	 * @param coords geometry type, count and move/draw coordinates.
+	 * @param startIndex index in coords array to start converting.
+	 * @param sb buffer to append geometry to.
+	 * @param addGeometryType if true then geometry type added to
+	 * geometry string.
+	 * @return index of next element in coords array to be parsed.
+	 */
+	private int createGeoJSON(double []coords, int startIndex, StringBuffer sb, boolean addGeometryType)
+	{
+		int geometryType = (int)coords[startIndex];
+		int nElements = (int)coords[startIndex + 1];
+		int nextIndex = startIndex + 2;
+
+		if (addGeometryType)
+		{
+			sb.append("{\"type\": ");
+			if (geometryType == GEOMETRY_POINT)
+				sb.append("\"Point\"");
+			else if (geometryType == GEOMETRY_LINESTRING)
+				sb.append("\"LineString\"");
+			else if (geometryType == GEOMETRY_POLYGON)
+				sb.append("\"Polygon\"");
+			else if (geometryType == GEOMETRY_MULTIPOINT)
+				sb.append("\"MultiPoint\"");
+			else if (geometryType == GEOMETRY_MULTILINESTRING)
+				sb.append("\"MultiLineString\"");
+			else if (geometryType == GEOMETRY_MULTIPOLYGON)
+				sb.append("\"MultiPolygon\"");
+			else
+				sb.append("\"GeometryCollection\", \"geometries\": ");
+
+			if (geometryType != GEOMETRY_COLLECTION)
+				sb.append(", \"coordinates\": ");
+		}
+
+		if (nElements == 0)
+		{
+			/*
+			 * Geometry is empty.
+			 */
+			sb.append("null");
+		}
+		else if (geometryType == GEOMETRY_POINT)
+		{
+			sb.append("[");
+			sb.append(coords[nextIndex + 1]);
+			sb.append(", ");
+			sb.append(coords[nextIndex + 2]);
+			sb.append("]");
+			nextIndex += 3;
+		}
+		else if (geometryType == GEOMETRY_LINESTRING || geometryType == GEOMETRY_POLYGON)
+		{
+			/*
+			 * Convert line or polygon to GeoJSON.
+			 */
+			if (geometryType == GEOMETRY_POLYGON)
+				sb.append("[");
+			for (int i = 0; i < nElements; i++)
+			{
+				if (coords[nextIndex] == MOVETO)
+				{
+					/*
+					 * End last polygon ring and begin next ring.
+					 */
+					if (i > 0)
+						sb.append("], ");
+					sb.append("[");
+				}
+				else if (i > 0)
+				{
+					sb.append(", ");
+				}
+				sb.append("[");
+				sb.append(m_geometryValue[nextIndex + 1]);
+				sb.append(", ");
+				sb.append(m_geometryValue[nextIndex + 2]);
+				sb.append("]");
+				nextIndex += 3;
+			}
+
+			if (geometryType == GEOMETRY_LINESTRING)
+				sb.append("]");
+			else
+				sb.append("]]");
+		}
+		else /* GEOMETRY_MULTIPOINT, GEOMETRY_MULTILINESTRING, GEOMETRY_MULTIPOLYGON, GEOMETRYCOLLECTION */
+		{
+			/*
+			 * Expand each geometry in the multiple geometry.
+			 */
+			boolean isGeometryCollection = (geometryType == GEOMETRY_COLLECTION);
+			sb.append("[");
+			for (int i = 0; i < nElements; i++)
+			{
+				if (i > 0)
+					sb.append(", ");
+				nextIndex = createGeoJSON(coords, nextIndex, sb, isGeometryCollection);
+			}
+			sb.append("]");
+		}
+
+		if (addGeometryType)
+		{
+			sb.append("}");
+		}
+		return(nextIndex);
+	}
+
+	/**
 	 * Add backslashes to escape any special characters in string.
 	 * @param s string to escape.
 	 * @return string with backslashes added.
