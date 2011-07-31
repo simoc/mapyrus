@@ -2847,26 +2847,26 @@ public class Interpreter implements Cloneable
 	/*
 	 * Static keyword lookup table for fast keyword lookup.
 	 */
-	private static HashMap<String, ParsedStatement> mKeywordLookup;
+	private static HashMap<String, ParsedStatement> m_keywordLookup;
 
 	static
 	{
-		mKeywordLookup = new HashMap<String, ParsedStatement>();
-		mKeywordLookup.put(END_KEYWORD,
+		m_keywordLookup = new HashMap<String, ParsedStatement>();
+		m_keywordLookup.put(END_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_END));
-		mKeywordLookup.put(THEN_KEYWORD,
+		m_keywordLookup.put(THEN_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_THEN));
-		mKeywordLookup.put(ELSE_KEYWORD,
+		m_keywordLookup.put(ELSE_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ELSE));
-		mKeywordLookup.put(ELIF_KEYWORD,
+		m_keywordLookup.put(ELIF_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ELSIF));
-		mKeywordLookup.put(ENDIF_KEYWORD,
+		m_keywordLookup.put(ENDIF_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_ENDIF));
-		mKeywordLookup.put(DO_KEYWORD,
+		m_keywordLookup.put(DO_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_DO));
-		mKeywordLookup.put(DONE_KEYWORD,
+		m_keywordLookup.put(DONE_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_DONE));
-		mKeywordLookup.put(IN_KEYWORD,
+		m_keywordLookup.put(IN_KEYWORD,
 			new ParsedStatement(ParsedStatement.PARSED_IN));
 	}
 
@@ -2947,7 +2947,7 @@ public class Interpreter implements Cloneable
 					 * Does keyword match a control-flow keyword?
 				 	 * like "then", or "else"?
 					 */
-					retval = (ParsedStatement)mKeywordLookup.get(lower);
+					retval = (ParsedStatement)m_keywordLookup.get(lower);
 					if (retval == null)
 					{
 						/*
