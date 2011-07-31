@@ -2310,11 +2310,11 @@ public class Interpreter implements Cloneable
 
 		/*
 		 * Keep parsing statement until we get to the end of the
-		 * line or end of file.
+		 * line, semi-colon statement separator or end of file.
 		 */
 		while (!finishedStatement)
 		{
-			if (c == -1 || c == '\n')
+			if (c == -1 || c == '\n' || c == ';')
 			{
 				finishedStatement = true;
 			}
@@ -2398,7 +2398,7 @@ public class Interpreter implements Cloneable
 		 */
 		state = AT_PARAM;
 		c = preprocessor.readNonSpace();
-		while (c != -1 && c != '\n')
+		while (c != -1 && c != '\n' && c != ';')
 		{
 			if (Character.isWhitespace((char)c))
 			{
@@ -2956,6 +2956,15 @@ public class Interpreter implements Cloneable
 						 */
 						Statement st = parseSimpleStatement(keyword, preprocessor);
 						retval = new ParsedStatement(st);
+					}
+					else
+					{
+						/*
+						 * Parse any semi-colon following the keyword.
+						 */
+						c = preprocessor.readNonSpace();
+						if (c != -1 && c != ';')
+							preprocessor.unread(c);
 					}
 				}
 				finishedStatement = true;
