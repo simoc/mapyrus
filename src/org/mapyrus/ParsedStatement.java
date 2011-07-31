@@ -95,5 +95,28 @@ public class ParsedStatement
 	{
 		return(m_keywordType);
 	}
+	
+	public String toString()
+	{
+		String retval;
+		if (m_keywordType == PARSED_END)
+			retval = "PARSED_END";
+		else if (m_keywordType == PARSED_THEN)
+			retval = "PARSED_THEN";
+		else if (m_keywordType == PARSED_ELSE)
+			retval = "PARSED_ELSE";
+		else if (m_keywordType == PARSED_ELSIF)
+			retval = "PARSED_ELSIF";
+		else if (m_keywordType == PARSED_ENDIF)
+			retval = "PARSED_ENDIF";
+		else if (m_keywordType == PARSED_DO)
+			retval = "PARSED_DO";
+		else if (m_keywordType == PARSED_DONE)
+			retval = "PARSED_DONE";
+		else if (m_keywordType == PARSED_IN)
+			retval = "PARSED_IN";
+		else
+			retval = m_statement.toString();
+		return retval;
+	}
 }
-
