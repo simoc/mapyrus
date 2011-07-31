@@ -1856,6 +1856,11 @@ public class Expression
 			return(null);
 	}
 
+	public String toString()
+	{
+		return m_exprTree.toString();
+	}
+
 	public static void main(String []args)
 	{
 		try
