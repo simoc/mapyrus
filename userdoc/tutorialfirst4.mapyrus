@@ -1,81 +1,32 @@
 newpage "eps", "tutorialfirst4.eps", 130, 27
 
-clearpath
-color "Firebrick"
-hexagon 7, 17, 6
-fill
+clearpath; color "Firebrick"; hexagon 7, 17, 6; fill
 
-clearpath
-color "orange"
-triangle 7, 17, 4, 0
-fill
+clearpath; color "orange"; triangle 7, 17, 4, 0; fill
 
-clearpath
-color "Forest Green"
-circle 22, 17, 5.5
-star 22, 17, 5, 5
-stroke
+clearpath; color "Forest Green"; circle 22, 17, 5.5
+star 22, 17, 5, 5; stroke
 
-clearpath
-color "indigo"
-wedge 37, 15, 8, 45, 90
-fill
+clearpath; color "indigo"; wedge 37, 15, 8, 45, 90; fill
 
-clearpath
-color "black"
-ellipse 50, 17, 2.5, 5
-ellipse 50, 17, 5, 2.5
-stroke
+clearpath; color "black"; ellipse 50, 17, 2.5, 5;
+ellipse 50, 17, 5, 2.5; stroke
 
-clearpath
-color "blue"
-linestyle 0.5, "round", "round"
-move 60, 15
-bezier 70, 25, 70, 20, 62, 15
-stroke
+clearpath; color "blue"; linestyle 0.5, "round", "round"
+move 60, 15; bezier 70, 25, 70, 20, 62, 15; stroke
 
-clearpath
-color "SlateGray"
-roundedbox 75, 15, 85, 22, 2.5
-fill
+clearpath; color "SlateGray"; roundedbox 75, 15, 85, 22, 2.5; fill
 
-clearpath
-box3d 90, 15, 95, 20
-color "yellow"
-fill
-color "black"
-stroke
+clearpath; box3d 90, 15, 95, 20; color "yellow"; fill; color "black"; stroke
 
-clearpath
-pentagon 108, 17, 5
-color "orange"
-fill
+clearpath; pentagon 108, 17, 5; color "orange"; fill
 
-clearpath
-color "Steel Blue"
-spiral 6, 6, 5, 5, 0
-stroke
+clearpath; color "Steel Blue"; spiral 6, 6, 5, 5, 0; stroke
 
-clearpath
-cylinder 22, 5, 6, 2.5
-color "yellow"
-fill
-color "black"
-stroke
+clearpath; cylinder 22, 5, 6, 2.5; color "yellow"; fill; color "black"; stroke
 
-clearpath
-color "dodgerblue"
-raindrop 38, 5, 2.5
-fill
+clearpath; color "dodgerblue"; raindrop 38, 5, 2.5; fill
 
-clearpath
-color "crimson"
-move 45, 5
-sinewave 52, 5, 4, 4
-stroke
+clearpath; color "crimson"; move 45, 5; sinewave 52, 5, 4, 4; stroke
 
-clearpath
-color "black"
-move 240, 20
-chessboard 60, 2, 66, 8, 1
-fill
+clearpath; color "black"; move 240, 20; chessboard 60, 2, 66, 8, 1; fill
