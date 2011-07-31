@@ -24,6 +24,7 @@ package org.mapyrus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A parsed statement.
@@ -431,5 +432,38 @@ public class Statement
 	public ArrayList<Statement> getStatementBlock()
 	{
 		return(m_statementBlock);
+	}
+
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer();
+		if (m_type == CALL)
+			sb.append("CALL ").append(m_blockName);
+		else if (m_type == CONDITIONAL)
+			sb.append("CONDITIONAL");
+		else if (m_type == REPEAT_LOOP)
+			sb.append("REPEAT_LOOP");
+		else if (m_type == WHILE_LOOP)
+			sb.append("WHILE_LOOP");
+		else if (m_type == FOR_LOOP)
+			sb.append("FOR_LOOP");
+		else if (m_type == BLOCK)
+			sb.append("BLOCK ").append(m_blockName);
+		else
+		{
+			for (Map.Entry<String, Integer> entry : m_statementTypeLookup.entrySet())
+			{
+				if (entry.getValue().intValue() == m_type)
+					sb.append(entry.getKey());
+			}
+		}
+		if (m_expressions != null)
+		{
+			for (int i = 0; i < m_expressions.length; i++)
+			{
+				sb.append(" ").append(m_expressions[i]);
+			}
+		}
+		return sb.toString();
 	}
 }
