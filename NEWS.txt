@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 
+1.105, August 2011
+
+* Change syntax for arrays with keys and values to {"AU":"red", "NZ":"blue"}.
+* Add GEOJSON function to create a feature in GeoJSON JavaScript format.
+* Allow multiple commands on one line, separated by semi-colons.
+
 1.104, June 2011
 
 * Block invalid octal character codes such as \099.
