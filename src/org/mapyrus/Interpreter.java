@@ -1937,37 +1937,74 @@ public class Interpreter implements Cloneable
 
 			case Statement.WORLDS:
 
-				if (nExpressions == 4 || nExpressions == 5)
+				if (nExpressions == 1 || nExpressions == 2)
 				{
 					/*
-					 * Add world coordinate over whole page.
+					 * Parse BBOX from string in WMS format: 10.2,48.2,11,49
 					 */
 					px1 = py1 = px2 = py2 = 0;
-				}
-				else if (nExpressions == 8 || nExpressions == 9)
-				{
-					/*
-					 * Set world coordinates over part of the page.
-					 */
-					px1 = m_executeArgs[4].getNumericValue();
-					py1 = m_executeArgs[5].getNumericValue();
-					px2 = m_executeArgs[6].getNumericValue();
-					py2 = m_executeArgs[7].getNumericValue();
+					StringTokenizer st2 = new StringTokenizer(m_executeArgs[0].getStringValue(), ",");
+					if (st2.countTokens() == 4)
+					{
+						String token = "";
+						try
+						{
+							token = st2.nextToken();
+							x1 = Double.parseDouble(token);
+							token = st2.nextToken();
+							y1 = Double.parseDouble(token);
+							token = st2.nextToken();
+							x2 = Double.parseDouble(token);
+							token = st2.nextToken();
+							y2 = Double.parseDouble(token);
+						}
+						catch (NumberFormatException e)
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLDS) +
+								": " + token);
+						}
+					}
+					else
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLDS));
+					}
 				}
 				else
 				{
-					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLDS));
-				}
+					if (nExpressions == 4 || nExpressions == 5)
+					{
+						/*
+						 * Add world coordinates over whole page.
+						 */
+						px1 = py1 = px2 = py2 = 0;
+					}
+					else if (nExpressions == 8 || nExpressions == 9)
+					{
+						/*
+						 * Set world coordinates over part of the page.
+						 */
+						px1 = m_executeArgs[4].getNumericValue();
+						py1 = m_executeArgs[5].getNumericValue();
+						px2 = m_executeArgs[6].getNumericValue();
+						py2 = m_executeArgs[7].getNumericValue();
+					}
+					else
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_WORLDS));
+					}
 
-				x1 = m_executeArgs[0].getNumericValue();
-				y1 = m_executeArgs[1].getNumericValue();
-				x2 = m_executeArgs[2].getNumericValue();
-				y2 = m_executeArgs[3].getNumericValue();
+					x1 = m_executeArgs[0].getNumericValue();
+					y1 = m_executeArgs[1].getNumericValue();
+					x2 = m_executeArgs[2].getNumericValue();
+					y2 = m_executeArgs[3].getNumericValue();
+				}
 
 				units = Context.WORLD_UNITS_METRES;
 				allowDistortion = false;
 
-				if (nExpressions == 5)
+				if (nExpressions == 2)
+					extras = m_executeArgs[1].getStringValue();
+				else if (nExpressions == 5)
 					extras = m_executeArgs[4].getStringValue();
 				else if (nExpressions == 9)
 					extras = m_executeArgs[8].getStringValue();
