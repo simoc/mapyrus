@@ -1,10 +1,10 @@
 newpage "eps", "tutorialdatasets4.eps", 160, 100, "background=lightblue"
-worlds -20, 30, 30, 68
+worlds -25, 30, 35, 68
 
 let c = ["yellow3", "orange3", "yellow", "gold", "pastelbrown", "yellowgreen"]
 
 linestyle 0.1, "round", "round"
-dataset "internal", "countries", "xmin=-20 ymin=30 xmax=30 ymax=68"
+dataset "internal", "countries", "xmin=-25 ymin=30 xmax=35 ymax=68"
 while Mapyrus.fetch.more
 do
   fetch
@@ -26,7 +26,7 @@ end
 
 color "black"
 font "Helvetica", 3
-dataset "internal", "capitals", "xmin=-20 ymin=30 xmax=30 ymax=68"
+dataset "internal", "capitals", "xmin=-25 ymin=30 xmax=35 ymax=68"
 while Mapyrus.fetch.more
 do
   fetch
