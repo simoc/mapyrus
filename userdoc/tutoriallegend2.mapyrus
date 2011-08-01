@@ -3,19 +3,14 @@ begin monument
   #
   key "point", "Monument"
   color "black"
-  move 0, 0
-  draw -1, -2, 1, -2, 0, 0
-  draw 0.5, 0.5, 0, 1, -0.5, 0.5, 0, 0
+  move 0, 0; draw -1, -2, 1, -2, 0, 0; draw 0.5, 0.5, 0, 1, -0.5, 0.5, 0, 0
   fill
 end
 begin ruins
   # Display archaelogical ruins symbol at current point.
   #
   key "point", "Archaelogical Ruins"
-  color "black"
-  circle 0, 1.5, 0.5
-  circle -1, 0, 0.5
-  circle 1, 0, 0.5
+  color "black"; circle 0, 1.5, 0.5; circle -1, 0, 0.5; circle 1, 0, 0.5
   fill
 end
 begin church name, ruined
@@ -27,40 +22,27 @@ begin church name, ruined
   # Draw name of church.
   #
   clearpath
-  font "Helvetica", 2.5
-  justify "middle"
+  font "Helvetica", 2.5; justify "middle"
   move 2, 0
   label name
   # Turn church symbol on its side if flagged as ruined.
   #
-  if ruined == 1
-  then
-    rotate -30
-  endif
-  color "black"
-  linestyle 0.1
+  if ruined == 1 then rotate -30; endif
+  color "black"; linestyle 0.1
   box -1, 0, 1, -2
   fill
-  clearpath
-  move 0, 0
-  draw 0, 2
-  move -1, 1
-  draw 1, 1
+  clearpath; move 0, 0; draw 0, 2; move -1, 1; draw 1, 1
   stroke
 end
 
 newpage "eps", "tutoriallegend2.eps", 50, 30, "background=grey90"
-clearpath
-move 5, 5
+clearpath; move 5, 5
 monument
-clearpath
-move 7, 22
+clearpath; move 7, 22
 monument
-clearpath
-move 24, 19
+clearpath; move 24, 19
 ruins
-clearpath
-move 32, 16
+clearpath; move 32, 16
 church "Ospringe", 1
 
 # Draw each legend entry in a separate PostScript file, giving
@@ -72,10 +54,7 @@ do
   let counter = counter + 1
   let filename = "tutoriallegend2legend" . counter . ".eps"
   newpage "eps", filename, 50, 8
-  clearpath
-  move 1, 1
-  color "black"
-  justify "middle"
-  font "Helvetica", 2.5
+  clearpath; move 1, 1
+  color "black"; justify "middle"; font "Helvetica", 2.5
   legend 6
 done
