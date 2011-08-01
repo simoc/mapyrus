@@ -66,6 +66,8 @@ public class HTTPRequest extends Thread
 	private static final String POST_REQUEST_KEYWORD = "POST";
 	private static final int POST_REQUEST = 2;
 
+	private static final File CURRENT_DIRECTORY = new File(System.getProperty("user.dir"));
+
 	/*
 	 * Variable name of array automatically set to contain header
 	 * of HTTP request. 
@@ -330,11 +332,10 @@ public class HTTPRequest extends Thread
 		}
 
 		/*
-		 * Block access to all files except those in current directory.
+		 * Block access to all files except those in current directory and subdirectories.
 		 */
-		File f = new File(m_filename);
-		if(m_filename.indexOf(File.separatorChar) >= 0 || m_filename.indexOf('/') >= 0 ||
-			m_filename.indexOf('\\') >= 0 || (!f.exists()))
+		File f = new File(CURRENT_DIRECTORY, m_filename);
+		if (m_filename.indexOf("../") >= 0 || m_filename.indexOf("..\\") >= 0 || (!f.exists()) || f.isDirectory())
 		{
 			throw new FileNotFoundException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
 				": " + m_filename);
