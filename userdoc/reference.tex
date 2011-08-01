@@ -3269,7 +3269,7 @@ HTTP request.
 Files are not cached and are read for each HTTP request.
 
 For security, the HTTP server only replies to requests
-from the directory in which Mapyrus was started.
+from the directory in which Mapyrus was started and its subdirectories.
 Requests for files from other directories return an error to the HTTP client.
 If communication between HTTP client and Mapyrus is blocked for longer than
 5 minutes then the HTTP request is cancelled.
