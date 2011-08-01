@@ -6,6 +6,8 @@ Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 * Change syntax for arrays with keys and values to {"AU":"red", "NZ":"blue"}.
 * Add GEOJSON function to create a feature in GeoJSON JavaScript format.
 * Allow multiple commands on one line, separated by semi-colons.
+* Accept OGC Web Mapping Server (WMS) BBOX parameter for world coordinates
+  in WORLDS command.
 
 1.104, June 2011
 
