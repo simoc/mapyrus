@@ -3133,6 +3133,7 @@ and \textit{rotate} values.
 \begin{alltt}
 worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2} [, \textit{extras} ]
 worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2}, \textit{px1}, \textit{py1}, \textit{px2}, \textit{py2} [, \textit{extras} ]
+worlds \textit{wx1,wy1,wx2,wy2} [, \textit{extras} ]
 \end{alltt}
 
 Defines a world coordinate system for the page.
@@ -3154,6 +3155,10 @@ coordinates are mapped to the whole page.
 
 The new world coordinates replace any world coordinates
 set with a previous \texttt{worlds} command.
+
+A single comma-separated string with world coordinate values is
+also accepted, as passed in the BBOX URL parameter in a OGC Web
+Mapping Service (WMS) request.
 
 \textit{extras} defines further options, given as
 \textit{variable=value} values, separated by whitespace.
