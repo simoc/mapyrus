@@ -1,7 +1,8 @@
 newpage "eps", "tutorialdatasets4.eps", 160, 100, "background=lightblue"
 worlds -25, 30, 35, 68
 
-let c = ["yellow3", "orange3", "yellow", "gold", "pastelbrown", "yellowgreen"]
+# 6-class Pink-Yellow-Green diverging scheme from http://colorbrewer2.org
+let c = ["#c51b7d", "#e9a3c9", "#fde0ef", "#e6f5d0", "#a1d76a", "#4d9221"]
 
 linestyle 0.1, "round", "round"
 dataset "internal", "countries", "xmin=-25 ymin=30 xmax=35 ymax=68"
