@@ -1,0 +1,21 @@
+<html>
+<head>
+<style>
+#map { width: 384px; height: 384px; }
+</style>
+<script src="OpenLayers.js"></script>
+<script type="text/javascript">
+function init() {
+map = new OpenLayers.Map("map");
+layer = new OpenLayers.Layer.WMS("Countries",
+  "http://localhost:8410/tutorialwms1.mapyrus", {format: "image/png"});
+map.addLayer(layer);
+map.setCenter(new OpenLayers.LonLat(5, 40), 5);
+}
+</script>
+</head>
+<body onload="init()">
+<h1>Mapyrus OpenLayers Example</h1>
+<div id="map"></div>
+</body>
+</html>

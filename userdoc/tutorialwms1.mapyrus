@@ -1,0 +1,14 @@
+mimetype FORMAT
+newpage FORMAT, "-", WIDTH . "px", HEIGHT . "px", "background=lightblue"
+worlds BBOX
+let c = ["#c51b7d", "#e9a3c9", "#fde0ef", "#e6f5d0", "#a1d76a", "#4d9221"]
+dataset "internal", "countries", ""
+while Mapyrus.fetch.more do
+  clearpath
+  fetch
+  addpath GEOMETRY
+  color c[COLORCODE]
+  fill
+  color "black"
+  stroke
+done

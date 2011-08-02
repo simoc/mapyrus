@@ -1964,6 +1964,46 @@ clicked in the image (with origin in top-left corner of the image).
 Use these variables to calculate the new area to display.
 \end{itemize}
 
+\subsection{Using Mapyrus HTTP Server With OpenLayers}
+
+To enable Mapyrus to work together with an interactive OpenLayers
+\footnote{Available from http://www.openlayers.org}
+web page, create the following file named
+\texttt{tutorialwms1.mapyrus} in the directory containing an
+OpenLayers installation.
+
+\verbatiminput{tutorialwms1.mapyrus}
+
+Next, create a file named \texttt{tutorialwms1.html} in the
+same directory with the following contents.
+
+\verbatiminput{tutorialwms1.html}
+
+In a terminal window, change directory to the OpenLayers installation and
+start Mapyrus as an HTTP server on port 8410 with the following command
+(where \textit{install-dir} is the directory in which Mapyrus is installed).
+
+\begin{alltt}
+java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus -s 8410
+\end{alltt}
+
+Then enter the following URL in a web browser to display the web page
+with OpenLayers controls for zooming and panning the map.
+
+\begin{verbatim}
+http://localhost:8410/tutorialwms1.html
+\end{verbatim}
+
+OpenLayers makes HTTP requests to Mapyrus using the
+OGC Web Mapping Service (WMS) interface.
+The Mapyrus HTTP Server uses the \texttt{BBOX},
+\texttt{FORMAT}, \texttt{HEIGHT} and \texttt{WIDTH} URL parameters
+from each request to generate the map image that is returned.
+
+Edit the Mapyrus commands in \texttt{tutorialwms1.mapyrus}
+and OpenLayers JavaScript calls in the
+HTML file to extend the application.
+
 \subsection{Using Mapyrus In A Java Or Jython Application}
 
 Jython is a Java implementation of the Python programming language.
