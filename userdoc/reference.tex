@@ -126,7 +126,7 @@ option when starting Mapyrus. \\
 \subsection{Language}
 
 Mapyrus interprets commands read from one or more plain text files.
-Each command begins on a separate line.
+Each command begins on a separate line or after a semi-colon (\texttt{;}).
 
 Any part of a line following a hash (\texttt{\#}) or
 a pair of slashes (\texttt{//}) that is not part of
@@ -685,6 +685,8 @@ if \textit{condition} then
 else
   \textit{else-commands} ...
 endif
+
+if \textit{condition} then \textit{command}; \textit{command}; else \textit{command}; \textit{command}; endif
 \end{alltt}
 
 Executes \textit{then-commands} if \textit{condition} evaluates to
@@ -708,6 +710,8 @@ times:
 repeat \textit{count} do
   \textit{commands} \dots
 done
+
+repeat \textit{count} do \textit{command}; \textit{command}; done
 \end{alltt}
 
 The \texttt{while} keyword defines a loop in which
@@ -718,6 +722,8 @@ as \textit{condition} continues to evaluate to a non-zero value:
 while \textit{condition} do
   \textit{commands} \dots
 done
+
+while \textit{condition} do \textit{command}; \textit{command}; done
 \end{alltt}
 
 The \texttt{for} \dots \texttt{in} keywords define a loop in which
@@ -730,6 +736,8 @@ indexes are numeric, otherwise in alphabetical index order:
 for \textit{var} in \textit{array} do
   \textit{commands} \dots
 done
+
+for \textit{var} in \textit{array} do \textit{command}; \textit{command}; done
 \end{alltt}
 
 Functions are used to repeat commonly used calculations and to
@@ -740,6 +748,8 @@ function \textit{name} [\textit{arg1}, \dots]
   \textit{commands} \dots
   \texttt{return} \textit{arg}
 end
+
+function \textit{name} [\textit{arg1}, \dots]; \textit{command}; \textit{command}; \texttt{return} \textit{arg}; end
 \end{alltt}
 
 Procedures group frequently used commands together, save
@@ -750,6 +760,8 @@ isolating the calling procedure from any changes:
 begin \textit{name} [\textit{arg1}, \dots]
   \textit{commands} \dots
 end
+
+begin \textit{name} [\textit{arg1}, \dots]; \textit{command}; \textit{command}; end
 \end{alltt}
 
 A procedure is defined to take a fixed number of arguments.
