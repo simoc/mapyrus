@@ -334,8 +334,23 @@ public class HTTPRequest extends Thread
 		/*
 		 * Block access to all files except those in current directory and subdirectories.
 		 */
+		String filenameSlash = m_filename + "/";
+		if (filenameSlash.indexOf("../") >= 0 || filenameSlash.indexOf("..\\") >= 0)
+		{
+			throw new FileNotFoundException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
+				": " + m_filename);
+		}
 		File f = new File(CURRENT_DIRECTORY, m_filename);
-		if (m_filename.indexOf("../") >= 0 || m_filename.indexOf("..\\") >= 0 || (!f.exists()) || f.isDirectory())
+		if (f.isDirectory())
+		{
+			/*
+			 * Try to load index.html in the directory.
+			 */
+			f = new File(f, "index.html");
+			m_filename = f.getPath();
+		}
+
+		if ((!f.exists()) || f.isDirectory())
 		{
 			throw new FileNotFoundException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
 				": " + m_filename);
