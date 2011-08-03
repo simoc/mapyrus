@@ -1202,9 +1202,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 		for (int j = 0; j < s.length(); j++)
 		{
 			c = s.charAt(j);
-			if (c == '\'')
-				sb.append("\\'");
-			else if (c == '"')
+			if (c == '"')
 				sb.append("\\\"");
 			else if (c == '\\')
 				sb.append("\\\\");
