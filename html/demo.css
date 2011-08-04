@@ -60,7 +60,7 @@ textarea {
 	padding-left: 3px;
 }
 
-// For OpenLayers Map.
+/* For OpenLayers Map. */
 #map {
 	width: 384px;
 	height: 384px;
