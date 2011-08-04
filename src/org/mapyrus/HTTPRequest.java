@@ -66,7 +66,7 @@ public class HTTPRequest extends Thread
 	private static final String POST_REQUEST_KEYWORD = "POST";
 	private static final int POST_REQUEST = 2;
 
-	private static final File CURRENT_DIRECTORY = new File(System.getProperty("user.dir"));
+	private File m_currentDirectory;
 
 	/*
 	 * Variable name of array automatically set to contain header
@@ -122,6 +122,7 @@ public class HTTPRequest extends Thread
 		m_returnStatus = HTTP_OK_CODE;
 		m_logger = logger;
 		m_creationTimeMillis = System.currentTimeMillis();
+		m_currentDirectory = new File(System.getProperty("user.dir"));
 	}
 
 	/**
@@ -340,7 +341,7 @@ public class HTTPRequest extends Thread
 			throw new FileNotFoundException(MapyrusMessages.get(MapyrusMessages.HTTP_NOT_FOUND) +
 				": " + m_filename);
 		}
-		File f = new File(CURRENT_DIRECTORY, m_filename);
+		File f = new File(m_currentDirectory, m_filename);
 		if (f.isDirectory())
 		{
 			/*
