@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>Mapyrus Servlet and OpenLayers Demo</title>
+<link rel="stylesheet" href="theme/default/style.css" type="text/css">
+<link rel="stylesheet" href="demo.css" type="text/css">
+<script src="OpenLayers.js"></script>
+<script type="text/javascript">
+var MAPYRUS = {};
+
+MAPYRUS.init = function () {
+	// Mapyrus commands to generate image tile for a WMS request.
+	MAPYRUS.commands1 = "mimetype FORMAT;";
+	MAPYRUS.commands1 += "newpage FORMAT, '-', WIDTH . 'px', HEIGHT . 'px', 'background=lightblue';";
+	MAPYRUS.commands1 += "worlds BBOX;";
+	MAPYRUS.commands1 += "let c = ['yellow3', 'orange3', 'yellow', 'gold', 'pastelbrown', 'yellowgreen'];";
+	MAPYRUS.commands1 += "dataset 'internal', 'countries', '';";
+	MAPYRUS.commands1 += "while Mapyrus.fetch.more do;";
+	MAPYRUS.commands1 += "clearpath;";
+	MAPYRUS.commands1 += "fetch;";
+	MAPYRUS.commands1 += "addpath GEOMETRY;";
+	MAPYRUS.commands1 += "color c[COLORCODE];";
+	MAPYRUS.commands1 += "fill;";
+	MAPYRUS.commands1 += "color 'gray';";
+	MAPYRUS.commands1 += "stroke;";
+	MAPYRUS.commands1 += "done";
+
+	// Mapyrus commands to return capital cities as GeoJSON document.
+	MAPYRUS.commands2 = "mimetype 'application/json';"
+	MAPYRUS.commands2 += "print '{\"type\": \"FeatureCollection\", \"features\":[';";
+	MAPYRUS.commands2 += "dataset 'internal', 'capitals', '';";
+	MAPYRUS.commands2 += "let separator='';";
+	MAPYRUS.commands2 += "while Mapyrus.fetch.more do;";
+	MAPYRUS.commands2 += "fetch;";
+	MAPYRUS.commands2 += "print separator, geojson(GEOMETRY, {'CAPITAL': CAPITAL});";
+	MAPYRUS.commands2 += "let separator=',';";
+	MAPYRUS.commands2 += "done;";
+	MAPYRUS.commands2 += "print ']}';";
+
+	MAPYRUS.map = new OpenLayers.Map('map');
+	MAPYRUS.layer1 = new OpenLayers.Layer.WMS("Countries",
+		"servlet",
+		{commands: MAPYRUS.commands1, format: "image/png"});
+
+	MAPYRUS.myStyle = {
+		externalGraphic: "img/capital.png",
+		graphicOpacity: 1,
+		graphicWidth: 8,
+		graphicHeight: 8,
+		stroke: false,
+		fill: false,
+		labelAlign: "lm",
+		labelXOffset: 5,
+		fontFamily: "Arial,Helvetica",
+		fontSize: "10px",
+		label: "${CAPITAL}"
+	};
+
+	MAPYRUS.myStyleMap = new OpenLayers.StyleMap({"default": MAPYRUS.myStyle});
+
+	MAPYRUS.layer2 = new OpenLayers.Layer.Vector('Capitals', {
+		styleMap: MAPYRUS.myStyleMap
+	});
+
+	MAPYRUS.myReader = function (request) {
+		var responseText = request.responseText;
+		var f = new OpenLayers.Format.GeoJSON();
+		MAPYRUS.layer2.addFeatures(f.read(responseText));
+	};
+
+	MAPYRUS.request = OpenLayers.Request.GET({
+		url: 'servlet',
+		params: {commands: MAPYRUS.commands2},
+		callback: MAPYRUS.myReader
+	});
+
+	MAPYRUS.map.addLayers([MAPYRUS.layer1, MAPYRUS.layer2]);
+
+        MAPYRUS.lon = 5;
+        MAPYRUS.lat = 40;
+        MAPYRUS.zoom = 5;
+	MAPYRUS.map.setCenter(new OpenLayers.LonLat(MAPYRUS.lon, MAPYRUS.lat), MAPYRUS.zoom);
+	MAPYRUS.map.addControl(new OpenLayers.Control.LayerSwitcher());
+}
+</script>
+</head>
+<body onload="MAPYRUS.init()">
+<div class="pagetext">
+<A href="http://mapyrus.sourceforge.net">
+<img src="mapyrus.png" alt="Mapyrus Logo" border=0/>
+</A>
+<p>
+In this example, Mapyrus Servlet is combined with
+<a href="http://www.openlayers.org">OpenLayers</a>
+to create two layers:
+</p>
+<p>
+1. A WMS layer of the Mapyrus country dataset using Mapyrus as an
+<a href="http://www.opengeospatial.org/standards/wms">
+OGC Web Map Service</a> (WMS) Server.
+</p>
+<p>
+2. A Vector layer of the Mapyrus capital city dataset
+using Mapyrus to provide points in
+<a href="http://www.geojson.org">GeoJSON</a>
+format.
+</p>
+<div id="map"></div>
+</body>
+</html>
