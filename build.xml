@@ -62,15 +62,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- Create version and date stamp files for JAR file and documentation -->
 <echo file="userdoc/version.txt">${version}</echo>
 <echo file="userdoc/timestamp.txt">${today}</echo>
-<echo file="src/org/mapyrus/version.txt">${version}</echo>
-<echo file="src/org/mapyrus/timestamp.txt">${today}</echo>
+<echo file="src/org/mapyrus/util/version.txt">${version}</echo>
+<echo file="src/org/mapyrus/util/timestamp.txt">${today}</echo>
 
 <mkdir dir="build/classes"/>
 <javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${proj4.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes"/>
 
 <!-- Copy resource, font and data files into built directory -->
-<copy file="src/org/mapyrus/version.txt" todir="build/classes/org/mapyrus"/>
-<copy file="src/org/mapyrus/timestamp.txt" todir="build/classes/org/mapyrus"/>
+<copy file="src/org/mapyrus/util/version.txt" todir="build/classes/org/mapyrus/util"/>
+<copy file="src/org/mapyrus/util/timestamp.txt" todir="build/classes/org/mapyrus/util"/>
 <copy file="src/org/mapyrus/Messages.properties" todir="build/classes/org/mapyrus"/>
 <copy file="src/org/mapyrus/gui/onlinehelp.html" todir="build/classes/org/mapyrus/gui"/>
 <copy file="src/org/mapyrus/gui/commands1.txt" todir="build/classes/org/mapyrus/gui"/>
