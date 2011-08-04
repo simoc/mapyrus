@@ -22,15 +22,13 @@
  */
 package org.mapyrus;
 
-import java.awt.Toolkit;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormatSymbols;
-import java.net.URL;
 import java.util.Locale;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
+
+import org.mapyrus.util.Version;
 
 /**
  * Globally useful constants including fixed distance measurements.
@@ -53,7 +51,7 @@ public class Constants
 		 */
 		if (m_version == null)
 		{
-			m_version = readResource("version.txt");
+			m_version = new Version().getVersion();
 		}
 		return(m_version);
 	}
@@ -69,39 +67,9 @@ public class Constants
 		 */
 		if (m_releaseDate == null)
 		{
-			m_releaseDate = readResource("timestamp.txt");
+			m_releaseDate = new Version().getReleaseDate();
 		}
 		return m_releaseDate;
-	}
-
-	private static String readResource(String filename)
-	{
-		BufferedReader reader = null;
-		String retval = null;
-		try
-		{
-			URL url = new Constants().getClass().getResource(filename);
-			reader = new BufferedReader(new InputStreamReader(url.openStream()));
-			retval = reader.readLine();
-		}
-		catch (IOException e)
-		{
-		}
-		finally
-		{
-			if (retval == null)
-				retval = "";
-
-			try
-			{
-				if (reader != null)
-					reader.close();
-			}
-			catch (IOException e)
-			{
-			}
-		}
-		return retval;
 	}
 
 	/**
