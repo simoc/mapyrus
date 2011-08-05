@@ -3317,16 +3317,6 @@ Any other parameters passed in the URL (following the \texttt{?} character
 in the URL or passed in an HTML form) are set as variables in Mapyrus.
 Variable names are converted to uppercase.
 
-The following URLs demonstrate passing commands to Mapyrus servlet.
-
-\begin{alltt}
-http://localhost:8080/mapyrus/servlet?commands=print+Mapyrus.version
-\end{alltt}
-\begin{alltt}
-http://localhost:8080/mapyrus/servlet?commands= \textbackslash
-  mimetype+"image%2Fpng"%0Dnewpage+"png"%2C"-"%2C50%2C50%2C"background%3Dred"
-\end{alltt}
-
 Normally, the Mapyrus commands in the HTTP request will be generated
 programmatically or entered in an HTML form.  Mapyrus commands
 passed programmatically must be converted to a form suitable for
