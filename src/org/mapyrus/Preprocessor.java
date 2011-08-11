@@ -348,6 +348,7 @@ class Preprocessor
 					 */
 					if ((filename.startsWith("\"") && filename.endsWith("\"")) ||
 						(filename.startsWith("'") && filename.endsWith("'")) ||
+						(filename.startsWith("\u2019") && filename.endsWith("\u2019")) ||
 						(filename.startsWith("<") && filename.endsWith(">")))
 					{
 						filename = filename.substring(1, filenameLen - 1);

@@ -1471,7 +1471,7 @@ public class Expression
 		int nUnicodeDigits;
 
 		c = p.readNonSpace();
-		if (c == '\'' || c == '"')
+		if (c == '\'' || c == '"' || c == '\u2019')
 		{
 			/*
 			 * It's a quoted string.  Keep reading up until matching quote.
