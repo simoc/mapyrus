@@ -37,6 +37,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.mapyrus.Argument;
+import org.mapyrus.FileOrURL;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
 import org.mapyrus.Row;
@@ -235,12 +236,21 @@ public class ShapefileDataset implements GeographicDataset
 
 		try
 		{
-			m_shapeStream = new DataInputStream(new BufferedInputStream(new FileInputStream(shapeFilename)));
+			FileOrURL shapeFile = new FileOrURL(shapeFilename);
+			m_shapeStream = new DataInputStream(shapeFile.getInputStream());
 			try
 			{
-				m_DBFStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dbfFilename)));
+				FileOrURL dbfFile = new FileOrURL(dbfFilename);
+				m_DBFStream = new DataInputStream(dbfFile.getInputStream());
 			}
 			catch (FileNotFoundException e)
+			{
+				/*
+				 * If .dbf file does not exist then just continue without it.
+				 */
+				m_DBFStream = null;
+			}
+			catch (MapyrusException e)
 			{
 				/*
 				 * If .dbf file does not exist then just continue without it.
@@ -259,10 +269,15 @@ public class ShapefileDataset implements GeographicDataset
 		BufferedReader prjReader = null;
 		try
 		{
-			prjReader = new BufferedReader(new FileReader(prjFilename));
+			FileOrURL prjFile = new FileOrURL(prjFilename);
+			prjReader = prjFile.getReader();
 			m_projection = prjReader.readLine();
 		}
 		catch(FileNotFoundException e)
+		{
+			m_projection = "";
+		}
+		catch(MapyrusException e)
 		{
 			m_projection = "";
 		}
