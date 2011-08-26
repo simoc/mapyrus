@@ -82,6 +82,13 @@ public class MimeTypes
 			 */
 			retval = "text/plain";
 		}
+		else if (extension.equalsIgnoreCase("shp") || extension.equalsIgnoreCase("dbf"))
+		{
+			/*
+			 * ESRI Shape files are binary files.
+			 */
+			retval = "application/octet-stream";
+		}
 		else if (extension.equalsIgnoreCase("js"))
 		{
 			retval = "application/x-javascript";
