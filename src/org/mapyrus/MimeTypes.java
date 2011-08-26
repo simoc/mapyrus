@@ -75,10 +75,11 @@ public class MimeTypes
 			 */
 			retval = "image/x-icon";
 		}
-		else if (extension.equalsIgnoreCase("tfw"))
+		else if (extension.equalsIgnoreCase("tfw") || extension.equalsIgnoreCase("prj"))
 		{
 			/*
-			 * Geoferencing files for images are text files.
+			 * Geoferencing files for images and ESRI Shape file projection definitions
+			 * are text files.
 			 */
 			retval = "text/plain";
 		}
