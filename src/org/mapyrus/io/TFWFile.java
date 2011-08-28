@@ -142,4 +142,9 @@ public class TFWFile implements GeoImageBoundingBox
 	{
 		return(m_bounds);
 	}
+	
+	public String toString()
+	{
+		return(m_bounds.toString());
+	}
 }
