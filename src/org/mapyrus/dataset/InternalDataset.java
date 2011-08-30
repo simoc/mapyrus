@@ -214,8 +214,8 @@ public class InternalDataset implements GeographicDataset
 			int spaceIndex = line.indexOf(' ');
 			int x = Integer.parseInt(line.substring(0, spaceIndex));
 			int y = Integer.parseInt(line.substring(spaceIndex + 1));
-			double xScaled = x / 100.0;
-			double yScaled = y / 100.0;
+			double xScaled = x / 1000.0;
+			double yScaled = y / 1000.0;
 			geometry[geometryIndex++] = xScaled;
 			geometry[geometryIndex++] = yScaled;
 			
