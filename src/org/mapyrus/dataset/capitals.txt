@@ -3,715 +3,715 @@
 # Data derived from Wikipedia List of national capital cities page.
 POINT
 Afghanistan,Kabul
-6918 3446
+69180 34460
 POINT
 Albania,Tirana
-1981 4130
+19810 41300
 POINT
 Algeria,Algiers
-313 3670
+3130 36700
 POINT
 American Samoa,Pago Pago
--17071 -1426
+-170710 -14260
 POINT
 Andorra,Andorra la Vella
-153 4251
+1530 42510
 POINT
 Anguilla,The Valley
--6308 1835
+-63080 18350
 POINT
 Angola,Luanda
-1325 -883
+13250 -8830
 POINT
 Antarctica,-
-6290 -6760
+62900 -67600
 POINT
 Antigua And Barbuda,Saint Johns
--6180 1733
+-61800 17330
 POINT
 Argentina,Buenos Aires
--5850 -3460
+-58500 -34600
 POINT
 Armenia,Yerevan
-4451 4016
+44510 40160
 POINT
 Aruba,Oranjestad
--7003 1253
+-70030 12530
 POINT
 Australia,Canberra
-14913 -3525
+149130 -35250
 POINT
 Austria,Vienna
-1636 4820
+16360 48200
 POINT
 Azerbaijan,Baku
-4993 4048
+49930 40480
 POINT
 Bahamas,Nassau
--7733 2508
+-77330 25080
 POINT
 Bahrain,Manama
-5050 2616
+50500 26160
 POINT
 Bangladesh,Dhaka
-9043 2371
+90430 23710
 POINT
 Barbados,Bridgetown
--5950 1308
+-59500 13080
 POINT
 Belarus,Minsk
-2750 5386
+27500 53860
 POINT
 Belgium,Brussels
-434 5085
+4340 50850
 POINT
 Belize,Belmopan
--8920 1730
+-89200 17300
 POINT
 Benin,Porto-Novo
-262 648
+2620 6480
 POINT
 Bermuda,Hamilton
--6470 3230
+-64700 32300
 POINT
 Bhutan,Thimphu
-8975 2751
+89750 27510
 POINT
 Bolivia,La Paz
--6816 -1633
+-68160 -16330
 POINT
 Bosnia And Herzegovina,Sarajevo
-1843 4386
+18430 43860
 POINT
 Botswana,Gaborone
-2595 -2475
+25950 -24750
 POINT
 Bouvet Island,Bouvet Island
-605 -5010
+6050 -50100
 POINT
 Brazil,Brasilia
--4791 -1578
+-47910 -15780
 POINT
 British Indian Ocean Territory,-
-7300 -800
+73000 -8000
 POINT
 British Virgin Islands,Road Town
--6461 1845
+-64610 18450
 POINT
 Brunei,Bandar Seri Begawan
-11500 486
+115000 4860
 POINT
 Bulgaria,Sofia
-2333 4275
+23330 42750
 POINT
 Burkina Faso,Ouagadougou
--150 1225
+-1500 12250
 POINT
 Burundi,Bujumbura
-2930 -326
+29300 -3260
 POINT
 Cambodia,Phnom Penh
-10491 1155
+104910 11550
 POINT
 Cameroon,Yaounde
-1158 383
+11580 3830
 POINT
 Canada,Ottawa
--7570 4545
+-75700 45450
 POINT
 Cape Verde,Praia
--2376 1503
+-23760 15030
 POINT
 Cayman Islands,George Town
--8140 1933
+-81400 19330
 POINT
 Central African Republic,Bangui
-1858 438
+18580 4380
 POINT
 Chad,N'Djamena
-1498 1216
+14980 12160
 POINT
 Chile,Santiago
--7066 -3340
+-70660 -33400
 POINT
 China,Beijing
-11633 3991
+116330 39910
 POINT
 Christmas Island,The Settlement
-10565 -1170
+105650 -11700
 POINT
 Cocos (Keeling) Islands,West Island
--9686 -1218
+-96860 -12180
 POINT
 Colombia,Bogota
--7400 456
+-74000 4560
 POINT
 Comoros,Moroni
-4355 -1155
+43550 -11550
 POINT
 Congo,Brazzaville
-1520 -415
+15200 -4150
 POINT
 Cook Islands,Avarua
--15776 -2120
+-157760 -21200
 POINT
 Costa Rica,San Jose
--8403 991
+-84030 9910
 POINT
 Ivory Coast,Yamoussoukro
--528 681
+-5280 6810
 POINT
 Croatia,Zagreb
-1596 4583
+15960 45830
 POINT
 Cuba,Havana
--8236 2313
+-82360 23130
 POINT
 Cyprus,Nicosia
-3341 3516
+33410 35160
 POINT
 Czech Republic,Prague
-1436 5008
+14360 50080
 POINT
 Democratic Republic Of The Congo,Kinshasa
-1525 -433
+15250 -4330
 POINT
 Denmark,Copenhagen
-1256 5568
+12560 55680
 POINT
 Djibouti,Djibouti
-4233 1113
+42330 11130
 POINT
 Dominica,Roseau
--6140 1533
+-61400 15330
 POINT
 Dominican Republic,Santo Domingo
--6998 1850
+-69980 18500
 POINT
 East Timor,Dili
-12596 -848
+125960 -8480
 POINT
 Ecuador,Quito
--7858 -25
+-78580 -250
 POINT
 Egypt,Cairo
-3123 3001
+31230 30010
 POINT
 El Salvador,San Salvador
--8916 1366
+-89160 13660
 POINT
 Equatorial Guinea,Malabo
-883 375
+8830 3750
 POINT
 Eritrea,Asmara
-3891 1531
+38910 15310
 POINT
 Estonia,Tallinn
-2480 5946
+24800 59460
 POINT
 Ethiopia,Addis Ababa
-3870 903
+38700 9030
 POINT
 Falkland Islands,Stanley
--5985 -5166
+-59850 -51660
 POINT
 Faroe Islands,Torshavn
--730 6180
+-7300 61800
 POINT
 Federated States Of Micronesia,Palikir
-15815 691
+158150 6910
 POINT
 Fiji,Suva
-17850 -1810
+178500 -18100
 POINT
 Finland,Helsinki
-2505 6025
+25050 60250
 POINT
 France,Paris
-233 4883
+2330 48830
 POINT
 French Guiana,Cayenne
--5240 485
+-52400 4850
 POINT
 French Polynesia,Papeete
--14956 -1753
+-149560 -17530
 POINT
 French Southern Territories,Port-aux-Francais
-7021 -4935
+70210 -49350
 POINT
 Gabon,Libreville
-943 41
+9430 410
 POINT
 Gambia,Banjul
--1666 1346
+-16660 13460
 POINT
 Georgia,Tbilisi
-4483 4171
+44830 41710
 POINT
 Germany,Berlin
-1341 5250
+13410 52500
 POINT
 Ghana,Accra
--10 558
+-100 5580
 POINT
 Gibraltar,Gibraltar
--535 3615
+-5350 36150
 POINT
 Greece,Athens
-2376 3796
+23760 37960
 POINT
 Greenland,Nuuk
--5158 6416
+-51580 64160
 POINT
 Grenada,Saint George's
--6175 1205
+-61750 12050
 POINT
 Guadeloupe,Basse-Terre
--6173 1600
+-61730 16000
 POINT
 Guam,Hagatna
-14478 1347
+144780 13470
 POINT
 Guatemala,Guatemala
--9036 1466
+-90360 14660
 POINT
 Guinea,Conakry
--1361 948
+-13610 9480
 POINT
 Guinea Bissau,Bissau
--1565 1175
+-15650 11750
 POINT
 Guyana,Georgetown
--5820 660
+-58200 6600
 POINT
 Haiti,Port-au-Prince
--7233 1866
+-72330 18660
 POINT
 Heard And McDonald Islands,-
-5880 -5145
+58800 -51450
 POINT
 Honduras,Tegucigalpa
--8723 1408
+-87230 14080
 POINT
 Hong Kong,Hong Kong
-11417 2225
+114170 22250
 POINT
 Hungary,Budapest
-1908 4748
+19080 47480
 POINT
 Iceland,Reykjavik
--2160 6416
+-21600 64160
 POINT
 India,New Delhi
-7721 2861
+77210 28610
 POINT
 Indonesia,Jakarta
-10681 -615
+106810 -6150
 POINT
 Iran,Tehran
-5150 3573
+51500 35730
 POINT
 Iraq,Baghdad
-4450 3333
+44500 33330
 POINT
 Ireland,Dublin
--625 5335
+-6250 53350
 POINT
 Israel,Jerusalem
-3510 3200
+35100 32000
 POINT
 Italy,Rome
-1248 4190
+12480 41900
 POINT
 Jamaica,Kingston
--7683 1800
+-76830 18000
 POINT
 Japan,Tokyo
-13975 3566
+139750 35660
 POINT
 Jordan,Amman
-3586 3195
+35860 31950
 POINT
 Kazakhstan,Astana
-7150 5116
+71500 51160
 POINT
 Kenya,Nairobi
-3679 -128
+36790 -1280
 POINT
 Kiribati,Tarawa
-17300 150
+173000 1500
 POINT
 Kuwait,Kuwait City
-4800 2930
+48000 29300
 POINT
 Kyrgyzstan,Bishkek
-7476 4290
+74760 42900
 POINT
 Laos,Vientiane
-10260 1797
+102600 17970
 POINT
 Latvia,Riga
-2413 5688
+24130 56880
 POINT
 Lebanon,Beirut
-3551 3388
+35510 33880
 POINT
 Lesotho,Maseru
-2750 -2930
+27500 -29300
 POINT
 Liberia,Monrovia
--1078 630
+-10780 6300
 POINT
 Libya,Tripoli
-1317 3280
+13170 32800
 POINT
 Liechtenstein,Vaduz
-951 4713
+9510 47130
 POINT
 Lithuania,Vilnius
-2531 5463
+25310 54630
 POINT
 Luxembourg,Luxembourg
-615 4961
+6150 49610
 POINT
 Macedonia,Skopje
-2150 4158
+21500 41580
 POINT
 Macau,Macau
-11355 2220
+113550 22200
 POINT
 Madagascar,Antananarivo
-4751 -1891
+47510 -18910
 POINT
 Malawi,Lilongwe
-3379 -1400
+33790 -14000
 POINT
 Malaysia,Kuala Lumpur
-10168 315
+101680 3150
 POINT
 Maldives,Male
-7346 400
+73460 4000
 POINT
 Mali,Bamako
--791 1256
+-7910 12560
 POINT
 Malta,Valletta
-1451 3590
+14510 35900
 POINT
 Marshall Islands,Majuro
-17120 715
+171200 7150
 POINT
 Martinique,Fort-de-France
--6103 1460
+-61030 14600
 POINT
 Mauritania,Nouakchott
--1615 1785
+-16150 17850
 POINT
 Mauritius,Port Louis
-5770 -2028
+57700 -20280
 POINT
 Mayotte,Mamoudzou
-4375 -1270
+43750 -12700
 POINT
 Mexico,Mexico City
--9916 1933
+-99160 19330
 POINT
 Moldova,Chisinau
-2883 4703
+28830 47030
 POINT
 Monaco,Monaco
-745 4380
+7450 43800
 POINT
 Mongolia,Ulaanbaatar
-10688 4792
+106880 47920
 POINT
 Montserrat,Plymouth
--6220 1675
+-62200 16750
 POINT
 Montenegro,Podgorica
-1935 4250
+19350 42500
 POINT
 Morocco,Rabat
--685 3403
+-6850 34030
 POINT
 Mozambique,Maputo
-3253 -2596
+32530 -25960
 POINT
 Myanmar (Burma),Yangon
-9633 1675
+96330 16750
 POINT
 Namibia,Windhoek
-1706 -2258
+17060 -22580
 POINT
 Nauru,Yaren
-16695 -55
+166950 -550
 POINT
 Nepal,Kathmandu
-8533 2775
+85330 27750
 POINT
 Netherlands,Amsterdam
-490 5238
+4900 52380
 POINT
 Netherlands Antilles,Willemstad
--6900 1208
+-69000 12080
 POINT
 New Caledonia,Noumea
-16650 -2228
+166500 -22280
 POINT
 New Zealand,Wellington
-17476 -4131
+174760 -41310
 POINT
 Nicaragua,Managua
--8633 1210
+-86330 12100
 POINT
 Niger,Niamey
-210 1345
+2100 13450
 POINT
 Nigeria,Abuja
-753 908
+7530 9080
 POINT
 Niue,Alofi
-16991 1903
+169910 19030
 POINT
 Norfolk Island,Kingston
-16510 -2805
+165100 -28050
 POINT
 North Korea,Pyong Yang
-12578 3900
+125780 39000
 POINT
 Northern Mariana Islands,Saipan
-14575 1520
+145750 15200
 POINT
 Norway,Oslo
-1075 5991
+10750 59910
 POINT
 Oman,Muscat
-5860 2361
+58600 23610
 POINT
 Pakistan,Islamabad
-7316 3366
+73160 33660
 POINT
 Palau,Melekeok
-13463 749
+134630 7490
 POINT
 Panama,Panama City
--7941 910
+-79410 9100
 POINT
 Papua New Guinea,Port Moresby
-14713 -940
+147130 -9400
 POINT
 Paraguay,Asuncion
--5750 -2516
+-57500 -25160
 POINT
 Peru,Lima
--7700 -1200
+-77000 -12000
 POINT
 Philippines,Manila
-12105 1466
+121050 14660
 POINT
 Pitcairn,Adamstown
--12995 -2510
+-129950 -25100
 POINT
 Poland,Warsaw
-2100 5221
+21000 52210
 POINT
 Portugal,Lisbon
--910 3870
+-9100 38700
 POINT
 Puerto Rico,San Juan
--6611 1846
+-66110 18460
 POINT
 Qatar,Doha
-5158 2525
+51580 25250
 POINT
 Reunion,Saint-Denis
-5546 -2110
+55460 -21100
 POINT
 Romania,Bucharest
-2616 4445
+26160 44450
 POINT
 Russian Federation,Moscow
-3758 5575
+37580 55750
 POINT
 Rwanda,Kigali
-3006 -198
+30060 -1980
 POINT
 Saint Helena,Jamestown
--690 -1800
+-6900 -18000
 POINT
 Saint Kitts And Nevis,Basseterre
--6271 1728
+-62710 17280
 POINT
 Saint Lucia,Castries
--6096 1403
+-60960 14030
 POINT
 Saint Pierre And Miquelon,Saint-Pierre
--5655 4680
+-56550 46800
 POINT
 Saint Vincent,Kingstown
--6130 1328
+-61300 13280
 POINT
 Samoa,Apia
--17183 -1383
+-171830 -13830
 POINT
 San Marino,San Marino
-1250 4391
+12500 43910
 POINT
 Sao Tome And Principe,Sao Tome
-665 16
+6650 160
 POINT
 Saudi Arabia,Riyadh
-4670 2468
+46700 24680
 POINT
 Senegal,Dakar
--1730 1456
+-17300 14560
 POINT
 Seychelles,Victoria
-5555 -465
+55550 -4650
 POINT
 Sierra Leone,Freetown
--1328 850
+-13280 8500
 POINT
 Singapore,Singapore
-10380 137
+103800 1370
 POINT
 Slovakia,Bratislava
-1711 4816
+17110 48160
 POINT
 Slovenia,Ljubljana
-1455 4606
+14550 46060
 POINT
 Solomon Islands,Honiara
-15994 -944
+159940 -9440
 POINT
 Somalia,Mogadishu
-4541 203
+45410 2030
 POINT
 South Africa,Pretoria
-2820 -2573
+28200 -25730
 POINT
 South Georgia And South Sandwich,King Edward Point
--3650 -5428
+-36500 -54280
 POINT
 South Korea,Seoul
-12696 3751
+126960 37510
 POINT
 Spain,Madrid
--375 4041
+-3750 40410
 POINT
 Sri Lanka,Colombo
-7987 690
+79870 6900
 POINT
 Sudan,Khartoum
-3258 1551
+32580 15510
 POINT
 Suriname,Paramaribo
--5516 573
+-55160 5730
 POINT
 Svalbard And Jan Mayen,Longyearbyen
-2115 7970
+21150 79700
 POINT
 Swaziland,Mbabane
-3110 -2630
+31100 -26300
 POINT
 Sweden,Stockholm
-1805 5933
+18050 59330
 POINT
 Switzerland,Bern
-746 4695
+7460 46950
 POINT
 Syria,Damascus
-3629 3350
+36290 33500
 POINT
 Taiwan,Taipei
-12152 2503
+121520 25030
 POINT
 Tajikistan,Dushanbe
-6880 3854
+68800 38540
 POINT
 Thailand,Bangkok
-10058 1375
+100580 13750
 POINT
 Togo,Lome
-133 625
+1330 6250
 POINT
 Tokelau,Tokelau
--17195 -890
+-171950 -8900
 POINT
 Tonga,Nuku'alofa
--17400 -2116
+-174000 -21160
 POINT
 Trinidad And Tobago,Port Of Spain
--6152 1067
+-61520 10670
 POINT
 Tunisia,Tunis
-1018 3683
+10180 36830
 POINT
 Turkey,Ankara
-3290 3995
+32900 39950
 POINT
 Turkmenistan,Ashgabat
-5783 3800
+57830 38000
 POINT
 Turks And Caicos Islands,Cockburn Town
--7113 2146
+-71130 21460
 POINT
 Tuvalu,Funafuti
-17921 -851
+179210 -8510
 POINT
 Uganda,Kampala
-3250 33
+32500 330
 POINT
 Ukraine,Kiev
-3046 5050
+30460 50500
 POINT
 United Arab Emirates,Abu Dhabi
-5436 2426
+54360 24260
 POINT
 United Kingdom,London
--8 5160
+-80 51600
 POINT
 Tanzania,Dodoma
-3575 -613
+35750 -6130
 POINT
 United States Minor Outlying Islands,-
--17730 2815
+-177300 28150
 POINT
 United States Of America,Washington DC
--7703 3888
+-77030 38880
 POINT
 Uruguay,Montevideo
--5618 -3470
+-56180 -34700
 POINT
 U.S. Virgin Islands,Charlotte Amalie
--6483 1833
+-64830 18330
 POINT
 Uzbekistan,Tashkent
-6916 4113
+69160 41130
 POINT
 Vanuatu,Port-Vila
-16830 -1775
+168300 -17750
 POINT
 Venezuela,Caracas
--6691 1040
+-66910 10400
 POINT
 Vietnam,Hanoi
-10591 2108
+105910 21080
 POINT
 Wallis And Futuna Islands,Mata-Utu
-17617 -1330
+176170 -13300
 POINT
 Yemen,Sana'a
-4418 1532
+44180 15320
 POINT
 Serbia,Belgrade
-2061 4483
+20610 44830
 POINT
 Western Sahara,Laayoune
--1320 2717
+-13200 27170
 POINT
 Zambia,Lusaka
-2826 -1546
+28260 -15460
 POINT
 Zimbabwe,Harare
-3103 -1771
+31030 -17710
