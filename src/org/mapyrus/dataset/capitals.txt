@@ -5,6 +5,9 @@ POINT
 Afghanistan,Kabul
 69180 34460
 POINT
+Aland,Mariehamm
+19900 60120
+POINT
 Albania,Tirana
 19810 41300
 POINT
@@ -37,6 +40,9 @@ Armenia,Yerevan
 POINT
 Aruba,Oranjestad
 -70030 12530
+POINT
+Ashmore And Cartier Islands,-
+123580 -12434
 POINT
 Australia,Canberra
 149130 -35250
@@ -245,6 +251,9 @@ POINT
 Gambia,Banjul
 -16660 13460
 POINT
+Gaza,Gaza City
+34450 31520
+POINT
 Georgia,Tbilisi
 44830 41710
 POINT
@@ -274,6 +283,9 @@ Guam,Hagatna
 POINT
 Guatemala,Guatemala
 -90360 14660
+POINT
+Guernsey,Saint Peter Port
+-2550 49450
 POINT
 Guinea,Conakry
 -13610 9480
@@ -305,6 +317,9 @@ POINT
 India,New Delhi
 77210 28610
 POINT
+Indian Ocean Territories,-
+96840 -12182
+POINT
 Indonesia,Jakarta
 106810 -6150
 POINT
@@ -316,6 +331,9 @@ Iraq,Baghdad
 POINT
 Ireland,Dublin
 -6250 53350
+POINT
+Isle of Man,Douglas
+-4480 54150
 POINT
 Israel,Jerusalem
 35100 32000
@@ -329,6 +347,9 @@ POINT
 Japan,Tokyo
 139750 35660
 POINT
+Jersey,Saint Helier
+-2110 49190
+POINT
 Jordan,Amman
 35860 31950
 POINT
@@ -340,6 +361,9 @@ Kenya,Nairobi
 POINT
 Kiribati,Tarawa
 173000 1500
+POINT
+Kosovo,Pristina
+21170 42670
 POINT
 Kuwait,Kuwait City
 48000 29300
@@ -452,8 +476,14 @@ POINT
 Netherlands,Amsterdam
 4900 52380
 POINT
-Netherlands Antilles,Willemstad
+Curacao,Willemstad
 -69000 12080
+POINT
+Saint Martin,Marigot
+-63080 18073
+POINT
+Sint Maarten,Philipsburg
+-63050 18020
 POINT
 New Caledonia,Noumea
 166500 -22280
@@ -478,6 +508,9 @@ Norfolk Island,Kingston
 POINT
 North Korea,Pyong Yang
 125780 39000
+POINT
+Northern Cyprus,Nicosia
+33410 35160
 POINT
 Northern Mariana Islands,Saipan
 145750 15200
@@ -536,6 +569,9 @@ POINT
 Rwanda,Kigali
 30060 -1980
 POINT
+Saint Barthelemy,Gustavia
+-62850 17890
+POINT
 Saint Helena,Jamestown
 -6900 -18000
 POINT
@@ -569,6 +605,9 @@ POINT
 Seychelles,Victoria
 55550 -4650
 POINT
+Siachen Glacier,-
+77200 35300
+POINT
 Sierra Leone,Freetown
 -13280 8500
 POINT
@@ -587,6 +626,9 @@ POINT
 Somalia,Mogadishu
 45410 2030
 POINT
+Somaliland,Hargeisa
+44050 9550
+POINT
 South Africa,Pretoria
 28200 -25730
 POINT
@@ -595,6 +637,9 @@ South Georgia And South Sandwich,King Edward Point
 POINT
 South Korea,Seoul
 126960 37510
+POINT
+South Sudan,Juba
+31600 4850
 POINT
 Spain,Madrid
 -3750 40410
@@ -674,9 +719,6 @@ POINT
 Tanzania,Dodoma
 35750 -6130
 POINT
-United States Minor Outlying Islands,-
--177300 28150
-POINT
 United States Of America,Washington DC
 -77030 38880
 POINT
@@ -692,6 +734,9 @@ POINT
 Vanuatu,Port-Vila
 168300 -17750
 POINT
+Vatican,Vatican City
+12430 41900
+POINT
 Venezuela,Caracas
 -66910 10400
 POINT
@@ -706,6 +751,9 @@ Yemen,Sana'a
 POINT
 Serbia,Belgrade
 20610 44830
+POINT
+West Bank,East Jerusalem
+35160 31780
 POINT
 Western Sahara,Laayoune
 -13200 27170
