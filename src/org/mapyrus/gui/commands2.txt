@@ -2,18 +2,29 @@
 # and numbers, then pressing the green arrow to see what happens.
 worlds -126, 23, -65, 52
 
+# Display world relief map as background.
+geoimage "jar:file:mapyrus.jar!/org/mapyrus/dataset/worldrelief.jpg"
+
+# First, display all country borders.
+linestyle 0.01, "round", "round"
+color "black"
+dataset "internal", "countries", ""
+while Mapyrus.fetch.more
+do
+	fetch; clearpath; addpath GEOMETRY; stroke
+done
+
 # Each state has a colorcode number.  Set color to use for each colorcode.
-let c = ["yellow3", "orange3", "yellow", "gold", "pastelbrown", "yellowgreen"]
+let c = ["#1b9e13", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02"]
 
 dataset "internal", "usa", ""
-linestyle 0.01, "round", "round"
 while Mapyrus.fetch.more
 do
 	# Display state in color of its colorcode with a black border.
 	fetch
 	clearpath
 	addpath GEOMETRY
-	color c[COLORCODE]
+	color c[COLORCODE], 0.75
 	fill
 	color "black"
 	stroke
