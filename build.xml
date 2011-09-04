@@ -78,6 +78,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <copy todir="build/classes/org/mapyrus/dataset">
 <fileset dir="src/org/mapyrus/dataset" includes="*.txt,*.jpg,*.tfw"/>
 </copy>
+<copy file="userdoc/coastline.shp" todir="build/classes/org/mapyrus/dataset"/>
+<copy file="userdoc/australia.png" todir="build/classes/org/mapyrus/dataset"/>
+<copy file="userdoc/australia.tfw" todir="build/classes/org/mapyrus/dataset"/>
 <copy todir="build/classes/org/mapyrus/font">
 <fileset dir="src/org/mapyrus/font" includes="*.afm,*.txt"/>
 </copy>
