@@ -865,6 +865,27 @@ as Mapyrus cannot read the default PNG format returned by Mapserver.
 
 \verbatiminput{tutorialgeoimage3.mapyrus}
 
+\subsection{Displaying Datasets and Images Stored In JAR Files}
+
+Java permits files stored inside a JAR file to be accessed using a URL.
+This is especially useful for web applications where the
+software and data are commonly packed together inside a single
+JAR or WAR file.
+
+The following example demonstrates reading an image and ESRI
+Shape file from inside of file \texttt{mapyrus.jar}.
+
+\verbatiminput{tutorialgeoimage4.mapyrus}
+
+To include other datasets, unpack the file \texttt{mapyrus.jar}
+using the Java \texttt{jar} program, add
+the datasets and create \texttt{mapyrus.jar} again.
+
+Alternatively, create a new JAR file containing only the datasets
+and include that JAR file in the classpath when running Mapyrus.
+In this case, the filename in the URL is changed from \texttt{mapyrus.jar}
+to the new filename of the new JAR.
+
 \subsection{Displaying Many Datasets or Geo-Referenced Images}
 
 To display data contained in many files, use the \texttt{listfiles}
