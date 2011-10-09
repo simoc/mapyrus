@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2011 Simon Chenery <simoc@users.sourceforge.net>
 
+1.106, September 2011
+
+* Allow ESRI Shape files to be accessed using a URL.
+* Use better countries data from www.naturalearthdata.com.
+* Add world relief image from www.naturalearthdata.com.
+
 1.105, August 2011
 
 * Change syntax for arrays with keys and values to {"AU":"red", "NZ":"blue"}.
