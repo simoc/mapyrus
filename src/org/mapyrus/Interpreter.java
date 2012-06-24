@@ -1911,6 +1911,37 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
+			case Statement.PDFGROUP:
+				if (nExpressions > 0)
+				{
+					String groupAction = m_executeArgs[0].getStringValue();
+					if (groupAction.equalsIgnoreCase("begin"))
+					{
+						if (nExpressions == 2)
+						{
+							String groupName = m_executeArgs[1].getStringValue();
+							context.beginPDFGroup(groupName);
+						}
+						else
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PDF_GROUP));
+						}
+					}
+					else if (groupAction.equalsIgnoreCase("end") && nExpressions == 1)
+					{
+						context.endPDFGroup();
+					}
+					else
+					{
+						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PDF_GROUP));
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PDF_GROUP));
+				}
+				break;
+				
 			case Statement.SCALE:
 				if (nExpressions == 1)
 				{
