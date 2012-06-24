@@ -95,22 +95,23 @@ public class Statement
 	public static final int SVG = 59;
 	public static final int SVGCODE = 60;
 	public static final int PDF = 61;
-	public static final int SCALE = 62;
-	public static final int ROTATE = 63;
-	public static final int WORLDS = 64;
-	public static final int DATASET = 65;
-	public static final int FETCH = 66;
-	public static final int NEWPAGE = 67;
-	public static final int ENDPAGE = 68;
-	public static final int SETOUTPUT = 69;
-	public static final int PRINT = 70;
-	public static final int LOCAL = 71;
-	public static final int LET = 72;
-	public static final int EVAL = 73;
-	public static final int KEY = 74;
-	public static final int LEGEND = 75;
-	public static final int MIMETYPE = 76;
-	public static final int HTTPRESPONSE = 77;
+	public static final int PDFGROUP = 62;
+	public static final int SCALE = 63;
+	public static final int ROTATE = 64;
+	public static final int WORLDS = 65;
+	public static final int DATASET = 66;
+	public static final int FETCH = 67;
+	public static final int NEWPAGE = 68;
+	public static final int ENDPAGE = 69;
+	public static final int SETOUTPUT = 70;
+	public static final int PRINT = 71;
+	public static final int LOCAL = 72;
+	public static final int LET = 73;
+	public static final int EVAL = 74;
+	public static final int KEY = 75;
+	public static final int LEGEND = 76;
+	public static final int MIMETYPE = 77;
+	public static final int HTTPRESPONSE = 78;
 
 	/*
 	 * Statement type for call and return to/from user defined procedure block.
@@ -216,6 +217,7 @@ public class Statement
 		m_statementTypeLookup.put("svg", Integer.valueOf(SVG));
 		m_statementTypeLookup.put("svgcode", Integer.valueOf(SVGCODE));
 		m_statementTypeLookup.put("pdf", Integer.valueOf(PDF));
+		m_statementTypeLookup.put("pdfgroup", Integer.valueOf(PDFGROUP));
 		m_statementTypeLookup.put("scale", Integer.valueOf(SCALE));
 		m_statementTypeLookup.put("rotate", Integer.valueOf(ROTATE));
 		m_statementTypeLookup.put("worlds", Integer.valueOf(WORLDS));
