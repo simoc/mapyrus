@@ -128,6 +128,7 @@ public class MapyrusMessages
 	public static final String INVALID_PATH_SHIFT = "invalidpathshift";
 	public static final String INVALID_PATH_STRIPE = "invalidpathstripe";
 	public static final String INVALID_PDF = "invalidpdf";
+	public static final String INVALID_PDF_GROUP = "invalidpdfgroup";
 	public static final String INVALID_PENTAGON = "invalidpentagon";
 	public static final String INVALID_RADIUS = "invalidradius";
 	public static final String INVALID_RAINDROP = "invalidraindrop";
@@ -187,6 +188,7 @@ public class MapyrusMessages
 	public static final String NO_MIME_TYPE = "nomimetype";
 	public static final String NO_MOVETO = "nomoveto";
 	public static final String NO_OUTPUT = "nooutput";
+	public static final String NO_PDF_GROUP = "nopdfgroup";
 	public static final String NO_ROWS = "norows";
 	public static final String NO_SINE_WAVE_START = "nosinewavestart";
 	public static final String NUMERIC_FUNCTION = "numericfunction";
