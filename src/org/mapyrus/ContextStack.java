@@ -701,6 +701,24 @@ public class ContextStack
 	}
 
 	/**
+	 * Begin PDF Content Group.
+	 * @param name name for group.
+	 */
+	public void beginPDFGroup(String name)
+	{
+		getCurrentContext().beginPDFGroup(name);
+	}
+
+	/**
+	 * Begin PDF Content Group.
+	 * @param name name for group.
+	 */
+	public void endPDFGroup()
+	{
+		getCurrentContext().endPDFGroup();
+	}
+
+	/**
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
