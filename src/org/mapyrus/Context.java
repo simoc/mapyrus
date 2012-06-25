@@ -2148,6 +2148,18 @@ public class Context
 		}
 	}
 
+	public void beginPDFGroup(String name)
+	{
+		if (m_outputFormat != null)
+			m_outputFormat.beginPDFGroup(name);
+	}
+
+	public void endPDFGroup() throws MapyrusException
+	{
+		if (m_outputFormat != null)
+			m_outputFormat.endPDFGroup();
+	}
+
 	/**
 	 * Draw currently defined path.
 	 * @param xmlAttributes XML attributes to add for SVG output.
