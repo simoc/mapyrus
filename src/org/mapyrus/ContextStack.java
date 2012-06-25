@@ -713,7 +713,7 @@ public class ContextStack
 	 * Begin PDF Content Group.
 	 * @param name name for group.
 	 */
-	public void endPDFGroup()
+	public void endPDFGroup() throws MapyrusException
 	{
 		getCurrentContext().endPDFGroup();
 	}
