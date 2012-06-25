@@ -4072,6 +4072,14 @@ public class OutputFormat
 
 	}
 
+	public void beginPDFGroup(String groupName)
+	{
+	}
+
+	public void endPDFGroup() throws MapyrusException
+	{
+	}
+
 	/**
 	 * Draw currently defined path to output page.
 	 * @param shape
