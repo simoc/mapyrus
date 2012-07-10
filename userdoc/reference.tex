@@ -2631,6 +2631,29 @@ PDF output.  For other formats,
 a grey box is drawn showing where the PDF file
 would be drawn.
 
+\subsubsection{pdfgroup}
+
+\begin{alltt}
+pdfgroup \textit{action} [, \textit{groupName}]
+\end{alltt}
+
+Controls creation of groups in PDF output files (known as
+\textit{Optional Content Groups} in PDF terminology).
+
+A PDF viewer such as Acrobat Reader enables each group in a PDF file to
+be turned on and off independently of other groups.
+
+The \textit{action} \texttt{begin} and a group name begins a group.
+All following output until the matching \texttt{end} action is
+included in the group.
+
+The \textit{action} \texttt{end} completes a group.  Any open groups are
+automatically ended when a PDF output file is finished.
+
+Nesting of groups is permitted.
+
+For formats other than PDF, this command has no effect.
+
 \subsubsection{pentagon}
 
 \begin{alltt}
