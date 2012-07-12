@@ -1483,6 +1483,21 @@ with output shown in Figure \ref{tutorialeps1}.
 \label{tutorialeps1}
 \end{figure}
 
+\subsection{Creating Groups in PDF Output Files}
+
+When creating PDF output it is possible to define any countinuous
+set of output as a named group.
+
+The output included in each group is displayed on the page as normal.
+However, PDF viewers such as Adobe Acrobat Reader have menu options to turn
+individual groups on and off, producing a layering effect.
+
+The \texttt{pdfgroup} command is used
+to define the name, beginning and end of each group, as demonstrated
+in the following example
+
+\verbatiminput{tutorialpdfgroup.mapyrus}
+
 \subsection{Mapyrus and Java Topology Suite Functions}
 \label{tutorialjts}
 
