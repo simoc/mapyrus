@@ -303,6 +303,14 @@ public class OutputFormat
 	private ArrayList<ArrayList<Integer>> m_PDFIncludedPages;
 
 	/*
+	 * Names of content groups in PDF output. 
+	 */
+	private ArrayList<String> m_PDFContentGroupNames;
+	private ArrayList<Integer> m_PDFContentGroupNestingLevels;
+	private int m_PDFCurrentContentGroupNesting;
+	private String m_PDFContentGroupPrefix;
+
+	/*
 	 * Format for writing coordinate values.
 	 */
 	private DecimalFormat m_coordinateDecimal = new DecimalFormat("#.###",
@@ -519,7 +527,7 @@ public class OutputFormat
 
 		m_PDFFileOffsets = new ArrayList<Integer>();
 
-		int nChars = writeLine(m_writer, "%PDF-1.4");
+		int nChars = writeLine(m_writer, "%PDF-1.5");
 
 		m_PDFFileOffsets.add(new Integer(nChars));
 		nChars += writeLine(m_writer, "1 0 obj % Document Catalog");
@@ -527,6 +535,16 @@ public class OutputFormat
 		nChars += writeLine(m_writer, "/Type /Catalog");
 		nChars += writeLine(m_writer, "/Outlines 3 0 R");
 		nChars += writeLine(m_writer, "/Pages 4 0 R");
+		
+		/*
+		 * We don't know what Optional Content groups will be used.
+		 * Use references so we can define them later.
+		 */
+		nChars += writeLine(m_writer, "/OCProperties");
+		nChars += writeLine(m_writer, "<<");
+		nChars += writeLine(m_writer, "/OCGs 5 0 R");
+		nChars += writeLine(m_writer, "/D << /Order 6 0 R /BaseState /ON >>");
+		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
 
@@ -560,7 +578,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, "4 0 obj % Page Tree Node");
 		nChars += writeLine(m_writer, "<<");
 		nChars += writeLine(m_writer, "/Type /Pages");
-		nChars += writeLine(m_writer, "/Kids [5 0 R]");
+		nChars += writeLine(m_writer, "/Kids [8 0 R]");
 		nChars += writeLine(m_writer, "/Count 1");
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
@@ -578,6 +596,9 @@ public class OutputFormat
 		m_PDFIncludedPages = new ArrayList<ArrayList<Integer>>();
 		m_PDFGeometryStringWriter = new StringWriter();
 		m_PDFGeometryWriter = new PrintWriter(m_PDFGeometryStringWriter);
+		m_PDFContentGroupNames = new ArrayList<String>();
+		m_PDFContentGroupNestingLevels = new ArrayList<Integer>();
+		m_PDFCurrentContentGroupNesting = 0;
 
 		if (turnPage)
 		{
@@ -637,7 +658,7 @@ public class OutputFormat
 	 */
 	private void writePDFResources() throws IOException, MapyrusException
 	{
-		int objectCounter = 6;
+		int objectCounter = 9;
 		String newline = "\r\n";
 
 		StringBuffer fontDictionary = new StringBuffer(4 * 1024);
@@ -870,9 +891,58 @@ public class OutputFormat
 		}
 		fontDictionary.append(">>").append(newline);
 
+		StringBuffer contentGroupsArray = new StringBuffer();
+		StringBuffer contentGroupsOrderArray = new StringBuffer();
+		StringBuffer contentGroupsDictionary = new StringBuffer("<<");
+		ArrayList<String> pdfContentGroupObjects = new ArrayList<String>();
+		int lastNestingLevel = 0;
+		for (int i = 0; i < m_PDFContentGroupNames.size(); i++)
+		{
+			contentGroupsArray.append(" " + objectCounter + " 0 R");
+			int nestingLevel = m_PDFContentGroupNestingLevels.get(i);
+			if (i > 0)
+			{
+				if (nestingLevel > lastNestingLevel)
+					contentGroupsOrderArray.append("[");
+				else if (nestingLevel < lastNestingLevel)
+					contentGroupsOrderArray.append("]");
+			}
+			contentGroupsOrderArray.append(" " + objectCounter + " 0 R");
+			contentGroupsDictionary.append(" /" + m_PDFContentGroupPrefix + i +
+				" " + objectCounter + " 0 R" + newline);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			pw.print(objectCounter + " 0 obj << /Type /OCG ");
+			writePostScriptString(pw, "/Name", m_PDFContentGroupNames.get(i));
+			pw.print(" /Intent [/View /Design] >>");
+			pw.flush();
+			pdfContentGroupObjects.add(sw.toString());
+			objectCounter++;
+			lastNestingLevel = nestingLevel;
+		}
+		while (lastNestingLevel-- > 0)
+			contentGroupsOrderArray.append("]");
+		contentGroupsDictionary.append(">>");
+
 		Integer offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
 		int nChars = offset.intValue();
-		nChars += writeLine(m_writer, "5 0 obj % Single Page");
+		
+		nChars += writeLine(m_writer, "5 0 obj % Optional Content Groups");
+		nChars += writeLine(m_writer, "[" + contentGroupsArray + "]");
+		nChars += writeLine(m_writer, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
+
+		nChars += writeLine(m_writer, "6 0 obj % Optional Content Groups Order");
+		nChars += writeLine(m_writer, "[" + contentGroupsOrderArray + "]");
+		nChars += writeLine(m_writer, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
+
+		nChars += writeLine(m_writer, "7 0 obj % Optional Content Group Resource Properties");
+		nChars += writeLine(m_writer, contentGroupsDictionary);
+		nChars += writeLine(m_writer, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
+
+		nChars += writeLine(m_writer, "8 0 obj % Single Page");
 		nChars += writeLine(m_writer, "<<");
 		nChars += writeLine(m_writer, "/Type /Page");
 		nChars += writeLine(m_writer, "/Parent 4 0 R");
@@ -896,17 +966,28 @@ public class OutputFormat
 		nChars += writeLine(m_writer, "/Font");
 		nChars += writeLine(m_writer, fontDictionary.toString());
 
+		/*
+		 * Add reference to optional content groups.
+		 */
+		nChars += writeLine(m_writer, "/Properties 7 0 R");
+
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
+		m_PDFFileOffsets.add(new Integer(nChars));
 
 		/*
 		 * Now add font width, font descriptor and font file objects.
 		 */
-		m_PDFFileOffsets.add(new Integer(nChars));
 		for (int i = 0; i < pdfFontObjects.size(); i++)
 		{
 			nChars += writeLine(m_writer, pdfFontObjects.get(i).toString());
+			m_PDFFileOffsets.add(new Integer(nChars));
+		}
+
+		for (int i = 0; i < pdfContentGroupObjects.size(); i++)
+		{
+			nChars += writeLine(m_writer, pdfContentGroupObjects.get(i));
 			m_PDFFileOffsets.add(new Integer(nChars));
 		}
 	}
@@ -1170,6 +1251,7 @@ public class OutputFormat
 		m_PDFFontPrefix =  m_uniqueKey + "F";
 		m_PDFImagePrefix = m_uniqueKey + "Img";
 		m_PDFGstatePrefix = m_uniqueKey + "Gstate";
+		m_PDFContentGroupPrefix = m_uniqueKey + "oc";
 		m_SVGClipPathPrefix = m_uniqueKey + "C";
 
 		if (m_outputType == POSTSCRIPT_GEOMETRY)
@@ -2509,6 +2591,12 @@ public class OutputFormat
 		}
 		else if (m_outputType == PDF)
 		{
+			/*
+			 * Close any PDF groups that are still open.
+			 */
+			while (m_PDFCurrentContentGroupNesting > 0)
+				endPDFGroup();
+
 			/*
 			 * Now we have finished the page we know all needed resources
 			 * and can write the resource dictionary.
@@ -4074,10 +4162,32 @@ public class OutputFormat
 
 	public void beginPDFGroup(String groupName)
 	{
+		if (m_outputType == PDF)
+		{
+			int size = m_PDFContentGroupNames.size();
+			writeLine(m_PDFGeometryWriter, "/OC /" + m_PDFContentGroupPrefix + size + " BDC");
+			if (groupName == null || groupName.length() == 0)
+				groupName = "Group" + (size + 1);
+			m_PDFContentGroupNames.add(groupName);
+			m_PDFContentGroupNestingLevels.add(new Integer(m_PDFCurrentContentGroupNesting));
+			m_PDFCurrentContentGroupNesting++;
+		}
 	}
 
 	public void endPDFGroup() throws MapyrusException
 	{
+		if (m_outputType == PDF)
+		{
+			if (m_PDFCurrentContentGroupNesting > 0)
+			{
+				writeLine(m_PDFGeometryWriter, "EMC");
+				m_PDFCurrentContentGroupNesting--;
+			}
+			else
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_PDF_GROUP));
+			}
+		}
 	}
 
 	/**
