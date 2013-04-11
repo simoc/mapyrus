@@ -1,6 +1,6 @@
 /*
  * This file is part of Mapyrus, software for plotting maps.
- * Copyright (C) 2003 - 2012 Simon Chenery.
+ * Copyright (C) 2003 - 2013 Simon Chenery.
  *
  * Mapyrus is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
