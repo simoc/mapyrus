@@ -1498,22 +1498,22 @@ in the following example
 
 \verbatiminput{tutorialpdfgroup.mapyrus}
 
-\subsection{Mapyrus and Java Topology Suite Functions}
+\subsection{Mapyrus and JTS Topology Suite Functions}
 \label{tutorialjts}
 
 Advanced geometric functions in Mapyrus
 (see Figure \ref{functions} on page \pageref{functions})
 are provided by the
-\textit{Java Topology Suite},
+\textit{JTS Topology Suite},
 available from
-(\texttt{http://www.vividsolutions.com/JTS}).
+(\texttt{http://www.tsusiatsoftware.net/jts/main.html}).
 
 If any of these functions are used then the
-\textit{Java Topology Suite} JAR file must be included in the
+\textit{JTS Topology Suite} JAR file must be included in the
 classpath when running Mapyrus.  The following command demonstrates this:
 
 \begin{alltt}
-java -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.8.jar \textbackslash
+java -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.13.jar \textbackslash
   org.mapyrus.Mapyrus tutorialjts1.mapyrus
 \end{alltt}
 
@@ -2169,7 +2169,7 @@ Ant build tool.
 \item
 Java 2 SDK 5, or higher.
 \item
-Java Topology Suite 1.8, or higher from \texttt{http://www.vividsolutions.com/JTS}.
+JTS Topology Suite 1.13, or higher from \texttt{http://www.tsusiatsoftware.net/jts/main.html}.
 \item
 Oracle JDBC driver JAR file \texttt{ojdbc14.jar} and Oracle
 Spatial data types JAR file \texttt{sdoapi.jar} from an

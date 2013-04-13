@@ -14,7 +14,7 @@ The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system.  If a real X-Windows display
 is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
 \item
-The \textit{Java Topology Suite} from \texttt{http://www.vividsolutions.com/JTS},
+The \textit{JTS Topology Suite} from \texttt{http://www.tsusiatsoftware.net/jts/main.html},
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
 \item
@@ -40,13 +40,13 @@ given then they are read in turn.
 Environment variables
 and variables passed to Mapyrus using the Java \texttt{-D} option
 are available in the Mapyrus interpreter.  The
-\textit{Java Topology Suite} JAR file and other JAR files
+\textit{JTS Topology Suite} JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
 \texttt{-classpath} option.
 
 \begin{alltt}
 \texttt{java -D\textit{variable}=\textit{value} \dots\ \textbackslash
-  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.8.jar:\textit{other-jarfile} \textbackslash
+  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.13.jar:\textit{other-jarfile} \textbackslash
   org.mapyrus.Mapyrus \textit{filename}}
 \end{alltt}
 
@@ -251,7 +251,7 @@ a distance \textit{dist} around the perimeter of geometry \textit{g}.
 The value of \textit{cap} defines
 the method of closing buffers at line endpoints, either
 \texttt{butt}, \texttt{round} or \texttt{square}.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS Topology Suite}. \\
 
 \hline
 
@@ -271,7 +271,7 @@ If point (\textit{x}, \textit{y}) or geometry \textit{g2}
 is contained inside \textit{g1} then
 1 is returned.  Otherwise 0 is returned.
 Geometries may be the same type or different types.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS Topology Suite}. \\
 
 \hline
 
@@ -290,7 +290,7 @@ If geometry \textit{g2} crosses \textit{g1} then
 1 is returned.  Otherwise 0 is returned.
 Geometries must be of different types.  To compare
 geometries of the same type, use \texttt{overlaps}.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS  Topology Suite}. \\
 
 \hline
 
@@ -298,7 +298,7 @@ This function requires the \textit{Java Topology Suite}. \\
 Returns a geometry containing the difference between
 geometry \textit{g1} and geometry \textit{g2}.  That is, parts
 of geometry \textit{g1} that are not part of geometry \textit{g2}.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS Topology Suite}. \\
 
 \hline
 
@@ -354,7 +354,7 @@ Each value $v_{i}$ is either a number or a named color.  \\
 \texttt{intersection(\textit{g1}, \textit{g2})} &
 Returns a geometry containing the intersection
 of geometry \textit{g1} and geometry \textit{g2}.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS  Topology Suite}. \\
 
 \hline
 
@@ -408,7 +408,7 @@ If geometry \textit{g1} and geometry \textit{g2}
 are the same type
 and overlap
 then 1 is returned.  Otherwise 0 is returned.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS Topology Suite}. \\
 
 \hline
 
@@ -624,7 +624,7 @@ Returns string \textit{str} with whitespace trimmed from start and end. \\
 \texttt{union(\textit{g1}, \textit{g2})} &
 Returns a geometry containing the union of 
 of geometry \textit{g1} and geometry \textit{g2}.
-This function requires the \textit{Java Topology Suite}. \\
+This function requires the \textit{JTS Topology Suite}. \\
 
 \hline
 
@@ -3364,8 +3364,8 @@ database connection pooling then database connections from the
 pool are available using the \texttt{jndiname} option in
 the \texttt{dataset} command.
 
-If Java Topology Suite functions or a JDBC driver are used then the
-\textit{Java Topology Suite} or JDBC JAR file must be made available
+If JTS Topology Suite functions or a JDBC driver are used then the
+\textit{JTS Topology Suite} or JDBC JAR file must be made available
 to the web server by copying it into a directory that the web server
 includes in the Java classpath.
 

@@ -27,10 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <!-- manually for each new release. -->
 <property name="version" value="1.301"/>
 
-<!-- 'Java Topology Suite' JAR file required for building some Java classes -->
-<property name="jts.jar" value="jts-1.8.jar"/>
+<!-- 'JTS Topology Suite' JAR file required for building some Java classes -->
+<property name="jts.jar" value="jts-1.13.jar"/>
 <available file="${jts.jar}" property="jts.jar.isAvailable"/>
-<fail message="Java Topology Suite JAR file ${jts.jar} not found.  Download it from http://www.vividsolutions.com" unless="jts.jar.isAvailable"/>
+<fail message="JTS Topology Suite JAR file ${jts.jar} not found.  Download it from http://tsusiatsoftware.net" unless="jts.jar.isAvailable"/>
 
 <!-- 'Java PROJ.4 library' JAR file required for building some Java classes -->
 <property name="proj4.jar" value="javaproj-1.0.9.jar"/>
@@ -164,7 +164,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <java jar="${ant.project.name}.jar" fork="yes" dir="userdoc">
 <arg line="tutorialrand1.mapyrus tutorialrand2.mapyrus tutorialrand3.mapyrus tutorialpiechart1.mapyrus tutorialprotect1.mapyrus tutorialprotect2.mapyrus tutorialturnpage1.mapyrus tutoriallayout1.mapyrus"/>
 </java>
-<!-- For examples using 'Java Topology Suite' we need jts JAR file in classpath -->
+<!-- For examples using 'JTS  Topology Suite' we need jts JAR file in classpath -->
 <java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
 <classpath>
 <pathelement path="${ant.project.name}.jar"/>
