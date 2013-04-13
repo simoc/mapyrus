@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 # Draw label in black, with white highlight so that it is easier to read.
 #
 begin highlightlabel name

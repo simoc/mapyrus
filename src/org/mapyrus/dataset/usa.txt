@@ -1,5 +1,4 @@
 # COLORCODE STATE STATECODE
-# @(#) $Id$
 # Data derived from National Atlas of the United States,
 # March 5, 2003, http://nationalatlas.gov
 # http://www.nationalatlas.gov/atlasftp.html?openChapters=chpbound

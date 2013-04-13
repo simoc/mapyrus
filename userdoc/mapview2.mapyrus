@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 # Include polygon fill patterns and scalebar definition.
 #
 include symbols.mapyrus

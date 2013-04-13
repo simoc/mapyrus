@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 # Show team strip colors of a football team.
 #
 begin teamStrip teamName, shirtColor, sleeveColor, shortsColor

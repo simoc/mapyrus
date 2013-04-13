@@ -1,4 +1,3 @@
-# @(#) $Id$
 begin scalebar scale, units, x, y
 
 	local worldBarLength

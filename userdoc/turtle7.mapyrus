@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 let vals1 = split("170:125:132:140:158:153:162", ":")
 let labels = split("M:T:W:T:F:S:S", ":")
 let title = "Turtle Sightings (Week 13)"

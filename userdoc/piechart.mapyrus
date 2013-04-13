@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 # Draw a piechart given sizes, labels and colors of slices.
 #
 begin piechart nSlices, sliceSizes, sliceLabels, sliceColors

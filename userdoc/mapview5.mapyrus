@@ -1,5 +1,3 @@
-# @(#) $Id$
-
 newpage "eps", "mapview5.eps", 90, 60, "background=skyblue lineantialiasing=true"
 worlds -2e7, -9900000, 2e7, 9900000
 

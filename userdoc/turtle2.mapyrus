@@ -1,4 +1,3 @@
-# @(#) $Id$
 begin fernbranch branchLength
   if branchLength > 1
   then

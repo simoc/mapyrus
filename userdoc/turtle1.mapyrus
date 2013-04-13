@@ -1,4 +1,3 @@
-# @(#) $Id$
 begin sunray
   color "yellow"
   move 0, 3

@@ -1,4 +1,3 @@
-# @(#) $Id$
 # Latitude/Longitude positions of South Pacific capital cities.
 33.83S 148.04E Canberra/Australia
 41.08S 174.91E Wellington/New Zealand
