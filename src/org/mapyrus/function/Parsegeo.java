@@ -68,7 +68,7 @@ public class Parsegeo implements Function
 			 */
 			int dIndex = geo.indexOf('d');
 			if (dIndex < 0)
-				dIndex = geo.indexOf('�');
+				dIndex = geo.indexOf('\u00b0');
 			if (dIndex < 0)
 				dIndex = geo.indexOf('\ufffd');
 			if (dIndex >= 0)
