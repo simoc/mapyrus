@@ -386,11 +386,13 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 		}
 	}
 
+	@Override
 	public String getProjection()
 	{
 		return "GEOGCS[\"wgs84\",DATUM[\"WGS_1984\",SPHEROID[\"wgs84\",6378137,298.257223563],TOWGS84[0.000,0.000,0.000]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
 	}
 
+	@Override
 	public Hashtable<String, String> getMetadata()
 	{
 		Hashtable<String, String> retval = new Hashtable<String, String>();
@@ -399,16 +401,19 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 		return retval;
 	}
 
+	@Override
 	public String[] getFieldNames()
 	{
 		return(FIELD_NAMES);
 	}
 
+	@Override
 	public Rectangle2D.Double getWorlds()
 	{
 		return(new Rectangle2D.Double(m_xMin, m_yMin, m_xMax - m_xMin, m_yMax - m_yMin));
 	}
 
+	@Override
 	public Row fetch() throws MapyrusException
 	{
 		Row retval;
@@ -419,6 +424,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 		return(retval);
 	}
 
+	@Override
 	public void close() throws MapyrusException
 	{
 		m_data = null;

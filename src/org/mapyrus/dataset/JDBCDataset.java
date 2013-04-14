@@ -248,6 +248,7 @@ public class JDBCDataset implements GeographicDataset
 	/**
 	 * Projection of database data not known.
 	 */
+	@Override
 	public String getProjection()
 	{
 		return null;
@@ -257,6 +258,7 @@ public class JDBCDataset implements GeographicDataset
 	 * Return metadata about the dataset.
 	 * @return metadata as (key, value) pairs.
 	 */
+	@Override
 	public Hashtable<String, String> getMetadata()
 	{
 		return null;
@@ -266,6 +268,7 @@ public class JDBCDataset implements GeographicDataset
 	 * Return names of fields returned by the SQL query.
 	 * @return fieldnames.
 	 */
+	@Override
 	public String[] getFieldNames()
 	{
 		return m_fieldNames;
@@ -275,6 +278,7 @@ public class JDBCDataset implements GeographicDataset
 	 * Return extents of query results.  We do not know this.
 	 * @return degree values covering the whole world
 	 */
+	@Override
 	public Double getWorlds()
 	{
 		return new Rectangle2D.Double(-180.0, -90.0, 180.0, 90.0);
@@ -284,6 +288,7 @@ public class JDBCDataset implements GeographicDataset
 	 * Fetch next row returned by query.
 	 * @return next row returned by query, or null if no more rows available.
 	 */
+	@Override
 	public Row fetch() throws MapyrusException
 	{
 		Row retval;
@@ -519,6 +524,7 @@ public class JDBCDataset implements GeographicDataset
 	/**
 	 * Finish query from database.
 	 */
+	@Override
 	public void close() throws MapyrusException
 	{
 		close(true);

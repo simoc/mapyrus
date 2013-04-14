@@ -162,6 +162,7 @@ public class TextfileDataset implements GeographicDataset
 	 * Returns projection of dataset, which is not defined for a text file.
 	 * @return empty string.
 	 */
+	@Override
 	public String getProjection()
 	{
 		return("");
@@ -170,6 +171,7 @@ public class TextfileDataset implements GeographicDataset
 	/**
 	 * @see org.mapyrus.GeographicDataset#getMetadata()
 	 */
+	@Override
 	public Hashtable<String, String> getMetadata()
 	{
 		return(new Hashtable<String, String>());
@@ -179,6 +181,7 @@ public class TextfileDataset implements GeographicDataset
 	 * Return names of fields in this text file.
 	 * @return null, no fieldnames known.
 	 */
+	@Override
 	public String[] getFieldNames()
 	{
 		return(null);
@@ -188,6 +191,7 @@ public class TextfileDataset implements GeographicDataset
 	 * Return extents of text file.  We do not know this.
 	 * @return degree values covering the whole world
 	 */
+	@Override
 	public Rectangle2D.Double getWorlds()
 	{
 		return new Rectangle2D.Double(-180.0, -90.0, 180.0, 90.0);
@@ -292,6 +296,7 @@ public class TextfileDataset implements GeographicDataset
 	 * Gets next row from file.
 	 * @return next row read, or null if no row found.
 	 */
+	@Override
 	public Row fetch() throws MapyrusException
 	{
 		Row row = new Row();
@@ -310,6 +315,7 @@ public class TextfileDataset implements GeographicDataset
 	/**
 	 * Closes dataset.
 	 */
+	@Override
 	public void close() throws MapyrusException
 	{
 		try

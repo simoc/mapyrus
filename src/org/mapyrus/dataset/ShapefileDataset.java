@@ -619,6 +619,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see org.mapyrus.dataset.GeographicDataset#getProjection()
 	 */
+	@Override
 	public String getProjection()
 	{
 		return m_projection;
@@ -627,6 +628,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see org.mapyrus.dataset.GeographicDataset#getMetadata()
 	 */
+	@Override
 	public Hashtable<String, String> getMetadata()
 	{
 		return(null);
@@ -635,6 +637,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see org.mapyrus.dataset.GeographicDataset#getFieldNames()
 	 */
+	@Override
 	public String[] getFieldNames()
 	{
 		return(m_fieldNames);
@@ -643,6 +646,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * @see org.mapyrus.dataset.GeographicDataset#getWorlds()
 	 */
+	@Override
 	public Rectangle2D.Double getWorlds()
 	{
 		return(m_extents);
@@ -652,6 +656,7 @@ public class ShapefileDataset implements GeographicDataset
 	 * Read next shape from shapefile that is inside or crossing the query extents.
 	 * @return true if a row was read.
 	 */
+	@Override
 	public Row fetch() throws MapyrusException
 	{
 		int recordLength;
@@ -980,6 +985,7 @@ public class ShapefileDataset implements GeographicDataset
 	/**
 	 * Closes dataset.
 	 */
+	@Override
 	public void close() throws MapyrusException
 	{
 		/*

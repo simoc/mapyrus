@@ -119,22 +119,26 @@ public class InternalDataset implements GeographicDataset
 		m_queryExtents = new Rectangle2D.Double(xMin, yMin, xMax - xMin, yMax - yMin);
 	}
 
+	@Override
 	public String getProjection()
 	{
 		return "GEOGCS[\"wgs84\",DATUM[\"WGS_1984\",SPHEROID[\"wgs84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
 	}
 
+	@Override
 	public Hashtable<String, String> getMetadata()
 	{
 		Hashtable<String, String> retval = new Hashtable<String, String>();
 		return retval;
 	}
 
+	@Override
 	public String[] getFieldNames()
 	{
 		return(m_fieldNames);
 	}
 
+	@Override
 	public Rectangle2D.Double getWorlds()
 	{
 		return(new Rectangle2D.Double(-180, -90, 360, 180));
@@ -311,6 +315,7 @@ public class InternalDataset implements GeographicDataset
 		return(retval);
 	}
 
+	@Override
 	public Row fetch() throws MapyrusException
 	{
 		Row retval = null;
@@ -325,6 +330,7 @@ public class InternalDataset implements GeographicDataset
 		return(retval);
 	}
 
+	@Override
 	public void close() throws MapyrusException
 	{
 		try
