@@ -32,6 +32,7 @@ import org.mapyrus.Constants;
  */
 public class SingleLineFormatter extends Formatter
 {
+	@Override
 	public String format(LogRecord record)
 	{
 		StringBuffer sb = new StringBuffer(128);

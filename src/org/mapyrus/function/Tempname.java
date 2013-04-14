@@ -33,9 +33,7 @@ import org.mapyrus.TransientFileFactory;
  */
 public class Tempname implements Function
 {
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
-	 */
+	@Override
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
@@ -48,25 +46,19 @@ public class Tempname implements Function
 		return(retval);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMaxArgumentCount()
-	 */
+	@Override
 	public int getMaxArgumentCount()
 	{
 		return(1);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMinArgumentCount()
-	 */
+	@Override
 	public int getMinArgumentCount()
 	{
 		return(1);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getName()
-	 */
+	@Override
 	public String getName()
 	{
 		return("tempname");

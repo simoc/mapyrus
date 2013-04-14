@@ -59,9 +59,7 @@ public class JavaFunction implements Function
 		}
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
-	 */
+	@Override
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException, InterruptedException
 	{
@@ -204,25 +202,19 @@ public class JavaFunction implements Function
 		return(retval);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMaxArgumentCount()
-	 */
+	@Override
 	public int getMaxArgumentCount()
 	{
 		return(m_maxArgs);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMinArgumentCount()
-	 */
+	@Override
 	public int getMinArgumentCount()
 	{
 		return(m_minArgs);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getName()
-	 */
+	@Override
 	public String getName()
 	{
 		return(m_className + "." + m_methodName);

@@ -39,34 +39,26 @@ public class DummyFunction implements Function
 		m_functionName = name;
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
-	 */
+	@Override
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
 		throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.CLASS_NOT_FUNCTION));
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMaxArgumentCount()
-	 */
+	@Override
 	public int getMaxArgumentCount()
 	{
 		return(4);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMinArgumentCount()
-	 */
+	@Override
 	public int getMinArgumentCount()
 	{
 		return(0);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getName()
-	 */
+	@Override
 	public String getName()
 	{
 		return(m_functionName);

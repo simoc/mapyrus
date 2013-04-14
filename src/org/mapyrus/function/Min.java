@@ -31,9 +31,7 @@ import org.mapyrus.MapyrusException;
  */
 public class Min implements Function
 {
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
-	 */
+	@Override
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException
 	{
@@ -73,25 +71,19 @@ public class Min implements Function
 		return(minArg);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMaxArgumentCount()
-	 */
+	@Override
 	public int getMaxArgumentCount()
 	{
 		return(Integer.MAX_VALUE);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMinArgumentCount()
-	 */
+	@Override
 	public int getMinArgumentCount()
 	{
 		return(1);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getName()
-	 */
+	@Override
 	public String getName()
 	{
 		return("min");

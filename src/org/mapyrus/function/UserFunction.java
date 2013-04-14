@@ -55,9 +55,7 @@ public class UserFunction implements Function
 		m_interpreter = interpreter;
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#evaluate(org.mapyrus.ContextStack, ArrayList)
-	 */
+	@Override
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException, InterruptedException
 	{
@@ -113,25 +111,19 @@ public class UserFunction implements Function
 		return(retval);
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMaxArgumentCount()
-	 */
+	@Override
 	public int getMaxArgumentCount()
 	{
 		return(m_formalParameters.size());
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getMinArgumentCount()
-	 */
+	@Override
 	public int getMinArgumentCount()
 	{
 		return(m_formalParameters.size());
 	}
 
-	/**
-	 * @see org.mapyrus.function.Function#getName()
-	 */
+	@Override
 	public String getName()
 	{
 		return(m_funcName);
