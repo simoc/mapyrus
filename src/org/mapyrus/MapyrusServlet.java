@@ -62,8 +62,8 @@ public class MapyrusServlet extends HttpServlet
 		 * using uppercase for all variable names.
 		 */
 		StringBuffer variables = new StringBuffer(512);
-		Map parameters = request.getParameterMap();
-		Iterator it = parameters.keySet().iterator();
+		Map<String, String[]> parameters = request.getParameterMap();
+		Iterator<String> it = parameters.keySet().iterator();
 
 		while (it.hasNext())
 		{
@@ -92,7 +92,7 @@ public class MapyrusServlet extends HttpServlet
 		/*
 		 * Create array containing HTTP request header information.
 		 */
-		Enumeration headerNames = request.getHeaderNames();
+		Enumeration<String> headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements())
 		{
 			String var = (String)headerNames.nextElement();

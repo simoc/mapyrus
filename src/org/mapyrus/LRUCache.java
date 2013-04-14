@@ -55,7 +55,7 @@ public class LRUCache<K,V> extends LinkedHashMap<K,V>
 	 * Returns true when eldest object should be removed from cache
 	 * to make way for a new object.
 	 */
-	protected boolean removeEldestEntry(Map.Entry eldest)
+	protected boolean removeEldestEntry(Map.Entry<K, V> eldest)
 	{
 		return(size() > m_maximumSize);
 	}

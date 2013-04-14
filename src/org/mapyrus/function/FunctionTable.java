@@ -246,7 +246,7 @@ public class FunctionTable
 			/*
 			 * Try to find Java class.
 			 */
-			Class clazz = Class.forName(className);
+			Class<?> clazz = Class.forName(className);
 
 			/*
 			 * Now try to find method in the Java class.

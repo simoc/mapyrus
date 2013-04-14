@@ -78,7 +78,7 @@ public class JavaFunction implements Function
 		for (i = 0; i < m_methods.size() && retval == null; i++)
 		{
 			Method method = m_methods.get(i);
-			Class[] parameters = method.getParameterTypes();
+			Class<?>[] parameters = method.getParameterTypes();
 			if (parameters.length == nArgs)
 			{
 				/*

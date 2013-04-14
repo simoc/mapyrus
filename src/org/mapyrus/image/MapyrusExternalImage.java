@@ -50,9 +50,9 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 			/*
 			 * Call constructor to create object to use to read image.
 			 */
-			Class clazz = Class.forName(className);
+			Class<?> clazz = Class.forName(className);
 			methodName = "<init>";
-			Constructor constructor = clazz.getConstructor(String.class, String.class);
+			Constructor<?> constructor = clazz.getConstructor(String.class, String.class);
 			Object imageReader = constructor.newInstance(filename, extras);
 
 			/*
@@ -70,7 +70,7 @@ public class MapyrusExternalImage implements GeoImageBoundingBox
 			{
 				methodName = "getLegendKeys";
 				Method getLegendKeysMethod = clazz.getMethod(methodName);
-				m_legendKeys = (HashMap)getLegendKeysMethod.invoke(imageReader);
+				m_legendKeys = (HashMap<String, Color>)getLegendKeysMethod.invoke(imageReader);
 			}
 			catch (NoSuchMethodException e)
 			{
