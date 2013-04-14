@@ -30,93 +30,7 @@ import java.util.Map;
  */
 public class Statement
 {
-	/*
-	 * Possible types of statements.
-	 */
-	public static final int CONDITIONAL = 2;
-	public static final int REPEAT_LOOP = 3;
-	public static final int WHILE_LOOP = 4;
-	public static final int FOR_LOOP = 5;
-	public static final int BLOCK = 6;
-
-	public static final int COLOR = 9;
-	public static final int BLEND = 10;
-	public static final int LINESTYLE = 11;
-	public static final int FONT = 12;
-	public static final int JUSTIFY = 13;
-	public static final int MOVE = 14;
-	public static final int DRAW = 15;
-	public static final int RDRAW = 16;
-	public static final int ARC = 17;
-	public static final int CIRCLE = 18;
-	public static final int ELLIPSE = 19;
-	public static final int CYLINDER = 20;
-	public static final int RAINDROP = 21;
-	public static final int BEZIER = 22;
-	public static final int SINEWAVE = 23;
-	public static final int WEDGE = 24;
-	public static final int SPIRAL = 25;
-	public static final int BOX = 26;
-	public static final int ROUNDEDBOX = 27;
-	public static final int BOX3D = 28;
-	public static final int CHESSBOARD = 29;
-	public static final int HEXAGON = 30;
-	public static final int PENTAGON = 31;
-	public static final int TRIANGLE = 32;
-	public static final int STAR = 33;
-	public static final int ADDPATH = 34;
-	public static final int CLEARPATH = 35;
-	public static final int CLOSEPATH = 36;
-	public static final int SAMPLEPATH = 37;
-	public static final int STRIPEPATH = 38;
-	public static final int SHIFTPATH = 39;
-	public static final int PARALLELPATH = 40;
-	public static final int SELECTPATH = 41;
-	public static final int REVERSEPATH = 42;
-	public static final int SINKHOLE = 43;
-	public static final int GUILLOTINE = 44;
-	public static final int STROKE = 45;
-	public static final int FILL = 46;
-	public static final int GRADIENTFILL = 47;
-	public static final int EVENTSCRIPT = 48;
-	public static final int PROTECT = 49;
-	public static final int UNPROTECT = 50;
-	public static final int CLIP = 51;
-	public static final int LABEL = 52;
-	public static final int FLOWLABEL = 53;
-	public static final int TABLE = 54;
-	public static final int TREE = 55;
-	public static final int ICON = 56;
-	public static final int GEOIMAGE = 57;
-	public static final int EPS = 58;
-	public static final int SVG = 59;
-	public static final int SVGCODE = 60;
-	public static final int PDF = 61;
-	public static final int PDFGROUP = 62;
-	public static final int SCALE = 63;
-	public static final int ROTATE = 64;
-	public static final int WORLDS = 65;
-	public static final int DATASET = 66;
-	public static final int FETCH = 67;
-	public static final int NEWPAGE = 68;
-	public static final int ENDPAGE = 69;
-	public static final int SETOUTPUT = 70;
-	public static final int PRINT = 71;
-	public static final int LOCAL = 72;
-	public static final int LET = 73;
-	public static final int EVAL = 74;
-	public static final int KEY = 75;
-	public static final int LEGEND = 76;
-	public static final int MIMETYPE = 77;
-	public static final int HTTPRESPONSE = 78;
-
-	/*
-	 * Statement type for call and return to/from user defined procedure block.
-	 */
-	public static final int CALL = 1000;
-	public static final int RETURN = 1001;
-
-	private int m_type;
+	private StatementType m_type;
 
 	/*
 	 * Statements in an if-then-else statement.
@@ -155,100 +69,96 @@ public class Statement
 	/*
 	 * Static statement type lookup table for fast lookup.
 	 */
-	private static HashMap<String, Integer> m_statementTypeLookup;
+	private static HashMap<String, StatementType> m_statementTypeLookup;
 	
 	static
 	{
-		m_statementTypeLookup = new HashMap<String, Integer>(100);
-		m_statementTypeLookup.put("color", Integer.valueOf(COLOR));
-		m_statementTypeLookup.put("colour", Integer.valueOf(COLOR));
-		m_statementTypeLookup.put("blend", Integer.valueOf(BLEND));
-		m_statementTypeLookup.put("linestyle", Integer.valueOf(LINESTYLE));
-		m_statementTypeLookup.put("font", Integer.valueOf(FONT));
-		m_statementTypeLookup.put("justify", Integer.valueOf(JUSTIFY));
-		m_statementTypeLookup.put("move", Integer.valueOf(MOVE));
-		m_statementTypeLookup.put("draw", Integer.valueOf(DRAW));
-		m_statementTypeLookup.put("rdraw", Integer.valueOf(RDRAW));
-		m_statementTypeLookup.put("arc", Integer.valueOf(ARC));
-		m_statementTypeLookup.put("circle", Integer.valueOf(CIRCLE));
-		m_statementTypeLookup.put("ellipse", Integer.valueOf(ELLIPSE));
-		m_statementTypeLookup.put("cylinder", Integer.valueOf(CYLINDER));
-		m_statementTypeLookup.put("raindrop", Integer.valueOf(RAINDROP));
-		m_statementTypeLookup.put("bezier", Integer.valueOf(BEZIER));
-		m_statementTypeLookup.put("sinewave", Integer.valueOf(SINEWAVE));
-		m_statementTypeLookup.put("wedge", Integer.valueOf(WEDGE));
-		m_statementTypeLookup.put("spiral", Integer.valueOf(SPIRAL));
-		m_statementTypeLookup.put("box", Integer.valueOf(BOX));
-		m_statementTypeLookup.put("roundedbox", Integer.valueOf(ROUNDEDBOX));
-		m_statementTypeLookup.put("box3d", Integer.valueOf(BOX3D));
-		m_statementTypeLookup.put("chessboard", Integer.valueOf(CHESSBOARD));
-		m_statementTypeLookup.put("hexagon", Integer.valueOf(HEXAGON));
-		m_statementTypeLookup.put("pentagon", Integer.valueOf(PENTAGON));
-		m_statementTypeLookup.put("triangle", Integer.valueOf(TRIANGLE));
-		m_statementTypeLookup.put("star", Integer.valueOf(STAR));
-		m_statementTypeLookup.put("addpath", Integer.valueOf(ADDPATH));
-		m_statementTypeLookup.put("clearpath", Integer.valueOf(CLEARPATH));
-		m_statementTypeLookup.put("closepath", Integer.valueOf(CLOSEPATH));
-		m_statementTypeLookup.put("samplepath", Integer.valueOf(SAMPLEPATH));
-		m_statementTypeLookup.put("stripepath", Integer.valueOf(STRIPEPATH));
-		m_statementTypeLookup.put("shiftpath", Integer.valueOf(SHIFTPATH));
-		m_statementTypeLookup.put("parallelpath", Integer.valueOf(PARALLELPATH));
-		m_statementTypeLookup.put("selectpath", Integer.valueOf(SELECTPATH));
-		m_statementTypeLookup.put("reversepath", Integer.valueOf(REVERSEPATH));
-		m_statementTypeLookup.put("sinkhole", Integer.valueOf(SINKHOLE));
-		m_statementTypeLookup.put("guillotine", Integer.valueOf(GUILLOTINE));
-		m_statementTypeLookup.put("stroke", Integer.valueOf(STROKE));
-		m_statementTypeLookup.put("fill", Integer.valueOf(FILL));
-		m_statementTypeLookup.put("gradientfill", Integer.valueOf(GRADIENTFILL));
-		m_statementTypeLookup.put("eventscript", Integer.valueOf(EVENTSCRIPT));
-		m_statementTypeLookup.put("protect", Integer.valueOf(PROTECT));
-		m_statementTypeLookup.put("unprotect", Integer.valueOf(UNPROTECT));
-		m_statementTypeLookup.put("clip", Integer.valueOf(CLIP));
-		m_statementTypeLookup.put("label", Integer.valueOf(LABEL));
-		m_statementTypeLookup.put("flowlabel", Integer.valueOf(FLOWLABEL));
-		m_statementTypeLookup.put("table", Integer.valueOf(TABLE));
-		m_statementTypeLookup.put("tree", Integer.valueOf(TREE));
-		m_statementTypeLookup.put("icon", Integer.valueOf(ICON));
-		m_statementTypeLookup.put("geoimage", Integer.valueOf(GEOIMAGE));
-		m_statementTypeLookup.put("eps", Integer.valueOf(EPS));
-		m_statementTypeLookup.put("svg", Integer.valueOf(SVG));
-		m_statementTypeLookup.put("svgcode", Integer.valueOf(SVGCODE));
-		m_statementTypeLookup.put("pdf", Integer.valueOf(PDF));
-		m_statementTypeLookup.put("pdfgroup", Integer.valueOf(PDFGROUP));
-		m_statementTypeLookup.put("scale", Integer.valueOf(SCALE));
-		m_statementTypeLookup.put("rotate", Integer.valueOf(ROTATE));
-		m_statementTypeLookup.put("worlds", Integer.valueOf(WORLDS));
-		m_statementTypeLookup.put("dataset", Integer.valueOf(DATASET));
-		m_statementTypeLookup.put("fetch", Integer.valueOf(FETCH));
-		m_statementTypeLookup.put("newpage", Integer.valueOf(NEWPAGE));
-		m_statementTypeLookup.put("endpage", Integer.valueOf(ENDPAGE));
-		m_statementTypeLookup.put("setoutput", Integer.valueOf(SETOUTPUT));
-		m_statementTypeLookup.put("print", Integer.valueOf(PRINT));
-		m_statementTypeLookup.put("local", Integer.valueOf(LOCAL));
-		m_statementTypeLookup.put("let", Integer.valueOf(LET));
-		m_statementTypeLookup.put("eval", Integer.valueOf(EVAL));
-		m_statementTypeLookup.put("key", Integer.valueOf(KEY));
-		m_statementTypeLookup.put("legend", Integer.valueOf(LEGEND));
-		m_statementTypeLookup.put("mimetype", Integer.valueOf(MIMETYPE));
-		m_statementTypeLookup.put("httpresponse", Integer.valueOf(HTTPRESPONSE));
-		m_statementTypeLookup.put("return", Integer.valueOf(RETURN));
+		m_statementTypeLookup = new HashMap<String, StatementType>(100);
+		m_statementTypeLookup.put("color", StatementType.COLOR);
+		m_statementTypeLookup.put("colour", StatementType.COLOR);
+		m_statementTypeLookup.put("blend", StatementType.BLEND);
+		m_statementTypeLookup.put("linestyle", StatementType.LINESTYLE);
+		m_statementTypeLookup.put("font", StatementType.FONT);
+		m_statementTypeLookup.put("justify", StatementType.JUSTIFY);
+		m_statementTypeLookup.put("move", StatementType.MOVE);
+		m_statementTypeLookup.put("draw", StatementType.DRAW);
+		m_statementTypeLookup.put("rdraw", StatementType.RDRAW);
+		m_statementTypeLookup.put("arc", StatementType.ARC);
+		m_statementTypeLookup.put("circle", StatementType.CIRCLE);
+		m_statementTypeLookup.put("ellipse", StatementType.ELLIPSE);
+		m_statementTypeLookup.put("cylinder", StatementType.CYLINDER);
+		m_statementTypeLookup.put("raindrop", StatementType.RAINDROP);
+		m_statementTypeLookup.put("bezier", StatementType.BEZIER);
+		m_statementTypeLookup.put("sinewave", StatementType.SINEWAVE);
+		m_statementTypeLookup.put("wedge", StatementType.WEDGE);
+		m_statementTypeLookup.put("spiral", StatementType.SPIRAL);
+		m_statementTypeLookup.put("box", StatementType.BOX);
+		m_statementTypeLookup.put("roundedbox", StatementType.ROUNDEDBOX);
+		m_statementTypeLookup.put("box3d", StatementType.BOX3D);
+		m_statementTypeLookup.put("chessboard", StatementType.CHESSBOARD);
+		m_statementTypeLookup.put("hexagon", StatementType.HEXAGON);
+		m_statementTypeLookup.put("pentagon", StatementType.PENTAGON);
+		m_statementTypeLookup.put("triangle", StatementType.TRIANGLE);
+		m_statementTypeLookup.put("star", StatementType.STAR);
+		m_statementTypeLookup.put("addpath", StatementType.ADDPATH);
+		m_statementTypeLookup.put("clearpath", StatementType.CLEARPATH);
+		m_statementTypeLookup.put("closepath", StatementType.CLOSEPATH);
+		m_statementTypeLookup.put("samplepath", StatementType.SAMPLEPATH);
+		m_statementTypeLookup.put("stripepath", StatementType.STRIPEPATH);
+		m_statementTypeLookup.put("shiftpath", StatementType.SHIFTPATH);
+		m_statementTypeLookup.put("parallelpath", StatementType.PARALLELPATH);
+		m_statementTypeLookup.put("selectpath", StatementType.SELECTPATH);
+		m_statementTypeLookup.put("reversepath", StatementType.REVERSEPATH);
+		m_statementTypeLookup.put("sinkhole", StatementType.SINKHOLE);
+		m_statementTypeLookup.put("guillotine", StatementType.GUILLOTINE);
+		m_statementTypeLookup.put("stroke", StatementType.STROKE);
+		m_statementTypeLookup.put("fill", StatementType.FILL);
+		m_statementTypeLookup.put("gradientfill", StatementType.GRADIENTFILL);
+		m_statementTypeLookup.put("eventscript", StatementType.EVENTSCRIPT);
+		m_statementTypeLookup.put("protect", StatementType.PROTECT);
+		m_statementTypeLookup.put("unprotect", StatementType.UNPROTECT);
+		m_statementTypeLookup.put("clip", StatementType.CLIP);
+		m_statementTypeLookup.put("label", StatementType.LABEL);
+		m_statementTypeLookup.put("flowlabel", StatementType.FLOWLABEL);
+		m_statementTypeLookup.put("table", StatementType.TABLE);
+		m_statementTypeLookup.put("tree", StatementType.TREE);
+		m_statementTypeLookup.put("icon", StatementType.ICON);
+		m_statementTypeLookup.put("geoimage", StatementType.GEOIMAGE);
+		m_statementTypeLookup.put("eps", StatementType.EPS);
+		m_statementTypeLookup.put("svg", StatementType.SVG);
+		m_statementTypeLookup.put("svgcode", StatementType.SVGCODE);
+		m_statementTypeLookup.put("pdf", StatementType.PDF);
+		m_statementTypeLookup.put("pdfgroup", StatementType.PDFGROUP);
+		m_statementTypeLookup.put("scale", StatementType.SCALE);
+		m_statementTypeLookup.put("rotate", StatementType.ROTATE);
+		m_statementTypeLookup.put("worlds", StatementType.WORLDS);
+		m_statementTypeLookup.put("dataset", StatementType.DATASET);
+		m_statementTypeLookup.put("fetch", StatementType.FETCH);
+		m_statementTypeLookup.put("newpage", StatementType.NEWPAGE);
+		m_statementTypeLookup.put("endpage", StatementType.ENDPAGE);
+		m_statementTypeLookup.put("setoutput", StatementType.SETOUTPUT);
+		m_statementTypeLookup.put("print", StatementType.PRINT);
+		m_statementTypeLookup.put("local", StatementType.LOCAL);
+		m_statementTypeLookup.put("let", StatementType.LET);
+		m_statementTypeLookup.put("eval", StatementType.EVAL);
+		m_statementTypeLookup.put("key", StatementType.KEY);
+		m_statementTypeLookup.put("legend", StatementType.LEGEND);
+		m_statementTypeLookup.put("mimetype", StatementType.MIMETYPE);
+		m_statementTypeLookup.put("httpresponse", StatementType.HTTPRESPONSE);
+		m_statementTypeLookup.put("return", StatementType.RETURN);
 	}
 
 	/**
 	 * Looks up identifier for a statement name.
 	 * @param s is the name of the statement.
-	 * @returns numeric code for this statement, or -1 if statement
-	 * is unknown.
+	 * @returns statement type.
 	 */
-	private int getStatementType(String s)
+	private StatementType getStatementType(String s)
 	{
-		int retval;
-		Integer type = m_statementTypeLookup.get(s.toLowerCase());
+		StatementType retval = m_statementTypeLookup.get(s.toLowerCase());
 
-		if (type == null)
-			retval = CALL;
-		else
-			retval = type.intValue();
+		if (retval == null)
+			retval = StatementType.CALL;
 		return(retval);
 	}
 	
@@ -261,7 +171,7 @@ public class Statement
 	public Statement(String keyword, Expression []expressions)
 	{
 		m_type = getStatementType(keyword);
-		if (m_type == CALL)
+		if (m_type == StatementType.CALL)
 			m_blockName = keyword;
 		m_expressions = expressions;
 	}
@@ -277,7 +187,7 @@ public class Statement
 		m_blockName = blockName;
 		m_parameters = parameters;
 		m_statementBlock = statements;
-		m_type = BLOCK;
+		m_type = StatementType.BLOCK;
 	}
 
 	/**
@@ -290,7 +200,7 @@ public class Statement
 	public Statement(Expression test, ArrayList<Statement> thenStatements,
 		ArrayList<Statement> elseStatements)
 	{
-		m_type = CONDITIONAL;
+		m_type = StatementType.CONDITIONAL;
 		m_expressions = new Expression[1];
 		m_expressions[0] = test;
 		m_thenStatements = thenStatements;
@@ -306,7 +216,7 @@ public class Statement
 	public Statement(Expression test, ArrayList<Statement> loopStatements,
 		boolean isWhileLoop)
 	{
-		m_type = isWhileLoop ? WHILE_LOOP : REPEAT_LOOP;
+		m_type = isWhileLoop ? StatementType.WHILE_LOOP : StatementType.REPEAT_LOOP;
 		m_expressions = new Expression[1];
 		m_expressions[0] = test;
 		m_loopStatements = loopStatements;
@@ -319,7 +229,7 @@ public class Statement
 	 */
 	public Statement(Expression var, Expression arrayVar, ArrayList<Statement> loopStatements)
 	{
-		m_type = FOR_LOOP;
+		m_type = StatementType.FOR_LOOP;
 		m_expressions = new Expression[1];
 		m_expressions[0] = var;
 		m_forHashMapExpression = arrayVar;
@@ -360,7 +270,7 @@ public class Statement
 	 * Returns the type of this statement.
 	 * @return statement type.
 	 */
-	public int getType()
+	public StatementType getType()
 	{
 		return(m_type);
 	}
@@ -436,23 +346,23 @@ public class Statement
 	public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
-		if (m_type == CALL)
+		if (m_type == StatementType.CALL)
 			sb.append("CALL ").append(m_blockName);
-		else if (m_type == CONDITIONAL)
+		else if (m_type == StatementType.CONDITIONAL)
 			sb.append("CONDITIONAL");
-		else if (m_type == REPEAT_LOOP)
+		else if (m_type == StatementType.REPEAT_LOOP)
 			sb.append("REPEAT_LOOP");
-		else if (m_type == WHILE_LOOP)
+		else if (m_type == StatementType.WHILE_LOOP)
 			sb.append("WHILE_LOOP");
-		else if (m_type == FOR_LOOP)
+		else if (m_type == StatementType.FOR_LOOP)
 			sb.append("FOR_LOOP");
-		else if (m_type == BLOCK)
+		else if (m_type == StatementType.BLOCK)
 			sb.append("BLOCK ").append(m_blockName);
 		else
 		{
-			for (Map.Entry<String, Integer> entry : m_statementTypeLookup.entrySet())
+			for (Map.Entry<String, StatementType> entry : m_statementTypeLookup.entrySet())
 			{
-				if (entry.getValue().intValue() == m_type)
+				if (entry.getValue() == m_type)
 					sb.append(entry.getKey());
 			}
 		}

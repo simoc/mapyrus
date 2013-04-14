@@ -641,7 +641,7 @@ public class Interpreter implements Cloneable
 	{
 		Expression []expr;
 		int nExpressions;
-		int type;
+		StatementType type;
 		double degrees, radius = 0.0;
 		double x1, y1, x2, y2;
 		double px1, py1, px2, py2;
@@ -666,7 +666,7 @@ public class Interpreter implements Cloneable
 		 * original list of variable names instead.
 		 */
 		type = st.getType();
-		if (type == Statement.LOCAL)
+		if (type == StatementType.LOCAL)
 		{
 			for (int i = 0; i < nExpressions; i++)
 			{
@@ -697,35 +697,35 @@ public class Interpreter implements Cloneable
 
 		switch (type)
 		{
-			case Statement.COLOR:
+			case COLOR:
 				setColor(context, m_executeArgs, nExpressions);
 				break;
 
-			case Statement.BLEND:
+			case BLEND:
 				if (nExpressions == 1)
 					context.setBlend(m_executeArgs[0].getStringValue());
 				else
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_BLEND));
 				break;
 
-			case Statement.LINESTYLE:
+			case LINESTYLE:
 				setLinestyle(context, m_executeArgs, nExpressions);
 				break;
 
-			case Statement.FONT:
+			case FONT:
 				setFont(context, m_executeArgs, nExpressions);
 				break;
 
-			case Statement.JUSTIFY:
+			case JUSTIFY:
 				if (nExpressions == 1)
 					setJustify(context, m_executeArgs[0].getStringValue());
 				else
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_JUSTIFY));
 				break;
 		
-			case Statement.MOVE:
-			case Statement.DRAW:
-			case Statement.RDRAW:
+			case MOVE:
+			case DRAW:
+			case RDRAW:
 				if (nExpressions > 0 && nExpressions % 2 == 0)
 				{
 					for (int i = 0; i < nExpressions; i += 2)
@@ -733,12 +733,12 @@ public class Interpreter implements Cloneable
 						/*
 						 * Add point to path.
 						 */
-						if (type == Statement.MOVE)
+						if (type == StatementType.MOVE)
 						{
 							context.moveTo(m_executeArgs[i].getNumericValue(),
 								m_executeArgs[i + 1].getNumericValue());
 						}
-						else if (type == Statement.DRAW)
+						else if (type == StatementType.DRAW)
 						{
 							context.lineTo(m_executeArgs[i].getNumericValue(),
 								m_executeArgs[i + 1].getNumericValue());
@@ -756,7 +756,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.ARC:
+			case ARC:
 				if (nExpressions == 5)
 				{
 					int direction = (m_executeArgs[0].getNumericValue() > 0 ? 1 : -1);
@@ -773,7 +773,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.CIRCLE:
+			case CIRCLE:
 				if (nExpressions == 3)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -795,7 +795,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.ELLIPSE:
+			case ELLIPSE:
 				if (nExpressions == 4)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -817,7 +817,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.CYLINDER:
+			case CYLINDER:
 				if (nExpressions == 4)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -856,7 +856,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.RAINDROP:
+			case RAINDROP:
 				if (nExpressions == 3)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -882,7 +882,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.BEZIER:
+			case BEZIER:
 				if (nExpressions == 6)
 				{
 					double xControl1 = m_executeArgs[0].getNumericValue();
@@ -900,7 +900,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.SINEWAVE:
+			case SINEWAVE:
 				if (nExpressions == 4)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -915,7 +915,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.WEDGE:
+			case WEDGE:
 				if (nExpressions == 5 || nExpressions == 6)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -1019,7 +1019,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.SPIRAL:
+			case SPIRAL:
 				if (nExpressions == 5)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -1059,7 +1059,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.HEXAGON:
+			case HEXAGON:
 				if (nExpressions == 3)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -1087,7 +1087,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.PENTAGON:
+			case PENTAGON:
 				if (nExpressions == 3)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -1116,7 +1116,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.TRIANGLE:
+			case TRIANGLE:
 				if (nExpressions == 4)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -1160,7 +1160,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.STAR:
+			case STAR:
 				if (nExpressions == 4)
 				{
 					x1 = m_executeArgs[0].getNumericValue();
@@ -1215,16 +1215,16 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.BOX:
-			case Statement.ROUNDEDBOX:
-			case Statement.BOX3D:
-			case Statement.CHESSBOARD:
-			case Statement.GUILLOTINE:
-			case Statement.PROTECT:
-			case Statement.UNPROTECT:
-				if (nExpressions == 4 || ((type == Statement.ROUNDEDBOX ||
-					type == Statement.BOX3D ||
-					type == Statement.CHESSBOARD) && nExpressions == 5))
+			case BOX:
+			case ROUNDEDBOX:
+			case BOX3D:
+			case CHESSBOARD:
+			case GUILLOTINE:
+			case PROTECT:
+			case UNPROTECT:
+				if (nExpressions == 4 || ((type == StatementType.ROUNDEDBOX ||
+					type == StatementType.BOX3D ||
+					type == StatementType.CHESSBOARD) && nExpressions == 5))
 				{
 					x1 = m_executeArgs[0].getNumericValue();
 					y1 = m_executeArgs[1].getNumericValue();
@@ -1254,7 +1254,7 @@ public class Interpreter implements Cloneable
 						yMax = y1;
 					}
 
-					if (type == Statement.ROUNDEDBOX)
+					if (type == StatementType.ROUNDEDBOX)
 					{
 						double yRange = yMax - yMin;
 						double xRange = xMax - xMin;
@@ -1277,9 +1277,9 @@ public class Interpreter implements Cloneable
 						 * rounded corners instead.
 						 */
 						if (radius <= 0)
-							type = Statement.BOX;
+							type = StatementType.BOX;
 					}
-					else if (type == Statement.BOX3D)
+					else if (type == StatementType.BOX3D)
 					{
 						depth = Math.min(xMax - xMin, yMax - yMin);
 						if (nExpressions == 5)
@@ -1287,7 +1287,7 @@ public class Interpreter implements Cloneable
 							depth = m_executeArgs[4].getNumericValue();
 						}
 					}
-					else if (type == Statement.CHESSBOARD)
+					else if (type == StatementType.CHESSBOARD)
 					{
 						if (nExpressions == 5)
 						{
@@ -1298,7 +1298,7 @@ public class Interpreter implements Cloneable
 								": " + tileSize);
 					}
 
-					if (type == Statement.BOX || type == Statement.BOX3D)
+					if (type == StatementType.BOX || type == StatementType.BOX3D)
 					{
 						context.moveTo(xMin, yMin);
 						context.lineTo(xMin, yMax);
@@ -1306,7 +1306,7 @@ public class Interpreter implements Cloneable
 						context.lineTo(xMax, yMin);
 						context.closePath();
 
-						if (type == Statement.BOX3D)
+						if (type == StatementType.BOX3D)
 						{
 
 							double cos30 = Math.cos(Math.toRadians(30));
@@ -1335,7 +1335,7 @@ public class Interpreter implements Cloneable
 							context.closePath();
 						}
 					}
-					else if (type == Statement.ROUNDEDBOX)
+					else if (type == StatementType.ROUNDEDBOX)
 					{
 						context.moveTo(xMin, yMax - radius);
 						context.arcTo(1, xMin + radius, yMax - radius, xMin + radius, yMax);
@@ -1347,7 +1347,7 @@ public class Interpreter implements Cloneable
 						context.arcTo(1, xMin + radius, yMin + radius, xMin, yMin + radius);
 						context.closePath();
 					}
-					else if (type == Statement.CHESSBOARD)
+					else if (type == StatementType.CHESSBOARD)
 					{
 						int i = 0, j;
 						y1 = yMin;
@@ -1384,11 +1384,11 @@ public class Interpreter implements Cloneable
 							y1 = yMin + i * tileSize;
 						}
 					}
-					else if (type == Statement.GUILLOTINE)
+					else if (type == StatementType.GUILLOTINE)
 					{
 						context.guillotine(xMin, yMin, xMax, yMax);
 					}
-					else if (type == Statement.PROTECT)
+					else if (type == StatementType.PROTECT)
 					{
 						context.protect(xMin, yMin, xMax, yMax);
 					}
@@ -1398,10 +1398,10 @@ public class Interpreter implements Cloneable
 					}
 				}
 				else if (nExpressions == 1 &&
-					(type == Statement.PROTECT || type == Statement.UNPROTECT))
+					(type == StatementType.PROTECT || type == StatementType.UNPROTECT))
 				{
 					Argument geometry = m_executeArgs[0];
-					if (type == Statement.PROTECT)
+					if (type == StatementType.PROTECT)
 					{
 						context.protect(geometry);
 					}
@@ -1410,11 +1410,11 @@ public class Interpreter implements Cloneable
 						context.unprotect(geometry);
 					}
 				}
-				else if (nExpressions == 0 && type == Statement.PROTECT)
+				else if (nExpressions == 0 && type == StatementType.PROTECT)
 				{
 					context.protect();
 				}
-				else if (nExpressions == 0 && type == Statement.UNPROTECT)
+				else if (nExpressions == 0 && type == StatementType.UNPROTECT)
 				{
 					context.unprotect();
 				}
@@ -1424,7 +1424,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.ADDPATH:
+			case ADDPATH:
 				for (int i = 0; i < nExpressions; i++)
 				{
 					double coords[] = m_executeArgs[i].getGeometryValue();
@@ -1432,7 +1432,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 				
-			case Statement.CLEARPATH:
+			case CLEARPATH:
 				if (nExpressions > 0)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
@@ -1440,7 +1440,7 @@ public class Interpreter implements Cloneable
 				context.clearPath();
 				break;
 
-			case Statement.CLOSEPATH:
+			case CLOSEPATH:
 				if (nExpressions > 0)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
@@ -1448,7 +1448,7 @@ public class Interpreter implements Cloneable
 				context.closePath();
 				break;
 
-			case Statement.SAMPLEPATH:
+			case SAMPLEPATH:
 				if (nExpressions == 2)
 				{
 					context.samplePath(m_executeArgs[0].getNumericValue(), m_executeArgs[1].getNumericValue());
@@ -1459,7 +1459,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 				
-			case Statement.STRIPEPATH:
+			case STRIPEPATH:
 				if (nExpressions == 2)
 				{
 					degrees = m_executeArgs[1].getNumericValue();
@@ -1471,7 +1471,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.SHIFTPATH:
+			case SHIFTPATH:
 				if (nExpressions == 2)
 				{
 					context.translatePath(m_executeArgs[0].getNumericValue(),
@@ -1483,7 +1483,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.PARALLELPATH:
+			case PARALLELPATH:
 				if (nExpressions > 0)
 				{
 					double []distances = new double[nExpressions];
@@ -1497,7 +1497,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.SELECTPATH:
+			case SELECTPATH:
 				if (nExpressions > 0 && nExpressions % 2 == 0)
 				{
 					double []offsets = new double[nExpressions / 2];
@@ -1515,7 +1515,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.REVERSEPATH:
+			case REVERSEPATH:
 				if (nExpressions > 0)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
@@ -1523,7 +1523,7 @@ public class Interpreter implements Cloneable
 				context.reversePath();
 				break;
 
-			case Statement.SINKHOLE:
+			case SINKHOLE:
 				if (nExpressions > 0)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_VALUES));
@@ -1531,7 +1531,7 @@ public class Interpreter implements Cloneable
 				context.createSinkhole();
 				break;
 
-			case Statement.STROKE:
+			case STROKE:
 				if (nExpressions > 0)
 				{
 					StringBuffer sb = new StringBuffer(m_executeArgs[0].getStringValue());
@@ -1545,7 +1545,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 				
-			case Statement.FILL:
+			case FILL:
 				if (nExpressions > 0)
 				{
 					StringBuffer sb = new StringBuffer(m_executeArgs[0].getStringValue());
@@ -1559,7 +1559,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.GRADIENTFILL:
+			case GRADIENTFILL:
 				if (nExpressions == 4 || nExpressions == 5)
 				{
 					Color current = context.getColor();
@@ -1603,7 +1603,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.EVENTSCRIPT:
+			case EVENTSCRIPT:
 				if (nExpressions >= 1)
 				{
 					StringBuffer sb = new StringBuffer();
@@ -1621,7 +1621,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.CLIP:
+			case CLIP:
 				if (nExpressions != 1)
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_CLIP_SIDE));
@@ -1633,7 +1633,7 @@ public class Interpreter implements Cloneable
 					context.clipOutside();
 				break;	
 
-			case Statement.SETOUTPUT:
+			case SETOUTPUT:
 				if (nExpressions == 1)
 				{
 					try
@@ -1689,9 +1689,9 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.LABEL:
-			case Statement.PRINT:
-			case Statement.FLOWLABEL:
+			case LABEL:
+			case PRINT:
+			case FLOWLABEL:
 				String label = "";
 				int nChars = 0;
 				int labelIndex;
@@ -1699,7 +1699,7 @@ public class Interpreter implements Cloneable
 				double spacing = 0.0;
 				boolean rotateInvertedLabels = true;
 
-				if (type == Statement.FLOWLABEL)
+				if (type == StatementType.FLOWLABEL)
 				{
 					if (nExpressions < 2)
 					{
@@ -1754,24 +1754,24 @@ public class Interpreter implements Cloneable
 					label = sb.toString();
 				}
 
-				if (type == Statement.PRINT)
+				if (type == StatementType.PRINT)
 				{
 					PrintStream p = context.getStdout();
 					p.println(label);
 				}
 				else if (nChars > 0)
 				{
-					if (type == Statement.FLOWLABEL)
+					if (type == StatementType.FLOWLABEL)
 						context.flowLabel(spacing, offset, rotateInvertedLabels, label);
 					else
 						context.label(label);
 				}
 				break;
 
-			case Statement.TABLE:
-			case Statement.TREE:
-				if ((type == Statement.TREE && nExpressions == 2) ||
-					(type == Statement.TABLE && nExpressions >= 2))
+			case TABLE:
+			case TREE:
+				if ((type == StatementType.TREE && nExpressions == 2) ||
+					(type == StatementType.TABLE && nExpressions >= 2))
 				{
 					extras = m_executeArgs[0].getStringValue();
 					ArrayList<Argument> columns = new ArrayList<Argument>(nExpressions - 1);
@@ -1789,21 +1789,21 @@ public class Interpreter implements Cloneable
 						}
 						columns.add(arg);
 					}
-					if (type == Statement.TABLE)
+					if (type == StatementType.TABLE)
 						context.drawTable(extras, columns);
 					else
 						context.drawTree(extras, (Argument)columns.get(0));
 				}
 				else
 				{
-					if (type == Statement.TABLE)
+					if (type == StatementType.TABLE)
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TABLE));
 					else
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_TREE));
 				}
 				break;
 
-			case Statement.ICON:
+			case ICON:
 				if (nExpressions == 1 || nExpressions == 2)
 				{
 					double size;
@@ -1820,7 +1820,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.GEOIMAGE:
+			case GEOIMAGE:
 				if (nExpressions == 1 || nExpressions == 2)
 				{
 					String filename = m_executeArgs[0].getStringValue();
@@ -1836,7 +1836,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.EPS:
+			case EPS:
 				if (nExpressions == 1 || nExpressions == 2)
 				{
 					double size;
@@ -1857,7 +1857,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 				
-			case Statement.SVG:
+			case SVG:
 				if (nExpressions == 1 || nExpressions == 2)
 				{
 					double size;
@@ -1878,14 +1878,14 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.SVGCODE:
+			case SVGCODE:
 				for (int i = 0; i < nExpressions; i++)
 				{
 					context.addSVGCode(m_executeArgs[i].getStringValue());
 				}
 				break;
 
-			case Statement.PDF:
+			case PDF:
 				if (nExpressions == 2 || nExpressions == 3)
 				{
 					double size;
@@ -1908,7 +1908,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.PDFGROUP:
+			case PDFGROUP:
 				if (nExpressions > 0)
 				{
 					String groupAction = m_executeArgs[0].getStringValue();
@@ -1939,7 +1939,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 				
-			case Statement.SCALE:
+			case SCALE:
 				if (nExpressions == 1)
 				{
 					double s = m_executeArgs[0].getNumericValue();
@@ -1951,7 +1951,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.ROTATE:
+			case ROTATE:
 				if (nExpressions == 1)
 				{
 					degrees = m_executeArgs[0].getNumericValue();
@@ -1963,7 +1963,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.WORLDS:
+			case WORLDS:
 
 				if (nExpressions == 1 || nExpressions == 2)
 				{
@@ -2068,7 +2068,7 @@ public class Interpreter implements Cloneable
 					units, allowDistortion);
 				break;
 
-			case Statement.DATASET:
+			case DATASET:
 				if (nExpressions == 2 || nExpressions == 3)
 				{
 					extras = "";
@@ -2083,7 +2083,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.FETCH:
+			case FETCH:
 				/*
 				 * Fetch next row from dataset.
 				 */
@@ -2105,7 +2105,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.NEWPAGE:
+			case NEWPAGE:
 				if (nExpressions >= 3 && nExpressions <= 5)
 				{
 					String format = m_executeArgs[0].getStringValue();
@@ -2170,14 +2170,14 @@ public class Interpreter implements Cloneable
 				}
 				break;	
 
-			case Statement.ENDPAGE:
+			case ENDPAGE:
 				context.closeOutputFormat();
 				break;
 
-			case Statement.LOCAL:
+			case LOCAL:
 				break;
 
-			case Statement.EVAL:
+			case EVAL:
 				if (nExpressions == 1)
 				{
 					/*
@@ -2198,14 +2198,14 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.LET:
+			case LET:
 				/*
 				 * Nothing to do -- any variables were assigned during expression
 				 * evaluation above.
 				 */
 				break;
 
-			case Statement.KEY:
+			case KEY:
 				if (nExpressions >= 2)
 				{
 					String entryType = m_executeArgs[0].getStringValue();
@@ -2224,7 +2224,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.LEGEND:
+			case LEGEND:
 				if (nExpressions == 1)
 				{
 					legendSize = m_executeArgs[0].getNumericValue();
@@ -2236,7 +2236,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
-			case Statement.MIMETYPE:
+			case MIMETYPE:
 				if (nExpressions == 1)
 				{
 					String mimeType = m_executeArgs[0].getStringValue();
@@ -2251,7 +2251,7 @@ public class Interpreter implements Cloneable
 				}
 				break;
 				
-			case Statement.HTTPRESPONSE:
+			case HTTPRESPONSE:
 				StringBuffer sb = new StringBuffer(128);
 				for (int i = 0; i < nExpressions; i++)
 				{
@@ -3141,18 +3141,18 @@ public class Interpreter implements Cloneable
 		throws IOException, MapyrusException, InterruptedException
 	{
 		Argument []args;
-		int statementType = statement.getType();
+		StatementType statementType = statement.getType();
 		Argument returnValue = null;
 
 		/*
 		 * Store procedure blocks away for later execution,
 		 * execute any other statements immediately.
 		 */
-		if (statementType == Statement.BLOCK)
+		if (statementType == StatementType.BLOCK)
 		{
 			m_statementBlocks.put(statement.getBlockName(), statement);
 		}
-		else if (statementType == Statement.RETURN)
+		else if (statementType == StatementType.RETURN)
 		{
 			/*
 			 * Evaluate any value to return.
@@ -3167,7 +3167,7 @@ public class Interpreter implements Cloneable
 			else
 				returnValue = expr[0].evaluate(m_context, statement.getFilename());
 		}
-		else if (statementType == Statement.CONDITIONAL)
+		else if (statementType == StatementType.CONDITIONAL)
 		{
 			/*
 			 * Execute correct part of if statement depending on value of expression.
@@ -3215,8 +3215,8 @@ public class Interpreter implements Cloneable
 				}
 			}
 		}
-		else if (statementType == Statement.WHILE_LOOP ||
-			statementType == Statement.REPEAT_LOOP)
+		else if (statementType == StatementType.WHILE_LOOP ||
+			statementType == StatementType.REPEAT_LOOP)
 		{
 			/*
 			 * Find expression to test and loop statements to execute.
@@ -3243,7 +3243,7 @@ public class Interpreter implements Cloneable
 			}
 
 			int nIterations = 0;
-			if (statementType == Statement.REPEAT_LOOP)
+			if (statementType == StatementType.REPEAT_LOOP)
 			{
 				/*
 				 * Protect against round-off.
@@ -3259,13 +3259,13 @@ public class Interpreter implements Cloneable
 			 * Execute loop while expression remains true (non-zero).
 			 */
 			int iter = 0;
-			int loopStatementType = statementType;
+			StatementType loopStatementType = statementType;
 			while
 			(
 				(returnValue == null) &&
-			 	((loopStatementType == Statement.WHILE_LOOP &&
+			 	((loopStatementType == StatementType.WHILE_LOOP &&
 					test.getNumericValue() != 0.0) ||
-			 	(loopStatementType == Statement.REPEAT_LOOP &&
+			 	(loopStatementType == StatementType.REPEAT_LOOP &&
 				 	iter < nIterations))
 			)
 			{
@@ -3290,7 +3290,7 @@ public class Interpreter implements Cloneable
 				if (v.isEmpty())
 					m_throttle.sleep();
 
-				if (loopStatementType == Statement.WHILE_LOOP && (returnValue == null))
+				if (loopStatementType == StatementType.WHILE_LOOP && (returnValue == null))
 				{
 					test = expr[0].evaluate(m_context, statement.getFilename());
 					if (test.getType() != Argument.NUMERIC)
@@ -3302,7 +3302,7 @@ public class Interpreter implements Cloneable
 				iter++;
 			}
 		}
-		else if (statementType == Statement.FOR_LOOP)
+		else if (statementType == StatementType.FOR_LOOP)
 		{
 			/*
 			 * Find hashmap to loop through and the variable to assign
@@ -3361,7 +3361,7 @@ public class Interpreter implements Cloneable
 				}
 			}
 		}
-		else if (statementType == Statement.CALL)
+		else if (statementType == StatementType.CALL)
 		{
 			/*
 			 * Find the statements for the procedure block we are calling.
