@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.operation.buffer.BufferOp;
+import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
 /**
  * Function returning geometry containing buffer around existing geometry.
@@ -52,11 +53,11 @@ public class Buffer implements Function
 		double distance = arg2.getNumericValue();
 
 		String cap = arg3.toString();
-		int capType = BufferOp.CAP_ROUND;
+		BufferParameters bufferParams = new BufferParameters(BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_ROUND);
 		if (cap.equalsIgnoreCase("butt"))
-			capType = BufferOp.CAP_BUTT;
+			bufferParams = new BufferParameters(BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT);
 		else if (cap.equalsIgnoreCase("square"))
-			capType = BufferOp.CAP_SQUARE;
+			bufferParams = new BufferParameters(BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_SQUARE);
 
 		try
 		{
@@ -65,8 +66,7 @@ public class Buffer implements Function
 			 * geometry argument.
 			 */
 			Geometry g = new WKTReader().read(wkt);
-			BufferOp bufOp = new BufferOp(g);
-			bufOp.setEndCapStyle(capType);
+			BufferOp bufOp = new BufferOp(g, bufferParams);
 			Geometry buffer = bufOp.getResultGeometry(distance);
 			retval = new Argument(buffer.toText());
 		}
