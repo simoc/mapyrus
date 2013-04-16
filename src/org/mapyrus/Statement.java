@@ -20,7 +20,9 @@
 package org.mapyrus;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -74,78 +76,14 @@ public class Statement
 	static
 	{
 		m_statementTypeLookup = new HashMap<String, StatementType>(100);
-		m_statementTypeLookup.put("color", StatementType.COLOR);
-		m_statementTypeLookup.put("colour", StatementType.COLOUR);
-		m_statementTypeLookup.put("blend", StatementType.BLEND);
-		m_statementTypeLookup.put("linestyle", StatementType.LINESTYLE);
-		m_statementTypeLookup.put("font", StatementType.FONT);
-		m_statementTypeLookup.put("justify", StatementType.JUSTIFY);
-		m_statementTypeLookup.put("move", StatementType.MOVE);
-		m_statementTypeLookup.put("draw", StatementType.DRAW);
-		m_statementTypeLookup.put("rdraw", StatementType.RDRAW);
-		m_statementTypeLookup.put("arc", StatementType.ARC);
-		m_statementTypeLookup.put("circle", StatementType.CIRCLE);
-		m_statementTypeLookup.put("ellipse", StatementType.ELLIPSE);
-		m_statementTypeLookup.put("cylinder", StatementType.CYLINDER);
-		m_statementTypeLookup.put("raindrop", StatementType.RAINDROP);
-		m_statementTypeLookup.put("bezier", StatementType.BEZIER);
-		m_statementTypeLookup.put("sinewave", StatementType.SINEWAVE);
-		m_statementTypeLookup.put("wedge", StatementType.WEDGE);
-		m_statementTypeLookup.put("spiral", StatementType.SPIRAL);
-		m_statementTypeLookup.put("box", StatementType.BOX);
-		m_statementTypeLookup.put("roundedbox", StatementType.ROUNDEDBOX);
-		m_statementTypeLookup.put("box3d", StatementType.BOX3D);
-		m_statementTypeLookup.put("chessboard", StatementType.CHESSBOARD);
-		m_statementTypeLookup.put("hexagon", StatementType.HEXAGON);
-		m_statementTypeLookup.put("pentagon", StatementType.PENTAGON);
-		m_statementTypeLookup.put("triangle", StatementType.TRIANGLE);
-		m_statementTypeLookup.put("star", StatementType.STAR);
-		m_statementTypeLookup.put("addpath", StatementType.ADDPATH);
-		m_statementTypeLookup.put("clearpath", StatementType.CLEARPATH);
-		m_statementTypeLookup.put("closepath", StatementType.CLOSEPATH);
-		m_statementTypeLookup.put("samplepath", StatementType.SAMPLEPATH);
-		m_statementTypeLookup.put("stripepath", StatementType.STRIPEPATH);
-		m_statementTypeLookup.put("shiftpath", StatementType.SHIFTPATH);
-		m_statementTypeLookup.put("parallelpath", StatementType.PARALLELPATH);
-		m_statementTypeLookup.put("selectpath", StatementType.SELECTPATH);
-		m_statementTypeLookup.put("reversepath", StatementType.REVERSEPATH);
-		m_statementTypeLookup.put("sinkhole", StatementType.SINKHOLE);
-		m_statementTypeLookup.put("guillotine", StatementType.GUILLOTINE);
-		m_statementTypeLookup.put("stroke", StatementType.STROKE);
-		m_statementTypeLookup.put("fill", StatementType.FILL);
-		m_statementTypeLookup.put("gradientfill", StatementType.GRADIENTFILL);
-		m_statementTypeLookup.put("eventscript", StatementType.EVENTSCRIPT);
-		m_statementTypeLookup.put("protect", StatementType.PROTECT);
-		m_statementTypeLookup.put("unprotect", StatementType.UNPROTECT);
-		m_statementTypeLookup.put("clip", StatementType.CLIP);
-		m_statementTypeLookup.put("label", StatementType.LABEL);
-		m_statementTypeLookup.put("flowlabel", StatementType.FLOWLABEL);
-		m_statementTypeLookup.put("table", StatementType.TABLE);
-		m_statementTypeLookup.put("tree", StatementType.TREE);
-		m_statementTypeLookup.put("icon", StatementType.ICON);
-		m_statementTypeLookup.put("geoimage", StatementType.GEOIMAGE);
-		m_statementTypeLookup.put("eps", StatementType.EPS);
-		m_statementTypeLookup.put("svg", StatementType.SVG);
-		m_statementTypeLookup.put("svgcode", StatementType.SVGCODE);
-		m_statementTypeLookup.put("pdf", StatementType.PDF);
-		m_statementTypeLookup.put("pdfgroup", StatementType.PDFGROUP);
-		m_statementTypeLookup.put("scale", StatementType.SCALE);
-		m_statementTypeLookup.put("rotate", StatementType.ROTATE);
-		m_statementTypeLookup.put("worlds", StatementType.WORLDS);
-		m_statementTypeLookup.put("dataset", StatementType.DATASET);
-		m_statementTypeLookup.put("fetch", StatementType.FETCH);
-		m_statementTypeLookup.put("newpage", StatementType.NEWPAGE);
-		m_statementTypeLookup.put("endpage", StatementType.ENDPAGE);
-		m_statementTypeLookup.put("setoutput", StatementType.SETOUTPUT);
-		m_statementTypeLookup.put("print", StatementType.PRINT);
-		m_statementTypeLookup.put("local", StatementType.LOCAL);
-		m_statementTypeLookup.put("let", StatementType.LET);
-		m_statementTypeLookup.put("eval", StatementType.EVAL);
-		m_statementTypeLookup.put("key", StatementType.KEY);
-		m_statementTypeLookup.put("legend", StatementType.LEGEND);
-		m_statementTypeLookup.put("mimetype", StatementType.MIMETYPE);
-		m_statementTypeLookup.put("httpresponse", StatementType.HTTPRESPONSE);
-		m_statementTypeLookup.put("return", StatementType.RETURN);
+		EnumSet<StatementType> statementSet = EnumSet.allOf(StatementType.class);
+		Iterator<StatementType> it = statementSet.iterator();
+		while (it.hasNext())
+		{
+			StatementType type = it.next();
+			if (!type.isControl())
+				m_statementTypeLookup.put(type.getName(), type);
+		}
 	}
 
 	/**
