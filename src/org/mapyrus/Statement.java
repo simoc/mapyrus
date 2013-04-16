@@ -75,7 +75,7 @@ public class Statement
 	{
 		m_statementTypeLookup = new HashMap<String, StatementType>(100);
 		m_statementTypeLookup.put("color", StatementType.COLOR);
-		m_statementTypeLookup.put("colour", StatementType.COLOR);
+		m_statementTypeLookup.put("colour", StatementType.COLOUR);
 		m_statementTypeLookup.put("blend", StatementType.BLEND);
 		m_statementTypeLookup.put("linestyle", StatementType.LINESTYLE);
 		m_statementTypeLookup.put("font", StatementType.FONT);

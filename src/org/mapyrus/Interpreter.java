@@ -698,6 +698,7 @@ public class Interpreter implements Cloneable
 		switch (type)
 		{
 			case COLOR:
+			case COLOUR:
 				setColor(context, m_executeArgs, nExpressions);
 				break;
 

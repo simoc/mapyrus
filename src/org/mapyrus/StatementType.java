@@ -30,6 +30,7 @@ public enum StatementType
 	BLOCK,
 
 	COLOR,
+	COLOUR,
 	BLEND,
 	LINESTYLE,
 	FONT,
