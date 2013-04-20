@@ -198,6 +198,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	{
 		String token;
 		boolean foundOpenParen, foundCloseParen, foundEmpty;
+		boolean foundNestedOpenParen, foundNestedCloseParen;
 		boolean foundX, foundY;
 		int index = geometryIndex;
 		int counter = 0;
@@ -206,6 +207,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 		 * First expect a '(' or the keyword 'EMPTY'.
 		 */
 		foundOpenParen = foundCloseParen = foundEmpty = false;
+		foundNestedOpenParen = foundNestedCloseParen = false;
 		foundX = foundY = false;
 		while (foundOpenParen == false && foundEmpty == false && st.hasMoreTokens())
 		{
@@ -283,12 +285,29 @@ public class Argument implements Comparable<Argument>, Cloneable
 							": " + wktGeometry);
 					}
 				}
+				else if (isMultiPoint && c == '(' && foundX == false && foundNestedOpenParen == false)
+				{
+					/*
+					 * Allow nested parentheses for second form of MULTIPOINT geometry like
+					 * MULTIPOINT ( ( 1 2 ) , ( 3 4 ) )
+					 */
+					foundNestedOpenParen = true;
+					foundNestedCloseParen = false;
+				}
 				else if (c == ')' && foundY)
 				{
 					/*
 					 * Found closing parenthesis marking end of coordinates.
 					 */
-					foundCloseParen = true;
+					if (foundNestedOpenParen && foundNestedCloseParen == false)
+					{
+						foundNestedOpenParen = false;
+						foundNestedCloseParen = true;
+					}
+					else
+					{
+						foundCloseParen = true;
+					}
 				}
 				else if (c == ',' && foundY)
 				{
@@ -308,7 +327,9 @@ public class Argument implements Comparable<Argument>, Cloneable
 		/*
 		 * Did we successively parse something?
 		 */
-		if ((foundOpenParen && foundCloseParen == false) || (foundX && (!foundY)))
+		if ((foundOpenParen && foundCloseParen == false) ||
+			(foundNestedOpenParen && foundNestedCloseParen == false) ||
+			(foundX && (!foundY)))
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_OGC_WKT) +
 				": " + wktGeometry);
