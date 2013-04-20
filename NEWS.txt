@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2012 Simon Chenery <simoc@users.sourceforge.net>
 
+1.301, May 2013
+
+* Accept MULTIPOINT ((1 2),(3 4)) format OCG WKT geometry strings too.
+
 1.202, July 2012
 
 * Added PDFGROUP command to enable definition of groups/layers in PDF output.
