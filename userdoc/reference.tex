@@ -2167,6 +2167,32 @@ Declares the listed variable names as local to a procedure.
 The variables are not visible outside the enclosing procedure
 and their values are lost when the procedure ends.
 
+\subsubsection{logspiral}
+
+\begin{alltt}
+logspiral \textit{xCenter}, \textit{yCenter}, \textit{a}, \textit{b}, \textit{revolutions}, \textit{startAngle}
+\end{alltt}
+
+Adds a logarithmic spiral to the current path, with center
+point (\textit{xCenter}, \textit{yCenter}).  The values \textit{a}
+and \textit{b} are used in the polar coordinates formula
+\begin{math}r = ae^{b\theta}\end{math}
+to generate the spiral points.
+
+\textit{revolutions} defines the number of loops of the spiral.
+If \textit{revolutions}
+is a positive number then the spiral is drawn in a anti-clockwise direction.
+If \textit{revolutions} is a negative number then the spiral
+is drawn in an clockwise direction.
+
+\textit{startAngle} defines the
+angle at which the inner revolution of the spiral starts.
+
+The center point and start angle are transformed through any
+transformation set with a \textit{worlds} command,
+then scaled and rotated by \textit{scale}
+and \textit{rotate} values.
+
 \subsubsection{mimetype}
 
 \begin{alltt}

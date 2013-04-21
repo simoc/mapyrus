@@ -1060,6 +1060,56 @@ public class Interpreter implements Cloneable
 				}
 				break;
 
+			case LOGSPIRAL:
+				if (nExpressions == 6)
+				{
+					x1 = m_executeArgs[0].getNumericValue();
+					y1 = m_executeArgs[1].getNumericValue();
+					double a = m_executeArgs[2].getNumericValue();
+					double b = m_executeArgs[3].getNumericValue();
+					double revs = m_executeArgs[4].getNumericValue();
+					double startAngle = m_executeArgs[5].getNumericValue();
+					startAngle = Math.toRadians(startAngle);
+					if (revs != 0 && b > 0 && a > 0)
+					{
+						context.moveTo(x1, y1);
+
+						double resolution = context.getResolution();
+
+						double t = 0;
+						double maxT = Math.abs(revs) * Math.PI * 2;
+						while (t < maxT)
+						{
+							radius = a * Math.exp(b * t);
+							
+							if (radius >= resolution)
+							{
+								double currentAngle;
+								if (revs > 0)
+									currentAngle = startAngle + t;
+								else
+									currentAngle = startAngle - t;
+
+								x2 = radius * Math.cos(currentAngle) + x1;
+								y2 = radius * Math.sin(currentAngle) + y1;
+
+								context.lineTo(x2, y2);
+
+								t += Math.asin(resolution / radius);
+							}
+							else
+							{
+								t += 2 * Math.PI / 180.0; /* 2 degrees */
+							}
+						}
+					}
+				}
+				else
+				{
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_LOGSPIRAL));
+				}
+				break;
+
 			case HEXAGON:
 				if (nExpressions == 3)
 				{

@@ -30,3 +30,5 @@ clearpath; color "dodgerblue"; raindrop 38, 5, 2.5; fill
 clearpath; color "crimson"; move 45, 5; sinewave 52, 5, 4, 4; stroke
 
 clearpath; color "black"; move 240, 20; chessboard 60, 2, 66, 8, 1; fill
+
+clearpath; color "dark khaki"; logspiral 80, 5, 0.1, 0.2, 3.25, 0; stroke

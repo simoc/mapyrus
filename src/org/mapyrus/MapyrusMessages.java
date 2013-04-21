@@ -109,6 +109,7 @@ public class MapyrusMessages
 	public static final String INVALID_LINE_JOIN = "invalidlinejoin";
 	public static final String INVALID_LINE_WIDTH = "invalidlinewidth";
 	public static final String INVALID_LINESTYLE = "invalidlinestyle";
+	public static final String INVALID_LOGSPIRAL = "invalidlogspiral";
 	public static final String INVALID_NUMBER = "invalidnumber";
 	public static final String INVALID_OCTAL = "invalidoctal";
 	public static final String INVALID_OGC_WKB = "invalidogcwkb";

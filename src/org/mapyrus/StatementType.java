@@ -47,6 +47,7 @@ public enum StatementType
 	SINEWAVE("sinewave", false),
 	WEDGE("wedge", false),
 	SPIRAL("spiral", false),
+	LOGSPIRAL("logspiral", false),
 	BOX("box", false),
 	ROUNDEDBOX("roundedbox", false),
 	BOX3D("box3d", false),
