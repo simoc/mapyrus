@@ -28,16 +28,17 @@ public interface MapyrusEventListener
 	 * All possible events from GUI.
 	 */
 	public static int EXIT_ACTION = 1;
-	public static int EXPORT_ACTION = 2;
-	public static int COPY_ACTION = 3;
-	public static int NEW_TAB_ACTION = 4;
-	public static int OPEN_FILE_ACTION = 5;
-	public static int CLOSE_TAB_ACTION = 6;
-	public static int SAVE_TAB_ACTION = 7;
-	public static int ONLINE_HELP_ACTION = 8;
-	public static int ABOUT_ACTION = 9;
-	public static int RUN_ACTION = 10;
-	public static int STOP_ACTION = 11;
+	public static int EXPORT_PNG_ACTION = 2;
+	public static int EXPORT_PDF_ACTION = 3;
+	public static int COPY_ACTION = 4;
+	public static int NEW_TAB_ACTION = 5;
+	public static int OPEN_FILE_ACTION = 6;
+	public static int CLOSE_TAB_ACTION = 7;
+	public static int SAVE_TAB_ACTION = 8;
+	public static int ONLINE_HELP_ACTION = 9;
+	public static int ABOUT_ACTION = 10;
+	public static int RUN_ACTION = 11;
+	public static int STOP_ACTION = 12;
 
 	/**
 	 * Handle an event from GUI.

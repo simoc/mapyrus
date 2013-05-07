@@ -448,7 +448,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clipboard.setContents(imageSelection, null);
 			}
-			else if (actionCode == MapyrusEventListener.EXPORT_ACTION)
+			else if (actionCode == MapyrusEventListener.EXPORT_PNG_ACTION)
 			{
 				try
 				{

@@ -123,7 +123,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.EXPORT_ACTION);
+				fireEvent(MapyrusEventListener.EXPORT_PNG_ACTION);
 			}
 		});
 
