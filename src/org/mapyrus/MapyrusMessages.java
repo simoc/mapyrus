@@ -45,6 +45,8 @@ public class MapyrusMessages
 	public static final String EXIT = "exit";
 	public static final String EXPECTED = "expected";
 	public static final String EXPORT_AS_PNG = "exportaspng";
+	public static final String EXPORT_AS_PDF = "exportaspdf";
+	public static final String EXPORTED_TO = "exportedto";
 	public static final String EXTENDED_PDF = "extendedpdf";
 	public static final String FAILED_PDF = "failedpdf";
 	public static final String FAILED_JAVA_FUNCTION = "failedjavafunction";
@@ -195,6 +197,7 @@ public class MapyrusMessages
 	public static final String OPEN_FILE = "openfile";
 	public static final String OVERWRITE = "overwrite";
 	public static final String PARSE_ERROR = "parseerror";
+	public static final String PDF_FILES = "pdffiles";
 	public static final String PNG_IMAGE_FILES = "pngimagefiles";
 	public static final String PROCESS_ERROR = "processerror";
 	public static final String READ_ONLY = "readonly";
