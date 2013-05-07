@@ -8,6 +8,7 @@ Copyright (C) 2003 - 2013 Simon Chenery <simoc@users.sourceforge.net>
 * Upgrade to JTS Topology Suite version 1.13.
 * Upgrade to Servlet API 3.0 (Tomcat 7).
 * Add LOGSPIRAL command.
+* Add Edit->Export as A4 PDF menu option in GUI.
 
 1.202, July 2012
 
