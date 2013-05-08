@@ -90,7 +90,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	private JTextArea m_outputTextArea;
 	private Thread m_outputThread;
 	private JPanel m_displayPanel;
-	private LinkedBlockingQueue<Integer> m_actionQueue = null;
+	private LinkedBlockingQueue<MapyrusEventListener.Action> m_actionQueue = null;
 	private Thread m_actionThread;
 	private BufferedImage m_displayImage;
 	private CrosshairMouseListener m_displayPanelListener;
@@ -233,7 +233,7 @@ public class MapyrusFrame implements MapyrusEventListener
 					 * Run last set of sample commands too.
 					 */
 					if (i == tabNames.length - 1)
-						actionPerformed(MapyrusEventListener.RUN_ACTION);
+						actionPerformed(MapyrusEventListener.Action.RUN);
 				}
 				catch (IOException e)
 				{
@@ -361,7 +361,7 @@ public class MapyrusFrame implements MapyrusEventListener
 		if (m_actionQueue != null)
 			m_actionQueue.clear();
 		else
-			m_actionQueue = new LinkedBlockingQueue<Integer>();
+			m_actionQueue = new LinkedBlockingQueue<MapyrusEventListener.Action>();
 
 		/*
 		 * Create another thread to read this queue and process
@@ -382,10 +382,10 @@ public class MapyrusFrame implements MapyrusEventListener
 		m_actionThread.start();
 	}
 
-	public void actionPerformed(int actionCode)
+	public void actionPerformed(MapyrusEventListener.Action action)
 	{
-		if (actionCode == MapyrusEventListener.STOP_ACTION ||
-			actionCode == MapyrusEventListener.EXIT_ACTION)
+		if (action == MapyrusEventListener.Action.STOP ||
+			action == MapyrusEventListener.Action.EXIT)
 		{
 			/*
 			 * Interrupt any action that is already running,
@@ -409,7 +409,7 @@ public class MapyrusFrame implements MapyrusEventListener
 		 */
 		try
 		{
-			m_actionQueue.put(Integer.valueOf(actionCode));
+			m_actionQueue.put(action);
 		}
 		catch (InterruptedException e)
 		{
@@ -420,9 +420,9 @@ public class MapyrusFrame implements MapyrusEventListener
 	{
 		while (true)
 		{
-			Integer actionCode =  m_actionQueue.take().intValue();
+			MapyrusEventListener.Action action =  m_actionQueue.take();
 
-			if (actionCode == MapyrusEventListener.NEW_TAB_ACTION)
+			if (action == MapyrusEventListener.Action.NEW_TAB_ACTION)
 			{
 				/*
 				 * Create new tab in editor panel.
@@ -430,7 +430,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				if (m_editorPanel != null)
 					m_editorPanel.createTab(null, null, null);
 			}
-			else if (actionCode == MapyrusEventListener.OPEN_FILE_ACTION)
+			else if (action == MapyrusEventListener.Action.OPEN_FILE)
 			{
 				/*
 				 * Show file chooser dialog for user to select a file
@@ -439,7 +439,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				 */
 				openFile();
 			}
-			else if (actionCode == MapyrusEventListener.COPY_ACTION)
+			else if (action == MapyrusEventListener.Action.COPY)
 			{
 				/*
 				 * Copy display panel output to clipboard.
@@ -448,7 +448,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clipboard.setContents(imageSelection, null);
 			}
-			else if (actionCode == MapyrusEventListener.EXPORT_PNG_ACTION)
+			else if (action == MapyrusEventListener.Action.EXPORT_PNG)
 			{
 				try
 				{
@@ -461,11 +461,24 @@ public class MapyrusFrame implements MapyrusEventListener
 						Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if (actionCode == MapyrusEventListener.RUN_ACTION)
+			else if (action == MapyrusEventListener.Action.EXPORT_PDF)
+			{
+				try
+				{
+					exportToPDF();
+				}
+				catch (SecurityException e)
+				{
+					JOptionPane.showMessageDialog(m_frame,
+						e.getClass().getName() + ": " + e.getMessage(),
+						Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (action == MapyrusEventListener.Action.RUN)
 			{
 				runCommands();
 			}
-			else if (actionCode == MapyrusEventListener.CLOSE_TAB_ACTION)
+			else if (action == MapyrusEventListener.Action.CLOSE_TAB)
 			{
 				/*
 				 * Close currently open tab.
@@ -479,7 +492,7 @@ public class MapyrusFrame implements MapyrusEventListener
 						m_editorPanel.closeSelectedTab();
 				}
 			}
-			else if (actionCode == MapyrusEventListener.SAVE_TAB_ACTION)
+			else if (action == MapyrusEventListener.Action.SAVE_TAB)
 			{
 				/*
 				 * Save currently open tab.
@@ -489,7 +502,7 @@ public class MapyrusFrame implements MapyrusEventListener
 					saveTab(false);
 				}
 			}
-			else if (actionCode == MapyrusEventListener.EXIT_ACTION)
+			else if (action == MapyrusEventListener.Action.EXIT)
 			{
 				/*
 				 * If any changes saved successfully then we can exit.
@@ -497,7 +510,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				if (saveAndExit())
 					m_mutex.unlock();
 			}
-			else if (actionCode == MapyrusEventListener.ONLINE_HELP_ACTION)
+			else if (action == MapyrusEventListener.Action.ONLINE_HELP)
 			{
 				/*
 				 * Show HTML GUI help page.
@@ -540,7 +553,7 @@ public class MapyrusFrame implements MapyrusEventListener
 					helpFrame.dispose();
 				}
 			}
-			else if (actionCode == MapyrusEventListener.ABOUT_ACTION)
+			else if (action == MapyrusEventListener.Action.ABOUT)
 			{
 				/*
 				 * Show version and license information.
@@ -580,6 +593,28 @@ public class MapyrusFrame implements MapyrusEventListener
 		public String getDescription()
 		{
 			return(MapyrusMessages.get(MapyrusMessages.PNG_IMAGE_FILES));
+		}
+	}
+
+	/*
+	 * File filter limiting file selection to PDF images. 
+	 */
+	private class PDFImageFilter extends FileFilter
+	{
+		public boolean accept(File f)
+		{
+			boolean retval = f.isDirectory();
+			if (!retval)
+			{
+				String name = f.getName();
+				retval = name.endsWith(".pdf") || name.endsWith(".PDF");
+			}
+			return(retval);
+		}
+
+		public String getDescription()
+		{
+			return(MapyrusMessages.get(MapyrusMessages.PDF_FILES));
 		}
 	}
 
@@ -625,6 +660,33 @@ public class MapyrusFrame implements MapyrusEventListener
 				ImageIO.write(m_displayImage, "png", outStream);
 			}
 			catch (IOException e)
+			{
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
+				selectedFile.delete();
+			}
+		}
+	}
+
+	/**
+	 * Re-run commands to generate a PDF file.
+	 */
+	private void exportToPDF()
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setFileFilter(new PDFImageFilter());
+		fileChooser.setSelectedFile(m_lastOpenedDirectory);
+
+		int retval = fileChooser.showSaveDialog(m_frame);
+		if (retval == JFileChooser.APPROVE_OPTION)
+		{
+			File selectedFile = fileChooser.getSelectedFile();
+			m_lastOpenedDirectory = selectedFile;
+			try
+			{
+				createPDF(selectedFile);
+			}
+			catch (InterruptedException e)
 			{
 				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 				selectedFile.delete();
@@ -723,6 +785,13 @@ public class MapyrusFrame implements MapyrusEventListener
 					JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+
+	/**
+	 * Run commands in currently selected tab, writing output to a PDF file.
+	 */
+	private void createPDF(File selectedFile) throws InterruptedException
+	{
 	}
 
 	/**

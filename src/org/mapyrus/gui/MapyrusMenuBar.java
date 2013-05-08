@@ -53,7 +53,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.NEW_TAB_ACTION);
+				fireEvent(MapyrusEventListener.Action.NEW_TAB_ACTION);
 			}
 		});
 
@@ -64,7 +64,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.OPEN_FILE_ACTION);
+				fireEvent(MapyrusEventListener.Action.OPEN_FILE);
 			}
 		});
 
@@ -75,7 +75,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.CLOSE_TAB_ACTION);
+				fireEvent(MapyrusEventListener.Action.CLOSE_TAB);
 			}
 		});
 
@@ -86,7 +86,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.SAVE_TAB_ACTION);
+				fireEvent(MapyrusEventListener.Action.SAVE_TAB);
 			}
 		});
 
@@ -98,7 +98,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.EXIT_ACTION);
+				fireEvent(MapyrusEventListener.Action.EXIT);
 			}
 		});
 
@@ -111,7 +111,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.COPY_ACTION);
+				fireEvent(MapyrusEventListener.Action.COPY);
 			}
 		});
 		editMenu.add(copyItem);
@@ -123,7 +123,18 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.EXPORT_PNG_ACTION);
+				fireEvent(MapyrusEventListener.Action.EXPORT_PNG);
+			}
+		});
+		
+		JMenuItem pdfExportItem = new JMenuItem(MapyrusMessages.get(MapyrusMessages.EXPORT_AS_PDF));
+		pdfExportItem.setMnemonic(KeyEvent.VK_F);
+		editMenu.add(pdfExportItem);
+		pngExportItem.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				fireEvent(MapyrusEventListener.Action.EXPORT_PDF);
 			}
 		});
 
@@ -136,7 +147,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.ONLINE_HELP_ACTION);
+				fireEvent(MapyrusEventListener.Action.ONLINE_HELP);
 			}
 		});
 		helpMenu.add(onlineHelpItem);
@@ -147,7 +158,7 @@ public class MapyrusMenuBar extends JMenuBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.ABOUT_ACTION);
+				fireEvent(MapyrusEventListener.Action.ABOUT);
 			}
 		});
 		helpMenu.add(aboutItem);
@@ -162,11 +173,11 @@ public class MapyrusMenuBar extends JMenuBar
 		m_menuBarListeners.add(listener);
 	}
 
-	private void fireEvent(int actionCode)
+	private void fireEvent(MapyrusEventListener.Action action)
 	{
 		for (MapyrusEventListener listener : m_menuBarListeners)
 		{
-			listener.actionPerformed(actionCode);
+			listener.actionPerformed(action);
 		}
 	}
 }

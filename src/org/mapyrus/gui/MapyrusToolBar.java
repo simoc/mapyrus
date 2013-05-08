@@ -56,8 +56,8 @@ public class MapyrusToolBar extends JToolBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.STOP_ACTION);
-				fireEvent(MapyrusEventListener.RUN_ACTION);
+				fireEvent(MapyrusEventListener.Action.STOP);
+				fireEvent(MapyrusEventListener.Action.RUN);
 			}
 		});
 
@@ -76,7 +76,7 @@ public class MapyrusToolBar extends JToolBar
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				fireEvent(MapyrusEventListener.STOP_ACTION);
+				fireEvent(MapyrusEventListener.Action.STOP);
 			}
 		});
 	}
@@ -86,11 +86,11 @@ public class MapyrusToolBar extends JToolBar
 		m_toolBarListeners.add(listener);
 	}
 
-	private void fireEvent(int actionCode)
+	private void fireEvent(MapyrusEventListener.Action action)
 	{
 		for (MapyrusEventListener listener : m_toolBarListeners)
 		{
-			listener.actionPerformed(actionCode);
+			listener.actionPerformed(action);
 		}
 	}
 }
