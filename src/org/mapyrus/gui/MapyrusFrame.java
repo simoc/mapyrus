@@ -792,6 +792,87 @@ public class MapyrusFrame implements MapyrusEventListener
 	 */
 	private void createPDF(File selectedFile) throws InterruptedException
 	{
+		String contents = m_editorPanel.getSelectedTabContents();
+		if (contents.length() > 0)
+		{
+			try
+			{
+				contents = "newpage 'pdf', '" + selectedFile.getPath() + "', 'A4'\n" +
+					contents + "\n" +
+					"endpage";
+
+				String title = m_editorPanel.getSelectedTabTitle();
+				FileOrURL f = new FileOrURL(new StringReader(contents), title);
+
+				Interpreter interpreter = new Interpreter();
+				ContextStack context = new ContextStack();
+
+				ByteArrayInputStream stdin = new ByteArrayInputStream(new byte[]{});
+				PipedOutputStream outStream = new PipedOutputStream();
+				final PipedInputStream inStream = new PipedInputStream(outStream);
+				m_outputTextArea.setText("");
+
+				/*
+				 * Create thread to read Mapyrus output and append it
+				 * to the output panel.
+				 */
+				m_outputThread = new Thread(){
+					public void run()
+					{
+						try
+						{
+							byte []buf = new byte[256];
+							int nBytes;
+							while ((nBytes = inStream.read(buf)) > 0)
+							{
+								String s = new String(buf, 0, nBytes);
+								int caretPosition = m_outputTextArea.getCaretPosition();
+								m_outputTextArea.append(s);
+								
+								/*
+								 * Ensure last lines of output are displayed.
+								 */
+								m_outputTextArea.setCaretPosition(caretPosition + s.length());
+								m_outputTextArea.repaint();
+							}
+						}
+						catch (IOException e)
+						{
+							/*
+							 * Reading pipes so should be no IOExceptions.
+							 */
+							m_outputTextArea.append(e.getMessage());
+						}
+					}
+				};
+				m_outputThread.start();
+
+				PrintStream p = new PrintStream(outStream);
+				interpreter.interpret(context, f, stdin, p);
+				p.close();
+				if (m_outputThread != null)
+				{
+					m_outputThread.join();
+					m_outputThread = null;
+				}
+
+				m_outputTextArea.repaint();
+
+				String message = MapyrusMessages.get(MapyrusMessages.EXPORTED_TO) + ": " + selectedFile.getPath();
+				JOptionPane.showMessageDialog(m_frame, message, Constants.PROGRAM_NAME,
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			catch (IOException e)
+			{
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
+					JOptionPane.ERROR_MESSAGE);
+			}
+			catch (MapyrusException e)
+			{
+				JOptionPane.showMessageDialog(m_frame, e.getMessage(), Constants.PROGRAM_NAME,
+					JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	/**

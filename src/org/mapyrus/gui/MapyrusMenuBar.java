@@ -126,11 +126,11 @@ public class MapyrusMenuBar extends JMenuBar
 				fireEvent(MapyrusEventListener.Action.EXPORT_PNG);
 			}
 		});
-		
+
 		JMenuItem pdfExportItem = new JMenuItem(MapyrusMessages.get(MapyrusMessages.EXPORT_AS_PDF));
 		pdfExportItem.setMnemonic(KeyEvent.VK_F);
 		editMenu.add(pdfExportItem);
-		pngExportItem.addActionListener(new ActionListener()
+		pdfExportItem.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
