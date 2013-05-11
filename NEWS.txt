@@ -3,12 +3,13 @@ Copyright (C) 2003 - 2013 Simon Chenery <simoc@users.sourceforge.net>
 
 1.301, May 2013
 
-* Accept MULTIPOINT ((1 2),(3 4)) format OCG WKT geometry strings too.
+* Accept MULTIPOINT ((1 2),(3 4)) format OGC WKT geometry strings too.
 * Upgrade to Java version 1.6.
 * Upgrade to JTS Topology Suite version 1.13.
 * Upgrade to Servlet API 3.0 (Tomcat 7).
 * Add LOGSPIRAL command.
 * Add Edit->Export as A4 PDF menu option in GUI.
+* Add CMYK colors for PostScript and PDF output.
 
 1.202, July 2012
 

@@ -1284,8 +1284,10 @@ color "softer" [, \textit{alpha}]
 color "current" [, \textit{alpha}]
 color "\#\textit{hexdigits}" [, \textit{alpha}]
 color "0x\textit{hexdigits}" [, \textit{alpha}]
+color "cmyk(\textit{cyan},\textit{magenta},\textit{yellow},\textit{black})" [, \textit{alpha}]
 color "rgb", \textit{red}, \textit{green}, \textit{blue} [, \textit{alpha}]
 color "hsb", \textit{hue}, \textit{saturation}, \textit{brightness} [, \textit{alpha}]
+color "cmyk", \textit{cyan}, \textit{magenta}, \textit{yellow}, \textit{black} [, \textit{alpha}]
 \end{alltt}
 
 Sets color for drawing.  Around 500 commonly used color names are defined,
@@ -1308,6 +1310,9 @@ value defining RGB values, as used in HTML pages.
 \textit{hue}, \textit{saturation} and \textit{brightness} values for
 Hue-saturation-brightness (HSB) colors are given as intensities in the range
 0-1.
+
+\textit{cyan}, \textit{magenta}, \textit{yellow} and \textit{black}
+values for CMYK colors are in the range 0-1.
 
 The alpha value is optional and defines transparency as a value in the range
 0-1.  An alpha value of 1 is completely opaque and the color overwrites
@@ -2298,7 +2303,8 @@ PostScript, Encapsulated PostScript &
 
 \texttt{background=\textit{color}}
 
-Background color for page, as a named color or as hex digits.
+Background color for page, as a named color, hex digits or CMYK values
+in parentheses.
 
 \vspace{10pt}
 \texttt{afmfiles=\textit{filename},\textit{filename2},...}
@@ -2436,7 +2442,8 @@ is required.
 \vspace{10pt}
 \texttt{background=\textit{color}}
 
-Background color for page, as a named color or as hex digits. \\
+Background color for page, as a named color, hex digits or CMYK values
+in parentheses. \\
 
 PDF &
 
@@ -2505,7 +2512,8 @@ Scalable Vector Graphics (SVG) &
 
 \texttt{background=\textit{color}}
 
-Background color for page, as a named color or as hex digits.
+Background color for page, as a named color, hex digits or CMYK values
+in parentheses.
 
 \vspace{10pt}
 \texttt{compress=\textit{flag}}
@@ -2539,7 +2547,8 @@ and Encapsulated PostScript images &
 
 \texttt{background=\textit{color}}
 
-Background color for image, as a named color or as hex digits.
+Background color for image, as a named color, hex digits or CMYK values
+in parentheses.
 
 \vspace{10pt}
 \texttt{fractionalfontmetrics=\textit{flag}}
@@ -3043,7 +3052,7 @@ Extra & Description \\
 \texttt{background=\textit{colors}} &
 
 Comma-separated list of colors to use as background for entries
-in the table, as named colors or as hex digits.
+in the table, as named colors, hex digits or CMYK values in parentheses.
 The colors are used in turn for each column in each row.
 When the end of the list is reached, the list is repeated.
 By default the background is not displayed. \\
