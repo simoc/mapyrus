@@ -184,19 +184,33 @@ public class Interpreter implements Cloneable
 
 			context.setColor(c);
 		}
-		else if (nArgs == 4 || nArgs == 5)
+		else if (nArgs == 4 || nArgs == 5 || nArgs == 6)
 		{
 			String colorType = args[0].getStringValue();
 			float c1 = (float)args[1].getNumericValue();
 			float c2 = (float)args[2].getNumericValue();
 			float c3 = (float)args[3].getNumericValue();
+			float c4 = 0;
+			int alphaIndex = 4;
 
-			if (nArgs == 5)
+			if (colorType.equalsIgnoreCase("cmyk"))
+			{
+				if (nArgs < 5)
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
+				c4 = (float)args[4].getNumericValue();
+				alphaIndex = 5;
+			}
+			else if (nArgs > 5)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR));
+			}
+
+			if (alphaIndex < nArgs)
 			{
 				/*
 				 * Parse transparency value.
 				 */
-				decimalAlpha = (float)args[4].getNumericValue();
+				decimalAlpha = (float)args[alphaIndex].getNumericValue();
 				if (decimalAlpha < 0.0f)
 					decimalAlpha = 0.0f;
 				else if (decimalAlpha > 1.0f)
@@ -218,6 +232,11 @@ public class Interpreter implements Cloneable
 			else if (c3 > 1.0f)
 				c3 = 1.0f;
 
+			if (c4 < 0.0f)
+				c4 = 0.0f;
+			else if (c4 > 1.0f)
+				c4 = 1.0f;
+
 			if (colorType.equalsIgnoreCase("hsb"))
 			{
 				/*
@@ -238,6 +257,20 @@ public class Interpreter implements Cloneable
 				 * Set RGB color.
 				 */
 				context.setColor(new Color(c1, c2, c3, decimalAlpha));
+			}
+			else if (colorType.equalsIgnoreCase("cmyk"))
+			{
+				if (c1 < 0.0f)
+					c1 = 0.0f;
+				else if (c1 > 1.0f)
+					c1 = 1.0f;
+				
+				/*
+				 * Set color with ColorSpace to identify it as CMYK.
+				 */
+				float []components = new float[]{c1, c2, c3, c4};
+				Color cmykColor = new Color(new CMYKColorSpace(), components, decimalAlpha);
+				context.setColor(cmykColor);
 			}
 			else
 			{
