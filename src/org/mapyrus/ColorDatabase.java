@@ -734,6 +734,29 @@ public class ColorDatabase
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + colorName);
 			}
 		}
+		else if (colorName.startsWith("cmyk(") && colorName.endsWith(")"))
+		{
+			StringTokenizer st = new StringTokenizer(colorName.substring(5), "/%)");
+			if (st.countTokens() != 4)
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + colorName);
+			try
+			{
+				float []components = new float[4];
+				for (int i = 0; i < 4; i++)
+				{
+					components[i] = Integer.parseInt(st.nextToken()) / 100.0f;
+					if (components[i] > 1)
+						components[i] = 1;
+					else if (components[i] < 0)
+						components[i] = 0;
+				}
+				retval = new Color(new CMYKColorSpace(), components, alpha / 255.0f);
+			}
+			catch (NumberFormatException e)
+			{
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + colorName);
+			}
+		}
 		else if (colorName.equals("brighter"))
 		{
 			int currentAlpha = currentColor.getAlpha();
