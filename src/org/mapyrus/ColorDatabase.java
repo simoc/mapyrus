@@ -21,6 +21,7 @@ package org.mapyrus;
 
 import java.util.Hashtable;
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
@@ -36,7 +37,9 @@ import java.io.IOException;
 public class ColorDatabase
 {
 	static private Hashtable<String, Color> m_colors = null;
-	
+
+	private static final float CMYK_BRIGHTER_INCREMENT = 0.2f;
+
 	/**
 	 * Load global color name database from a file.
 	 */
@@ -736,7 +739,7 @@ public class ColorDatabase
 		}
 		else if (colorName.startsWith("cmyk(") && colorName.endsWith(")"))
 		{
-			StringTokenizer st = new StringTokenizer(colorName.substring(5), "/%)");
+			StringTokenizer st = new StringTokenizer(colorName.substring(5), ",)");
 			if (st.countTokens() != 4)
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) + ": " + colorName);
 			try
@@ -744,7 +747,7 @@ public class ColorDatabase
 				float []components = new float[4];
 				for (int i = 0; i < 4; i++)
 				{
-					components[i] = Integer.parseInt(st.nextToken()) / 100.0f;
+					components[i] = Float.parseFloat(st.nextToken().trim());
 					if (components[i] > 1)
 						components[i] = 1;
 					else if (components[i] < 0)
@@ -760,21 +763,51 @@ public class ColorDatabase
 		else if (colorName.equals("brighter"))
 		{
 			int currentAlpha = currentColor.getAlpha();
-			retval = currentColor.brighter();
-			if (alpha != currentAlpha)
+			if (currentColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
 			{
-				retval = new Color(retval.getRed(), retval.getGreen(),
-					retval.getBlue(), alpha);
+				/*
+				 * java.awt.Color.brighter() converts the ColorSpace to RGB, so we have to
+				 * do the calculation ourselves to preserve the CMYK ColorSpace. 
+				 */
+				float []components = currentColor.getComponents(null);
+				components[3] -= CMYK_BRIGHTER_INCREMENT;
+				if (components[3] < 0)
+					components[3] = 0;
+				retval = new Color(currentColor.getColorSpace(), components, alpha / 255.0f);
+			}
+			else
+			{
+				retval = currentColor.brighter();
+				if (alpha != currentAlpha)
+				{
+					retval = new Color(retval.getRed(), retval.getGreen(),
+						retval.getBlue(), alpha);
+				}
 			}
 		}
 		else if (colorName.equals("darker"))
 		{
 			int currentAlpha = currentColor.getAlpha();
-			retval = currentColor.darker();
-			if (alpha != currentAlpha)
+			if (currentColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
 			{
-				retval = new Color(retval.getRed(), retval.getGreen(),
-					retval.getBlue(), alpha);
+				/*
+				 * java.awt.Color.brighter() converts the ColorSpace to RGB, so we have to
+				 * do the calculation ourselves to preserve the CMYK ColorSpace. 
+				 */
+				float []components = currentColor.getComponents(null);
+				components[3] += CMYK_BRIGHTER_INCREMENT;
+				if (components[3] > 1)
+					components[3] = 1;
+				retval = new Color(currentColor.getColorSpace(), components, alpha / 255.0f);
+			}
+			else
+			{
+				retval = currentColor.darker();
+				if (alpha != currentAlpha)
+				{
+					retval = new Color(retval.getRed(), retval.getGreen(),
+						retval.getBlue(), alpha);
+				}
 			}
 		}
 		else if (colorName.equals("softer"))
@@ -782,16 +815,32 @@ public class ColorDatabase
 			/*
 			 * Set softer version of current color.
 			 */
-			int red = 128 + currentColor.getRed() / 2;
-			if (red > 255)
-				red = 255;
-			int green = 128 + currentColor.getGreen() / 2;
-			if (green > 255)
-				green = 255;
-			int blue = 128 + currentColor.getBlue() / 2;
-			if (blue > 255)
-				blue = 255;
-			retval = new Color(red, green, blue, alpha);
+			if (currentColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+			{
+				/*
+				 * java.awt.Color.brighter() converts the ColorSpace to RGB, so we have to
+				 * do the calculation ourselves to preserve the CMYK ColorSpace. 
+				 */
+				float []components = currentColor.getComponents(null);
+				for (int i = 0; i < 4; i++)
+				{
+					components[i] = components[i] / 2;
+				}
+				retval = new Color(currentColor.getColorSpace(), components, alpha / 255.0f);
+			}
+			else
+			{
+				int red = 128 + currentColor.getRed() / 2;
+				if (red > 255)
+					red = 255;
+				int green = 128 + currentColor.getGreen() / 2;
+				if (green > 255)
+					green = 255;
+				int blue = 128 + currentColor.getBlue() / 2;
+				if (blue > 255)
+					blue = 255;
+				retval = new Color(red, green, blue, alpha);
+			}
 		}
 		else if (colorName.equals("contrast"))
 		{
@@ -803,22 +852,31 @@ public class ColorDatabase
 				currentColor.getBlue() * 3;
 
 			/*
-			 * If color is currently close to black, then contrasting
-			 * color is white, otherwise contrasting color is black.
+			 * If color is currently close to white, then contrasting
+			 * color is black, otherwise contrasting color is white.
 			 */
-			if (darkness > (3 + 4 + 3) * 255 / 2)
+			boolean isWhite = darkness > (3 + 4 + 3) * 255 / 2;
+			if (currentColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
 			{
-				if (alpha == 255)
-					retval = Color.BLACK;
-				else
-					retval = new Color(0, 0, 0, alpha);
+				float blackContrast = isWhite ? 1 : 0;
+				retval = new Color(currentColor.getColorSpace(), new float[]{0, 0, 0, blackContrast}, alpha / 255.0f);
 			}
 			else
 			{
-				if (alpha == 255)
-					retval = Color.WHITE;
+				if (isWhite)
+				{
+					if (alpha == 255)
+						retval = Color.BLACK;
+					else
+						retval = new Color(0, 0, 0, alpha);
+				}
 				else
-					retval = new Color(255, 255, 255, alpha);
+				{
+					if (alpha == 255)
+						retval = Color.WHITE;
+					else
+						retval = new Color(255, 255, 255, alpha);
+				}
 			}
 		}
 		else if (colorName.equals("current"))
