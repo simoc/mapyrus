@@ -2538,6 +2538,17 @@ public class Context
 				while (st2.hasMoreTokens())
 				{
 					String colorName = st2.nextToken();
+					if (colorName.startsWith("cmyk("))
+					{
+						/*
+						 * Reconstruct CMYK color name that also contains commas.
+						 */
+						for (int i = 0; i < 3; i++)
+						{
+							if (st2.hasMoreTokens())
+								colorName += "," + st2.nextToken();
+						}
+					}
 					Color c = ColorDatabase.getColor(colorName, 255, getColor());
 					if (c == null)
 					{
