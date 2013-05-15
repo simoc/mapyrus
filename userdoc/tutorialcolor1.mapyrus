@@ -1,0 +1,21 @@
+newpage "eps", "tutorialcolor1.eps", 40, 40, "background=cmyk(0,0,0,0)"
+
+color "cmyk", 1, 0, 0, 0
+box 2, 2, 10, 38
+fill
+
+clearpath
+color "cmyk", 0, 1, 0, 0
+box 12, 2, 20, 38
+fill
+
+clearpath
+color "cmyk", 0, 0, 1, 0
+box 22, 2, 30, 38
+fill
+
+clearpath
+# Another way of defining a CMYK color
+color "cmyk(0, 0, 0, 1)"
+box 32, 2, 40, 38
+fill

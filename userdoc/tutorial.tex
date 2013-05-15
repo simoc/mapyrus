@@ -1283,6 +1283,30 @@ When creating PDF output, the method of blending transparent colors
 with the background is modified using the
 \texttt{blend} command.
 
+\subsection{Color For Printing}
+
+RGB colors define exactly the color for display on the screen.
+A printer can only approximate these colors.
+To define exact colors for printing, use CMYK colors in the
+\texttt{COLOR} command when creating PostScript, Encapsulated
+PostScript or PDF output.
+
+Color images that are read and displayed using
+the \texttt{icon} and \texttt{geoimage} commands are
+included in PostScript, Encapsulated
+PostScript and PDF output as RGB images.
+
+The following example demonstrates using CMYK colors, with
+output shown in Figure \ref{tutorialcolor1}.
+
+\verbatiminput{tutorialcolor1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialcolor1.eps}
+\caption{CMYK Color}
+\label{tutorialcolor1}
+\end{figure}
+
 \subsection{Shadow Effects}
 \label{tutorialshadow}
 
