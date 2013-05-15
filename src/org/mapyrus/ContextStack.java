@@ -41,6 +41,7 @@ import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.image.Bitmap;
+import org.mapyrus.image.ColorIcon;
 import org.mapyrus.image.ImageIOWrapper;
 
 /**
@@ -84,7 +85,7 @@ public class ContextStack
 	/*
 	 * Cache of icons we've already used and are likely to use again.
 	 */
-	private LRUCache<String, BufferedImage> m_iconCache;
+	private LRUCache<String, ColorIcon> m_iconCache;
 
 	/*
 	 * Time at which this context was allocated.
@@ -118,7 +119,7 @@ public class ContextStack
 		m_throttle = new Throttle();
 		m_imagemapPoint = null;
 		m_legendEntries = new LegendEntryList();
-		m_iconCache = new LRUCache<String, BufferedImage>(Constants.ICON_CACHE_SIZE);
+		m_iconCache = new LRUCache<String, ColorIcon>(Constants.ICON_CACHE_SIZE);
 		m_HTTPResponse = HTTPRequest.HTTP_OK_KEYWORD + Constants.LINE_SEPARATOR +
 			HTTPRequest.CONTENT_TYPE_KEYWORD + ": " + MimeTypes.get("html") +
 			Constants.LINE_SEPARATOR;
@@ -525,7 +526,7 @@ public class ContextStack
 	public void drawIcon(String filename, double size)
 		throws IOException, MapyrusException
 	{
-		BufferedImage icon;
+		ColorIcon icon;
 		boolean isDigits = false;
 		boolean isResource = false;
 		int digitsType = 0;
@@ -533,7 +534,7 @@ public class ContextStack
 		/*
 		 * Have we opened icon before and cached it?
 		 */
-		icon = (BufferedImage)m_iconCache.get(filename);
+		icon = m_iconCache.get(filename);
 		if (icon == null)
 		{
 			URL url;
@@ -567,11 +568,11 @@ public class ContextStack
 				}
 			}
 
+			Color currentColor = getCurrentContext().getColor();
 			if (isDigits)
 			{
-				Bitmap bitmap = new Bitmap(filename, digitsType,
-					getCurrentContext().getColor());
-				icon = bitmap.getBufferedImage();
+				Bitmap bitmap = new Bitmap(filename, digitsType, currentColor);
+				icon = new ColorIcon(bitmap.getBufferedImage(), currentColor);
 			}
 			else
 			{
@@ -596,11 +597,11 @@ public class ContextStack
 
 						url = new URL(filename);
 					}
-					icon = ImageIOWrapper.read(url, getCurrentContext().getColor());
+					icon = ImageIOWrapper.read(url, currentColor);
 				}
 				catch (MalformedURLException e)
 				{
-					icon = ImageIOWrapper.read(new File(filename), getCurrentContext().getColor());
+					icon = ImageIOWrapper.read(new File(filename), currentColor);
 				}
 
 				if (icon == null)
@@ -615,7 +616,7 @@ public class ContextStack
 			 * Do not cache an icon given as hex digits as we may want
 			 * it in a different color next time.
 			 */
-			if ((!isDigits) && icon.getHeight() * icon.getWidth() <= 128 * 128)
+			if ((!isDigits) && icon.getImage().getHeight() * icon.getImage().getWidth() <= 128 * 128)
 				m_iconCache.put(filename, icon);
 		}
 		getCurrentContext().drawIcon(icon, size);

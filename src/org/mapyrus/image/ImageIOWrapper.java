@@ -45,26 +45,89 @@ import org.mapyrus.MapyrusMessages;
 public class ImageIOWrapper
 {
 	/**
+	 * Determines if only one color is used in an image.
+	 * @param image image to check.
+	 * @return true if non-transparent color used in an image, or null if
+	 * image has many colors.
+	 */
+	private static boolean isSingleColorImage(BufferedImage image)
+	{
+		Color singleColor = Color.BLACK;
+		boolean foundDifferentColors = false;
+		boolean foundFirstColor = false;
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+
+		/*
+		 * Check if all pixels are the same color, or transparent.
+		 */
+		int y = 0;
+		while (y < imageHeight && (!foundDifferentColors))
+		{
+			int x = 0;
+			while (x < imageWidth && (!foundDifferentColors))
+			{
+				int pixel = image.getRGB(x, y);
+				if ((pixel & 0xff000000) != 0)
+				{
+					/*
+					 * Pixel is not transparent.
+					 */
+					if (!foundFirstColor)
+					{
+						foundFirstColor = true;
+						singleColor = new Color(pixel & 0xffffff);
+					}
+					else
+					{
+						foundDifferentColors = (pixel != singleColor.getRGB());
+					}
+				}
+				x++;
+			}
+			y++;
+		}
+
+		return(!foundDifferentColors);
+	}
+
+	/**
 	 * Read an image from a file. 
 	 * @param file file to read image from.
 	 * @param color color for monochrome images.
 	 * @return image read from file.
 	 */
-	public static BufferedImage read(File f, Color color) throws IOException, MapyrusException
+	public static ColorIcon read(File f, Color color) throws IOException, MapyrusException
 	{
-		BufferedImage retval = null;
+		ColorIcon retval = null;
+		BufferedImage image = null;
 
 		try
 		{
 			String filename = f.getName().toLowerCase();
 			if (filename.endsWith(".ppm") || filename.endsWith(".pgm") || filename.endsWith(".pbm"))
-				retval = new PNMImage(f.toString()).getBufferedImage();
+				image = new PNMImage(f.toString()).getBufferedImage();
 			else if (filename.endsWith(".pat"))
-				retval = new PATImage(f.toString()).getBufferedImage();
+				image = new PATImage(f.toString()).getBufferedImage();
 			else if (filename.endsWith(".xbm"))
-				retval = new XBMImage(f.toString(), color.getRGB()).getBufferedImage();
+				image = new XBMImage(f.toString(), color.getRGB()).getBufferedImage();
 			else
-				retval = ImageIO.read(f);
+				image = ImageIO.read(f);
+
+			if (image != null)
+			{	
+				/*
+				 * Check if image is a single color.
+				 * Some output formats have more efficient rendering for single color images.
+				 */
+				if (!isSingleColorImage(image))
+					color = null;
+				retval = new ColorIcon(image, color);
+			}
+			else
+			{
+				retval = null;
+			}
 		}
 		catch (SecurityException e)
 		{
@@ -79,10 +142,11 @@ public class ImageIOWrapper
 	 * @param color color for monochrome images.
 	 * @return image read from URL.
 	 */
-	public static BufferedImage read(URL url, Color color) throws IOException, MapyrusException
+	public static ColorIcon read(URL url, Color color) throws IOException, MapyrusException
 	{
-		BufferedImage retval;
+		ColorIcon retval;
 		InputStream stream = null;
+		BufferedImage image = null;
 
 		try
 		{
@@ -122,15 +186,30 @@ public class ImageIOWrapper
 				contentType.equals("image/x-portable-bitmap") ||
 				contentType.equals("image/x-portable-graymap"))
 			{
-				retval = new PNMImage(stream, filename).getBufferedImage();
+				image = new PNMImage(stream, filename).getBufferedImage();
 			}
 			else if (contentType.equals("image/x-xbm"))
 			{
-				retval = new XBMImage(stream, filename, color.getRGB()).getBufferedImage();
+				image = new XBMImage(stream, filename, color.getRGB()).getBufferedImage();
 			}
 			else
 			{
-				retval = ImageIO.read(stream);
+				image = ImageIO.read(stream);
+			}
+			
+			if (image != null)
+			{	
+				/*
+				 * Check if image is a single color.
+				 * Some output formats have more efficient rendering for single color images.
+				 */
+				if (!isSingleColorImage(image))
+					color = null;
+				retval = new ColorIcon(image, color);
+			}
+			else
+			{
+				retval = null;
 			}
 		}
 		catch (SecurityException e)

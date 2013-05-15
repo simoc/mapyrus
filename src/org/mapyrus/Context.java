@@ -47,6 +47,7 @@ import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.geom.Sinkhole;
 import org.mapyrus.geom.SutherlandHodgman;
+import org.mapyrus.image.ColorIcon;
 import org.mapyrus.image.GradientFillFactory;
 import org.mapyrus.image.ImageFilter;
 import org.mapyrus.image.ImageIOWrapper;
@@ -1762,7 +1763,7 @@ public class Context
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.
 	 */
-	public void drawIcon(BufferedImage icon, double size)
+	public void drawIcon(ColorIcon icon, double size)
 		throws IOException, MapyrusException
 	{
 		GeometricPath path = getDefinedPath();
@@ -1888,7 +1889,7 @@ public class Context
 		{
 			try
 			{
-				image = ImageIOWrapper.read(url, getColor());
+				image = ImageIOWrapper.read(url, getColor()).getImage();
 			}
 			catch (IOException e)
 			{
@@ -1902,7 +1903,7 @@ public class Context
 		}
 		else
 		{
-			image = ImageIOWrapper.read(new File(filename), getColor());
+			image = ImageIOWrapper.read(new File(filename), getColor()).getImage();
 		}
 
 		if (image == null)
@@ -2231,9 +2232,9 @@ public class Context
 				BufferedImage image = GradientFillFactory.getImage(c1, c2, c3, c4, c5);
 				ArrayList<Point2D> coords = new ArrayList<Point2D>();
 				coords.add(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
-				m_outputFormat.drawIcon(coords, image,
+				m_outputFormat.drawIcon(coords, new ColorIcon(image, null),
 					Math.max(bounds.getWidth(), bounds.getHeight()), 0.0, 1.0);
-	
+
 				/*
 				 * Restore original clipping path.
 				 */
