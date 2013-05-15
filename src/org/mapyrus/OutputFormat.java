@@ -30,6 +30,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.color.ColorSpace;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -72,6 +73,7 @@ import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
 import org.mapyrus.gui.MapyrusFrame;
 import org.mapyrus.image.BlendComposite;
+import org.mapyrus.image.ColorIcon;
 import org.mapyrus.image.ImageIOWrapper;
 import org.mapyrus.io.ASCII85Writer;
 import org.mapyrus.io.WildcardFile;
@@ -418,13 +420,30 @@ public class OutputFormat
 		 * Set background color for page.
 		 */
 		writeLine(m_writer, "/RG { setrgbcolor } bind def");
+		writeLine(m_writer, "/K { setcmykcolor } bind def");
+		writeLine(m_writer, "/G { setgray } bind def");
 		if (backgroundColor != null)
 		{
-			float c[] = backgroundColor.getRGBColorComponents(null);
 			writeLine(m_writer, "gsave");
-			writeLine(m_writer, m_coordinateDecimal.format(c[0]) + " " +
-				m_coordinateDecimal.format(c[1]) + " " +
-				m_coordinateDecimal.format(c[2]) + " RG");
+
+			float c[] = backgroundColor.getColorComponents(null);
+			sb = new StringBuffer();
+			sb.append(m_coordinateDecimal.format(c[0]));
+			sb.append(" ");
+			sb.append(m_coordinateDecimal.format(c[1]));
+			sb.append(" ");
+			sb.append(m_coordinateDecimal.format(c[2]));
+			if (backgroundColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+			{
+				sb.append(" ");
+				sb.append(m_coordinateDecimal.format(c[3]));
+				sb.append(" K");
+			}
+			else
+			{
+				sb.append(" RG");
+			}
+			writeLine(m_writer, sb.toString());
 			writeLine(m_writer, "0 0 " + widthInPoints + " " + heightInPoints + " rectfill");
 			writeLine(m_writer, "grestore");
 		}
@@ -617,9 +636,12 @@ public class OutputFormat
 			writeLine(m_PDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
 			for (int i = 0; i < components.length; i++)
 				writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(components[i]));
-			writeLine(m_PDFGeometryWriter, "rg f Q");
+			if (backgroundColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+				writeLine(m_PDFGeometryWriter, "k");
+			else
+				writeLine(m_PDFGeometryWriter, "rg");
+			writeLine(m_PDFGeometryWriter, "f Q");
 		}
-		writeLine(m_PDFGeometryWriter, "0 0 0 RG 0 0 0 rg");
 
 		/*
 		 * Set scale so that we can give all coordinate positions in millimetres.
@@ -1714,7 +1736,7 @@ public class OutputFormat
 					 * Read existing image for editing.
 					 * Set page width and height to size of existing image.
 					 */
-					m_image = ImageIOWrapper.read(f, Color.BLACK);
+					m_image = ImageIOWrapper.read(f, Color.BLACK).getImage();
 					if (m_image == null)
 					{
 						throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) + ": " + filename);
@@ -2084,16 +2106,27 @@ public class OutputFormat
 		return(len + 2);
 	}
 
+	private void writePostScriptOrPDFIcon(ColorIcon icon, double x, double y,
+			double width, double height, double rotation)
+			throws IOException, MapyrusException
+	{
+		writePostScriptOrPDFImage(icon.getImage(), icon.getColor(), x, y,
+			width, height, rotation);
+	}
+
 	/**
 	 * Write image to PostScript file.
 	 * @param image image to write.
+	 * @param singleColor color for image if it is monochrome (only one color).
 	 * @param x center position on page for image.
 	 * @param y center position on page for image.
 	 * @param width width of image in millimetres.
 	 * @param height height of image in millimetres.
 	 * @param rotation rotation angle for image.
 	 */
-	private void writePostScriptOrPDFImage(BufferedImage image, double x, double y,
+	private void writePostScriptOrPDFImage(BufferedImage image,
+		Color singleColor,
+		double x, double y,
 		double width, double height, double rotation)
 		throws IOException, MapyrusException
 	{
@@ -2139,17 +2172,9 @@ public class OutputFormat
 
 		int reducedPixelWidth = (pixelWidth + step - 1) / step;
 		int reducedPixelHeight = (pixelHeight + step - 1) / step;
-
+        
 		/*
-		 * Check if image is a single color.
-		 * Draw single color images with transparent background
-		 * using PostScript 'imagemask' operator.
-		 * Draw other images as RGB images using 'image' operator.
-		 */
-		Color singleColor = getSingleImageColor(image);
-
-		/*
-		 * Write PostScript image directionary entry to draw image.
+		 * Write PostScript image dictionary entry to draw image.
 		 * Taken from Adobe PostScript Language Reference Manual
 		 * (2nd Edition), p. 234.
 		 */
@@ -2180,10 +2205,21 @@ public class OutputFormat
 			if (singleColor != null)
 			{
 				float []c = singleColor.getColorComponents(null);
-				writeLine(m_PDFGeometryWriter,
-					m_coordinateDecimal.format(c[0]) + " " +
-					m_coordinateDecimal.format(c[1]) + " " +
-					m_coordinateDecimal.format(c[2]) + " rg");
+				if (singleColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+				{
+					writeLine(m_PDFGeometryWriter,
+							m_coordinateDecimal.format(c[0]) + " " +
+							m_coordinateDecimal.format(c[1]) + " " +
+							m_coordinateDecimal.format(c[2]) + " " +
+							m_coordinateDecimal.format(c[3]) + " k");
+				}
+				else
+				{
+					writeLine(m_PDFGeometryWriter,
+						m_coordinateDecimal.format(c[0]) + " " +
+						m_coordinateDecimal.format(c[1]) + " " +
+						m_coordinateDecimal.format(c[2]) + " rg");
+				}
 			}
 
 			writeLine(m_PDFGeometryWriter, "/" + imageKey + " Do");
@@ -2192,7 +2228,10 @@ public class OutputFormat
 		else
 		{
 			writeLine(pw, "q");
-			writeLine(pw, "/DeviceRGB setcolorspace");
+			if (singleColor != null && singleColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+				writeLine(pw, "/DeviceCMYK setcolorspace");
+			else
+				writeLine(pw, "/DeviceRGB setcolorspace");
 
 			writeLine(pw, x + " " + y + " translate");
 			writeLine(pw, rotation + " radtodeg rotate");
@@ -2210,9 +2249,19 @@ public class OutputFormat
 			if (singleColor != null)
 			{
 				float []c = singleColor.getColorComponents(null);
-				writeLine(pw, m_coordinateDecimal.format(c[0]) + " " +
-					m_coordinateDecimal.format(c[1]) + " " +
-					m_coordinateDecimal.format(c[2]) + " RG");
+				if (singleColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+				{
+					writeLine(pw, m_coordinateDecimal.format(c[0]) + " " +
+							m_coordinateDecimal.format(c[1]) + " " +
+							m_coordinateDecimal.format(c[2]) + " " +
+							m_coordinateDecimal.format(c[3]) + " K");
+				}
+				else
+				{
+					writeLine(pw, m_coordinateDecimal.format(c[0]) + " " +
+						m_coordinateDecimal.format(c[1]) + " " +
+						m_coordinateDecimal.format(c[2]) + " RG");
+				}
 			}
 		}
 
@@ -2531,7 +2580,7 @@ public class OutputFormat
 				/*
 				 * Write image file containing page.
 				 */
-				writePostScriptOrPDFImage(m_image, m_pageWidth / 2, m_pageHeight / 2,
+				writePostScriptOrPDFImage(m_image, null, m_pageWidth / 2, m_pageHeight / 2,
 					m_pageWidth, m_pageHeight, 0);
 			}
 
@@ -3145,7 +3194,7 @@ public class OutputFormat
 	{
 		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
-			float c[] = color.getRGBColorComponents(null);
+			float c[] = color.getColorComponents(null);
 			PrintWriter pw;
 			
 			if (m_outputType == PDF)
@@ -3154,15 +3203,28 @@ public class OutputFormat
 				pw = m_writer;
 
 			StringBuffer sb = new StringBuffer();
-			sb.append(m_coordinateDecimal.format(c[0]));
-			sb.append(' ');
-			sb.append(m_coordinateDecimal.format(c[1]));
-			sb.append(' ');
-			sb.append(m_coordinateDecimal.format(c[2]));
-			writeLine(pw, sb.toString() + " RG");
+			for (int i = 0; i < c.length; i++)
+			{
+				sb.append(m_coordinateDecimal.format(c[i]));
+				sb.append(' ');
+			}
+
+			int colorSpaceType = color.getColorSpace().getType();
+			if (colorSpaceType == ColorSpace.TYPE_CMYK)
+				writeLine(pw, sb.toString() + "K");
+			else if (c[0] == 0 && c[1] == 0 && c[2] == 0)
+				writeLine(pw, "0 G");
+			else
+				writeLine(pw, sb.toString() + "RG");
+
 			if (m_outputType == PDF)
 			{
-				writeLine(pw, sb.toString() + " rg");
+				if (colorSpaceType == ColorSpace.TYPE_CMYK)
+					writeLine(pw, sb.toString() + "k");
+				else if (c[0] == 0 && c[1] == 0 && c[2] == 0)
+					writeLine(pw, "0 g");
+				else
+					writeLine(pw, sb.toString() + "rg");
 
 				/*
 				 * Write graphics state dictionary entry setting
@@ -3557,55 +3619,6 @@ public class OutputFormat
 	}
 
 	/**
-	 * Determines single color used in an image.
-	 * @param image image to check.
-	 * @return single non-transparent color used in an image, or null if
-	 * image has many colors.
-	 */
-	private Color getSingleImageColor(BufferedImage image)
-	{
-		Color singleColor = Color.BLACK;
-		boolean foundDifferentColors = false;
-		boolean foundFirstColor = false;
-		int imageWidth = image.getWidth();
-		int imageHeight = image.getHeight();
-
-		/*
-		 * Check if all pixels are the same color, or transparent.
-		 */
-		int y = 0;
-		while (y < imageHeight && (!foundDifferentColors))
-		{
-			int x = 0;
-			while (x < imageWidth && (!foundDifferentColors))
-			{
-				int pixel = image.getRGB(x, y);
-				if ((pixel & 0xff000000) != 0)
-				{
-					/*
-					 * Pixel is not transparent.
-					 */
-					if (!foundFirstColor)
-					{
-						foundFirstColor = true;
-						singleColor = new Color(pixel & 0xffffff);
-					}
-					else
-					{
-						foundDifferentColors = (pixel != singleColor.getRGB());
-					}
-				}
-				x++;
-			}
-			y++;
-		}
-
-		if (foundDifferentColors)
-			singleColor = null;
-		return(singleColor);
-	}
-
-	/**
 	 * Draw icon at points on page.
 	 * @param pointList is list of Point2D objects at which to draw icon.
 	 * @param icon image to draw.
@@ -3613,12 +3626,12 @@ public class OutputFormat
 	 * @param rotation rotation angle for icon.
 	 * @param scaling scale factor for icon.
 	 */
-	public void drawIcon(ArrayList<Point2D> pointList, BufferedImage image, double size,
+	public void drawIcon(ArrayList<Point2D> pointList, ColorIcon icon, double size,
 		double rotation, double scaling)
 		throws IOException, MapyrusException
 	{
-		int pixelWidth = image.getWidth();
-		int pixelHeight = image.getHeight();
+		int pixelWidth = icon.getImage().getWidth();
+		int pixelHeight = icon.getImage().getHeight();
 		Point2D pt;
 		int i;
 		double x, y, mmWidth, mmHeight;
@@ -3666,7 +3679,7 @@ public class OutputFormat
 				if (x + mmWidth >= 0 && x - mmWidth <= m_pageWidth &&
 					y + mmHeight >= 0.0 && y - mmHeight <= m_pageHeight)
 				{
-					writePostScriptOrPDFImage(image, x, y, mmWidth, mmHeight, rotation);
+					writePostScriptOrPDFIcon(icon, x, y, mmWidth, mmHeight, rotation);
 				}
 			}
 		}
@@ -3678,7 +3691,7 @@ public class OutputFormat
 
 			int reduction = (int)Math.round(1 / xScale);
 			int step = 1;
-			Image imageToDisplay = image;
+			Image imageToDisplay = icon.getImage();
 			while (reduction > 1)
 			{
 				reduction = reduction / 2;
@@ -3698,7 +3711,7 @@ public class OutputFormat
 				int reducedHeight = pixelHeight / step;
 				if (reducedWidth > 0 && reducedHeight > 0)
 				{
-					imageToDisplay = image.getScaledInstance(reducedWidth,
+					imageToDisplay = icon.getImage().getScaledInstance(reducedWidth,
 						reducedHeight, Image.SCALE_SMOOTH);
 					xScale *= ((double)pixelWidth / reducedWidth);
 					yScale *= ((double)pixelHeight / reducedHeight);
@@ -3764,7 +3777,7 @@ public class OutputFormat
 	{
 		if (m_outputType == POSTSCRIPT_GEOMETRY || m_outputType == PDF)
 		{
-			writePostScriptOrPDFImage(image, x + width / 2,
+			writePostScriptOrPDFImage(image, null, x + width / 2,
 				y + height / 2, width, height, 0);
 		}
 		else
