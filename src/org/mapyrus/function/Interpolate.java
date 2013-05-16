@@ -20,6 +20,7 @@
 package org.mapyrus.function;
 
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -123,27 +124,49 @@ public class Interpolate implements Function
 							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_COLOR) +
 								": " + token);
 						}
-						float []lowerHSB = new float[3];
-						float []upperHSB = new float[3];
-						Color.RGBtoHSB(lowerColor.getRed(), lowerColor.getGreen(),
-							lowerColor.getBlue(), lowerHSB);
-						Color.RGBtoHSB(upperColor.getRed(), upperColor.getGreen(),
-							upperColor.getBlue(), upperHSB);
-						float h = (float)(lowerHSB[0] + fraction * (upperHSB[0] - lowerHSB[0]));
-						float s = (float)(lowerHSB[1] + fraction * (upperHSB[1] - lowerHSB[1]));
-						float b = (float)(lowerHSB[2] + fraction * (upperHSB[2] - lowerHSB[2]));
-
-						/*
-						 * Create interpolated color as hex string.
-						 */
-						Color c = Color.getHSBColor(h, s, b);
-						StringBuffer sb = new StringBuffer("0x");
-						String hexDigits = Integer.toHexString(c.getRGB() & 0xffffff);
-						int padding = 6 - hexDigits.length();
-						while (padding-- > 0)
-							sb.append('0');
-						sb.append(hexDigits);
-						retval = new Argument(Argument.STRING, sb.toString());
+						if (lowerColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK &&
+							upperColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
+						{
+							/*
+							 * Create interpolated CMYK color.
+							 */
+							float []lowerCMYK = lowerColor.getColorComponents(null);
+							float []upperCMYK = upperColor.getColorComponents(null);
+							StringBuffer sb = new StringBuffer("cmyk(");
+							for (int i = 0; i < 4; i++)
+							{
+								if (i > 0)
+									sb.append(",");
+								float comp = (float)(lowerCMYK[i] + fraction * (upperCMYK[i] - lowerCMYK[i]));
+								sb.append(comp);
+							}
+							sb.append(")");
+							retval = new Argument(Argument.STRING, sb.toString());
+						}
+						else
+						{
+							float []lowerHSB = new float[3];
+							float []upperHSB = new float[3];
+							Color.RGBtoHSB(lowerColor.getRed(), lowerColor.getGreen(),
+								lowerColor.getBlue(), lowerHSB);
+							Color.RGBtoHSB(upperColor.getRed(), upperColor.getGreen(),
+								upperColor.getBlue(), upperHSB);
+							float h = (float)(lowerHSB[0] + fraction * (upperHSB[0] - lowerHSB[0]));
+							float s = (float)(lowerHSB[1] + fraction * (upperHSB[1] - lowerHSB[1]));
+							float b = (float)(lowerHSB[2] + fraction * (upperHSB[2] - lowerHSB[2]));
+	
+							/*
+							 * Create interpolated color as hex string.
+							 */
+							Color c = Color.getHSBColor(h, s, b);
+							StringBuffer sb = new StringBuffer("0x");
+							String hexDigits = Integer.toHexString(c.getRGB() & 0xffffff);
+							int padding = 6 - hexDigits.length();
+							while (padding-- > 0)
+								sb.append('0');
+							sb.append(hexDigits);
+							retval = new Argument(Argument.STRING, sb.toString());
+						}
 					}
 				}
 			}
