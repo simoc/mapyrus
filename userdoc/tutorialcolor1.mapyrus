@@ -16,6 +16,6 @@ fill
 
 clearpath
 # Another way of defining a CMYK color
-color "cmyk(0, 0, 0, 1)"
+color "cmyk(0,0,0,1)"
 box 32, 2, 40, 38
 fill
