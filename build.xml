@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 <!-- Current software version, this value is updated -->
 <!-- manually for each new release. -->
-<property name="version" value="1.301"/>
+<property name="version" value="1.302"/>
 
 <!-- 'JTS Topology Suite' JAR file required for building some Java classes -->
 <property name="jts.jar" value="jts-1.13.jar"/>
