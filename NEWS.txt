@@ -1,6 +1,10 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2013 Simon Chenery <simoc@users.sourceforge.net>
 
+1.302, June 2013
+
+* Fix Edit->Export as A4 PDF File Selection for Windows.
+
 1.301, May 2013
 
 * Accept MULTIPOINT ((1 2),(3 4)) format OGC WKT geometry strings too.

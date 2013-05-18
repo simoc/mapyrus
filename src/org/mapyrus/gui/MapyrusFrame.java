@@ -797,7 +797,10 @@ public class MapyrusFrame implements MapyrusEventListener
 		{
 			try
 			{
-				contents = "newpage 'pdf', '" + selectedFile.getPath() + "', 'A4'\n" +
+				String path = selectedFile.getPath();
+				path = path.replace("\\", "\\\\");
+				path = path.replace("'", "\\'");
+				contents = "newpage 'pdf', '" + path + "', 'A4'\n" +
 					contents + "\n" +
 					"endpage";
 
