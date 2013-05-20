@@ -2,7 +2,7 @@ newpage "eps", "tutoriallabels3.eps", 100, 30
 
 # Draw label, then underline it.
 #
-font "Helvetica-Narrow-Bold", 6
+font "Helvetica-Bold", 6
 let h1 = "Abcdefg", h2 = "Hij"
 move 5, 5
 label h1

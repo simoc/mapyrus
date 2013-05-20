@@ -3,7 +3,7 @@
 begin district name
   stroke
   sinkhole
-  font "Helvetica-Narrow-Bold", 3
+  font "Helvetica-Bold", 3
   justify "center, middle"
   label name
 end

@@ -3,7 +3,7 @@ begin caption message, width
 
   # Word wrap message then display it as a table with only one entry.
   #
-  font 'Helvetica-Narrow', 3
+  font 'Helvetica', 3
   let t[1] = wordwrap(message, width)
   color "Black"
   linestyle 0.1
@@ -13,7 +13,7 @@ begin caption message, width
 end
 
 newpage "eps", "tutorialwordwrap1.eps", 95, 50
-move 20, 24
+move 20, 28
 caption "SYDNEY: A cloudy morning followed by a partly cloudy afternoon.
 Mostly fine apart from the chance of a shower early.  Light to moderate
 W/NW winds, turning moderate SW during the day.", 35

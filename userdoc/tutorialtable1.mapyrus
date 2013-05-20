@@ -5,7 +5,7 @@ begin vehiclebox reg, cargo, driver, time
 
   # Draw vehicle info as two column table with arrow pointing left
   #
-  font 'Helvetica-Narrow', 3
+  font 'Helvetica', 3
   color "Black"
   clearpath
   move 2, 4
@@ -19,5 +19,5 @@ move 22, 20
 vehiclebox "MAC-259", "FROZEN", "Smith", "Bris 9:20"
 
 clearpath
-move 65, 14
+move 60, 14
 vehiclebox "MTT-257", "FRESH", "Jones", "Syd 2:10"

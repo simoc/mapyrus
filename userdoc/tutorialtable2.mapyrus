@@ -8,7 +8,7 @@ end
 
 newpage "eps", "tutorialtable2.eps", 100, 50
 color "black"
-font 'Helvetica-Narrow-Bold', 3
+font 'Helvetica-Bold', 3
 
 # Display the ESRI Shape file hotel.shp on left side of page.
 #

@@ -609,7 +609,7 @@ begin speechbubble message
 	key "point", "Speech Bubble", "speech\nbubble"
 	local height, halfWidth
 
-	font "Helvetica-Narrow", 3
+	font "Helvetica", 3
 	justify "left, bottom"
 
 	# Find size of message.
@@ -1171,7 +1171,7 @@ end
 begin streetname name
 	local w
 	key "point", "Street Name", "Sesame St"
-	font "Helvetica-Narrow-Bold", 3
+	font "Helvetica-Bold", 2.5
 	let w = stringwidth(name) + 1
 
 	# Do not draw labels that overlap existing labels.
