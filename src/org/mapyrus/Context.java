@@ -28,13 +28,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.StringTokenizer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -42,6 +35,16 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.script.Bindings;
 
 import org.mapyrus.dataset.GeographicDataset;
 import org.mapyrus.font.StringDimension;
@@ -56,6 +59,7 @@ import org.mapyrus.io.GeoImageBoundingBox;
 import org.mapyrus.io.ImageClippingFile;
 import org.mapyrus.io.TFWFile;
 import org.mapyrus.io.WMSRequestBoundingBox;
+import org.mapyrus.script.MapyrusBindings;
 
 /**
  * Maintains state information during interpretation inside a single procedure block.
@@ -3209,6 +3213,49 @@ public class Context
 			
 		}
 		arg.addHashMapEntry(key, value);
+	}
+
+	/**
+	 * Replace all variables for ScriptEngine interface.
+	 * @param bindings key/value pairs for variables. 
+	 */
+	public void setBindings(Bindings bindings)
+	{
+		if (m_vars == null)
+			m_vars = new HashMap<String, Argument>();
+		else
+			m_vars.clear();
+
+		for (Map.Entry<String, Object> entry : bindings.entrySet())
+		{
+			Object entryValue = entry.getValue();
+			if (entryValue instanceof Argument)
+			{
+				defineVariable(entry.getKey(), (Argument)entry.getValue());
+			}
+			else if (entryValue instanceof Number)
+			{
+				double d = ((Number)entry.getValue()).doubleValue();
+				defineVariable(entry.getKey(), new Argument(d));
+			}
+			else
+			{
+				defineVariable(entry.getKey(),
+					new Argument(Argument.STRING, entryValue.toString()));
+			}
+		}
+	}
+
+	/**
+	 * Get all currently defined variables for ScriptEngine interface.
+	 * @return key/value pairs for variables.
+	 */
+	public Bindings getBindings()
+	{
+		Bindings retval = new MapyrusBindings();
+		if (m_vars != null)
+			retval.putAll(m_vars);
+		return retval;
 	}
 
 	/**

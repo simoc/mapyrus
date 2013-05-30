@@ -25,8 +25,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
+
+import javax.script.Bindings;
 
 import org.mapyrus.dataset.DatasetFactory;
 import org.mapyrus.dataset.GeographicDataset;
@@ -1574,6 +1576,26 @@ public class ContextStack
 			c = (Context)(m_stack.getFirst());
 
 		c.defineHashMapEntry(hashMapName, key, value);
+	}
+
+	/**
+	 * Replace all variables.
+	 * @param bindings key/value pairs for variables. 
+	 */
+	public void setBindings(Bindings bindings)
+	{
+		Context context = m_stack.getFirst();
+		context.setBindings(bindings);
+	}
+
+	/**
+	 * Get all currently defined variables.
+	 * @return key/value pairs for variables.
+	 */
+	public Bindings getBindings()
+	{
+		Context context = m_stack.getFirst();
+		return context.getBindings();
 	}
 
 	/**
