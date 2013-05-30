@@ -93,7 +93,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 <attribute name="Main-Class" value="org.mapyrus.Mapyrus"/>
 <attribute name="Built-By" value="${user.name}"/>
 </manifest>
-<jar jarfile="${ant.project.name}.jar" basedir="build/classes" manifest="manifest"/>
+<jar jarfile="${ant.project.name}.jar" basedir="build/classes" manifest="manifest">
+<service type="javax.script.ScriptEngineFactory" provider="org.mapyrus.script.MapyrusScriptEngineFactory"/>
+</jar>
 </target>
 
 <target name="war" depends="jar, compile" description="Build war file from classes">
