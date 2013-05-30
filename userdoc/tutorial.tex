@@ -2100,6 +2100,43 @@ code that passes Mapyrus commands in HTTP requests.
 http://www.mapyrus.org/mapyrus/openlayers.html
 \end{verbatim}
 
+\subsection{Using Mapyrus JSR 223 Script Engine Interface}
+
+Mapyrus implements JSR 223, the \texttt{javax.script} interfaces enabling
+scripting languages to be called from Java.
+
+The interface to Mapyrus is automatically registered when the
+\texttt{mapyrus.jar} file is included in the Java classpath.
+
+Create a \texttt{javax.script.ScriptEngine} to run Mapyrus
+commands using the following Java class:
+
+\begin{verbatim}
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
+public class JSR223Demo
+{
+  public static void main(String []args)
+  {
+    try
+    {
+      ScriptEngineManager manager = new ScriptEngineManager();
+      ScriptEngine engine = manager.getEngineByName("Mapyrus");
+      engine.eval("newpage 'png', 'j.png', 100, 100\n" +
+        "color 'yellow'\n" +
+        "hexagon 50, 50, 40\n" +
+        "fill\n" +
+        "endpage");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+}
+\end{verbatim}
+
 \subsection{Using Mapyrus In A Java Or Jython Application}
 
 Jython is a Java implementation of the Python programming language.
