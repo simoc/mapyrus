@@ -4534,15 +4534,22 @@ public class OutputFormat
 					c = m_adobeFontMetrics.getEncodedChar(m_fontName, c);
 				}
 				int extendedChar = c;
-				int b1 = extendedChar / (8 * 8);
-				extendedChar -= b1 * (8 * 8);
-				int b2 = extendedChar / 8;
-				extendedChar -= b2 * 8;
-				int b3 = extendedChar;
-				buffer.append('\\');
-				buffer.append(b1);
-				buffer.append(b2);
-				buffer.append(b3);
+				
+				/*
+				 * Avoid overflowing 3 octal digits.
+				 */
+				if (extendedChar < 8 * 8 * 8)
+				{
+					int b1 = extendedChar / (8 * 8);
+					extendedChar -= b1 * (8 * 8);
+					int b2 = extendedChar / 8;
+					extendedChar -= b2 * 8;
+					int b3 = extendedChar;
+					buffer.append('\\');
+					buffer.append(b1);
+					buffer.append(b2);
+					buffer.append(b3);
+				}
 			}
 			else
 			{
