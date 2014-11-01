@@ -19,6 +19,9 @@
 
 package org.mapyrus.function;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
@@ -46,6 +49,7 @@ public class Wordwrap implements Function
 		double maxWidth = arg2.getNumericValue();
 		String hyphenation = null;
 		boolean adjustSpacing = false;
+		boolean preserveNewlines = false;
 		if (args.size() == 3)
 		{
 			StringTokenizer st = new StringTokenizer(args.get(2).toString());
@@ -61,15 +65,53 @@ public class Wordwrap implements Function
 					String flag = token.substring(14);
 					adjustSpacing = flag.equalsIgnoreCase("true");
 				}
+				else if (token.startsWith("preservenewlines="))
+				{
+					String flag = token.substring(17);
+					preserveNewlines = flag.equalsIgnoreCase("true");
+				}
 			} 
 		}
 
-		StringTokenizer st = new StringTokenizer(s);
+		StringBuffer sb = new StringBuffer();
+		if (preserveNewlines)
+		{
+			try
+			{
+				String line;
+				BufferedReader reader = new BufferedReader(new StringReader(s));
+				int lineNumber = 0;
+				while ((line = reader.readLine()) != null)
+				{
+					if (lineNumber > 0)
+						sb.append(Constants.LINE_SEPARATOR);
+					sb.append(wrapWords(context, line, maxWidth, hyphenation, adjustSpacing));
+					lineNumber++;
+				}
+			}
+			catch (IOException e)
+			{
+				throw new MapyrusException(e.getMessage());
+			}
+		}
+		else
+		{
+			sb = wrapWords(context, s, maxWidth, hyphenation, adjustSpacing);
+		}
+
+		Argument retval = new Argument(Argument.STRING, sb.toString());
+		return(retval);
+	}
+
+	private StringBuffer wrapWords(ContextStack context, String words, double maxWidth,
+		String hyphenation, boolean adjustSpacing) throws MapyrusException
+	{
+		StringTokenizer st = new StringTokenizer(words);
 		String token;
 		StringDimension dim;
 		double lineWidth = 0;
 		double wordWidth;
-		StringBuffer sb = new StringBuffer(s.length() + 5);
+		StringBuffer sb = new StringBuffer(words.length() + 5);
 		int lineStartIndex = 0;
 		double spaceWidth = context.getStringDimension(" ").getWidth();
 
@@ -220,8 +262,7 @@ public class Wordwrap implements Function
 			}
 		}
 
-		Argument retval = new Argument(Argument.STRING, sb.toString());
-		return(retval);
+		return sb;
 	}
 
 	/**
