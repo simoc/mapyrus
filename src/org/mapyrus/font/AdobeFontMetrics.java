@@ -61,7 +61,7 @@ public class AdobeFontMetrics
 	/*
 	 * Lookup table from Unicode to PostScript glyph name. 
 	 */
-	private static HashMap<Integer, ArrayList<String>> m_glyphNames;
+	private static HashMap<Integer, ArrayList<String>> m_defaultGlyphNames;
 
 	/*
 	 * Lookup table of ISOLatin1 (ISO-8859-1) character indexes for named extended characters.
@@ -181,38 +181,12 @@ public class AdobeFontMetrics
 		String res = "org/mapyrus/font/glyphlist.txt";
 		InputStream inStream = AdobeFontMetrics.class.getClassLoader().getResourceAsStream(res);
 
-		m_glyphNames = new HashMap<Integer, ArrayList<String>>(4400); 
+		m_defaultGlyphNames = new HashMap<Integer, ArrayList<String>>(); 
 		BufferedReader reader = null;
 		try
 		{
 			reader = new BufferedReader(new InputStreamReader(inStream));
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				if (!line.startsWith("#"))
-				{
-					int index = line.indexOf(';');
-					if (index >= 0)
-					{
-						String glyphName = line.substring(0, index);
-						String hex = line.substring(index + 1);
-						StringTokenizer st = new StringTokenizer(hex);
-						while (st.hasMoreTokens())
-						{
-							String token = st.nextToken();
-							int unicode = Integer.parseInt(token, 16);
-							ArrayList<String> glyphNames = m_glyphNames.get(Integer.valueOf(unicode));
-							if (glyphNames == null)
-							{
-								glyphNames = new ArrayList<String>(1);
-								m_glyphNames.put(Integer.valueOf(unicode), glyphNames);
-								
-							}
-							glyphNames.add(glyphName);
-						}
-					}
-				}
-			}
+			m_defaultGlyphNames = readGlyphNames(reader);
 		}
 		catch (IOException e)
 		{
@@ -554,11 +528,61 @@ public class AdobeFontMetrics
 
 	/**
 	 * Return string representation of object.
-	 * @param string representation.
+	 * @return string representation.
 	 */
 	public String toString()
 	{
 		return("Adobe Font Metrics for " + m_fontName);
+	}
+
+	/**
+	 * Read Adobe glyphlist.txt file giving PostScript glyph names for each unicode character.
+	 * @param reader glyphlist.txt file.
+	 * @return lookup table.
+	 */
+	private static HashMap<Integer, ArrayList<String>> readGlyphNames(BufferedReader reader)
+		throws IOException
+	{
+		HashMap<Integer, ArrayList<String>> glyphNameMap = new HashMap<Integer, ArrayList<String>>();
+
+		String line;
+		while ((line = reader.readLine()) != null)
+		{
+			if (!line.startsWith("#"))
+			{
+				int index = line.indexOf(';');
+				if (index >= 0)
+				{
+					String glyphName = line.substring(0, index);
+					String hex = line.substring(index + 1);
+					StringTokenizer st = new StringTokenizer(hex);
+					while (st.hasMoreTokens())
+					{
+						String token = st.nextToken();
+						int unicode = Integer.parseInt(token, 16);
+						ArrayList<String> glyphNames = glyphNameMap.get(Integer.valueOf(unicode));
+						if (glyphNames == null)
+						{
+							glyphNames = new ArrayList<String>(1);
+							glyphNameMap.put(Integer.valueOf(unicode), glyphNames);
+							
+						}
+						glyphNames.add(glyphName);
+					}
+				}
+			}
+		}
+		return glyphNameMap;
+	}
+
+	/**
+	 * Get PostScript glyph names for a unicode character.
+	 * @param unicode unicode character.
+	 * @return list of glyph names, or null if not found.
+	 */
+	private ArrayList<String> getGlyphNames(char unicode)
+	{
+		return m_defaultGlyphNames.get(Integer.valueOf(unicode));
 	}
 
 	/**
@@ -571,7 +595,7 @@ public class AdobeFontMetrics
 	{
 		int total = 0;
 		int sLength = s.length();
-		int c;
+		char c;
 		double pointLen;
 		double maxAscent = 0, minDescent = FULL_CHAR_SIZE;
 		StringDimension retval = new StringDimension();
@@ -585,7 +609,7 @@ public class AdobeFontMetrics
 			CharacterMetrics metrics = null;
 
 			c = s.charAt(i);
-			ArrayList<String> glyphNames = m_glyphNames.get(Integer.valueOf(c));
+			ArrayList<String> glyphNames = getGlyphNames(c);
 			if (glyphNames != null)
 			{
 				for (int j = 0; j < glyphNames.size() && metrics == null; j++)
@@ -632,7 +656,7 @@ public class AdobeFontMetrics
 	public char getEncodedChar(char c)
 	{
 		CharacterMetrics metrics = null;
-		ArrayList<String> glyphNames = m_glyphNames.get(Integer.valueOf(c));
+		ArrayList<String> glyphNames = getGlyphNames(c);
 		if (glyphNames != null)
 		{
 			for (int i = 0; i < glyphNames.size() && metrics == null; i++)
