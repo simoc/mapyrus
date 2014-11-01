@@ -215,6 +215,8 @@ public class OutputFormat
 	private ArrayList<PostScriptFont> m_pfbFiles;
 	private ArrayList<AdobeFontMetrics> m_PDFFonts;
 	
+	private String m_glyphFile;
+	
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
 	 */
@@ -660,7 +662,7 @@ public class OutputFormat
 			try
 			{
 				reader = new BufferedReader(new FileReader(afmFilename));
-				afm = new AdobeFontMetrics(reader, afmFilename, m_encodeAsISOLatin1);
+				afm = new AdobeFontMetrics(reader, afmFilename, m_encodeAsISOLatin1, m_glyphFile);
 				m_PDFFonts.add(afm);
 			}
 			finally
@@ -1353,6 +1355,13 @@ public class OutputFormat
 					}
 				}
 			}
+			else if (token.startsWith("glyphfile="))
+			{
+				/*
+				 * Custom file defining Adobe glyphs for Unicode characters.
+				 */
+				m_glyphFile = token.substring(10);
+			}
 			else if (token.startsWith("isolatinfonts="))
 			{
 				/*
@@ -2003,7 +2012,7 @@ public class OutputFormat
 				 * Load Font Metrics information only when it is needed.
 				 */
 				if (m_adobeFontMetrics == null)
-					m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1);
+					m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1, m_glyphFile);
 
 				double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
 				StringDimension dim = m_adobeFontMetrics.getStringDimension(fontName, pointSize, token);
@@ -4530,7 +4539,7 @@ public class OutputFormat
 					 * Find character in PostScript font this character.
 					 */
 					if (m_adobeFontMetrics == null)
-						m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1);
+						m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1, m_glyphFile);
 					c = m_adobeFontMetrics.getEncodedChar(m_fontName, c);
 				}
 				int extendedChar = c;

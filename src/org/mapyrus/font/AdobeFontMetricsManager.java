@@ -96,7 +96,7 @@ public class AdobeFontMetricsManager
 	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
 	 */
 	public AdobeFontMetricsManager(List<String> afmFilenames,
-		HashSet<String> ISOLatin1EncodedFonts)
+		HashSet<String> ISOLatin1EncodedFonts, String glyphFilename)
 		throws IOException, MapyrusException
 	{
 		m_fontMetrics = new HashMap<String, AdobeFontMetrics>();
@@ -115,7 +115,7 @@ public class AdobeFontMetricsManager
 			try
 			{
 				r = new BufferedReader(new InputStreamReader(inStream));
-				AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts);
+				AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts, glyphFilename);
 				m_fontMetrics.put(afm.getFontName(), afm);
 			}
 			finally
@@ -137,7 +137,7 @@ public class AdobeFontMetricsManager
 			try
 			{
 				r = new BufferedReader(new FileReader(filename));
-				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts);
+				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts, glyphFilename);
 				m_fontMetrics.put(afm.getFontName(), afm);
 			}
 			finally

@@ -21,6 +21,7 @@ package org.mapyrus.font;
 
 import java.awt.Rectangle;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -62,6 +63,8 @@ public class AdobeFontMetrics
 	 * Lookup table from Unicode to PostScript glyph name. 
 	 */
 	private static HashMap<Integer, ArrayList<String>> m_defaultGlyphNames;
+	
+	private HashMap<Integer, ArrayList<String>> m_customGlyphNames;
 
 	/*
 	 * Lookup table of ISOLatin1 (ISO-8859-1) character indexes for named extended characters.
@@ -206,9 +209,11 @@ public class AdobeFontMetrics
 	 * @param r file to read from.
 	 * @param afmFilename filename being read (for any error message).
 	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
+	 * @param glyphFilename optional Adobe Glyph List filename.
 	 */	
 	public AdobeFontMetrics (BufferedReader r, String afmFilename,
-		HashSet<String> ISOLatin1EncodedFonts) throws IOException, MapyrusException
+		HashSet<String> ISOLatin1EncodedFonts,
+		String glyphFilename) throws IOException, MapyrusException
 	{
 		String line;
 		boolean inCharMetrics = false;
@@ -221,6 +226,27 @@ public class AdobeFontMetrics
 		m_lastChar = Integer.MIN_VALUE;
 		m_flags = 32; /* Nonsymbolic font for PDF */
 		boolean convertToISOLatin1 = false;
+
+		BufferedReader glyphReader = null;
+		try
+		{
+			if (glyphFilename != null)
+			{
+				glyphReader = new BufferedReader(new FileReader(glyphFilename));
+				m_customGlyphNames = readGlyphNames(glyphReader);
+			}
+		}
+		finally
+		{
+			try
+			{
+				if (glyphReader != null)
+					glyphReader.close();
+			}
+			catch (IOException e)
+			{
+			}
+		}
 
 		try
 		{
@@ -582,7 +608,13 @@ public class AdobeFontMetrics
 	 */
 	private ArrayList<String> getGlyphNames(char unicode)
 	{
-		return m_defaultGlyphNames.get(Integer.valueOf(unicode));
+		ArrayList<String> retval;
+
+		if (m_customGlyphNames != null)
+			retval = m_customGlyphNames.get(Integer.valueOf(unicode));
+		else
+			retval = m_defaultGlyphNames.get(Integer.valueOf(unicode));
+		return retval;
 	}
 
 	/**
