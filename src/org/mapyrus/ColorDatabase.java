@@ -895,7 +895,7 @@ public class ColorDatabase
 				 */
 				int nChars = colorName.length();
 				char c;
-				StringBuffer sb = new StringBuffer(nChars);
+				StringBuilder sb = new StringBuilder(nChars);
 				
 				for (int i = 0; i < nChars; i++)
 				{
@@ -935,7 +935,7 @@ public class ColorDatabase
 	 */
 	public static String toHexString(Color c)
 	{
-		StringBuffer sb = new StringBuffer("#");
+		StringBuilder sb = new StringBuilder("#");
 		String r = Integer.toHexString(c.getRed());
 		String g = Integer.toHexString(c.getGreen());
 		String b = Integer.toHexString(c.getBlue());

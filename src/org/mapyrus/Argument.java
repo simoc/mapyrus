@@ -987,7 +987,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 * geometry string.
 	 * @return index of next element in coords array to be parsed.
 	 */
-	private int createOGCWKT(double []coords, int startIndex, StringBuffer s, boolean addGeometryType)
+	private int createOGCWKT(double []coords, int startIndex, StringBuilder s, boolean addGeometryType)
 	{
 		int geometryType = (int)coords[startIndex];
 		int nElements = (int)coords[startIndex + 1];
@@ -1090,7 +1090,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	public String getGeoJSONValue() throws MapyrusException
 	{
 		double []coords = getGeometryValue();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		createGeoJSON(coords, 0, sb, true);
 		String retval = sb.toString().trim();
 		return(retval);
@@ -1105,7 +1105,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 * geometry string.
 	 * @return index of next element in coords array to be parsed.
 	 */
-	private int createGeoJSON(double []coords, int startIndex, StringBuffer sb, boolean addGeometryType)
+	private int createGeoJSON(double []coords, int startIndex, StringBuilder sb, boolean addGeometryType)
 	{
 		int geometryType = (int)coords[startIndex];
 		int nElements = (int)coords[startIndex + 1];
@@ -1214,7 +1214,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	private String escapeQuotes(String s)
 	{
-		StringBuffer sb = new StringBuffer(s.length());
+		StringBuilder sb = new StringBuilder(s.length());
 		int c;
 		for (int j = 0; j < s.length(); j++)
 		{
@@ -1245,7 +1245,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	{
 		String retval = null;
 		DecimalFormat format;
-		StringBuffer sb;
+		StringBuilder sb;
 
 		if (m_type == STRING)
 			retval = m_stringValue;
@@ -1272,7 +1272,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 			 * Build string of all key, value pairs in the hash map, in a
 			 * format that could be re-interpreted by Mapyrus as an array.
 			 */
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			Object []keys = getHashMapKeys();
 			boolean isSequential = isSequentialKeys(keys);
 			if (isSequential)
@@ -1310,7 +1310,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 		}
 		else
 		{
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			createOGCWKT(m_geometryValue, 0, sb, true);
 			retval = sb.toString().trim();
 		}

@@ -468,7 +468,7 @@ public class Expression
 					/*
 					 * Repeat string N times.
 					 */
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					int repeatCount = (int)(Math.floor(rightValue.getNumericValue()));
 					for (int i = 0; i < repeatCount; i++)
 					{
@@ -615,7 +615,7 @@ public class Expression
 		public String toString()
 		{
 			String retval;
-			StringBuffer sb;
+			StringBuilder sb;
 			
 			if (m_isLeaf)
 			{
@@ -625,7 +625,7 @@ public class Expression
 				}
 				else
 				{
-					sb = new StringBuffer("[");
+					sb = new StringBuilder("[");
 					String delimiter = "";
 					boolean isKey = true;
 					for (ExpressionTreeNode node : m_branches)
@@ -738,7 +738,7 @@ public class Expression
 						break;
 				}
 				
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				ExpressionTreeNode leftBranch = (ExpressionTreeNode)m_branches.get(0);
 				if (m_operation == PRE_INCREMENT_OPERATION || m_operation == PRE_DECREMENT_OPERATION)
 				{
@@ -1455,7 +1455,7 @@ public class Expression
 		throws IOException, MapyrusException
 	{
 		boolean parsedDigit;
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		ExpressionTreeNode expr;
 		int c, quote;
 
