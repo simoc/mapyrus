@@ -73,7 +73,7 @@ public class Wordwrap implements Function
 			} 
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (preserveNewlines)
 		{
 			try
@@ -103,7 +103,7 @@ public class Wordwrap implements Function
 		return(retval);
 	}
 
-	private StringBuffer wrapWords(ContextStack context, String words, double maxWidth,
+	private StringBuilder wrapWords(ContextStack context, String words, double maxWidth,
 		String hyphenation, boolean adjustSpacing) throws MapyrusException
 	{
 		StringTokenizer st = new StringTokenizer(words);
@@ -111,7 +111,7 @@ public class Wordwrap implements Function
 		StringDimension dim;
 		double lineWidth = 0;
 		double wordWidth;
-		StringBuffer sb = new StringBuffer(words.length() + 5);
+		StringBuilder sb = new StringBuilder(words.length() + 5);
 		int lineStartIndex = 0;
 		double spaceWidth = context.getStringDimension(" ").getWidth();
 
@@ -147,7 +147,7 @@ public class Wordwrap implements Function
 					 * Progressively try adding less and less of word until
 					 * it will fit on line.
 					 */
-					StringBuffer joined = new StringBuffer(token.length());
+					StringBuilder joined = new StringBuilder(token.length());
 					for (int i = 0; i < nElementsToAdd; i++)
 						joined.append(splitList.get(i));
 					if (nElementsToAdd <  splitList.size())

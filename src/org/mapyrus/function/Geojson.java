@@ -47,7 +47,7 @@ public class Geojson implements Function
 		String id = identifier.toString();
 		if (properties.getHashMapSize() == 0)
 			props = "null";
-		StringBuffer feature = new StringBuffer();
+		StringBuilder feature = new StringBuilder();
 		feature.append("{\"type\": \"Feature\", \"geometry\": ");
 		feature.append(geojson);
 		feature.append(", \"properties\": ");

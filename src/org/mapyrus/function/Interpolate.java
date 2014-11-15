@@ -132,7 +132,7 @@ public class Interpolate implements Function
 							 */
 							float []lowerCMYK = lowerColor.getColorComponents(null);
 							float []upperCMYK = upperColor.getColorComponents(null);
-							StringBuffer sb = new StringBuffer("cmyk(");
+							StringBuilder sb = new StringBuilder("cmyk(");
 							for (int i = 0; i < 4; i++)
 							{
 								if (i > 0)
@@ -159,7 +159,7 @@ public class Interpolate implements Function
 							 * Create interpolated color as hex string.
 							 */
 							Color c = Color.getHSBColor(h, s, b);
-							StringBuffer sb = new StringBuffer("0x");
+							StringBuilder sb = new StringBuilder("0x");
 							String hexDigits = Integer.toHexString(c.getRGB() & 0xffffff);
 							int padding = 6 - hexDigits.length();
 							while (padding-- > 0)

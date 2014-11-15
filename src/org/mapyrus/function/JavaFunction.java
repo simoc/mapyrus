@@ -178,7 +178,7 @@ public class JavaFunction implements Function
 					catch (InvocationTargetException e)
 					{
 						Throwable cause = e.getCause();
-						StringBuffer message = new StringBuffer();
+						StringBuilder message = new StringBuilder();
 						message.append(MapyrusMessages.get(MapyrusMessages.FAILED_JAVA_FUNCTION));
 						message.append(": ");
 						if (cause != null)

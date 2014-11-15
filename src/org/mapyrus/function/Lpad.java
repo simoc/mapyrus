@@ -66,7 +66,7 @@ public class Lpad implements Function
 			/*
 			 * Add padding to string, then replace original string at end of string.
 			 */
-			StringBuffer sb = new StringBuffer(paddedLength + padding.length());
+			StringBuilder sb = new StringBuilder(paddedLength + padding.length());
 			while (sb.length() < paddedLength)
 			{
 				sb.append(padding);

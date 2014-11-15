@@ -131,7 +131,7 @@ public class UserFunction implements Function
 	
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer(m_funcName);
+		StringBuilder sb = new StringBuilder(m_funcName);
 		sb.append(" ");
 		for (int i = 0; i < m_formalParameters.size(); i++)
 		{

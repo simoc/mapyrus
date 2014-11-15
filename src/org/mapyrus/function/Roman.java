@@ -37,7 +37,7 @@ public class Roman implements Function
 		throws MapyrusException
 	{
 		Argument retval;
-		StringBuffer roman = new StringBuffer();
+		StringBuilder roman = new StringBuilder();
 		Argument arg1 = args.get(0);
 		int n = (int)arg1.getNumericValue();
 
@@ -77,7 +77,7 @@ public class Roman implements Function
 	 * @return value n after subtracting Roman numeral digits added
 	 * to Roman numeral string.
 	 */
-	private int addRomanDigits(int n, int romanUnits, String romanDigits, StringBuffer buf)
+	private int addRomanDigits(int n, int romanUnits, String romanDigits, StringBuilder buf)
 	{
 		while (n >= romanUnits)
 		{

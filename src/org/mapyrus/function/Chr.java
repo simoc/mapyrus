@@ -18,7 +18,7 @@ public class Chr implements Function
 	{
 		Argument arg1 = args.get(0);
 		int c = (int)arg1.getNumericValue();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append((char)c);
 		Argument retval = new Argument(Argument.STRING, sb.toString());
 		return(retval);

@@ -66,7 +66,7 @@ public class Rpad implements Function
 			/*
 			 * Add padding to string until it is long enough.
 			 */
-			StringBuffer sb = new StringBuffer(paddedLength + padding.length());
+			StringBuilder sb = new StringBuilder(paddedLength + padding.length());
 			sb.append(s);
 			while (sb.length() < paddedLength)
 			{
