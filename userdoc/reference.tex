@@ -494,12 +494,15 @@ Returns the sine of angle \textit{n}, given in degrees. \\
 \hline
 
 \texttt{split(\textit{str}, \textit{regex})}
+\texttt{split(\textit{str}, \textit{regex}, \textit{extras})}
 \texttt{split(\textit{str})} &
 Splits the string \textit{str} into an array of strings, delimited by the
 regular expression \textit{regex} or whitespace if no regular expression given.
 The array of split strings is returned,
 with the first string having array index 1, the
-second string having index 2, and so on. \\
+second string having index 2, and so on.
+If \textit{extras} contains \texttt{includedelimiters=true} then
+delimiters are included in the array too. \\
 
 \hline
 
