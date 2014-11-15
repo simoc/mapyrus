@@ -223,7 +223,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				{
 					URL commandsUrl = this.getClass().getResource(urls[i]);
 					r = new InputStreamReader(commandsUrl.openConnection().getInputStream());
-					StringBuffer commands = new StringBuffer();
+					StringBuilder commands = new StringBuilder();
 					int c;
 					while ((c = r.read()) != -1)
 						commands.append((char)c);
@@ -558,7 +558,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				/*
 				 * Show version and license information.
 				 */
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(Constants.PROGRAM_NAME).append(" ").append(Constants.getVersion());
 				sb.append(", ").append(Constants.getReleaseDate());
 				sb.append(" ").append(Constants.WEB_SITE);

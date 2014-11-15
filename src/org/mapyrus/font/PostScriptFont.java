@@ -50,7 +50,7 @@ public class PostScriptFont
 	/*
 	 * Contents of font file.
 	 */
-	private StringBuffer m_fileContents;
+	private StringBuilder m_fileContents;
 
 	/**
 	 * Create PostScript Type 1 font from a .pfa or .pfb file.
@@ -146,7 +146,7 @@ public class PostScriptFont
 			 * Create embedded Type 1 font object as described in section 5.8
 			 * of Adobe PDF Reference Manual. 
 			 */
-			m_fileContents = new StringBuffer(128 * 1024);
+			m_fileContents = new StringBuilder(128 * 1024);
 			m_fileContents.append("<< /Type /FontFile /Length ");
 			long hexEncodedLength = totalLength * 2 + Constants.LINE_SEPARATOR.length();
 			hexEncodedLength += totalLength / LINE_LENGTH * Constants.LINE_SEPARATOR.length();
@@ -166,7 +166,7 @@ public class PostScriptFont
 			/*
 			 * Add all segments to PDF object as a hex encoded stream.
 			 */
-			StringBuffer segBuf = new StringBuffer();
+			StringBuilder segBuf = new StringBuilder();
 			int nBytesAdded = 0;
 			for (int i = 0; i < segments.size(); i++)
 			{
@@ -251,7 +251,7 @@ public class PostScriptFont
 			/*
 			 * Read entire .pfa file into memory, most files are about 100kb in size.
 			 */
-			m_fileContents = new StringBuffer(128 * 1024);
+			m_fileContents = new StringBuilder(128 * 1024);
 			m_fileContents.append(firstLine);
 			m_fileContents.append(Constants.LINE_SEPARATOR);
 			
