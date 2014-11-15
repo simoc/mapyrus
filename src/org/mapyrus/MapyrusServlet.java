@@ -61,7 +61,7 @@ public class MapyrusServlet extends HttpServlet
 		 * Generate Mapyrus commands to set variables from HTTP request parameters,
 		 * using uppercase for all variable names.
 		 */
-		StringBuffer variables = new StringBuffer(512);
+		StringBuilder variables = new StringBuilder(512);
 		Map<String, String[]> parameters = request.getParameterMap();
 		Iterator<String> it = parameters.keySet().iterator();
 

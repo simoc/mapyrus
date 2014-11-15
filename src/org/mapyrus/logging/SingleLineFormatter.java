@@ -35,7 +35,7 @@ public class SingleLineFormatter extends Formatter
 	@Override
 	public String format(LogRecord record)
 	{
-		StringBuffer sb = new StringBuffer(128);
+		StringBuilder sb = new StringBuilder(128);
 
 		String level = record.getLevel().getName();
 		String message = record.getMessage();

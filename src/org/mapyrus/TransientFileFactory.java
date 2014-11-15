@@ -81,7 +81,7 @@ public class TransientFileFactory
 		 * make it unpredictable.
 		 */
 		random += (now % 397);
-		StringBuffer sb = new StringBuffer("tmp");
+		StringBuilder sb = new StringBuilder("tmp");
 		sb.append(m_counter);
 		sb.append("a");
 		sb.append(Long.toString(random, Character.MAX_RADIX));

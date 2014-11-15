@@ -283,7 +283,7 @@ public class Statement
 
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (m_type == StatementType.CALL)
 			sb.append("CALL ").append(m_blockName);
 		else if (m_type == StatementType.CONDITIONAL)

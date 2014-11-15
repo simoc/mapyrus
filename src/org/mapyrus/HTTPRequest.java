@@ -147,7 +147,7 @@ public class HTTPRequest extends Thread
 	 * @param value variable value.
 	 * @return string with variable appended.
 	 */
-	public static StringBuffer addVariable(StringBuffer sb, String varName, String value)
+	public static StringBuilder addVariable(StringBuilder sb, String varName, String value)
 	{
 		/*
 		 * Add Mapyrus command to set variable,
@@ -188,10 +188,10 @@ public class HTTPRequest extends Thread
 	 * @param form HTML form to parse.
 	 * @return string containing Mapyrus commands to set each variable.
 	 */
-	private StringBuffer parseForm(String form) throws MapyrusException, IOException
+	private StringBuilder parseForm(String form) throws MapyrusException, IOException
 	{
 		StringTokenizer st;
-		StringBuffer retval = new StringBuffer(form.length() * 2);
+		StringBuilder retval = new StringBuilder(form.length() * 2);
 
 		/*
 		 * Parse any imagemap coordinates like foo.map?144,75
@@ -267,8 +267,8 @@ public class HTTPRequest extends Thread
 	private void parseRequest(BufferedReader reader)
 		throws IOException, MapyrusException
 	{
-		StringBuffer variables = new StringBuffer();
-		StringBuffer commands = new StringBuffer();
+		StringBuilder variables = new StringBuilder();
+		StringBuilder commands = new StringBuilder();
 		int postRequestLength = 0;
 		int requestType;
 		String token;
@@ -432,7 +432,7 @@ public class HTTPRequest extends Thread
 			/*
 			 * Read POST request form data that follows the HTTP header.
 			 */
-			StringBuffer sb = new StringBuffer(postRequestLength);
+			StringBuilder sb = new StringBuilder(postRequestLength);
 			for (int i = 0; i < postRequestLength; i++)
 			{
 				int c = reader.read();
@@ -469,7 +469,7 @@ public class HTTPRequest extends Thread
 	 */
 	private String exceptionToString(Exception e)
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		String msg = e.getMessage();
 		if (msg != null)

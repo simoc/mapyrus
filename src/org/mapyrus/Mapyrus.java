@@ -68,7 +68,7 @@ public class Mapyrus
 	 */
 	private StringReader makeStringReader(String []s)
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < s.length; i++)
 		{
 			sb.append(s[i]);
@@ -483,7 +483,7 @@ public class Mapyrus
 		int argIndex = 0;
 		int port = 0;
 		Level logLevel = null;
-		StringBuffer commandsToExecute = new StringBuffer();
+		StringBuilder commandsToExecute = new StringBuilder();
 		boolean startGui = false;
 		Throttle throttle = null;
 

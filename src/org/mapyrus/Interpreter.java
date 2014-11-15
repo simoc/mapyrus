@@ -1618,7 +1618,7 @@ public class Interpreter implements Cloneable
 			case STROKE:
 				if (nExpressions > 0)
 				{
-					StringBuffer sb = new StringBuffer(m_executeArgs[0].getStringValue());
+					StringBuilder sb = new StringBuilder(m_executeArgs[0].getStringValue());
 					for (int i = 1; i < nExpressions; i++)
 						sb.append(m_executeArgs[i].getStringValue()).append(Constants.LINE_SEPARATOR);
 					context.stroke(sb.toString());
@@ -1632,7 +1632,7 @@ public class Interpreter implements Cloneable
 			case FILL:
 				if (nExpressions > 0)
 				{
-					StringBuffer sb = new StringBuffer(m_executeArgs[0].getStringValue());
+					StringBuilder sb = new StringBuilder(m_executeArgs[0].getStringValue());
 					for (int i = 1; i < nExpressions; i++)
 						sb.append(m_executeArgs[i].getStringValue()).append(Constants.LINE_SEPARATOR);
 					context.fill(sb.toString());
@@ -1690,7 +1690,7 @@ public class Interpreter implements Cloneable
 			case EVENTSCRIPT:
 				if (nExpressions >= 1)
 				{
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i < nExpressions; i++)
 					{
 							if (i > 0)
@@ -1825,7 +1825,7 @@ public class Interpreter implements Cloneable
 				}
 				else
 				{
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					for (int i = labelIndex; i < nExpressions; i++)
 					{
 						if (i > labelIndex)
@@ -2336,7 +2336,7 @@ public class Interpreter implements Cloneable
 				break;
 				
 			case HTTPRESPONSE:
-				StringBuffer sb = new StringBuffer(128);
+				StringBuilder sb = new StringBuilder(128);
 				for (int i = 0; i < nExpressions; i++)
 				{
 					sb.append(m_executeArgs[i].getStringValue());
@@ -2408,7 +2408,7 @@ public class Interpreter implements Cloneable
 	private String parseWord(int c, Preprocessor preprocessor)
 		throws IOException, MapyrusException
 	{
-		StringBuffer word = new StringBuffer();
+		StringBuilder word = new StringBuilder();
 
 		/*
 		 * A statement or procedure name begins with a keyword
