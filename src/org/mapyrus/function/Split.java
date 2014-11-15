@@ -21,6 +21,8 @@ package org.mapyrus.function;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mapyrus.Argument;
 import org.mapyrus.ContextStack;
@@ -45,10 +47,28 @@ public class Split implements Function
 	{
 		Argument arg1 = args.get(0);
 		Argument arg2;
-		if (args.size() == 2)
+		boolean includeDelimiters = false;
+		if (args.size() >= 2)
+		{
 			arg2 = args.get(1);
+			if (args.size() >= 3)
+			{
+				StringTokenizer st = new StringTokenizer(args.get(2).toString());
+				while (st.hasMoreTokens())
+				{
+					String token = st.nextToken();
+					if (token.startsWith("includedelimiters="))
+					{
+						String flag = token.substring(18);
+						includeDelimiters = flag.equalsIgnoreCase("true");
+					}
+				}
+			}
+		}
 		else
+		{
 			arg2 = WHITESPACE_PATTERN;
+		}
 
 		/*
 		 * Split string on regular expression and assign as hashmap entries
@@ -73,7 +93,35 @@ public class Split implements Function
 			/*
 			 * Split using regular expression.
 			 */
-			split = arg1.toString().split(delimiter);
+			String str = arg1.toString();
+			if (includeDelimiters)
+			{
+				/*
+				 * Caller wants delimiters too, so we have to walk the string adding
+				 * each token and delimiter.
+				 */
+				Pattern p = Pattern.compile(delimiter);
+				Matcher m = p.matcher(str);
+				int prevIndex = 0;
+				ArrayList<String> splitList = new ArrayList<String>();
+				while (m.find())
+				{
+					int startIndex = m.start();
+					int endIndex = m.end();
+					splitList.add(str.substring(prevIndex, startIndex));
+					splitList.add(str.substring(startIndex, endIndex));
+					prevIndex = endIndex;
+					
+				}
+				if (prevIndex == 0 || prevIndex < str.length())
+					splitList.add(str.substring(prevIndex));
+				split = new String[splitList.size()];
+				splitList.toArray(split);
+			}
+			else
+			{
+				split = str.split(delimiter);
+			}
 		}
 
 		for (int i = 0; i < split.length; i++)
@@ -93,7 +141,7 @@ public class Split implements Function
 	@Override
 	public int getMaxArgumentCount()
 	{
-		return(2);
+		return(3);
 	}
 
 	@Override
