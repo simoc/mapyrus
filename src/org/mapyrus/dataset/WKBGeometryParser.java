@@ -57,7 +57,7 @@ public class WKBGeometryParser
 	 */
 	private static String convertToHexDigits(int b, ByteBuffer byteBuffer)
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("0x");
 		b = (b & 255);
 		String hex = Integer.toHexString(b);

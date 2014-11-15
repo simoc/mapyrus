@@ -124,7 +124,7 @@ public class MapyrusScriptEngineFactory implements ScriptEngineFactory
 	@Override
 	public String getProgram(String... statements)
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < statements.length; i++)
 		{
 			sb.append(statements[i]);

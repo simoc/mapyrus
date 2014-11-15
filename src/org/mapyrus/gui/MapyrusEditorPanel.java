@@ -153,7 +153,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 			{
 				FileOrURL f = new FileOrURL(filename);
 				r = f.getReader();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				char []buf = new char[512];
 				int nChars;
 				while ((nChars = r.read(buf)) > 0)

@@ -43,8 +43,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class SVGFile extends DefaultHandler
 {
 	private Rectangle2D m_boundingBox;
-	private StringBuffer m_contents;
-	private StringBuffer m_SVGAttributes;
+	private StringBuilder m_contents;
+	private StringBuilder m_SVGAttributes;
 	private int m_SVGTagCount;
 
 	/**
@@ -96,8 +96,8 @@ public class SVGFile extends DefaultHandler
 
 	public void startDocument()
 	{
-		m_contents = new StringBuffer(1024);
-		m_SVGAttributes = new StringBuffer(256);
+		m_contents = new StringBuilder(1024);
+		m_SVGAttributes = new StringBuilder(256);
 	}
 
 	public InputSource resolveEntity(String publicId, String systemId)

@@ -54,7 +54,7 @@ class Preprocessor
 	/*
 	 * Line we are currently reading from.
 	 */
-	private StringBuffer m_currentLine = null;
+	private StringBuilder m_currentLine = null;
 	private int m_currentLineIndex = 0;
 
 	/*
@@ -306,7 +306,7 @@ class Preprocessor
 		/*
 		 * Join line with next line if it ends with '\'.
 		 */
-		m_currentLine = new StringBuffer(s);
+		m_currentLine = new StringBuilder(s);
 		while (s != null && s.endsWith("\\"))
 		{
 			/*
@@ -397,7 +397,7 @@ class Preprocessor
 		if (m_currentLine == null)
 		{
 			Character cs = new Character((char)c);
-			m_currentLine = new StringBuffer(cs.toString());
+			m_currentLine = new StringBuilder(cs.toString());
 			m_currentLineIndex = 0;
 		}
 		else

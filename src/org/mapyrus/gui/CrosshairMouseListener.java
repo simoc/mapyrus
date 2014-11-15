@@ -109,7 +109,7 @@ public class CrosshairMouseListener implements MouseMotionListener, MouseListene
 			double dx = m_displayImageWorlds.getMinX() + (double)x / imageWidth * m_displayImageWorlds.getWidth();
 			double dy = m_displayImageWorlds.getMaxY() - (double)y / imageHeight * m_displayImageWorlds.getHeight();
 	
-			StringBuffer label = new StringBuffer();
+			StringBuilder label = new StringBuilder();
 			if (Math.abs(dx) < 1000)
 				label.append(m_crosshairFormat.format(dx));
 			else

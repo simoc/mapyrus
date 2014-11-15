@@ -165,7 +165,7 @@ public class ImageIOWrapper
 				 * error message as it may be helpful in understanding the
 				 * problem.
 				 */
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				int c;
 				while ((c = reader.read()) != -1)
