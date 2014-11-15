@@ -1,5 +1,11 @@
 Mapyrus Change History
-Copyright (C) 2003 - 2013 Simon Chenery <simoc@users.sourceforge.net>
+Copyright (C) 2003 - 2014 Simon Chenery <simoc@users.sourceforge.net>
+
+1.401, November 2014
+
+* Add glyphfile= option to NEWPAGE command for alternate Adode glyph file.
+* Add preservenewlines=true option to WORDWRAP function.
+* Add includedelimiters=true option to SPLIT function.
 
 1.302, June 2013
 
