@@ -1,0 +1,54 @@
+newpage "eps", "tutorialformatting1.eps", 110, 50, \
+  "isolatinfonts=Helvetica,Helvetica-Bold,Helvetica-Oblique"
+
+begin markup message, xStart, yStart, xEnd, xWrapStart
+  local x, y, fh, a, t, mod, sw
+  let x = xStart, y = yStart
+  let fh = 6
+  font "Helvetica", fh
+  justify "left, bottom"
+  let a = split(message, "( |<b>|</b>|<i>|</i>|\n|\t)", \
+    "includedelimiters=true")
+  for i in a
+  do
+    let t = a[i]
+    if t eq "\n" then
+      let y = y - fh, x = xStart
+    elif t eq "\t" then
+      # move right to next tab position
+      let mod = x % 10
+      let x = x + (10 - mod)
+    elif t eq "<b>" then
+      font "Helvetica-Bold", fh
+    elif t eq "<i>" then
+      font "Helvetica-Oblique", fh
+    elif t eq "</b>" or t eq "</i>" then
+      font "Helvetica", fh
+    elif t eq "" or t eq " " then
+      # skip whitespace
+    else
+      if x > xStart then
+        let sw = stringwidth(" " . t)
+        if (x + sw > xEnd) then
+          # no more space on this line, wrap to new line
+          let y = y - fh, x = xWrapStart
+        else
+          let t = " " . t
+        endif
+      endif
+      clearpath ; move x, y
+      label t
+      let x = x + stringwidth(t)
+    endif
+  done
+end
+
+let str = "<b>ospe'dale</b>\t<i>sm</i>hospital;"
+let str = str . "<b>dov'\u00e8 l'~pi\u00f9 vicino?</b>"
+let str = str . "where's the nearest hospital?\n"
+let str = str . "<b>ospi'tale</b>\t<i>ag</i>hospitable\n"
+let str = str . "<b>ospi'tare</b>\t<i>vt</i>to give "
+let str = str . "hospitality to; <i>albergo</i>"
+let str = str . "to accommodate\n"
+
+markup str, 10, 40, 100, 20

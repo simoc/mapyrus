@@ -1387,6 +1387,28 @@ is shown in Figure \ref{tutorialwordwrap1}.
 \label{tutorialwordwrap1}
 \end{figure}
 
+\subsection{Formatting In Labels}
+
+It is also possible to manually format text as a sequence
+of \texttt{label} commands, using the \texttt{stringwidth}
+function to determine when to start a new line.
+
+This is demonstrated in the following example,
+with markup tokens in the text being
+parsed to change the font or colour between words.
+Tab and newline characters also used to control the
+positioning of text on the page.
+The output of this example
+is shown in Figure \ref{tutorialformatting1}.
+
+\verbatiminput{tutorialformatting1.mapyrus}
+
+\begin{figure}[htb]
+\includegraphics{tutorialformatting1.eps}
+\caption{Label Formatting}
+\label{tutorialformatting1}
+\end{figure}
+
 \subsection{Avoiding Overlapping Labels}
 
 Mapyrus stores a list of
