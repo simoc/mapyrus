@@ -1,2 +1,10 @@
 # mapyrus
-Mirror of Mercurial repository http://hg.code.sf.net/p/mapyrus/code
+
+http://www.mapyrus.org
+
+Mapyrus is software for
+creating plots of points, lines, polygons and labels
+to PostScript (high resolution, up to A0 paper size),
+Portable Document Format (PDF),
+Scalable Vector Graphics (SVG) format
+and web image output formats.
