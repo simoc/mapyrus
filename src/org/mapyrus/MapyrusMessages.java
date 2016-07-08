@@ -163,6 +163,7 @@ public class MapyrusMessages
 	public static final String NEW_TAB = "newtab";
 	public static final String NOT_A_AFM_FILE = "notaafmfile";
 	public static final String NOT_ASCENDING = "notascending";
+	public static final String NOT_A_OTF_FILE = "notaotffile";
 	public static final String NOT_A_PAT_FILE = "notapatfile";
 	public static final String NOT_A_PFA_FILE = "notapfafile";
 	public static final String NOT_A_PFB_FILE = "notapfbfile";
@@ -208,6 +209,7 @@ public class MapyrusMessages
 	public static final String SAVE_TAB = "savetab";
 	public static final String STARTED_THREAD = "startedthread";
 	public static final String STOP_COMMANDS = "stopcommands";
+	public static final String TABLE_NOT_FOUND = "tablenotfound";
 	public static final String TIMEOUT = "timeout";
 	public static final String TO_FILE = "tofile";
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
