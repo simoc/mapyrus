@@ -68,6 +68,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.mapyrus.font.AdobeFontMetrics;
 import org.mapyrus.font.AdobeFontMetricsManager;
+import org.mapyrus.font.OpenTypeFont;
 import org.mapyrus.font.PostScriptFont;
 import org.mapyrus.font.StringDimension;
 import org.mapyrus.font.TrueTypeFont;
@@ -170,7 +171,7 @@ public class OutputFormat
 	private PrintWriter m_writer;
 	private OutputStream m_outputStream;
 	private Graphics2D m_graphics2D;
-	private boolean m_isPipedOutput;	
+	private boolean m_isPipedOutput;
 	private boolean m_isStandardOutput;
 	private boolean m_isUpdatingFile;
 	private Process m_outputProcess;
@@ -214,9 +215,15 @@ public class OutputFormat
 	private ArrayList<String> m_afmFiles;
 	private ArrayList<PostScriptFont> m_pfbFiles;
 	private ArrayList<AdobeFontMetrics> m_PDFFonts;
-	
+
 	private String m_glyphFile;
-	
+
+	/*
+	 * List of Opentype fonts containing character widths and character outlines.
+	 */
+	private ArrayList<String> m_otfFiles;
+	private ArrayList<OpenTypeFont> m_OTFFonts;
+
 	/*
 	 * List of TrueType fonts to load using Java Font.createFont() method.
 	 */
@@ -289,7 +296,7 @@ public class OutputFormat
 	/*
 	 * File offset of each object in PDF file and buffers containing
 	 * all geometry and additional objects (images and graphics
-	 * states) to be included in PDF file. 
+	 * states) to be included in PDF file.
 	 */
 	private ArrayList<Integer> m_PDFFileOffsets;
 	private StringWriter m_PDFGeometryStringWriter;
@@ -304,7 +311,7 @@ public class OutputFormat
 	private ArrayList<ArrayList<Integer>> m_PDFIncludedPages;
 
 	/*
-	 * Names of content groups in PDF output. 
+	 * Names of content groups in PDF output.
 	 */
 	private ArrayList<String> m_PDFContentGroupNames;
 	private ArrayList<Integer> m_PDFContentGroupNestingLevels;
@@ -391,7 +398,7 @@ public class OutputFormat
 			writeLine(m_writer, "%%BeginResource: font " + psFont.getName());
 			String fontDefinition = psFont.getFontDefinition();
 			writeLine(m_writer, fontDefinition);
-			writeLine(m_writer, "%%EndResource");			
+			writeLine(m_writer, "%%EndResource");
 		}
 		writeLine(m_writer, "%%EndSetup");
 
@@ -413,7 +420,7 @@ public class OutputFormat
 			writeLine(m_writer, "90 rotate 0 " + heightInPoints + " neg translate");
 		}
 
-		/* 
+		/*
 		 * Prevent anything being displayed outside bounding box we've just defined.
 		 */
 		writeLine(m_writer, "0 0 " + widthInPoints + " " + heightInPoints + " rectclip");
@@ -553,7 +560,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, "/Type /Catalog");
 		nChars += writeLine(m_writer, "/Outlines 3 0 R");
 		nChars += writeLine(m_writer, "/Pages 4 0 R");
-		
+
 		/*
 		 * We don't know what Optional Content groups will be used.
 		 * Use references so we can define them later.
@@ -574,7 +581,7 @@ public class OutputFormat
 		String author = System.getProperty("user.name");
 		if (author != null)
 			nChars += writeLine(m_writer, "/Author (" + author + ")");
-		
+
 		StringBuffer date = new StringBuffer("D:");
 		date.append(new SimpleDateFormat("yyyyMMddHHmmssZZZZZ").format(new Date()));
 		date.insert(date.length() - 2, '\'');
@@ -670,6 +677,16 @@ public class OutputFormat
 				if (reader != null)
 					reader.close();
 			}
+		}
+
+		for (int i = 0; i < m_otfFiles.size(); i++)
+		{
+			/*
+			 * Read .otf file for each additional font file given by user.
+			 */
+			String otfFilename = (String)m_otfFiles.get(i);
+			OpenTypeFont otf = new OpenTypeFont(otfFilename);
+			m_OTFFonts.add(otf);
 		}
 	}
 
@@ -887,6 +904,83 @@ public class OutputFormat
 			fontDictionary.append(" >>").append(newline);
 		}
 
+		for (int i = 0; i < m_OTFFonts.size(); i++)
+		{
+			OpenTypeFont otf = m_OTFFonts.get(i);
+
+			/*
+			 * Add OpenType font dictionary.
+			 */
+			fontDictionary.append("/" + m_PDFFontPrefix + (PDF_FONTS.length + m_PDFFonts.size() + i));
+			fontDictionary.append(newline);
+			fontDictionary.append("<< /Type /Font /Subtype /Type0");
+			fontDictionary.append(" /BaseFont /").append(otf.getPostScriptFontName()).append("-Identity-H");
+			fontDictionary.append(" /Encoding /Identity-H");
+			fontDictionary.append(" /DescendantFonts [").append(objectCounter).append(" 0 R]");
+			fontDictionary.append(" >>").append(newline);
+
+			StringBuffer sb = new StringBuffer();
+			sb.append(objectCounter).append(" 0 obj % DescendantFont for ").append(otf.getPostScriptFontName());
+			sb.append(newline);
+			objectCounter++;
+			sb.append("<< /Type /Font /Subtype /CIDFontType").append(otf.getCIDFontType());
+			sb.append(" /BaseFont /").append(otf.getPostScriptFontName());
+			sb.append(" /W ").append(otf.getCharWidths());
+			sb.append(newline);
+			sb.append(" /FontDescriptor ").append(objectCounter).append(" 0 R");
+			sb.append(" /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >>");
+			if (otf.getCIDFontType() == 2)
+				sb.append(" /CIDToGIDMap /Identity");
+			sb.append(" >>").append(newline);
+			sb.append("endobj").append(newline);
+			pdfFontObjects.add(sb);
+
+			sb = new StringBuffer();
+			sb.append(objectCounter).append(" 0 obj % Font Descriptor");
+			sb.append(newline);
+			objectCounter++;
+			sb.append("<<");
+			sb.append(newline);
+			sb.append("/Type /FontDescriptor");
+			sb.append(newline);
+			sb.append("/FontName /").append(otf.getPostScriptFontName());
+			sb.append(newline);
+			sb.append("/Flags ").append(otf.getFlags());
+			sb.append(newline);
+			Rectangle rect = otf.getFontBBox();
+			sb.append("/FontBBox [" +
+				Math.round(rect.getMinX()) + " " +
+				Math.round(rect.getMinY()) + " " +
+				Math.round(rect.getMaxX()) + " " +
+				Math.round(rect.getMaxY()) + "]");
+			sb.append(newline);
+			sb.append("/ItalicAngle ").append(otf.getItalicAngle());
+			sb.append(newline);
+			sb.append("/Ascent ").append(otf.getAscender());
+			sb.append(newline);
+			sb.append("/Descent ").append(otf.getDescender());
+			sb.append(newline);
+			sb.append("/CapHeight ").append(otf.getCapHeight());
+			sb.append(newline);
+			sb.append("/StemV 105");
+			sb.append(newline);
+			if (otf.getCIDFontType() == 2)
+				sb.append("/FontFile2 ").append(objectCounter).append(" 0 R").append(newline);
+			else
+				sb.append("/FontFile3 ").append(objectCounter).append(" 0 R").append(newline);
+			sb.append(">>").append(newline);
+			sb.append("endobj").append(newline);
+			pdfFontObjects.add(sb);
+
+			sb = new StringBuffer();
+			sb.append(objectCounter).append(" 0 obj % Font File for ").append(otf.getFullFontName());
+			sb.append(newline);
+			objectCounter++;
+			sb.append(otf.getFontDefinition()).append(newline);
+			sb.append("endobj").append(newline);
+			pdfFontObjects.add(sb);
+		}
+
 		for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 		{
 			PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
@@ -947,7 +1041,7 @@ public class OutputFormat
 
 		Integer offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
 		int nChars = offset.intValue();
-		
+
 		nChars += writeLine(m_writer, "5 0 obj % Optional Content Groups");
 		nChars += writeLine(m_writer, "[" + contentGroupsArray + "]");
 		nChars += writeLine(m_writer, "endobj");
@@ -1141,7 +1235,7 @@ public class OutputFormat
 		 */
 		m_graphics2D.translate(0, m_image.getHeight());
 		m_graphics2D.scale(scale, -scale);
-		
+
 		/*
 		 * Set anti-aliasing for labels and lines if the user wants it.
 		 */
@@ -1257,6 +1351,8 @@ public class OutputFormat
 		m_TTFFonts = new HashMap<String, TrueTypeFont>();
 		m_PDFFonts = new ArrayList<AdobeFontMetrics>();
 		m_afmFiles = new ArrayList<String>();
+		m_OTFFonts = new ArrayList<OpenTypeFont>();
+		m_otfFiles = new ArrayList<String>();
 		m_SVGOpenGTags = new Stack<Integer>();
 		m_isUpdatingFile = false;
 		int resolution;
@@ -1351,7 +1447,7 @@ public class OutputFormat
 						{
 							m_afmFiles.add(it.next());
 						}
-										
+
 					}
 				}
 			}
@@ -1361,6 +1457,32 @@ public class OutputFormat
 				 * Custom file defining Adobe glyphs for Unicode characters.
 				 */
 				m_glyphFile = token.substring(10);
+			}
+			if (token.startsWith("otffiles="))
+			{
+				StringTokenizer st2 = new StringTokenizer(token.substring(9), ",");
+				while (st2.hasMoreTokens())
+				{
+					String otfFilename = st2.nextToken();
+					if (otfFilename.length() > 0)
+					{
+						if (!m_throttle.isIOAllowed())
+						{
+							throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NO_IO) +
+								": " + otfFilename);
+						}
+
+						/*
+						 * Accept wildcards in filenames.
+						 */
+						WildcardFile wildcard = new WildcardFile(otfFilename);
+						Iterator<String> it = wildcard.getMatchingFiles().iterator();
+						while (it.hasNext())
+						{
+							m_otfFiles.add(it.next());
+						}
+					}
+				}
 			}
 			else if (token.startsWith("isolatinfonts="))
 			{
@@ -1441,7 +1563,7 @@ public class OutputFormat
 				{
 					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_PAGE_RESOLUTION) +
 						": " + r);
-				}	
+				}
 			}
 			else if (token.startsWith("ttffiles="))
 			{
@@ -1453,7 +1575,7 @@ public class OutputFormat
 				while (st2.hasMoreTokens())
 				{
 					String ttfFilename = st2.nextToken();
-						
+
 					/*
 					 * Accept wildcards in filenames.
 					 */
@@ -1869,7 +1991,7 @@ public class OutputFormat
 
 		/*
 		 * Check that Java can write this image format to a file.
-		 */				
+		 */
 		if (m_formatName.equals("ps") ||
 			m_formatName.equals("postscript") ||
 			m_formatName.equals("application/postscript"))
@@ -1911,7 +2033,7 @@ public class OutputFormat
 				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_FORMAT) +
 					": " + format);
 			}
-		
+
 			m_outputType = IMAGE_FILE;
 		}
 		try
@@ -1955,7 +2077,7 @@ public class OutputFormat
 	{
 		return(m_pageWidth);
 	}
-	
+
 	/**
 	 * Return page height.
 	 * @return height in millimetres.
@@ -1973,7 +2095,7 @@ public class OutputFormat
 	{
 		return(m_formatName);
 	}
-	
+
 	/**
 	 * Return resolution of page as a distance measurement.
 	 * @return distance in millimetres between centres of adjacent pixels.
@@ -2012,7 +2134,7 @@ public class OutputFormat
 				 * Load Font Metrics information only when it is needed.
 				 */
 				if (m_adobeFontMetrics == null)
-					m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1, m_glyphFile);
+					m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1, m_glyphFile, m_otfFiles);
 
 				double pointSize = fontSize / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
 				StringDimension dim = m_adobeFontMetrics.getStringDimension(fontName, pointSize, token);
@@ -2058,7 +2180,7 @@ public class OutputFormat
 				else
 				{
 					height += fontSize * lineSpacing;
-					ascent += fontSize * lineSpacing;	
+					ascent += fontSize * lineSpacing;
 				}
 				descent = -(glyphBounds.getMinY() + glyphBounds.getHeight());
 			}
@@ -2155,7 +2277,7 @@ public class OutputFormat
 		pixelHeight = image.getHeight();
 
 		/*
-		 * Calculate reduction in image size so that it is 
+		 * Calculate reduction in image size so that it is
 		 * an appropriate size for the resolution of the page.
 		 */
 		if (pixelWidth <= 16 || pixelHeight <= 16)
@@ -2181,7 +2303,7 @@ public class OutputFormat
 
 		int reducedPixelWidth = (pixelWidth + step - 1) / step;
 		int reducedPixelHeight = (pixelHeight + step - 1) / step;
-        
+
 		/*
 		 * Write PostScript image dictionary entry to draw image.
 		 * Taken from Adobe PostScript Language Reference Manual
@@ -2245,7 +2367,7 @@ public class OutputFormat
 			writeLine(pw, x + " " + y + " translate");
 			writeLine(pw, rotation + " radtodeg rotate");
 			writeLine(pw, width + " " + height + " scale");
-		
+
 			/*
 			 * Image is centred at each point.
 			 * Shift image left and down half it's size so that it is displayed centred.
@@ -2403,7 +2525,7 @@ public class OutputFormat
 					nextBit <<= (7 - bitCounter);
 					byteValue |= nextBit;
 					bitCounter++;
-	
+
 					if (bitCounter == 8 || (col + step >= pixelWidth))
 					{
 						ascii85.write(byteValue);
@@ -2419,7 +2541,7 @@ public class OutputFormat
 					int blue = (pixel & 0xff);
 					int green = ((pixel >> 8) & 0xff);
 					int red = ((pixel >> 16) & 0xff);
-	
+
 					ascii85.write(red);
 					ascii85.write(green);
 					ascii85.write(blue);
@@ -2469,8 +2591,8 @@ public class OutputFormat
 
 				/*
 				 * Append PDF commands, then large temporary file containing
-				 * image, then more PDF commands. 
-				 */				
+				 * image, then more PDF commands.
+				 */
 				bigs.append(sw.getBuffer());
 				bigs.append(tempFile);
 
@@ -2501,7 +2623,7 @@ public class OutputFormat
 		else if (m_outputType == SVG)
 		{
 			writeLine(m_writer, "<g>");
-			
+
 			/*
 			 * We will use <g> tags for clipping too.  Keep track
 			 * of how many we open so that we can close them all when
@@ -2531,7 +2653,7 @@ public class OutputFormat
 			writeLine(m_PDFGeometryWriter, "Q");
 			retval = false;
 		}
-		else 
+		else
 		{
 			if (m_outputType == SVG)
 			{
@@ -2605,11 +2727,11 @@ public class OutputFormat
 			}
 
 			writeLine(m_writer, "%%Trailer");
-			
+
 			/*
 			 * Included list of fonts we used in this file but did
 			 * not include in the header.
-			 */	
+			 */
 			writeLine(m_writer, "%%DocumentNeededResources:");
 			Iterator<String> it = m_neededFontResources.iterator();
 			while (it.hasNext())
@@ -2769,7 +2891,7 @@ public class OutputFormat
 			}
 			nChars += writeLine(m_writer, ">>");
 			nChars += writeLine(m_writer, "endobj");
-			
+
 			/*
 			 * Write dictionary containing patterns used in external
 			 * PDF files.
@@ -3205,7 +3327,7 @@ public class OutputFormat
 		{
 			float c[] = color.getColorComponents(null);
 			PrintWriter pw;
-			
+
 			if (m_outputType == PDF)
 				pw = m_PDFGeometryWriter;
 			else
@@ -3416,7 +3538,7 @@ public class OutputFormat
 
 	/*
 	 * Walk through path, converting it to output format.
-	 */	
+	 */
 	private void writeShape(Shape shape, int outputType, PrintWriter pw, String scriptCommands)
 	{
 		PathIterator pi;
@@ -3588,7 +3710,7 @@ public class OutputFormat
 					skippedLastSegment = false;
 					break;
 			}
-			pi.next();			
+			pi.next();
 		}
 
 		if (skippedLastSegment)
@@ -3831,7 +3953,7 @@ public class OutputFormat
 			path.closePath();
 			fill(path, null);
 		}
-		m_graphics2D.setColor(currentColor);	
+		m_graphics2D.setColor(currentColor);
 	}
 
 	/**
@@ -3901,7 +4023,7 @@ public class OutputFormat
 					 */
 					writeLine(m_writer, -boundingBox.getMinX() + " " + -boundingBox.getMinY() +
 						" translate");
-						
+
 					/*
 					 * Set graphics attributes to initial values, as described
 					 * on page 728 of PostScript Language Reference Manual.
@@ -4059,7 +4181,7 @@ public class OutputFormat
 		PDFFile pdfFile = null;
 		int index = 0;
 		if (m_outputType == PDF)
-		{		
+		{
 			while (index < m_PDFIncludedFiles.size() && pdfFile == null)
 			{
 				PDFFile p = (PDFFile)m_PDFIncludedFiles.get(index);
@@ -4240,7 +4362,7 @@ public class OutputFormat
 						capString = "square";
 					else
 						capString = "round";
-					
+
 					if (lineJoin == BasicStroke.JOIN_BEVEL)
 						joinString = "bevel";
 					else if (lineJoin == BasicStroke.JOIN_MITER)
@@ -4488,7 +4610,7 @@ public class OutputFormat
 
 			/*
 			 * Increment number of "<g>" graphics states we have written so we
-			 * know how many to remove later in the SVG file. 
+			 * know how many to remove later in the SVG file.
 			 */
 			Integer nStates = m_SVGOpenGTags.pop();
 			m_SVGOpenGTags.push(Integer.valueOf(nStates + 1));
@@ -4539,11 +4661,11 @@ public class OutputFormat
 					 * Find character in PostScript font this character.
 					 */
 					if (m_adobeFontMetrics == null)
-						m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1, m_glyphFile);
+						m_adobeFontMetrics = new AdobeFontMetricsManager(m_afmFiles, m_encodeAsISOLatin1, m_glyphFile, m_otfFiles);
 					c = m_adobeFontMetrics.getEncodedChar(m_fontName, c);
 				}
 				int extendedChar = c;
-				
+
 				/*
 				 * Avoid overflowing 3 octal digits.
 				 */
@@ -4570,6 +4692,40 @@ public class OutputFormat
 		return(nChars);
 	}
 
+	private int writeUnicodePDFString(PrintWriter writer, OpenTypeFont otf, String s)
+		throws IOException
+	{
+		int nChars = 0;
+
+		/*
+		 * Write hexadecimal string with 2 byte glyphId for each character.
+		 */
+		StringBuffer buffer = new StringBuffer("<");
+		for (int i = 0; i < s.length(); i++)
+		{
+			char c = s.charAt(i);
+			char glyphId = otf.getEncodedChar(c);
+			String hex = Integer.toHexString(glyphId);
+			int hexLength = hex.length();
+			while (hexLength++ < 4)
+				buffer.append("0");
+			buffer.append(hex);
+
+			/*
+			 * Wrap strings that get too long.
+			 */
+			if (buffer.length() > 72)
+			{
+				nChars += writeLine(writer, buffer.toString());
+				buffer.setLength(0);
+			}
+		}
+		buffer.append(">");
+		nChars += writeLine(writer, buffer.toString());
+
+		return nChars;
+	}
+
 	/**
 	 * Draw label positioned at (or along) currently defined path.
 	 * @param pointList is list of Point2D objects at which to draw label.
@@ -4594,7 +4750,7 @@ public class OutputFormat
 		if (m_outputType != POSTSCRIPT_GEOMETRY && m_outputType != PDF)
 		{
 			frc = m_graphics2D.getFontRenderContext();
-			
+
 			if (m_fontOutlineWidth > 0)
 			{
 				/*
@@ -4636,6 +4792,8 @@ public class OutputFormat
 			x = pt.getX();
 			y = pt.getY();
 
+			OpenTypeFont otfUsed = null;
+
 			if (m_outputType == PDF)
 			{
 				/*
@@ -4675,6 +4833,15 @@ public class OutputFormat
 						if (afm.getFontName().equals(m_fontName))
 						{
 							index = k + PDF_FONTS.length;
+						}
+					}
+					for (int k = 0; k < m_OTFFonts.size() && index < 0; k++)
+					{
+						OpenTypeFont otf = m_OTFFonts.get(k);
+						if (otf.getFullFontName().equals(m_fontName) || otf.getPostScriptFontName().equals(m_fontName))
+						{
+							index = k + PDF_FONTS.length + m_PDFFonts.size();
+							otfUsed = otf;
 						}
 					}
 					if (index < 0)
@@ -4734,7 +4901,10 @@ public class OutputFormat
 					/*
 					 * Draw each line of the label to PDF file.
 					 */
-					writePostScriptString(m_PDFGeometryWriter, null, nextLine);
+					if (otfUsed != null)
+						writeUnicodePDFString(m_PDFGeometryWriter, otfUsed, nextLine);
+					else
+						writePostScriptString(m_PDFGeometryWriter, null, nextLine);
 					writeLine(m_PDFGeometryWriter, "Tj");
 				}
 				else if (m_outputType == SVG)
@@ -4887,19 +5057,19 @@ public class OutputFormat
 					{
 						startPt = pt;
 					}
-					
+
 					float fx = (float)startPt.getX();
 					float fy = (float)startPt.getY();
-					
+
 					if (m_fontOutlineWidth > 0)
 					{
 						/*
 						 * Draw only outline of letters in label as lines.
 						 */
 						GlyphVector glyphs = m_graphics2D.getFont().createGlyphVector(frc, nextLine);
-						Shape outline = glyphs.getOutline(fx, fy);						
+						Shape outline = glyphs.getOutline(fx, fy);
 						m_graphics2D.draw(outline);
-						
+
 					}
 					else
 					{
@@ -4911,7 +5081,7 @@ public class OutputFormat
 				}
 				lineNumber++;
 			}
-			
+
 			if (m_outputType == PDF)
 				writeLine(m_PDFGeometryWriter, "ET Q");
 		}

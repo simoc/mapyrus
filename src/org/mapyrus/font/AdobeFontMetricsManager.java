@@ -90,16 +90,22 @@ public class AdobeFontMetricsManager
 	 */
 	private HashMap<String, AdobeFontMetrics> m_fontMetrics;
 
+	private HashMap<String, OpenTypeFont> m_otfFontMetrics;
+
 	/**
 	 * Create font metrics information for PostScript fonts.
-	 * @param afmFilenames names of user-provided .afm file.
+	 * @param afmFilenames names of user-provided .afm files.
 	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
+	 * @param glyphFilename custom file defining Adobe glyphs for Unicode characters.
+	 * @param otfFilenames names of user-provided .otf files.
 	 */
 	public AdobeFontMetricsManager(List<String> afmFilenames,
-		HashSet<String> ISOLatin1EncodedFonts, String glyphFilename)
+		HashSet<String> ISOLatin1EncodedFonts, String glyphFilename,
+		List<String> otfFilenames)
 		throws IOException, MapyrusException
 	{
 		m_fontMetrics = new HashMap<String, AdobeFontMetrics>();
+		m_otfFontMetrics = new HashMap<String, OpenTypeFont>();
 
 		/*
 		 * Load font metrics information for standard PostScript fonts
@@ -146,6 +152,19 @@ public class AdobeFontMetricsManager
 					r.close();
 			}
 		}
+
+		/*
+		 * Load font metrics information from .otf files provided by caller.
+		 */
+		it = otfFilenames.iterator();
+		while (it.hasNext())
+		{
+			String filename = it.next();
+			OpenTypeFont otf = new OpenTypeFont(filename);
+
+			m_otfFontMetrics.put(otf.getPostScriptFontName(), otf);
+			m_otfFontMetrics.put(otf.getFullFontName(), otf);
+		}
 	}
 
 	/**
@@ -166,12 +185,20 @@ public class AdobeFontMetricsManager
 		}
 		else
 		{
-			/*
-			 * No Font Metric information given for this font.  Just
-			 * calculate approximate length assuming fixed with characters.
-			 */
-			double width = s.length() * pointSize;
-			retval.setSize(width, pointSize, pointSize, 0);
+			OpenTypeFont otf = m_otfFontMetrics.get(fontName);
+			if (otf != null)
+			{
+				retval = otf.getStringDimension(s, pointSize);
+			}
+			else
+			{
+				/*
+				 * No Font Metric information given for this font.  Just
+				 * calculate approximate length assuming fixed with characters.
+				 */
+				double width = s.length() * pointSize;
+				retval.setSize(width, pointSize, pointSize, 0);
+			}
 		}
 
 		return(retval);
@@ -189,9 +216,16 @@ public class AdobeFontMetricsManager
 		AdobeFontMetrics afm = m_fontMetrics.get(fontName);
 
 		if (afm != null)
+		{
 			retval = afm.getEncodedChar(c);
+		}
 		else
+		{
+			/*
+			 * We use Unicode for OpenType fonts without any encoding.
+			 */
 			retval = c;
+		}
 		return retval;
 	}
 
