@@ -21,11 +21,13 @@ package org.mapyrus.font;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import org.mapyrus.Constants;
 import org.mapyrus.MapyrusException;
 import org.mapyrus.MapyrusMessages;
+import org.mapyrus.io.ASCII85Writer;
 
 /**
  * Methods to extract fields from an Adobe OpenType (.otf) format font file.
@@ -641,32 +643,36 @@ public class OpenTypeFont
 			r = new RandomAccessFile(m_otfFilename, "r");
 			r.seek(tableRecord.fileOffset);
 
-			long hexEncodedLength = tableRecord.length * 2 + Constants.LINE_SEPARATOR.length();
-			hexEncodedLength += ((tableRecord.length - 1) / LINE_LENGTH) * Constants.LINE_SEPARATOR.length();
+			/*
+			 * Font files can be several megabytes and do compress to a much smaller size,
+			 * so better to use Flate and ASCII85 encoding.
+			 */
+			StringWriter ascii85sw = new StringWriter((int)tableRecord.length * 2);
+			ASCII85Writer ascii85 = new ASCII85Writer(ascii85sw, true);
+			for (int i = 0; i < tableRecord.length; i++)
+			{
+				byte byteValue = r.readByte();
+				ascii85.write(byteValue);
+			}
+			ascii85.close();
+			ascii85sw.flush();
+			String eodMarker = "~>";
+			int nEncodedChars = ascii85.getEncodedLength() + eodMarker.length();
 
-			sb.ensureCapacity((int)hexEncodedLength + 200);
+			sb.ensureCapacity(nEncodedChars + 200);
 
 			sb.append("<< /Type /FontFile ");
 			if (m_CIDFontType == 0)
 				sb.append("/Subtype /CIDFontType0C");
-			sb.append(" /Length ").append(hexEncodedLength);
+			sb.append(" /Length ").append(nEncodedChars);
 			if (m_CIDFontType == 2)
 				sb.append(" /Length1 ").append(tableRecord.length);
-			sb.append(" /Filter /ASCIIHexDecode >>");
+			sb.append(" /Filter [/ASCII85Decode /FlateDecode] >>");
 			sb.append(Constants.LINE_SEPARATOR);
 			sb.append("stream");
-
-			for (int i = 0; i < tableRecord.length; i++)
-			{
-				if (i % LINE_LENGTH == 0)
-					sb.append(Constants.LINE_SEPARATOR);
-
-				byte b = r.readByte();
-				String s = Integer.toHexString(b & 0xff);
-				if (s.length() < 2)
-					sb.append('0');
-				sb.append(s);
-			}
+			sb.append(Constants.LINE_SEPARATOR);
+			sb.append(ascii85sw.getBuffer());
+			sb.append(eodMarker);
 			sb.append(Constants.LINE_SEPARATOR);
 			sb.append("endstream");
 		}
