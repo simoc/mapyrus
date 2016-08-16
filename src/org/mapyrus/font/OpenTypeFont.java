@@ -47,6 +47,11 @@ public class OpenTypeFont
 	private static final int NAME_FULL_NAME_CODE = 4;
 	private static final int NAME_POSTSCRIPT_NAME_CODE = 6;
 
+	private static final int FONT_DESCRIPTOR_FLAG_FIXED_PITCH = 1;
+	private static final int FONT_DESCRIPTOR_FLAG_SYMBOLIC = (1 << 2);
+	private static final int FONT_DESCRIPTOR_FLAG_ITALIC = (1 << 6);
+	private static final int FONT_DESCRIPTOR_FLAG_FORCE_BOLD = (1 << 18);
+
 	private static final int LINE_LENGTH = 30;
 
 	private String m_otfFilename;
@@ -58,7 +63,7 @@ public class OpenTypeFont
 	private short m_glyphYMax;
 	private String m_fullFontName;
 	private String m_postScriptFontName;
-	private int m_italicAngle;
+	private double m_italicAngle;
 	private int m_flags;
 
 	private short m_ascender;
@@ -111,7 +116,7 @@ public class OpenTypeFont
 		m_glyphIndexes = new HashMap<Integer, Integer>();
 		m_fullFontName = "unknown";
 		m_postScriptFontName = "unknown";
-		m_flags = 0;
+		m_flags = FONT_DESCRIPTOR_FLAG_SYMBOLIC;
 
 		HashMap<String, TableRecord> tableRecords = new HashMap<String, TableRecord>();
 
@@ -359,6 +364,11 @@ public class OpenTypeFont
 		m_glyphYMin = r.readShort();
 		m_glyphXMax = r.readShort();
 		m_glyphYMax = r.readShort();
+		int macStyle = r.readUnsignedShort();
+		if ((macStyle & 1) != 0)
+			m_flags |= FONT_DESCRIPTOR_FLAG_FORCE_BOLD;
+		if ((macStyle & 2) != 0)
+			m_flags |= FONT_DESCRIPTOR_FLAG_ITALIC;
 	}
 
 	/**
@@ -446,12 +456,12 @@ public class OpenTypeFont
 	{
 		readUnsignedInt(r); /* version */
 		m_italicAngle = r.readShort();
-		r.readShort(); /* italicAngle decimal part */
+		m_italicAngle += r.readUnsignedShort() / 16384.0;
 		r.readShort(); /* underlinePosition */
 		r.readShort(); /* underlineThickness */
 		long isFixedPitch = readUnsignedInt(r);
 		if (isFixedPitch != 0)
-			m_flags |= 1;
+			m_flags |= FONT_DESCRIPTOR_FLAG_FIXED_PITCH;
 	}
 
 	/**
@@ -572,7 +582,7 @@ public class OpenTypeFont
 	 * Returns italic angle of font.
 	 * @return italic angle.
 	 */
-	public int getItalicAngle()
+	public double getItalicAngle()
 	{
 		return(m_italicAngle);
 	}
