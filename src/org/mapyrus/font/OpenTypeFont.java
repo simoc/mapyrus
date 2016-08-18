@@ -54,6 +54,8 @@ public class OpenTypeFont
 
 	private static final int LINE_LENGTH = 30;
 
+	private static final int SPACE_CHAR = 32;
+
 	private String m_otfFilename;
 
 	private int m_CIDFontType;
@@ -727,8 +729,10 @@ public class OpenTypeFont
 	{
 		Integer glyphId = m_glyphIndexes.get(Integer.valueOf(c));
 		if (glyphId == null)
-			return c;
-		else
-			return (char)glyphId.intValue();
+			glyphId = m_glyphIndexes.get(Integer.valueOf(SPACE_CHAR));
+		if (glyphId == null)
+			return 0;
+
+		return (char)glyphId.intValue();
 	}
 }
