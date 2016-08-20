@@ -59,6 +59,7 @@ public class OpenTypeFont
 	private String m_otfFilename;
 
 	private int m_CIDFontType;
+	private int m_unitsPerEm;
 	private short m_glyphXMin;
 	private short m_glyphYMin;
 	private short m_glyphXMax;
@@ -113,6 +114,7 @@ public class OpenTypeFont
 
 	private void readFile(RandomAccessFile r, String otfFilename) throws IOException, MapyrusException
 	{
+		m_unitsPerEm = 0;
 		m_glyphXMin = 0;
 		m_glyphYMin = 0;
 		m_glyphXMax = 1;
@@ -369,7 +371,7 @@ public class OpenTypeFont
 		readUnsignedInt(r); /* checkSumAdjustment */
 		readUnsignedInt(r); /* magicNumber */
 		r.readUnsignedShort(); /* flags */
-		r.readUnsignedShort(); /* unitsPerEm */
+		m_unitsPerEm = r.readUnsignedShort();
 		r.readLong(); /* creation date */
 		r.readLong(); /* modification date */
 		m_glyphXMin = r.readShort();
@@ -653,11 +655,11 @@ public class OpenTypeFont
 			if (hMetricsIndex != null && hMetricsIndex.intValue() < m_hMetrics.length)
 				total += m_hMetrics[hMetricsIndex.intValue()];
 			else
-				total += m_glyphXMax;
+				total += m_unitsPerEm;
 		}
-		pointLen = (double)total / m_glyphXMax * pointSize;
-		ascent = (double)m_ascender / m_glyphYMax * pointSize;
-		descent = (double)m_descender / m_glyphYMax * pointSize;
+		pointLen = (double)total / m_unitsPerEm * pointSize;
+		ascent = (double)m_ascender / m_unitsPerEm * pointSize;
+		descent = (double)m_descender / m_unitsPerEm * pointSize;
 
 		retval.setSize(pointLen, pointSize, ascent, descent);
 		return retval;
