@@ -52,6 +52,11 @@ public class OpenTypeFont
 	private static final int FONT_DESCRIPTOR_FLAG_ITALIC = (1 << 6);
 	private static final int FONT_DESCRIPTOR_FLAG_FORCE_BOLD = (1 << 18);
 
+	/**
+	 * Width of each character in PDF font dictionary is relative to this width.
+	 */
+	private static final int FULL_CHARACTER_WIDTH = 1000;
+
 	private static final int LINE_LENGTH = 30;
 
 	private static final int SPACE_CHAR = 32;
@@ -746,7 +751,7 @@ public class OpenTypeFont
 				else
 					sb.append(" ");
 			}
-			sb.append(m_hMetrics[i]);
+			sb.append(Math.round(m_hMetrics[i] * (double)FULL_CHARACTER_WIDTH / m_unitsPerEm));
 		}
 		sb.append("] ]");
 		return sb.toString();
