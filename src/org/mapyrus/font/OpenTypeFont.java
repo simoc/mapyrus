@@ -68,6 +68,8 @@ public class OpenTypeFont
 	private double m_italicAngle;
 	private int m_flags;
 
+	private int m_numberOfGlyphs;
+
 	private short m_ascender;
 	private short m_descender;
 	private int m_numberOfHMetrics;
@@ -119,6 +121,7 @@ public class OpenTypeFont
 		m_fullFontName = "unknown";
 		m_postScriptFontName = "unknown";
 		m_flags = FONT_DESCRIPTOR_FLAG_SYMBOLIC;
+		m_numberOfGlyphs = 0;
 
 		HashMap<String, TableRecord> tableRecords = new HashMap<String, TableRecord>();
 
@@ -177,6 +180,13 @@ public class OpenTypeFont
         	throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.TABLE_NOT_FOUND) + ": " + tableTag + ": " + otfFilename);
         r.seek(tableRecord.fileOffset);
         readName(r);
+
+        tableTag = "maxp";
+        tableRecord = tableRecords.get(tableTag);
+        if (tableRecord == null)
+            throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.TABLE_NOT_FOUND) + ": " + tableTag + ": " + otfFilename);
+        r.seek(tableRecord.fileOffset);
+        readMaxp(r);
 
         tableTag = "hhea";
         tableRecord = tableRecords.get(tableTag);
@@ -420,6 +430,16 @@ public class OpenTypeFont
 	}
 
 	/**
+	 * Read 'maxp' table from OpenType file.
+	 * @param r file to read from.
+	 */
+	private void readMaxp(RandomAccessFile r) throws IOException
+	{
+		readUnsignedInt(r); /* version */
+		m_numberOfGlyphs = r.readUnsignedShort();
+	}
+
+	/**
 	 * Read 'hhea' table from OpenType file and extract fields
 	 * we need for calculating character metrics.
 	 * @param r file to read from.
@@ -440,13 +460,23 @@ public class OpenTypeFont
 	 */
 	private void readHmtx(RandomAccessFile r) throws IOException
 	{
-		m_hMetrics = new int[m_numberOfHMetrics];
-		for (int j = 0; j < m_numberOfHMetrics; j++)
+		int advanceWidth = 0;
+		int j = 0;
+
+		m_hMetrics = new int[m_numberOfGlyphs];
+		while (j < m_numberOfHMetrics)
         {
-            int advanceWidth = r.readUnsignedShort();
+            advanceWidth = r.readUnsignedShort();
             r.readShort(); /* lsb */
             m_hMetrics[j] = advanceWidth;
+            j++;
         }
+		while (j < m_numberOfGlyphs)
+		{
+			m_hMetrics[j] = advanceWidth;
+			r.readShort(); /* lsb */
+			j++;
+		}
 	}
 
 	/**
