@@ -1793,6 +1793,18 @@ binary PostScript Type 1 font in files
 ttf2pt1 -b BEANTOWN.TTF BEANTOWN
 \end{verbatim}
 
+\subsection{Using OpenType Fonts In PDF Output}
+
+Each PostScript Type 1 font contains different characters, depending
+on the character encoding. However, each character is one byte, limiting
+the total number of characters to 256. OpenType fonts avoid this
+restriction and enable two byte Unicode characters to be used directly
+from Mapyrus.
+
+An OpenType file is a binary file with suffix
+\texttt{.otf} and is included in a PDF file created by Mapyrus using the
+\textit{extra} \texttt{otffiles} option to the \texttt{newpage} command.
+
 \subsection{Using TrueType Fonts In Output to Image Formats}
 \label{ttffonts}
 
