@@ -757,7 +757,16 @@ public class OpenTypeFont
 				else
 					sb.append(" ");
 			}
-			sb.append(Math.round(m_hMetrics[i] * (double)FULL_CHARACTER_WIDTH / m_unitsPerEm));
+			long scaledWidth = Math.round(m_hMetrics[i] * (double)FULL_CHARACTER_WIDTH / m_unitsPerEm);
+
+			/*
+			 * Some fonts have impossibly wide characters (perhaps as a result of numeric overflow?)
+			 * that Acrobat Reader will complain about. Limit character widths to something sensible.
+			 */
+			if (scaledWidth > 5 * FULL_CHARACTER_WIDTH)
+				scaledWidth = 5 * FULL_CHARACTER_WIDTH;
+
+			sb.append(scaledWidth);
 		}
 		sb.append("] ]");
 		return sb.toString();
