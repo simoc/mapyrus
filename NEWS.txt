@@ -1,5 +1,9 @@
 Mapyrus Change History
-Copyright (C) 2003 - 2014 Simon Chenery <simoc@users.sourceforge.net>
+Copyright (C) 2003 - 2016 Simon Chenery <simoc@users.sourceforge.net>
+
+1.601, August 2016
+
+* Enable inclusion of OpenType fonts with Unicode characters in PDF output.
 
 1.401, November 2014
 
