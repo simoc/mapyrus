@@ -59,7 +59,10 @@ public class OpenTypeFont
 
 	private static final int LINE_LENGTH = 30;
 
-	private static final int SPACE_CHAR = 32;
+	/*
+	 * Replaces Unicode characters that do not exist in this font.
+	 */
+	private static final int QUESTION_MARK_CHAR = 63;
 
 	private String m_otfFilename;
 
@@ -657,6 +660,9 @@ public class OpenTypeFont
 		{
 			c = s.charAt(i);
 			Integer hMetricsIndex = m_glyphIndexes.get(Integer.valueOf(c));
+			if (hMetricsIndex == null)
+				hMetricsIndex = m_glyphIndexes.get(Integer.valueOf(QUESTION_MARK_CHAR));
+
 			if (hMetricsIndex != null && hMetricsIndex.intValue() < m_hMetrics.length)
 				total += m_hMetrics[hMetricsIndex.intValue()];
 			else
@@ -766,7 +772,7 @@ public class OpenTypeFont
 	{
 		Integer glyphId = m_glyphIndexes.get(Integer.valueOf(c));
 		if (glyphId == null)
-			glyphId = m_glyphIndexes.get(Integer.valueOf(SPACE_CHAR));
+			glyphId = m_glyphIndexes.get(Integer.valueOf(QUESTION_MARK_CHAR));
 		if (glyphId == null)
 			return 0;
 
