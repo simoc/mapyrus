@@ -545,8 +545,8 @@ public class OutputFormat
 		Color backgroundColor)
 		throws IOException, MapyrusException
 	{
-		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *	Constants.POINTS_PER_INCH);
-		long heightInPoints = Math.round(height / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH);
+		double widthInPoints = width / Constants.MM_PER_INCH *	Constants.POINTS_PER_INCH;
+		double heightInPoints = height / Constants.MM_PER_INCH * Constants.POINTS_PER_INCH;
 
 		m_pfbFiles = fontList;
 
@@ -610,9 +610,15 @@ public class OutputFormat
 		m_PDFFileOffsets.add(new Integer(nChars));
 
 		if (turnPage)
-			m_mediaBox = "[0 0 " + heightInPoints + " " + widthInPoints + "]";
+		{
+			m_mediaBox = "[0 0 " + m_coordinateDecimal.format(heightInPoints) + " " +
+				m_coordinateDecimal.format(widthInPoints) + "]";
+		}
 		else
-			m_mediaBox = "[0 0 " + widthInPoints + " " + heightInPoints + "]";
+		{
+			m_mediaBox = "[0 0 " + m_coordinateDecimal.format(widthInPoints) + " " +
+				m_coordinateDecimal.format(heightInPoints) + "]";
+		}
 		m_writer.flush();
 
 		m_PDFExtGStateObjects = new HashMap<String, String>();
@@ -632,7 +638,8 @@ public class OutputFormat
 			 * on a portrait page.
 			 */
 			writeLine(m_PDFGeometryWriter, "0 1 -1 0 0 0 cm");
-			writeLine(m_PDFGeometryWriter, "1 0 0 1 0 " + (-heightInPoints) + " cm");
+			writeLine(m_PDFGeometryWriter, "1 0 0 1 0 " +
+				m_coordinateDecimal.format(-heightInPoints) + " cm");
 		}
 
 		if (backgroundColor != null)
@@ -642,7 +649,9 @@ public class OutputFormat
 			 */
 			float components[] = backgroundColor.getColorComponents(null);
 			writeLine(m_PDFGeometryWriter, "q");
-			writeLine(m_PDFGeometryWriter, "0 0 " + widthInPoints + " " + heightInPoints + " re");
+			writeLine(m_PDFGeometryWriter, "0 0 " +
+				m_coordinateDecimal.format(widthInPoints) + " " +
+				m_coordinateDecimal.format(heightInPoints) + " re");
 			for (int i = 0; i < components.length; i++)
 				writeLine(m_PDFGeometryWriter, m_coordinateDecimal.format(components[i]));
 			if (backgroundColor.getColorSpace().getType() == ColorSpace.TYPE_CMYK)
