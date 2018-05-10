@@ -655,6 +655,7 @@ public class GeometricPath
 		int lineToCount = 0;
 		double ai, aSum, xSum, ySum;
 		int nEls;
+		double minimumSegmentLength = resolution * 0.01;
 
 		/*
 		 * Create array to hold length and area of each part of path.
@@ -689,9 +690,18 @@ public class GeometricPath
 				if (attributeToCalculate == CALCULATE_START_ANGLE)
 				{
 					/*
-					 * First two points are enough to determine angle of first line segment.
+					 * Ignore very short segments that occur due to numerical precision
+					 * problems with circular arcs.
 					 */
-					break;
+					double xDiff = Math.abs(coords[0] - xStart);
+					double yDiff = Math.abs(coords[1] - yStart);
+					if (xDiff > minimumSegmentLength || yDiff > minimumSegmentLength)
+					{
+						/*
+						 * First two points are enough to determine angle of first line segment.
+						 */
+						break;
+					}
 				}
 
 				if (segmentType == PathIterator.SEG_CLOSE)
