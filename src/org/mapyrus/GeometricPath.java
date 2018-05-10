@@ -655,7 +655,6 @@ public class GeometricPath
 		int lineToCount = 0;
 		double ai, aSum, xSum, ySum;
 		int nEls;
-		double minimumSegmentLength = resolution * 0.01;
 
 		/*
 		 * Create array to hold length and area of each part of path.
@@ -693,9 +692,7 @@ public class GeometricPath
 					 * Ignore very short segments that occur due to numerical precision
 					 * problems with circular arcs.
 					 */
-					double xDiff = Math.abs(coords[0] - xStart);
-					double yDiff = Math.abs(coords[1] - yStart);
-					if (xDiff > minimumSegmentLength || yDiff > minimumSegmentLength)
+					if (NumericalAnalysis.equals(coords[0], xStart) == false || NumericalAnalysis.equals(coords[1], yStart) == false)
 					{
 						/*
 						 * First two points are enough to determine angle of first line segment.
@@ -1225,7 +1222,6 @@ public class GeometricPath
 		float xEnd = 0.0f, yEnd = 0.0f;
 		boolean isPathClosed = false;
 		ArrayList<LineEquation> lineEquations = new ArrayList<LineEquation>();
-		double minimumSegmentLength = resolution * 0.01;
 
 		/*
 		 * Flatten arcs in path and make list of line equations
@@ -1275,9 +1271,7 @@ public class GeometricPath
 				 * Ignore very short segments that occur due to numerical precision
 				 * problems with circular arcs.
 				 */
-				double xDiff = Math.abs(xEnd - xStart);
-				double yDiff = Math.abs(yEnd - yStart);
-				if (xDiff > minimumSegmentLength || yDiff > minimumSegmentLength)
+				if (NumericalAnalysis.equals(xStart, xEnd) == false || NumericalAnalysis.equals(yStart, yEnd) == false)
 				{
 					LineEquation eq = new LineEquation(xStart, yStart, xEnd, yEnd);
 					lineEquations.add(eq);
