@@ -1215,12 +1215,16 @@ public class GeometricPath
 		float xEnd = 0.0f, yEnd = 0.0f;
 		boolean isPathClosed = false;
 		ArrayList<LineEquation> lineEquations = new ArrayList<LineEquation>();
+		double minimumSegmentLength = resolution * 0.01;
 
 		/*
 		 * Flatten arcs in path and make list of line equations
 		 * for each segment of path.
+		 * Flatness chosen by eye so that expansion of curves to
+		 * straight line segments is not noticeable.
 		 */
-		pi = m_path.getPathIterator(m_identityMatrix, resolution);	
+		double flatness = resolution / 4;
+		pi = m_path.getPathIterator(m_identityMatrix, flatness);
 		while (!pi.isDone())
 		{
 			segmentType = pi.currentSegment(coords);
@@ -1257,13 +1261,20 @@ public class GeometricPath
 					yEnd = coords[1];
 				}
 
-				if (xStart != xEnd || yStart != yEnd)
+				/*
+				 * Ignore very short segments that occur due to numerical precision
+				 * problems with circular arcs.
+				 */
+				double xDiff = Math.abs(xEnd - xStart);
+				double yDiff = Math.abs(yEnd - yStart);
+				if (xDiff > minimumSegmentLength || yDiff > minimumSegmentLength)
 				{
 					LineEquation eq = new LineEquation(xStart, yStart, xEnd, yEnd);
 					lineEquations.add(eq);
+
+					xStart = xEnd;
+					yStart = yEnd;
 				}
-				xStart = xEnd;
-				yStart = yEnd;
 			}
 
 			/*
