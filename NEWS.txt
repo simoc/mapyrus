@@ -1,6 +1,12 @@
 Mapyrus Change History
 Copyright (C) 2003 - 2018 Simon Chenery <simoc@users.sourceforge.net>
 
+1.802, May 2018
+
+* Improve PARALLELPATH calculation for circular arcs, generating smoother line
+  segments and avoiding numerical precision problems at start and end of arc.
+* Calculate Mapyrus.path.start.angle more accurately for circular arcs.
+
 1.801, April 2018
 
 * Define page size in PDF output more accurately with decimal values.
