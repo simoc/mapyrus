@@ -18,7 +18,7 @@ along with Mapyrus; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 -->
 
-<project name="mapyrus" default="deploy" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="mapyrus" default="deploy" basedir=".">
 
 
 <target name="init" description="Setup properties">
@@ -27,30 +27,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <!-- manually for each new release. -->
 <property name="version" value="1.802"/>
 
-<!-- 'JTS Topology Suite' JAR file required for building some Java classes -->
-<property name="jts.jar" value="jts-1.13.jar"/>
-<available file="${jts.jar}" property="jts.jar.isAvailable"/>
-<fail message="JTS Topology Suite JAR file ${jts.jar} not found.  Download it from http://tsusiatsoftware.net" unless="jts.jar.isAvailable"/>
-
-<!-- 'Java PROJ.4 library' JAR file required for building some Java classes -->
-<property name="proj4.jar" value="javaproj-1.0.9.jar"/>
-<available file="${proj4.jar}" property="proj4.jar.isAvailable"/>
-<fail message="Java PROJ.4 library JAR file ${proj4.jar} not found.  Download it from http://www.jhlabs.com" unless="proj4.jar.isAvailable"/>
-
-<!-- servlet-api.jar JAR file required for building servlet -->
-<property name="servlet-api.jar" value="servlet-api.jar"/>
-<available file="${servlet-api.jar}" property="servlet-api.jar.isAvailable"/>
-<fail message="Servlet API JAR file ${servlet-api.jar} not found.  Download it as part of Tomcat from http://tomcat.apache.org" unless="servlet-api.jar.isAvailable"/>
-
-<!-- Oracle Spatial JAR files required for building some Java classes -->
-<property name="oracle.jars" value="sdoapi.jar:ojdbc14.jar"/>
-<condition property="oracle.jars.areAvailable">
-<and>
-<available file="sdoapi.jar"/>
-<available file="ojdbc14.jar"/>
-</and>
-</condition>
-<fail message="Oracle Spatial JAR files ${oracle.jars} not found." unless="oracle.jars.areAvailable"/>
+<ivy:retrieve/>
+<ivy:cachepath pathid="default.classpath"/>
+<ivy:cachepath pathid="proj4.jar" organisation="com.jhlabs" module="javaproj" revision="1.0" inline="true"/>
 
 <tstamp>
 <format property="today" pattern="d-MMMM-yyyy" locale="en"/>
@@ -65,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <echo file="src/org/mapyrus/util/timestamp.txt">${today}</echo>
 
 <mkdir dir="build/classes"/>
-<javac srcdir="src" listfiles="yes" classpath="${jts.jar}:${proj4.jar}:${oracle.jars}:${servlet-api.jar}" destdir="build/classes"/>
+<javac srcdir="src" listfiles="yes" classpathref="default.classpath" destdir="build/classes"/>
 
 <!-- Copy resource, font and data files into built directory -->
 <copy file="src/org/mapyrus/util/version.txt" todir="build/classes/org/mapyrus/util"/>
@@ -104,7 +83,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <fileset dir="html"/>
 <fileset file="userdoc/mapyrus.png"/>
 <lib file="${ant.project.name}.jar"/>
-<lib file="${proj4.jar}"/>
+<lib file="${toString:proj4.jar}"/>
 </war>
 </target>
 
@@ -121,7 +100,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
 <classpath>
 <pathelement path="${ant.project.name}.jar"/>
-<pathelement path="${proj4.jar}"/>
+<path refid="default.classpath"/>
 </classpath>
 <arg line="turtle1.mapyrus turtle2.mapyrus turtle3.mapyrus turtle4.mapyrus turtle5.mapyrus turtle6.mapyrus turtle7.mapyrus mapview1.mapyrus mapview2.mapyrus mapview3.mapyrus mapview4.mapyrus mapview5.mapyrus"/>
 </java>
@@ -170,7 +149,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
 <classpath>
 <pathelement path="${ant.project.name}.jar"/>
-<pathelement path="${jts.jar}"/>
+<path refid="default.classpath"/>
 </classpath>
 <arg line="tutorialjts1.mapyrus tutorialjts2.mapyrus tutorialjts3.mapyrus"/>
 </java>
@@ -178,7 +157,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <java classname="org.mapyrus.Mapyrus" fork="yes" dir="userdoc">
 <classpath>
 <pathelement path="${ant.project.name}.jar"/>
-<pathelement path="${proj4.jar}"/>
+<path refid="default.classpath"/>
 </classpath>
 <arg line="tutorialproj1.mapyrus"/>
 </java>

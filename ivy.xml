@@ -1,0 +1,12 @@
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="org.mapyrus" module="mapyrus"/>
+    <dependencies>
+        <dependency org="com.vividsolutions" name="jts" rev="1.13"/>
+        <dependency org="com.jhlabs" name="javaproj" rev="1.0"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0"/>
+        <dependency org="com.oracle.database.jdbc" name="ojdbc8" rev="12.2.0.1"/>
+        <dependency org="oracle" name="sdoapi" rev="11.2.0"/>
+    </dependencies>
+</ivy-module>

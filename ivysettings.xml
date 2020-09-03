@@ -1,0 +1,10 @@
+<ivysettings>
+    <settings defaultResolver="central"/>
+    <resolvers>
+        <ibiblio name="central" m2compatible="true"/>
+        <ibiblio name="datanucleus" root="https://www.datanucleus.org/downloads/maven2/" m2compatible="true"/>
+    </resolvers>
+    <modules>
+        <module organisation="oracle" resolver="datanucleus"/>
+    </modules>
+</ivysettings>
