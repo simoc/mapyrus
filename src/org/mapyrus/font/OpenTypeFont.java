@@ -704,9 +704,10 @@ public class OpenTypeFont
 			 */
 			StringWriter ascii85sw = new StringWriter((int)tableRecord.length * 2);
 			ASCII85Writer ascii85 = new ASCII85Writer(ascii85sw, true);
-			for (int i = 0; i < tableRecord.length; i++)
-			{
-				byte byteValue = r.readByte();
+			// buffer relevant section, see https://gitlab.com/albina-euregio/albina-server/-/issues/216
+			byte[] buffer = new byte[((int) tableRecord.length)];
+			r.readFully(buffer);
+			for (byte byteValue : buffer) {
 				ascii85.write(byteValue);
 			}
 			ascii85.close();
