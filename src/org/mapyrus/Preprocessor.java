@@ -396,7 +396,7 @@ class Preprocessor
 		}
 		if (m_currentLine == null)
 		{
-			Character cs = new Character((char)c);
+			Character cs = Character.valueOf((char)c);
 			m_currentLine = new StringBuilder(cs.toString());
 			m_currentLineIndex = 0;
 		}
@@ -414,7 +414,7 @@ class Preprocessor
 			}
 			else
 			{
-				Character cs = new Character((char)c);
+				Character cs = Character.valueOf((char)c);
 				m_currentLine.insert(m_currentLineIndex, cs.toString());
 			}
 		}

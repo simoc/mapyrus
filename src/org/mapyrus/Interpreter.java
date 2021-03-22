@@ -2344,6 +2344,13 @@ public class Interpreter implements Cloneable
 				}
 				context.setHTTPReponse(sb.toString());
 				break;
+
+			default:
+				/*
+				 * If we reach here then something has gone wrong internally with parsing of commands.
+				 */
+				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_COMMAND) +
+					": " + type.getName());
 		}		
 	}
 

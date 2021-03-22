@@ -215,6 +215,7 @@ public class MapyrusMessages
 	public static final String TOO_MANY_EXPRESSIONS = "toomanyexpressions";
 	public static final String TRANSFORM_ERROR = "transformerror";
 	public static final String UNDEFINED_PROC = "undefinedproc";
+	public static final String UNEXPECTED_COMMAND = "unexpectedcommand";
 	public static final String UNEXPECTED_EOF = "unexpectedeof";
 	public static final String UNEXPECTED_VALUES = "unexpectedvalues";
 	public static final String UNKNOWN_FIELD_TYPE = "unknownfieldtype";

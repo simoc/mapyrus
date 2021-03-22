@@ -2867,7 +2867,7 @@ public class Context
 					StringDimension sDim = getStringDimension(s, false);
 
 					ptCopy.y -= Math.max(sDim.getHeight(), dim.getHeight());
-					lastY2.add(k, new Float(y2));
+					lastY2.add(k, Float.valueOf(y2));
 				}
 				lastEntry = entry;
 			}
