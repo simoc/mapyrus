@@ -769,7 +769,6 @@ public class MapyrusFrame implements MapyrusEventListener
 				{
 					m_outputThread.join();
 					m_outputThread = null;
-					System.out.println("closing stream");
 					inStream.close();
 				}
 
@@ -859,7 +858,6 @@ public class MapyrusFrame implements MapyrusEventListener
 				{
 					m_outputThread.join();
 					m_outputThread = null;
-					System.out.println("closing stream");
 					inStream.close();
 				}
 
