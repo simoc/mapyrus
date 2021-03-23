@@ -554,7 +554,7 @@ public class OutputFormat
 
 		int nChars = writeLine(m_writer, "%PDF-1.5");
 
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 		nChars += writeLine(m_writer, "1 0 obj % Document Catalog");
 		nChars += writeLine(m_writer, "<<");
 		nChars += writeLine(m_writer, "/Type /Catalog");
@@ -573,7 +573,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
 
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 		nChars += writeLine(m_writer, "2 0 obj % Document Metadata");
 		nChars += writeLine(m_writer, "<<");
 		nChars += writeLine(m_writer, "/Creator (" + Constants.PROGRAM_NAME +
@@ -591,7 +591,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
 
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 		nChars += writeLine(m_writer, "3 0 obj % Document");
 		nChars += writeLine(m_writer, "<<");
 		nChars += writeLine(m_writer, "/Type /Outlines");
@@ -599,7 +599,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
 
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 		nChars += writeLine(m_writer, "4 0 obj % Page Tree Node");
 		nChars += writeLine(m_writer, "<<");
 		nChars += writeLine(m_writer, "/Type /Pages");
@@ -607,7 +607,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, "/Count 1");
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 
 		if (turnPage)
 		{
@@ -1054,17 +1054,17 @@ public class OutputFormat
 		nChars += writeLine(m_writer, "5 0 obj % Optional Content Groups");
 		nChars += writeLine(m_writer, "[" + contentGroupsArray + "]");
 		nChars += writeLine(m_writer, "endobj");
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 
 		nChars += writeLine(m_writer, "6 0 obj % Optional Content Groups Order");
 		nChars += writeLine(m_writer, "[" + contentGroupsOrderArray + "]");
 		nChars += writeLine(m_writer, "endobj");
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 
 		nChars += writeLine(m_writer, "7 0 obj % Optional Content Group Resource Properties");
 		nChars += writeLine(m_writer, contentGroupsDictionary);
 		nChars += writeLine(m_writer, "endobj");
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 
 		nChars += writeLine(m_writer, "8 0 obj % Single Page");
 		nChars += writeLine(m_writer, "<<");
@@ -1098,7 +1098,7 @@ public class OutputFormat
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, ">>");
 		nChars += writeLine(m_writer, "endobj");
-		m_PDFFileOffsets.add(new Integer(nChars));
+		m_PDFFileOffsets.add(Integer.valueOf(nChars));
 
 		/*
 		 * Now add font width, font descriptor and font file objects.
@@ -1106,13 +1106,13 @@ public class OutputFormat
 		for (int i = 0; i < pdfFontObjects.size(); i++)
 		{
 			nChars += writeLine(m_writer, pdfFontObjects.get(i).toString());
-			m_PDFFileOffsets.add(new Integer(nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(nChars));
 		}
 
 		for (int i = 0; i < pdfContentGroupObjects.size(); i++)
 		{
 			nChars += writeLine(m_writer, pdfContentGroupObjects.get(i));
-			m_PDFFileOffsets.add(new Integer(nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(nChars));
 		}
 	}
 
@@ -2820,7 +2820,7 @@ public class OutputFormat
 			 * blend modes and alpha values.
 			 */
 			Integer offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 			nChars = writeLine(m_writer, objIndex + " 0 obj % Graphics States");
 			objIndex++;
 			nChars += writeLine(m_writer, "<<");
@@ -2869,7 +2869,7 @@ public class OutputFormat
 			 * PDF files.
 			 */
 			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 			nChars = writeLine(m_writer, objIndex + " 0 obj % ColorSpace");
 			objIndex++;
 			nChars += writeLine(m_writer, "<<");
@@ -2906,7 +2906,7 @@ public class OutputFormat
 			 * PDF files.
 			 */
 			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 			nChars = writeLine(m_writer, objIndex + " 0 obj % Pattern");
 			objIndex++;
 			nChars += writeLine(m_writer, "<<");
@@ -2918,7 +2918,7 @@ public class OutputFormat
 			 * PDF files.
 			 */
 			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 			nChars = writeLine(m_writer, objIndex + " 0 obj % Shading");
 			objIndex++;
 			nChars += writeLine(m_writer, "<<");
@@ -2929,7 +2929,7 @@ public class OutputFormat
 			 * Write dictionary containing each image used in file.
 			 */
 			offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-			m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+			m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 			nChars = writeLine(m_writer, objIndex + " 0 obj % Image Dictionary");
 			objIndex++;
 			nChars += writeLine(m_writer, "<<");
@@ -2977,7 +2977,7 @@ public class OutputFormat
 			for (int i = 0; i < pdfExtGStateObjs.length; i++)
 			{
 				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 
 				Object key = pdfExtGStateObjs[i];
 				nChars = writeLine(m_writer, objIndex + " 0 obj % " + key);
@@ -2988,7 +2988,7 @@ public class OutputFormat
 			for (int i = 0; i < includedExtGstateObjects.size(); i++)
 			{
 				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 
 				String extGState = includedExtGstateObjects.get(i).toString();
 				nChars = writeLine(m_writer, extGState);
@@ -2997,7 +2997,7 @@ public class OutputFormat
 			for (int i = 0; i < includedColorSpaceObjects.size(); i++)
 			{
 				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 
 				String colorSpace = includedColorSpaceObjects.get(i).toString();
 				nChars = writeLine(m_writer, colorSpace);
@@ -3006,7 +3006,7 @@ public class OutputFormat
 			for (int i = 0; i < pdfImageObjs.length; i++)
 			{
 				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 
 				Object key = pdfImageObjs[i];
 				nChars = writeLine(m_writer, objIndex + " 0 obj % " + key);
@@ -3020,7 +3020,7 @@ public class OutputFormat
 			for (int i = 0; i < includedImageObjects.size(); i++)
 			{
 				offset = m_PDFFileOffsets.get(m_PDFFileOffsets.size() - 1);
-				m_PDFFileOffsets.add(new Integer(offset.intValue() + nChars));
+				m_PDFFileOffsets.add(Integer.valueOf(offset.intValue() + nChars));
 
 				String image = includedImageObjects.get(i).toString();
 				nChars = writeLine(m_writer, image);
@@ -4223,7 +4223,7 @@ public class OutputFormat
 		if (m_outputType == PDF)
 		{
 			ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(index);
-			Integer pageNumber = new Integer(page);
+			Integer pageNumber = Integer.valueOf(page);
 			if (!pageNumbers.contains(pageNumber))
 				pageNumbers.add(pageNumber);
 		}
@@ -4319,7 +4319,7 @@ public class OutputFormat
 			if (groupName == null || groupName.length() == 0)
 				groupName = "Group" + (size + 1);
 			m_PDFContentGroupNames.add(groupName);
-			m_PDFContentGroupNestingLevels.add(new Integer(m_PDFCurrentContentGroupNesting));
+			m_PDFContentGroupNestingLevels.add(Integer.valueOf(m_PDFCurrentContentGroupNesting));
 			m_PDFCurrentContentGroupNesting++;
 		}
 	}

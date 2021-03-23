@@ -769,6 +769,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				{
 					m_outputThread.join();
 					m_outputThread = null;
+					inStream.close();
 				}
 
 				m_outputTextArea.repaint();
@@ -857,6 +858,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				{
 					m_outputThread.join();
 					m_outputThread = null;
+					inStream.close();
 				}
 
 				m_outputTextArea.repaint();

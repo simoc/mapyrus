@@ -111,7 +111,7 @@ public class TextfileDataset implements GeographicDataset
 			if (token.startsWith("comment="))
 				m_comment = token.substring(8);
 			else if (token.startsWith("delimiter=") && token.length() == 11)
-				m_delimiter = new Character(token.charAt(10));
+				m_delimiter = Character.valueOf(token.charAt(10));
 			if (token.startsWith("encoding="))
 				encoding = token.substring(9);
 		}

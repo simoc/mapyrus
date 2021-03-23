@@ -111,7 +111,7 @@ public class GeometricPath
 	{
 		m_path.moveTo(x, y);
 		m_moveTos.add(new Point2D.Float(x, y));
-		m_rotations.add(new Double(rotation));
+		m_rotations.add(Double.valueOf(rotation));
 	}
 
 	/**
