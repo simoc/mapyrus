@@ -60,10 +60,10 @@ public class AdobeFontMetrics
 	private int m_flags;
 
 	/*
-	 * Lookup table from Unicode to PostScript glyph name. 
+	 * Lookup table from Unicode to PostScript glyph name.
 	 */
 	private static HashMap<Integer, ArrayList<String>> m_defaultGlyphNames;
-	
+
 	private HashMap<Integer, ArrayList<String>> m_customGlyphNames;
 
 	/*
@@ -72,7 +72,7 @@ public class AdobeFontMetrics
 	 * p. 605.
 	 */
 	private static HashMap<String, Integer> m_ISOLatin1CharIndexes;
-	
+
 	static
 	{
 		m_ISOLatin1CharIndexes = new HashMap<String, Integer>(256);
@@ -184,7 +184,7 @@ public class AdobeFontMetrics
 		String res = "org/mapyrus/font/glyphlist.txt";
 		InputStream inStream = AdobeFontMetrics.class.getClassLoader().getResourceAsStream(res);
 
-		m_defaultGlyphNames = new HashMap<Integer, ArrayList<String>>(); 
+		m_defaultGlyphNames = new HashMap<Integer, ArrayList<String>>();
 		BufferedReader reader = null;
 		try
 		{
@@ -210,7 +210,7 @@ public class AdobeFontMetrics
 	 * @param afmFilename filename being read (for any error message).
 	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
 	 * @param glyphFilename optional Adobe Glyph List filename.
-	 */	
+	 */
 	public AdobeFontMetrics (BufferedReader r, String afmFilename,
 		HashSet<String> ISOLatin1EncodedFonts,
 		String glyphFilename) throws IOException, MapyrusException
@@ -227,24 +227,11 @@ public class AdobeFontMetrics
 		m_flags = 32; /* Nonsymbolic font for PDF */
 		boolean convertToISOLatin1 = false;
 
-		BufferedReader glyphReader = null;
-		try
+		if (glyphFilename != null)
 		{
-			if (glyphFilename != null)
+			try (BufferedReader glyphReader = new BufferedReader(new FileReader(glyphFilename)))
 			{
-				glyphReader = new BufferedReader(new FileReader(glyphFilename));
 				m_customGlyphNames = readGlyphNames(glyphReader);
-			}
-		}
-		finally
-		{
-			try
-			{
-				if (glyphReader != null)
-					glyphReader.close();
-			}
-			catch (IOException e)
-			{
 			}
 		}
 
@@ -533,7 +520,7 @@ public class AdobeFontMetrics
 	{
 		return(m_flags);
 	}
-	
+
 	/**
 	 * Returns maximum height of font above baseline.
 	 * @return ascender height.
@@ -591,7 +578,7 @@ public class AdobeFontMetrics
 						{
 							glyphNames = new ArrayList<String>(1);
 							glyphNameMap.put(Integer.valueOf(unicode), glyphNames);
-							
+
 						}
 						glyphNames.add(glyphName);
 					}
@@ -683,7 +670,7 @@ public class AdobeFontMetrics
 	/**
 	 * Get character in PostScript font that character maps to.
 	 * @param c character (in Unicode).
-	 * @return character in PostScript font. 
+	 * @return character in PostScript font.
 	 */
 	public char getEncodedChar(char c)
 	{
