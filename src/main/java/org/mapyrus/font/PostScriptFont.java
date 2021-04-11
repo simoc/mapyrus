@@ -41,7 +41,7 @@ import org.mapyrus.Constants;
 public class PostScriptFont
 {
 	private static final int LINE_LENGTH = 30;
-	
+
 	/*
 	 * Name of font given in header of font file.
 	 */
@@ -89,11 +89,8 @@ public class PostScriptFont
 	private void readPfbFile(String pfbFilename)
 		throws IOException, MapyrusException
 	{
-		BufferedInputStream stream = null;
-
-		try
-		{			
-			stream = new BufferedInputStream(new FileInputStream(pfbFilename));
+		try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(pfbFilename)))
+		{
 			byte magic[] = new byte[2];
 			byte header[] = new byte[4];
 			ArrayList<byte []> segments = new ArrayList<byte []>();
@@ -129,7 +126,7 @@ public class PostScriptFont
 						": " + pfbFilename);
 				}
 				segments.add(buf);
-				
+
 				if (stream.read(magic) != magic.length)
 				{
 					throw new IOException(MapyrusMessages.get(MapyrusMessages.UNEXPECTED_EOF) +
@@ -144,7 +141,7 @@ public class PostScriptFont
 
 			/*
 			 * Create embedded Type 1 font object as described in section 5.8
-			 * of Adobe PDF Reference Manual. 
+			 * of Adobe PDF Reference Manual.
 			 */
 			m_fileContents = new StringBuilder(128 * 1024);
 			m_fileContents.append("<< /Type /FontFile /Length ");
@@ -213,17 +210,6 @@ public class PostScriptFont
 			m_fileContents.append(Constants.LINE_SEPARATOR);
 			m_fileContents.append("endstream");
 		}
-		finally
-		{
-			try
-			{
-				if (stream != null)
-					stream.close();
-			}
-			catch (IOException e)
-			{
-			}
-		}
 	}
 
 	/**
@@ -233,12 +219,8 @@ public class PostScriptFont
 	private void readPfaFile(String pfaFilename)
 		throws IOException, MapyrusException
 	{
-		BufferedReader bufferedReader = null;
-
-		try
+		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(pfaFilename)))
 		{
-			bufferedReader = new BufferedReader(new FileReader(pfaFilename));
-	
 			/*
 			 * First line of file contains PostScript keyword, then font name.  For example,
 			 * %!PS-AdobeFont-1.0: LuxiSerif 1.1000
@@ -254,7 +236,7 @@ public class PostScriptFont
 			m_fileContents = new StringBuilder(128 * 1024);
 			m_fileContents.append(firstLine);
 			m_fileContents.append(Constants.LINE_SEPARATOR);
-			
+
 			String line;
 			while ((line = bufferedReader.readLine()) != null)
 			{
@@ -279,11 +261,6 @@ public class PostScriptFont
 					": " + pfaFilename);
 			}
 		}
-		finally
-		{
-			if (bufferedReader != null)
-				bufferedReader.close();
-		}		
 	}
 
 	/**
@@ -308,7 +285,7 @@ public class PostScriptFont
 	 * Return definition of font read from .pfa file, suitable for inclusion
 	 * in a PostScript file.
 	 * @return font definition.
-	 */	
+	 */
 	public String getFontDefinition()
 	{
 		return(m_fileContents.toString());
