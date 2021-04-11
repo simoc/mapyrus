@@ -32,10 +32,10 @@ import org.mapyrus.MapyrusMessages;
 /**
  * Clipping polygon for a geo-referenced image read from a file containing (X, Y)
  * coordinates of polygon.
- * 
+ *
  * By clippping each image in a row of trapezoidal shaped images, each image
  * can be displayed without overwriting the neighbouring images:
- * 
+ *
  * <pre>
  *   ___ ___ ___
  *  /  //  //  /
@@ -54,17 +54,15 @@ public class ImageClippingFile
 	public ImageClippingFile(String filename, AffineTransform ctm)
 		throws MapyrusException, IOException
 	{
-		LineNumberReader reader = null;
 		String line;
 		double []pt = new double[2];
 		int nPts = 0;
 
-		try
-		{	
-			FileOrURL f;
-			f = new FileOrURL(filename);
+		FileOrURL f;
+		f = new FileOrURL(filename);
 
-			reader = f.getReader();
+		try (LineNumberReader reader = f.getReader())
+		{
 			m_path = new GeometricPath();
 
 			while ((line = reader.readLine()) != null)
@@ -99,22 +97,11 @@ public class ImageClippingFile
 			}
 			m_path.closePath();
 		}
-		finally
-		{
-			try
-			{
-				if (reader != null)
-					reader.close();
-			}
-			catch (IOException e)
-			{
-			}
-		}
 	}
 
 	/**
 	 * Get clipping polygon for image.
-	 * @return clipping polygon. 
+	 * @return clipping polygon.
 	 */
 	public GeometricPath getClippingPolygon()
 	{
