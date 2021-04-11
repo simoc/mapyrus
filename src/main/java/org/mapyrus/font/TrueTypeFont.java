@@ -57,7 +57,7 @@ public class TrueTypeFont
 
 		m_filename = filename;
 		Font f = getFont();
-		
+
 		/*
 		 * Use PostScript name for this font so we have a name without spaces.
 		 */
@@ -86,27 +86,17 @@ public class TrueTypeFont
 	 * Return definition of font read from .ttf file that can be used
 	 * to derive font of any size.
 	 * @return font definition.
-	 */	
+	 */
 	public Font getFont() throws IOException, MapyrusException
 	{
-		Font font = null;
-		FileInputStream f = null;
-
-		try
+		try (FileInputStream f = new FileInputStream(m_filename))
 		{
-			f = new FileInputStream(m_filename);
-			font = Font.createFont(Font.TRUETYPE_FONT, f);
+			return Font.createFont(Font.TRUETYPE_FONT, f);
 		}
 		catch (FontFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_TTF_FILE) +
 				": " + m_filename);
 		}
-		finally
-		{
-			if (f != null)
-				f.close();
-		}
-		return(font);
 	}
 }
