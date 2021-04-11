@@ -36,7 +36,7 @@ import org.mapyrus.Constants;
  * Implements algorithm described in section 3.13.3, 'ASCII85EncodeFilter'
  * of Adobe PostScript Language Reference Manual (2nd Edition).
  */
-public class ASCII85Writer
+public class ASCII85Writer implements AutoCloseable
 {
 	/*
 	 * Bytes buffered but yet to be encoded.
@@ -266,12 +266,13 @@ public class ASCII85Writer
 
 		try (PrintWriter writer = new PrintWriter(new FileWriter("/tmp/ascii85.txt")))
 		{
-			ASCII85Writer ascii85 = new ASCII85Writer(writer, false);
-			byte []messageBytes = message.getBytes();
-			for (int j = 0; j < 100; j++)
-				for (int i = 0; i < messageBytes.length; i++)
-					ascii85.write(messageBytes[i]);
-			ascii85.close();
+			try (ASCII85Writer ascii85 = new ASCII85Writer(writer, false))
+			{
+				byte []messageBytes = message.getBytes();
+				for (int j = 0; j < 100; j++)
+					for (int i = 0; i < messageBytes.length; i++)
+						ascii85.write(messageBytes[i]);
+			}
 		}
 		catch (IOException e)
 		{
