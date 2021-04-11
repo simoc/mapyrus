@@ -1230,7 +1230,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 			else if (c == '\t')
 				sb.append("\\t");
 			else if (c > 127)
-				sb.append("\\u").append(String.format("%04X", c));
+				sb.append("\\u").append(String.format("%04X", Integer.valueOf(c)));
 			else
 				sb.append((char)c);
 		}

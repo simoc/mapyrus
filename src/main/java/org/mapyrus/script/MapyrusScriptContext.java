@@ -151,7 +151,7 @@ public class MapyrusScriptContext implements ScriptContext
 	public List<Integer> getScopes()
 	{
 		ArrayList<Integer> scopes = new ArrayList<Integer>();
-		scopes.add(ScriptContext.ENGINE_SCOPE);
+		scopes.add(Integer.valueOf(ScriptContext.ENGINE_SCOPE));
 		return scopes;
 	}
 
