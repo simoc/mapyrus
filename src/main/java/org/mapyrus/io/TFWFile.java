@@ -44,40 +44,37 @@ public class TFWFile implements GeoImageBoundingBox
 	public TFWFile(String filename, BufferedImage image)
 		throws MapyrusException, IOException
 	{
-		LineNumberReader reader = null;
 		double []values = new double[6];
 		int nValuesRead = 0;
 		String line;
 
+		String basename;
+		int dotIndex = filename.lastIndexOf('.');
+		if (dotIndex < 0)
+			basename = filename;
+		else
+			basename = filename.substring(0, dotIndex);
+
+		/*
+		 * Check both upper and lowercase file extension.
+		 */
+		String tfwLower = basename + ".tfw";
+		String tfwUpper = basename + ".TFW";
+		String tfwFilename;
+		FileOrURL f;
 		try
 		{
-			String basename;
-			int dotIndex = filename.lastIndexOf('.');
-			if (dotIndex < 0)
-				basename = filename;
-			else
-				basename = filename.substring(0, dotIndex);
+			f = new FileOrURL(tfwLower);
+			tfwFilename = tfwLower;
+		}
+		catch (IOException e)
+		{
+			f = new FileOrURL(tfwUpper);
+			tfwFilename = tfwUpper;
+		}
 
-			/*
-			 * Check both upper and lowercase file extension.
-			 */
-			String tfwLower = basename + ".tfw";
-			String tfwUpper = basename + ".TFW";
-			String tfwFilename;
-			FileOrURL f;
-			try
-			{
-				f = new FileOrURL(tfwLower);
-				tfwFilename = tfwLower;
-				
-			}
-			catch (IOException e)
-			{
-				f = new FileOrURL(tfwUpper);
-				tfwFilename = tfwUpper;
-			}
-			reader = f.getReader();
-
+		try (LineNumberReader reader = f.getReader())
+		{
 			/*
 			 * Read six numbers from file giving bounding rectangle coordinates of image.
 			 */
@@ -102,7 +99,7 @@ public class TFWFile implements GeoImageBoundingBox
 				}
 				nValuesRead++;
 			}
-			
+
 			double pixelWidth = values[0];
 			double pixelHeight = -values[3];
 
@@ -118,17 +115,6 @@ public class TFWFile implements GeoImageBoundingBox
 			m_bounds = new Rectangle2D.Double(xMin, yMax - imageHeight * pixelHeight,
 				imageWidth * pixelWidth, imageHeight * pixelHeight);
 		}
-		finally
-		{
-			try
-			{
-				if (reader != null)
-					reader.close();
-			}
-			catch (IOException ignore)
-			{
-			}
-		}
 	}
 
 	/**
@@ -139,7 +125,7 @@ public class TFWFile implements GeoImageBoundingBox
 	{
 		return(m_bounds);
 	}
-	
+
 	public String toString()
 	{
 		return(m_bounds.toString());
