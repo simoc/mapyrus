@@ -1023,7 +1023,7 @@ public class OutputFormat
 		for (int i = 0; i < m_PDFContentGroupNames.size(); i++)
 		{
 			contentGroupsArray.append(" " + objectCounter + " 0 R");
-			int nestingLevel = m_PDFContentGroupNestingLevels.get(i);
+			int nestingLevel = m_PDFContentGroupNestingLevels.get(i).intValue();
 			if (i > 0)
 			{
 				if (nestingLevel > lastNestingLevel)
@@ -4622,7 +4622,7 @@ public class OutputFormat
 			 * know how many to remove later in the SVG file.
 			 */
 			Integer nStates = m_SVGOpenGTags.pop();
-			m_SVGOpenGTags.push(Integer.valueOf(nStates + 1));
+			m_SVGOpenGTags.push(Integer.valueOf(nStates.intValue() + 1));
 		}
 	}
 

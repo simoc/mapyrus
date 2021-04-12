@@ -126,7 +126,7 @@ public class MapyrusServlet extends HttpServlet
 			 * servlet init-param "io" is set.
 			 */
 			String s = getInitParameter("io");
-			boolean isIOAllowed = Boolean.valueOf(s);
+			boolean isIOAllowed = Boolean.valueOf(s).booleanValue();
 			throttle.setIOAllowed(isIOAllowed);
 			interpreter.setThrottle(throttle);
 			interpreter.interpret(context, f1, emptyStdin, null);
