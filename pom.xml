@@ -16,6 +16,12 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:https://github.com/simoc/mapyrus.git</connection>
+        <tag>HEAD</tag>
+        <url>https://github.com/simoc/mapyrus</url>
+    </scm>
+
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
