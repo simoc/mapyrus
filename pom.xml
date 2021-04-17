@@ -9,6 +9,27 @@
     <name>mapyrus</name>
     <url>http://mapyrus.org/</url>
 
+    <licenses>
+        <license>
+            <name>LGPL2.1</name>
+            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/simoc/mapyrus.git</connection>
+        <tag>HEAD</tag>
+        <url>https://github.com/simoc/mapyrus</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>simoc</id>
+            <name>Simon Chenery</name>
+            <email>simon_chenery@yahoo.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
@@ -86,4 +107,15 @@
             <url>https://www.datanucleus.org/downloads/maven2/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>
