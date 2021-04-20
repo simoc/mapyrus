@@ -34,7 +34,7 @@ import com.jhlabs.map.proj.ProjectionException;
 
 /**
  * Reprojects a point from one projection to another.
- * reproject("epsg:4326", "epsg:31464", 11, 48) -> POINT(4425384, 5318396).
+ * reproject("epsg:4326", "epsg:31464", 11, 48) -&gt; POINT(4425384, 5318396).
  */
 public class Reproject implements Function
 {

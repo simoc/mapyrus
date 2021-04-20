@@ -45,6 +45,8 @@ public class TrueTypeFont
 	/**
 	 * Create TrueType 1 font from a .ttf file.
 	 * @param filename name of .ttf file.
+	 * @throws IOException if font file cannot be read.
+	 * @throws MapyrusException if font file has wrong format.
 	 */
 	public TrueTypeFont(String filename) throws IOException, MapyrusException
 	{
@@ -86,6 +88,8 @@ public class TrueTypeFont
 	 * Return definition of font read from .ttf file that can be used
 	 * to derive font of any size.
 	 * @return font definition.
+	 * @throws IOException if font file cannot be read.
+	 * @throws MapyrusException if font file has wrong format.
 	 */	
 	public Font getFont() throws IOException, MapyrusException
 	{

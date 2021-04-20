@@ -41,6 +41,9 @@ public class JavaFunction implements Function
 
 	/**
 	 * Create function that calls a Java method.
+	 * @param className name of Java class to call.
+	 * @param methodName name of method in Java class.
+	 * @param methods all Java methods in class with this name.
 	 */
 	public JavaFunction(String className, String methodName, ArrayList<Method> methods)
 	{

@@ -54,7 +54,8 @@ public interface Function
 	 * @param context context containing variables and other state information.
 	 * @param args arguments to function.
 	 * @return evaluated function value.
-	 * @throws MapyrusException
+	 * @throws MapyrusException if function cannot be evaluated.
+	 * @throws InterruptedException if function is interrupted.
 	 */
 	public Argument evaluate(ContextStack context, ArrayList<Argument> args)
 		throws MapyrusException, InterruptedException;

@@ -400,6 +400,7 @@ public class Context
 	/**
 	 * Return resolution of page we are writing to as a distance measurement.
 	 * @return distance in millimetres between centres of adjacent pixels.
+	 * @throws MapyrusException if no resolution available for output device.
 	 */
 	public double getResolution() throws MapyrusException
 	{
@@ -461,6 +462,8 @@ public class Context
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if output file cannot be created.
+	 * @throws MapyrusException if parameters for output page are not valid.
 	 */
 	public void setOutputFormat(String format, String filename,
 		double width, double height, String extras,
@@ -1274,6 +1277,7 @@ public class Context
 	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
 	 * @param xMax maximum X coordinate of rectangle containing ellipse.
 	 * @param yMax maximum Y coordinate of rectangle containing ellipse.
+	 * @throws MapyrusException if adding ellipse to path fails.
 	 */
 	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
 		throws MapyrusException
@@ -1386,6 +1390,11 @@ public class Context
 
 	/**
 	 * Replace path with path clipped against a rectangle.
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 * @throws MapyrusException if clipping fails.
 	 */
 	public void guillotine(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -1485,6 +1494,7 @@ public class Context
 	 * @param x2 upper-right corner of rectangle.
 	 * @param y2 upper-right corner of rectangle.
 	 * @param maskValue value to set in mask for rectangular area.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void setPageMask(double x1, double y1, double x2, double y2, int maskValue)
 		throws MapyrusException
@@ -1522,7 +1532,7 @@ public class Context
 	 * Set page mask for region of page.
 	 * @param geometry area of page to set mask for.
 	 * @param maskValue value to set in mask.
-	 * @throws MapyrusException
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void setPageMask(Argument geometry, int maskValue)
 		throws MapyrusException
@@ -1543,6 +1553,7 @@ public class Context
 	/**
 	 * Set page mask for region of page covered by current path.
 	 * @param maskValue value to set in mask.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void setPageMask(int maskValue) throws MapyrusException
 	{
@@ -1648,6 +1659,7 @@ public class Context
 	 * Determine whether a part of the page is protected.
 	 * @param geometry area to check.
 	 * @return true if any part of this region is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isPageMaskAllZero(Argument geometry) throws MapyrusException
 	{
@@ -1671,6 +1683,7 @@ public class Context
 	/**
 	 * Determine whether a part of the page covered by current path is protected.
 	 * @return true if any part of path is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isPageMaskAllZero() throws MapyrusException
 	{
@@ -1714,6 +1727,7 @@ public class Context
 	/**
 	 * Replace path with new paths at parallel distances to original path.
 	 * @param distances list of parallel distances for new paths.
+	 * @throws MapyrusException if calculating parallel paths fails.
 	 */
 	public void parallelPath(double []distances) throws MapyrusException
 	{
@@ -1731,6 +1745,7 @@ public class Context
 	 * Replace path with selected parts of path.
 	 * @param offsets offsets along existing path to select.
 	 * @param lengths length of existing path to select at each offset.
+	 * @throws MapyrusException if calculating selected parts of path fails.
 	 */
 	public void selectPath(double []offsets, double []lengths)
 		throws MapyrusException
@@ -1752,6 +1767,7 @@ public class Context
 
 	/**
 	 * Reverse direction of path.
+	 * @throws MapyrusException if reversing path fails.
 	 */
 	public void reversePath() throws MapyrusException
 	{
@@ -1766,6 +1782,8 @@ public class Context
 	 * Draw image icon at current point on path.
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.
+	 * @throws IOException if writing icon to file fails.
+	 * @throws MapyrusException if icon to draw is not valid.
 	 */
 	public void drawIcon(ColorIcon icon, double size)
 		throws IOException, MapyrusException
@@ -1784,6 +1802,8 @@ public class Context
 	 * @param filename geo-referenced image filename.
 	 * @param extras extra parameters to control display of image.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if writing image to file fails.
+	 * @throws MapyrusException if image to draw is not valid.
 	 */
 	public void drawGeoImage(String filename, String extras, Throttle throttle)
 		throws IOException, MapyrusException
@@ -2087,8 +2107,10 @@ public class Context
 
 	/**
 	 * Includes Encsapsulated PostScript file in page.
-	 * @param EPS filename.
+	 * @param filename EPS filename.
 	 * @param size size for EPS file on page in millimetres.
+	 * @throws IOException if writing EPS file fails.
+	 * @throws MapyrusException if EPS file to draw is not valid.
 	 */
 	public void drawEPS(String filename, double size)
 		throws IOException, MapyrusException
@@ -2105,8 +2127,10 @@ public class Context
 
 	/**
 	 * Includes Scalable Vector Graphics file in page.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param size size for SVG file on page in millimetres.
+	 * @throws IOException if writing SVG file fails.
+	 * @throws MapyrusException if SVG file to draw is not valid.
 	 */
 	public void drawSVG(String filename, double size)
 		throws IOException, MapyrusException
@@ -2124,6 +2148,8 @@ public class Context
 	/**
 	 * Add Scalable Vector Graphics code to page.
 	 * @param xml XML elements to add to SVG file.
+	 * @throws IOException if writing XML elements fails.
+	 * @throws MapyrusException if XML elements to draw are not valid.
 	 */
 	public void addSVGCode(String xml)
 		throws IOException, MapyrusException
@@ -2133,9 +2159,11 @@ public class Context
 
 	/**
 	 * Includes PDF file in page.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param page page number in PDF file to display.
 	 * @param size size for SVG file on page in millimetres.
+	 * @throws IOException if writing PDF file fails.
+	 * @throws MapyrusException if PDF file to draw is not valid.
 	 */
 	public void drawPDF(String filename, int page, double size)
 		throws IOException, MapyrusException
@@ -2165,6 +2193,8 @@ public class Context
 	/**
 	 * Draw currently defined path.
 	 * @param xmlAttributes XML attributes to add for SVG output.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void stroke(String xmlAttributes) throws IOException, MapyrusException
 	{

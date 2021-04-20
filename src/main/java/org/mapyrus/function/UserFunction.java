@@ -39,12 +39,11 @@ public class UserFunction implements Function
 	private Interpreter m_interpreter;
 
 	/**
-	 * Create user-defined function.
+	 * Create user-defined function that can be executed just like internal functions.
 	 * @param funcName name of function.
 	 * @param formalParameters formal paramters for function.
 	 * @param statements statements to execute for function.
 	 * @param interpreter interpreter in which statements will execute.
-	 * @return function function that can be executed just like internal functions.
 	 */
 	public UserFunction(String funcName, ArrayList<String> formalParameters,
 		ArrayList<Statement> statements, Interpreter interpreter)
