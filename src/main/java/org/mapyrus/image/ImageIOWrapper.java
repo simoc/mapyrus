@@ -93,7 +93,7 @@ public class ImageIOWrapper
 
 	/**
 	 * Read an image from a file. 
-	 * @param file file to read image from.
+	 * @param f file to read image from.
 	 * @param color color for monochrome images.
 	 * @return image read from file.
 	 */
@@ -235,7 +235,7 @@ public class ImageIOWrapper
 	 * Write an image to a file. 
 	 * @param image image to write.
 	 * @param format name of image format in which to write image. 
-	 * @param file file to write image to.
+	 * @param f file to write image to.
 	 */
 	public static void write(BufferedImage image, String format, File f)
 		throws IOException

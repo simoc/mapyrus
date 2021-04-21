@@ -169,7 +169,7 @@ public class TextfileDataset implements GeographicDataset
 	}
 
 	/**
-	 * @see org.mapyrus.GeographicDataset#getMetadata()
+	 * @see org.mapyrus.dataset.GeographicDataset#getMetadata()
 	 */
 	@Override
 	public Hashtable<String, String> getMetadata()

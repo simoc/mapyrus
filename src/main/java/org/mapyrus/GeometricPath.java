@@ -116,7 +116,8 @@ public class GeometricPath
 
 	/**
 	 * Add point to path with straight line segment from last point.
-	 * @param coords two element array containing x and y coordinates of point.
+	 * @param x coordinate of point.
+	 * @param y coordinate of point.
 	 */	
 	public void lineTo(float x, float y)
 	{

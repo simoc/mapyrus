@@ -622,7 +622,7 @@ public class Context
 
 	/**
 	 * Sets color.
-	 * @param c is new color for drawing.
+	 * @param color is new color for drawing.
 	 */
 	public void setColor(Color color)
 	{
@@ -2537,7 +2537,7 @@ public class Context
 	/**
 	 * Draw a table (a grid with a value in each cell) at current path position.
 	 * @param extras options for table.
-	 * @param list of arrays giving values in each column.
+	 * @param columns list of arrays giving values in each column.
 	 */
 	public void drawTable(String extras, ArrayList<Argument> columns)
 		throws IOException, MapyrusException
@@ -3149,7 +3149,7 @@ public class Context
 
 	/**
 	 * Returns value of a variable.
-	 * @param variable name to lookup.
+	 * @param varName variable name to lookup.
 	 * @return value of variable, or null if it is not defined.
 	 */
 	public Argument getVariableValue(String varName)

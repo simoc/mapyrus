@@ -45,7 +45,7 @@ public class Dataset
 	}
 
 	/**
-	 * @see org.mapyrus.dataset.GeographicDataset#getProjection().
+	 * @see org.mapyrus.dataset.GeographicDataset#getProjection()
 	 */	
 	public String getProjection()
 	{
@@ -53,7 +53,7 @@ public class Dataset
 	}
 
 	/**
-	 * @see org.mapyrus.dataset.GeographicDataset#getWorlds().
+	 * @see org.mapyrus.dataset.GeographicDataset#getWorlds()
 	 */
 	public Rectangle2D.Double getWorlds()
 	{
@@ -61,7 +61,7 @@ public class Dataset
 	}
 
 	/**
-	 * @see org.mapyrus.dataset.GeographicDataset#getFieldNames().
+	 * @see org.mapyrus.dataset.GeographicDataset#getFieldNames()
 	 */
 	public String []getFieldNames()
 	{

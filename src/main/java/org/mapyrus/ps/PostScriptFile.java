@@ -163,10 +163,7 @@ public class PostScriptFile
 
 	/**
 	 * Parse bounding box from a PostScript file.
-	 * @param filename file to read bounding box from.
-	 * @return
-	 * @throws IOException
-	 * @throws MapyrusException
+	 * @return bounding box.
 	 */
 	public Rectangle getBoundingBox()
 	{

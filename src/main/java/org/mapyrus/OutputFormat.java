@@ -3968,7 +3968,7 @@ public class OutputFormat
 	/**
 	 * Draw EPS file at points on page.
 	 * @param pointList is list of Point2D objects at which to draw EPS file.
-	 * @param EPS filename.
+	 * @param filename EPS filename.
 	 * @param size size for EPS file on page in millimetres.
 	 * @param rotation rotation angle for EPS file.
 	 * @param scaling scale factor for EPS file.
@@ -4079,7 +4079,7 @@ public class OutputFormat
 	/**
 	 * Draw SVG file at points on page.
 	 * @param pointList is list of Point2D objects at which to draw SVG file.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param size size for SVG file on page in millimetres.
 	 * @param rotation rotation angle for SVG file.
 	 * @param scaling scale factor for SVG file.
@@ -4173,7 +4173,7 @@ public class OutputFormat
 	/**
 	 * Draw PDF file at points on page.
 	 * @param pointList is list of Point2D objects at which to draw PDF file.
-	 * @param PDF filename.
+	 * @param filename PDF filename.
 	 * @param page page number in PDF file to display.
 	 * @param size size for PDF file on page in millimetres.
 	 * @param rotation rotation angle for PDF file.

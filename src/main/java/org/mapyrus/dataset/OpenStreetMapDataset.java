@@ -45,8 +45,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Reads Open Streetmap XML format data from URL or local file,
- * using OSM Protocol Version 0.5.
- * @see http://wiki.openstreetmap.org/index.php/OSM_Protocol_Version_0.5
+ * using
+ * <a href="http://wiki.openstreetmap.org/index.php/OSM_Protocol_Version_0.5">
+ * OSM Protocol Version 0.5.</a>.
  */
 public class OpenStreetMapDataset extends DefaultHandler implements GeographicDataset
 {

@@ -45,7 +45,7 @@ public class PDFObject
 
 	/**
 	 * Create new PDF object.
-	 * @param simple object such as number or string.
+	 * @param value simple object such as number or string.
 	 */
 	public PDFObject(String value)
 	{
@@ -99,7 +99,7 @@ public class PDFObject
 
 	/**
 	 * Set object to be the same as another object
-	 * @param anotherObject object to copy.
+	 * @param otherObject object to copy.
 	 */
 	public void setValue(PDFObject otherObject)
 	{
@@ -177,7 +177,7 @@ public class PDFObject
 	 * Get object and all references in format for inclusion in a PDF file.
 	 * @param objectNumber first object number to use in PDF file.
 	 * @param addObjectHeader if true then object header included in PDF object.
-	 * @param addDictionaryMarkers if true then << and >> tokens added around PDF dictionary object.
+	 * @param addDictionaryMarkers if true then &lt;&lt; and &gt;&gt; tokens added around PDF dictionary object.
 	 * @param pdfObjects table of all objects for resolving references.
 	 * @param pdfFile PDF file to read streams from.
 	 * @param filename name of PDF file being read.

@@ -1832,7 +1832,8 @@ public class Expression
 
 	/**
 	 * Evaluate an expression.
-	 * @param vars are all currently defined variables and their values.
+	 * @param context all currently defined variables and their values.
+	 * @param interpreterFilename name of file being intrepreted (for error messages).
 	 * @return the evaluated expression, either a string or a number.
 	 */
 	public Argument evaluate(ContextStack context, String interpreterFilename)

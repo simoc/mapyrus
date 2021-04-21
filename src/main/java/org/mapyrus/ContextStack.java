@@ -643,7 +643,7 @@ public class ContextStack
 
 	/**
 	 * Includes Encsapsulated PostScript file in page.
-	 * @param EPS filename.
+	 * @param filename EPS filename.
 	 * @param size size for EPS file on page in millimetres.
 	 */
 	public void drawEPS(String filename, double size)
@@ -659,7 +659,7 @@ public class ContextStack
 
 	/**
 	 * Includes Scalable Vector Graphics file in page.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param size size for SVG file on page in millimetres.
 	 */
 	public void drawSVG(String filename, double size)
@@ -685,7 +685,7 @@ public class ContextStack
 
 	/**
 	 * Includes PDF file in page.
-	 * @param PDF filename.
+	 * @param filename PDF filename.
 	 * @param page page number in PDF file to display.
 	 * @param size size for PDF file on page in millimetres.
 	 */
@@ -710,8 +710,7 @@ public class ContextStack
 	}
 
 	/**
-	 * Begin PDF Content Group.
-	 * @param name name for group.
+	 * End PDF Content Group.
 	 */
 	public void endPDFGroup() throws MapyrusException
 	{
@@ -911,7 +910,7 @@ public class ContextStack
 
 	/**
 	 * Fill currently defined path.
-	 * @param xmlAttribtes XML attributes to add for SVG output.
+	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
 	public void fill(String xmlAttributes) throws IOException, MapyrusException
 	{
@@ -987,7 +986,7 @@ public class ContextStack
 	/**
 	 * Draw a table (a grid with a value in each cell) at current path position.
 	 * @param extras options for table.
-	 * @param list of arrays giving values in each column.
+	 * @param columns list of arrays giving values in each column.
 	 */
 	public void drawTable(String extras, ArrayList<Argument> columns)
 		throws IOException, MapyrusException
@@ -1650,7 +1649,7 @@ public class ContextStack
 
 	/**
 	 * Save current context so that it can be restored later with restoreState.
-	 * @param name of procedure block that saved state will run.
+	 * @param blockName name of procedure block that saved state will run.
 	 */
 	public void saveState(String blockName) throws MapyrusException
 	{

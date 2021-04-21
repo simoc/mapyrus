@@ -227,7 +227,6 @@ public class WildcardFile
 
 	/**
 	 * Returns filenames matching a wildcard pattern.
-	 * @param wildcard wildcard pattern to match.
 	 * @return list of matching files in sorted order.
 	 */
 	public List<String> getMatchingFiles()
