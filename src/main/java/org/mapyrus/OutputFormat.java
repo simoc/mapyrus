@@ -4364,7 +4364,7 @@ public class OutputFormat
 
 	/**
 	 * Draw currently defined path to output page.
-	 * @param shape
+	 * @param shape shape to draw on page.
 	 * @param xmlAttributes XML attributes to add for SVG output.
 	 */
 	public void stroke(Shape shape, String xmlAttributes)
