@@ -4,7 +4,7 @@
     <groupId>org.mapyrus</groupId>
     <artifactId>mapyrus</artifactId>
     <packaging>jar</packaging>
-    <version>2.105</version>
+    <version>2.106-SNAPSHOT</version>
     <name>mapyrus</name>
     <url>http://mapyrus.org/</url>
     <description>Creates plots of points, lines, polygons and labels to PostScript, PDF, SVG and image formats</description>
@@ -18,7 +18,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/simoc/mapyrus.git</connection>
-        <tag>mapyrus-2.105</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/simoc/mapyrus</url>
     </scm>
 
