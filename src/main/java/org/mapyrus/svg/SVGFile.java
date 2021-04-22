@@ -48,8 +48,10 @@ public class SVGFile extends DefaultHandler
 	private int m_SVGTagCount;
 
 	/**
-	 * Open PostScript file and parse header information.
+	 * Open SVG file and parse header information.
 	 * @param filename name of PostScript file to read.
+	 * @throws IOException if SVG file cannot be opened or read.
+	 * @throws MapyrusException if SVG file cannot be parsed.
 	 */
 	public SVGFile(String filename) throws IOException, MapyrusException
 	{

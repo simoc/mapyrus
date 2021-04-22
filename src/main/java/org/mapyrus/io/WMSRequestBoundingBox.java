@@ -36,7 +36,8 @@ public class WMSRequestBoundingBox implements GeoImageBoundingBox
 
 	/**
 	 * Create geo-referenced image from WMS request.
-	 * @param urlQuery query part of URL after '?' with var=value settings.
+	 * @param url query part of URL after '?' with var=value settings.
+	 * @throws MapyrusException if URL does not return bounding box information.
 	 */
 	public WMSRequestBoundingBox(URL url) throws MapyrusException
 	{

@@ -40,6 +40,8 @@ public class XBMImage
 	 * Read XBM image from file.
 	 * @param filename name of file.
 	 * @param rgb RGB color for pixel values in image.
+	 * @throws IOException if file cannot be opened.
+	 * @throws MapyrusException if file does not contain a XBM image.
 	 */
 	public XBMImage(String filename, int rgb) throws MapyrusException, IOException
 	{
@@ -52,6 +54,8 @@ public class XBMImage
 	 * @param stream open stream to read from.
 	 * @param filename name of file.
 	 * @param rgb RGB color for pixel values in image.
+	 * @throws IOException if stream cannot be read.
+	 * @throws MapyrusException if stream does not contain a XBM image.
 	 */
 	public XBMImage(InputStream stream, String filename, int rgb)
 		throws MapyrusException, IOException

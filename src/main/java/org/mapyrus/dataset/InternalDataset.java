@@ -48,6 +48,8 @@ public class InternalDataset implements GeographicDataset
 	 * Open dataset stored inside this software.
 	 * @param filename is name of data to read.
 	 * @param extras options for reading data.
+	 * @throws IOException if opening file fails.
+	 * @throws MapyrusException if URL or extras are not valid.
 	 */
 	public InternalDataset(String filename, String extras) throws MapyrusException, IOException
 	{

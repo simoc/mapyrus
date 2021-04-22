@@ -78,7 +78,7 @@ public class FontCache extends LRUCache<String, Font>
 	 * is removed from the cache.
 	 * @param name is name of font as defined in java.awt.Font class.
 	 * @param style is a style as defined in java.awt.Font class.
-	 * @param pointSize is size for labelling in whatever units caller wants
+	 * @param size is size for labelling in whatever units caller wants
 	 * (as long as caller is consistent).
 	 * @param rotation is rotation angle for text in radians.
 	 * @param font is font store in cache.

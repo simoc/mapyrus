@@ -225,6 +225,7 @@ public class WKBGeometryParser
 	 * Parse WKB geometry into geometry used by Mapyrus.
 	 * @param b byte array containing geometry
 	 * @return double array containing geometry in Mapyrus format.
+	 * @throws MapyrusException if array is not a valid geometry.
 	 */
 	public static double []parse(byte []b) throws MapyrusException
 	{

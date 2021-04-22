@@ -45,8 +45,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Reads Open Streetmap XML format data from URL or local file,
- * using OSM Protocol Version 0.5.
- * @see http://wiki.openstreetmap.org/index.php/OSM_Protocol_Version_0.5
+ * using
+ * <a href="http://wiki.openstreetmap.org/index.php/OSM_Protocol_Version_0.5">
+ * OSM Protocol Version 0.5.</a>.
  */
 public class OpenStreetMapDataset extends DefaultHandler implements GeographicDataset
 {
@@ -90,7 +91,9 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 	 * Open file or URL to OpenStreetmap XML data and read data.
 	 * @param filename is file or URL to read data from.
 	 * @param extras options for reading data.
-	 * @throws MapyrusException
+	 * @param stdin standard input.
+	 * @throws IOException if opening file fails.
+	 * @throws MapyrusException if file is not an OpenStreetmap XML file.
 	 */
 	public OpenStreetMapDataset(String filename, String extras, InputStream stdin)
 		throws IOException, MapyrusException

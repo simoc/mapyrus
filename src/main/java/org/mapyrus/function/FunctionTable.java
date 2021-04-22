@@ -282,7 +282,7 @@ public class FunctionTable
 
 	/**
 	 * Lookup function from name and return object
-	 * @param name name of function to lookup.
+	 * @param funcName name of function to lookup.
 	 * @return object for evaluating this function, or null if not found.
 	 */
 	public static Function getFunction(String funcName)

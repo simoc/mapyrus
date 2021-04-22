@@ -88,7 +88,7 @@ public class PageMask
 
 	/**
 	 * Set all values inside shape in mask to 0 or to 1. 
-	 * @param shape area to set in mask.
+	 * @param s area to set in mask.
 	 * @param value 0 or 1 value to set.
 	 */
 	public void setValue(Shape s, int value)

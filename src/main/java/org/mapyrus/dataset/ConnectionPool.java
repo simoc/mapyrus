@@ -42,9 +42,10 @@ public class ConnectionPool
 
 	/**
 	 * Get an unused or new database connection.
-	 * @param url database connection string
-	 * @param properties username, password for database connection
-	 * @return database connection
+	 * @param url database connection string.
+	 * @param properties username, password for database connection.
+	 * @return database connection.
+	 * @throws SQLException if creating a new database connection fails.
 	 */
 	public static synchronized Connection get(String url, Properties properties)
 		throws SQLException

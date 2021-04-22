@@ -28,7 +28,7 @@ public class Geometry
 {
 	/**
 	 * Find whether two rectangles overlap.
-	 * @param r1 first rectangle.
+	 * @param r first rectangle.
 	 * @param xMin minimum X coordinate of second rectangle.
 	 * @param yMin minimum Y coordinate of second rectangle.
 	 * @param xMax maximum X coordinate of second rectangle.

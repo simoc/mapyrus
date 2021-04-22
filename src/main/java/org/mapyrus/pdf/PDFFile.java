@@ -253,6 +253,8 @@ public class PDFFile
 	 * Get page contents.
 	 * @param page page number.
 	 * @return page contents.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if parsing PDF file fails.
 	 */
 	public byte[] getContents(int page) throws IOException, MapyrusException
 	{
@@ -296,7 +298,9 @@ public class PDFFile
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @param dictKey key of values to fetch from resources dictionary.
-	 * @returnlist of PDF objects containing for this key.
+	 * @return list of PDF objects containing for this key.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if PDF file does not contain resource.
 	 */
 	private ArrayList<StringBuffer> getResource(int page, int objectNumber, String dictKey)
 		throws IOException, MapyrusException
@@ -316,6 +320,8 @@ public class PDFFile
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing graphics states.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if page does not contain graphics state information.
 	 */
 	public ArrayList<StringBuffer> getExtGState(int page, int objectNumber) throws IOException, MapyrusException
 	{
@@ -324,10 +330,12 @@ public class PDFFile
 	}
 
 	/**
-	 * Get color states for page.
+	 * Get color spaces for page.
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing color spaces.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if page does not contain color space information.
 	 */
 	public ArrayList<StringBuffer> getColorSpace(int page, int objectNumber)
 		throws IOException, MapyrusException
@@ -341,6 +349,8 @@ public class PDFFile
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing patterns.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if page does not contain pattern information.
 	 */
 	public ArrayList<StringBuffer> getPattern(int page, int objectNumber)
 		throws IOException, MapyrusException
@@ -354,6 +364,8 @@ public class PDFFile
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing shading.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if page does not contain shading information.
 	 */
 	public ArrayList<StringBuffer> getShading(int page, int objectNumber)
 		throws IOException, MapyrusException
@@ -367,6 +379,8 @@ public class PDFFile
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing fonts.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if page does not contain font information.
 	 */
 	public ArrayList<StringBuffer> getFont(int page, int objectNumber)
 		throws IOException, MapyrusException
@@ -380,6 +394,8 @@ public class PDFFile
 	 * @param page page number.
 	 * @param objectNumber object number to use for first PDF object.
 	 * @return list of PDF objects containing external objects.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if page does not contain external object information.
 	 */
 	public ArrayList<StringBuffer> getXObject(int page, int objectNumber)
 		throws IOException, MapyrusException
@@ -392,6 +408,7 @@ public class PDFFile
 	 * Get media box for page.
 	 * @param page page number.
 	 * @return (x1, y1) and (x2, y2) coordinates of page in points.
+	 * @throws MapyrusException if PDF does not contain media box information.
 	 */
 	public int[] getMediaBox(int page) throws MapyrusException
 	{
@@ -687,6 +704,7 @@ public class PDFFile
 	 * @param obj dictionary object.
 	 * @param key key to lookup in dictionary.
 	 * @return value of key.
+	 * @throws MapyrusException if dictionary does not contain key.
 	 */
 	private PDFObject getDictionaryValue(PDFObject dictObj, String key)
 		throws MapyrusException

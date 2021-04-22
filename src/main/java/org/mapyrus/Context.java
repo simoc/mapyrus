@@ -400,6 +400,7 @@ public class Context
 	/**
 	 * Return resolution of page we are writing to as a distance measurement.
 	 * @return distance in millimetres between centres of adjacent pixels.
+	 * @throws MapyrusException if no resolution available for output device.
 	 */
 	public double getResolution() throws MapyrusException
 	{
@@ -461,6 +462,8 @@ public class Context
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if output file cannot be created.
+	 * @throws MapyrusException if parameters for output page are not valid.
 	 */
 	public void setOutputFormat(String format, String filename,
 		double width, double height, String extras,
@@ -484,6 +487,8 @@ public class Context
      * @param image is buffered image to draw into.
      * @param imageMapWriter is HTML image map to write to.
      * @param extras contains extra settings for this output.
+     * @throws IOException if writing to image or image map fails.
+     * @throws MapyrusException if extras are not valid.
      */
     public void setOutputFormat(BufferedImage image,
 		PrintWriter imageMapWriter, String extras)
@@ -498,6 +503,8 @@ public class Context
 	 * Sets image for drawing to.
 	 * @param image is buffered image to draw into.
 	 * @param extras contains extra settings for this output.
+	 * @throws IOException if writing to image fails.
+	 * @throws MapyrusException if extras are not valid.
 	 */
 	public void setOutputFormat(BufferedImage image, String extras)
 		throws IOException, MapyrusException
@@ -515,6 +522,8 @@ public class Context
 
 	/**
 	 * Close any open output file being created.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if output to file cannot be completed.
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
@@ -543,6 +552,8 @@ public class Context
 	 * A context cannot be used again after this call.
 	 * @return bit flag of graphical attributes that were changed in this context
 	 * and cannot be restored.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if context cannot be closed.
 	 */
 	public int closeContext() throws IOException, MapyrusException
 	{
@@ -619,7 +630,7 @@ public class Context
 
 	/**
 	 * Sets color.
-	 * @param c is new color for drawing.
+	 * @param color is new color for drawing.
 	 */
 	public void setColor(Color color)
 	{
@@ -731,6 +742,7 @@ public class Context
 	 * @param py2 millimetre position on page of wy2, or 0 to use whole page.
 	 * @param units units of world coordinates (WORLD_UNITS_METRES,WORLD_UNITS_FEET, etc.)
 	 * @param allowDistortion if true then different scaling in X and Y axes allowed.
+	 * @throws MapyrusException if no output page or page position not valid.
 	 */
 	public void setWorlds(double wx1, double wy1, double wx2, double wy2,
 		double px1, double py1, double px2, double py2,
@@ -831,6 +843,7 @@ public class Context
 	 * Transform geometry from page coordinates to world coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
+	 * @throws MapyrusException if geometry not valid.
 	 */
 	public Argument transformToWorlds(Argument arg) throws MapyrusException
 	{
@@ -855,6 +868,7 @@ public class Context
 	 * Transform geometry from world coordinates to page coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
+	 * @throws MapyrusException if geometry not valid.
 	 */
 	public Argument transformToPage(Argument arg) throws MapyrusException
 	{
@@ -867,6 +881,7 @@ public class Context
 	/**
 	 * Set current dataset that can be queried and fetched from.
 	 * @param dataset opened dataset for subsequent queries.
+	 * @throws MapyrusException if dataset cannot be read.
 	 */
 	public void setDataset(GeographicDataset dataset) throws MapyrusException
 	{
@@ -883,6 +898,7 @@ public class Context
 	 * Sets file for writing standard output to.
 	 * File will automatically be closed when this context is closed.
 	 * @param stdout stream to write to.
+	 * @throws IOException if any previous output cannot be closed.
 	 */
 	public void setStdout(PrintStream stdout) throws IOException
 	{
@@ -925,7 +941,7 @@ public class Context
 	 * Returns world coordinate extents being shown on page.
 	 * @return rectangular area covered by extents.
 	 */
-	public Rectangle2D.Double getWorldExtents() throws MapyrusException
+	public Rectangle2D.Double getWorldExtents()
 	{
 		Rectangle2D.Double retval;
 
@@ -1007,7 +1023,7 @@ public class Context
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void moveTo(double x, double y) throws MapyrusException
+	public void moveTo(double x, double y)
 	{
 		double srcPts[] = new double[2];
 		float dstPts[] = new float[2];
@@ -1035,6 +1051,7 @@ public class Context
 	 * Add point to path with straight line segment from last point.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void lineTo(double x, double y) throws MapyrusException
 	{
@@ -1066,6 +1083,7 @@ public class Context
 	 * Add point to path with straight line segment relative to last point.
 	 * @param x X coordinate distance to move, relative to last point.
 	 * @param y Y coordinate distance to move, relative to last point.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void rlineTo(double x, double y) throws MapyrusException
 	{
@@ -1116,6 +1134,7 @@ public class Context
 	 * @param yCentre Y coordinate of centre point of arc.
 	 * @param xEnd X coordinate of end point of arc.
 	 * @param yEnd Y coordinate of end point of arc.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void arcTo(int direction, double xCentre, double yCentre,
 		double xEnd, double yEnd) throws MapyrusException
@@ -1158,6 +1177,7 @@ public class Context
 	 * @param yControl2 Y coordinate of second Bezier control point.
 	 * @param xEnd X coordinate of end point of curve.
 	 * @param yEnd Y coordinate of end point of curve.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void curveTo(double xControl1, double yControl1,
 		double xControl2, double yControl2,
@@ -1198,6 +1218,7 @@ public class Context
 	 * @param y Y coordinate of end of path.
 	 * @param nRepeats number of repeats of sine wave pattern.
 	 * @param amplitude scaling factor for height of sine wave.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void sineWaveTo(double x, double y,
 		double nRepeats, double amplitude) throws MapyrusException
@@ -1274,6 +1295,7 @@ public class Context
 	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
 	 * @param xMax maximum X coordinate of rectangle containing ellipse.
 	 * @param yMax maximum Y coordinate of rectangle containing ellipse.
+	 * @throws MapyrusException if adding ellipse to path fails.
 	 */
 	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
 		throws MapyrusException
@@ -1339,6 +1361,7 @@ public class Context
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
+	 * @throws MapyrusException if no output device.
 	 */
 	public void samplePath(double spacing, double offset) throws MapyrusException
 	{
@@ -1386,6 +1409,11 @@ public class Context
 
 	/**
 	 * Replace path with path clipped against a rectangle.
+	 * @param x1 lower-left corner of rectangle.
+	 * @param y1 lower-left corner of rectangle.
+	 * @param x2 upper-right corner of rectangle.
+	 * @param y2 upper-right corner of rectangle.
+	 * @throws MapyrusException if clipping fails.
 	 */
 	public void guillotine(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -1485,6 +1513,7 @@ public class Context
 	 * @param x2 upper-right corner of rectangle.
 	 * @param y2 upper-right corner of rectangle.
 	 * @param maskValue value to set in mask for rectangular area.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void setPageMask(double x1, double y1, double x2, double y2, int maskValue)
 		throws MapyrusException
@@ -1522,7 +1551,7 @@ public class Context
 	 * Set page mask for region of page.
 	 * @param geometry area of page to set mask for.
 	 * @param maskValue value to set in mask.
-	 * @throws MapyrusException
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void setPageMask(Argument geometry, int maskValue)
 		throws MapyrusException
@@ -1543,6 +1572,7 @@ public class Context
 	/**
 	 * Set page mask for region of page covered by current path.
 	 * @param maskValue value to set in mask.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void setPageMask(int maskValue) throws MapyrusException
 	{
@@ -1648,6 +1678,7 @@ public class Context
 	 * Determine whether a part of the page is protected.
 	 * @param geometry area to check.
 	 * @return true if any part of this region is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isPageMaskAllZero(Argument geometry) throws MapyrusException
 	{
@@ -1671,6 +1702,7 @@ public class Context
 	/**
 	 * Determine whether a part of the page covered by current path is protected.
 	 * @return true if any part of path is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isPageMaskAllZero() throws MapyrusException
 	{
@@ -1714,6 +1746,7 @@ public class Context
 	/**
 	 * Replace path with new paths at parallel distances to original path.
 	 * @param distances list of parallel distances for new paths.
+	 * @throws MapyrusException if calculating parallel paths fails.
 	 */
 	public void parallelPath(double []distances) throws MapyrusException
 	{
@@ -1731,6 +1764,7 @@ public class Context
 	 * Replace path with selected parts of path.
 	 * @param offsets offsets along existing path to select.
 	 * @param lengths length of existing path to select at each offset.
+	 * @throws MapyrusException if calculating selected parts of path fails.
 	 */
 	public void selectPath(double []offsets, double []lengths)
 		throws MapyrusException
@@ -1752,6 +1786,7 @@ public class Context
 
 	/**
 	 * Reverse direction of path.
+	 * @throws MapyrusException if reversing path fails.
 	 */
 	public void reversePath() throws MapyrusException
 	{
@@ -1766,6 +1801,8 @@ public class Context
 	 * Draw image icon at current point on path.
 	 * @param icon icon to draw.
 	 * @param size size for icon in millimetres.
+	 * @throws IOException if writing icon to file fails.
+	 * @throws MapyrusException if icon to draw is not valid.
 	 */
 	public void drawIcon(ColorIcon icon, double size)
 		throws IOException, MapyrusException
@@ -1784,6 +1821,8 @@ public class Context
 	 * @param filename geo-referenced image filename.
 	 * @param extras extra parameters to control display of image.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if writing image to file fails.
+	 * @throws MapyrusException if image to draw is not valid.
 	 */
 	public void drawGeoImage(String filename, String extras, Throttle throttle)
 		throws IOException, MapyrusException
@@ -2087,8 +2126,10 @@ public class Context
 
 	/**
 	 * Includes Encsapsulated PostScript file in page.
-	 * @param EPS filename.
+	 * @param filename EPS filename.
 	 * @param size size for EPS file on page in millimetres.
+	 * @throws IOException if writing EPS file fails.
+	 * @throws MapyrusException if EPS file to draw is not valid.
 	 */
 	public void drawEPS(String filename, double size)
 		throws IOException, MapyrusException
@@ -2105,8 +2146,10 @@ public class Context
 
 	/**
 	 * Includes Scalable Vector Graphics file in page.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param size size for SVG file on page in millimetres.
+	 * @throws IOException if writing SVG file fails.
+	 * @throws MapyrusException if SVG file to draw is not valid.
 	 */
 	public void drawSVG(String filename, double size)
 		throws IOException, MapyrusException
@@ -2124,6 +2167,8 @@ public class Context
 	/**
 	 * Add Scalable Vector Graphics code to page.
 	 * @param xml XML elements to add to SVG file.
+	 * @throws IOException if writing XML elements fails.
+	 * @throws MapyrusException if XML elements to draw are not valid.
 	 */
 	public void addSVGCode(String xml)
 		throws IOException, MapyrusException
@@ -2133,9 +2178,11 @@ public class Context
 
 	/**
 	 * Includes PDF file in page.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param page page number in PDF file to display.
 	 * @param size size for SVG file on page in millimetres.
+	 * @throws IOException if writing PDF file fails.
+	 * @throws MapyrusException if PDF file to draw is not valid.
 	 */
 	public void drawPDF(String filename, int page, double size)
 		throws IOException, MapyrusException
@@ -2165,6 +2212,8 @@ public class Context
 	/**
 	 * Draw currently defined path.
 	 * @param xmlAttributes XML attributes to add for SVG output.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void stroke(String xmlAttributes) throws IOException, MapyrusException
 	{
@@ -2180,6 +2229,8 @@ public class Context
 	/**
 	 * Fill currently defined path.
 	 * @param xmlAttributes XML attributes to add for SVG output.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void fill(String xmlAttributes) throws IOException, MapyrusException
 	{
@@ -2199,6 +2250,8 @@ public class Context
 	 * @param c3 color for top-left corner of image.
 	 * @param c4 color for top-right corner of image.
 	 * @param c5 color for center of image, if null then not used.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void gradientFill(Color c1, Color c2, Color c3, Color c4, Color c5)
 		throws IOException, MapyrusException
@@ -2253,7 +2306,7 @@ public class Context
 	 * Set event script for currently defined path.
 	 * @param script commands to run for currently defined path.
 	 */
-	public void setEventScript(String script) throws IOException, MapyrusException
+	public void setEventScript(String script)
 	{
 		GeometricPath path = getDefinedPath();
 		
@@ -2266,6 +2319,7 @@ public class Context
 	/**
 	 * Clip to show only area outside currently defined path,
 	 * protecting what is inside path.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public void clipOutside() throws MapyrusException
 	{
@@ -2345,6 +2399,8 @@ public class Context
 	/**
 	 * Draw label positioned at (or along) currently defined path.
 	 * @param label is string to draw on page.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or attributes are not valid.
 	 */
 	public void label(String label) throws IOException, MapyrusException
 	{
@@ -2363,6 +2419,8 @@ public class Context
 	 * @param offset offset along path at which to begin label.
 	 * @param rotateInvertedLabels rotate labels that would appear upside down.
 	 * @param label label to draw.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or attributes are not valid.
 	 */
 	public void flowLabel(double spacing, double offset, boolean rotateInvertedLabels,
 		String label) throws IOException, MapyrusException
@@ -2507,7 +2565,9 @@ public class Context
 	/**
 	 * Draw a table (a grid with a value in each cell) at current path position.
 	 * @param extras options for table.
-	 * @param list of arrays giving values in each column.
+	 * @param columns list of arrays giving values in each column.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or extras are not valid.
 	 */
 	public void drawTable(String extras, ArrayList<Argument> columns)
 		throws IOException, MapyrusException
@@ -2759,6 +2819,8 @@ public class Context
 	 * Draw a tree of labels at current path position.
 	 * @param extras options for tree.
 	 * @param tree array containing labels for tree.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or extras are not valid.
 	 */
 	public void drawTree(String extras, Argument tree) throws IOException, MapyrusException
 	{
@@ -2914,6 +2976,7 @@ public class Context
 	/**
 	 * Returns geometric length of current path.
 	 * @return length of current path.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public double getPathLength() throws MapyrusException
 	{
@@ -2931,6 +2994,7 @@ public class Context
 	/**
 	 * Returns geometric area of current path.
 	 * @return area of current path.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public double getPathArea() throws MapyrusException
 	{
@@ -2948,6 +3012,7 @@ public class Context
 	/**
 	 * Returns geometric centroid of current path.
 	 * @return centroid of current path.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public Point2D.Double getPathCentroid() throws MapyrusException
 	{
@@ -2965,6 +3030,7 @@ public class Context
 	/**
 	 * Returns angle of first line segment in path.
 	 * @return angle in radians.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public double getPathStartAngle() throws MapyrusException
 	{
@@ -2980,6 +3046,7 @@ public class Context
 	/**
 	 * Returns angle of last line segment in path.
 	 * @return angle in radians.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public double getPathEndAngle() throws MapyrusException
 	{
@@ -2996,7 +3063,7 @@ public class Context
 	 * Returns first point in path.
 	 * @return first point or (0, 0) if path is empty.
 	 */
-	public Point2D getPathStartPoint() throws MapyrusException
+	public Point2D getPathStartPoint()
 	{
 		Point2D retval = null;
 		GeometricPath path = getDefinedPath();
@@ -3012,7 +3079,7 @@ public class Context
 	 * Returns last point in path.
 	 * @return last point or (0, 0) if path is empty.
 	 */
-	public Point2D getPathEndPoint() throws MapyrusException
+	public Point2D getPathEndPoint()
 	{
 		Point2D retval = null;
 		GeometricPath path = getDefinedPath();
@@ -3045,6 +3112,7 @@ public class Context
 	/**
 	 * Returns coordinate for each each moveTo point in current path.
 	 * @return array of Point2D.Float objects relative to current transformation matrix.
+	 * @throws MapyrusException if path cannot be transformed.
 	 */
 	public ArrayList<Point2D> getMoveTos() throws MapyrusException
 	{
@@ -3107,6 +3175,7 @@ public class Context
 	/**
 	 * Get current path as a geometry argument.
 	 * @return current path.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public Argument getPathArgument() throws MapyrusException
 	{
@@ -3119,7 +3188,7 @@ public class Context
 
 	/**
 	 * Returns value of a variable.
-	 * @param variable name to lookup.
+	 * @param varName variable name to lookup.
 	 * @return value of variable, or null if it is not defined.
 	 */
 	public Argument getVariableValue(String varName)
@@ -3263,6 +3332,8 @@ public class Context
 	 * @param s string to calculate height and width for.
 	 * @param scaleToWorlds scale dimension to world coordinates, if true.
 	 * @return height and width of string in millimetres.
+	 * @throws IOException if font cannot be read.
+	 * @throws MapyrusException if font is not valid.
 	 */	
 	public StringDimension getStringDimension(String s, boolean scaleToWorlds)
 		throws IOException, MapyrusException

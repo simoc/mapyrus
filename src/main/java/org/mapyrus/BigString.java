@@ -41,7 +41,7 @@ public class BigString
 
 	/**
 	 * Append a string.
-	 * @sb string buffer to append.
+	 * @param sb string buffer to append.
 	 */
 	public void append(StringBuffer sb)
 	{
@@ -50,7 +50,7 @@ public class BigString
 
 	/**
 	 * Append contents of file to string.
-	 * @file file to be appended.
+	 * @param file file to be appended.
 	 */
 	public void append(File file)
 	{
@@ -62,6 +62,8 @@ public class BigString
 	 * @param filename name of file being written to.
 	 * @param writer writer to append strings to.
 	 * @return number of characters written.
+	 * @throws IOException if file cannot be written.
+	 * @throws MapyrusException if an error occurs wring file.
 	 */
 	public int writeTo(String filename, PrintWriter writer)
 		throws IOException, MapyrusException

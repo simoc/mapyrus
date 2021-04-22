@@ -62,7 +62,7 @@ public class JDBCDataset implements GeographicDataset
 	 * Open connection to RDBMS and make SQL query, returning geographic data.
 	 * @param filename is SQL select statement to read data from.
 	 * @param extras if RDBMS connection options.
-	 * @throws MapyrusException
+	 * @throws MapyrusException if connection to RDBMS fails.
 	 */
 	public JDBCDataset(String filename, String extras)
 		throws MapyrusException

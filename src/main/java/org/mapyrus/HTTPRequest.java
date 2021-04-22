@@ -262,7 +262,6 @@ public class HTTPRequest extends Thread
 	/**
 	 * Return filename and options read from header of HTTP request.
 	 * @param reader opened socket from which HTTP header is to be read.
-	 * @return filename requested in HTTP header.
 	 */
 	private void parseRequest(BufferedReader reader)
 		throws IOException, MapyrusException

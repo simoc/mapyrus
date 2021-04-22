@@ -53,6 +53,7 @@ public class Match implements Function
 	 * Synchronized because LRUCache is not thread-safe.
 	 * @param regex is regular expression to compile.
 	 * @return compiled pattern
+	 * @throws MapyrusException if pattern is not a valid regular expression.
 	 */
 	public static synchronized Pattern compileRegex(String regex) throws MapyrusException
 	{

@@ -67,6 +67,7 @@ public class ASCII85Writer
 	 * Create new ASCII85 filtered output stream.
 	 * @param writer writer to build filter on top of.
 	 * @param deflate if true then stream is ZLIB compressed too.
+	 * @throws IOException if writing to writer fails.
 	 */
 	public ASCII85Writer(Writer writer, boolean deflate) throws IOException
 	{
@@ -175,6 +176,7 @@ public class ASCII85Writer
 	/**
 	 * Write byte to stream.
 	 * @param b byte to write.
+	 * @throws IOException if writing to writer fails.
 	 */
 	public void write(int b) throws IOException
 	{
@@ -219,6 +221,7 @@ public class ASCII85Writer
 
 	/**
 	 * Flush and close this writer, without closing the underlying writer.
+	 * @throws IOException if writing to writer fails.
 	 */
 	public void close() throws IOException
 	{

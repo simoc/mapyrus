@@ -57,11 +57,13 @@ public interface GeographicDataset
 	/**
 	 * Fetch next row of data from dataset.
 	 * @return row returns next row of data, or null if there is no row available.
+	 * @throws MapyrusException if no more rows in dataset.
 	 */
 	public Row fetch() throws MapyrusException;
 	
 	/**
 	 * Close dataset, closing any files, database connections and other resources.
+	 * @throws MapyrusException if dataset cannot be closed.
 	 */
 	public void close() throws MapyrusException;
 }
