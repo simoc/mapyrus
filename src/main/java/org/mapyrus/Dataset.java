@@ -36,6 +36,7 @@ public class Dataset
 	/**
 	 * Setup a new dataset for reading.
 	 * @param dataset is dataset to be read.
+	 * @throws MapyrusException if first row of dataset cannot be fetched.
 	 */
 	public Dataset(GeographicDataset dataset) throws MapyrusException
 	{
@@ -45,6 +46,7 @@ public class Dataset
 	}
 
 	/**
+	 * @return projection of this dataset.
 	 * @see org.mapyrus.dataset.GeographicDataset#getProjection()
 	 */	
 	public String getProjection()
@@ -53,6 +55,7 @@ public class Dataset
 	}
 
 	/**
+	 * @return world coordinate extents of this dataset in projection of dataset.
 	 * @see org.mapyrus.dataset.GeographicDataset#getWorlds()
 	 */
 	public Rectangle2D.Double getWorlds()
@@ -61,6 +64,7 @@ public class Dataset
 	}
 
 	/**
+	 * @return list of names of fields in this dataset.
 	 * @see org.mapyrus.dataset.GeographicDataset#getFieldNames()
 	 */
 	public String []getFieldNames()
@@ -80,6 +84,7 @@ public class Dataset
 	/**
 	 * Fetches next row from query.
 	 * @return next row.
+	 * @throws MapyrusException if no more rows in dataset.
 	 */
 	public Row fetchRow() throws MapyrusException
 	{
@@ -107,6 +112,7 @@ public class Dataset
 	
 	/**
 	 * Closes dataset.
+	 * @throws MapyrusException if dataset cannot be closed.
 	 */
 	public void close() throws MapyrusException
 	{

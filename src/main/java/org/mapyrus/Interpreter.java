@@ -3155,9 +3155,12 @@ public class Interpreter implements Cloneable
 	 * Reads and parses commands from file and executes them.
 	 * @param context is the context to use during interpretation.
 	 * @param f is open file or URL to read from.
-	 * @param stdin is stream to use for standard input by this intepreter.
-	 * @param stdout is stream to use for standard output by this intepreter.
+	 * @param stdin is stream to use for standard input by this interpreter.
+	 * @param stdout is stream to use for standard output by this interpreter.
 	 * File f is closed by this method when reading is completed.
+	 * @throws IOException if commands cannot be read from file.
+	 * @throws InterruptedException if execution of commands is interrupted.
+	 * @throws MapyrusException if execution of commands fails.
 	 */
 	public void interpret(ContextStack context, FileOrURL f,
 		InputStream stdin, PrintStream stdout)
@@ -3227,6 +3230,9 @@ public class Interpreter implements Cloneable
 	 * blocks of statements.
 	 * @param statement is statement to execute.
 	 * @return type of last statement executed.
+	 * @throws IOException if commands cannot be read from file.
+	 * @throws InterruptedException if execution of command is interrupted.
+	 * @throws MapyrusException if execution of command fails.
 	 */
 	public Argument executeStatement(Statement statement)
 		throws IOException, MapyrusException, InterruptedException

@@ -26,6 +26,7 @@ import java.util.LinkedList;
  * connection pooling.  When an object is requested, one of the objects
  * in the pool is returned, with the request blocking until an object
  * becomes available if the pool is currently empty.
+ * @param <E> the type of objects in the pool.
  */
 public class Pool<E>
 {

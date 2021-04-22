@@ -39,6 +39,8 @@ public class PostScriptFile
 	/**
 	 * Open PostScript file and parse header information.
 	 * @param filename name of PostScript file to read.
+	 * @throws IOException if PostScript file cannot be opened or read.
+	 * @throws MapyrusException if PostScript file cannot be parsed.
 	 */
 	public PostScriptFile(String filename)
 		throws IOException, MapyrusException

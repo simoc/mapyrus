@@ -89,6 +89,9 @@ public class TextfileDataset implements GeographicDataset
 	 * @param filename name of text file to open.
 	 * @param extras options specific to text file datasets, given as var=value pairs.
 	 * @param stdin standard input stream of interpreter.
+	 * @throws FileNotFoundException if file does not exist.
+	 * @throws IOException if reading file fails.
+	 * @throws MapyrusException if file is an invalid URL.
 	 */	
 	public TextfileDataset(String filename, String extras, InputStream stdin)
 		throws FileNotFoundException, IOException, MapyrusException

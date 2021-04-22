@@ -50,6 +50,8 @@ public class ImageClippingFile
 	 * Read optional clipping polygon for an image.
 	 * @param filename name of file containing clip polygon coordinates.
 	 * @param ctm transformation matrix from world coordinates to page coordinates.
+	 * @throws IOException if file cannot be opened or read.
+	 * @throws MapyrusException if file does not contain coordinates.
 	 */
 	public ImageClippingFile(String filename, AffineTransform ctm)
 		throws MapyrusException, IOException

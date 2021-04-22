@@ -132,6 +132,7 @@ public class GeometricPath
 	 * @param yCentre Y coordinate of centre point of arc.
 	 * @param xEnd X coordinate of end point of arc.
 	 * @param yEnd Y coordinate of end point of arc.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void arcTo(int direction, float xCentre, float yCentre,
 		float xEnd, float yEnd) throws MapyrusException
@@ -182,6 +183,7 @@ public class GeometricPath
 	 * @param yControl2 Y coordinate of second Bezier control point.
 	 * @param xEnd X coordinate of end point of curve.
 	 * @param yEnd Y coordinate of end point of curve.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void curveTo(float xControl1, float yControl1,
 		float xControl2, float yControl2, float xEnd, float yEnd) throws MapyrusException
@@ -958,6 +960,7 @@ public class GeometricPath
 	 * Return new path, with all coordinates in path shifted by a fixed amount.
 	 * @param xShift distance in millimetres to shift X coordinate values.
 	 * @param yShift distance in millimetres to shift Y coordinate values.
+	 * @return translated path.
 	 */
 	public GeometricPath translatePath(double xShift, double yShift)
 	{
@@ -1628,6 +1631,7 @@ public class GeometricPath
 	 * Create new path with selected parts of existing path.
 	 * @param offsets offsets along existing path to select.
 	 * @param lengths length of existing path to select at each offset.
+	 * @param resolution flatness for new path.
 	 * @return new path containing selected parts of existing path.
 	 */
 	public GeometricPath selectPath(double []offsets, double []lengths,

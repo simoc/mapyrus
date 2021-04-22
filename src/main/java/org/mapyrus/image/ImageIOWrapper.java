@@ -96,6 +96,8 @@ public class ImageIOWrapper
 	 * @param f file to read image from.
 	 * @param color color for monochrome images.
 	 * @return image read from file.
+	 * @throws IOException if file cannot be opened.
+	 * @throws MapyrusException if file is not valid.
 	 */
 	public static ColorIcon read(File f, Color color) throws IOException, MapyrusException
 	{
@@ -141,6 +143,8 @@ public class ImageIOWrapper
 	 * @param url URL to read image from.
 	 * @param color color for monochrome images.
 	 * @return image read from URL.
+	 * @throws IOException if URL cannot be opened.
+	 * @throws MapyrusException if URL is not an image.
 	 */
 	public static ColorIcon read(URL url, Color color) throws IOException, MapyrusException
 	{
@@ -236,6 +240,7 @@ public class ImageIOWrapper
 	 * @param image image to write.
 	 * @param format name of image format in which to write image. 
 	 * @param f file to write image to.
+	 * @throws IOException if writing image to file fails.
 	 */
 	public static void write(BufferedImage image, String format, File f)
 		throws IOException
@@ -262,6 +267,7 @@ public class ImageIOWrapper
 	 * @param image image to write
 	 * @param format name of image format in which to write image. 
 	 * @param stream stream to write image to.
+	 * @throws IOException if writing image to stream fails.
 	 */
 	public static void write(BufferedImage image, String format, OutputStream stream)
 		throws IOException

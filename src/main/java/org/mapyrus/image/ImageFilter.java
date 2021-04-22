@@ -37,6 +37,7 @@ public class ImageFilter
 	 * @param saturation saturation factor.
 	 * @param brightness brightness factor.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws MapyrusException if throttle limits CPU usage during filtering.
 	 */
 	public static void filter(BufferedImage image, float hue,
 		float saturation, float brightness, Throttle throttle) throws MapyrusException

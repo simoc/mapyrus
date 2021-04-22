@@ -90,6 +90,7 @@ public class Throttle
 	 * Sleep to limit CPU usage.
 	 * Should be called several times a second so sleeping
 	 * can be done accurately.
+	 * @throws MapyrusException if interrupted.
 	 */
 	public void sleep() throws MapyrusException
 	{

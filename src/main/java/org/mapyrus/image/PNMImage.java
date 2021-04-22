@@ -40,6 +40,8 @@ public class PNMImage
 	/**
 	 * Read Netpbm PNM image from file.
 	 * @param filename name of file.
+	 * @throws IOException if file cannot be opened.
+	 * @throws MapyrusException if file cannot be read.
 	 */
 	public PNMImage(String filename) throws MapyrusException, IOException
 	{
@@ -51,6 +53,8 @@ public class PNMImage
 	 * Read Netpbm PNM image from open stream.
 	 * @param stream open stream to read from.
 	 * @param filename name of file.
+	 * @throws IOException if stream cannot be read.
+	 * @throws MapyrusException if stream does not contain a PNM image.
 	 */
 	public PNMImage(InputStream stream, String filename) throws MapyrusException, IOException
 	{
@@ -209,6 +213,7 @@ public class PNMImage
 	 * Write an image to a Netpbm PPM format file.
 	 * @param image image to write
 	 * @param stream output stream to write image to.
+	 * @throws IOException if writing image to stream fails.
 	 */
 	public static void write(BufferedImage image, OutputStream stream) throws IOException
 	{

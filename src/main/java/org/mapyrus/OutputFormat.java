@@ -1989,6 +1989,8 @@ public class OutputFormat
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if opening or writing to file fails.
+	 * @throws MapyrusException if format or extras not valid.
 	 */
 	public OutputFormat(String filename, String format,
 		double width, double height, String extras,
@@ -2059,6 +2061,8 @@ public class OutputFormat
 	 * Sets image for drawing into.
 	 * @param image is buffered image to draw into.
 	 * @param extras contains extra settings for this output.
+	 * @throws IOException if writing to image fails.
+	 * @throws MapyrusException if extras not valid.
 	 */
 	public OutputFormat(BufferedImage image, String extras)
 		throws IOException, MapyrusException
@@ -2119,7 +2123,10 @@ public class OutputFormat
 	 * @param s string to calculate width for.
 	 * @param fontName name of font to calculate dimensions for.
 	 * @param fontSize size of characters in millimetres.
+	 * @param lineSpacing fraction of fontSize for line spacing.
 	 * @return height and width of string in millimetres.
+	 * @throws IOException if font file cannot be read.
+	 * @throws MapyrusException if bounding box of string cannot be calculated.
 	 */
 	public StringDimension getStringDimension(String s, String fontName, double fontSize, double lineSpacing)
 		throws IOException, MapyrusException
@@ -2685,6 +2692,8 @@ public class OutputFormat
 
 	/**
 	 * Writes trailing and buffered information, then closes output file.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if cleanup fails.
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
@@ -3171,6 +3180,8 @@ public class OutputFormat
 	 * with this width.
 	 * @param lineSpacing spacing between lines in multi-line labels, as
 	 * a multiple of the font size.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if reading font fails.
 	 */
 	public void setFontAttribute(String fontName, double fontSize,
 		double fontRotation, double outlineWidth, double lineSpacing)
@@ -3765,6 +3776,8 @@ public class OutputFormat
 	 * @param size is size of icon in millimeters, or zero for screen size.
 	 * @param rotation rotation angle for icon.
 	 * @param scaling scale factor for icon.
+	 * @throws IOException if writing icon to output file fails.
+	 * @throws MapyrusException if icon is not valid.
 	 */
 	public void drawIcon(ArrayList<Point2D> pointList, ColorIcon icon, double size,
 		double rotation, double scaling)
@@ -3910,6 +3923,8 @@ public class OutputFormat
 	 * @param y Y coordinate of bottom left corner of image.
 	 * @param width width of image in millimetres.
 	 * @param height height of image in millimetres.
+	 * @throws IOException if writing image to output file fails.
+	 * @throws MapyrusException if image type is not supported.
 	 */
 	public void drawGeoImage(BufferedImage image,
 		double x, double y, double width, double height)
@@ -3972,6 +3987,8 @@ public class OutputFormat
 	 * @param size size for EPS file on page in millimetres.
 	 * @param rotation rotation angle for EPS file.
 	 * @param scaling scale factor for EPS file.
+	 * @throws IOException if writing EPS to output file fails.
+	 * @throws MapyrusException if parsing EPS file fails.
 	 */
 	public void drawEPS(ArrayList<Point2D> pointList, String filename,
 		double size, double rotation, double scaling)
@@ -4083,6 +4100,8 @@ public class OutputFormat
 	 * @param size size for SVG file on page in millimetres.
 	 * @param rotation rotation angle for SVG file.
 	 * @param scaling scale factor for SVG file.
+	 * @throws IOException if writing SVG to output file fails.
+	 * @throws MapyrusException  if SVG file cannot be parsed.
 	 */
 	public void drawSVG(ArrayList<Point2D> pointList, String filename,
 		double size, double rotation, double scaling)
@@ -4159,9 +4178,10 @@ public class OutputFormat
 	/**
 	 * Add Scalable Vector Graphics code to page.
 	 * @param xml XML elements to add to SVG file.
+	 * @throws IOException if writing to output file fails.
 	 */
 	public void addSVGCode(String xml)
-		throws IOException, MapyrusException
+		throws IOException
 	{
 		if (m_outputType == SVG)
 		{
@@ -4178,6 +4198,8 @@ public class OutputFormat
 	 * @param size size for PDF file on page in millimetres.
 	 * @param rotation rotation angle for PDF file.
 	 * @param scaling scale factor for PDF file.
+	 * @throws IOException if writing PDF to output file fails.
+	 * @throws MapyrusException if parsing PDF file fails.
 	 */
 	public void drawPDF(ArrayList<Point2D> pointList, String filename, int page,
 		double size, double rotation, double scaling)
@@ -4574,6 +4596,7 @@ public class OutputFormat
 
 	/**
 	 * Set clip region to inside of currently defined path on output page.
+	 * @param shape shape to clip to.
 	 */
 	public void clip(Shape shape)
 	{
@@ -4739,6 +4762,8 @@ public class OutputFormat
 	 * Draw label positioned at (or along) currently defined path.
 	 * @param pointList is list of Point2D objects at which to draw label.
 	 * @param label is string to draw on path.
+	 * @throws IOException if writing label to output file fails.
+	 * @throws MapyrusException if font file has wrong format.
 	 */
 	public void label(ArrayList<Point2D> pointList, String label) throws IOException, MapyrusException
 	{

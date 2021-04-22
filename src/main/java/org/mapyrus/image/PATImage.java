@@ -39,6 +39,8 @@ public class PATImage
 	/**
 	 * Read GIMP image pattern from URL.
 	 * @param url URL.
+	 * @throws IOException if file or URL cannot be opened.
+	 * @throws MapyrusException if file or URL cannot be read.
 	 */
 	public PATImage(URL url) throws MapyrusException, IOException
 	{
@@ -49,6 +51,8 @@ public class PATImage
 	/**
 	 * Read GIMP image pattern from file.
 	 * @param filename name of file.
+	 * @throws IOException if file or URL cannot be opened.
+	 * @throws MapyrusException if file or URL cannot be read.
 	 */
 	public PATImage(String filename) throws MapyrusException, IOException
 	{

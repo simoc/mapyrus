@@ -38,6 +38,7 @@ public class PageSize extends MediaSizeName
 	/**
 	 * Create page size from name.
 	 * @param name name of page size.
+	 * @throws MapyrusException if name is not known.
 	 */
 	public PageSize(String name) throws MapyrusException
 	{

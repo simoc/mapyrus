@@ -46,7 +46,8 @@ public class FileOrURL
 	/**
 	 * Open file or URL.
 	 * @param name name of file or URL to open.
-	 * @throws IOException
+	 * @throws IOException if opening file or URL fails.
+	 * @throws MapyrusException if URL is not valid.
 	 */
 	public FileOrURL(String name) throws IOException, MapyrusException
 	{
@@ -57,7 +58,8 @@ public class FileOrURL
 	 * Open file or URL.
 	 * @param name name of file or URL to open.
 	 * @param charsetName character set encoding of file or URL.
-	 * @throws IOException
+	 * @throws IOException if opening file or URL fails.
+	 * @throws MapyrusException if URL is not valid.
 	 */
 	public FileOrURL(String name, String charsetName) throws IOException, MapyrusException
 	{
@@ -150,6 +152,8 @@ public class FileOrURL
 	 * @param name filename or URL to open.
 	 * @param contextURL parent URL from which this URL is being loaded, or null
 	 * if we are not loading from within the context of another URL.
+	 * @throws IOException if opening file or URL fails.
+	 * @throws MapyrusException if URL is not valid.
 	 */
 	public FileOrURL(String name, FileOrURL contextURL)
 		throws IOException, MapyrusException
@@ -266,6 +270,7 @@ public class FileOrURL
 	/**
 	 * Returns content type of URL being read.
 	 * @return content type for URL being read.
+	 * @throws IOException if URL cannot be opened.
 	 */
 	public String getURLContentType() throws IOException
 	{	

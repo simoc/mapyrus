@@ -40,6 +40,9 @@ public class DatasetFactory
 	 * @param extras are special options for this dataset type such as
 	 * database connection information, or instructions for interpreting data.
 	 * @param stdin standard input stream of interpreter.
+	 * @param throttle limits CPU usage whilst reading this dataset.
+	 * @return open dataset.
+	 * @throws MapyrusException if type is not supported or opening dataset failed.
 	 */
 	public static GeographicDataset open(String type, String name,
 		String extras, InputStream stdin, Throttle throttle) throws MapyrusException
