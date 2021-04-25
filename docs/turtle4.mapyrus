@@ -24,7 +24,7 @@ begin cutHere
   scissors
 end
 
-newpage "eps", "turtle4.eps", 30, 30, "background=white lineantialiasing=true"
+newpage "png", "turtle4.png", 30, 30, "background=white lineantialiasing=true"
 move 5, 5
 draw 20, 5
 bezier 35, 5, 15, 40, 15, 25
