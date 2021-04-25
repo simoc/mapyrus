@@ -22,12 +22,12 @@ Reusable routines are built up using a BASIC-like language.
 Branching and looping constructs enable complex shapes, symbols, patterns
 and graphs to be be defined.
 
-[turtle1](turtle1.png)
-[turtle2](turtle2.png)
-[turtle3](turtle3.png)
-[turtle4](turtle4.png)
-[turtle5](turtle5.png)
-[turtle6](turtle6.png)
+![turtle1](turtle1.png)
+![turtle2](turtle2.png)
+![turtle3](turtle3.png)
+![turtle4](turtle4.png)
+![turtle5](turtle5.png)
+![turtle6](turtle6.png)
 
 ## Data Display
 
@@ -43,16 +43,16 @@ the color, size, annotation and other characteristics of the
 appearance of the geographic data.
 Scalebars, legends, coordinate grids and north arrows are also available.
 
-[mapview1](mapview1.png)
-[mapview1](mapview3.png)
-[mapview1](mapview5.png)
+![Average Monthly Temperatures](mapview1.png)
+![Strip Map of Railways Lines in East Kent](mapview3.png)
+![Sinusoidal Projection](mapview5.png)
 
-[mapview2](mapview2.png)
-[mapview2legend](mapview2legend.png)
-[mapview2scalebar](mapview2scalebar.png)
-[mapview2north](mapview2north.png)
+![Vegetation Classes](mapview2.png)
+![Vegetation Classes Legend](mapview2legend.png)
+![Vegetation Classes Scalebar](mapview2scalebar.png)
+![Vegetation Classes North Arrow](mapview2north.png)
 
-[mapview4](mapview4.png)
+![Inventory Levels at Warehouses](mapview4.png)
 
 ## Geometry Algorithms
 
