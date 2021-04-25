@@ -14,7 +14,7 @@ enabling it to run on a wide range of operating systems.
 
 The software combines the following three features.
 
-## Logo Or Turtle Graphics
+### Logo Or Turtle Graphics
 
 An imaginary pen is moved around a page,
 creating shapes that are drawn into an image file.
@@ -29,7 +29,7 @@ and graphs to be be defined.
 ![turtle5](turtle5.png)
 ![turtle6](turtle6.png)
 
-## Data Display
+### Data Display
 
 Reading and displaying of geographic information
 system (GIS) datasets,
@@ -44,17 +44,20 @@ appearance of the geographic data.
 Scalebars, legends, coordinate grids and north arrows are also available.
 
 ![Average Monthly Temperatures](mapview1.png)
+
 ![Strip Map of Railways Lines in East Kent](mapview3.png)
+
 ![Sinusoidal Projection](mapview5.png)
 
 ![Vegetation Classes](mapview2.png)
 ![Vegetation Classes Legend](mapview2legend.png)
+
 ![Vegetation Classes Scalebar](mapview2scalebar.png)
 ![Vegetation Classes North Arrow](mapview2north.png)
 
 ![Inventory Levels at Warehouses](mapview4.png)
 
-## Geometry Algorithms
+### Geometry Algorithms
 
 Integration with the freely-available
 [JTS Topology Suite](http://www.tsusiatsoftware.net/jts/main.html).
@@ -63,7 +66,9 @@ such as buffering, point-in-polygon test and polygon intersection.
 
 Integration with the freely-available
 [JH Labs](http://www.jhlabs.com/java/maps/proj)
-Java port of the PROJ.4 projection library.
+Java port of the [PROJ.4](https://proj.org/) projection library.
+
+# Documentation
 
 Further examples are included in the [tutorial](tutorial.md).
 
