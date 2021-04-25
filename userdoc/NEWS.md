@@ -3,8 +3,9 @@ Copyright (C) 2003 - 2021 Simon Chenery <simoc@users.sourceforge.net>
 
 2.106, April 2021
 
-* Update to Java 8 (oldest supported Java version)
-* Upload to Maven Central
+* Update to Java 8 (oldest supported Java version).
+* Build with Maven instead of Ant.
+* Upload to Maven Central.
 
 1.802, May 2018
 
