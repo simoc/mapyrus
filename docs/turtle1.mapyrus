@@ -20,7 +20,7 @@ begin sun
   done
 end
 #
-newpage "eps", "turtle1.eps", 30, 30, "background=white lineantialiasing=true"
+newpage "png", "turtle1.png", 30, 30, "background=white lineantialiasing=true"
 clearpath
 move 15, 15
 sun

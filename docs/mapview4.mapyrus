@@ -43,7 +43,7 @@ begin warehouse name, inventory
 	highlightlabel name
 end
 
-newpage "eps", "mapview4.eps", 60, 60, "background=lightpink lineantialiasing=true isolatinfonts=Helvetica-Bold"
+newpage "png", "mapview4.png", 60, 60, "background=lightpink lineantialiasing=true isolatinfonts=Helvetica-Bold"
 
 # Import freight rail line network in Munich
 #

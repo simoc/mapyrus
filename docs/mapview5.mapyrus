@@ -1,4 +1,4 @@
-newpage "eps", "mapview5.eps", 90, 60, "background=skyblue lineantialiasing=true"
+newpage "png", "mapview5.png", 90, 60, "background=skyblue lineantialiasing=true"
 worlds -2e7, -9900000, 2e7, 9900000
 
 # Draw vertical and horizontal grid lines, adding intermediate
