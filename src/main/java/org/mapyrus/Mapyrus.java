@@ -110,7 +110,7 @@ public class Mapyrus
 	 * later displays in a window.
 	 * @param image buffered image to use as initial output page.
 	 * @param extras extras settings for output page.
-	 * @throws IOException
+	 * @throws IOException if output file cannot be created.
 	 * @throws MapyrusException if there is an error accessing image.
 	 */
 	public void setPage(BufferedImage image, String extras)
@@ -124,8 +124,8 @@ public class Mapyrus
 	/**
 	 * Flush any pending output to an output file and close output file.
 	 * Close any dataset being accessed.
-	 * @throws IOException
-	 * @throws MapyrusException
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if context cannot be closed.
 	 */
 	public void close() throws IOException, MapyrusException
 	{

@@ -56,6 +56,8 @@ public class PostScriptFont
 	 * Create PostScript Type 1 font from a .pfa or .pfb file.
 	 * @param filename name of .pfa or .pfb file.
 	 * @param isBinary true if file is to be parsed as binary file.
+	 * @throws IOException if font file cannot be read.
+	 * @throws MapyrusException if font file has wrong format.
 	 */
 	public PostScriptFont(String filename, boolean isBinary)
 		throws IOException, MapyrusException

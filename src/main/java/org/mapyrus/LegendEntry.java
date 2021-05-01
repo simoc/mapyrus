@@ -95,7 +95,7 @@ public class LegendEntry implements Comparable<LegendEntry>
 
 	/**
 	 * Compare legend entry with another.
-	 * @param o legend entry to compare with.
+	 * @param entry legend entry to compare with.
 	 * @return -1, 0, 1, depending whether this object is less, equal, or greater than o.
 	 */
 	public int compareTo(LegendEntry entry)

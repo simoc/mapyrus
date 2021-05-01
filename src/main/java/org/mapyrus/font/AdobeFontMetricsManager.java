@@ -95,9 +95,11 @@ public class AdobeFontMetricsManager
 	/**
 	 * Create font metrics information for PostScript fonts.
 	 * @param afmFilenames names of user-provided .afm files.
-	 * @param mISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
+	 * @param ISOLatin1EncodedFonts list of fonts being used with ISOLatin1Encoding.
 	 * @param glyphFilename custom file defining Adobe glyphs for Unicode characters.
 	 * @param otfFilenames names of user-provided .otf files.
+	 * @throws IOException if AFM file or glyph file cannot be read.
+	 * @throws MapyrusException if AFM file or glyph file have wrong format.
 	 */
 	public AdobeFontMetricsManager(List<String> afmFilenames,
 		HashSet<String> ISOLatin1EncodedFonts, String glyphFilename,

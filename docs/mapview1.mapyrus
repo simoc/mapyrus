@@ -1,6 +1,6 @@
 include symbols.mapyrus
 
-newpage "eps", "mapview1.eps", 80, 80, "isolatinfonts=Helvetica-Bold background=white lineantialiasing=true"
+newpage "png", "mapview1.png", 80, 80, "isolatinfonts=Helvetica-Bold background=white lineantialiasing=true"
 clearpath
 
 # Import coastline of Australia.

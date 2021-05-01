@@ -100,7 +100,9 @@ public class OpenTypeFont
 
 	/**
 	 * Create metrics for a character.
-	 * @param filename character code in AFM file.
+	 * @param otfFilename character code in AFM file.
+	 * @throws IOException if font file cannot be read.
+	 * @throws MapyrusException if font file has wrong format.
 	 */
 	public OpenTypeFont(String otfFilename) throws IOException, MapyrusException
 	{
@@ -680,6 +682,7 @@ public class OpenTypeFont
 	 * Return definition of font read from .otf file, suitable for inclusion
 	 * in a PDF file stream object.
 	 * @return font definition.
+	 * @throws IOException if font file cannot be read.
 	 */
 	public String getFontDefinition() throws IOException
 	{

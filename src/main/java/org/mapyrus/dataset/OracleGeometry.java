@@ -45,8 +45,10 @@ public class OracleGeometry
 
 	/**
 	 * Parse Oracle JGeometry data type into Mapyrus geometry.
-	 * @param o Oracle geometry
-	 * @return Mapyrus geometry
+	 * @param o Oracle geometry.
+	 * @return Mapyrus geometry.
+	 * @throws SQLException if error occurs reading from database.
+	 * @throws MapyrusException if geometry is not valid.
 	 */
 	public static Argument parseGeometry(Object o)
 		throws SQLException, MapyrusException

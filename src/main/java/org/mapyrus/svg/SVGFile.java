@@ -50,6 +50,8 @@ public class SVGFile extends DefaultHandler
 	/**
 	 * Open SVG file and parse header information.
 	 * @param filename name of SVG file to read.
+	 * @throws IOException if SVG file cannot be opened or read.
+	 * @throws MapyrusException if SVG file cannot be parsed.
 	 */
 	public SVGFile(String filename) throws IOException, MapyrusException
 	{

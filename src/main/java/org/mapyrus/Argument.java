@@ -577,6 +577,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	/**
 	 * Create new geometry argument from OGC well known geometry string.
 	 * @param wktGeometry OGC geometry string.
+	 * @throws MapyrusException if string is not a valid OGC geometry string.
 	 */
 	public Argument(String wktGeometry) throws MapyrusException
 	{
@@ -604,6 +605,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 * Returns numeric value of argument.
 	 * @return numeric argument value,
 	 * or zero if it cannot be converted to a number.
+	 * @throws MapyrusException if argument is an array or geometry.
 	 */
 	public double getNumericValue() throws MapyrusException
 	{
@@ -658,7 +660,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	/**
 	 * Returns value of geometry argument.
 	 * @return geometry argument value.
-	 */	
+	 * @throws MapyrusException if argument is not geometry and cannot be converted to geometry.
+	 */
 	public double []getGeometryValue() throws MapyrusException
 	{
 		if (m_type == NUMERIC || m_type == HASHMAP || m_type == VARIABLE)
@@ -766,6 +769,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	/**
 	 * Returns bounding box of a geometry argument.
 	 * @return minimum bounding rectangle, or null if geometry is empty.
+	 * @throws MapyrusException if argument is not geometry and cannot be converted to geometry.
 	 */
 	public Rectangle2D.Double getGeometryBoundingBox() throws MapyrusException
 	{
@@ -854,6 +858,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 * return new geometry argument.
 	 * @param affine transformation.
 	 * @return transformed geometry.
+	 * @throws MapyrusException if argument is not geometry and cannot be converted to geometry.
 	 */
 	public Argument transformGeometry(AffineTransform affine)
 		throws MapyrusException
@@ -1086,6 +1091,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	/**
 	 * Get geometry in GeoJSON format.
 	 * @return geometry in GeoJSON format.
+	 * @throws MapyrusException if argument is not geometry and cannot be converted to geometry.
 	 */
 	public String getGeoJSONValue() throws MapyrusException
 	{
@@ -1230,7 +1236,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 			else if (c == '\t')
 				sb.append("\\t");
 			else if (c > 127)
-				sb.append("\\u").append(String.format("%04X", c));
+				sb.append("\\u").append(String.format("%04X", Integer.valueOf(c)));
 			else
 				sb.append((char)c);
 		}
@@ -1374,7 +1380,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 
 	/**
 	 * Compare this argument with another argument.
-	 * @param other argument.
+	 * @param arg other argument.
 	 * @return -1, 0, 1 depending on comparison between arguments.
 	 */
 	public int compareTo(Argument arg)

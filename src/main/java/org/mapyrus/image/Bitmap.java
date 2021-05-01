@@ -40,6 +40,7 @@ public class Bitmap
 	 * @param definition string containing digits
 	 * @param digitsType either HEX_DIGIT_BITMAP or BINARY_DIGIT_BITMAP.
 	 * @param c color for bitmap.
+	 * @throws MapyrusException if definition does not contain valid bitmap.
 	 */
 	public Bitmap(String definition, int digitsType, Color c) throws MapyrusException
 	{

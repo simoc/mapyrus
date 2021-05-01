@@ -95,6 +95,8 @@ class Preprocessor
 	/**
 	 * Create new user input producer from a file.
 	 * @param filename is a file to open and read from.
+	 * @throws IOException if file cannot be read.
+	 * @throws MapyrusException if URL cannot be opened.
 	 */
 	public Preprocessor(String filename) throws IOException, MapyrusException
 	{
@@ -234,6 +236,8 @@ class Preprocessor
 	/**
 	 * Reads next character that is not a space, skipping comments too.
 	 * @return next non-space character.
+	 * @throws IOException if file cannot be read.
+	 * @throws MapyrusException if error occurs pre-processing file.
 	 */
 	public int readNonSpace() throws IOException, MapyrusException
 	{
@@ -252,6 +256,8 @@ class Preprocessor
 	 * Blocks if another character is not available.
 	 * @return next character from wherever user input is coming from, or -1
 	 * if at EOF.
+	 * @throws IOException if file cannot be read.
+	 * @throws MapyrusException if error occurs pre-processing file.
 	 */
 	public int read() throws IOException, MapyrusException
 	{
@@ -382,6 +388,7 @@ class Preprocessor
 
 	/**
 	 * Pushes a single character that was read back to the reader.
+	 * @param c character to push back to reader.
 	 */
 	public void unread(int c)
 	{
@@ -464,7 +471,7 @@ class Preprocessor
 		
 	/**
 	 * Returns line number and name of file being read.
-	 * @retval the name and line number of the file currently being read.
+	 * @return the name and line number of the file currently being read.
 	 */
 	public String getCurrentFilenameAndLineNumber()
 	{

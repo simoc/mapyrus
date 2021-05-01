@@ -48,7 +48,7 @@ begin teamStrip teamName, shirtColor, sleeveColor, shortsColor
   label teamName
 end
 
-newpage "eps", "turtle6.eps", 50, 30, "background=white lineantialiasing=true"
+newpage "png", "turtle6.png", 50, 30, "background=white lineantialiasing=true"
 
 clearpath
 move 10, 15

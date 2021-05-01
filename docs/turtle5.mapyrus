@@ -1,4 +1,4 @@
-newpage "eps", "turtle5.eps", 40, 30, "background=white lineantialiasing=true"
+newpage "png", "turtle5.png", 40, 30, "background=white lineantialiasing=true"
 clearpath
 box 2, 16, 18, 26
 gradientfill "red", "orange", "orange", "white"

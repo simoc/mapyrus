@@ -45,7 +45,7 @@ public class PDFObject
 
 	/**
 	 * Create new PDF object.
-	 * @param simple object such as number or string.
+	 * @param value simple object such as number or string.
 	 */
 	public PDFObject(String value)
 	{
@@ -99,7 +99,7 @@ public class PDFObject
 
 	/**
 	 * Set object to be the same as another object
-	 * @param anotherObject object to copy.
+	 * @param otherObject object to copy.
 	 */
 	public void setValue(PDFObject otherObject)
 	{
@@ -177,11 +177,13 @@ public class PDFObject
 	 * Get object and all references in format for inclusion in a PDF file.
 	 * @param objectNumber first object number to use in PDF file.
 	 * @param addObjectHeader if true then object header included in PDF object.
-	 * @param addDictionaryMarkers if true then << and >> tokens added around PDF dictionary object.
+	 * @param addDictionaryMarkers if true then &lt;&lt; and &gt;&gt; tokens added around PDF dictionary object.
 	 * @param pdfObjects table of all objects for resolving references.
 	 * @param pdfFile PDF file to read streams from.
 	 * @param filename name of PDF file being read.
 	 * @return object and its referenced objects as a list of StringBuffers.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if parsing PDF file fails.
 	 */
 	public ArrayList<StringBuffer> toPDFString(int objectNumber, boolean addObjectHeader,
 		boolean addDictionaryMarkers, HashMap<Integer, PDFObject> pdfObjects, RandomAccessFile pdfFile,
@@ -296,11 +298,13 @@ public class PDFObject
 	}
 
 	/**
-	 * Get stream of for this object.
+	 * Get stream of bytes for this object.
 	 * @param pdfFile PDF file to read from.
 	 * @param filename filename of PDf file.
 	 * @param pdfObjects offsets of all PDf objects in PDF file.
 	 * @return decoded stream.
+	 * @throws IOException if reading PDF file fails.
+	 * @throws MapyrusException if parsing PDF file fails.
 	 */
 	public byte[] getStream(RandomAccessFile pdfFile, String filename,
 		HashMap<Integer, PDFObject> pdfObjects) throws IOException, MapyrusException
@@ -373,6 +377,7 @@ public class PDFObject
 	 * @param buf bytes to uncompress.
 	 * @param filename name of PDF file being read.
 	 * @return uncompressed bytes.
+	 * @throws MapyrusException if bytes are not deflate format.
 	 */
 	private byte[] decodeDeflatedBytes(byte []buf, String filename) throws MapyrusException
 	{

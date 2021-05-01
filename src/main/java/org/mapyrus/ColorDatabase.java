@@ -710,8 +710,9 @@ public class ColorDatabase
 	 * Return color structure from named color.
 	 * @param colorName is named color to lookup or hex value.
 	 * @param alpha alpha channel value for color.
-	 * @param current color.
+	 * @param currentColor current color.
 	 * @return color definition, or null if color not known.
+	 * @throws MapyrusException if color has invalid format.
 	 */	
 	public static Color getColor(String colorName, int alpha, Color currentColor)
 		throws MapyrusException

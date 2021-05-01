@@ -27,6 +27,8 @@ import java.util.Map;
  * a fixed number of key-value pairs, like a java.util.HashMap.  If the
  * cache is full when a new object is added, the object with the oldest
  * access time is automatically removed from the cache.
+ * @param <K> the type of keys in the map.
+ * @param <V> the type of values in the map.
  */
 public class LRUCache<K,V> extends LinkedHashMap<K,V>
 {

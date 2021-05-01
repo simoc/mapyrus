@@ -139,6 +139,8 @@ public class ContextStack
 	/**
 	 * Pops current context from stack.
 	 * @return number of elements left in stack after pop.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if context cannot be closed.
 	 */
 	private int popContext()
 		throws IOException, MapyrusException
@@ -169,6 +171,7 @@ public class ContextStack
 	 * Pushes copy of context at top of stack onto stack.
 	 * This context is later removed with popContext().
 	 * @param blockName is procedure block name containing statements to be executed.
+	 * @throws MapyrusException if maximum stack depth exceeded.
 	 */
 	private void pushContext(String blockName) throws MapyrusException
 	{
@@ -197,6 +200,8 @@ public class ContextStack
 	 * @param extras contains extra settings for this output.
 	 * @param stdoutStream standard output stream for program.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if output file cannot be created.
+	 * @throws MapyrusException if parameters for output page are not valid.
 	 */
 	public void setOutputFormat(String format, String filename,
 		double width, double height, String extras,
@@ -212,6 +217,8 @@ public class ContextStack
 	 * @param image is buffered image to draw into.
 	 * @param imageMapWriter is HTML image map to write to.
 	 * @param extras contains extra settings for this output.
+	 * @throws IOException if output file cannot be created.
+	 * @throws MapyrusException if extras are not valid.
 	 */
 	public void setOutputFormat(BufferedImage image,
 		PrintWriter imageMapWriter, String extras)
@@ -224,6 +231,8 @@ public class ContextStack
 	 * Sets image for drawing to.
 	 * @param image is buffered image to draw into.
 	 * @param extras contains extra settings for this output.
+	 * @throws IOException if writing to image fails.
+	 * @throws MapyrusException if extras are not valid.
 	 */
 	public void setOutputFormat(BufferedImage image, String extras)
 		throws IOException, MapyrusException
@@ -233,6 +242,8 @@ public class ContextStack
 
 	/**
 	 * Close any open output file being created.
+	 * @throws IOException  if writing to output file fails.
+	 * @throws MapyrusException if output to file cannot be completed.
 	 */
 	public void closeOutputFormat() throws IOException, MapyrusException
 	{
@@ -308,6 +319,7 @@ public class ContextStack
 	/**
 	 * Sets scaling for subsequent coordinates.
 	 * @param factor is new scaling in X and Y axes.
+	 * @throws MapyrusException if factor is zero.
 	 */
 	public void setScaling(double factor) throws MapyrusException
 	{
@@ -350,6 +362,7 @@ public class ContextStack
 	 * @param py2 millimetre position on page of wy2, or 0 to use whole page.
 	 * @param units units of world coordinates (WORLD_UNITS_METRES,WORLD_UNITS_FEET, etc.)
 	 * @param allowDistortion if true then different scaling in X and Y axes allowed.
+	 * @throws MapyrusException if no output page or page position not valid.
 	 */
 	public void setWorlds(double wx1, double wy1, double wx2, double wy2,
 		double px1, double py1, double px2, double py2,
@@ -362,8 +375,9 @@ public class ContextStack
 
 	/**
 	 * Gets real world coordinates of the page.
+	 * @return rectangular area covered by extents.
 	 */
-	public Rectangle2D.Double getWorlds() throws MapyrusException
+	public Rectangle2D.Double getWorlds()
 	{
 		Rectangle2D.Double retval = getCurrentContext().getWorldExtents();
 		return(retval);
@@ -373,6 +387,7 @@ public class ContextStack
 	 * Transform geometry from page coordinates to world coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
+	 * @throws MapyrusException if geometry not valid.
 	 */
 	public Argument transformToWorlds(Argument arg) throws MapyrusException
 	{
@@ -384,6 +399,7 @@ public class ContextStack
 	 * Transform geometry from world coordinates to page coordinates.
 	 * @param arg geometry.
 	 * @return transformed geometry.
+	 * @throws MapyrusException if no output page or page position not valid.
 	 */
 	public Argument transformToPage(Argument arg) throws MapyrusException
 	{
@@ -397,7 +413,8 @@ public class ContextStack
 	 * @param name is name of dataset to open.
 	 * @param extras are special options for this dataset type such as database
 	 * connection information, or instructions for interpreting data.
-	 * @param stdin standard ihput stream of interpreter.
+	 * @param stdin standard input stream of interpreter.
+	 * @throws MapyrusException if type is not supported or opening dataset failed.
 	 */
 	public void setDataset(String type, String name,
 		String extras, InputStream stdin) throws MapyrusException
@@ -411,6 +428,7 @@ public class ContextStack
 	 * Sets file for writing standard output to.
 	 * File will automatically be closed when this context is closed.
 	 * @param stdout stream to write to.
+	 * @throws IOException if any previous output cannot be closed.
 	 */
 	public void setStdout(PrintStream stdout) throws IOException
 	{
@@ -422,7 +440,7 @@ public class ContextStack
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
 	 */
-	public void moveTo(double x, double y) throws MapyrusException
+	public void moveTo(double x, double y)
 	{
 		getCurrentContext().moveTo(x, y);
 	}
@@ -431,6 +449,7 @@ public class ContextStack
 	 * Add point to path with straight line segment from last point.
 	 * @param x X coordinate to add to path.
 	 * @param y Y coordinate to add to path.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void lineTo(double x, double y) throws MapyrusException
 	{
@@ -441,6 +460,7 @@ public class ContextStack
 	 * Add point to path with straight line segment relative to last point.
 	 * @param x X coordinate distance to move, relative to last point.
 	 * @param y Y coordinate distance to move, relative to last point.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void rlineTo(double x, double y) throws MapyrusException
 	{
@@ -454,6 +474,7 @@ public class ContextStack
 	 * @param yCentre Y coordinate of centre point of arc.
 	 * @param xEnd X coordinate of end point of arc.
 	 * @param yEnd Y coordinate of end point of arc.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void arcTo(int direction, double xCentre, double yCentre,
 		double xEnd, double yEnd) throws MapyrusException
@@ -469,6 +490,7 @@ public class ContextStack
 	 * @param yControl2 Y coordinate of second Bezier control point.
 	 * @param xEnd X coordinate of end point of curve.
 	 * @param yEnd Y coordinate of end point of curve.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void curveTo(double xControl1, double yControl1,
 		double xControl2, double yControl2,
@@ -484,6 +506,7 @@ public class ContextStack
 	 * @param y Y coordinate of end of path.
 	 * @param nRepeats number of repeats of sine wave pattern.
 	 * @param amplitude scaling factor for height of sine wave.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void sineWaveTo(double x, double y, double nRepeats, double amplitude)
 		throws MapyrusException
@@ -497,6 +520,7 @@ public class ContextStack
 	 * @param yMin minimum Y coordinate of rectangle containing ellipse.
 	 * @param xMax maximum X coordinate of rectangle containing ellipse.
 	 * @param yMax maximum Y coordinate of rectangle containing ellipse.
+	 * @throws MapyrusException if path is empty.
 	 */
 	public void ellipseTo(double xMin, double yMin, double xMax, double yMax)
 		throws MapyrusException
@@ -524,6 +548,8 @@ public class ContextStack
 	 * Draws icon on page.
 	 * @param filename file containing icon.
 	 * @param size size for icon on page in millimetres.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if URL of icon not valid.
 	 */
 	public void drawIcon(String filename, double size)
 		throws IOException, MapyrusException
@@ -629,6 +655,8 @@ public class ContextStack
 	 * @param filename geo-referenced image filename.
 	 * @param extras extra parameters to control display of image.
 	 * @param throttle throttle limiting CPU usage.
+	 * @throws IOException if writing image to file fails.
+	 * @throws MapyrusException if image to draw is not valid.
 	 */
 	public void drawGeoImage(String filename, String extras, Throttle throttle)
 		throws IOException, MapyrusException
@@ -643,8 +671,10 @@ public class ContextStack
 
 	/**
 	 * Includes Encsapsulated PostScript file in page.
-	 * @param EPS filename.
+	 * @param filename EPS filename.
 	 * @param size size for EPS file on page in millimetres.
+	 * @throws IOException if writing EPS to file fails.
+	 * @throws MapyrusException if EPS to draw is not valid.
 	 */
 	public void drawEPS(String filename, double size)
 		throws IOException, MapyrusException
@@ -659,8 +689,10 @@ public class ContextStack
 
 	/**
 	 * Includes Scalable Vector Graphics file in page.
-	 * @param SVG filename.
+	 * @param filename SVG filename.
 	 * @param size size for SVG file on page in millimetres.
+	 * @throws IOException if writing SVG to file fails.
+	 * @throws MapyrusException if SVG to draw is not valid.
 	 */
 	public void drawSVG(String filename, double size)
 		throws IOException, MapyrusException
@@ -676,6 +708,8 @@ public class ContextStack
 	/**
 	 * Add Scalable Vector Graphics code to page.
 	 * @param xml XML elements to add to SVG file.
+	 * @throws IOException if writing XML elements fails.
+	 * @throws MapyrusException if XML elements to draw are not valid.
 	 */
 	public void addSVGCode(String xml)
 		throws IOException, MapyrusException
@@ -685,9 +719,11 @@ public class ContextStack
 
 	/**
 	 * Includes PDF file in page.
-	 * @param PDF filename.
+	 * @param filename PDF filename.
 	 * @param page page number in PDF file to display.
 	 * @param size size for PDF file on page in millimetres.
+	 * @throws IOException if writing PDF file fails.
+	 * @throws MapyrusException if PDF file to draw is not valid.
 	 */
 	public void drawPDF(String filename, int page, double size)
 		throws IOException, MapyrusException
@@ -710,8 +746,8 @@ public class ContextStack
 	}
 
 	/**
-	 * Begin PDF Content Group.
-	 * @param name name for group.
+	 * End PDF Content Group.
+	 * @throws MapyrusException if no current PDF Content Group.
 	 */
 	public void endPDFGroup() throws MapyrusException
 	{
@@ -722,6 +758,7 @@ public class ContextStack
 	 * Replace path with regularly spaced points along it.
 	 * @param spacing is distance between points.
 	 * @param offset is starting offset of first point.
+	 * @throws MapyrusException if no output device.
 	 */
 	public void samplePath(double spacing, double offset) throws MapyrusException
 	{
@@ -752,6 +789,7 @@ public class ContextStack
 	/**
 	 * Replace path with new paths at parallel distances to original path.
 	 * @param distances list of parallel distances for new paths.
+	 * @throws MapyrusException if calculating parallel paths fails.
 	 */
 	public void parallelPath(double []distances) throws MapyrusException
 	{
@@ -762,6 +800,7 @@ public class ContextStack
 	 * Replace path with selected parts of path.
 	 * @param offsets offset along original path to select.
 	 * @param lengths length of original path to select at each offset.
+	 * @throws MapyrusException if calculating selected parts of path fails.
 	 */
 	public void selectPath(double []offsets, double []lengths)
 		throws MapyrusException
@@ -771,6 +810,7 @@ public class ContextStack
 
 	/**
 	 * Reverse direction of path.
+	 * @throws MapyrusException if reversing path fails.
 	 */
 	public void reversePath() throws MapyrusException
 	{
@@ -791,6 +831,7 @@ public class ContextStack
 	 * @param y1 lower-left corner of rectangle.
 	 * @param x2 upper-right corner of rectangle.
 	 * @param y2 upper-right corner of rectangle.
+	 * @throws MapyrusException if clipping fails.
 	 */
 	public void guillotine(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -804,6 +845,7 @@ public class ContextStack
 	 * @param y1 lower-left corner of rectangle.
 	 * @param x2 upper-right corner of rectangle.
 	 * @param y2 upper-right corner of rectangle.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void protect(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -814,6 +856,7 @@ public class ContextStack
 	/**
 	 * Mark area on page as protected.
 	 * @param geometry area on page to protect.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void protect(Argument geometry)
 		throws MapyrusException
@@ -823,6 +866,7 @@ public class ContextStack
 
 	/**
 	 * Mark area on page covered by current path as protected.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void protect()
 		throws MapyrusException
@@ -836,6 +880,7 @@ public class ContextStack
 	 * @param y1 lower-left corner of rectangle.
 	 * @param x2 upper-right corner of rectangle.
 	 * @param y2 upper-right corner of rectangle.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void unprotect(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -846,6 +891,7 @@ public class ContextStack
 	/**
 	 * Mark area on page as unprotected.
 	 * @param geometry area on page to unprotect.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void unprotect(Argument geometry)
 		throws MapyrusException
@@ -855,6 +901,7 @@ public class ContextStack
 
 	/**
 	 * Mark area on page covered by current path as unprotected.
+	 * @throws MapyrusException if setting page mask fails.
 	 */
 	public void unprotect()
 		throws MapyrusException
@@ -869,6 +916,7 @@ public class ContextStack
 	 * @param x2 upper-right corner of rectangle.
 	 * @param y2 upper-right corner of rectangle.
 	 * @return true if part of this rectangular region is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isProtected(double x1, double y1, double x2, double y2)
 		throws MapyrusException
@@ -881,6 +929,7 @@ public class ContextStack
 	 * Determine whether a part of the page is protected.
 	 * @param geometry area to check.
 	 * @return true if any part of this region is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isProtected(Argument geometry)
 		throws MapyrusException
@@ -892,6 +941,7 @@ public class ContextStack
 	/**
 	 * Determine whether a part of the page covered by current path is protected.
 	 * @return true if any part of path is protected.
+	 * @throws MapyrusException if determining protected region fails.
 	 */
 	public boolean isProtected()
 		throws MapyrusException
@@ -903,6 +953,8 @@ public class ContextStack
 	/**
 	 * Draw currently defined path.
 	 * @param xmlAttributes XML attributes to add for SVG output.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void stroke(String xmlAttributes) throws IOException, MapyrusException
 	{
@@ -911,7 +963,9 @@ public class ContextStack
 
 	/**
 	 * Fill currently defined path.
-	 * @param xmlAttribtes XML attributes to add for SVG output.
+	 * @param xmlAttributes XML attributes to add for SVG output.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void fill(String xmlAttributes) throws IOException, MapyrusException
 	{
@@ -928,6 +982,8 @@ public class ContextStack
 	 * @param c3 color for upper left corner of path.
 	 * @param c4 color for upper right corner of path.
 	 * @param c5 color in center of path.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path is not valid.
 	 */
 	public void gradientFill(Color c1, Color c2, Color c3, Color c4, Color c5)
 		throws IOException, MapyrusException
@@ -939,7 +995,7 @@ public class ContextStack
 	 * Set event script for currently defined path.
 	 * @param script commands to run for currently defined path.
 	 */
-	public void setEventScript(String script) throws IOException, MapyrusException
+	public void setEventScript(String script)
 	{
 		getCurrentContext().setEventScript(script);
 	}
@@ -947,6 +1003,7 @@ public class ContextStack
 	/**
 	 * Clip to show only area outside currently defined path,
 	 * protecting what is inside path.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public void clipOutside() throws MapyrusException
 	{
@@ -964,6 +1021,8 @@ public class ContextStack
 	/**
 	 * Draw label positioned at current point.
 	 * @param label label to draw.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or attributes are not valid.
 	 */
 	public void label(String label) throws IOException, MapyrusException
 	{
@@ -976,6 +1035,8 @@ public class ContextStack
 	 * @param offset offset along path at which to begin label.
 	 * @param rotateInvertedLabels rotate labels that would appear upside down.
 	 * @param label label to draw.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or attributes are not valid.
 	 */
 	public void flowLabel(double spacing, double offset,
 		boolean rotateInvertedLabels,
@@ -987,7 +1048,9 @@ public class ContextStack
 	/**
 	 * Draw a table (a grid with a value in each cell) at current path position.
 	 * @param extras options for table.
-	 * @param list of arrays giving values in each column.
+	 * @param columns list of arrays giving values in each column.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or attributes are not valid.
 	 */
 	public void drawTable(String extras, ArrayList<Argument> columns)
 		throws IOException, MapyrusException
@@ -999,6 +1062,8 @@ public class ContextStack
 	 * Draw a tree of labels at current path position.
 	 * @param extras options for tree.
 	 * @param tree array argument with tree entries.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if path or attributes are not valid.
 	 */
 	public void drawTree(String extras, Argument tree) throws IOException, MapyrusException
 	{
@@ -1038,6 +1103,7 @@ public class ContextStack
 	/**
 	 * Returns coordinates for each each moveTo point in current path
 	 * @return list of Point2D.Float objects.
+	 * @throws MapyrusException if path cannot be transformed.
 	 */	
 	public ArrayList<Point2D> getMoveTos() throws MapyrusException
 	{
@@ -1048,6 +1114,7 @@ public class ContextStack
 	 * Returns height and width of a string, drawn to current page with current font.
 	 * @param s string to calculate dimensions for.
 	 * @return height and width of string in millimetres.
+	 * @throws MapyrusException if font cannot be read or is not valid.
 	 */	
 	public StringDimension getStringDimension(String s) throws MapyrusException
 	{
@@ -1067,6 +1134,7 @@ public class ContextStack
 	/**
 	 * Get resolution of page.
 	 * @return page resolution in millimetres.
+	 * @throws MapyrusException if no output device set.
 	 */
 	public double getResolution() throws MapyrusException
 	{
@@ -1077,6 +1145,7 @@ public class ContextStack
 	/**
 	 * Return next row from dataset.
 	 * @return field values for next row.
+	 * @throws MapyrusException if no current dataset.
 	 */
 	public Row fetchRow() throws MapyrusException
 	{
@@ -1089,6 +1158,7 @@ public class ContextStack
 	/**
 	 * Return names of fields in current dataset.
 	 * @return names of fields.
+	 * @throws MapyrusException if no current dataset.
 	 */
 	public String []getDatasetFieldNames() throws MapyrusException
 	{
@@ -1163,6 +1233,7 @@ public class ContextStack
 	 * @param varName variable name to lookup.
 	 * @param interpreterFilename name of file being interpreted.
 	 * @return value of variable, or null if it is not defined.
+	 * @throws MapyrusException if variable cannot be evaluated.
 	 */
 	public Argument getVariableValue(String varName, String interpreterFilename)
 		throws MapyrusException
@@ -1526,7 +1597,7 @@ public class ContextStack
 	 * defined in current context only and not accessible by any other context.
 	 * @param varName name of variable to be treated as global
 	 */
-	public void setLocalScope(String varName) throws MapyrusException
+	public void setLocalScope(String varName)
 	{
 		getCurrentContext().setLocalScope(varName);
 	}
@@ -1650,7 +1721,8 @@ public class ContextStack
 
 	/**
 	 * Save current context so that it can be restored later with restoreState.
-	 * @param name of procedure block that saved state will run.
+	 * @param blockName name of procedure block that saved state will run.
+	 * @throws MapyrusException if maximum stack depth exceeded.
 	 */
 	public void saveState(String blockName) throws MapyrusException
 	{
@@ -1659,6 +1731,8 @@ public class ContextStack
 
 	/**
 	 * Restore context to state before saveState was called.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if context cannot be closed.
 	 */
 	public void restoreState() throws IOException, MapyrusException
 	{
@@ -1668,6 +1742,8 @@ public class ContextStack
 	/**
 	 * Pops all contexts from stack that were pushed with saveState.
 	 * A ContextStack cannot be used again after this call.
+	 * @throws IOException if writing to output file fails.
+	 * @throws MapyrusException if context cannot be closed.
 	 */
 	public void closeContextStack() throws IOException, MapyrusException
 	{

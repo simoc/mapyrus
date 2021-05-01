@@ -210,6 +210,8 @@ public class AdobeFontMetrics
 	 * @param afmFilename filename being read (for any error message).
 	 * @param ISOLatin1EncodedFonts names of fonts for which to use ISO Latin1 encoding.
 	 * @param glyphFilename optional Adobe Glyph List filename.
+	 * @throws IOException if AFM file or glyph file cannot be read.
+	 * @throws MapyrusException if AFM file or glyph file have wrong format.
 	 */
 	public AdobeFontMetrics (BufferedReader r, String afmFilename,
 		HashSet<String> ISOLatin1EncodedFonts,

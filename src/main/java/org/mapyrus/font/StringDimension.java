@@ -42,6 +42,8 @@ public class StringDimension
 	 * Set dimension.
 	 * @param width width to set.
 	 * @param height height to set.
+	 * @param ascent ascent to set.
+	 * @param descent descent to set.
 	 */
 	public void setSize(double width, double height, double ascent, double descent)
 	{

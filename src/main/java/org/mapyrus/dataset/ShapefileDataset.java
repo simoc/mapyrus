@@ -125,6 +125,9 @@ public class ShapefileDataset implements GeographicDataset
 	 * Open ESRI shape file containing geographic data for querying.
 	 * @param filename name of shape file to open, with or without shp suffix.
 	 * @param extras options specific to text file datasets, given as var=value pairs.
+	 * @throws FileNotFoundException if file does not exist.
+	 * @throws IOException if reading file fails.
+	 * @throws MapyrusException if file is not an ESRI shape file.
 	 */
 	public ShapefileDataset(String filename, String extras)
 		throws FileNotFoundException, IOException, MapyrusException

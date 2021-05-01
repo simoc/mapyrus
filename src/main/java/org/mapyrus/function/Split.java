@@ -30,7 +30,7 @@ import org.mapyrus.MapyrusException;
 
 /**
  * Function splitting string into array, delimited by a regular expression.
- * For example, split("foo:bar", ":") = [1] -> "foo", [2] -> "bar".
+ * For example, split("foo:bar", ":") = [1] -&gt; "foo", [2] -&gt; "bar".
  */
 public class Split implements Function
 {

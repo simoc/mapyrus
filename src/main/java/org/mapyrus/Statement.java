@@ -162,7 +162,8 @@ public class Statement
 
 	/**
 	 * Create a for loop block of statements.
-	 * @param test is expression to test before each iteration of loop.
+	 * @param var is variable to use in each iteration of loop.
+	 * @param arrayVar is array to loop through.
 	 * @param loopStatements is statements to execute for each loop iteration.
 	 */
 	public Statement(Expression var, Expression arrayVar, ArrayList<Statement> loopStatements)

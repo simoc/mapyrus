@@ -40,6 +40,8 @@ public class TFWFile implements GeoImageBoundingBox
 	 * Read tfw file for an image.
 	 * @param filename filename of image or tfw file.
 	 * @param image image read from file.
+	 * @throws IOException if file cannot be opened or read.
+	 * @throws MapyrusException if file is not a TFW file.
 	 */
 	public TFWFile(String filename, BufferedImage image)
 		throws MapyrusException, IOException

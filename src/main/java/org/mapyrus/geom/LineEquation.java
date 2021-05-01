@@ -60,7 +60,8 @@ public class LineEquation
 	/**
 	 * Create new line equation parallel to existing line.
 	 * @param parallelDistance parallel distance to the right of line
-	 * to create new line. 
+	 * to create new line.
+	 * @return line equation.
 	 */
 	public LineEquation createParallel(double parallelDistance)
 	{
@@ -125,6 +126,7 @@ public class LineEquation
 	/**
 	 * Return start point given for line equation.
 	 * return start point.
+	 * @return start point.
 	 */
 	public Point2D.Double getStartPoint()
 	{
@@ -135,6 +137,7 @@ public class LineEquation
 	/**
 	 * Return end point given for line equation.
 	 * return end point.
+	 * @return end point.
 	 */
 	public Point2D.Double getEndPoint()
 	{

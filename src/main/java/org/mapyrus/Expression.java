@@ -161,6 +161,7 @@ public class Expression
 
 		/**
 		 * Create a node containing a call to a function.
+		 * @param func is function being called.
 		 * @param functionType is identifier of function being called.
 		 * @param args list of ExpressionTreeNode arguments to function.
 		 */
@@ -177,6 +178,8 @@ public class Expression
 		 * @param context variable definitions and other context information.
 		 * @param interpreterFilename name of file being interpreted.
 		 * @return numeric or string value of the expression.
+		 * @throws MapyrusException if expression cannot be evaluated.
+		 * @throws InterruptedException if evaluation is interrupted.
 		 */
 		public Argument evaluate(ContextStack context, String interpreterFilename)
 			throws MapyrusException, InterruptedException
@@ -185,7 +188,7 @@ public class Expression
 		}
 
 		/**
-		 * Evalute internal function.
+		 * Evaluate internal function.
 		 * @param context is context containing variable values
 		 * @param interpreterFilename name of file being interpreted.
 		 * @return result of function
@@ -1823,6 +1826,8 @@ public class Expression
 	 * as part of an expression.
 	 * @param p is the preprocessed output to read from.
 	 * @param userFunctions user-defined functions.
+	 * @throws IOException if reading from preprocessor fails.
+	 * @throws MapyrusException if expression is not valid.
 	 */
 	public Expression(Preprocessor p, HashMap<String, UserFunction> userFunctions)
 		throws IOException, MapyrusException
@@ -1832,8 +1837,11 @@ public class Expression
 
 	/**
 	 * Evaluate an expression.
-	 * @param vars are all currently defined variables and their values.
+	 * @param context all currently defined variables and their values.
+	 * @param interpreterFilename name of file being intrepreted (for error messages).
 	 * @return the evaluated expression, either a string or a number.
+	 * @throws MapyrusException if expression cannot be evaluated.
+	 * @throws InterruptedException if evaluation is interrupted.
 	 */
 	public Argument evaluate(ContextStack context, String interpreterFilename)
 		throws MapyrusException, InterruptedException

@@ -39,6 +39,8 @@ public class PostScriptFile
 	/**
 	 * Open PostScript file and parse header information.
 	 * @param filename name of PostScript file to read.
+	 * @throws IOException if PostScript file cannot be opened or read.
+	 * @throws MapyrusException if PostScript file cannot be parsed.
 	 */
 	public PostScriptFile(String filename)
 		throws IOException, MapyrusException
@@ -150,10 +152,7 @@ public class PostScriptFile
 
 	/**
 	 * Parse bounding box from a PostScript file.
-	 * @param filename file to read bounding box from.
-	 * @return
-	 * @throws IOException
-	 * @throws MapyrusException
+	 * @return bounding box.
 	 */
 	public Rectangle getBoundingBox()
 	{

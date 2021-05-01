@@ -70,7 +70,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 
 	/**
 	 * Set editor font.
-	 * @font font for text area.
+	 * @param font font for text area.
 	 */
 	public void setFont(Font font)
 	{
