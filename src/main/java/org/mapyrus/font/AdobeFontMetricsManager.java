@@ -117,17 +117,10 @@ public class AdobeFontMetricsManager
 			InputStream inStream =
 				this.getClass().getClassLoader().getResourceAsStream(res);
 
-			BufferedReader r = null;
-			try
+			try (BufferedReader r = new BufferedReader(new InputStreamReader(inStream)))
 			{
-				r = new BufferedReader(new InputStreamReader(inStream));
 				AdobeFontMetrics afm = new AdobeFontMetrics(r, res, ISOLatin1EncodedFonts, glyphFilename);
 				m_fontMetrics.put(afm.getFontName(), afm);
-			}
-			finally
-			{
-				if (r != null)
-					r.close();
 			}
 		}
 
@@ -138,18 +131,11 @@ public class AdobeFontMetricsManager
 		while (it.hasNext())
 		{
 			String filename = it.next();
-			BufferedReader r = null;
 
-			try
+			try (BufferedReader r = new BufferedReader(new FileReader(filename)))
 			{
-				r = new BufferedReader(new FileReader(filename));
 				AdobeFontMetrics afm = new AdobeFontMetrics(r, filename, ISOLatin1EncodedFonts, glyphFilename);
 				m_fontMetrics.put(afm.getFontName(), afm);
-			}
-			finally
-			{
-				if (r != null)
-					r.close();
 			}
 		}
 
