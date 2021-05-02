@@ -1805,26 +1805,13 @@ public class OutputFormat
 				writeLine(m_writer, "save");
 				writeLine(m_writer, "/showpage {} def");
 				writeLine(m_writer, "%%BeginDocument: " + filename);
-				BufferedReader r = null;
 
-				try
+				try (BufferedReader r = new BufferedReader(new FileReader(filename)))
 				{
-					r = new BufferedReader(new FileReader(filename));
 					String line;
 					while ((line = r.readLine()) != null)
 					{
 						writeLine(m_writer, line);
-					}
-				}
-				finally
-				{
-					try
-					{
-						if (r != null)
-							r.close();
-					}
-					catch (IOException e)
-					{
 					}
 				}
 				writeLine(m_writer, "%%EndDocument");
