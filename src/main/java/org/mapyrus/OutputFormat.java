@@ -335,7 +335,6 @@ public class OutputFormat
 	 */
 	private void writePostScriptHeader(double width, double height,
 		int resolution, boolean turnPage, ArrayList<PostScriptFont> fontList, Color backgroundColor)
-		throws IOException, MapyrusException
 	{
 		long widthInPoints = Math.round(width / Constants.MM_PER_INCH *
 			Constants.POINTS_PER_INCH);
@@ -4725,7 +4724,6 @@ public class OutputFormat
 	}
 
 	private int writeUnicodePDFString(PrintWriter writer, OpenTypeFont otf, String s)
-		throws IOException
 	{
 		int nChars = 0;
 

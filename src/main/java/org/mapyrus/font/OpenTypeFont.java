@@ -514,7 +514,7 @@ public class OpenTypeFont
 	 * @param r file to read from.
 	 * @param tableRecord position in file of CFF record.
 	 */
-	private void readCFF(RandomAccessFile r, TableRecord tableRecord) throws IOException
+	private void readCFF(RandomAccessFile r, TableRecord tableRecord)
 	{
 		/*
 		 * Just note position of table in file. We will read it later.
