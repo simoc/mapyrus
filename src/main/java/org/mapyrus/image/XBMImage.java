@@ -64,7 +64,7 @@ public class XBMImage
 	}
 
 	private void init(InputStream stream, String filename, int rgb)
-		throws MapyrusException, IOException
+		throws IOException
 	{
 		try
 		{

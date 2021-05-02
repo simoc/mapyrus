@@ -184,7 +184,7 @@ public class Reproject implements Function
 	 * @pt point to reproject.
 	 */
 	private void reproject(Projection srcProj, Projection destProj,
-		Point2D.Double pt) throws MapyrusException
+		Point2D.Double pt)
 	{
 		if (!srcProj.isRectilinear())
 		{

@@ -1588,7 +1588,6 @@ public class Context
 	}
 
 	public boolean isPageMaskAllZero(double x1, double y1, double x2, double y2)
-		throws MapyrusException
 	{
 		boolean retval = true;
 
