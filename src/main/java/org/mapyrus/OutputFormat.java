@@ -673,18 +673,10 @@ public class OutputFormat
 			 * Read .afm file for each additional font file given by user.
 			 */
 			String afmFilename = (String)m_afmFiles.get(i);
-			BufferedReader reader = null;
-			AdobeFontMetrics afm = null;
-			try
+			try (BufferedReader reader = new BufferedReader(new FileReader(afmFilename)))
 			{
-				reader = new BufferedReader(new FileReader(afmFilename));
-				afm = new AdobeFontMetrics(reader, afmFilename, m_encodeAsISOLatin1, m_glyphFile);
+				AdobeFontMetrics afm = new AdobeFontMetrics(reader, afmFilename, m_encodeAsISOLatin1, m_glyphFile);
 				m_PDFFonts.add(afm);
-			}
-			finally
-			{
-				if (reader != null)
-					reader.close();
 			}
 		}
 
@@ -1162,20 +1154,13 @@ public class OutputFormat
 			/*
 			 * Add any other XML elements (for example Javascript functions).
 			 */
-			LineNumberReader reader = null;
-			try
+			try (LineNumberReader reader = new FileOrURL(scriptFilename).getReader())
 			{
 				String line;
-				reader = new FileOrURL(scriptFilename).getReader();
 				while ((line = reader.readLine()) != null)
 				{
 					writeLine(m_writer, line);
 				}
-			}
-			finally
-			{
-				if (reader != null)
-					reader.close();
 			}
 		}
 
@@ -4059,11 +4044,8 @@ public class OutputFormat
 					writeLine(m_writer, "0 setlinejoin 10 setmiterlimit [] 0 setdash newpath");
 
 					writeLine(m_writer, "%%BeginDocument: (" + filename + ")");
-					BufferedReader reader = null;
-					try
+					try (BufferedReader reader = new FileOrURL(filename).getReader())
 					{
-						reader = new FileOrURL(filename).getReader();
-
 						String line;
 						while ((line = reader.readLine()) != null)
 						{
@@ -4071,14 +4053,6 @@ public class OutputFormat
 						}
 						writeLine(m_writer, "%%EndDocument");
 						writeLine(m_writer, "restore");
-					}
-					finally
-					{
-						/*
-						 * Ensure EPS file is always closed.
-						 */
-						if (reader != null)
-							reader.close();
 					}
 				}
 			}
