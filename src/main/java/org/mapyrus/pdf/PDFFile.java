@@ -129,7 +129,7 @@ public class PDFFile
 		{
 			PDFObject kidObject = kidsArray[i];
 			if (kidObject.isReference())
-				kidObject = (PDFObject)m_objects.get(Integer.valueOf(kidObject.getReference()));
+				kidObject = m_objects.get(Integer.valueOf(kidObject.getReference()));
 			PDFObject objectType = getDictionaryValue(kidObject, "/Type");
 			if (objectType.getValue().equals("/Page"))
 			{
@@ -420,7 +420,7 @@ public class PDFFile
 		{
 			PDFObject obj = boxArray[i];
 			if (obj.isReference())
-				obj = (PDFObject)m_objects.get(Integer.valueOf(obj.getReference()));
+				obj = m_objects.get(Integer.valueOf(obj.getReference()));
 			String s = obj.getValue();
 			retval[i] = (int)Math.round(Double.parseDouble(s));
 		}
@@ -716,10 +716,10 @@ public class PDFFile
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.FAILED_PDF) +
 				": " + m_filename);
 		}
-		PDFObject value = (PDFObject)dict.get(key);
+		PDFObject value = dict.get(key);
 		if (value != null && value.isReference())
 		{
-			value = (PDFObject)m_objects.get(Integer.valueOf(value.getReference()));
+			value = m_objects.get(Integer.valueOf(value.getReference()));
 		}
 		return(value);
 	}
@@ -748,7 +748,7 @@ public class PDFFile
 		}
 		else if (obj.isReference())
 		{
-			PDFObject value = (PDFObject)m_objects.get(Integer.valueOf(obj.getReference()));
+			PDFObject value = m_objects.get(Integer.valueOf(obj.getReference()));
 			resolveAllReferences(value);
 			obj.setValue(value);
 		}

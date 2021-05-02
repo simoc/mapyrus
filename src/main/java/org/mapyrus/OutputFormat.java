@@ -672,7 +672,7 @@ public class OutputFormat
 			/*
 			 * Read .afm file for each additional font file given by user.
 			 */
-			String afmFilename = (String)m_afmFiles.get(i);
+			String afmFilename = m_afmFiles.get(i);
 			BufferedReader reader = null;
 			AdobeFontMetrics afm = null;
 			try
@@ -693,7 +693,7 @@ public class OutputFormat
 			/*
 			 * Read .otf file for each additional font file given by user.
 			 */
-			String otfFilename = (String)m_otfFiles.get(i);
+			String otfFilename = m_otfFiles.get(i);
 			OpenTypeFont otf = new OpenTypeFont(otfFilename);
 			m_OTFFonts.add(otf);
 		}
@@ -771,7 +771,7 @@ public class OutputFormat
 
 		for (int i = 0; i < m_PDFFonts.size(); i++)
 		{
-			AdobeFontMetrics afm = (AdobeFontMetrics)m_PDFFonts.get(i);
+			AdobeFontMetrics afm = m_PDFFonts.get(i);
 
 			/*
 			 * Add each user defined font, given by a .pfa file.
@@ -782,7 +782,7 @@ public class OutputFormat
 			PostScriptFont font = null;
 			while (j < m_pfbFiles.size() && (!foundPfbFile))
 			{
-				font = (PostScriptFont)m_pfbFiles.get(j);
+				font = m_pfbFiles.get(j);
 				if (font.getName().equals(afm.getFontName()))
 					foundPfbFile = true;
 				else
@@ -992,11 +992,11 @@ public class OutputFormat
 
 		for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 		{
-			PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+			PDFFile pdfFile = m_PDFIncludedFiles.get(i);
 			ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 			for (int j = 0; j < pageNumbers.size(); j++)
 			{
-				Integer pageNumber = (Integer)pageNumbers.get(j);
+				Integer pageNumber = pageNumbers.get(j);
 				ArrayList<StringBuffer> list = pdfFile.getFont(pageNumber.intValue(), objectCounter);
 				if (list != null && !list.isEmpty())
 				{
@@ -2848,11 +2848,11 @@ public class OutputFormat
 			ArrayList<StringBuffer> includedExtGstateObjects = new ArrayList<StringBuffer>();
 			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				PDFFile pdfFile = m_PDFIncludedFiles.get(i);
 				ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
-					Integer pageNumber = (Integer)pageNumbers.get(j);
+					Integer pageNumber = pageNumbers.get(j);
 					ArrayList<StringBuffer> list = pdfFile.getExtGState(pageNumber.intValue(),
 						objIndex + counter + 4);
 					if (list != null && !list.isEmpty())
@@ -2885,11 +2885,11 @@ public class OutputFormat
 			ArrayList<StringBuffer> includedColorSpaceObjects = new ArrayList<StringBuffer>();
 			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				PDFFile pdfFile = m_PDFIncludedFiles.get(i);
 				ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
-					Integer pageNumber = (Integer)pageNumbers.get(j);
+					Integer pageNumber = pageNumbers.get(j);
 					ArrayList<StringBuffer> list = pdfFile.getColorSpace(pageNumber.intValue(),
 						objIndex + counter + 3);
 					if (list != null && !list.isEmpty())
@@ -2955,11 +2955,11 @@ public class OutputFormat
 			ArrayList<StringBuffer> includedImageObjects = new ArrayList<StringBuffer>();
 			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				PDFFile pdfFile = m_PDFIncludedFiles.get(i);
 				ArrayList<Integer> pageNumbers = m_PDFIncludedPages.get(i);
 				for (int j = 0; j < pageNumbers.size(); j++)
 				{
-					Integer pageNumber = (Integer)pageNumbers.get(j);
+					Integer pageNumber = pageNumbers.get(j);
 					ArrayList<StringBuffer> list = pdfFile.getXObject(pageNumber.intValue(),
 						objIndex + counter);
 					if (list != null && !list.isEmpty())
@@ -3078,7 +3078,7 @@ public class OutputFormat
 
 			for (int i = 0; i < m_PDFIncludedFiles.size(); i++)
 			{
-				PDFFile pdfFile = (PDFFile)m_PDFIncludedFiles.get(i);
+				PDFFile pdfFile = m_PDFIncludedFiles.get(i);
 				pdfFile.close();
 			}
 
@@ -3263,7 +3263,7 @@ public class OutputFormat
 					 * use that, else expect the operating system to be able to
 					 * open the font.
 					 */
-					TrueTypeFont ttf = (TrueTypeFont)m_TTFFonts.get(fontName);
+					TrueTypeFont ttf = m_TTFFonts.get(fontName);
 					if (ttf != null)
 						m_baseFont = ttf.getFont().deriveFont(style, newSize);
 					else
@@ -3875,7 +3875,7 @@ public class OutputFormat
 
 			for (i = 0; i < pointList.size(); i++)
 			{
-				pt = (Point2D)(pointList.get(i));
+				pt = pointList.get(i);
 				x = pt.getX();
 				y = pt.getY();
 				AffineTransform affine = AffineTransform.getTranslateInstance(x, y);
@@ -4215,7 +4215,7 @@ public class OutputFormat
 		{
 			while (index < m_PDFIncludedFiles.size() && pdfFile == null)
 			{
-				PDFFile p = (PDFFile)m_PDFIncludedFiles.get(index);
+				PDFFile p = m_PDFIncludedFiles.get(index);
 				if (p.getFilename().equals(filename))
 					pdfFile = p;
 				else
@@ -4791,8 +4791,9 @@ public class OutputFormat
 				 * Save existing linestyle and create new one for drawing outlines of each letter.
 				 */
 				originalStroke = m_graphics2D.getStroke();
+				float miterLimit = FONT_OUTLINE_MITER_LIMIT;
 				BasicStroke outlineStroke = new BasicStroke((float)m_fontOutlineWidth,
-					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, (float)FONT_OUTLINE_MITER_LIMIT);
+					BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, miterLimit);
 				m_graphics2D.setStroke(outlineStroke);
 			}
 		}
@@ -4822,7 +4823,7 @@ public class OutputFormat
 		 */
 		for (int i = 0; i < pointList.size(); i++)
 		{
-			pt = (Point2D)(pointList.get(i));
+			pt = pointList.get(i);
 			x = pt.getX();
 			y = pt.getY();
 
@@ -4863,7 +4864,7 @@ public class OutputFormat
 					 */
 					for (int k = 0; k < m_PDFFonts.size() && index < 0; k++)
 					{
-						AdobeFontMetrics afm = (AdobeFontMetrics)m_PDFFonts.get(k);
+						AdobeFontMetrics afm = m_PDFFonts.get(k);
 						if (afm.getFontName().equals(m_fontName))
 						{
 							index = k + PDF_FONTS.length;
@@ -4901,7 +4902,7 @@ public class OutputFormat
 			lineNumber = 0;
 			while (it.hasNext())
 			{
-				nextLine = (String)it.next();
+				nextLine = it.next();
 
 				if (m_outputType == POSTSCRIPT_GEOMETRY)
 				{

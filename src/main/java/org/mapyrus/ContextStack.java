@@ -133,7 +133,7 @@ public class ContextStack
 	 */
 	private Context getCurrentContext()
 	{
-		return((Context)m_stack.getLast());
+		return(m_stack.getLast());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class ContextStack
 			/*
 			 * Finish off current context, remove it from stack.
 			 */
-			Context context = (Context)m_stack.removeLast();
+			Context context = m_stack.removeLast();
 			i--;
 			int attributesSet = context.closeContext();
 
@@ -1519,7 +1519,7 @@ public class ContextStack
 		}
 		else
 		{
-			Context context = (Context)(m_stack.getLast());
+			Context context = m_stack.getLast();
 			if (m_stack.size() > 1 && context.hasLocalScope(varName))
 			{
 				/*
@@ -1533,7 +1533,7 @@ public class ContextStack
 				 * Variable not defined in current context, is
 				 * it set as a global in the first context instead?
 				 */
-				context = (Context)(m_stack.getFirst());
+				context = m_stack.getFirst();
 				retval = context.getVariableValue(varName);
 			
 				String property = null;
@@ -1620,7 +1620,7 @@ public class ContextStack
 		if (currentContext.hasLocalScope(varName))
 			c = currentContext;
 		else
-			c = (Context)(m_stack.getFirst());
+			c = m_stack.getFirst();
 
 		c.defineVariable(varName, value);
 	}
@@ -1644,7 +1644,7 @@ public class ContextStack
 		if (currentContext.hasLocalScope(hashMapName))
 			c = currentContext;
 		else
-			c = (Context)(m_stack.getFirst());
+			c = m_stack.getFirst();
 
 		c.defineHashMapEntry(hashMapName, key, value);
 	}

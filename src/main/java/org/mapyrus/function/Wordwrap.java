@@ -178,7 +178,7 @@ public class Wordwrap implements Function
 				 */
 				if (nElementsToAdd == 0 && lineWidth == 0)
 				{
-					String firstElement = (String)splitList.removeFirst();
+					String firstElement = splitList.removeFirst();
 					int nChars = firstElement.length();
 					while (nChars > 0)
 					{
@@ -256,7 +256,7 @@ public class Wordwrap implements Function
 					/*
 					 * Trim any leading space we added before starting new line.
 					 */
-					String firstElement = (String)splitList.removeFirst();
+					String firstElement = splitList.removeFirst();
 					splitList.addFirst(firstElement.trim());
 				}
 			}

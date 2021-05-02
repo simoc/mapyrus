@@ -570,7 +570,7 @@ public class ShapefileDataset implements GeographicDataset
 		 */
 		for (i = fieldIndex = 0; i < nTotalFields; i++)
 		{
-			dbfField = (byte [])(dbfFields.get(i));
+			dbfField = dbfFields.get(i);
 
 			m_DBFFieldTypes[i] = dbfField[11];
 
@@ -585,7 +585,7 @@ public class ShapefileDataset implements GeographicDataset
 			/*
 			 * Unpack field information if we are going to be fetching this field.
 			 */
-			if (((Boolean)m_DBFFieldsToFetch.get(i)).booleanValue())
+			if (m_DBFFieldsToFetch.get(i).booleanValue())
 			{
 				/*
 				 * Extract null terminated field name.
@@ -918,7 +918,7 @@ public class ShapefileDataset implements GeographicDataset
 							/*
 							 * Only unpack fields that user asked for.
 							 */
-							if (((Boolean)m_DBFFieldsToFetch.get(i)).booleanValue())
+							if (m_DBFFieldsToFetch.get(i).booleanValue())
 							{
 								if (m_DBFFieldTypes[i] == DBF_CHARACTER ||
 									m_DBFFieldTypes[i] == DBF_DATE)

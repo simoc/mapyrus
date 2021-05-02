@@ -194,7 +194,7 @@ public class Constants
 	{
 		int resolution = getScreenResolution();
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-		return(width / (double)resolution * MM_PER_INCH);
+		return(width / resolution * MM_PER_INCH);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class Constants
 	{
 		int resolution = getScreenResolution();
 		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-		return(height / (double)resolution * MM_PER_INCH);
+		return(height / resolution * MM_PER_INCH);
 	}
 
 	/**

@@ -68,7 +68,7 @@ public class MapyrusServlet extends HttpServlet
 		while (it.hasNext())
 		{
 			String var = it.next().toString();
-			String []value = ((String [])parameters.get(var));
+			String []value = parameters.get(var);
 			if (!HTTPRequest.isLegalVariable(var))
 			{
 				throw new ServletException(MapyrusMessages.get(MapyrusMessages.VARIABLE_EXPECTED) +
@@ -95,7 +95,7 @@ public class MapyrusServlet extends HttpServlet
 		Enumeration<String> headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements())
 		{
-			String var = (String)headerNames.nextElement();
+			String var = headerNames.nextElement();
 			String value = request.getHeader(var);
 			if (HTTPRequest.isLegalVariable(var))
 				HTTPRequest.addVariable(variables, HTTPRequest.HTTP_HEADER_ARRAY + "['" + var + "']", value);

@@ -663,8 +663,8 @@ public class AdobeFontMetrics
 			}
 		}
 		pointLen = (double)total / FULL_CHAR_SIZE * pointSize;
-		maxAscent = (double)maxAscent / FULL_CHAR_SIZE * pointSize;
-		minDescent = (double)minDescent / FULL_CHAR_SIZE * pointSize;
+		maxAscent = maxAscent / FULL_CHAR_SIZE * pointSize;
+		minDescent = minDescent / FULL_CHAR_SIZE * pointSize;
 
 		if (m_isFixedPitch)
 		{
