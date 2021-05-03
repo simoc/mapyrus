@@ -42,6 +42,7 @@ public class BlendComposite implements Composite
 	 */
 	public static final BlendComposite MULTIPLY = new BlendComposite("multiply", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -51,6 +52,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite SCREEN = new BlendComposite("screen", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -60,6 +62,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite OVERLAY = new BlendComposite("overlay", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -74,6 +77,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite DARKEN = new BlendComposite("darken", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -85,6 +89,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite LIGHTEN = new BlendComposite("lighten", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -96,6 +101,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite COLORDODGE = new BlendComposite("colordodge", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -116,6 +122,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite COLORBURN = new BlendComposite("colorburn", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -136,6 +143,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite HARDLIGHT = new BlendComposite("hardlight", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -150,6 +158,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite SOFTLIGHT = new BlendComposite("softlight", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -184,6 +193,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite DIFFERENCE = new BlendComposite("difference", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -193,6 +203,7 @@ public class BlendComposite implements Composite
 
 	public static final BlendComposite EXCLUSION = new BlendComposite("exclusion", new Blender()
 	{
+		@Override
 		public void blend(int []srcPixel, int []dstPixel, int []resultPixel)
 		{
 			for (int i = 0; i < 3; i++)
@@ -209,6 +220,7 @@ public class BlendComposite implements Composite
 		mBlender = blender;
 	}
 
+	@Override
 	public CompositeContext createContext(ColorModel srcColorModel,
 		ColorModel dstColorModel, RenderingHints hints)
 	{
@@ -260,6 +272,7 @@ public class BlendComposite implements Composite
 
 	private class BlendCompositeContext implements CompositeContext
 	{
+		@Override
 		public void compose(Raster src, Raster dstIn, WritableRaster dstOut)
 		{
 			int width = Math.min(src.getWidth(), dstIn.getWidth());
@@ -303,6 +316,7 @@ public class BlendComposite implements Composite
 			}
 		}
 
+		@Override
 		public void dispose()
 		{
 		}

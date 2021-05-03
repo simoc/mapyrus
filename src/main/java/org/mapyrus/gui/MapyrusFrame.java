@@ -114,6 +114,7 @@ public class MapyrusFrame implements MapyrusEventListener
 
 		m_frame.addWindowListener(new WindowAdapter()
 		{
+			@Override
 			public void windowClosing(WindowEvent e)
 			{
 				/*
@@ -145,6 +146,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			
 			static final long serialVersionUID = 0x3302;
 
+			@Override
 			public void paintComponent(Graphics g)
 			{
 				/*
@@ -255,6 +257,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			}
 		}
 		m_editorPanel.addChangeListener(new ChangeListener(){
+			@Override
 			public void stateChanged(ChangeEvent e)
 			{
 				/*
@@ -314,6 +317,7 @@ public class MapyrusFrame implements MapyrusEventListener
 
 		m_frame.addWindowListener(new WindowAdapter()
 		{
+			@Override
 			public void windowClosing(WindowEvent e)
 			{
 				/*
@@ -368,6 +372,7 @@ public class MapyrusFrame implements MapyrusEventListener
 		 * actions so that the GUI is not blocked.
 		 */
 		m_actionThread = new Thread(){
+			@Override
 			public void run()
 			{
 				try
@@ -382,6 +387,7 @@ public class MapyrusFrame implements MapyrusEventListener
 		m_actionThread.start();
 	}
 
+	@Override
 	public void actionPerformed(MapyrusEventListener.Action action)
 	{
 		if (action == MapyrusEventListener.Action.STOP ||
@@ -524,6 +530,7 @@ public class MapyrusFrame implements MapyrusEventListener
 					helpPane.setPage(helpUrl);
 					JButton closeButton = new JButton(MapyrusMessages.get(MapyrusMessages.CLOSE));
 					closeButton.addActionListener(new ActionListener(){
+						@Override
 						public void actionPerformed(ActionEvent e)
 						{
 							/*
@@ -579,6 +586,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	 */
 	private class PNGImageFilter extends FileFilter
 	{
+		@Override
 		public boolean accept(File f)
 		{
 			boolean retval = f.isDirectory();
@@ -590,6 +598,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			return(retval);
 		}
 
+		@Override
 		public String getDescription()
 		{
 			return(MapyrusMessages.get(MapyrusMessages.PNG_IMAGE_FILES));
@@ -601,6 +610,7 @@ public class MapyrusFrame implements MapyrusEventListener
 	 */
 	private class PDFImageFilter extends FileFilter
 	{
+		@Override
 		public boolean accept(File f)
 		{
 			boolean retval = f.isDirectory();
@@ -612,6 +622,7 @@ public class MapyrusFrame implements MapyrusEventListener
 			return(retval);
 		}
 
+		@Override
 		public String getDescription()
 		{
 			return(MapyrusMessages.get(MapyrusMessages.PDF_FILES));
@@ -731,6 +742,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				 * to the output panel.
 				 */
 				m_outputThread = new Thread(){
+					@Override
 					public void run()
 					{
 						try
@@ -822,6 +834,7 @@ public class MapyrusFrame implements MapyrusEventListener
 				 * to the output panel.
 				 */
 				m_outputThread = new Thread(){
+					@Override
 					public void run()
 					{
 						try

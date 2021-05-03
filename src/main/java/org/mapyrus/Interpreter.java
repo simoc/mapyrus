@@ -3598,6 +3598,7 @@ public class Interpreter implements Cloneable
 	 * Return a clone of this interpreter.
 	 * @return cloned interpreter.
 	 */
+	@Override
 	public Object clone()
 	{
 		Interpreter retval = new Interpreter();

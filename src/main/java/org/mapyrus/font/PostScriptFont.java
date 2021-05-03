@@ -278,6 +278,7 @@ public class PostScriptFont
 	 * String representation of PostScript font.
 	 * @return font name.
 	 */
+	@Override
 	public String toString()
 	{
 		return("PostScript Font " + m_fontName);

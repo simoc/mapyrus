@@ -86,12 +86,14 @@ public class SVGFile extends DefaultHandler
 		return(m_boundingBox);
 	}
 
+	@Override
 	public void startDocument()
 	{
 		m_contents = new StringBuilder(1024);
 		m_SVGAttributes = new StringBuilder(256);
 	}
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
 		return new InputSource(new StringReader(""));
@@ -133,6 +135,7 @@ public class SVGFile extends DefaultHandler
 		return(retval * factor);
 	}
 
+	@Override
 	public void startElement(String uri, String localName,
 		String qName, Attributes attributes)
 	{
@@ -180,6 +183,7 @@ public class SVGFile extends DefaultHandler
 		}
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String qName)
 	{
 		if (qName.equals("svg"))
@@ -194,6 +198,7 @@ public class SVGFile extends DefaultHandler
 		}
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length)
 	{
 		for (int i = 0; i < length; i++)
@@ -217,6 +222,7 @@ public class SVGFile extends DefaultHandler
 	 * Return contents of SVG file as a string.
 	 * @return contents of SVG file.
 	 */
+	@Override
 	public String toString()
 	{
 		return(m_contents.toString());

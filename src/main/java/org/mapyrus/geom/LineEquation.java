@@ -185,6 +185,7 @@ public class LineEquation
 	 * Return string representation of line equation.
 	 * @return line equation as a string.
 	 */
+	@Override
 	public String toString()
 	{
 		return(m_A + "x + " + m_B + "y + " + m_C + " = 0");

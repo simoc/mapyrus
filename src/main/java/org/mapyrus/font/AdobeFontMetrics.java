@@ -545,6 +545,7 @@ public class AdobeFontMetrics
 	 * Return string representation of object.
 	 * @return string representation.
 	 */
+	@Override
 	public String toString()
 	{
 		return("Adobe Font Metrics for " + m_fontName);

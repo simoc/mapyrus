@@ -299,6 +299,7 @@ public class FileOrURL
 	 * Returns name of file or URL we are reading from.
 	 * @return filename or URL.
 	 */
+	@Override
 	public String toString()
 	{
 		return(m_name);

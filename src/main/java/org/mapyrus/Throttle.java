@@ -146,6 +146,7 @@ public class Throttle
 	 * Make a clone of this throttle.
 	 * @return clone of this throttle.
 	 */
+	@Override
 	public Throttle clone()
 	{
 		Throttle retval = new Throttle();

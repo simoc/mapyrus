@@ -79,6 +79,7 @@ public class TrueTypeFont
 	 * String representation of TrueType font.
 	 * @return font name.
 	 */
+	@Override
 	public String toString()
 	{
 		return("TrueType Font " + m_fontName);
