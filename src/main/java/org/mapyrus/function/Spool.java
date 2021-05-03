@@ -64,7 +64,6 @@ public class Spool implements Function
 		}
 
 		ByteArrayOutputStream buf = new ByteArrayOutputStream(8 * 1024);
-		InputStream stream = null;
 		int nBytes;
 
 		try
@@ -80,27 +79,18 @@ public class Spool implements Function
 			 * Read complete file into memory and return it as a single string.
 			 */
 			FileOrURL f = new FileOrURL(filename);
-			stream = f.getInputStream();
-			byte b[] = new byte[1024];
-			while ((nBytes = stream.read(b)) > 0)
+			try (InputStream stream = f.getInputStream())
 			{
-				buf.write(b, 0, nBytes);
+				byte b[] = new byte[1024];
+				while ((nBytes = stream.read(b)) > 0)
+				{
+					buf.write(b, 0, nBytes);
+				}
 			}
 		}
 		catch (IOException e)
 		{
 			throw new MapyrusException(e.getMessage());
-		}
-		finally
-		{
-			try
-			{
-				if (stream != null)
-					stream.close();
-			}
-			catch (IOException e)
-			{
-			}
 		}
 
 		Argument retval;

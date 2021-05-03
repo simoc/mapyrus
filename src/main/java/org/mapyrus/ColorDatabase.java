@@ -25,7 +25,6 @@ import java.awt.color.ColorSpace;
 import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -45,9 +44,7 @@ public class ColorDatabase
 	 */
 	private static synchronized void loadColorNames() throws MapyrusException
 	{
-		String filename, line;
-		StringTokenizer st;
-		LineNumberReader reader = null;
+		String filename;
 
 		/*
 		 * Only load colors once.
@@ -609,9 +606,12 @@ public class ColorDatabase
 			 */
 			if (filename == null)
 				filename = "rgb.txt";		
-			reader = new LineNumberReader(new FileReader(filename));
+			try (LineNumberReader reader = new LineNumberReader(new FileReader(filename)))
+			{
+				readColors(filename, reader);
+			}
 		}
-		catch (FileNotFoundException e)
+		catch (IOException e)
 		{
 			filename = null;
 		}
@@ -633,16 +633,25 @@ public class ColorDatabase
 				filename = "/usr/lib/X11/rgb.txt";
 				if (Constants.getOSName().indexOf("SUNOS") >= 0)
 					filename = "/usr/openwin/lib/X11/rgb.txt";
-				reader = new LineNumberReader(new FileReader(filename));
+				try (LineNumberReader reader = new LineNumberReader(new FileReader(filename)))
+				{
+					readColors(filename, reader);
+				}
 			}
 		}
-		catch (FileNotFoundException e)
+		catch (IOException e)
 		{
 			/*
 			 * No color file available, just use basic set.
 			 */
 			return;
 		}
+	}
+
+	private static void readColors(String filename, LineNumberReader reader) throws MapyrusException
+	{
+		String line;
+		StringTokenizer st;
 
 		try
 		{
@@ -693,16 +702,6 @@ public class ColorDatabase
 		catch (IOException e)
 		{
 			throw new MapyrusException(e.getMessage());
-		}
-		finally
-		{
-			try
-			{
-				reader.close();
-			}
-			catch (IOException e)
-			{
-			}
 		}
 	}
 

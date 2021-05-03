@@ -28,7 +28,6 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +48,7 @@ import org.mapyrus.MapyrusMessages;
 public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 {
 	static final long serialVersionUID = 0x3301;
-	
+
 	private static final Color LINE_NUMBERING_COLOR = new Color(139, 0, 0);
 
 	/*
@@ -79,7 +78,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 	}
 
 	/**
-	 * Create panel with line number information for a text area. 
+	 * Create panel with line number information for a text area.
 	 * @param textArea text area to add line numbering to.
 	 * @return line numbering panel.
 	 */
@@ -148,36 +147,26 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 			/*
 			 * Add tab with contents of a file.
 			 */
-			Reader r = null;
 			try
 			{
 				FileOrURL f = new FileOrURL(filename);
-				r = f.getReader();
-				StringBuilder sb = new StringBuilder();
-				char []buf = new char[512];
-				int nChars;
-				while ((nChars = r.read(buf)) > 0)
+				try (Reader r = f.getReader())
 				{
-					sb.append(buf, 0, nChars);
+					StringBuilder sb = new StringBuilder();
+					char []buf = new char[512];
+					int nChars;
+					while ((nChars = r.read(buf)) > 0)
+					{
+						sb.append(buf, 0, nChars);
+					}
+					textArea.setText(sb.toString());
 				}
-				textArea.setText(sb.toString());
 			}
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(this, e.getMessage(),
 					Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 				return;
-			}
-			finally
-			{
-				try
-				{
-					if (r != null)
-						r.close();
-				}
-				catch (IOException e)
-				{
-				}
 			}
 
 			if (tabName == null)
@@ -340,7 +329,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 	}
 
 	public void keyReleased(KeyEvent event)
-	{	
+	{
 	}
 
 	public void keyTyped(KeyEvent event)

@@ -106,19 +106,11 @@ public class OpenTypeFont
 	 */
 	public OpenTypeFont(String otfFilename) throws IOException, MapyrusException
 	{
-		RandomAccessFile r = null;
-
 		m_otfFilename = otfFilename;
 
-		try
+		try (RandomAccessFile r = new RandomAccessFile(otfFilename, "r"))
 		{
-			r = new RandomAccessFile(otfFilename, "r");
 			readFile(r, otfFilename);
-		}
-		finally
-		{
-			if (r != null)
-				r.close();
 		}
 	}
 
@@ -514,7 +506,7 @@ public class OpenTypeFont
 	 * @param r file to read from.
 	 * @param tableRecord position in file of CFF record.
 	 */
-	private void readCFF(RandomAccessFile r, TableRecord tableRecord) throws IOException
+	private void readCFF(RandomAccessFile r, TableRecord tableRecord)
 	{
 		/*
 		 * Just note position of table in file. We will read it later.
@@ -686,19 +678,17 @@ public class OpenTypeFont
 	 */
 	public String getFontDefinition() throws IOException
 	{
-		RandomAccessFile r = null;
 		StringBuffer sb = new StringBuffer();
 
-		try
+		TableRecord tableRecord;
+
+		if (m_CIDFontType == 2)
+			tableRecord = m_glyfTableRecord;
+		else
+			tableRecord = m_CFFTableRecord;
+
+		try (RandomAccessFile r = new RandomAccessFile(m_otfFilename, "r"))
 		{
-			TableRecord tableRecord;
-
-			if (m_CIDFontType == 2)
-				tableRecord = m_glyfTableRecord;
-			else
-				tableRecord = m_CFFTableRecord;
-
-			r = new RandomAccessFile(m_otfFilename, "r");
 			r.seek(tableRecord.fileOffset);
 
 			/*
@@ -734,11 +724,6 @@ public class OpenTypeFont
 			sb.append(eodMarker);
 			sb.append(Constants.LINE_SEPARATOR);
 			sb.append("endstream");
-		}
-		finally
-		{
-			if (r != null)
-				r.close();
 		}
 
 		return sb.toString();

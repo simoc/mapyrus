@@ -49,20 +49,21 @@ public class SVGFile extends DefaultHandler
 
 	/**
 	 * Open SVG file and parse header information.
-	 * @param filename name of PostScript file to read.
+	 * @param filename name of SVG file to read.
 	 * @throws IOException if SVG file cannot be opened or read.
 	 * @throws MapyrusException if SVG file cannot be parsed.
 	 */
 	public SVGFile(String filename) throws IOException, MapyrusException
 	{
-		InputStream stream = null;
 		try
 		{
 			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			xmlReader.setContentHandler(this);
 			xmlReader.setEntityResolver(this);
-			stream = new FileOrURL(filename).getInputStream();
-			xmlReader.parse(new InputSource(stream));
+			try (InputStream stream = new FileOrURL(filename).getInputStream())
+			{
+				xmlReader.parse(new InputSource(stream));
+			}
 		}
 		catch (ParserConfigurationException e)
 		{
@@ -73,17 +74,6 @@ public class SVGFile extends DefaultHandler
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.INVALID_SVG) +
 				": " + filename + ": " + e2.getMessage());
-		}
-		finally
-		{
-			try
-			{
-				if (stream != null)
-					stream.close();
-			}
-			catch (IOException e)
-			{
-			}
 		}
 	}
 
@@ -184,7 +174,7 @@ public class SVGFile extends DefaultHandler
 				m_contents.append(attributes.getValue(i));
 				m_contents.append("\"");
 				m_contents.append(Constants.LINE_SEPARATOR);
-				
+
 			}
 			m_contents.append(">");
 		}
@@ -194,7 +184,7 @@ public class SVGFile extends DefaultHandler
 	{
 		if (qName.equals("svg"))
 		{
-			m_SVGTagCount--;	
+			m_SVGTagCount--;
 			if (m_SVGTagCount > 0)
 				m_contents.append("</svg>");
 		}
@@ -226,7 +216,7 @@ public class SVGFile extends DefaultHandler
 	/**
 	 * Return contents of SVG file as a string.
 	 * @return contents of SVG file.
-	 */	
+	 */
 	public String toString()
 	{
 		return(m_contents.toString());
@@ -235,7 +225,7 @@ public class SVGFile extends DefaultHandler
 	/**
 	 * Return attributes in svg tag of SVG file.
 	 * @return attributes as XML attribute string.
-	 */	
+	 */
 	public String getSVGAttributes()
 	{
 		return(m_SVGAttributes.toString());

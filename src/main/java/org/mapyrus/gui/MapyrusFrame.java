@@ -761,10 +761,11 @@ public class MapyrusFrame implements MapyrusEventListener
 				};
 				m_outputThread.start();
 
-				PrintStream p = new PrintStream(outStream);
-				interpreter.interpret(context, f, stdin, p);
-				m_displayPanelListener.setWorlds(context.getWorlds());
-				p.close();
+				try (PrintStream p = new PrintStream(outStream))
+				{
+					interpreter.interpret(context, f, stdin, p);
+					m_displayPanelListener.setWorlds(context.getWorlds());
+				}
 				if (m_outputThread != null)
 				{
 					m_outputThread.join();
@@ -851,9 +852,10 @@ public class MapyrusFrame implements MapyrusEventListener
 				};
 				m_outputThread.start();
 
-				PrintStream p = new PrintStream(outStream);
-				interpreter.interpret(context, f, stdin, p);
-				p.close();
+				try (PrintStream p = new PrintStream(outStream))
+				{
+					interpreter.interpret(context, f, stdin, p);
+				}
 				if (m_outputThread != null)
 				{
 					m_outputThread.join();
@@ -961,13 +963,12 @@ public class MapyrusFrame implements MapyrusEventListener
 				}
 				while (status != JOptionPane.YES_OPTION);
 			}
-			FileWriter f = null;
-			try
+
+			try (FileWriter f = new FileWriter(filename))
 			{
 				/*
 				 * Write the tab contents to file.
 				 */
-				f = new FileWriter(filename);
 				String contents = m_editorPanel.getSelectedTabContents();
 				f.write(contents);
 				f.flush();
@@ -984,17 +985,6 @@ public class MapyrusFrame implements MapyrusEventListener
 				JOptionPane.showMessageDialog(m_frame, e.getMessage(),
 					Constants.PROGRAM_NAME, JOptionPane.ERROR_MESSAGE);
 				return(false);
-			}
-			finally
-			{
-				try
-				{
-					if (f != null)
-						f.close();
-				}
-				catch (IOException e)
-				{
-				}
 			}
 		}
 		return(true);

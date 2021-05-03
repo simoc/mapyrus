@@ -83,14 +83,14 @@ public class ShapefileDataset implements GeographicDataset
 
 	/*
 	 * Files containing data, their lengths and type.
-	 */	
+	 */
 	private DataInputStream m_shapeStream;
 	private DataInputStream m_DBFStream;
 	private String m_filename;
 	private int m_shapeFileLength, m_shapeFileType, m_geometryType;
 	private int m_DBFRecordLength;
 	private String m_projection;
-	
+
 	/*
 	 * Flags indicating which fields in DBF file that user wants to fetch
 	 * and the total number of fields the user wants to fetch.
@@ -111,7 +111,7 @@ public class ShapefileDataset implements GeographicDataset
 	 */
 	private Rectangle2D.Double m_extents;
 	private Rectangle2D.Double m_queryExtents;
-	
+
 	/*
 	 * Number of bytes already read for query.
 	 * A record read from DBF file for query.
@@ -128,7 +128,7 @@ public class ShapefileDataset implements GeographicDataset
 	 * @throws FileNotFoundException if file does not exist.
 	 * @throws IOException if reading file fails.
 	 * @throws MapyrusException if file is not an ESRI shape file.
-	 */	
+	 */
 	public ShapefileDataset(String filename, String extras)
 		throws FileNotFoundException, IOException, MapyrusException
 	{
@@ -263,12 +263,13 @@ public class ShapefileDataset implements GeographicDataset
 		/*
 		 * If there is an accompanying .prj file with the projection then read it.
 		 */
-		BufferedReader prjReader = null;
 		try
 		{
 			FileOrURL prjFile = new FileOrURL(prjFilename);
-			prjReader = prjFile.getReader();
-			m_projection = prjReader.readLine();
+			try (BufferedReader prjReader = prjFile.getReader())
+			{
+				m_projection = prjReader.readLine();
+			}
 		}
 		catch(FileNotFoundException e)
 		{
@@ -277,11 +278,6 @@ public class ShapefileDataset implements GeographicDataset
 		catch(MapyrusException e)
 		{
 			m_projection = "";
-		}
-		finally
-		{
-			if (prjReader != null)
-				prjReader.close();
 		}
 
 		try
@@ -421,7 +417,7 @@ public class ShapefileDataset implements GeographicDataset
 		yMin = readLittleEndianDouble(m_shapeStream);
 		xMax = readLittleEndianDouble(m_shapeStream);
 		yMax = readLittleEndianDouble(m_shapeStream);
-		
+
 		readLittleEndianDouble(m_shapeStream);	/* zMin */
 		readLittleEndianDouble(m_shapeStream);	/* zMax */
 		readLittleEndianDouble(m_shapeStream);	/* mMin */
@@ -430,7 +426,7 @@ public class ShapefileDataset implements GeographicDataset
 
 		/*
 		 * Convert geometry type to the type we use internally.
-		 */		
+		 */
 		switch (m_shapeFileType)
 		{
 			case NULL_SHAPE:
@@ -535,7 +531,7 @@ public class ShapefileDataset implements GeographicDataset
 				{
 					m_DBFStream.read(dbfField, 1, dbfField.length - 1);
 					fieldName = unpackString(dbfField, 0, 11);
-	
+
 					/*
 					 * Build list of flags indicating which fields we'll
 					 * be fetching for the user.
@@ -545,7 +541,7 @@ public class ShapefileDataset implements GeographicDataset
 					m_DBFFieldsToFetch.add(Boolean.valueOf(fetchStatus));
 					if (fetchStatus)
 						m_nDBFFieldsToFetch++;
-	
+
 					nBytesRead += dbfField.length - 1;
 					dbfFields.add(dbfField);
 					nTotalFields++;
@@ -591,7 +587,7 @@ public class ShapefileDataset implements GeographicDataset
 				 * Extract null terminated field name.
 				 */
 				m_fieldNames[fieldIndex] = unpackString(dbfField, 0, 11);
-	
+
 				/*
 				 * Convert shape field type to our representation of field types.
 				 */
@@ -685,10 +681,10 @@ public class ShapefileDataset implements GeographicDataset
 				 */
 				m_shapeStream.readInt();	/* record number */
 				recordLength = m_shapeStream.readInt() * 2;
-				
+
 				shapeType = readLittleEndianInt(m_shapeStream);
 				nBytes = 4;
-				
+
 				if (shapeType == 0)
 				{
 					/*
@@ -884,7 +880,7 @@ public class ShapefileDataset implements GeographicDataset
 
 				/*
 				 * Skip until end of this record in shape file.
-				 */		
+				 */
 				if (nBytes < recordLength)
 					m_shapeStream.skipBytes(recordLength - nBytes);
 
@@ -914,7 +910,7 @@ public class ShapefileDataset implements GeographicDataset
 						for (i = 0; i < m_DBFFieldTypes.length; i++)
 						{
 							Argument arg = null;
-	
+
 							/*
 							 * Only unpack fields that user asked for.
 							 */
@@ -959,7 +955,7 @@ public class ShapefileDataset implements GeographicDataset
 								}
 								row.add(arg);
 							}
-	
+
 							recordOffset += m_DBFFieldLengths[i];
 						}
 					}

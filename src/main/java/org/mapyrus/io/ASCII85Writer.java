@@ -271,16 +271,14 @@ public class ASCII85Writer
 	{
 		String message = "The quick brown fox jumped over the lazy dog.";
 
-		try
+		try (PrintWriter writer = new PrintWriter(new FileWriter("/tmp/ascii85.txt")))
 		{
-			PrintWriter writer = new PrintWriter(new FileWriter("/tmp/ascii85.txt"));
 			ASCII85Writer ascii85 = new ASCII85Writer(writer, false);
 			byte []messageBytes = message.getBytes();
 			for (int j = 0; j < 100; j++)
 				for (int i = 0; i < messageBytes.length; i++)
 					ascii85.write(messageBytes[i]);
 			ascii85.close();
-			writer.close();
 		}
 		catch (IOException e)
 		{
