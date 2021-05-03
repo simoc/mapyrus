@@ -59,7 +59,7 @@ public class TrueTypeFont
 
 		m_filename = filename;
 		Font f = getFont();
-		
+
 		/*
 		 * Use PostScript name for this font so we have a name without spaces.
 		 */
@@ -90,27 +90,17 @@ public class TrueTypeFont
 	 * @return font definition.
 	 * @throws IOException if font file cannot be read.
 	 * @throws MapyrusException if font file has wrong format.
-	 */	
+	 */
 	public Font getFont() throws IOException, MapyrusException
 	{
-		Font font = null;
-		FileInputStream f = null;
-
-		try
+		try (FileInputStream f = new FileInputStream(m_filename))
 		{
-			f = new FileInputStream(m_filename);
-			font = Font.createFont(Font.TRUETYPE_FONT, f);
+			return Font.createFont(Font.TRUETYPE_FONT, f);
 		}
 		catch (FontFormatException e)
 		{
 			throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_A_TTF_FILE) +
 				": " + m_filename);
 		}
-		finally
-		{
-			if (f != null)
-				f.close();
-		}
-		return(font);
 	}
 }

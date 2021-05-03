@@ -45,7 +45,6 @@ public class PostScriptFile
 	public PostScriptFile(String filename)
 		throws IOException, MapyrusException
 	{
-		BufferedReader reader = null;
 		String firstBoundingBox = null;
 		String lastBoundingBox = null;
 		String firstPages = null;
@@ -55,9 +54,8 @@ public class PostScriptFile
 		StringTokenizer st;
 		MapyrusException e = new MapyrusException(MapyrusMessages.get(MapyrusMessages.NOT_PS_FILE) + ": " + filename);
 
-		try
+		try (BufferedReader reader = new BufferedReader(new FileReader(filename)))
 		{
-			reader = new BufferedReader(new FileReader(filename));
 			line = reader.readLine();
 			if (line == null || (!line.startsWith("%!")))
 				throw e;
@@ -126,7 +124,7 @@ public class PostScriptFile
 				x2 = Integer.parseInt(st.nextToken());
 				y2 = Integer.parseInt(st.nextToken());
 
-				m_boundingBox = new Rectangle(x1, y1, x2 - x1, y2 - y1); 
+				m_boundingBox = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 			}
 			else
 			{
@@ -140,17 +138,6 @@ public class PostScriptFile
 		catch (SecurityException se)
 		{
 			throw new IOException(se.getClass().getName() + ": " + e.getMessage());
-		}
-		finally
-		{
-			try
-			{
-				if (reader != null)
-					reader.close();			
-			}
-			catch (IOException ioe)
-			{
-			}
 		}
 	}
 

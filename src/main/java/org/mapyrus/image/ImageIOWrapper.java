@@ -21,10 +21,8 @@ package org.mapyrus.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -117,7 +115,7 @@ public class ImageIOWrapper
 				image = ImageIO.read(f);
 
 			if (image != null)
-			{	
+			{
 				/*
 				 * Check if image is a single color.
 				 * Some output formats have more efficient rendering for single color images.
@@ -149,7 +147,6 @@ public class ImageIOWrapper
 	public static ColorIcon read(URL url, Color color) throws IOException, MapyrusException
 	{
 		ColorIcon retval;
-		InputStream stream = null;
 		BufferedImage image = null;
 
 		try
@@ -160,106 +157,69 @@ public class ImageIOWrapper
 			String filename = url.getPath().toLowerCase();
 			URLConnection urlConnection = url.openConnection();
 			String contentType = urlConnection.getContentType();
-			stream = urlConnection.getInputStream();
-			if (contentType.startsWith("text/") ||
-				contentType.startsWith("application/vnd.ogc."))
+			try (InputStream stream = urlConnection.getInputStream())
 			{
-				/*
-				 * Read textual content from URL and include it in our
-				 * error message as it may be helpful in understanding the
-				 * problem.
-				 */
-				StringBuilder sb = new StringBuilder();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-				int c;
-				while ((c = reader.read()) != -1)
+				if (contentType.startsWith("text/") ||
+					contentType.startsWith("application/vnd.ogc."))
 				{
-					sb.append((char)c);
-					if (sb.length() >= 80 * 17)
+					/*
+					 * Read textual content from URL and include it in our
+					 * error message as it may be helpful in understanding the
+					 * problem.
+					 */
+					StringBuilder sb = new StringBuilder();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+					int c;
+					while ((c = reader.read()) != -1)
 					{
-						sb.append("...");
-						break;
+						sb.append((char)c);
+						if (sb.length() >= 80 * 17)
+						{
+							sb.append("...");
+							break;
+						}
 					}
+					throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.URL_RETURNED) +
+						": " + contentType + Constants.LINE_SEPARATOR +
+						url.toString() + Constants.LINE_SEPARATOR + sb);
 				}
-				throw new MapyrusException(MapyrusMessages.get(MapyrusMessages.URL_RETURNED) +
-					": " + contentType + Constants.LINE_SEPARATOR +
-					url.toString() + Constants.LINE_SEPARATOR + sb);
-			}
 
-			if (contentType.equals("image/x-portable-pixmap") ||
-				contentType.equals("image/x-portable-bitmap") ||
-				contentType.equals("image/x-portable-graymap"))
-			{
-				image = new PNMImage(stream, filename).getBufferedImage();
-			}
-			else if (contentType.equals("image/x-xbm"))
-			{
-				image = new XBMImage(stream, filename, color.getRGB()).getBufferedImage();
-			}
-			else
-			{
-				image = ImageIO.read(stream);
-			}
-			
-			if (image != null)
-			{	
-				/*
-				 * Check if image is a single color.
-				 * Some output formats have more efficient rendering for single color images.
-				 */
-				if (!isSingleColorImage(image))
-					color = null;
-				retval = new ColorIcon(image, color);
-			}
-			else
-			{
-				retval = null;
+				if (contentType.equals("image/x-portable-pixmap") ||
+					contentType.equals("image/x-portable-bitmap") ||
+					contentType.equals("image/x-portable-graymap"))
+				{
+					image = new PNMImage(stream, filename).getBufferedImage();
+				}
+				else if (contentType.equals("image/x-xbm"))
+				{
+					image = new XBMImage(stream, filename, color.getRGB()).getBufferedImage();
+				}
+				else
+				{
+					image = ImageIO.read(stream);
+				}
+
+				if (image != null)
+				{
+					/*
+					 * Check if image is a single color.
+					 * Some output formats have more efficient rendering for single color images.
+					 */
+					if (!isSingleColorImage(image))
+						color = null;
+					retval = new ColorIcon(image, color);
+				}
+				else
+				{
+					retval = null;
+				}
 			}
 		}
 		catch (SecurityException e)
 		{
 			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + url.toString());
 		}
-		finally
-		{
-			try
-			{
-				if (stream != null)
-					stream.close();
-			}
-			catch (IOException ignore)
-			{
-				
-			}
-		}
 		return(retval);
-	}
-	
-	/**
-	 * Write an image to a file. 
-	 * @param image image to write.
-	 * @param format name of image format in which to write image. 
-	 * @param f file to write image to.
-	 * @throws IOException if writing image to file fails.
-	 */
-	public static void write(BufferedImage image, String format, File f)
-		throws IOException
-	{
-		BufferedOutputStream stream = null;
-		try
-		{
-			stream = new BufferedOutputStream(new FileOutputStream(f));
-			write(image, format, stream);
-		}
-		catch (SecurityException e)
-		{
-			throw new IOException(e.getClass().getName() + ": " + e.getMessage() + ": " + f.getPath());
-		}
-		finally
-		{
-			if (stream != null)
-				stream.close();
-		}
 	}
 
 	/**

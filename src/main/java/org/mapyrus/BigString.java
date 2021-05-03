@@ -86,10 +86,8 @@ public class BigString
 			else
 			{
 				File file = (File)obj;
-				FileReader reader = null;
-				try
+				try (FileReader reader = new FileReader(file))
 				{
-					reader = new FileReader(file);
 					char []cbuf = new char[512];
 					int nBytes;
 					while ((nBytes = reader.read(cbuf)) > 0)
@@ -101,17 +99,6 @@ public class BigString
 								": " + MapyrusMessages.get(MapyrusMessages.ERROR_FILE));
 						}
 						totalChars += nBytes;
-					}
-				}
-				finally
-				{
-					try
-					{
-						if (reader != null)
-							reader.close();
-					}
-					catch (IOException e)
-					{
 					}
 				}
 			}
