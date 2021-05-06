@@ -72,6 +72,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 	 * Set editor font.
 	 * @param font font for text area.
 	 */
+	@Override
 	public void setFont(Font font)
 	{
 		m_font = font;
@@ -87,6 +88,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 		final Font finalFont = textArea.getFont();
 		JComponent lineNumberingComponent = new JComponent(){
 			static final long serialVersionUID = 0x1;
+			@Override
 			public void paintComponent(Graphics g)
 			{
 				FontMetrics fontMetrics = getFontMetrics(finalFont);
@@ -320,6 +322,7 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 		}
 	}
 
+	@Override
 	public void keyPressed(KeyEvent event)
 	{
 		/*
@@ -328,10 +331,12 @@ public class MapyrusEditorPanel extends JTabbedPane implements KeyListener
 		setSelectedTabEdited(true);
 	}
 
+	@Override
 	public void keyReleased(KeyEvent event)
 	{
 	}
 
+	@Override
 	public void keyTyped(KeyEvent event)
 	{
 	}

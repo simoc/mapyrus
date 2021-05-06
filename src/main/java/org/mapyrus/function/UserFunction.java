@@ -127,7 +127,8 @@ public class UserFunction implements Function
 	{
 		return(m_funcName);
 	}
-	
+
+	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder(m_funcName);

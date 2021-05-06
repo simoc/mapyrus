@@ -615,6 +615,7 @@ public class Expression
 		 * String representation of an expression tree.
 		 * @return expression as a string.
 		 */
+		@Override
 		public String toString()
 		{
 			String retval;
@@ -1861,6 +1862,7 @@ public class Expression
 			return(null);
 	}
 
+	@Override
 	public String toString()
 	{
 		return m_exprTree.toString();

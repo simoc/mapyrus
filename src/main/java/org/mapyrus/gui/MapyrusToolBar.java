@@ -54,6 +54,7 @@ public class MapyrusToolBar extends JToolBar
 		add(runButton);
 		runButton.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.STOP);
@@ -74,6 +75,7 @@ public class MapyrusToolBar extends JToolBar
 		add(stopButton);
 		stopButton.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.STOP);

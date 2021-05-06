@@ -98,6 +98,7 @@ public class LegendEntry implements Comparable<LegendEntry>
 	 * @param entry legend entry to compare with.
 	 * @return -1, 0, 1, depending whether this object is less, equal, or greater than o.
 	 */
+	@Override
 	public int compareTo(LegendEntry entry)
 	{
 		/*
@@ -168,6 +169,7 @@ public class LegendEntry implements Comparable<LegendEntry>
 	 * Convert object to string.
 	 * @return string representation.
 	 */
+	@Override
 	public String toString()
 	{
 		return(m_blockName + " " + m_description);

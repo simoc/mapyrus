@@ -627,6 +627,7 @@ public class OpenTypeFont
 	 * Return string representation of object.
 	 * @return string representation.
 	 */
+	@Override
 	public String toString()
 	{
 		return("OpenType font " + m_fullFontName);

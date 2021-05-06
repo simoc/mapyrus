@@ -93,6 +93,7 @@ public class StringDimension
 	 * Get dimension as a string.
 	 * @return dimension string.
 	 */
+	@Override
 	public String toString()
 	{
 		return(m_width + " x " + m_height);

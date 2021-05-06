@@ -90,6 +90,7 @@ public class WMSRequestBoundingBox implements GeoImageBoundingBox
 	 * Get bounding rectangle for image being returned by request.
 	 * @return bounding rectangle.
 	 */
+	@Override
 	public Rectangle2D getBounds()
 	{
 		return(m_bounds);

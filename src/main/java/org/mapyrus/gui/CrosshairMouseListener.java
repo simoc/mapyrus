@@ -67,6 +67,7 @@ public class CrosshairMouseListener implements MouseMotionListener, MouseListene
 		m_displayImageWorlds = worlds;
 	}
 
+	@Override
 	public void mouseMoved(MouseEvent e)
 	{
 		if (m_displayImage == null || m_displayImageWorlds == null)
@@ -152,19 +153,23 @@ public class CrosshairMouseListener implements MouseMotionListener, MouseListene
 		}
 	}
 
+	@Override
 	public void mouseDragged(MouseEvent e)
 	{
 		mouseMoved(e);
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e)
 	{
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e)
 	{
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e)
 	{
 		/*
@@ -174,10 +179,12 @@ public class CrosshairMouseListener implements MouseMotionListener, MouseListene
 		displayPanel.repaint();
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e)
 	{
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e)
 	{
 	}

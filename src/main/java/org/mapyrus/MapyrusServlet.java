@@ -48,6 +48,7 @@ public class MapyrusServlet extends HttpServlet
 	 * @param request HTTP request
 	 * @param response HTTP response
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException
 	{
@@ -205,6 +206,7 @@ public class MapyrusServlet extends HttpServlet
 	 * @param request HTTP request
 	 * @param response HTTP response
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException
 	{

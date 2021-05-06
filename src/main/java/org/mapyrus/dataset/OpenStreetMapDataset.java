@@ -217,6 +217,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 		return(attrValue);
 	}
 
+	@Override
 	public void startElement(String uri, String localName,
 			String qName, Attributes attributes) throws SAXException
 	{
@@ -309,6 +310,7 @@ public class OpenStreetMapDataset extends DefaultHandler implements GeographicDa
 		}
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException
 	{
 		if (qName.equals("node"))

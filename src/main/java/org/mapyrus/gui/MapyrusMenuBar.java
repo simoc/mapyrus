@@ -51,6 +51,7 @@ public class MapyrusMenuBar extends JMenuBar
 		fileMenu.add(newTabItem);
 		newTabItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.NEW_TAB_ACTION);
@@ -62,6 +63,7 @@ public class MapyrusMenuBar extends JMenuBar
 		fileMenu.add(openFileItem);
 		openFileItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.OPEN_FILE);
@@ -73,6 +75,7 @@ public class MapyrusMenuBar extends JMenuBar
 		fileMenu.add(closeTabItem);
 		closeTabItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.CLOSE_TAB);
@@ -84,6 +87,7 @@ public class MapyrusMenuBar extends JMenuBar
 		fileMenu.add(saveTabItem);
 		saveTabItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.SAVE_TAB);
@@ -96,6 +100,7 @@ public class MapyrusMenuBar extends JMenuBar
 		fileMenu.add(exitItem);
 		exitItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.EXIT);
@@ -109,6 +114,7 @@ public class MapyrusMenuBar extends JMenuBar
 		copyItem.setMnemonic(KeyEvent.VK_C);
 		copyItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.COPY);
@@ -121,6 +127,7 @@ public class MapyrusMenuBar extends JMenuBar
 		editMenu.add(pngExportItem);
 		pngExportItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.EXPORT_PNG);
@@ -132,6 +139,7 @@ public class MapyrusMenuBar extends JMenuBar
 		editMenu.add(pdfExportItem);
 		pdfExportItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.EXPORT_PDF);
@@ -145,6 +153,7 @@ public class MapyrusMenuBar extends JMenuBar
 		onlineHelpItem.setMnemonic(KeyEvent.VK_H);
 		onlineHelpItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.ONLINE_HELP);
@@ -156,6 +165,7 @@ public class MapyrusMenuBar extends JMenuBar
 		aboutItem.setMnemonic(KeyEvent.VK_A);
 		aboutItem.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				fireEvent(MapyrusEventListener.Action.ABOUT);

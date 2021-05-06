@@ -123,11 +123,13 @@ public class TFWFile implements GeoImageBoundingBox
 	 * Get bounding rectangle for image given in tfw file.
 	 * @return bounding rectangle.
 	 */
+	@Override
 	public Rectangle2D getBounds()
 	{
 		return(m_bounds);
 	}
 
+	@Override
 	public String toString()
 	{
 		return(m_bounds.toString());

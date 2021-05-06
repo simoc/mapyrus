@@ -902,6 +902,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 */
 	private class NumericAndStringComparator implements Comparator<String>
 	{
+		@Override
 		public int compare(String s1, String s2)
 		{
 			int retval;
@@ -1247,6 +1248,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 * Return string representation of this argument.
 	 * @return string representation of argument value.
 	 */
+	@Override
 	public String toString()
 	{
 		String retval = null;
@@ -1342,7 +1344,8 @@ public class Argument implements Comparable<Argument>, Cloneable
 	/**
 	 * Clones an Argument object.
 	 * @return clone of this argument.
-	 */	
+	 */
+	@Override
 	public Object clone()
 	{
 		Argument retval;
@@ -1383,6 +1386,7 @@ public class Argument implements Comparable<Argument>, Cloneable
 	 * @param arg other argument.
 	 * @return -1, 0, 1 depending on comparison between arguments.
 	 */
+	@Override
 	public int compareTo(Argument arg)
 	{
 		int retval;
