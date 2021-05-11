@@ -61,57 +61,14 @@ To increase available memory to 256Mb, use the following command:
 ### Startup Configuration
 
 The variables available for configuring Mapyrus at startup are
-shown in Table \ref{startupvariables}.
+shown in the table below.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{startupvariables}
-Variable & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Startup Variables} \\
-\endfoot
-
-\hline
-Variable & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{Mapyrus.rgb.file=_filename_} &
-Defines an X Windows color names file containing additional color names
-for the
-\texttt{color} command.  Default value is
-\texttt{/usr/lib/X11/rgb.txt} \\
-
-\hline
-
-\texttt{java.awt.headless=true} &
-Run in headless mode.  Required when running on a server
-with no graphics display. \\
-
-\hline
-
-\texttt{java.io.tmpdir=_dir_} &
-Defines directory to use for temporary files.  Large images in PDF output
-are temporarily saved in this directory until output is complete. \\
-
-\hline
-
-\texttt{jdbc.drivers=_class_} &
-Defines class containing JDBC 1.0 (or higher) driver to load at startup.
-A JDBC driver is required for connecting to a relational database and
-is provided as part of a relational database.
-See the Java JDBC DriverManager API documentation
-\footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}}
-for details.
-The JAR file containing the class must be included in the \texttt{-classpath}
-option when starting Mapyrus. \\
-
-\hline
-\end{longtable}
+Variable | Description
+-------- | -----------
+\texttt{Mapyrus.rgb.file=_filename_} | Defines an X Windows color names file containing additional color names for the \texttt{color} command.  Default value is \texttt{/usr/lib/X11/rgb.txt}
+\texttt{java.awt.headless=true} | Run in headless mode.  Required when running on a server with no graphics display.
+\texttt{java.io.tmpdir=_dir_} | Defines directory to use for temporary files.  Large images in PDF output are temporarily saved in this directory until output is complete.
+\texttt{jdbc.drivers=_class_} | Defines class containing JDBC 1.0 (or higher) driver to load at startup.  A JDBC driver is required for connecting to a relational database and is provided as part of a relational database.  See the Java JDBC DriverManager API documentation \footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}} for details.  The JAR file containing the class must be included in the \texttt{-classpath} option when starting Mapyrus.
 
 ## Language
 
