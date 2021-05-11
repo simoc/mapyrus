@@ -1,6 +1,6 @@
-\section{Reference}
+# Reference
 
-\subsection{Software Requirements}
+## Software Requirements
 
 Mapyrus requires:
 \begin{itemize}
@@ -20,7 +20,7 @@ The \textit{Java PROJ.4 library} from \texttt{http://www.jhlabs.com/java/maps/pr
 if the \texttt{REPROJECT} function is required for reprojecting coordinates.
 \end{itemize}
 
-\subsection{Usage}
+## Usage
 
 The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
@@ -66,7 +66,7 @@ To increase available memory to 256Mb, use the following command:
 \texttt{java -Xmx256m -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
 \end{alltt}
 
-\subsubsection{Startup Configuration}
+### Startup Configuration
 
 The variables available for configuring Mapyrus at startup are
 shown in Table \ref{startupvariables}.
@@ -121,7 +121,7 @@ option when starting Mapyrus. \\
 \hline
 \end{longtable}
 
-\subsection{Language}
+## Language
 
 Mapyrus interprets commands read from one or more plain text files.
 Each command begins on a separate line or after a semi-colon (\texttt{;}).
@@ -846,7 +846,7 @@ coordinates in the called procedure are relative to the move point.  This
 enables drawing commands in the called procedure to be given in millimeters,
 relative to each \texttt{move} point.
 
-\subsection{Internal Variables}
+## Internal Variables
 
 All environment variables and
 Java standard system properties (\texttt{os.arch}, \texttt{user.dir}, etc.)
@@ -1075,13 +1075,13 @@ by the page width. \\
 
 \end{longtable}
 
-\subsection{Commands}
+## Commands
 
 Commands are listed alphabetically.  The arguments required for each command
 are given.  Some commands accept arguments in several ways.  For these
 commands, each combination of arguments is given.
 
-\subsubsection{addpath}
+### addpath
 
 \begin{alltt}
 addpath \textit{geometry-field} [, \textit{geometry-field} ...]
@@ -1097,7 +1097,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{arc}
+### arc
 
 \begin{alltt}
 arc \textit{direction}, \textit{xCenter}, \textit{yCenter}, \textit{xEnd}, \textit{yEnd}
@@ -1118,7 +1118,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{bezier}
+### bezier
 
 \begin{alltt}
 bezier \textit{xControl1}, \textit{yControl1}, \textit{xControl2}, \textit{yControl2}, \textit{xEnd}, \textit{yEnd}
@@ -1141,7 +1141,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{blend}
+### blend
 
 \begin{alltt}
 blend \textit{mode}
@@ -1168,7 +1168,7 @@ The effect of each blend mode is described in the PDF Reference Manual,
 available from \texttt{http://www.adobe.com}.
 Only the first six blend modes are available for SVG format output.
 
-\subsubsection{box}
+### box
 
 \begin{alltt}
 box \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
@@ -1185,7 +1185,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{box3d}
+### box3d
 
 \begin{alltt}
 box3d \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2} [, \textit{depth}]
@@ -1204,7 +1204,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{chessboard}
+### chessboard
 
 \begin{alltt}
 chessboard \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}, \textit{size}
@@ -1222,7 +1222,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{circle}
+### circle
 
 \begin{alltt}
 circle \textit{xCenter}, \textit{yCenter}, \textit{radius}
@@ -1237,7 +1237,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{clearpath}
+### clearpath
 
 \begin{alltt}
 clearpath
@@ -1245,7 +1245,7 @@ clearpath
 
 Removes all points from the current path.
 
-\subsubsection{clip}
+### clip
 
 \begin{alltt}
 clip \textit{side}
@@ -1270,7 +1270,7 @@ areas that satisfy all clip paths.
 
 The current path is not modified by this command.
 
-\subsubsection{closepath}
+### closepath
 
 \begin{alltt}
 closepath
@@ -1279,7 +1279,7 @@ closepath
 Closes the current path by adding a straight line segment
 back to the last point added with a \texttt{move} command.
 
-\subsubsection{color}
+### color
 
 \begin{alltt}
 color \textit{name} [, \textit{alpha}]
@@ -1340,7 +1340,7 @@ files will be opaque.
 
 The spelling \texttt{colour} is also accepted for this command.
 
-\subsubsection{cylinder}
+### cylinder
 
 \begin{alltt}
 cylinder \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{height}
@@ -1354,7 +1354,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{dataset}
+### dataset
 
 \begin{alltt}
 dataset \textit{format}, \textit{name} [, \textit{extras}]
@@ -1600,7 +1600,7 @@ Common character set encodings are \texttt{UTF-8} (Unicode) and
 
 \end{longtable}
 
-\subsubsection{draw}
+### draw
 
 \begin{alltt}
 draw \textit{x}, \textit{y}, ...
@@ -1614,7 +1614,7 @@ transformation set with a \texttt{worlds} command
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{ellipse}
+### ellipse
 
 \begin{alltt}
 ellipse \textit{xCenter}, \textit{yCenter}, \textit{xRadius}, \textit{yRadius}
@@ -1630,7 +1630,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{endpage}
+### endpage
 
 \begin{alltt}
 endpage
@@ -1638,7 +1638,7 @@ endpage
 
 Closes output file created with \texttt{newpage} command.
 
-\subsubsection{eps}
+### eps
 
 \begin{alltt}
 eps \textit{filename} [, \textit{size}]
@@ -1661,7 +1661,7 @@ as defined in the Encapsulated PostScript file.
 The file is scaled and rotated according to the current \texttt{scale}
 and \texttt{rotate} settings.
 
-\subsubsection{eval}
+### eval
 
 \begin{alltt}
 eval \textit{command}
@@ -1673,7 +1673,7 @@ This command is identical to the \texttt{eval} command found in
 UNIX scripting and Perl and
 enables commands to be built and executed while Mapyrus runs.
 
-\subsubsection{eventscript}
+### eventscript
 
 \begin{alltt}
 eventscript \textit{tags} \ldots
@@ -1703,7 +1703,7 @@ See section
 \ref{tutorialjavascript}
 for an example displaying tooltips as the mouse is moved over an image.
 
-\subsubsection{fetch}
+### fetch
 
 \begin{alltt}
 fetch
@@ -1716,7 +1716,7 @@ Before fetching a record, check the variable
 \texttt{Mapyrus.fetch.more}
 to ensure that another record is available from the dataset.
 
-\subsubsection{fill}
+### fill
 
 \begin{alltt}
 fill [\textit{xml-attributes}]
@@ -1731,7 +1731,7 @@ For SVG output, any XML attributes given in
 \textit{xml-attributes} are
 included in the \texttt{<path>} XML element for the filled path.
 
-\subsubsection{flowlabel}
+### flowlabel
 
 \begin{alltt}
 flowlabel \textit{spacing}, \textit{offset} [,\textit{extras} ], \textit{string} [, \textit{string} ...]
@@ -1751,7 +1751,7 @@ would appear upside down on the page are rotated
 If \textit{extras} contains \texttt{rotate=false} then labels are
 not rotated.
 
-\subsubsection{font}
+### font
 
 \begin{alltt}
 font \textit{name}, \textit{size} [, \textit{extras} ...]
@@ -1820,7 +1820,7 @@ The default line spacing is 1. \\
 \hline
 \end{longtable}
 
-\subsubsection{geoimage}
+### geoimage
 
 \begin{alltt}
 geoimage \textit{filename} [, \textit{extras} ]
@@ -1913,7 +1913,7 @@ be extended to read additional image formats. \\
 \hline
 \end{longtable}
 
-\subsubsection{gradientfill}
+### gradientfill
 
 \begin{alltt}
 gradientfill \textit{color1}, \textit{color2}, \textit{color3}, \textit{color4} [, \textit{color5} \ldots]
@@ -1939,7 +1939,7 @@ For SVG output only gradient fill patterns that fade in one dimension
 (vertically or horizontally) are possible.  This is a limitation
 of the SVG format.
 
-\subsubsection{guillotine}
+### guillotine
 
 \begin{alltt}
 guillotine \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
@@ -1962,7 +1962,7 @@ and \texttt{rotate} values.
 The path is always cut against a rectangle
 aligned with the X and Y axes of the page, regardless of any rotation angle.
 
-\subsubsection{hexagon}
+### hexagon
 
 \begin{alltt}
 hexagon \textit{xCenter}, \textit{yCenter}, \textit{radius}
@@ -1978,7 +1978,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{httpresponse}
+### httpresponse
 
 \begin{alltt}
 httpresponse \textit{header}
@@ -1990,7 +1990,7 @@ must include at least two lines containing an HTTP server
 response code and a MIME content type.  See section \ref{cookies}
 for example HTTP headers.
 
-\subsubsection{icon}
+### icon
 
 \begin{alltt}
 icon \textit{filename}, [, \textit{size}]
@@ -2041,7 +2041,7 @@ for Mapyrus.
 
 Icons cannot be displayed when creating SVG format output.
 
-\subsubsection{justify}
+### justify
 
 \begin{alltt}
 justify \textit{justification}
@@ -2054,7 +2054,7 @@ horizontally and/or
 \texttt{top}, \texttt{middle}, \texttt{bottom} for justifying labels
 vertically.
 
-\subsubsection{key}
+### key
 
 \begin{alltt}
 key \textit{type}, \textit{description}, [\textit{arg1}, \textit{arg2} ...]
@@ -2082,7 +2082,7 @@ on the arguments passed to it then use a separate
 \texttt{key} command for each, with different descriptions
 and different arguments.
 
-\subsubsection{label}
+### label
 
 \begin{alltt}
 label \textit{string} [, \textit{string} ...]
@@ -2095,7 +2095,7 @@ separated by spaces.  If \textit{string} contains newline characters
 (\texttt{\textbackslash{}n}) then labels are displayed as multiple lines, one
 below the other.
 
-\subsubsection{legend}
+### legend
 
 \begin{alltt}
 legend \textit{size}
@@ -2131,7 +2131,7 @@ entries that were actually displayed.
 The description label is displayed to the right of each legend entry, using the
 current \texttt{color}, \texttt{font} and \texttt{justify} settings.
 
-\subsubsection{let}
+### let
 
 \begin{alltt}
 let \textit{var} = \textit{expression}, \dots
@@ -2147,7 +2147,7 @@ element of the form \textit{var}[\textit{index}].
 Several variables are assigned by separating each 
 \textit{var} and \textit{expression} pair by a comma.
 
-\subsubsection{linestyle}
+### linestyle
 
 \begin{alltt}
 linestyle \textit{width}
@@ -2168,7 +2168,7 @@ dashes in a dash pattern.  Each \textit{dash length} is given in millimeters.
 \textit{phase} is the offset in millimeters into the dash pattern 
 at which to begin.
 
-\subsubsection{local}
+### local
 
 \begin{alltt}
 local \textit{name}, [\textit{name} ...]
@@ -2178,7 +2178,7 @@ Declares the listed variable names as local to a procedure.
 The variables are not visible outside the enclosing procedure
 and their values are lost when the procedure ends.
 
-\subsubsection{logspiral}
+### logspiral
 
 \begin{alltt}
 logspiral \textit{xCenter}, \textit{yCenter}, \textit{a}, \textit{b}, \textit{revolutions}, \textit{startAngle}
@@ -2204,7 +2204,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{mimetype}
+### mimetype
 
 \begin{alltt}
 mimetype \textit{type}
@@ -2215,7 +2215,7 @@ when Mapyrus is running as an HTTP server.  A more general
 solution is to use the \texttt{httpresponse} command to set
 the complete header returned from the HTTP request.
 
-\subsubsection{move}
+### move
 
 \begin{alltt}
 move \textit{x}, \textit{y}
@@ -2227,7 +2227,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{newpage}
+### newpage
 
 \begin{alltt}
 newpage \textit{format}, \textit{filename}, \textit{width}, \textit{height}, \textit{extras}
@@ -2654,7 +2654,7 @@ Page size is set to the size of the existing image,
 
 \end{longtable}
 
-\subsubsection{parallelpath}
+### parallelpath
 
 \begin{alltt}
 parallelpath \textit{distance} [, \textit{distance} ...]
@@ -2668,7 +2668,7 @@ negative then path is created to the left of the current path.
 When used on complex paths with sharp angles, this command creates
 paths that self-intersect.
 
-\subsubsection{pdf}
+### pdf
 
 \begin{alltt}
 pdf \textit{filename}, \textit{page} [, \textit{size}]
@@ -2692,7 +2692,7 @@ PDF output.  For other formats,
 a grey box is drawn showing where the PDF file
 would be drawn.
 
-\subsubsection{pdfgroup}
+### pdfgroup
 
 \begin{alltt}
 pdfgroup \textit{action} [, \textit{groupName}]
@@ -2715,7 +2715,7 @@ Nesting of groups is permitted.
 
 For formats other than PDF, this command has no effect.
 
-\subsubsection{pentagon}
+### pentagon
 
 \begin{alltt}
 pentagon \textit{xCenter}, \textit{yCenter}, \textit{radius}
@@ -2731,7 +2731,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{print}
+### print
 
 \begin{alltt}
 print \textit{string} [, \textit{string} ...]
@@ -2744,7 +2744,7 @@ A newline is added after the final \textit{string}.
 Standard output is redirected to a different file
 or destination using the \texttt{setoutput} command.
 
-\subsubsection{protect}
+### protect
 
 \begin{alltt}
 protect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
@@ -2772,7 +2772,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{raindrop}
+### raindrop
 
 \begin{alltt}
 raindrop \textit{xCenter}, \textit{yCenter}, \textit{radius}
@@ -2787,7 +2787,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{reversepath}
+### reversepath
 
 \begin{alltt}
 reversepath
@@ -2795,7 +2795,7 @@ reversepath
 
 Reverses the direction of the current path.
 
-\subsubsection{rotate}
+### rotate
 
 \begin{alltt}
 rotate \textit{angle}
@@ -2806,7 +2806,7 @@ is given in degrees, measured counter-clockwise.  All later coordinates given
 in \texttt{move}, \texttt{draw}, \texttt{arc} and \texttt{addpath} commands are
 rotated by this angle.
 
-\subsubsection{rdraw}
+### rdraw
 
 \begin{alltt}
 rdraw \textit{dx}, \textit{dy}, ...
@@ -2822,7 +2822,7 @@ transformation set with a \texttt{worlds} command
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{roundedbox}
+### roundedbox
 
 \begin{alltt}
 roundedbox \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
@@ -2842,7 +2842,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{samplepath}
+### samplepath
 
 \begin{alltt}
 samplepath \textit{spacing}, \textit{offset}
@@ -2859,7 +2859,7 @@ path is travelled from the end towards the beginning.  Using a very large
 positive or negative value for \textit{spacing} results in current path being
 replaced by a single point at the beginning or end of the path.
 
-\subsubsection{scale}
+### scale
 
 \begin{alltt}
 scale \textit{factor}
@@ -2870,7 +2870,7 @@ is scale factor for X and Y axes.  All later coordinates given in
 \texttt{move}, \texttt{draw}, \texttt{arc} and \texttt{addpath} commands are
 scaled by this factor.
 
-\subsubsection{selectpath}
+### selectpath
 
 \begin{alltt}
 selectpath \textit{offset}, \textit{length} [, \textit{offset}, \textit{length}  \dots ]
@@ -2886,7 +2886,7 @@ in millimeters.
 Offsets and lengths are scaled by \texttt{scale} values but are independent of
 any world coordinate transformation.
 
-\subsubsection{setoutput}
+### setoutput
 
 \begin{alltt}
 setoutput \textit{filename}
@@ -2896,7 +2896,7 @@ Sets file that all \texttt{print} commands will be written to.
 \textit{filename} is the name of a file to write to, overwriting any
 existing file with this name.
 
-\subsubsection{shiftpath}
+### shiftpath
 
 \begin{alltt}
 shiftpath \textit{x}, \textit{y}
@@ -2912,7 +2912,7 @@ repeatedly following a \texttt{clip "outside"} command to produce a shadow
 effect for polygons, as shown in 
 Section \ref{tutorialshadow} on page \pageref{tutorialshadow}.
 
-\subsubsection{sinewave}
+### sinewave
 
 \begin{alltt}
 sinewave \textit{xEnd}, \textit{yEnd}, \textit{repeats}, \textit{height}
@@ -2932,7 +2932,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{sinkhole}
+### sinkhole
 
 \begin{alltt}
 sinkhole
@@ -2941,7 +2941,7 @@ sinkhole
 Replaces the current path containing a polygon with a single point in the
 middle of the polygon, farthest from the polygon perimeter.
 
-\subsubsection{spiral}
+### spiral
 
 \begin{alltt}
 spiral \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{revolutions}, \textit{startAngle}
@@ -2964,7 +2964,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{star}
+### star
 
 \begin{alltt}
 star \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{points}
@@ -2981,7 +2981,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{stripepath}
+### stripepath
 
 \begin{alltt}
 stripepath \textit{spacing}, \textit{angle}
@@ -2993,7 +2993,7 @@ millimeters.  \textit{angle} is angle of each line, measured
 counter-clockwise in degrees, with zero being horizontal.  Follow this command
 with a \texttt{clip} command to produce a hatched fill pattern.
 
-\subsubsection{stroke}
+### stroke
 
 \begin{alltt}
 stroke [\textit{xml-attributes}]
@@ -3006,7 +3006,7 @@ For SVG output, any XML attributes given in
 \textit{xml-attributes} are
 included in the \texttt{<path>} XML element for the drawn path.
 
-\subsubsection{svg}
+### svg
 
 \begin{alltt}
 svg \textit{filename}, [, \textit{size}]
@@ -3030,7 +3030,7 @@ SVG output.  For other formats,
 a grey box is drawn showing where the SVG file
 would be drawn.
 
-\subsubsection{svgcode}
+### svgcode
 
 \begin{alltt}
 svgcode \textit{xml}
@@ -3043,7 +3043,7 @@ XML code can only be added to Scalable Vector Graphics (SVG) files.
 This enables the default Mapyrus settings in SVG files to
 be overridden and for graphics to be grouped together as layers.
 
-\subsubsection{table}
+### table
 
 \begin{alltt}
 table \textit{extras}, \textit{column1}, \textit{column2} \dots
@@ -3113,7 +3113,7 @@ order, or \texttt{desc} for descending order.  Default is ascending order. \\
 \end{longtable}
 
 
-\subsubsection{tree}
+### tree
 
 \begin{alltt}
 tree \textit{extras}, \textit{entries}
@@ -3159,7 +3159,7 @@ By default whitespace is used as the delimiter. \\
 \end{longtable}
 
 
-\subsubsection{triangle}
+### triangle
 
 \begin{alltt}
 triangle \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{rotation}
@@ -3177,7 +3177,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{unprotect}
+### unprotect
 
 \begin{alltt}
 unprotect \textit{x1}, \textit{y1}, \textit{x2}, \textit{y2}
@@ -3202,7 +3202,7 @@ transformation set with a \texttt{worlds} command,
 then scaled and rotated by \texttt{scale}
 and \texttt{rotate} values.
 
-\subsubsection{wedge}
+### wedge
 
 \begin{alltt}
 wedge \textit{xCenter}, \textit{yCenter}, \textit{radius}, \textit{angle}, \textit{sweep} [, \textit{height} ]
@@ -3224,7 +3224,7 @@ transformation set with a \textit{worlds} command,
 then scaled and rotated by \textit{scale}
 and \textit{rotate} values.
 
-\subsubsection{worlds}
+### worlds
 
 \begin{alltt}
 worlds \textit{wx1}, \textit{wy1}, \textit{wx2}, \textit{wy2} [, \textit{extras} ]
@@ -3295,7 +3295,7 @@ If not given, then scaling is uniform. \\
 \hline
 \end{longtable}
 
-\subsection{Error Handling}
+# Error Handling
 
 If Mapyrus encounters an error when interpreting commands,
 an error message is printed including the filename and line number
@@ -3307,7 +3307,7 @@ option, an HTTP failure status and the error message
 are returned to the HTTP client.  The HTTP server continues,
 handling the next request.
 
-\subsection{Mapyrus HTTP Server}
+## Mapyrus HTTP Server
 
 Mapyrus runs as an HTTP server when started with the \texttt{-s} command line
 option.
@@ -3374,7 +3374,7 @@ further requests are queued.
 
 Logging of HTTP requests is controlled by the \texttt{-l} command line option.
 
-\subsection{Mapyrus Servlet}
+## Mapyrus Servlet
 
 The file \texttt{mapyrus.war} provided with Mapyrus
 is a web application archive.
