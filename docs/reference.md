@@ -2509,42 +2509,13 @@ Mapping Service (WMS) request.
 
 _extras_ defines further options, given as
 _variable=value_ values, separated by whitespace.
-See Table \ref{worldsextras}
+See the table below
 for available options.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{worldsextras}
-Extra & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Worlds Extras} \\
-\endfoot
-
-\hline
-Extra & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{units=_units_} &
-
-Defines the units of the world coordinates,
-either \texttt{metres}, \texttt{meters} or \texttt{feet}.
-If not given, units are assumed to be meters. \\
-
-\texttt{distortion=_flag_} &
-
-If \texttt{true} then non-uniform scaling in X and Y axes
-is allowed.  If \texttt{false} then
-the world coordinate range is expanded,
-if necessary, to maintain uniform scaling.
-If not given, then scaling is uniform. \\
-
-\hline
-\end{longtable}
+Extra | Description
+----- | -----------
+\texttt{units=_units_} | Defines the units of the world coordinates, either \texttt{metres}, \texttt{meters} or \texttt{feet}.  If not given, units are assumed to be meters.
+\texttt{distortion=_flag_} | If \texttt{true} then non-uniform scaling in X and Y axes is allowed.  If \texttt{false} then the world coordinate range is expanded, if necessary, to maintain uniform scaling.  If not given, then scaling is uniform.
 
 # Error Handling
 
