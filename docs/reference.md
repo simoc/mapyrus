@@ -315,45 +315,34 @@ the graphics state is saved.
 The graphics state is restored when the procedure finishes.
 The graphics state contains:
 
-\begin{enumerate}
-\item
-The path defined with
-\texttt{move},
-\texttt{draw},
-\texttt{box},
-\texttt{arc},
-\texttt{bezier},
-\texttt{circle},
-\texttt{cylinder},
-\texttt{ellipse},
-\texttt{hexagon},
-\texttt{pentagon},
-\texttt{sinewave},
-\texttt{spiral},
-\texttt{star},
-\texttt{triangle},
-\texttt{wedge}
-and
-\texttt{addpath}
-commands.
-
-\item
-The clip path defined with
-\texttt{clip} commands.
-
-\item
-Current drawing settings set by
-\texttt{color},
-\texttt{linestyle},
-\texttt{font} and \texttt{justify}
-commands.
-
-\item
-Transformations set by \texttt{rotate} and \texttt{scale} commands.
-
-\item
-The output file set by a \texttt{setoutput} command.
-\end{enumerate}
+* The path defined with
+  \texttt{move},
+  \texttt{draw},
+  \texttt{box},
+  \texttt{arc},
+  \texttt{bezier},
+  \texttt{circle},
+  \texttt{cylinder},
+  \texttt{ellipse},
+  \texttt{hexagon},
+  \texttt{pentagon},
+  \texttt{sinewave},
+  \texttt{spiral},
+  \texttt{star},
+  \texttt{triangle},
+  \texttt{wedge}
+  and
+  \texttt{addpath} commands.
+* The clip path defined with \texttt{clip} commands.
+* Current drawing settings set by
+  \texttt{color},
+  \texttt{linestyle},
+  \texttt{font}
+  and
+  \texttt{justify}
+  commands.
+* Transformations set by \texttt{rotate} and \texttt{scale} commands.
+* The output file set by a \texttt{setoutput} command.
 
 Any new page created in a procedure with a
 \texttt{newpage}
@@ -2437,28 +2426,22 @@ Requests for files with no suffix, or with unknown file suffix
 such as \texttt{.mapyrus} are interpreted
 by Mapyrus using the following steps.
 
-\begin{enumerate}
-\item
-Set any parameters passed in the URL (following the \texttt{?} character in
-the URL or passed in an HTML form) as variables in Mapyrus.
-Variable names are converted to uppercase.
-\item
-Read and execute the commands from the filename given in the URL.
-\item
-Capture the standard output of these commands and return it to the
-HTTP client.
-An image file is returned if the
-\texttt{newpage} command is used with output file set
-to standard output.
-Otherwise the output of any \texttt{print} commands is returned.
-The HTTP header information set in a
-\texttt{mimetype}
-or
-\texttt{httpresponse}
-command is returned to the HTTP client.
-
-An HTTP error state is returned if the request fails.
-\end{enumerate}
+* Set any parameters passed in the URL (following the \texttt{?} character in
+  the URL or passed in an HTML form) as variables in Mapyrus.
+  Variable names are converted to uppercase.
+* Read and execute the commands from the filename given in the URL.
+* Capture the standard output of these commands and return it to the
+  HTTP client.
+  An image file is returned if the
+  \texttt{newpage} command is used with output file set
+  to standard output.
+  Otherwise the output of any \texttt{print} commands is returned.
+  The HTTP header information set in a
+  \texttt{mimetype}
+  or
+  \texttt{httpresponse}
+  command is returned to the HTTP client.
+  An HTTP error state is returned if the request fails.
 
 Requests using either GET or POST methods are accepted by Mapyrus.
 
