@@ -167,6 +167,7 @@ Operator | Description
 \texttt{and}, \texttt{or}, \texttt{not} | Logical and, or, not
 
 Function Name | Description
+------------- | -----------
 \texttt{abs(_n_)} | Returns the absolute value of _n_.
 \texttt{axis(_min_, _max_, _intervals_)} | Generates a set of numbers that are suitable for an axis of a graph containing values in the range _min_ to _max_.  _intervals_ sets the maximum number of values for the axis.  An array is returned with each value for the axis.
 \texttt{buffer(_g_, _dist_, _cap_)} | Returns a geometry containing a buffer calculated at a distance _dist_ around the perimeter of geometry _g_.  The value of _cap_ defines the method of closing buffers at line endpoints, either \texttt{butt}, \texttt{round} or \texttt{square}.  This function requires the _JTS Topology Suite_.
