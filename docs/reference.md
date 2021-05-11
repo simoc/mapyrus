@@ -9,10 +9,10 @@ Mapyrus requires:
 * The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
   if running on Linux or a UNIX operating system.  If a real X-Windows display
   is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
-* The _JTS Topology Suite_ from \texttt{http://www.tsusiatsoftware.net/jts/main.html},
+* The [JTS Topology Suite](http://www.tsusiatsoftware.net/jts/main.html),
   if geometric functions are required
   (see Table \ref{functions} on page \pageref{functions}).
-* The _Java PROJ.4 library_ from \texttt{http://www.jhlabs.com/java/maps/proj},
+* The [Java PROJ.4 library](http://www.jhlabs.com/java/maps/proj),
   if the \texttt{REPROJECT} function is required for reprojecting coordinates.
 
 ## Usage
@@ -68,7 +68,7 @@ Variable | Description
 \texttt{Mapyrus.rgb.file=_filename_} | Defines an X Windows color names file containing additional color names for the \texttt{color} command.  Default value is \texttt{/usr/lib/X11/rgb.txt}
 \texttt{java.awt.headless=true} | Run in headless mode.  Required when running on a server with no graphics display.
 \texttt{java.io.tmpdir=_dir_} | Defines directory to use for temporary files.  Large images in PDF output are temporarily saved in this directory until output is complete.
-\texttt{jdbc.drivers=_class_} | Defines class containing JDBC 1.0 (or higher) driver to load at startup.  A JDBC driver is required for connecting to a relational database and is provided as part of a relational database.  See the Java JDBC DriverManager API documentation \footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}} for details.  The JAR file containing the class must be included in the \texttt{-classpath} option when starting Mapyrus.
+\texttt{jdbc.drivers=_class_} | Defines class containing JDBC 1.0 (or higher) driver to load at startup.  A JDBC driver is required for connecting to a relational database and is provided as part of a relational database.  See the Java JDBC [DriverManager API documentation](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html) for details.  The JAR file containing the class must be included in the \texttt{-classpath} option when starting Mapyrus.
 
 ## Language
 
@@ -143,7 +143,7 @@ pattern _p_ containing asterisk (\texttt{*}) characters.
 \texttt{log10(_n_)} | Returns the base 10 logarithm of _n_.
 \texttt{lower(_str_)} | Returns _str_ converted to lower case.
 \texttt{lpad(_str_, _len_, _pad_)} \texttt{lpad(_str_, _len_)} | Returns string _str_ left padded to length _len_ using characters from string _pad_.  Spaces are used for padding if _pad_ is not given.  String is truncated on the left if longer than length _len_.
-\texttt{match(_str_, _regex_)} | Returns the index in the string _str_, where the regular expression _regex_ is first matched.  The index of the first character is 1.  If the regular expression does not match _str_, then 0 is returned.  The _Java API documentation_ \footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html}} describes the syntax of regular expressions.
+\texttt{match(_str_, _regex_)} | Returns the index in the string _str_, where the regular expression _regex_ is first matched.  The index of the first character is 1.  If the regular expression does not match _str_, then 0 is returned.  The [Java API documentation](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html) describes the syntax of regular expressions.
 \texttt{max(_a_, _b_)} | Returns the larger of values _a_ and _b_.
 \texttt{min(_a_, _b_)} | Returns the smaller of values _a_ and _b_.
 \texttt{overlaps(_g1_, _g2_)} | If geometry _g1_ and geometry _g2_ are the same type and overlap then 1 is returned.  Otherwise 0 is returned.  This function requires the _JTS Topology Suite_.
@@ -493,8 +493,7 @@ Blend mode is one of \texttt{Normal},
 \texttt{Difference} or
 \texttt{Exclusion}.
 
-The effect of each blend mode is described in the PDF Reference Manual,
-available from \texttt{http://www.adobe.com}.
+The effect of each blend mode is described in the [PDF Reference Manual](http://www.adobe.com).
 Only the first six blend modes are available for SVG format output.
 
 ### box
@@ -1154,8 +1153,8 @@ OGC Web Mapping Service (WMS)
 for an image.  The request type must be \texttt{GetMap}.
 The world coordinate range for the image is parsed from the
 \texttt{BBOX} parameter in the URL.
-See the Web Map Service Implementation specification at
-\texttt{http://www.opengis.org}
+See the [Web Map Service Implementation](http://www.opengis.org)
+specification
 for details of all parameters that must be included in the URL.
 
 _extras_ defines further options for the image, given as
