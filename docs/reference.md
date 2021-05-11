@@ -847,228 +847,33 @@ All environment variables and
 Java standard system properties (\texttt{os.arch}, \texttt{user.dir}, etc.)
 are defined as variables in Mapyrus.
 
-Mapyrus maintains the internal variables shown in Table \ref{internalvariables}.
+Mapyrus maintains the internal variables shown in the table below.
 
-\begin{longtable}{|p{6cm}|p{7cm}|}
-\hline
-\label{internalvariables}
-Variable Name & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Internal Variables} \\
-\endfoot
-
-\hline
-Variable Name & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{Mapyrus.dataset.fieldnames} &
-An array containing the names of fields being read from
-the current dataset.  The first fieldname has array index 1. \\
-
-\hline
-
-\texttt{Mapyrus.dataset.projection} &
-A description of the projection (coordinate system) in which coordinates
-of the current dataset are stored.
-Projection descriptions are not standardised between dataset formats.
-Different dataset formats will return different descriptions for the same
-projection. \\
-
-\hline
-
-\texttt{Mapyrus.dataset.min.x},
-\texttt{Mapyrus.dataset.min.y},
-\texttt{Mapyrus.dataset.max.x},
-\texttt{Mapyrus.dataset.max.y},
-\texttt{Mapyrus.dataset.center.x},
-\texttt{Mapyrus.dataset.center.y} &
-The bounding rectangle of all data in the current dataset. \\
-
-\hline
-
-\texttt{Mapyrus.fetch.count} &
-The number of records already fetched from the current dataset. \\
-
-\hline
-
-\texttt{Mapyrus.fetch.more} &
-Flag value set to 1 if another record is available
-for \texttt{fetch}
-command, or 0 if no more records available. \\
-
-\hline
-
-\texttt{Mapyrus.filename} &
-The name of the file or URL being interpreted. \\
-
-\hline
-
-\texttt{Mapyrus.freeMemory} &
-The amount of free memory that Java has available, in bytes. \\
-
-\hline
-
-\texttt{Mapyrus.http.header} &
-An array containing header information passed in the HTTP request
-when running as an HTTP server.
-Useful values are
-\texttt{Mapyrus.http.header['Referer']}
-giving the name of the referring HTML page,
-\texttt{Mapyrus.http.header['Cookie']}
-giving the contents of a cookie set by a previous HTTP request and
-\texttt{Mapyrus.http.header['User-Agent']}
-giving the name of the web browser making the HTTP request.  \\
-
-\hline
-
-\texttt{Mapyrus.imagemap.x},
-\texttt{Mapyrus.imagemap.y} &
-The pixel position of the point clicked in an HTML imagemap and
-passed to Mapyrus, for use when running as an HTTP server.
-Both values are set to -1 if no imagemap point passed in current URL. \\
-
-\hline
-
-\texttt{Mapyrus.key.count} &
-The number of legend entries defined with
-\texttt{key} commands that have not yet
-been displayed with a
-\texttt{legend} command. \\
-
-\hline
-
-\texttt{Mapyrus.key.next} &
-The name of the of the next procedure to be displayed by the
-\texttt{legend} command. \\
-
-\hline
-
-\texttt{Mapyrus.page.format},
-\texttt{Mapyrus.page.height},
-\texttt{Mapyrus.page.width},
-\texttt{Mapyrus.page.resolution.dpi},
-\texttt{Mapyrus.page.resolution.mm} &
-The file format, page height, page width
-and resolution that were passed to the
-\texttt{newpage} command.  File format is in lowercase.
-Height and width are in millimeters.  Resolution is available
-as either a dots-per-inch value, or a distance in millimeters between
-dots. \\
-
-\hline
-\texttt{Mapyrus.path} &
-The current path as an OGC WKT geometry with coordinates measured
-in millimetres. \\
-
-\hline
-
-\texttt{Mapyrus.path.length},
-\texttt{Mapyrus.path.area},
-\texttt{Mapyrus.path.start.angle},
-\texttt{Mapyrus.path.start.x},
-\texttt{Mapyrus.path.start.y},
-\texttt{Mapyrus.path.end.angle},
-\texttt{Mapyrus.path.end.x},
-\texttt{Mapyrus.path.end.y},
-\texttt{Mapyrus.path.min.x},
-\texttt{Mapyrus.path.min.y},
-\texttt{Mapyrus.path.max.x},
-\texttt{Mapyrus.path.max.y},
-\texttt{Mapyrus.path.center.x},
-\texttt{Mapyrus.path.center.y},
-\texttt{Mapyrus.path.width},
-\texttt{Mapyrus.path.height} &
-The length of the current path on the page measured in millimeters,
-the area of the current path measured in square millimeters,
-the coordinates and angles at the start and end of the path in degrees measured
-counter-clockwise,
-and the bounding rectangle of the current path.  \\
-
-\hline
-
-\texttt{Mapyrus.rotation} &
-The current rotation angle in degrees set by
-\texttt{rotate} command.
-Returned value is normalised to fall in the
-range -180 to +180 degrees. \\
-
-\hline
-
-\texttt{Mapyrus.scale} &
-The current scale factor set by \texttt{scale} command. \\
-
-\hline
-
-\texttt{Mapyrus.screen.height},
-\texttt{Mapyrus.screen.width},
-\texttt{Mapyrus.screen.resolution.dpi},
-\texttt{Mapyrus.screen.resolution.mm} &
-The height, width and resolution of the screen in which Mapyrus
-is running.
-Height and width are in millimeters.  Resolution is available
-as either a dots-per-inch value, or a distance in millimeters between
-dots. \\
-
-\hline
-
-\texttt{Mapyrus.time.day},
-\texttt{Mapyrus.time.month},
-\texttt{Mapyrus.time.year},
-\texttt{Mapyrus.time.hour},
-\texttt{Mapyrus.time.minute},
-\texttt{Mapyrus.time.second},
-\texttt{Mapyrus.time.day.of.week},
-\texttt{Mapyrus.time.day.name},
-\texttt{Mapyrus.time.month.name},
-\texttt{Mapyrus.time.week.of.year},
-\texttt{Mapyrus.time.stamp}
-&
-Components of the current date and time.
-Day of week has value 1 for Monday through to 7 for Sunday.
-
-\\
-
-\hline
-
-\texttt{Mapyrus.timer} &
-The elapsed processing time, measured in seconds. \\
-
-\hline
-
-\texttt{Mapyrus.totalMemory} &
-The total amount of memory available to Java, in bytes. \\
-
-\hline
-
-\texttt{Mapyrus.version} &
-The version of the software. \\
-
-\hline
-
-\texttt{Mapyrus.worlds.min.x},
-\texttt{Mapyrus.worlds.min.y},
-\texttt{Mapyrus.worlds.max.x},
-\texttt{Mapyrus.worlds.max.y},
-\texttt{Mapyrus.worlds.center.x},
-\texttt{Mapyrus.worlds.center.y},
-\texttt{Mapyrus.worlds.width},
-\texttt{Mapyrus.worlds.height} &
-The bounding rectangle of world coordinates set with the 
-\texttt{worlds} command. \\
-
-\hline
-
-\texttt{Mapyrus.worlds.scale} &
-The real-world scale factor, determined by
-dividing of the X axis world coordinate range
-by the page width. \\
-
-\end{longtable}
+Variable Name | Description
+------------- | -----------
+\texttt{Mapyrus.dataset.fieldnames} | An array containing the names of fields being read from the current dataset.  The first fieldname has array index 1.
+\texttt{Mapyrus.dataset.projection} | A description of the projection (coordinate system) in which coordinates of the current dataset are stored.  Projection descriptions are not standardised between dataset formats.  Different dataset formats will return different descriptions for the same projection.
+\texttt{Mapyrus.dataset.min.x}, \texttt{Mapyrus.dataset.min.y}, \texttt{Mapyrus.dataset.max.x}, \texttt{Mapyrus.dataset.max.y}, \texttt{Mapyrus.dataset.center.x}, \texttt{Mapyrus.dataset.center.y} | The bounding rectangle of all data in the current dataset.
+\texttt{Mapyrus.fetch.count} | The number of records already fetched from the current dataset.
+\texttt{Mapyrus.fetch.more} | Flag value set to 1 if another record is available for \texttt{fetch} command, or 0 if no more records available.
+\texttt{Mapyrus.filename} | The name of the file or URL being interpreted.
+\texttt{Mapyrus.freeMemory} | The amount of free memory that Java has available, in bytes.
+\texttt{Mapyrus.http.header} | An array containing header information passed in the HTTP request when running as an HTTP server.  Useful values are \texttt{Mapyrus.http.header['Referer']} giving the name of the referring HTML page, \texttt{Mapyrus.http.header['Cookie']} giving the contents of a cookie set by a previous HTTP request and \texttt{Mapyrus.http.header['User-Agent']} giving the name of the web browser making the HTTP request.
+\texttt{Mapyrus.imagemap.x}, \texttt{Mapyrus.imagemap.y} | The pixel position of the point clicked in an HTML imagemap and passed to Mapyrus, for use when running as an HTTP server.  Both values are set to -1 if no imagemap point passed in current URL.
+\texttt{Mapyrus.key.count} | The number of legend entries defined with \texttt{key} commands that have not yet been displayed with a \texttt{legend} command.
+\texttt{Mapyrus.key.next} | The name of the of the next procedure to be displayed by the \texttt{legend} command.
+\texttt{Mapyrus.page.format}, \texttt{Mapyrus.page.height}, \texttt{Mapyrus.page.width}, \texttt{Mapyrus.page.resolution.dpi}, \texttt{Mapyrus.page.resolution.mm} | The file format, page height, page width and resolution that were passed to the \texttt{newpage} command.  File format is in lowercase.  Height and width are in millimeters.  Resolution is available as either a dots-per-inch value, or a distance in millimeters between dots.
+\texttt{Mapyrus.path} | The current path as an OGC WKT geometry with coordinates measured in millimetres.
+\texttt{Mapyrus.path.length}, \texttt{Mapyrus.path.area}, \texttt{Mapyrus.path.start.angle}, \texttt{Mapyrus.path.start.x}, \texttt{Mapyrus.path.start.y}, \texttt{Mapyrus.path.end.angle}, \texttt{Mapyrus.path.end.x}, \texttt{Mapyrus.path.end.y}, \texttt{Mapyrus.path.min.x}, \texttt{Mapyrus.path.min.y}, \texttt{Mapyrus.path.max.x}, \texttt{Mapyrus.path.max.y}, \texttt{Mapyrus.path.center.x}, \texttt{Mapyrus.path.center.y}, \texttt{Mapyrus.path.width}, \texttt{Mapyrus.path.height} | The length of the current path on the page measured in millimeters, the area of the current path measured in square millimeters, the coordinates and angles at the start and end of the path in degrees measured counter-clockwise, and the bounding rectangle of the current path.
+\texttt{Mapyrus.rotation} | The current rotation angle in degrees set by \texttt{rotate} command.  Returned value is normalised to fall in the range -180 to +180 degrees.
+\texttt{Mapyrus.scale} | The current scale factor set by \texttt{scale} command.
+\texttt{Mapyrus.screen.height}, \texttt{Mapyrus.screen.width}, \texttt{Mapyrus.screen.resolution.dpi}, \texttt{Mapyrus.screen.resolution.mm} | The height, width and resolution of the screen in which Mapyrus is running.  Height and width are in millimeters.  Resolution is available as either a dots-per-inch value, or a distance in millimeters between dots.
+\texttt{Mapyrus.time.day}, \texttt{Mapyrus.time.month}, \texttt{Mapyrus.time.year}, \texttt{Mapyrus.time.hour}, \texttt{Mapyrus.time.minute}, \texttt{Mapyrus.time.second}, \texttt{Mapyrus.time.day.of.week}, \texttt{Mapyrus.time.day.name}, \texttt{Mapyrus.time.month.name}, \texttt{Mapyrus.time.week.of.year}, \texttt{Mapyrus.time.stamp} | Components of the current date and time.  Day of week has value 1 for Monday through to 7 for Sunday.
+\texttt{Mapyrus.timer} | The elapsed processing time, measured in seconds.
+\texttt{Mapyrus.totalMemory} | The total amount of memory available to Java, in bytes.
+\texttt{Mapyrus.version} | The version of the software.
+\texttt{Mapyrus.worlds.min.x}, \texttt{Mapyrus.worlds.min.y}, \texttt{Mapyrus.worlds.max.x}, \texttt{Mapyrus.worlds.max.y}, \texttt{Mapyrus.worlds.center.x}, \texttt{Mapyrus.worlds.center.y}, \texttt{Mapyrus.worlds.width}, \texttt{Mapyrus.worlds.height} | The bounding rectangle of world coordinates set with the \texttt{worlds} command.
+\texttt{Mapyrus.worlds.scale} | The real-world scale factor, determined by dividing of the X axis world coordinate range by the page width.
 
 ## Commands
 
