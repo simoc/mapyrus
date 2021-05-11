@@ -3,22 +3,17 @@
 ## Software Requirements
 
 Mapyrus requires:
-\begin{itemize}
-\item
-Java 2 Runtime Environment, Standard Edition, (J2RE) 8 or higher,
-or Java 2 Software Developers Kit, Standard Edition (J2SDK) 8 or higher.
-\item
-The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
-if running on Linux or a UNIX operating system.  If a real X-Windows display
-is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
-\item
-The _JTS Topology Suite_ from \texttt{http://www.tsusiatsoftware.net/jts/main.html},
-if geometric functions are required
-(see Table \ref{functions} on page \pageref{functions}).
-\item
-The _Java PROJ.4 library_ from \texttt{http://www.jhlabs.com/java/maps/proj},
-if the \texttt{REPROJECT} function is required for reprojecting coordinates.
-\end{itemize}
+
+* Java 2 Runtime Environment, Standard Edition, (J2RE) 8 or higher,
+  or Java 2 Software Developers Kit, Standard Edition (J2SDK) 8 or higher.
+* The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
+  if running on Linux or a UNIX operating system.  If a real X-Windows display
+  is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
+* The _JTS Topology Suite_ from \texttt{http://www.tsusiatsoftware.net/jts/main.html},
+  if geometric functions are required
+  (see Table \ref{functions} on page \pageref{functions}).
+* The _Java PROJ.4 library_ from \texttt{http://www.jhlabs.com/java/maps/proj},
+  if the \texttt{REPROJECT} function is required for reprojecting coordinates.
 
 ## Usage
 
@@ -1396,46 +1391,28 @@ Available dataset names are \texttt{countries},
 Dataset \texttt{countries} contains the following
 fields for each record:
 
-\begin{itemize}
-\item
-\texttt{GEOMETRY} Polygon with country border
-\item
-\texttt{ISOCODE} Country ISO code
-\item
-\texttt{COUNTRY} Country name
-\item
-\texttt{POP2005} Population in year 2005
-\item
-\texttt{COLORCODE} number in range 1 - 6, with neighbouring countries
-having different color codes.
-\end{itemize}
+* \texttt{GEOMETRY} Polygon with country border
+* \texttt{ISOCODE} Country ISO code
+* \texttt{COUNTRY} Country name
+* \texttt{POP2005} Population in year 2005
+* \texttt{COLORCODE} number in range 1 - 6, with neighbouring countries
+  having different color codes.
 
 Dataset \texttt{capitals} contains the following
 fields for each record:
 
-\begin{itemize}
-\item
-\texttt{GEOMETRY} Point with capital
-\item
-\texttt{COUNTRY} Country name
-\item
-\texttt{CAPITAL} Capital city name
-\end{itemize}
+* \texttt{GEOMETRY} Point with capital
+* \texttt{COUNTRY} Country name
+* \texttt{CAPITAL} Capital city name
 
 Dataset \texttt{usa} contains the following
 fields for each record:
 
-\begin{itemize}
-\item
-\texttt{GEOMETRY} Polygon with US state border
-\item
-\texttt{STATE} US state name
-\item
-\texttt{STATECODE} two letter US state code
-\item
-\texttt{COLORCODE} number in range 1 - 6, with neighbouring states
-having different color codes.
-\end{itemize}
+* \texttt{GEOMETRY} Polygon with US state border
+* \texttt{STATE} US state name
+* \texttt{STATECODE} two letter US state code
+* \texttt{COLORCODE} number in range 1 - 6, with neighbouring states
+  having different color codes.
 
 \vspace{10pt}
 Extras:
@@ -1897,14 +1874,10 @@ Defines a hue, saturation or brightness multiplication factor for the image. \\
 Gives the name of a Java class to read the image and the world
 coordinate range covered by the image.  The Java class must
 be included in the Java classpath and must contain the following methods:
-\begin{itemize}
-\item
-\texttt{constructor(String filename, String extras)}
-\item
-\texttt{java.awt.image.BufferedImage read()}
-\item
-\texttt{java.awt.geom.Rectangle2D getBounds()}
-\end{itemize}
+
+* \texttt{constructor(String filename, String extras)}
+* \texttt{java.awt.image.BufferedImage read()}
+* \texttt{java.awt.geom.Rectangle2D getBounds()}
 
 The methods may throw any type of Java exception on error.
 This option enables Mapyrus to
@@ -2239,35 +2212,23 @@ path, clipping path and world coordinates are cleared.  The origin of
 the new page is in the lower-left corner.  _format_ is the
 file format to use for output, one of:
 
-\begin{itemize}
-\item
-\texttt{eps} for Encapsulated PostScript output,
-with shapes and labels defined geometrically.
-\item
-\texttt{ps}, \texttt{postscript} or \texttt{application/postscript}
-for PostScript output,
-with shapes and labels defined geometrically.
-\item
-\texttt{pdf} or \texttt{application/pdf} for Portable Document
-Format output.
-\item
-\texttt{screen} to display output in a window on the screen.
-\item
-\texttt{bmp} or \texttt{image/bmp} for BMP image output.
-\item
-\texttt{jpeg} or \texttt{image/jpeg} for JPEG image output.
-\item
-\texttt{png} or \texttt{image/png} for PNG image output.
-\item
-\texttt{ppm} or \texttt{image/x-portable-pixmap} for Netpbm PPM image output.
-\item
-\texttt{epsimage} for Encapsulated PostScript image output.
-Output contains
-a single image in which all shapes and labels have been drawn.
-\item
-\texttt{svg} or \texttt{image/svg+xml} for Scalable Vector Graphics
-(SVG) output.
-\end{itemize}
+* \texttt{eps} for Encapsulated PostScript output,
+  with shapes and labels defined geometrically.
+* \texttt{ps}, \texttt{postscript} or \texttt{application/postscript}
+  for PostScript output,
+  with shapes and labels defined geometrically.
+* \texttt{pdf} or \texttt{application/pdf} for Portable Document
+  Format output.
+* \texttt{screen} to display output in a window on the screen.
+* \texttt{bmp} or \texttt{image/bmp} for BMP image output.
+* \texttt{jpeg} or \texttt{image/jpeg} for JPEG image output.
+* \texttt{png} or \texttt{image/png} for PNG image output.
+* \texttt{ppm} or \texttt{image/x-portable-pixmap} for Netpbm PPM image output.
+* \texttt{epsimage} for Encapsulated PostScript image output.
+  Output contains
+  a single image in which all shapes and labels have been drawn.
+* \texttt{svg} or \texttt{image/svg+xml} for Scalable Vector Graphics
+  (SVG) output.
 
 _paper_ is a paper size name for the page.
 Alternatively, _width_ and _height_ are the dimensions of the page
