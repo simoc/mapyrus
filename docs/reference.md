@@ -21,7 +21,7 @@ The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
 \vspace{10pt}
-\texttt{java -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ \dots}
+\texttt{java -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...}
 \vspace{10pt}
 
 _install-path_ is the directory in which
@@ -38,14 +38,14 @@ to be used in combination with Mapyrus are included in the
 \texttt{-classpath} option.
 
 \begin{alltt}
-\texttt{java -D_variable_=_value_ \dots\ -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ org.mapyrus.Mapyrus _filename_}
+\texttt{java -D_variable_=_value_ ... -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ org.mapyrus.Mapyrus _filename_}
 \end{alltt}
 
 Mapyrus runs as an HTTP Server when started with the
 \texttt{-s} option.
 
 \begin{alltt}
-\texttt{java -classpath _install-dir_/mapyrus.jar:_jarfile_ org.mapyrus.Mapyrus -s _port_ _filename_ \dots}
+\texttt{java -classpath _install-dir_/mapyrus.jar:_jarfile_ org.mapyrus.Mapyrus -s _port_ _filename_ ...}
 \end{alltt}
 
 \label{morememory}
@@ -55,7 +55,7 @@ to make more memory available when running Mapyrus.
 To increase available memory to 256Mb, use the following command:
 
 \begin{alltt}
-\texttt{java -Xmx256m -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ \dots}
+\texttt{java -Xmx256m -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...}
 \end{alltt}
 
 ### Startup Configuration
@@ -78,7 +78,7 @@ Each command begins on a separate line or after a semi-colon (\texttt{;}).
 Any part of a line following a hash (\texttt{\#}) or
 a pair of slashes (\texttt{//}) that is not part of
 a literal string is interpreted as a comment and is ignored.
-C programming \texttt{/*} \ldots \texttt{*/} style
+C programming \texttt{/*} ... \texttt{*/} style
 comments are also ignored.
 Leading and
 trailing spaces or tabs on a line are ignored too.  A backslash
@@ -137,7 +137,7 @@ pattern _p_ containing asterisk (\texttt{*}) characters.
 \texttt{floor(_n_)} | Returns the largest integer value that is not larger than _n_.
 \texttt{format(_str_, _n_)} | Returns the number _n_ formatted using format string _str_.  Format string is given using hash characters and zeroes for digits and an optional decimal point.  For example, \texttt{00000} for a five digit number with leading zeroes, or \texttt{\#\#.\#\#\#} for a number rounded to three decimal places.
 \texttt{geojson(_g_)} \texttt{geojson(_g_, _p_)} \texttt{geojson(_g_, _p_, _id_)} | Returns a feature containing geometry _g_ in GeoJSON format.  Additional key and value properties and a feature identifier are included, if array _p_ and identifier _id_ are given.
-\texttt{interpolate(_str_, _n_)} | Returns value calculated from _n_ using linear interpolation.  _str_ contains list of numbers (given in increasing numeric order) and corresponding values: $n_{1}$ $v_{1}$ $n_{2}$ $v_{2}$ \ldots.  Result is found by finding range $n_{i}$ to $n_{i+1}$ containing \texttt{n} and using linear interpolation to calculate a value between $v_{i}$ and $v_{i+1}$.  Each value $v_{i}$ is either a number, named color, hex digits color or CMYK color in parentheses.
+\texttt{interpolate(_str_, _n_)} | Returns value calculated from _n_ using linear interpolation.  _str_ contains list of numbers (given in increasing numeric order) and corresponding values: $n_{1}$ $v_{1}$ $n_{2}$ $v_{2}$ ...  Result is found by finding range $n_{i}$ to $n_{i+1}$ containing \texttt{n} and using linear interpolation to calculate a value between $v_{i}$ and $v_{i+1}$.  Each value $v_{i}$ is either a number, named color, hex digits color or CMYK color in parentheses.
 \texttt{intersection(_g1_, _g2_)} | Returns a geometry containing the intersection of geometry _g1_ and geometry _g2_.  This function requires the _JTS  Topology Suite_.
 \texttt{length(_v_)} | If _v_ is an array, then the number of elements in the array is returned.  Otherwise the string length of _v_ is returned.
 \texttt{log10(_n_)} | Returns the base 10 logarithm of _n_.
@@ -224,9 +224,9 @@ Compound tests are built using the \texttt{elif} keyword:
 
 \begin{alltt}
 if _condition_ then
-  _commands_ \dots
+  _commands_ ...
 elif _condition_ then
-  _commands_ \dots
+  _commands_ ...
 endif
 \end{alltt}
 
@@ -236,7 +236,7 @@ times:
 
 \begin{alltt}
 repeat _count_ do
-  _commands_ \dots
+  _commands_ ...
 done
 
 repeat _count_ do _command_; _command_; done
@@ -248,13 +248,13 @@ as _condition_ continues to evaluate to a non-zero value:
 
 \begin{alltt}
 while _condition_ do
-  _commands_ \dots
+  _commands_ ...
 done
 
 while _condition_ do _command_; _command_; done
 \end{alltt}
 
-The \texttt{for} \dots \texttt{in} keywords define a loop in which
+The \texttt{for} ... \texttt{in} keywords define a loop in which
 each element of _array_ is assigned to variable _var_
 and _commands_ are executed.
 Elements in _array_ are accessed in numerical index order if
@@ -262,7 +262,7 @@ indexes are numeric, otherwise in alphabetical index order:
 
 \begin{alltt}
 for _var_ in _array_ do
-  _commands_ \dots
+  _commands_ ...
 done
 
 for _var_ in _array_ do _command_; _command_; done
@@ -272,12 +272,12 @@ Functions are used to repeat commonly used calculations and to
 return a value:
 
 \begin{alltt}
-function _name_ [_arg1_, \dots]
-  _commands_ \dots
+function _name_ [_arg1_, ...]
+  _commands_ ...
   \texttt{return} _arg_
 end
 
-function _name_ [_arg1_, \dots]; _command_; _command_; \texttt{return} _arg_; end
+function _name_ [_arg1_, ...]; _command_; _command_; \texttt{return} _arg_; end
 \end{alltt}
 
 Procedures group frequently used commands together, save
@@ -285,11 +285,11 @@ graphics state when they begin and restore it when they end,
 isolating the calling procedure from any changes:
 
 \begin{alltt}
-begin _name_ [_arg1_, \dots]
-  _commands_ \dots
+begin _name_ [_arg1_, ...]
+  _commands_ ...
 end
 
-begin _name_ [_arg1_, \dots]; _command_; _command_; end
+begin _name_ [_arg1_, ...]; _command_; _command_; end
 \end{alltt}
 
 A procedure is defined to take a fixed number of arguments.
@@ -881,7 +881,7 @@ coordinate values in \texttt{worlds} command improves performance. \\
 Reads from delimited text file or URL _name_, with one
 record per line.  Fields in fetched record
 are assigned to variables
-\texttt{\$1}, \texttt{\$2}, \texttt{\$3}, \dots
+\texttt{\$1}, \texttt{\$2}, \texttt{\$3}, ...
 and the whole record is assigned to variable
 \texttt{\$0}.
 If _name_ is \texttt{-} then standard input is read.
@@ -987,7 +987,7 @@ enables commands to be built and executed while Mapyrus runs.
 ### eventscript
 
 \begin{alltt}
-eventscript _tags_ \ldots
+eventscript _tags_ ...
 \end{alltt}
 
 This command is used in combination with the \texttt{imagemap}
@@ -1179,7 +1179,7 @@ Extra | Description
 ### gradientfill
 
 \begin{alltt}
-gradientfill _color1_, _color2_, _color3_, _color4_ [, _color5_ \ldots]
+gradientfill _color1_, _color2_, _color3_, _color4_ [, _color5_ ...]
 \end{alltt}
 
 Fills the current path with a gradient fill pattern.
@@ -1397,7 +1397,7 @@ current \texttt{color}, \texttt{font} and \texttt{justify} settings.
 ### let
 
 \begin{alltt}
-let _var_ = _expression_, \dots
+let _var_ = _expression_, ...
 \end{alltt}
 
 Assigns result of evaluating _expression_ to a variable with name
@@ -1816,7 +1816,7 @@ default value of screen resolution.
 \vspace{10pt}
 \texttt{scriptfile=_filename_}
 
-Name of file containing an XML \texttt{<script> \ldots </script>}
+Name of file containing an XML \texttt{<script> ... </script>}
 element to add to SVG file. \\
 
 \hline
@@ -2124,7 +2124,7 @@ scaled by this factor.
 ### selectpath
 
 \begin{alltt}
-selectpath _offset_, _length_ [, _offset_, _length_  \dots ]
+selectpath _offset_, _length_ [, _offset_, _length_  ... ]
 \end{alltt}
 
 Selects one or more parts of the current path.
@@ -2297,7 +2297,7 @@ be overridden and for graphics to be grouped together as layers.
 ### table
 
 \begin{alltt}
-table _extras_, _column1_, _column2_ \dots
+table _extras_, _column1_, _column2_ ...
 \end{alltt}
 
 Draws a table at each point in the path set with the \texttt{move} command,
