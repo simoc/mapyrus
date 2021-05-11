@@ -1965,7 +1965,7 @@ logspiral _xCenter_, _yCenter_, _a_, _b_, _revolutions_, _startAngle_
 Adds a logarithmic spiral to the current path, with center
 point (_xCenter_, _yCenter_).  The values _a_
 and _b_ are used in the polar coordinates formula
-\begin{math}r = ae^{b\theta}\end{math}
+r = a * e ^ (b * &#x03B8;)
 to generate the spiral points.
 
 _revolutions_ defines the number of loops of the spiral.
