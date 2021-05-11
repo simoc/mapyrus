@@ -305,7 +305,7 @@ public class BlendComposite implements Composite
 						if (alpha != 255)
 						{
 							resultPixel[i] = dstPixel[i] +
-								(int)((resultPixel[i] - dstPixel[i]) * alpha / 256);
+								((resultPixel[i] - dstPixel[i]) * alpha / 256);
 						}
 						if (resultPixel[i] > 255)
 							resultPixel[i] = 255;

@@ -114,7 +114,7 @@ public class ConnectionPool
 			/*
 			 * Reuse an existing connection.
 			 */
-			retval = ((TimeStampedConnection)connections.removeFirst()).getConnection();
+			retval = connections.removeFirst().getConnection();
 		}
 		return(retval);
 	}

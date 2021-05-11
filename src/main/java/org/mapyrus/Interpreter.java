@@ -509,7 +509,7 @@ public class Interpreter implements Cloneable
 			LegendEntry entry = legendList.pop();
 			String blockName = entry.getBlockName();
 
-			Statement block = (Statement)m_statementBlocks.get(blockName);
+			Statement block = m_statementBlocks.get(blockName);
 			if (block == null)
 			{
 				throw new MapyrusException(st.getFilenameAndLineNumber() +
@@ -1876,7 +1876,7 @@ public class Interpreter implements Cloneable
 					if (type == StatementType.TABLE)
 						context.drawTable(extras, columns);
 					else
-						context.drawTree(extras, (Argument)columns.get(0));
+						context.drawTree(extras, columns.get(0));
 				}
 				else
 				{
@@ -2185,7 +2185,7 @@ public class Interpreter implements Cloneable
 							fieldName = fieldNames[i];
 						else
 							fieldName = DefaultFieldNames.get(i);
-						context.defineVariable(fieldName, (Argument)(row.get(i)));
+						context.defineVariable(fieldName, row.get(i));
 				}
 				break;
 
@@ -2526,7 +2526,7 @@ public class Interpreter implements Cloneable
 
 			for (int i = 0; i < a.length; i++)
 			{
-				a[i] = (Expression)expressions.get(i);
+				a[i] = expressions.get(i);
 			}
 			retval = new Statement(keyword, a);
 
@@ -3103,7 +3103,7 @@ public class Interpreter implements Cloneable
 					 * Does keyword match a control-flow keyword?
 				 	 * like "then", or "else"?
 					 */
-					retval = (ParsedStatement)m_keywordLookup.get(lower);
+					retval = m_keywordLookup.get(lower);
 					if (retval == null)
 					{
 						/*
@@ -3301,7 +3301,7 @@ public class Interpreter implements Cloneable
 				 */	
 				for (int i = 0; i < v.size(); i++)
 				{
-					statement = (Statement)v.get(i);
+					statement = v.get(i);
 					returnValue = executeStatement(statement);
 
 					/*
@@ -3371,7 +3371,7 @@ public class Interpreter implements Cloneable
 				 */
 				for (int i = 0; i < v.size(); i++)
 				{
-					Statement st = (Statement)v.get(i);
+					Statement st = v.get(i);
 					returnValue = executeStatement(st);
 					
 					/*
@@ -3446,7 +3446,7 @@ public class Interpreter implements Cloneable
 					 */	
 					for (int j = 0; j < v.size(); j++)
 					{
-						Statement st = (Statement)v.get(j);
+						Statement st = v.get(j);
 						returnValue = executeStatement(st);
 						
 						/*
@@ -3464,7 +3464,7 @@ public class Interpreter implements Cloneable
 			 * Find the statements for the procedure block we are calling.
 			 */
 			String blockName = statement.getBlockName();
-			Statement block = (Statement)m_statementBlocks.get(blockName);
+			Statement block = m_statementBlocks.get(blockName);
 			if (block == null)
 			{
 				throw new MapyrusException(statement.getFilenameAndLineNumber() +
@@ -3524,7 +3524,7 @@ public class Interpreter implements Cloneable
 					m_context.setTranslation(pt.x, pt.y);
 					m_context.clearPath();
 
-					double rotation = ((Double)rotations.get(i)).doubleValue();
+					double rotation = rotations.get(i).doubleValue();
 					m_context.setRotation(rotation);
 					makeCall(block, formalParameters, args);
 					m_context.restoreState();
@@ -3619,6 +3619,6 @@ public class Interpreter implements Cloneable
 		}
 		retval.m_stdinStream = null;
 		retval.m_stdoutStream = null;
-		return((Object)retval);
+		return(retval);
 	}
 }

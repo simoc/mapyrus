@@ -227,7 +227,7 @@ public class PDFObject
 				sb.append("<<\r\n");
 			for (String key : m_dictionary.keySet())
 			{
-				PDFObject value = (PDFObject)m_dictionary.get(key);
+				PDFObject value = m_dictionary.get(key);
 				if (!(key.equals("/Length") || key.equals("/Filter")))
 				{
 					sb.append(key);
@@ -254,7 +254,7 @@ public class PDFObject
 			 * Add reference to object and then add the referenced object.
 			 */
 			sb.append(objectNumber + retval.size()).append(" 0 R\r\n");
-			PDFObject referencedObject = (PDFObject)pdfObjects.get(Integer.valueOf(m_reference));
+			PDFObject referencedObject = pdfObjects.get(Integer.valueOf(m_reference));
 			ArrayList<StringBuffer> referencedObjects = referencedObject.toPDFString(objectNumber + retval.size(),
 				true, true, pdfObjects, pdfFile, filename);
 			retval.addAll(referencedObjects);
@@ -309,14 +309,14 @@ public class PDFObject
 	public byte[] getStream(RandomAccessFile pdfFile, String filename,
 		HashMap<Integer, PDFObject> pdfObjects) throws IOException, MapyrusException
 	{
-		PDFObject value = (PDFObject)m_dictionary.get("/Length");
+		PDFObject value = m_dictionary.get("/Length");
 		if (value.isReference())
-			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.m_reference));
+			value = pdfObjects.get(Integer.valueOf(value.m_reference));
 		int streamLength = Integer.parseInt(value.m_value);
 
-		PDFObject filter = (PDFObject)m_dictionary.get("/Filter");
+		PDFObject filter = m_dictionary.get("/Filter");
 		if (value.isReference())
-			value = (PDFObject)pdfObjects.get(Integer.valueOf(value.m_reference));
+			value = pdfObjects.get(Integer.valueOf(value.m_reference));
 
 		byte []buf = new byte[streamLength];
 		pdfFile.seek(m_streamOffset);
@@ -340,7 +340,7 @@ public class PDFObject
 				{
 					filter = filterArray[i];
 					if (filter.isReference())
-						filter = (PDFObject)pdfObjects.get(Integer.valueOf(filter.getReference()));
+						filter = pdfObjects.get(Integer.valueOf(filter.getReference()));
 					filterNames[i] = filter.getValue();
 				}
 			}

@@ -102,11 +102,15 @@ public class ASCII85Writer
 		 * Pack 4 bytes together into an integer value.  Use a long
 		 * to avoid problems with sign bit of integer.
 		 */
-		long l;
-		l = ((long)m_unencodedBytes[0] << 24);
-		l |= ((long)m_unencodedBytes[1] << 16);
-		l |= ((long)m_unencodedBytes[2] << 8);
-		l |= ((long)m_unencodedBytes[3]);
+		long l0 = m_unencodedBytes[0];
+		long l1 = m_unencodedBytes[1];
+		long l2 = m_unencodedBytes[2];
+		long l3 = m_unencodedBytes[3];
+
+		long l = (l0 << 24);
+		l |= (l1 << 16);
+		l |= (l2 << 8);
+		l |= l3;
 
 		if ((!isFinalSet) && l == 0)
 		{

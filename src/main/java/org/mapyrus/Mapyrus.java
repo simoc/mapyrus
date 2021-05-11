@@ -386,7 +386,7 @@ public class Mapyrus
 				Iterator<HTTPRequest> iterator = activeThreads.iterator();
 				while (iterator.hasNext())
 				{
-					HTTPRequest active = (HTTPRequest)(iterator.next());
+					HTTPRequest active = iterator.next();
 					if (!active.isAlive())
 					{
 						/*

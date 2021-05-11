@@ -152,11 +152,11 @@ public class PostScriptFont
 			m_fileContents.append(hexEncodedLength);
 			m_fileContents.append(Constants.LINE_SEPARATOR);
 			m_fileContents.append("/Length1 ");
-			m_fileContents.append(((byte [])segments.get(0)).length);
+			m_fileContents.append(segments.get(0).length);
 			m_fileContents.append(" /Length2 ");
-			m_fileContents.append(((byte [])segments.get(1)).length);
+			m_fileContents.append(segments.get(1).length);
 			m_fileContents.append(" /Length3 ");
-			m_fileContents.append(((byte [])segments.get(2)).length);
+			m_fileContents.append(segments.get(2).length);
 			m_fileContents.append(" /Filter /ASCIIHexDecode >>");
 			m_fileContents.append(Constants.LINE_SEPARATOR);
 			m_fileContents.append("stream");
@@ -169,7 +169,7 @@ public class PostScriptFont
 			int nBytesAdded = 0;
 			for (int i = 0; i < segments.size(); i++)
 			{
-				byte []buf = (byte [])segments.get(i);
+				byte []buf = segments.get(i);
 				for (int j = 0; j < buf.length; j++)
 				{
 					if (i == 0 && (buf[j] == '\r' || buf[j] == '\n' || buf[j] == '\t' || buf[j] >= 32))

@@ -111,7 +111,7 @@ class Preprocessor
 	{
 		FileOrURL f;
 
-		FileOrURL includingFile = (FileOrURL)m_fileStack.getLast();
+		FileOrURL includingFile = m_fileStack.getLast();
 
 		if (includingFile.isURL())
 			f = new FileOrURL(filename, includingFile);
@@ -277,7 +277,7 @@ class Preprocessor
 		 * Need to read a new line.
 		 */
 		m_currentLineIndex = 0;
-		FileOrURL f = (FileOrURL)m_fileStack.getLast();
+		FileOrURL f = m_fileStack.getLast();
 		reader = f.getReader();
 		String s = reader.readLine();
 		if (s == null)
@@ -437,7 +437,7 @@ class Preprocessor
 
 		if (m_fileStack.size() > 0)
 		{
-			retval = (FileOrURL)m_fileStack.getLast();
+			retval = m_fileStack.getLast();
 		}
 		else
 		{
@@ -486,7 +486,7 @@ class Preprocessor
 	{
 		while (!m_fileStack.isEmpty())
 		{
-			FileOrURL f = (FileOrURL)m_fileStack.removeLast();
+			FileOrURL f = m_fileStack.removeLast();
 			Reader reader = f.getReader();
 			try
 			{

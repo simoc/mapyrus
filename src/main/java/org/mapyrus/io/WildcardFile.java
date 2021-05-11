@@ -152,7 +152,7 @@ public class WildcardFile
 
 			for (int j = index; j < nFilenameParts && matched; j++)
 			{
-				String part = (String)m_patternParts.get(j);
+				String part = m_patternParts.get(j);
 				if (part.equals("*"))
 				{
 				}
@@ -188,7 +188,7 @@ public class WildcardFile
 						 * If next part of pattern is a "/" then end of filename must
 						 * match current string in pattern.
 						 */
-						String nextPart = (String)m_patternParts.get(j + 1);
+						String nextPart = m_patternParts.get(j + 1);
 						if (nextPart.equals(File.separator) &&
 							(!filename.endsWith(part)))
 						{
@@ -245,7 +245,7 @@ public class WildcardFile
 
 			if (m_patternParts.size() == 1)
 			{
-				String first = (String)m_patternParts.get(0);
+				String first = m_patternParts.get(0);
 				if (!first.equals("*"))
 					isSingleFile = true;
 			}
@@ -258,7 +258,7 @@ public class WildcardFile
 				 */
 				retval = new LinkedList<String>();
 	
-				File f = new File(m_baseDirectory + File.separator + (String)m_patternParts.get(0));
+				File f = new File(m_baseDirectory + File.separator + m_patternParts.get(0));
 				if (f.exists() && f.isFile())
 					retval.add(f.toString());
 			}

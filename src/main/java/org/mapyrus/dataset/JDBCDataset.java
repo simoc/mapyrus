@@ -185,7 +185,7 @@ public class JDBCDataset implements GeographicDataset
 				 * Check that field name is acceptable for defining as variable name.
 				 */
 				char c = m_fieldNames[i].charAt(0);
-				boolean isValidName = (Character.isLetter((char)c) || c == '$');
+				boolean isValidName = (Character.isLetter(c) || c == '$');
 
 				if (isValidName)
 				{
@@ -194,7 +194,7 @@ public class JDBCDataset implements GeographicDataset
 					{
 						c = m_fieldNames[i].charAt(j);
 						isValidName = (c == '.' || c == '_' ||
-							Character.isLetterOrDigit((char)c));
+							Character.isLetterOrDigit(c));
 						j++;
 					}
 				}

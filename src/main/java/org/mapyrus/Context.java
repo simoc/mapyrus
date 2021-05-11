@@ -1917,7 +1917,7 @@ public class Context
 		 * Do not open it for display if it is not visible
 		 * on the page.
 		 */
-		imageBounds = (GeoImageBoundingBox)m_imageBoundsCache.get(filename);
+		imageBounds = m_imageBoundsCache.get(filename);
 		if (imageBounds != null &&
 			(!imageBounds.getBounds().intersects(worldExtents)))
 		{
@@ -2762,10 +2762,10 @@ public class Context
 					 * Draw box around each entry in the table.
 					 */
 					GeometricPath box = new GeometricPath();
-					float x1 = (float)(ptCopy.x);
+					float x1 = ptCopy.x;
 					float y1 = (float)(ptCopy.y - yPadding - rowHeights[k] - yPadding);
 					float x2 = (float)(x1 + xPadding + columnWidths[j] + xPadding);
-					float y2 = (float)(ptCopy.y); 
+					float y2 = ptCopy.y;
 					box.moveTo(x1, y1, 0);
 					box.lineTo(x1, y2);
 					box.lineTo(x2, y2);
@@ -2776,7 +2776,7 @@ public class Context
 					{
 						m_outputFormat.saveState();
 						int slotIndex = k * columns.size() + j;
-						Color c = (Color)bgColors.get(slotIndex % bgColors.size());
+						Color c = bgColors.get(slotIndex % bgColors.size());
 						m_outputFormat.setColorAttribute(c);
 						m_outputFormat.fill(box.getShape(), null);
 						m_outputFormat.restoreState();
@@ -2879,8 +2879,8 @@ public class Context
 				ListIterator<String> lastIt = lastEntry.listIterator();
 				while (it.hasNext() && lastIt.hasNext())
 				{
-					String token = (String)it.next();
-					String lastToken = (String)lastIt.next();
+					String token = it.next();
+					String lastToken = lastIt.next();
 					if (token.equals(lastToken))
 						indent++;
 					else
@@ -2893,7 +2893,7 @@ public class Context
 				 */
 				for (int k = indent; k < entry.size(); k++)
 				{
-					String s = (String)entry.get(k);
+					String s = entry.get(k);
 
 					GeometricPath box = new GeometricPath();
 					float x1 = (float)(ptCopy.x + dim.getWidth() * k - dim.getWidth() / 2);
@@ -2905,7 +2905,7 @@ public class Context
 						/*
 						 * Draw line down from last entry at this level of indentation.
 						 */
-						y1 = ((Float)(lastY2.get(k))).floatValue();
+						y1 = lastY2.get(k).floatValue();
 						int l = lastY2.size() - k;
 						while (l-- > 0)
 							lastY2.removeLast();
@@ -2920,7 +2920,7 @@ public class Context
 					labelPt.x = (float)(ptCopy.x + dim.getWidth() * k);
 					if (k > 0)
 						labelPt.x += dim.getWidth() / 5; 
-					labelPt.y = (float)ptCopy.y;
+					labelPt.y = ptCopy.y;
 
 					ArrayList<Point2D> ptList = new ArrayList<Point2D>();
 					ptList.add(labelPt);
@@ -3200,7 +3200,7 @@ public class Context
 		if (m_vars == null)
 			retval = null;
 		else		
-			retval = (Argument)m_vars.get(varName);
+			retval = m_vars.get(varName);
 			
 		return(retval);
 	}
@@ -3269,7 +3269,7 @@ public class Context
 		/*
 		 * Create new entry in a hash map.
 		 */
-		Argument arg = (Argument)m_vars.get(hashMapName);
+		Argument arg = m_vars.get(hashMapName);
 		if (arg == null || arg.getType() != Argument.HASHMAP)
 		{
 			/*
