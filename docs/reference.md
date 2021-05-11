@@ -156,497 +156,71 @@ and method name separated by a dot.  Only Java methods
 declared as \texttt{public} and \texttt{static} are available
 as functions.
 
-\begin{table}[htb]
-\begin{tabular}{|l|p{7cm}|}
-\hline
-Operator & Description \\
-\hline
-\hline
-
-\texttt{(}, \texttt{)} & parentheses \\
-
-\hline
-
-\texttt{++}, \texttt{--} &
-increments or decrements variable \\
-
-\hline
-
-\texttt{*}, \texttt{/}, \texttt{\%}, \texttt{x} &
-numeric multiplication, numeric division, modulo (works
-with non-integer values too), string repetition \\
-
-\hline
-
-\texttt{+}, \texttt{-}, \texttt{.} & numeric addition,
-numeric subtraction, string concatenation \\
-
-\hline
-
-\texttt{<=}, \texttt{<}, \texttt{==},
-\texttt{!=}, \texttt{>}, \texttt{>=},
-\texttt{lt}, \texttt{le}, \texttt{eq},
-\texttt{ne}, \texttt{gt}, \texttt{ge} &
-numeric comparisons and string comparisons \\
-
-\hline
-
-\texttt{?:} & ternary conditional operator \\
-
-\hline
-
-\texttt{and},
-\texttt{or},
-\texttt{not} &
-Logical and, or, not \\
-
-\hline
-
-\end{tabular}
-\caption{Operators}
-\label{operators}
-\end{table}
-
-
-\begin{longtable}{|p{5cm}|p{7cm}|}
-\hline
-\label{functions}
-Function Name & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Functions} \\
-\endfoot
-
-\hline
-Function Name & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{abs(_n_)} &
-Returns the absolute value of _n_. \\
-
-\hline
-
-\texttt{axis(_min_, _max_, _intervals_)} &
-Generates a set of numbers that are suitable for an axis of a graph
-containing values in the range _min_ to _max_.
-_intervals_ sets the maximum number of values for the axis.
-An array is returned with each value for the axis. \\
-
-\hline
-
-\texttt{buffer(_g_, _dist_, _cap_)} &
-Returns a geometry containing a buffer calculated at
-a distance _dist_ around the perimeter of geometry _g_.
-The value of _cap_ defines
-the method of closing buffers at line endpoints, either
-\texttt{butt}, \texttt{round} or \texttt{square}.
-This function requires the _JTS Topology Suite_. \\
-
-\hline
-
-\texttt{ceil(_n_)} &
-Returns the smallest integer value that is not less than _n_. \\
-
-\hline
-
-\texttt{chr(_n_)} &
-Returns a string containing the single Unicode character code _n_. \\
-
-\hline
-
-\texttt{contains(_g1_, _x_, _y_)}
-\texttt{contains(_g1_, _g2_)} &
-If point (_x_, _y_) or geometry _g2_
-is contained inside _g1_ then
-1 is returned.  Otherwise 0 is returned.
-Geometries may be the same type or different types.
-This function requires the _JTS Topology Suite_. \\
-
-\hline
-
-\texttt{convexhull(_g_)} &
-Returns a convex hull geometry that surrounds geometry _g_. \\
-
-\hline
-
-\texttt{cos(_n_)} &
-Returns the cosine of angle _n_, given in degrees. \\
-
-\hline
-
-\texttt{crosses(_g1_, _g2_)} &
-If geometry _g2_ crosses _g1_ then
-1 is returned.  Otherwise 0 is returned.
-Geometries must be of different types.  To compare
-geometries of the same type, use \texttt{overlaps}.
-This function requires the _JTS  Topology Suite_. \\
-
-\hline
-
-\texttt{difference(_g1_, _g2_)} &
-Returns a geometry containing the difference between
-geometry _g1_ and geometry _g2_.  That is, parts
-of geometry _g1_ that are not part of geometry _g2_.
-This function requires the _JTS Topology Suite_. \\
-
-\hline
-
-\texttt{dir(_p_)} &
-Returns an array of all filenames matching the wildcard
-pattern _p_ containing asterisk (\texttt{*}) characters. \\
-
-\hline
-
-\texttt{floor(_n_)} &
-Returns the largest integer value that is not larger than _n_. \\
-
-\hline
-
-\texttt{format(_str_, _n_)} &
-Returns the number _n_ formatted using format string _str_.
-Format string is given using hash characters and zeroes for digits
-and an optional decimal point.
-For example,
-\texttt{00000} for a five digit number with leading zeroes,
-or
-\texttt{\#\#.\#\#\#} for a number rounded to three decimal places.  \\
-
-\hline
-
-\texttt{geojson(_g_)}
-\texttt{geojson(_g_, _p_)}
-\texttt{geojson(_g_, _p_, _id_)} &
-Returns a feature containing geometry _g_ in GeoJSON format.
-Additional key and value properties and a feature identifier are included,
-if array _p_ and identifier _id_ are given. \\
-
-\hline
-
-\texttt{interpolate(_str_, _n_)} &
-Returns value calculated from _n_ using linear interpolation.
-_str_ contains list of numbers (given in increasing numeric
-order) and corresponding values:
-$n_{1}$ $v_{1}$ $n_{2}$ $v_{2}$ \ldots.
-Result is found by finding range
-$n_{i}$
-to
-$n_{i+1}$
-containing \texttt{n} and
-using linear interpolation to calculate a value between
-$v_{i}$
-and
-$v_{i+1}$.
-Each value $v_{i}$ is either a number, named color, hex digits color
-or CMYK color in parentheses. \\
-
-\hline
-
-\texttt{intersection(_g1_, _g2_)} &
-Returns a geometry containing the intersection
-of geometry _g1_ and geometry _g2_.
-This function requires the _JTS  Topology Suite_. \\
-
-\hline
-
-\texttt{length(_v_)} &
-If _v_ is an array, then the number of elements in the
-array is returned.  Otherwise the string length of _v_ is returned. \\
-
-\hline
-
-\texttt{log10(_n_)} &
-Returns the base 10 logarithm of _n_. \\
-
-\hline
-
-\texttt{lower(_str_)} &
-Returns _str_ converted to lower case. \\
-
-\hline
-
-\texttt{lpad(_str_, _len_, _pad_)}
-\texttt{lpad(_str_, _len_)} &
-Returns string _str_ left padded to length _len_
-using characters from string _pad_.
-Spaces are used for padding if _pad_ is not given.
-String is truncated on the left if longer than length _len_. \\
-
-\hline
-
-\texttt{match(_str_, _regex_)} &
-Returns the index in the string _str_, where the regular expression
-_regex_ is first matched.  The index of the first character is 1.
-If the regular expression does not match _str_, then 0 is returned.
-The _Java API documentation_
-\footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html}}
-describes the syntax of regular expressions. \\
-
-\hline
-
-\texttt{max(_a_, _b_)} &
-Returns the larger of values _a_ and _b_. \\
-
-\hline
-
-\texttt{min(_a_, _b_)} &
-Returns the smaller of values _a_ and _b_. \\
-
-\hline
-
-\texttt{overlaps(_g1_, _g2_)} &
-If geometry _g1_ and geometry _g2_
-are the same type
-and overlap
-then 1 is returned.  Otherwise 0 is returned.
-This function requires the _JTS Topology Suite_. \\
-
-\hline
-
-\texttt{parsegeo(_n_)} &
-Parses string _n_ containing a latitude or longitude position
-into a decimal value and returns it.  Strings of many forms are
-accepted, including
-\texttt{42.196597N}, \texttt{42\textdegree{} 11\'{} 47.75\"},
-\texttt{42d 11m 47.75s},
-\texttt{N 42d 11m 47.75s} and
-\texttt{42deg 11min 47.75sec}. \\
-
-\hline
-
-\texttt{pow(_a_, _b_)} &
-Returns _a_ to the power _b_. \\
-
-\hline
-
-\texttt{protected(_x1_, _y1_, _x2_, _y2_)}
-\texttt{protected(_g_)}
-\texttt{protected()} &
-For points
-(_x1_, _y1_) and (_x2_, _y2_) defining
-any two opposite corners of a rectangle, returns 1 if any part of
-this rectangle has been protected using the \texttt{protect} command.
-For polygon geometry _g_, returns 1 if any part of the polygon
-has been protected.
-When no rectangle or geometry is given then 1 is returned if any
-part of the current path has been protected.
-Otherwise 0 is returned. \\
-
-\hline
-
-\texttt{random(_n_)} &
-Generates a random floating point number between 0 and _n_. \\
-
-\hline
-
-\texttt{readable(_filename_)} &
-Returns 1 if the file _filename_ exists and is readable.
-Otherwise 0 is returned. \\
-
-\hline
-
-\texttt{replace(_str_, _regex_, _replacement_)} &
-Returns the string _str_, with all occurrences of the regular
-expression _regex_ replaced by _replacement_. \\
-
-\hline
-
-\texttt{reproject(_p1_, _p2_, _g_)}
-\texttt{reproject(_p1_, _p2_, _x_, _y_)} &
-Reprojects the geometry _g_ or point (_x_, _y_)
-from projection _p1_ to projection _p2_.
-Projections are names in the PROJ.4 database
-or a list of PROJ.4 projection parameters separated by whitespace.
-This function requires the _Java PROJ.4 library_. \\
-
-\hline
-
-\texttt{roman(_n_)} &
-Returns the number _n_ converted to a Roman numerals string. \\
-
-\hline
-
-\texttt{round(_n_)} &
-Returns _n_ rounded to nearest whole number. \\
-
-\hline
-
-\texttt{rpad(_str_, _len_, _pad_)}
-\texttt{rpad(_str_, _len_)} &
-Returns string _str_ right padded to length _len_
-using characters from string _pad_.
-Spaces are used for padding if _pad_ is not given.
-String is truncated if longer than length _len_. \\
-
-\hline
-
-\texttt{sin(_n_)} &
-Returns the sine of angle _n_, given in degrees. \\
-
-\hline
-
-\texttt{split(_str_, _regex_)}
-\texttt{split(_str_, _regex_, _extras_)}
-\texttt{split(_str_)} &
-Splits the string _str_ into an array of strings, delimited by the
-regular expression _regex_ or whitespace if no regular expression given.
-The array of split strings is returned,
-with the first string having array index 1, the
-second string having index 2, and so on.
-If _extras_ contains \texttt{includedelimiters=true} then
-delimiters are included in the array too. \\
-
-\hline
-
-\texttt{spool(_filename_)}
-\texttt{spool(_filename_, _extras_)} &
-Returns string containing contents of text file _filename_.
-If _filename_ has suffix
-\texttt{.gz} or \texttt{.zip}
-then it is automatically decompressed as it is read.
-If _extras_ contains \texttt{encoding=}_charset_
-then characters in file are interpreted with
-that character set encoding. \\
-
-\hline
-
-\texttt{sqrt(_n_)} &
-Returns square root of _n_. \\
-
-\hline
-
-\texttt{stringascent(_str_)} &
-Returns the ascent of the string _str_
-if it were displayed using the \texttt{label} command.
-The ascent is the distance above the label position of
-the tallest character in the string.
-For strings containing several lines, the total ascent of all
-lines is returned.
-The ascent is returned in world coordinate units if set with a
-\texttt{worlds} command, otherwise in page coordinates. \\
-
-\hline
-
-\texttt{stringdescent(_str_)} &
-Returns the descent of the string _str_
-if it were displayed using the \texttt{label} command.
-The descent is the distance below the label position
-used by characters such as _g_ and _y_
-and is returned as a negative number.
-For strings containing several lines, the descent of the
-first line is returned.
-The descent is returned in world coordinate units if set with a
-\texttt{worlds} command, otherwise in page coordinates. \\
-
-\hline
-
-\texttt{stringheight(_str_)} &
-Returns the height of the string _str_
-if it were displayed using the \texttt{label} command.
-For strings containing several lines, the total height of all
-lines is returned.
-The height is returned in world coordinate units if set with a
-\texttt{worlds} command, otherwise in page coordinates. \\
-
-\hline
-
-\texttt{stringwidth(_str_)} &
-Returns the width of the string _str_
-if it were displayed using the \texttt{label} command.
-For strings containing several lines, the width of the longest
-line is returned.
-The width is returned in world coordinate units if set with a
-\texttt{worlds} command, otherwise in page coordinates. \\
-
-\hline
-
-\texttt{sum(_a_)} &
-Returns the sum of values in array _a_. \\
-
-\hline
-
-\texttt{substr(_str_, _offset_, _n_)}
-\texttt{substr(_str_, _offset_)} &
-Returns a substring of the string _str_, beginning at the
-character with index _offset_ that is _n_ characters long,
-or all characters from index _offset_ if
-_n_ is not given.
-The first character in _str_ has an index of 1. \\
-
-\hline
-
-\texttt{tan(_n_)} &
-Returns the trigonometric tangent of angle _n_, given in degrees. \\
-
-\hline
-
-\texttt{tempname(_suffix_)} &
-Returns a unique temporary filename with given file suffix,
-for use when running as an HTTP server.
-Temporary files returned by this function
-are automatically deleted after 5 minutes. \\
-
-\hline
-
-\texttt{timestamp(_n_)} &
-Returns a time stamp containing the current GMT date and time plus
-_n_ seconds, for use in setting expiry dates when
-running as an HTTP server. \\
-
-\hline
-
-\texttt{topage(_x_, _y_)}
-\texttt{topage(_g_)} &
-Transforms the point (_x_, _y_) or geometry _g_
-from the current world coordinate system to page coordinates. \\
-
-\hline
-
-\texttt{toworlds(_x_, _y_)}
-\texttt{toworlds(_g_)} &
-Transforms the point (_x_, _y_) or geometry _g_
-from page coordinates to the current world coordinate system.
-This is the inverse of the \texttt{topage} function. \\
-
-\hline
-
-\texttt{trim(_str_)} &
-Returns string _str_ with whitespace trimmed from start and end. \\
-
-\hline
-
-\texttt{union(_g1_, _g2_)} &
-Returns a geometry containing the union of 
-of geometry _g1_ and geometry _g2_.
-This function requires the _JTS Topology Suite_. \\
-
-\hline
-
-\texttt{upper(_str_)} &
-Returns _str_ converted to upper case. \\
-
-\hline
-
-\texttt{wordwrap(_str_, _width_)}
-\texttt{wordwrap(_str_, _width_, _extras_)} &
-Returns _str_ broken into several lines for
-use in a \texttt{label} command.
-Each line will not be
-longer than _width_ millimeters wide.
-If _extras_ contains \texttt{hyphenation=}_str_ then
-words containing the hyphenation
-string may also be split onto two lines at that point using a hyphen.
-If _extras_ contains \texttt{adjustspacing=true} then
-additional spaces are added between words so that each line has the
-required width.
-If _extras_ contains \texttt{preservenewlines=true} then
-newlines in _str_ are preserved.  \\
-
-\hline
-\end{longtable}
+Operator | Description
+-------- | -----------
+\texttt{(}, \texttt{)} | parentheses
+\texttt{++}, \texttt{--} | increments or decrements variable
+\texttt{*}, \texttt{/}, \texttt{\%}, \texttt{x} | numeric multiplication, numeric division, modulo (works with non-integer values too), string repetition
+\texttt{+}, \texttt{-}, \texttt{.} | numeric addition, numeric subtraction, string concatenation
+\texttt{<=}, \texttt{<}, \texttt{==}, \texttt{!=}, \texttt{>}, \texttt{>=}, \texttt{lt}, \texttt{le}, \texttt{eq}, \texttt{ne}, \texttt{gt}, \texttt{ge} | numeric comparisons and string comparisons
+\texttt{?:} | ternary conditional operator
+\texttt{and}, \texttt{or}, \texttt{not} | Logical and, or, not
+
+Function Name | Description
+\texttt{abs(_n_)} | Returns the absolute value of _n_.
+\texttt{axis(_min_, _max_, _intervals_)} | Generates a set of numbers that are suitable for an axis of a graph containing values in the range _min_ to _max_.  _intervals_ sets the maximum number of values for the axis.  An array is returned with each value for the axis.
+\texttt{buffer(_g_, _dist_, _cap_)} | Returns a geometry containing a buffer calculated at a distance _dist_ around the perimeter of geometry _g_.  The value of _cap_ defines the method of closing buffers at line endpoints, either \texttt{butt}, \texttt{round} or \texttt{square}.  This function requires the _JTS Topology Suite_.
+\texttt{ceil(_n_)} | Returns the smallest integer value that is not less than _n_.
+\texttt{chr(_n_)} | Returns a string containing the single Unicode character code _n_.
+\texttt{contains(_g1_, _x_, _y_)} \texttt{contains(_g1_, _g2_)} | If point (_x_, _y_) or geometry _g2_ is contained inside _g1_ then 1 is returned.  Otherwise 0 is returned.  Geometries may be the same type or different types.  This function requires the _JTS Topology Suite_.
+\texttt{convexhull(_g_)} | Returns a convex hull geometry that surrounds geometry _g_.
+\texttt{cos(_n_)} | Returns the cosine of angle _n_, given in degrees.
+\texttt{crosses(_g1_, _g2_)} | If geometry _g2_ crosses _g1_ then 1 is returned.  Otherwise 0 is returned.  Geometries must be of different types.  To compare geometries of the same type, use \texttt{overlaps}.  This function requires the _JTS  Topology Suite_.
+\texttt{difference(_g1_, _g2_)} | Returns a geometry containing the difference between geometry _g1_ and geometry _g2_.  That is, parts of geometry _g1_ that are not part of geometry _g2_.  This function requires the _JTS Topology Suite_.
+\texttt{dir(_p_)} | Returns an array of all filenames matching the wildcard
+pattern _p_ containing asterisk (\texttt{*}) characters.
+\texttt{floor(_n_)} | Returns the largest integer value that is not larger than _n_.
+\texttt{format(_str_, _n_)} | Returns the number _n_ formatted using format string _str_.  Format string is given using hash characters and zeroes for digits and an optional decimal point.  For example, \texttt{00000} for a five digit number with leading zeroes, or \texttt{\#\#.\#\#\#} for a number rounded to three decimal places.
+\texttt{geojson(_g_)} \texttt{geojson(_g_, _p_)} \texttt{geojson(_g_, _p_, _id_)} | Returns a feature containing geometry _g_ in GeoJSON format.  Additional key and value properties and a feature identifier are included, if array _p_ and identifier _id_ are given.
+\texttt{interpolate(_str_, _n_)} | Returns value calculated from _n_ using linear interpolation.  _str_ contains list of numbers (given in increasing numeric order) and corresponding values: $n_{1}$ $v_{1}$ $n_{2}$ $v_{2}$ \ldots.  Result is found by finding range $n_{i}$ to $n_{i+1}$ containing \texttt{n} and using linear interpolation to calculate a value between $v_{i}$ and $v_{i+1}$.  Each value $v_{i}$ is either a number, named color, hex digits color or CMYK color in parentheses.
+\texttt{intersection(_g1_, _g2_)} | Returns a geometry containing the intersection of geometry _g1_ and geometry _g2_.  This function requires the _JTS  Topology Suite_.
+\texttt{length(_v_)} | If _v_ is an array, then the number of elements in the array is returned.  Otherwise the string length of _v_ is returned.
+\texttt{log10(_n_)} | Returns the base 10 logarithm of _n_.
+\texttt{lower(_str_)} | Returns _str_ converted to lower case.
+\texttt{lpad(_str_, _len_, _pad_)} \texttt{lpad(_str_, _len_)} | Returns string _str_ left padded to length _len_ using characters from string _pad_.  Spaces are used for padding if _pad_ is not given.  String is truncated on the left if longer than length _len_.
+\texttt{match(_str_, _regex_)} | Returns the index in the string _str_, where the regular expression _regex_ is first matched.  The index of the first character is 1.  If the regular expression does not match _str_, then 0 is returned.  The _Java API documentation_ \footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html}} describes the syntax of regular expressions.
+\texttt{max(_a_, _b_)} | Returns the larger of values _a_ and _b_.
+\texttt{min(_a_, _b_)} | Returns the smaller of values _a_ and _b_.
+\texttt{overlaps(_g1_, _g2_)} | If geometry _g1_ and geometry _g2_ are the same type and overlap then 1 is returned.  Otherwise 0 is returned.  This function requires the _JTS Topology Suite_.
+\texttt{parsegeo(_n_)} | Parses string _n_ containing a latitude or longitude position into a decimal value and returns it.  Strings of many forms are accepted, including \texttt{42.196597N}, \texttt{42\textdegree{} 11\'{} 47.75\"}, \texttt{42d 11m 47.75s}, \texttt{N 42d 11m 47.75s} and \texttt{42deg 11min 47.75sec}.
+\texttt{pow(_a_, _b_)} | Returns _a_ to the power _b_.
+\texttt{protected(_x1_, _y1_, _x2_, _y2_)} \texttt{protected(_g_)} \texttt{protected()} | For points (_x1_, _y1_) and (_x2_, _y2_) defining any two opposite corners of a rectangle, returns 1 if any part of this rectangle has been protected using the \texttt{protect} command.  For polygon geometry _g_, returns 1 if any part of the polygon has been protected.  When no rectangle or geometry is given then 1 is returned if any part of the current path has been protected.  Otherwise 0 is returned.
+\texttt{random(_n_)} | Generates a random floating point number between 0 and _n_.
+\texttt{readable(_filename_)} | Returns 1 if the file _filename_ exists and is readable.  Otherwise 0 is returned.
+\texttt{replace(_str_, _regex_, _replacement_)} | Returns the string _str_, with all occurrences of the regular expression _regex_ replaced by _replacement_.
+\texttt{reproject(_p1_, _p2_, _g_)} \texttt{reproject(_p1_, _p2_, _x_, _y_)} | Reprojects the geometry _g_ or point (_x_, _y_) from projection _p1_ to projection _p2_.  Projections are names in the PROJ.4 database or a list of PROJ.4 projection parameters separated by whitespace.  This function requires the _Java PROJ.4 library_.
+\texttt{roman(_n_)} | Returns the number _n_ converted to a Roman numerals string.
+\texttt{round(_n_)} | Returns _n_ rounded to nearest whole number.
+\texttt{rpad(_str_, _len_, _pad_)} \texttt{rpad(_str_, _len_)} | Returns string _str_ right padded to length _len_ using characters from string _pad_.  Spaces are used for padding if _pad_ is not given.  String is truncated if longer than length _len_.
+\texttt{sin(_n_)} | Returns the sine of angle _n_, given in degrees.
+\texttt{split(_str_, _regex_)} \texttt{split(_str_, _regex_, _extras_)} \texttt{split(_str_)} | Splits the string _str_ into an array of strings, delimited by the regular expression _regex_ or whitespace if no regular expression given.  The array of split strings is returned, with the first string having array index 1, the second string having index 2, and so on.  If _extras_ contains \texttt{includedelimiters=true} then delimiters are included in the array too.
+\texttt{spool(_filename_)} \texttt{spool(_filename_, _extras_)} | Returns string containing contents of text file _filename_.  If _filename_ has suffix \texttt{.gz} or \texttt{.zip} then it is automatically decompressed as it is read.  If _extras_ contains \texttt{encoding=}_charset_ then characters in file are interpreted with that character set encoding.
+\texttt{sqrt(_n_)} | Returns square root of _n_.
+\texttt{stringascent(_str_)} | Returns the ascent of the string _str_ if it were displayed using the \texttt{label} command.  The ascent is the distance above the label position of the tallest character in the string.  For strings containing several lines, the total ascent of all lines is returned.  The ascent is returned in world coordinate units if set with a \texttt{worlds} command, otherwise in page coordinates.
+\texttt{stringdescent(_str_)} | Returns the descent of the string _str_ if it were displayed using the \texttt{label} command.  The descent is the distance below the label position used by characters such as _g_ and _y_ and is returned as a negative number.  For strings containing several lines, the descent of the first line is returned.  The descent is returned in world coordinate units if set with a \texttt{worlds} command, otherwise in page coordinates.
+\texttt{stringheight(_str_)} | Returns the height of the string _str_ if it were displayed using the \texttt{label} command.  For strings containing several lines, the total height of all lines is returned.  The height is returned in world coordinate units if set with a \texttt{worlds} command, otherwise in page coordinates.
+\texttt{stringwidth(_str_)} | Returns the width of the string _str_ if it were displayed using the \texttt{label} command.  For strings containing several lines, the width of the longest line is returned.  The width is returned in world coordinate units if set with a \texttt{worlds} command, otherwise in page coordinates.
+\texttt{sum(_a_)} | Returns the sum of values in array _a_.
+\texttt{substr(_str_, _offset_, _n_)} \texttt{substr(_str_, _offset_)} | Returns a substring of the string _str_, beginning at the character with index _offset_ that is _n_ characters long, or all characters from index _offset_ if _n_ is not given.  The first character in _str_ has an index of 1.
+\texttt{tan(_n_)} | Returns the trigonometric tangent of angle _n_, given in degrees.
+\texttt{tempname(_suffix_)} | Returns a unique temporary filename with given file suffix, for use when running as an HTTP server.  Temporary files returned by this function are automatically deleted after 5 minutes.
+\texttt{timestamp(_n_)} | Returns a time stamp containing the current GMT date and time plus _n_ seconds, for use in setting expiry dates when running as an HTTP server.
+\texttt{topage(_x_, _y_)} \texttt{topage(_g_)} | Transforms the point (_x_, _y_) or geometry _g_ from the current world coordinate system to page coordinates.
+\texttt{toworlds(_x_, _y_)} \texttt{toworlds(_g_)} | Transforms the point (_x_, _y_) or geometry _g_ from page coordinates to the current world coordinate system.  This is the inverse of the \texttt{topage} function.
+\texttt{trim(_str_)} | Returns string _str_ with whitespace trimmed from start and end.
+\texttt{union(_g1_, _g2_)} | Returns a geometry containing the union of of geometry _g1_ and geometry _g2_.  This function requires the _JTS Topology Suite_.
+\texttt{upper(_str_)} | Returns _str_ converted to upper case.
+\texttt{wordwrap(_str_, _width_)} \texttt{wordwrap(_str_, _width_, _extras_)} | Returns _str_ broken into several lines for use in a \texttt{label} command.  Each line will not be longer than _width_ millimeters wide.  If _extras_ contains \texttt{hyphenation=}_str_ then words containing the hyphenation string may also be split onto two lines at that point using a hyphen.  If _extras_ contains \texttt{adjustspacing=true} then additional spaces are added between words so that each line has the required width.  If _extras_ contains \texttt{preservenewlines=true} then newlines in _str_ are preserved.
 
 An argument or expression is assigned to a named variable using the
 \texttt{let} command and an equals sign (\texttt{=}).  A variable name begins
