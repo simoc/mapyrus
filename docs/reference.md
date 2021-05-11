@@ -2192,34 +2192,12 @@ Labels are drawn using the current color and font settings.
 
 _extras_ defines further options for the tree, given as
 _variable=value_ values, separated by whitespace.
-See Table \ref{treeextras}
+See the table below
 for available options.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{treeextras}
-Extra & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Tree Extras} \\
-\endfoot
-
-\hline
-Extra & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{delimiter=_string_} &
-
-Delimiter used to determine indentation of labels.
-By default whitespace is used as the delimiter. \\
-
-\hline
-\end{longtable}
-
+Extra | Description
+----- | -----------
+\texttt{delimiter=_string_} | Delimiter used to determine indentation of labels.  By default whitespace is used as the delimiter.
 
 ### triangle
 
