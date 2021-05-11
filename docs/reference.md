@@ -38,17 +38,14 @@ to be used in combination with Mapyrus are included in the
 \texttt{-classpath} option.
 
 \begin{alltt}
-\texttt{java -D_variable_=_value_ \dots\ \textbackslash
-  -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ \textbackslash
-  org.mapyrus.Mapyrus _filename_}
+\texttt{java -D_variable_=_value_ \dots\ -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ org.mapyrus.Mapyrus _filename_}
 \end{alltt}
 
 Mapyrus runs as an HTTP Server when started with the
 \texttt{-s} option.
 
 \begin{alltt}
-\texttt{java -classpath _install-dir_/mapyrus.jar:_jarfile_ \textbackslash
-  org.mapyrus.Mapyrus -s _port_ _filename_ \dots}
+\texttt{java -classpath _install-dir_/mapyrus.jar:_jarfile_ org.mapyrus.Mapyrus -s _port_ _filename_ \dots}
 \end{alltt}
 
 \label{morememory}
@@ -128,7 +125,7 @@ C programming \texttt{/*} \ldots \texttt{*/} style
 comments are also ignored.
 Leading and
 trailing spaces or tabs on a line are ignored too.  A backslash
-(\texttt{\textbackslash}) character at the end of a line is interpreted as a
+(`\\`) character at the end of a line is interpreted as a
 line continuation and the line and next line are joined into a single line.
 
 A line beginning with the word \texttt{include}, followed by a filename
@@ -140,10 +137,10 @@ or double quotes (\texttt{\"}), a variable name, an array, an
 array element or an expression.
 
 In a string literal,
-the character sequence \texttt{\textbackslash{}_nnn_}
+the character sequence \\_nnn_
 is interpreted as an octal character code (where
 \texttt{_nnn_} is one to three digits) and the character
-sequence \texttt{\textbackslash{}u_nnnn_} is interpreted
+sequence \\u_nnnn_ is interpreted
 as a Unicode character (where _nnnn_ is four hexadecimal
 digits).
 
@@ -1445,7 +1442,7 @@ Draws a label at each point in the path set with the \texttt{move} command,
 using the font, justification and rotation set with the \texttt{font},
 \texttt{justify} and \texttt{rotate} commands.  _string_ values are
 separated by spaces.  If _string_ contains newline characters
-(\texttt{\textbackslash{}n}) then labels are displayed as multiple lines, one
+(`\\n`) then labels are displayed as multiple lines, one
 below the other.
 
 ### legend
