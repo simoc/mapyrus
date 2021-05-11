@@ -1054,39 +1054,13 @@ describe different font formats.
 
 _extras_ defines further options for the font, given as
 _variable=value_ values, separated by whitespace.
-See Table \ref{fontextras}
+See the table below
 for available options.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{fontextras}
-Extra & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Font Extras} \\
-\endfoot
-
-\hline
-Extra & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{outlinewidth=_width_} &
-
-Sets line width to use for drawing outline of each letter in label.
-Only the outline of each letter is drawn, no part of the letter is filled. \\
-
-\texttt{linespacing=_spacing_} &
-
-Sets spacing between lines for labels with multiple lines.
-Line spacing is given as a multiple of the font size.
-The default line spacing is 1. \\
-
-\hline
-\end{longtable}
+Extra | Description
+----- | -----------
+\texttt{outlinewidth=_width_} | Sets line width to use for drawing outline of each letter in label.  Only the outline of each letter is drawn, no part of the letter is filled.
+\texttt{linespacing=_spacing_} | Sets spacing between lines for labels with multiple lines.  Line spacing is given as a multiple of the font size.  The default line spacing is 1.
 
 ### geoimage
 
