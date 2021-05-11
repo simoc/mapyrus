@@ -1687,11 +1687,11 @@ for the area covered by the current path.
 Useful HTML tags include hyperlinks and callbacks for mouse events.
 Example HTML tags are:
 
-\begin{verbatim}
+```
 href="australia.html"
 
 onMouseClicked="return alert('Message!');"
-\end{verbatim}
+```
 
 To create an imagemap entry for a single point, first use the \texttt{box}
 command to define a box a few pixels in size around the point.
@@ -3382,17 +3382,17 @@ is a web application archive.
 After being deployed in a web server, the Mapyrus servlet handles HTTP
 requests to the following URL.
 
-\begin{verbatim}
+```
 http://localhost:8080/mapyrus/servlet
-\end{verbatim}
+```
 
 An example web page with an HTML form for the user
 to enter Mapyrus commands, submit them to the Mapyrus servlet
 and obtain the output is provided at the following URL.
 
-\begin{verbatim}
+```
 http://localhost:8080/mapyrus
-\end{verbatim}
+```
 
 The commands to be run by Mapyrus servlet are passed in
 the URL parameter \texttt{commands} in the HTTP request.
