@@ -1174,11 +1174,7 @@ Extra | Description
 ----- | -----------
 \texttt{clipfile=_filename_} | Gives name of a text file containing a clip polygon for the image.  Each line of the text file defines one (X, Y) world coordinate of the clip polygon.  Only image data inside the clip polygon is displayed.  Using a clip polygon prevents display of a non-rectangular image from overwriting a neighbouring image.
 \texttt{hue=_factor_} \texttt{saturation=_factor_} \texttt{brightness=_factor_} | Defines a hue, saturation or brightness multiplication factor for the image.
-\texttt{readerclass=_classname_} | Gives the name of a Java class to read the image and the world coordinate range covered by the image.  The Java class must be included in the Java classpath and must contain the following methods:
-* \texttt{constructor(String filename, String extras)}
-* \texttt{java.awt.image.BufferedImage read()}
-* \texttt{java.awt.geom.Rectangle2D getBounds()}
-The methods may throw any type of Java exception on error.  This option enables Mapyrus to be extended to read additional image formats.
+\texttt{readerclass=_classname_} | Gives the name of a Java class to read the image and the world coordinate range covered by the image.  The Java class must be included in the Java classpath and must contain the following methods: \texttt{constructor(String filename, String extras)} \texttt{java.awt.image.BufferedImage read()} \texttt{java.awt.geom.Rectangle2D getBounds()}. The methods may throw any type of Java exception on error.  This option enables Mapyrus to be extended to read additional image formats.
 
 ### gradientfill
 
