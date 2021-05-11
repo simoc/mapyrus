@@ -2166,61 +2166,16 @@ Labels in the table are drawn using the current color and font settings.
 
 _extras_ defines further options for the table, given as
 _variable=value_ values, separated by whitespace.
-See Table \ref{tableextras}
+See the table below
 for available options.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{tableextras}
-Extra & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Table Extras} \\
-\endfoot
-
-\hline
-Extra & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{background=_colors_} &
-
-Comma-separated list of colors to use as background for entries
-in the table, as named colors, hex digits or CMYK values in parentheses.
-The colors are used in turn for each column in each row.
-When the end of the list is reached, the list is repeated.
-By default the background is not displayed. \\
-
-\texttt{borders=_flag_} &
-
-If _flag_ is \texttt{true} then a border is drawn around
-each entry in the table using the current linestyle and color.
-By default borders are drawn. \\
-
-\texttt{justify=_justifications_} &
-
-A comma-separated list of horizontal justification values for each column
-in the table.  Each justification is one of
-\texttt{left}, \texttt{right} or \texttt{center}. \\
-
-\texttt{sortcolumn=_index_} &
-
-Index of column to sort on, with first column having index 1.
-Values in given column are sorted and all columns are displayed
-in the order of the sorted column.
-By default values are not sorted. \\
-
-\texttt{sortorder=_order_} &
-
-Ordering for sort column.  Either \texttt{asc} for ascending
-order, or \texttt{desc} for descending order.  Default is ascending order. \\
-
-\hline
-\end{longtable}
-
+Extra | Description
+----- | -----------
+\texttt{background=_colors_} | Comma-separated list of colors to use as background for entries in the table, as named colors, hex digits or CMYK values in parentheses.  The colors are used in turn for each column in each row.  When the end of the list is reached, the list is repeated.  By default the background is not displayed.
+\texttt{borders=_flag_} | If _flag_ is \texttt{true} then a border is drawn around each entry in the table using the current linestyle and color.  By default borders are drawn.
+\texttt{justify=_justifications_} | A comma-separated list of horizontal justification values for each column in the table.  Each justification is one of \texttt{left}, \texttt{right} or \texttt{center}.
+\texttt{sortcolumn=_index_} | Index of column to sort on, with first column having index 1.  Values in given column are sorted and all columns are displayed in the order of the sorted column.  By default values are not sorted.
+\texttt{sortorder=_order_} | Ordering for sort column.  Either \texttt{asc} for ascending order, or \texttt{desc} for descending order.  Default is ascending order.
 
 ### tree
 
