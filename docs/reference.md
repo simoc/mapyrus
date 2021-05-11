@@ -37,16 +37,12 @@ _JTS Topology Suite_ JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
 \texttt{-classpath} option.
 
-\begin{alltt}
 \texttt{java -D_variable_=_value_ ... -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ org.mapyrus.Mapyrus _filename_}
-\end{alltt}
 
 Mapyrus runs as an HTTP Server when started with the
 \texttt{-s} option.
 
-\begin{alltt}
 \texttt{java -classpath _install-dir_/mapyrus.jar:_jarfile_ org.mapyrus.Mapyrus -s _port_ _filename_ ...}
-\end{alltt}
 
 \label{morememory}
 Use the
@@ -54,9 +50,7 @@ Use the
 to make more memory available when running Mapyrus.
 To increase available memory to 256Mb, use the following command:
 
-\begin{alltt}
 \texttt{java -Xmx256m -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...}
-\end{alltt}
 
 ### Startup Configuration
 
@@ -207,52 +201,58 @@ The \texttt{if}, \texttt{repeat}, \texttt{while}, \texttt{for}
 and \texttt{function} flow control structures
 found in other languages are available:
 
-\begin{alltt}
+```
 if _condition_ then
   _then-commands_ ...
 else
   _else-commands_ ...
 endif
+```
 
+```
 if _condition_ then _command_; _command_; else _command_; _command_; endif
-\end{alltt}
+```
 
 Executes _then-commands_ if _condition_ evaluates to
 a non-zero value, otherwise _else-commands_ are executed.
 The \texttt{else} part is optional.
 Compound tests are built using the \texttt{elif} keyword:
 
-\begin{alltt}
+```
 if _condition_ then
   _commands_ ...
 elif _condition_ then
   _commands_ ...
 endif
-\end{alltt}
+```
 
 The \texttt{repeat} keyword defines a loop in which
 _commands_ will be executed _count_
 times:
 
-\begin{alltt}
+```
 repeat _count_ do
   _commands_ ...
 done
+```
 
+```
 repeat _count_ do _command_; _command_; done
-\end{alltt}
+```
 
 The \texttt{while} keyword defines a loop in which
 _commands_ will be executed for as long
 as _condition_ continues to evaluate to a non-zero value:
 
-\begin{alltt}
+```
 while _condition_ do
   _commands_ ...
 done
+```
 
+```
 while _condition_ do _command_; _command_; done
-\end{alltt}
+```
 
 The \texttt{for} ... \texttt{in} keywords define a loop in which
 each element of _array_ is assigned to variable _var_
@@ -260,37 +260,43 @@ and _commands_ are executed.
 Elements in _array_ are accessed in numerical index order if
 indexes are numeric, otherwise in alphabetical index order:
 
-\begin{alltt}
+```
 for _var_ in _array_ do
   _commands_ ...
 done
+```
 
+```
 for _var_ in _array_ do _command_; _command_; done
-\end{alltt}
+```
 
 Functions are used to repeat commonly used calculations and to
 return a value:
 
-\begin{alltt}
+```
 function _name_ [_arg1_, ...]
   _commands_ ...
   \texttt{return} _arg_
 end
+```
 
+```
 function _name_ [_arg1_, ...]; _command_; _command_; \texttt{return} _arg_; end
-\end{alltt}
+```
 
 Procedures group frequently used commands together, save
 graphics state when they begin and restore it when they end,
 isolating the calling procedure from any changes:
 
-\begin{alltt}
+```
 begin _name_ [_arg1_, ...]
   _commands_ ...
 end
+```
 
+```
 begin _name_ [_arg1_, ...]; _command_; _command_; end
-\end{alltt}
+```
 
 A procedure is defined to take a fixed number of arguments.
 All procedure names are global and following the same naming
@@ -412,9 +418,7 @@ commands, each combination of arguments is given.
 
 ### addpath
 
-\begin{alltt}
 addpath _geometry-field_ [, _geometry-field_ ...]
-\end{alltt}
 
 Adds geometry in each _geometry-field_ to current path.
 A _geometry-field_ is geometry fetched from a dataset
@@ -428,9 +432,7 @@ and \texttt{rotate} values.
 
 ### arc
 
-\begin{alltt}
 arc _direction_, _xCenter_, _yCenter_, _xEnd_, _yEnd_
-\end{alltt}
 
 Adds a circular arc to the current path.  The arc begins at
 the last point added to the path and ends at (_xEnd_, _yEnd_)
@@ -449,9 +451,7 @@ and _rotate_ values.
 
 ### bezier
 
-\begin{alltt}
 bezier _xControl1_, _yControl1_, _xControl2_, _yControl2_, _xEnd_, _yEnd_
-\end{alltt}
 
 Adds a Bezier curve (a spline curve) to the current path.  The curve begins at
 the last point added to the path and ends at (_xEnd_, _yEnd_)
@@ -472,9 +472,7 @@ and _rotate_ values.
 
 ### blend
 
-\begin{alltt}
 blend _mode_
-\end{alltt}
 
 Sets the blend mode for transparent colors.
 Transparent colors are mixed differently with background
@@ -498,9 +496,7 @@ Only the first six blend modes are available for SVG format output.
 
 ### box
 
-\begin{alltt}
 box _x1_, _y1_, _x2_, _y2_
-\end{alltt}
 
 Adds a rectangle to the current path.
 The points
@@ -515,9 +511,7 @@ and \texttt{rotate} values.
 
 ### box3d
 
-\begin{alltt}
 box3d _x1_, _y1_, _x2_, _y2_ [, _depth_]
-\end{alltt}
 
 Adds a rectangle to the current path in the same way as
 the \texttt{box} command.  The right side and top sides of the
@@ -534,9 +528,7 @@ and \texttt{rotate} values.
 
 ### chessboard
 
-\begin{alltt}
 chessboard _x1_, _y1_, _x2_, _y2_, _size_
-\end{alltt}
 
 Adds squares in a chessboard pattern to the current path.
 The points
@@ -552,9 +544,7 @@ and \texttt{rotate} values.
 
 ### circle
 
-\begin{alltt}
 circle _xCenter_, _yCenter_, _radius_
-\end{alltt}
 
 Adds a circle to the current path, with center
 point (_xCenter_, _yCenter_) and radius
@@ -567,17 +557,13 @@ and _rotate_ values.
 
 ### clearpath
 
-\begin{alltt}
 clearpath
-\end{alltt}
 
 Removes all points from the current path.
 
 ### clip
 
-\begin{alltt}
 clip _side_
-\end{alltt}
 
 Sets a clip path to the area covered by the current path,
 or excluding the area covered by the current path, depending
@@ -600,29 +586,36 @@ The current path is not modified by this command.
 
 ### closepath
 
-\begin{alltt}
 closepath
-\end{alltt}
 
 Closes the current path by adding a straight line segment
 back to the last point added with a \texttt{move} command.
 
 ### color
 
-\begin{alltt}
 color _name_ [, _alpha_]
+
 color "contrast" [, _alpha_]
+
 color "brighter" [, _alpha_]
+
 color "darker" [, _alpha_]
+
 color "softer" [, _alpha_]
+
 color "current" [, _alpha_]
+
 color "\#_hexdigits_" [, _alpha_]
+
 color "0x_hexdigits_" [, _alpha_]
+
 color "cmyk(_cyan_,_magenta_,_yellow_,_black_)" [, _alpha_]
+
 color "rgb", _red_, _green_, _blue_ [, _alpha_]
+
 color "hsb", _hue_, _saturation_, _brightness_ [, _alpha_]
+
 color "cmyk", _cyan_, _magenta_, _yellow_, _black_ [, _alpha_]
-\end{alltt}
 
 Sets color for drawing.  Around 500 commonly used color names are defined,
 additional color names are defined in a file given as a startup variable (see
@@ -670,9 +663,7 @@ The spelling \texttt{colour} is also accepted for this command.
 
 ### cylinder
 
-\begin{alltt}
 cylinder _xCenter_, _yCenter_, _radius_, _height_
-\end{alltt}
 
 Adds a cylindrical shape to the current path, with center
 point (_xCenter_, _yCenter_) and given radius and height.
@@ -684,9 +675,7 @@ and _rotate_ values.
 
 ### dataset
 
-\begin{alltt}
 dataset _format_, _name_ [, _extras_]
-\end{alltt}
 
 Defines a dataset to read from.  A dataset contains geographic data,
 geometry, attributes, a lookup table, data to write to standard
@@ -912,9 +901,7 @@ Common character set encodings are \texttt{UTF-8} (Unicode) and
 
 ### draw
 
-\begin{alltt}
 draw _x_, _y_, ...
-\end{alltt}
 
 Adds one or more straight line segments to the current path.
 A straight line segment is added from the previously defined point
@@ -926,9 +913,7 @@ and \texttt{rotate} values.
 
 ### ellipse
 
-\begin{alltt}
 ellipse _xCenter_, _yCenter_, _xRadius_, _yRadius_
-\end{alltt}
 
 Adds an ellipse to the current path, with center
 point (_xCenter_, _yCenter_).  The radius of the ellipse
@@ -942,17 +927,13 @@ and _rotate_ values.
 
 ### endpage
 
-\begin{alltt}
 endpage
-\end{alltt}
 
 Closes output file created with \texttt{newpage} command.
 
 ### eps
 
-\begin{alltt}
 eps _filename_ [, _size_]
-\end{alltt}
 
 Displays an Encapsulated PostScript file at each \texttt{move} point in
 the current path.  The file is centered at each point.
@@ -973,9 +954,7 @@ and \texttt{rotate} settings.
 
 ### eval
 
-\begin{alltt}
 eval _command_
-\end{alltt}
 
 Evaluates any variables in _command_ and then
 runs the result as a new command.
@@ -985,9 +964,7 @@ enables commands to be built and executed while Mapyrus runs.
 
 ### eventscript
 
-\begin{alltt}
 eventscript _tags_ ...
-\end{alltt}
 
 This command is used in combination with the \texttt{imagemap}
 option of the \texttt{newpage} command to create an HTML imagemap.
@@ -1015,9 +992,7 @@ for an example displaying tooltips as the mouse is moved over an image.
 
 ### fetch
 
-\begin{alltt}
 fetch
-\end{alltt}
 
 Fetches next record from current dataset.
 For each field in the record, a variable is defined with the name
@@ -1028,9 +1003,7 @@ to ensure that another record is available from the dataset.
 
 ### fill
 
-\begin{alltt}
 fill [_xml-attributes_]
-\end{alltt}
 
 Flood fills the current path with the current color.
 The winding rule is used for determining the inside and outside
@@ -1043,9 +1016,7 @@ included in the \texttt{<path>} XML element for the filled path.
 
 ### flowlabel
 
-\begin{alltt}
 flowlabel _spacing_, _offset_ [,_extras_ ], _string_ [, _string_ ...]
-\end{alltt}
 
 Draws a label following the current path,
 using the font set with the \texttt{font} command.
@@ -1063,9 +1034,7 @@ not rotated.
 
 ### font
 
-\begin{alltt}
 font _name_, _size_ [, _extras_ ...]
-\end{alltt}
 
 Sets font for labelling with the \texttt{label} command.
 Font _name_ and _size_ are the name and size in
@@ -1132,11 +1101,11 @@ The default line spacing is 1. \\
 
 ### geoimage
 
-\begin{alltt}
 geoimage _filename_ [, _extras_ ]
+
 geoimage _url_ [, _extras_ ]
+
 geoimage _WebMapServiceUrl_ [, _extras_ ]
-\end{alltt}
 
 Displays a geo-referenced image.
 
@@ -1177,9 +1146,7 @@ Extra | Description
 
 ### gradientfill
 
-\begin{alltt}
 gradientfill _color1_, _color2_, _color3_, _color4_ [, _color5_ ...]
-\end{alltt}
 
 Fills the current path with a gradient fill pattern.
 Color names _color1_, _color2_, _color3_ and
@@ -1203,9 +1170,7 @@ of the SVG format.
 
 ### guillotine
 
-\begin{alltt}
 guillotine _x1_, _y1_, _x2_, _y2_
-\end{alltt}
 
 Cuts path against a rectangle.
 Any part of the path inside or
@@ -1226,9 +1191,7 @@ aligned with the X and Y axes of the page, regardless of any rotation angle.
 
 ### hexagon
 
-\begin{alltt}
 hexagon _xCenter_, _yCenter_, _radius_
-\end{alltt}
 
 Adds a hexagon shape to the current path, with center
 point (_xCenter_, _yCenter_) and distance
@@ -1242,9 +1205,7 @@ and _rotate_ values.
 
 ### httpresponse
 
-\begin{alltt}
 httpresponse _header_
-\end{alltt}
 
 Sets the complete header to return from an HTTP request
 when Mapyrus is running as an HTTP server.  The header
@@ -1254,12 +1215,13 @@ for example HTTP headers.
 
 ### icon
 
-\begin{alltt}
 icon _filename_, [, _size_]
+
 icon "_binarydigits_" [, _size_]
+
 icon "0x_hexdigits_" [, _size_]
+
 icon "resource:_resourcename_" [, _size_]
-\end{alltt}
 
 Displays an image icon at each \texttt{move} point in
 the current path.  The icon is centered at each point.
@@ -1305,9 +1267,7 @@ Icons cannot be displayed when creating SVG format output.
 
 ### justify
 
-\begin{alltt}
 justify _justification_
-\end{alltt}
 
 Sets justification for labelling with the \texttt{label} command.
 _justification_ is a string containing either
@@ -1318,9 +1278,7 @@ vertically.
 
 ### key
 
-\begin{alltt}
 key _type_, _description_, [_arg1_, _arg2_ ...]
-\end{alltt}
 
 Defines an entry for a legend.  The procedure containing this command will be
 called with arguments _arg1_, _arg2_ ... to display a sample of
@@ -1346,9 +1304,7 @@ and different arguments.
 
 ### label
 
-\begin{alltt}
 label _string_ [, _string_ ...]
-\end{alltt}
 
 Draws a label at each point in the path set with the \texttt{move} command,
 using the font, justification and rotation set with the \texttt{font},
@@ -1359,9 +1315,7 @@ below the other.
 
 ### legend
 
-\begin{alltt}
 legend _size_
-\end{alltt}
 
 Displays legend entries defined with
 \texttt{key} commands at points defined with
@@ -1395,9 +1349,7 @@ current \texttt{color}, \texttt{font} and \texttt{justify} settings.
 
 ### let
 
-\begin{alltt}
 let _var_ = _expression_, ...
-\end{alltt}
 
 Assigns result of evaluating _expression_ to a variable with name
 _var_.  The variable is globally accessible unless defined as local to
@@ -1411,11 +1363,11 @@ _var_ and _expression_ pair by a comma.
 
 ### linestyle
 
-\begin{alltt}
 linestyle _width_
+
 linestyle _width_, _cap_, _join_
+
 linestyle _width_, _cap_, _join_, _phase_, _dash length_, ...
-\end{alltt}
 
 Sets style line drawing by the \texttt{stroke}
 command.
@@ -1432,9 +1384,7 @@ at which to begin.
 
 ### local
 
-\begin{alltt}
 local _name_, [_name_ ...]
-\end{alltt}
 
 Declares the listed variable names as local to a procedure.
 The variables are not visible outside the enclosing procedure
@@ -1442,9 +1392,7 @@ and their values are lost when the procedure ends.
 
 ### logspiral
 
-\begin{alltt}
 logspiral _xCenter_, _yCenter_, _a_, _b_, _revolutions_, _startAngle_
-\end{alltt}
 
 Adds a logarithmic spiral to the current path, with center
 point (_xCenter_, _yCenter_).  The values _a_
@@ -1468,9 +1416,7 @@ and _rotate_ values.
 
 ### mimetype
 
-\begin{alltt}
 mimetype _type_
-\end{alltt}
 
 Sets MIME type for content being returned from HTTP request
 when Mapyrus is running as an HTTP server.  A more general
@@ -1479,9 +1425,7 @@ the complete header returned from the HTTP request.
 
 ### move
 
-\begin{alltt}
 move _x_, _y_
-\end{alltt}
 
 Adds the point (_x_, _y_) to the current path.  The
 point is first transformed through any world coordinate
@@ -1491,10 +1435,9 @@ and \texttt{rotate} values.
 
 ### newpage
 
-\begin{alltt}
 newpage _format_, _filename_, _width_, _height_, _extras_
+
 newpage _format_, _filename_, _paper_, _extras_
-\end{alltt}
 
 Begins output of a new page to a file.  Any previous output is closed.  The
 path, clipping path and world coordinates are cleared.  The origin of
@@ -1906,9 +1849,7 @@ _width_ and _height_ of the new page are ignored.  \\
 
 ### parallelpath
 
-\begin{alltt}
 parallelpath _distance_ [, _distance_ ...]
-\end{alltt}
 
 Replaces current path with new paths parallel to current path.
 For each given distance, a new path is created at _distance_
@@ -1920,9 +1861,7 @@ paths that self-intersect.
 
 ### pdf
 
-\begin{alltt}
 pdf _filename_, _page_ [, _size_]
-\end{alltt}
 
 Displays a Portable Document Format (PDF) file at each \texttt{move} point in
 the current path.  
@@ -1944,9 +1883,7 @@ would be drawn.
 
 ### pdfgroup
 
-\begin{alltt}
 pdfgroup _action_ [, _groupName_]
-\end{alltt}
 
 Controls creation of groups in PDF output files (known as
 _Optional Content Groups_ in PDF terminology).
@@ -1967,9 +1904,7 @@ For formats other than PDF, this command has no effect.
 
 ### pentagon
 
-\begin{alltt}
 pentagon _xCenter_, _yCenter_, _radius_
-\end{alltt}
 
 Adds a pentagon shape to the current path, with center
 point (_xCenter_, _yCenter_) and distance
@@ -1983,9 +1918,7 @@ and _rotate_ values.
 
 ### print
 
-\begin{alltt}
 print _string_ [, _string_ ...]
-\end{alltt}
 
 Prints each _string_ to standard output,
 separated by spaces.
@@ -1996,11 +1929,11 @@ or destination using the \texttt{setoutput} command.
 
 ### protect
 
-\begin{alltt}
 protect _x1_, _y1_, _x2_, _y2_
+
 protect _geometry_
+
 protect
-\end{alltt}
 
 Marks a region of the page as protected.
 The function \texttt{protected} will then return 1 for any
@@ -2024,9 +1957,7 @@ and \texttt{rotate} values.
 
 ### raindrop
 
-\begin{alltt}
 raindrop _xCenter_, _yCenter_, _radius_
-\end{alltt}
 
 Adds a raindrop shape to the current path, with center
 point (_xCenter_, _yCenter_) and radius
@@ -2039,17 +1970,13 @@ and _rotate_ values.
 
 ### reversepath
 
-\begin{alltt}
 reversepath
-\end{alltt}
 
 Reverses the direction of the current path.
 
 ### rotate
 
-\begin{alltt}
 rotate _angle_
-\end{alltt}
 
 Rotates the coordinate system, adding to any existing rotation.  _angle_
 is given in degrees, measured counter-clockwise.  All later coordinates given
@@ -2058,9 +1985,7 @@ rotated by this angle.
 
 ### rdraw
 
-\begin{alltt}
 rdraw _dx_, _dy_, ...
-\end{alltt}
 
 Adds one or more straight line segments to the current path
 using relative distances.
@@ -2074,10 +1999,9 @@ and \texttt{rotate} values.
 
 ### roundedbox
 
-\begin{alltt}
 roundedbox _x1_, _y1_, _x2_, _y2_
+
 roundedbox _x1_, _y1_, _x2_, _y2_, _radius_
-\end{alltt}
 
 Adds a rectangle with rounded corners to the current path.
 The points
@@ -2094,9 +2018,7 @@ and _rotate_ values.
 
 ### samplepath
 
-\begin{alltt}
 samplepath _spacing_, _offset_
-\end{alltt}
 
 Replaces current path with equally spaced points along the path.
 _offset_ is the distance along the path at which to place first point,
@@ -2111,9 +2033,7 @@ replaced by a single point at the beginning or end of the path.
 
 ### scale
 
-\begin{alltt}
 scale _factor_
-\end{alltt}
 
 Scales the coordinate system, adding to any existing scaling.  _factor_
 is scale factor for X and Y axes.  All later coordinates given in
@@ -2122,9 +2042,7 @@ scaled by this factor.
 
 ### selectpath
 
-\begin{alltt}
 selectpath _offset_, _length_ [, _offset_, _length_  ... ]
-\end{alltt}
 
 Selects one or more parts of the current path.
 
@@ -2138,9 +2056,7 @@ any world coordinate transformation.
 
 ### setoutput
 
-\begin{alltt}
 setoutput _filename_
-\end{alltt}
 
 Sets file that all \texttt{print} commands will be written to.
 _filename_ is the name of a file to write to, overwriting any
@@ -2148,9 +2064,7 @@ existing file with this name.
 
 ### shiftpath
 
-\begin{alltt}
 shiftpath _x_, _y_
-\end{alltt}
 
 Shifts all points in the current path _x_ millimeters along the X axis
 and _y_ millimeters along the Y axis.  Shift values are scaled and
@@ -2164,9 +2078,7 @@ Section \ref{tutorialshadow} on page \pageref{tutorialshadow}.
 
 ### sinewave
 
-\begin{alltt}
 sinewave _xEnd_, _yEnd_, _repeats_, _height_
-\end{alltt}
 
 Adds a a sine wave curve to the current path.  The curve begins at
 the last point added to the path and ends at (_xEnd_, _yEnd_)
@@ -2184,18 +2096,14 @@ and _rotate_ values.
 
 ### sinkhole
 
-\begin{alltt}
 sinkhole
-\end{alltt}
 
 Replaces the current path containing a polygon with a single point in the
 middle of the polygon, farthest from the polygon perimeter.
 
 ### spiral
 
-\begin{alltt}
 spiral _xCenter_, _yCenter_, _radius_, _revolutions_, _startAngle_
-\end{alltt}
 
 Adds a spiral to the current path, with center
 point (_xCenter_, _yCenter_) and given outer radius.
@@ -2216,9 +2124,7 @@ and _rotate_ values.
 
 ### star
 
-\begin{alltt}
 star _xCenter_, _yCenter_, _radius_, _points_
-\end{alltt}
 
 Adds a star shape to the current path, with center
 point (_xCenter_, _yCenter_), distance
@@ -2233,9 +2139,7 @@ and _rotate_ values.
 
 ### stripepath
 
-\begin{alltt}
 stripepath _spacing_, _angle_
-\end{alltt}
 
 Replaces current path with equally spaced parallel lines that completely cover
 the path.  _spacing_ is the distance between lines, measured in
@@ -2245,9 +2149,7 @@ with a \texttt{clip} command to produce a hatched fill pattern.
 
 ### stroke
 
-\begin{alltt}
 stroke [_xml-attributes_]
-\end{alltt}
 
 Draws the current path using the current color and linestyle.
 The current path is not modified by this command.
@@ -2258,9 +2160,7 @@ included in the \texttt{<path>} XML element for the drawn path.
 
 ### svg
 
-\begin{alltt}
 svg _filename_, [, _size_]
-\end{alltt}
 
 Displays a Scalable Vector Graphics (SVG) file at each \texttt{move} point in
 the current path.  
@@ -2282,9 +2182,7 @@ would be drawn.
 
 ### svgcode
 
-\begin{alltt}
 svgcode _xml_
-\end{alltt}
 
 Adds XML code to the output file.
 
@@ -2295,9 +2193,7 @@ be overridden and for graphics to be grouped together as layers.
 
 ### table
 
-\begin{alltt}
 table _extras_, _column1_, _column2_ ...
-\end{alltt}
 
 Draws a table at each point in the path set with the \texttt{move} command,
 One or more arrays are given defining values for each column of the table.
@@ -2365,9 +2261,7 @@ order, or \texttt{desc} for descending order.  Default is ascending order. \\
 
 ### tree
 
-\begin{alltt}
 tree _extras_, _entries_
-\end{alltt}
 
 Draws a tree of labels at each point in the path set with the
 \texttt{move} command.
@@ -2411,9 +2305,7 @@ By default whitespace is used as the delimiter. \\
 
 ### triangle
 
-\begin{alltt}
 triangle _xCenter_, _yCenter_, _radius_, _rotation_
-\end{alltt}
 
 Adds an equilateral triangle to the current path, with center
 point (_xCenter_, _yCenter_) and distance
@@ -2429,11 +2321,11 @@ and _rotate_ values.
 
 ### unprotect
 
-\begin{alltt}
 unprotect _x1_, _y1_, _x2_, _y2_
+
 unprotect _geometry_
+
 unprotect
-\end{alltt}
 
 Clears all protected regions from an area on the page.
 
@@ -2454,9 +2346,7 @@ and \texttt{rotate} values.
 
 ### wedge
 
-\begin{alltt}
 wedge _xCenter_, _yCenter_, _radius_, _angle_, _sweep_ [, _height_ ]
-\end{alltt}
 
 Adds a wedge (pie slice) shape to the current path, with center
 point (_xCenter_, _yCenter_) and radius
@@ -2476,11 +2366,11 @@ and _rotate_ values.
 
 ### worlds
 
-\begin{alltt}
 worlds _wx1_, _wy1_, _wx2_, _wy2_ [, _extras_ ]
+
 worlds _wx1_, _wy1_, _wx2_, _wy2_, _px1_, _py1_, _px2_, _py2_ [, _extras_ ]
+
 worlds _wx1,wy1,wx2,wy2_ [, _extras_ ]
-\end{alltt}
 
 Defines a world coordinate system for the page.
 
