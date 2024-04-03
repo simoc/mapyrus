@@ -75,3 +75,6 @@ Further examples are included in the [tutorial](tutorial.md).
 The [reference](reference.md) describes how Mapyrus works in detail.
 
 Changes in each released version are listed in [NEWS](NEWS.md).
+
+Report bugs and request changes or extensions to Mapyrus
+as [GitHub Issues](https://github.com/simoc/mapyrus/issues).
