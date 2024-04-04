@@ -78,3 +78,7 @@ Changes in each released version are listed in [NEWS](NEWS.md).
 
 Report bugs and request changes or extensions to Mapyrus
 as [GitHub Issues](https://github.com/simoc/mapyrus/issues).
+
+Mapyrus is released under the [GNU Lesser General Public License](COPYING).
+The software, documentation and source code is available for download
+from [SourceForge](https://mapyrus.sourceforge.net/download.html).
