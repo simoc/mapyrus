@@ -19,9 +19,7 @@
 
 package org.mapyrus.io;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.zip.Deflater;
 
@@ -36,7 +34,7 @@ import org.mapyrus.Constants;
  * Implements algorithm described in section 3.13.3, 'ASCII85EncodeFilter'
  * of Adobe PostScript Language Reference Manual (2nd Edition).
  */
-public class ASCII85Writer
+public class ASCII85Writer implements AutoCloseable
 {
 	/*
 	 * Bytes buffered but yet to be encoded.
@@ -265,24 +263,5 @@ public class ASCII85Writer
 	public int getEncodedLength()
 	{
 		return(m_nCharsWritten);
-	}
-
-	static public void main(String args[])
-	{
-		String message = "The quick brown fox jumped over the lazy dog.";
-
-		try (PrintWriter writer = new PrintWriter(new FileWriter("/tmp/ascii85.txt")))
-		{
-			ASCII85Writer ascii85 = new ASCII85Writer(writer, false);
-			byte []messageBytes = message.getBytes();
-			for (int j = 0; j < 100; j++)
-				for (int i = 0; i < messageBytes.length; i++)
-					ascii85.write(messageBytes[i]);
-			ascii85.close();
-		}
-		catch (IOException e)
-		{
-			System.err.println(e.getMessage());
-		}
 	}
 }

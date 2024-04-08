@@ -20,8 +20,6 @@
 package org.mapyrus.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -34,7 +32,28 @@ public class TestASCII85Writer
 	public void testWriteZeroBytes() throws IOException
 	{
 		StringWriter writer = new StringWriter();
-		ASCII85Writer ascii85 = new ASCII85Writer(writer, false);
-		ascii85.close();
+		try (ASCII85Writer ascii85 = new ASCII85Writer(writer, false))
+		{
+			for (int i = 0; i < 20; i++)
+			{
+				ascii85.write(0);
+			}
+		}
+		assertEquals(writer.getBuffer().toString().trim(), "zzzzz");
+	}
+
+	@Test
+	public void testWriteHello() throws IOException
+	{
+		StringWriter writer = new StringWriter();
+		try (ASCII85Writer ascii85 = new ASCII85Writer(writer, false))
+		{
+			String s = "hello";
+			for (char c : s.toCharArray())
+			{
+				ascii85.write(c);
+			}
+		}
+		assertEquals(writer.getBuffer().toString().trim(), "BOu!rDZ");
 	}
 }
