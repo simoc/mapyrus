@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.junit.jupiter.api.Test;
+
 public class TestASCII85Writer
 {
 	@Test
