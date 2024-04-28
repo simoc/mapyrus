@@ -1,72 +1,55 @@
-\section{Reference}
+# Reference
 
-\subsection{Software Requirements}
+## Software Requirements
 
 Mapyrus requires:
-\begin{itemize}
-\item
-Java 2 Runtime Environment, Standard Edition, (J2RE) 8 or higher,
+- Java 2 Runtime Environment, Standard Edition, (J2RE) 8 or higher,
 or Java 2 Software Developers Kit, Standard Edition (J2SDK) 8 or higher.
-\item
-The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
+- The `$DISPLAY` environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system.  If a real X-Windows display
-is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
-\item
-The \textit{JTS Topology Suite} from \texttt{http://www.tsusiatsoftware.net/jts/main.html},
+is not available, use the `-Djava.awt.headless=true` startup variable.
+- The [JTS Topology Suite](http://www.tsusiatsoftware.net/jts/main.html),
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
-\item
-The \textit{Java PROJ.4 library} from \texttt{http://www.jhlabs.com/java/maps/proj},
+- The [Java PROJ.4 library](http://www.jhlabs.com/java/maps/proj),
 if the \texttt{REPROJECT} function is required for reprojecting coordinates.
-\end{itemize}
 
-\subsection{Usage}
+## Usage
 
 The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
-\vspace{10pt}
-\texttt{java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
-\vspace{10pt}
+    java -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...
 
-\textit{install-path} is the directory in which
-Mapyrus is installed.  \textit{filename} is the name of a file
-or a URL for Mapyrus to read from.  If \textit{filename} is \texttt{-}
+_install-path_ is the directory in which
+Mapyrus is installed.  _filename_ is the name of a file
+or a URL for Mapyrus to read from.  If _filename_ is `-`
 then standard input is read.  If several filenames and URLs are
 given then they are read in turn.
 
 Environment variables
-and variables passed to Mapyrus using the Java \texttt{-D} option
+and variables passed to Mapyrus using the Java `-D` option
 are available in the Mapyrus interpreter.  The
-\textit{JTS Topology Suite} JAR file and other JAR files
+_JTS Topology Suite_ JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
-\texttt{-classpath} option.
+`-classpath` option.
 
-\begin{alltt}
-\texttt{java -D\textit{variable}=\textit{value} \dots\ \textbackslash
-  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.13.jar:\textit{other-jarfile} \textbackslash
-  org.mapyrus.Mapyrus \textit{filename}}
-\end{alltt}
+    java -D_variable_=_value_ ... -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ org.mapyrus.Mapyrus _filename_
 
 Mapyrus runs as an HTTP Server when started with the
-\texttt{-s} option.
+`-s` option.
 
-\begin{alltt}
-\texttt{java -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} \textbackslash
-  org.mapyrus.Mapyrus -s \textit{port} \textit{filename} \dots}
-\end{alltt}
+    java -classpath _install-dir_/mapyrus.jar:_jarfile_ org.mapyrus.Mapyrus -s _port_ _filename_ ...
 
 \label{morememory}
 Use the
-\texttt{-Xmx} Java option
+`-Xmx` Java option
 to make more memory available when running Mapyrus.
 To increase available memory to 256Mb, use the following command:
 
-\begin{alltt}
-\texttt{java -Xmx256m -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
-\end{alltt}
+    java -Xmx256m -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...
 
-\subsubsection{Startup Configuration}
+### Startup Configuration
 
 The variables available for configuring Mapyrus at startup are
 shown in Table \ref{startupvariables}.
