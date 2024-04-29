@@ -1,155 +1,103 @@
-\section{Reference}
+# Reference
 
-\subsection{Software Requirements}
+## Software Requirements
 
 Mapyrus requires:
-\begin{itemize}
-\item
-Java 2 Runtime Environment, Standard Edition, (J2RE) 8 or higher,
+- Java 2 Runtime Environment, Standard Edition, (J2RE) 8 or higher,
 or Java 2 Software Developers Kit, Standard Edition (J2SDK) 8 or higher.
-\item
-The \texttt{\$DISPLAY} environment variable set to an X-Windows display,
+- The `$DISPLAY` environment variable set to an X-Windows display,
 if running on Linux or a UNIX operating system.  If a real X-Windows display
-is not available, use the \texttt{-Djava.awt.headless=true} startup variable.
-\item
-The \textit{JTS Topology Suite} from \texttt{http://www.tsusiatsoftware.net/jts/main.html},
+is not available, use the `-Djava.awt.headless=true` startup variable.
+- The [JTS Topology Suite](http://www.tsusiatsoftware.net/jts/main.html),
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
-\item
-The \textit{Java PROJ.4 library} from \texttt{http://www.jhlabs.com/java/maps/proj},
-if the \texttt{REPROJECT} function is required for reprojecting coordinates.
-\end{itemize}
+- The [Java PROJ.4 library](http://www.jhlabs.com/java/maps/proj),
+if the `REPROJECT` function is required for reprojecting coordinates.
 
-\subsection{Usage}
+## Usage
 
 The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
-\vspace{10pt}
-\texttt{java -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
-\vspace{10pt}
+<pre>
+java -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
+</pre>
 
-\textit{install-path} is the directory in which
-Mapyrus is installed.  \textit{filename} is the name of a file
-or a URL for Mapyrus to read from.  If \textit{filename} is \texttt{-}
+_install-path_ is the directory in which
+Mapyrus is installed.  _filename_ is the name of a file
+or a URL for Mapyrus to read from.  If _filename_ is `-`
 then standard input is read.  If several filenames and URLs are
 given then they are read in turn.
 
 Environment variables
-and variables passed to Mapyrus using the Java \texttt{-D} option
+and variables passed to Mapyrus using the Java `-D` option
 are available in the Mapyrus interpreter.  The
-\textit{JTS Topology Suite} JAR file and other JAR files
+_JTS Topology Suite_ JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
-\texttt{-classpath} option.
+`-classpath` option.
 
-\begin{alltt}
-\texttt{java -D\textit{variable}=\textit{value} \dots\ \textbackslash
-  -classpath \textit{install-dir}/mapyrus.jar:\textit{jts-dir}/jts-1.13.jar:\textit{other-jarfile} \textbackslash
-  org.mapyrus.Mapyrus \textit{filename}}
-\end{alltt}
+<pre>
+java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-dir</i>/mapyrus.jar:<i>jts-dir</i>/jts-1.13.jar:<i>other-jarfile</i> org.mapyrus.Mapyrus <i>filename</i>
+</pre>
 
 Mapyrus runs as an HTTP Server when started with the
-\texttt{-s} option.
+`-s` option.
 
-\begin{alltt}
-\texttt{java -classpath \textit{install-dir}/mapyrus.jar:\textit{jarfile} \textbackslash
-  org.mapyrus.Mapyrus -s \textit{port} \textit{filename} \dots}
-\end{alltt}
+<pre>
+java -classpath <i>install-dir</i>/mapyrus.jar:<i>jarfile</i> org.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
+</pre>
 
 \label{morememory}
 Use the
-\texttt{-Xmx} Java option
+`-Xmx` Java option
 to make more memory available when running Mapyrus.
 To increase available memory to 256Mb, use the following command:
 
-\begin{alltt}
-\texttt{java -Xmx256m -classpath \textit{install-dir}/mapyrus.jar org.mapyrus.Mapyrus \textit{filename} \dots}
-\end{alltt}
+<pre>
+java -Xmx256m -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
+</pre>
 
-\subsubsection{Startup Configuration}
+### Startup Configuration
 
 The variables available for configuring Mapyrus at startup are
 shown in Table \ref{startupvariables}.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{startupvariables}
-Variable & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Startup Variables} \\
-\endfoot
+Variable                         | Description
+-------------------------------- | -----------
+Mapyrus.rgb.file=<i>filename</i> | Defines an X Windows color names file containing additional color names for the `color` command.  Default value is `/usr/lib/X11/rgb.txt`
+java.awt.headless=true           | Run in headless mode.  Required when running on a server with no graphics display.
+java.io.tmpdir=<i>dir</i>        | Defines directory to use for temporary files. Large images in PDF output are temporarily saved in this directory until output is complete.
+jdbc.drivers=<i>class</i>        | Defines class containing JDBC 1.0 (or higher) driver to load at startup. A JDBC driver is required for connecting to a relational database and is provided as part of a relational database.  See the [Java JDBC DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html) API documentation for details.  The JAR file containing the class must be included in the `-classpath` option when starting Mapyrus.
 
-\hline
-Variable & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{Mapyrus.rgb.file=\textit{filename}} &
-Defines an X Windows color names file containing additional color names
-for the
-\texttt{color} command.  Default value is
-\texttt{/usr/lib/X11/rgb.txt} \\
-
-\hline
-
-\texttt{java.awt.headless=true} &
-Run in headless mode.  Required when running on a server
-with no graphics display. \\
-
-\hline
-
-\texttt{java.io.tmpdir=\textit{dir}} &
-Defines directory to use for temporary files.  Large images in PDF output
-are temporarily saved in this directory until output is complete. \\
-
-\hline
-
-\texttt{jdbc.drivers=\textit{class}} &
-Defines class containing JDBC 1.0 (or higher) driver to load at startup.
-A JDBC driver is required for connecting to a relational database and
-is provided as part of a relational database.
-See the Java JDBC DriverManager API documentation
-\footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}}
-for details.
-The JAR file containing the class must be included in the \texttt{-classpath}
-option when starting Mapyrus. \\
-
-\hline
-\end{longtable}
-
-\subsection{Language}
+## Language
 
 Mapyrus interprets commands read from one or more plain text files.
-Each command begins on a separate line or after a semi-colon (\texttt{;}).
+Each command begins on a separate line or after a semi-colon (`;`).
 
-Any part of a line following a hash (\texttt{\#}) or
-a pair of slashes (\texttt{//}) that is not part of
+Any part of a line following a hash (`#`) or
+a pair of slashes (`//`) that is not part of
 a literal string is interpreted as a comment and is ignored.
-C programming \texttt{/*} \ldots \texttt{*/} style
+C programming `/*` ... `*/` style
 comments are also ignored.
 Leading and
 trailing spaces or tabs on a line are ignored too.  A backslash
-(\texttt{\textbackslash}) character at the end of a line is interpreted as a
+(`\`) character at the end of a line is interpreted as a
 line continuation and the line and next line are joined into a single line.
 
-A line beginning with the word \texttt{include}, followed by a filename
+A line beginning with the word `include`, followed by a filename
 or URL includes commands from another file.
 
 Each command is passed zero or more arguments separated by commas.
-An argument is a number, a string literal in single quotes (\texttt{\'})
-or double quotes (\texttt{\"}), a variable name, an array, an
+An argument is a number, a string literal in single quotes (`'`)
+or double quotes (`"`), a variable name, an array, an
 array element or an expression.
 
 In a string literal,
-the character sequence \texttt{\textbackslash{}\textit{nnn}}
+the character sequence `\`_nnn_
 is interpreted as an octal character code (where
-\texttt{\textit{nnn}} is one to three digits) and the character
-sequence \texttt{\textbackslash{}u\textit{nnnn}} is interpreted
-as a Unicode character (where \textit{nnnn} is four hexadecimal
+_nnn_ is one to three digits) and the character
+sequence `\u`_nnnn_ is interpreted
+as a Unicode character (where _nnnn_ is four hexadecimal
 digits).
 
 An expression contains arguments and operators and functions
@@ -158,60 +106,26 @@ Available operators are shown in Table \ref{operators}.
 Pre-defined functions are shown in Table \ref{functions}.
 Java methods are also available as functions by giving the class name
 and method name separated by a dot.  Only Java methods
-declared as \texttt{public} and \texttt{static} are available
+declared as `public` and `static` are available
 as functions.
 
-\begin{table}[htb]
-\begin{tabular}{|l|p{7cm}|}
-\hline
-Operator & Description \\
-\hline
-\hline
+Operator | Description
+-------- | -----------
+( )      | parentheses
+++ --    | increments or decrements variable
+\* / % x  | numeric multiplication, numeric division, modulo (works with non-integer values too), string repetition
+\+ - .    | numeric addition, numeric subtraction, string concatenation
+\<= \< == != \> \>= lt le eq ne gt ge | numeric comparisons and string comparisons
+? :      | ternary conditional operator
+and or not | Logical and, or, not
 
-\texttt{(}, \texttt{)} & parentheses \\
-
-\hline
-
-\texttt{++}, \texttt{--} &
-increments or decrements variable \\
-
-\hline
-
-\texttt{*}, \texttt{/}, \texttt{\%}, \texttt{x} &
-numeric multiplication, numeric division, modulo (works
-with non-integer values too), string repetition \\
-
-\hline
-
-\texttt{+}, \texttt{-}, \texttt{.} & numeric addition,
-numeric subtraction, string concatenation \\
-
-\hline
-
-\texttt{<=}, \texttt{<}, \texttt{==},
-\texttt{!=}, \texttt{>}, \texttt{>=},
-\texttt{lt}, \texttt{le}, \texttt{eq},
-\texttt{ne}, \texttt{gt}, \texttt{ge} &
-numeric comparisons and string comparisons \\
-
-\hline
-
-\texttt{?:} & ternary conditional operator \\
-
-\hline
-
-\texttt{and},
-\texttt{or},
-\texttt{not} &
-Logical and, or, not \\
-
-\hline
-
-\end{tabular}
-\caption{Operators}
-\label{operators}
-\end{table}
-
+Function Name | Description
+------------- | -----------
+abs(n)        | Returns the absolute value of _n_
+axis(min, max, intervals | Generates a set of numbers that are suitable for an axis of a graph containing values in the range _min_ to _max_. _intervals_ sets the maximum number of values for the axis.  An array is returned with each value for the axis.
+buffer(g, dist, cap) | Returns a geometry containing a buffer calculated at
+a distance _dist_ around the perimeter of geometry _g_.  The value of _cap_ defines the method of closing buffers at line endpoints, either
+`butt`, `round` or `square`.  This function requires the [JTS Topology Suite](http://www.tsusiatsoftware.net/jts/main.html).
 
 \begin{longtable}{|p{5cm}|p{7cm}|}
 \hline
