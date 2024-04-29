@@ -19,7 +19,7 @@ if the \texttt{REPROJECT} function is required for reprojecting coordinates.
 The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
-    java -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...
+    java -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
 
 _install-path_ is the directory in which
 Mapyrus is installed.  _filename_ is the name of a file
@@ -34,12 +34,12 @@ _JTS Topology Suite_ JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
 `-classpath` option.
 
-    java -D_variable_=_value_ ... -classpath _install-dir_/mapyrus.jar:_jts-dir_/jts-1.13.jar:_other-jarfile_ org.mapyrus.Mapyrus _filename_
+    java -D_variable_=_value_ ... -classpath <i>install-dir</i>/mapyrus.jar:<i>jts-dir</i>/jts-1.13.jar:<i>other-jarfile</i> org.mapyrus.Mapyrus <i>filename</i>
 
 Mapyrus runs as an HTTP Server when started with the
 `-s` option.
 
-    java -classpath _install-dir_/mapyrus.jar:_jarfile_ org.mapyrus.Mapyrus -s _port_ _filename_ ...
+    java -classpath <i>install-dir</i>/mapyrus.jar:<i>jarfile</i> org.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
 
 \label{morememory}
 Use the
@@ -47,62 +47,19 @@ Use the
 to make more memory available when running Mapyrus.
 To increase available memory to 256Mb, use the following command:
 
-    java -Xmx256m -classpath _install-dir_/mapyrus.jar org.mapyrus.Mapyrus _filename_ ...
+    java -Xmx256m -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
 
 ### Startup Configuration
 
 The variables available for configuring Mapyrus at startup are
 shown in Table \ref{startupvariables}.
 
-\begin{longtable}{|l|p{7cm}|}
-\hline
-\label{startupvariables}
-Variable & Description \\
-\hline
-\hline
-\endfirsthead
-\hline
-\caption{Startup Variables} \\
-\endfoot
-
-\hline
-Variable & Description \\
-\hline
-\hline
-\endhead
-
-\texttt{Mapyrus.rgb.file=\textit{filename}} &
-Defines an X Windows color names file containing additional color names
-for the
-\texttt{color} command.  Default value is
-\texttt{/usr/lib/X11/rgb.txt} \\
-
-\hline
-
-\texttt{java.awt.headless=true} &
-Run in headless mode.  Required when running on a server
-with no graphics display. \\
-
-\hline
-
-\texttt{java.io.tmpdir=\textit{dir}} &
-Defines directory to use for temporary files.  Large images in PDF output
-are temporarily saved in this directory until output is complete. \\
-
-\hline
-
-\texttt{jdbc.drivers=\textit{class}} &
-Defines class containing JDBC 1.0 (or higher) driver to load at startup.
-A JDBC driver is required for connecting to a relational database and
-is provided as part of a relational database.
-See the Java JDBC DriverManager API documentation
-\footnote{Available from \texttt{https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}}
-for details.
-The JAR file containing the class must be included in the \texttt{-classpath}
-option when starting Mapyrus. \\
-
-\hline
-\end{longtable}
+Variable                         | Description
+-------------------------------- | -----------
+Mapyrus.rgb.file=<i>filename</i> | Defines an X Windows color names file containing additional color names for the `color` command.  Default value is `/usr/lib/X11/rgb.txt`
+java.awt.headless=true           | Run in headless mode.  Required when running on a server with no graphics display.
+java.io.tmpdir=<i>dir</i>        | Defines directory to use for temporary files. Large images in PDF output are temporarily saved in this directory until output is complete.
+jdbc.drivers=<i>class</i>        | Defines class containing JDBC 1.0 (or higher) driver to load at startup. A JDBC driver is required for connecting to a relational database and is provided as part of a relational database.  See the [Java JDBC DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html) API documentation for details.  The JAR file containing the class must be included in the `-classpath` option when starting Mapyrus.
 
 \subsection{Language}
 
