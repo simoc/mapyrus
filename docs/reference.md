@@ -93,11 +93,11 @@ or double quotes (`"`), a variable name, an array, an
 array element or an expression.
 
 In a string literal,
-the character sequence `\<i>nnn</i>`
+the character sequence <pre>\<i>nnn</i></pre>
 is interpreted as an octal character code (where
-`<i>nnn</i>` is one to three digits) and the character
-sequence `\u<i>nnnn</i>` is interpreted
-as a Unicode character (where `<i>nnnn</i>` is four hexadecimal
+<pre><i>nnn</i></pre> is one to three digits) and the character
+sequence <pre>\u<i>nnnn</i></pre> is interpreted
+as a Unicode character (where <pre><i>nnnn</i></pre> is four hexadecimal
 digits).
 
 An expression contains arguments and operators and functions
@@ -113,9 +113,9 @@ Operator | Description
 -------- | -----------
 ( )      | parentheses
 ++ --    | increments or decrements variable
-* / % x  | numeric multiplication, numeric division, modulo (works with non-integer values too), string repetition 
-+ - .    | numeric addition, numeric subtraction, string concatenation
-<= < == != > >= lt le eq ne gt ge | numeric comparisons and string comparisons
+\* / % x  | numeric multiplication, numeric division, modulo (works with non-integer values too), string repetition
+\+ - .    | numeric addition, numeric subtraction, string concatenation
+\<= \< == != \> \>= lt le eq ne gt ge | numeric comparisons and string comparisons
 ? :      | ternary conditional operator
 and or not | Logical and, or, not
 
