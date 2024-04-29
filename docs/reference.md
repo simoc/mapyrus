@@ -93,11 +93,11 @@ or double quotes (`"`), a variable name, an array, an
 array element or an expression.
 
 In a string literal,
-the character sequence <pre>\<i>nnn</i></pre>
+the character sequence `\`_nnn_
 is interpreted as an octal character code (where
-<pre><i>nnn</i></pre> is one to three digits) and the character
-sequence <pre>\u<i>nnnn</i></pre> is interpreted
-as a Unicode character (where <pre><i>nnnn</i></pre> is four hexadecimal
+_nnn_ is one to three digits) and the character
+sequence `\u`_nnnn_ is interpreted
+as a Unicode character (where _nnnn_ is four hexadecimal
 digits).
 
 An expression contains arguments and operators and functions
@@ -118,6 +118,14 @@ Operator | Description
 \<= \< == != \> \>= lt le eq ne gt ge | numeric comparisons and string comparisons
 ? :      | ternary conditional operator
 and or not | Logical and, or, not
+
+Function Name | Description
+------------- | -----------
+abs(n)        | Returns the absolute value of _n_
+axis(min, max, intervals | Generates a set of numbers that are suitable for an axis of a graph containing values in the range _min_ to _max_. _intervals_ sets the maximum number of values for the axis.  An array is returned with each value for the axis.
+buffer(g, dist, cap) | Returns a geometry containing a buffer calculated at
+a distance _dist_ around the perimeter of geometry _g_.  The value of _cap_ defines the method of closing buffers at line endpoints, either
+`butt`, `round` or `square`.  This function requires the [JTS Topology Suite](http://www.tsusiatsoftware.net/jts/main.html).
 
 \begin{longtable}{|p{5cm}|p{7cm}|}
 \hline
