@@ -12,14 +12,16 @@ is not available, use the `-Djava.awt.headless=true` startup variable.
 if geometric functions are required
 (see Table \ref{functions} on page \pageref{functions}).
 - The [Java PROJ.4 library](http://www.jhlabs.com/java/maps/proj),
-if the \texttt{REPROJECT} function is required for reprojecting coordinates.
+if the `REPROJECT` function is required for reprojecting coordinates.
 
 ## Usage
 
 The Mapyrus software is contained in a single Java JAR file.
 Start Mapyrus in a Java interpreter with the following command.
 
-    java -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
+<pre>
+java -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
+</pre>
 
 _install-path_ is the directory in which
 Mapyrus is installed.  _filename_ is the name of a file
@@ -34,12 +36,16 @@ _JTS Topology Suite_ JAR file and other JAR files
 to be used in combination with Mapyrus are included in the
 `-classpath` option.
 
-    java -D_variable_=_value_ ... -classpath <i>install-dir</i>/mapyrus.jar:<i>jts-dir</i>/jts-1.13.jar:<i>other-jarfile</i> org.mapyrus.Mapyrus <i>filename</i>
+<pre>
+java -D<i>variable</i>=<i>value</i> ... -classpath <i>install-dir</i>/mapyrus.jar:<i>jts-dir</i>/jts-1.13.jar:<i>other-jarfile</i> org.mapyrus.Mapyrus <i>filename</i>
+</pre>
 
 Mapyrus runs as an HTTP Server when started with the
 `-s` option.
 
-    java -classpath <i>install-dir</i>/mapyrus.jar:<i>jarfile</i> org.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
+<pre>
+java -classpath <i>install-dir</i>/mapyrus.jar:<i>jarfile</i> org.mapyrus.Mapyrus -s <i>port</i> <i>filename</i> ...
+</pre>
 
 \label{morememory}
 Use the
@@ -47,7 +53,9 @@ Use the
 to make more memory available when running Mapyrus.
 To increase available memory to 256Mb, use the following command:
 
-    java -Xmx256m -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
+<pre>
+java -Xmx256m -classpath <i>install-dir</i>/mapyrus.jar org.mapyrus.Mapyrus <i>filename</i> ...
+</pre>
 
 ### Startup Configuration
 
@@ -61,35 +69,35 @@ java.awt.headless=true           | Run in headless mode.  Required when running 
 java.io.tmpdir=<i>dir</i>        | Defines directory to use for temporary files. Large images in PDF output are temporarily saved in this directory until output is complete.
 jdbc.drivers=<i>class</i>        | Defines class containing JDBC 1.0 (or higher) driver to load at startup. A JDBC driver is required for connecting to a relational database and is provided as part of a relational database.  See the [Java JDBC DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html) API documentation for details.  The JAR file containing the class must be included in the `-classpath` option when starting Mapyrus.
 
-\subsection{Language}
+## Language
 
 Mapyrus interprets commands read from one or more plain text files.
-Each command begins on a separate line or after a semi-colon (\texttt{;}).
+Each command begins on a separate line or after a semi-colon (`;`).
 
-Any part of a line following a hash (\texttt{\#}) or
-a pair of slashes (\texttt{//}) that is not part of
+Any part of a line following a hash (`#`) or
+a pair of slashes (`//`) that is not part of
 a literal string is interpreted as a comment and is ignored.
-C programming \texttt{/*} \ldots \texttt{*/} style
+C programming `/*` ... `*/` style
 comments are also ignored.
 Leading and
 trailing spaces or tabs on a line are ignored too.  A backslash
-(\texttt{\textbackslash}) character at the end of a line is interpreted as a
+(`\`) character at the end of a line is interpreted as a
 line continuation and the line and next line are joined into a single line.
 
-A line beginning with the word \texttt{include}, followed by a filename
+A line beginning with the word `include`, followed by a filename
 or URL includes commands from another file.
 
 Each command is passed zero or more arguments separated by commas.
-An argument is a number, a string literal in single quotes (\texttt{\'})
-or double quotes (\texttt{\"}), a variable name, an array, an
+An argument is a number, a string literal in single quotes (`'`)
+or double quotes (`"`), a variable name, an array, an
 array element or an expression.
 
 In a string literal,
-the character sequence \texttt{\textbackslash{}\textit{nnn}}
+the character sequence `\<i>nnn</i>`
 is interpreted as an octal character code (where
-\texttt{\textit{nnn}} is one to three digits) and the character
-sequence \texttt{\textbackslash{}u\textit{nnnn}} is interpreted
-as a Unicode character (where \textit{nnnn} is four hexadecimal
+`<i>nnn</i>` is one to three digits) and the character
+sequence `\u<i>nnnn</i>` is interpreted
+as a Unicode character (where `<i>nnnn</i>` is four hexadecimal
 digits).
 
 An expression contains arguments and operators and functions
@@ -98,60 +106,18 @@ Available operators are shown in Table \ref{operators}.
 Pre-defined functions are shown in Table \ref{functions}.
 Java methods are also available as functions by giving the class name
 and method name separated by a dot.  Only Java methods
-declared as \texttt{public} and \texttt{static} are available
+declared as `public` and `static` are available
 as functions.
 
-\begin{table}[htb]
-\begin{tabular}{|l|p{7cm}|}
-\hline
-Operator & Description \\
-\hline
-\hline
-
-\texttt{(}, \texttt{)} & parentheses \\
-
-\hline
-
-\texttt{++}, \texttt{--} &
-increments or decrements variable \\
-
-\hline
-
-\texttt{*}, \texttt{/}, \texttt{\%}, \texttt{x} &
-numeric multiplication, numeric division, modulo (works
-with non-integer values too), string repetition \\
-
-\hline
-
-\texttt{+}, \texttt{-}, \texttt{.} & numeric addition,
-numeric subtraction, string concatenation \\
-
-\hline
-
-\texttt{<=}, \texttt{<}, \texttt{==},
-\texttt{!=}, \texttt{>}, \texttt{>=},
-\texttt{lt}, \texttt{le}, \texttt{eq},
-\texttt{ne}, \texttt{gt}, \texttt{ge} &
-numeric comparisons and string comparisons \\
-
-\hline
-
-\texttt{?:} & ternary conditional operator \\
-
-\hline
-
-\texttt{and},
-\texttt{or},
-\texttt{not} &
-Logical and, or, not \\
-
-\hline
-
-\end{tabular}
-\caption{Operators}
-\label{operators}
-\end{table}
-
+Operator | Description
+-------- | -----------
+( )      | parentheses
+++ --    | increments or decrements variable
+* / % x  | numeric multiplication, numeric division, modulo (works with non-integer values too), string repetition 
++ - .    | numeric addition, numeric subtraction, string concatenation
+<= < == != > >= lt le eq ne gt ge | numeric comparisons and string comparisons
+? :      | ternary conditional operator
+and or not | Logical and, or, not
 
 \begin{longtable}{|p{5cm}|p{7cm}|}
 \hline
